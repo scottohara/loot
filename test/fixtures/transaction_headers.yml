@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  transaction_date: 2013-04-08
+  type: 
+
+two:
+  transaction_date: 2013-04-08
+  type: 

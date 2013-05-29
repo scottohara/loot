@@ -1,0 +1,20 @@
+%table
+  %thead
+    %th Date
+    %th Payee
+    %th Amount
+    %th Direction
+    %th Category
+    %th Subcategory
+    %th Memo
+  %tbody
+    - @transactions.each do |transaction|
+      %tr
+        %td #{transaction[:transaction_date]}
+        %td #{transaction[:payee]}
+        %td #{transaction[:amount]}
+        %td #{transaction[:direction]}
+        %td #{transaction[:category]}
+        %td #{transaction[:subcategory]}
+        %td #{transaction[:memo]}
+

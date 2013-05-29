@@ -1,0 +1,9 @@
+class Category < ActiveRecord::Base
+	attr_accessible :direction, :name
+	validates :name, :presence => true
+	validates :direction, :presence => true, :inclusion => {:in => %w(inflow outflow)}
+	belongs_to :parent, :class_name => 'Category', :foreign_key => 'parent_id'
+	has_many :children, :class_name => 'Category', :foreign_key => 'parent_id'
+	has_many :transaction_categories
+	has_many :transactions, :through => :transaction_categories
+end
