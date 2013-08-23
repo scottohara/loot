@@ -1,5 +1,6 @@
 %table
   %thead
+    %th ID
     %th Date
     %th Payee
     %th Amount
@@ -10,6 +11,7 @@
   %tbody
     - @transactions.each do |transaction|
       %tr
+        %td #{transaction[:id]}
         %td #{transaction[:transaction_date]}
         %td #{transaction[:payee]}
         %td #{transaction[:amount]}

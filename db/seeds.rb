@@ -13,6 +13,7 @@ require 'csv'
 @tmp_payees = {}
 @tmp_categories = {}
 @tmp_splits = {}
+@tmp_subtransactions = []
 @tmp_transfers = {}
 @tmp_transactions = {}
 
@@ -127,10 +128,23 @@ def load_transactions
 	print "Deleting existing transactions..."
 	Transaction.destroy_all
 	puts "done"
+	print "Deleting existing transaction accounts..."
+	TransactionAccount.delete_all
+	puts "done"
+	print "Deleting existing transaction headers..."
+	TransactionHeader.delete_all
+	puts "done"
+	print "Deleting existing transaction categories..."
+	TransactionCategory.delete_all
+	puts "done"
+	print "Deleting existing transaction splits..."
+	TransactionSplit.delete_all
+	puts "done"
 
 	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'TRN_SPLIT-rows.csv'), :headers => true do |row|
 		@tmp_splits[row['htrnParent']] = [] unless @tmp_splits.has_key? row['htrnParent']
 		@tmp_splits[row['htrnParent']] << row['htrn']
+		@tmp_subtransactions << row['htrn']
 		progress "Loaded", $., "split" if $. % 10 == 0
 	end
 	progress "Loaded", $., "split"
@@ -144,17 +158,41 @@ def load_transactions
 	puts
 
 	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'TRN-rows.csv'), {:headers => true, :encoding => 'ISO-8859-1:UTF-8'} do |row|
-		@tmp_transactions[row['htrn']] = { :id => row['htrn'], :account => @tmp_accounts[row['hacct']], :transaction_date => row['dt'], :amount => row['amt'].to_f.abs, :memo => row['mMemo'], :payee => @tmp_payees[row['lHpay']], :category => ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]) }
+		@tmp_transactions[row['htrn']] = { :id => row['htrn'], :account => @tmp_accounts[row['hacct']], :transaction_date => row['dt'], :amount => row['amt'].to_f.abs, :memo => row['mMemo'], :payee => @tmp_payees[row['lHpay']], :category => ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]), :grftt => row['grftt'] }
 
 		@tmp_transactions[row['htrn']][:type] = case
-			when row['ps'].eql?('0') && !@tmp_splits.has_key?(row['htrn']) && !@tmp_transfers.has_key?(row['htrn']) && !@tmp_transfers.has_value?(row['htrn']) then 'basic'
-			when row['ps'].eql?('0') && @tmp_splits.has_key?(row['htrn']) then 'split'
-			when row['ps'].eql?('0') && @tmp_transfers.has_key?(row['htrn']) then 'transfer'
+			# Payslip is simply any row where 'ps' is 1
 			when row['ps'].eql?('1') then 'payslip'
-			when row['ps'].eql?('2') then 'subtransaction'
+
+			# Subtransfers are any rows where 'ps' is 0 and the row is both part of a transfer and a child of a split
+			when row['ps'].eql?('0') && (@tmp_transfers.has_key?(row['htrn']) || @tmp_transfers.has_value?(row['htrn'])) && @tmp_subtransactions.include?(row['htrn']) then 'subtransfer'
+
+			# Transfers out are any rows where 'ps' is 0 and the row is part of a transfer and the other side is not a child of a split and the amount is negative
+			when row['ps'].eql?('0') && @tmp_transfers.has_key?(row['htrn']) && !@tmp_subtransactions.include?(@tmp_transfers[row['htrn']]) && row['amt'].to_f < 0 then 'transfer_out'
+
+			# Transfers in are any rows where 'ps' is 0 and the row is part of a transfer and the other side is not a child of a split and the amount is positive
+			when row['ps'].eql?('0') && @tmp_transfers.has_key?(row['htrn']) && !@tmp_subtransactions.include?(@tmp_transfers[row['htrn']]) && row['amt'].to_f >= 0 then 'transfer_in'
+
+			# Subtransactions are any rows where 'ps' is 2, or 'ps' is 0 and the row is a child of a split
+			when row['ps'].eql?('2') || (row['ps'].eql?('0') && @tmp_subtransactions.include?(row['htrn'])) then 'subtransaction'
+
+			# Payslip before tax is simply any row where 'ps' is 3
 			when row['ps'].eql?('3') then 'payslip_beforetax'
+
+			# Payslip tax is simply any row where 'ps' is 4
 			when row['ps'].eql?('4') then 'payslip_tax'
+
+			# LoanRepayment is simply any row where 'ps' is 5
 			when row['ps'].eql?('5') then 'loanrepayment'
+
+			# Splits out are any rows where 'ps' is 0 and is the parent in a split and the amount is negative
+			when row['ps'].eql?('0') && @tmp_splits.has_key?(row['htrn']) && row['amt'].to_f < 0 then 'split_out'
+
+			# Splits in are any rows where 'ps' is 0 and is the parent in a split and the amount is positive
+			when row['ps'].eql?('0') && @tmp_splits.has_key?(row['htrn']) && row['amt'].to_f >= 0 then 'split_in'
+
+			# Basic is any row where 'ps' is 0 and the row is not part of a split or a transfer
+			when row['ps'].eql?('0') && !@tmp_splits.has_key?(row['htrn']) && !@tmp_subtransactions.include?(row['htrn']) && !@tmp_transfers.has_key?(row['htrn']) && !@tmp_transfers.has_value?(row['htrn']) then 'basic'
 		end
 		progress "Prepared", $., "transaction" if $. % 10 == 0
 	end
@@ -163,8 +201,12 @@ def load_transactions
 
 	@tmp_transactions.sort_by {|k,v| Date.parse v[:transaction_date]}.each_with_index do |(id, trx), index|
 		begin
-			self.send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil?
-			progress "Loaded", index, "transaction"
+			if trx[:grftt].to_i > 100
+				puts "Skipping transaction on #{trx[:transaction_date]} for $#{trx[:amount]} with grftt of #{trx[:grftt]}"
+			else
+				self.send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil?
+				progress "Loaded", index, "transaction"
+			end
 		rescue
 			p trx
 			raise
@@ -184,10 +226,18 @@ def create_basic_transaction(trx)
 	s.save
 end
 
-def create_split_transaction(trx)
+def create_split_out_transaction(trx)
+	create_split_transaction(trx, 'outflow')
+end
+
+def create_split_in_transaction(trx)
+	create_split_transaction(trx, 'inflow')
+end
+
+def create_split_transaction(trx, direction)
 	# Split Transaction
 	s = SplitTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => 'outflow').account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_transaction_account(:direction => direction).account = (!!trx[:account] && Account.find(trx[:account])) || nil
 	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 
 	# Add splits
@@ -195,17 +245,27 @@ def create_split_transaction(trx)
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
 			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
-			else s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'outflow').account = Account.find(subtrx[:account])
+			else s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => direction).account = Account.find(subtrx[:account])
 		end 
 	end
 	s.save
 end
 
-def create_transfer_transaction(trx)
+def create_transfer_out_transaction(trx)
+	create_transfer_transaction trx, 'outflow'
+end
+
+def create_transfer_in_transaction(trx)
+	create_transfer_transaction trx, 'inflow'
+end
+
+def create_transfer_transaction(trx, direction)
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
+	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
+
 	s = TransferTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_source_transaction_account(:direction => 'outflow').account = (!!trx[:account] && Account.find(trx[:account])) || nil
-	s.build_destination_transaction_account(:direction => 'inflow').account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
+	s.build_source_transaction_account(:direction => direction).account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
 	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 	s.save
 end
@@ -220,7 +280,7 @@ def create_payslip_transaction(trx)
 	@tmp_splits[trx[:id]].each do |trxid|
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
-			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			when 'subtransaction' || 'payslip_before_tax' || 'payslip_tax' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
 			else s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = Account.find(subtrx[:account])
 		end 
 	end
@@ -228,9 +288,27 @@ def create_payslip_transaction(trx)
 end
 
 def create_loanrepayment_transaction(trx)
+	# Loan Repayment Transaction
+	s = LoanRepaymentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
+	s.build_transaction_account(:direction => 'outflow').account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+
+	# Add splits
+	@tmp_splits[trx[:id]].each do |trxid|
+		subtrx = @tmp_transactions[trxid]
+		case subtrx[:type]
+			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			else s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'outflow').account = (!!subtrx[:account] && Account.find(subtrx[:account])) || nil
+		end 
+	end
+	s.save
 end
 
 def create_subtransaction_transaction(trx)
+	#noop
+end
+
+def create_subtransfer_transaction(trx)
 	#noop
 end
 
