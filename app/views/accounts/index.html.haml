@@ -3,3 +3,4 @@
     %li
       = link_to account[:name], account_transactions_path(account, :asat => @asat)
       = link_to "Details", account_path(account, :asat => @asat)
+      = number_to_currency @closing_balance[account[:id]]

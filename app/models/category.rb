@@ -1,5 +1,4 @@
 class Category < ActiveRecord::Base
-	attr_accessible :direction, :name
 	validates :name, :presence => true
 	validates :direction, :presence => true, :inclusion => {:in => %w(inflow outflow)}
 	belongs_to :parent, :class_name => 'Category', :foreign_key => 'parent_id'

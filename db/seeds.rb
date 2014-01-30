@@ -7,19 +7,29 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 require 'csv'
+require 'json'
+
+# Location of the exported sunriise files
+@export_dir = File.join(Dir.home, 'Documents', 'sunriise')
 
 # Temporary hashes for lookups etc. during load
 @tmp_accounts = {}
 @tmp_payees = {}
 @tmp_categories = {}
+@tmp_securities = {}
 @tmp_splits = {}
 @tmp_subtransactions = []
 @tmp_transfers = {}
+@tmp_investments = {}
 @tmp_transactions = {}
 
 def progress(action, count, type)
 	reset_line = "\r\e[0K"
 	print "#{reset_line}#{action} #{count} #{type}".pluralize $.
+end
+
+def csv_file_path(table)
+	File.join @export_dir, 'csv', table, "#{table}-rows.csv"
 end
 
 # Accounts
@@ -28,8 +38,8 @@ def load_accounts
 	Account.destroy_all
 	puts "done"
 
-	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'ACCT-rows.csv'), :headers => true do |row|
-		@tmp_accounts[row['hacct']] = Account.create(:name => row['szFull'], :account_type => 'bank', :opening_balance => row['amtOpen']).id
+	CSV.foreach csv_file_path('ACCT'), :headers => true do |row|
+		@tmp_accounts[row['hacct']] = Account.create(:name => row['szFull'], :account_type => 'bank', :opening_balance => (!!row['amtOpen'] && row['amtOpen']) || 0).id
 		progress "Loaded", $., "account" if $. % 10 == 0
 	end
 	progress "Loaded", $., "account"
@@ -42,7 +52,7 @@ def load_payees
 	Payee.destroy_all
 	puts "done"
 
-	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'PAY-rows.csv'), :headers => true do |row|
+	CSV.foreach csv_file_path('PAY'), :headers => true do |row|
 		@tmp_payees[row['hpay']] = Payee.create(:name => row['szFull']).id
 		progress "Loaded", $., "payee" if $. % 10 == 0
 	end
@@ -56,7 +66,7 @@ def load_categories
 	Category.destroy_all
 	puts "done"
 
-	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'CAT-rows.csv'), :headers => true do |row|
+	CSV.foreach csv_file_path('CAT'), :headers => true do |row|
 		@tmp_categories[row['hcat']] = { :type => row['hct'], :name => row['szFull'], :level => row['nLevel'], :parent => row['hcatParent'] }
 	end
 
@@ -123,6 +133,49 @@ def create_category(id, name, direction)
 	end
 end
 
+# Securities
+def load_securities
+	print "Deleting existing securities..."
+	Security.destroy_all
+	puts "done"
+
+	CSV.foreach csv_file_path('SEC'), :headers => true do |row|
+		@tmp_securities[row['hsec']] = { :id => Security.create(:name => row['szFull']).id, :prices => [] }
+		progress "Loaded", $., "security" if $. % 10 == 0
+	end
+	progress "Loaded", $., "security"
+	2.times { puts }
+end
+
+# Security Prices
+def load_security_prices
+	print "Deleting existing security prices..."
+	SecurityPrice.delete_all
+	puts "done"
+
+	CSV.foreach csv_file_path('SP'), :headers => true do |row|
+		@tmp_securities[row['hsec']][:prices] << { :price => row['dPrice'].to_f, :as_at_date => row['dt'] }
+		progress "Prepared", $., "security price" if $. % 10 == 0
+	end
+	progress "Prepared", $., "security price"
+	puts
+
+	loaded = 0
+	@tmp_securities.each do |id,sec|
+		s = Security.find(sec[:id])
+		last_price = nil
+		sec[:prices].sort_by {|price| Date.parse price[:as_at_date]}.each do |price|
+			s.prices.build(:price => price[:price], :as_at_date => price[:as_at_date]) unless price[:price].eql? last_price
+			last_price = price[:price]
+			loaded += 1
+			progress "Loaded", loaded, "security price" if loaded % 10 == 0
+		end
+		s.save
+	end
+	progress "Loaded", loaded, "security prices"
+	2.times { puts }
+end
+
 #Transactions
 def load_transactions
 	print "Deleting existing transactions..."
@@ -141,7 +194,7 @@ def load_transactions
 	TransactionSplit.delete_all
 	puts "done"
 
-	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'TRN_SPLIT-rows.csv'), :headers => true do |row|
+	CSV.foreach csv_file_path('TRN_SPLIT'), :headers => true do |row|
 		@tmp_splits[row['htrnParent']] = [] unless @tmp_splits.has_key? row['htrnParent']
 		@tmp_splits[row['htrnParent']] << row['htrn']
 		@tmp_subtransactions << row['htrn']
@@ -150,22 +203,44 @@ def load_transactions
 	progress "Loaded", $., "split"
 	puts
 
-	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'TRN_XFER-rows.csv'), :headers => true do |row|
+	CSV.foreach csv_file_path('TRN_XFER'), :headers => true do |row|
 		@tmp_transfers[row['htrnLink']] = row['htrnFrom']
 		progress "Loaded", $., "transfer" if $. % 10 == 0
 	end
 	progress "Loaded", $., "transfer"
 	puts
 
-	CSV.foreach File.join(Dir.home, 'Documents', 'csv', 'TRN-rows.csv'), {:headers => true, :encoding => 'ISO-8859-1:UTF-8'} do |row|
-		@tmp_transactions[row['htrn']] = { :id => row['htrn'], :account => @tmp_accounts[row['hacct']], :transaction_date => row['dt'], :amount => row['amt'].to_f.abs, :memo => row['mMemo'], :payee => @tmp_payees[row['lHpay']], :category => ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]), :grftt => row['grftt'] }
+	CSV.foreach csv_file_path('TRN_INV'), :headers => true do |row|
+		@tmp_investments[row['htrn']] = {
+			:price => row['dPrice'].to_f,
+			:qty => row['qty'].to_f,
+			:commission => row['amtCmn'].to_f
+		}
+		progress "Loaded", $., "investment" if $. % 10 == 0
+	end
+	progress "Loaded", $., "investment"
+	puts
+
+	CSV.foreach csv_file_path('TRN'), {:headers => true, :encoding => 'ISO-8859-1:UTF-8'} do |row|
+		@tmp_transactions[row['htrn']] = {
+			:id => row['htrn'],
+			:account => @tmp_accounts[row['hacct']],
+			:transaction_date => row['dt'],
+			:amount => row['amt'].to_f.abs,
+			:orig_amount => row['amt'],
+			:memo => row['mMemo'],
+			:payee => @tmp_payees[row['lHpay']],
+			:security => @tmp_securities[row['hsec']],
+			:category => ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]),
+			:grftt => row['grftt']
+		}
 
 		@tmp_transactions[row['htrn']][:type] = case
 			# Payslip is simply any row where 'ps' is 1
 			when row['ps'].eql?('1') then 'payslip'
 
-			# Subtransfers are any rows where 'ps' is 0 and the row is both part of a transfer and a child of a split
-			when row['ps'].eql?('0') && (@tmp_transfers.has_key?(row['htrn']) || @tmp_transfers.has_value?(row['htrn'])) && @tmp_subtransactions.include?(row['htrn']) then 'subtransfer'
+			# Subtransfers are any rows where 'ps' is 0 or 2, and the row is both part of a transfer and a child of a split
+			when (row['ps'].eql?('0') || row['ps'].eql?('2')) && (@tmp_transfers.has_key?(row['htrn']) || @tmp_transfers.has_value?(row['htrn'])) && @tmp_subtransactions.include?(row['htrn']) then 'subtransfer'
 
 			# Transfers out are any rows where 'ps' is 0 and the row is part of a transfer and the other side is not a child of a split and the amount is negative
 			when row['ps'].eql?('0') && @tmp_transfers.has_key?(row['htrn']) && !@tmp_subtransactions.include?(@tmp_transfers[row['htrn']]) && row['amt'].to_f < 0 then 'transfer_out'
@@ -182,7 +257,7 @@ def load_transactions
 			# Payslip tax is simply any row where 'ps' is 4
 			when row['ps'].eql?('4') then 'payslip_tax'
 
-			# LoanRepayment is simply any row where 'ps' is 5
+			# Loan repayment is simply any row where 'ps' is 5
 			when row['ps'].eql?('5') then 'loanrepayment'
 
 			# Splits out are any rows where 'ps' is 0 and is the parent in a split and the amount is negative
@@ -199,14 +274,37 @@ def load_transactions
 	progress "Prepared", $., "transaction"
 	puts
 
+	# For any transfers, check if one or both sides of the transfer have a security
+	@tmp_transfers.each_with_index do |(this_side, other_side), index|
+		trx = @tmp_transactions[this_side]
+
+		# Only interested in transfers in/out
+		next unless ['transfer_in','transfer_out'].include? trx[:type]
+		
+		this_security, other_security = @tmp_transactions[this_side][:security], @tmp_transactions[other_side][:security]
+
+		case
+			# Transfer is where both sides have a security
+			when !this_security.nil? && !other_security.nil? then trx[:type] = 'securitytransfer'
+
+			# Investment is where only one side has a security and is in investments
+			when (this_security.nil? ^ other_security.nil?) && (@tmp_investments.include?(this_side) || @tmp_investments.include?(other_side)) then trx[:type] = (this_security.nil? ? 'securityinvestment_out' : 'securityinvestment_in')
+
+			# Dividend is where only one side has a security and neither is in investments
+			when (this_security.nil? ^ other_security.nil?) && !@tmp_investments.include?(this_side) && !@tmp_investments.include?(other_side) then trx[:type] = (this_security.nil? ? 'dividend_in' : 'dividend_out')
+
+			# Holding is???
+			# TODO
+		end
+		progress "Prepared", index, "security transaction" if index % 10 == 0
+	end
+	progress "Prepared", @tmp_transfers.length, "security transaction"
+	puts
+
 	@tmp_transactions.sort_by {|k,v| Date.parse v[:transaction_date]}.each_with_index do |(id, trx), index|
 		begin
-			if trx[:grftt].to_i > 100
-				puts "Skipping transaction on #{trx[:transaction_date]} for $#{trx[:amount]} with grftt of #{trx[:grftt]}"
-			else
-				self.send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil?
-				progress "Loaded", index, "transaction"
-			end
+			self.send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil? || !!!trx[:account] || void?(trx)
+			progress "Loaded", index, "transaction"
 		rescue
 			p trx
 			raise
@@ -219,8 +317,10 @@ end
 def create_basic_transaction(trx)
 	# Basic Transaction
 	category = Category.find(trx[:category]) unless trx[:category].nil?
+	category_direction = (!!category && category.direction) || nil
+
 	s = BasicTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => (!!category && category.direction) || nil).account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_transaction_account(:direction => category_direction).account = Account.find(trx[:account])
 	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 	s.build_transaction_category.category = category
 	s.save
@@ -237,7 +337,7 @@ end
 def create_split_transaction(trx, direction)
 	# Split Transaction
 	s = SplitTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => direction).account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_transaction_account(:direction => direction).account = Account.find(trx[:account])
 	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 
 	# Add splits
@@ -245,7 +345,13 @@ def create_split_transaction(trx, direction)
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
 			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
-			else s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => direction).account = Account.find(subtrx[:account])
+			else
+				subaccount, subdirection = subtrx[:account], direction
+				
+				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side (and reverse the direction)
+				subaccount, subdirection = @tmp_transactions[@tmp_transfers[subtrx[:id]]][:account], ['inflow','outflow'].reject {|dir| dir.eql? direction }.first if subaccount.eql? trx[:account]
+
+				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => subdirection).account = Account.find(subaccount)
 		end 
 	end
 	s.save
@@ -264,7 +370,7 @@ def create_transfer_transaction(trx, direction)
 	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
 	s = TransferTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_source_transaction_account(:direction => direction).account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_source_transaction_account(:direction => direction).account = Account.find(trx[:account])
 	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
 	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 	s.save
@@ -273,15 +379,21 @@ end
 def create_payslip_transaction(trx)
 	# Payslip Transaction
 	s = PayslipTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => 'inflow').account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_transaction_account(:direction => 'inflow').account = Account.find(trx[:account])
 	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 
 	# Add splits
 	@tmp_splits[trx[:id]].each do |trxid|
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
-			when 'subtransaction' || 'payslip_before_tax' || 'payslip_tax' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
-			else s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = Account.find(subtrx[:account])
+			when 'subtransaction', 'payslip_before_tax', 'payslip_tax' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			else
+				subaccount = subtrx[:account]
+				
+				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side
+				subaccount = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first][:account] if subaccount.eql? trx[:account]
+
+				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
 	s.save
@@ -290,7 +402,7 @@ end
 def create_loanrepayment_transaction(trx)
 	# Loan Repayment Transaction
 	s = LoanRepaymentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => 'outflow').account = (!!trx[:account] && Account.find(trx[:account])) || nil
+	s.build_transaction_account(:direction => 'outflow').account = Account.find(trx[:account])
 	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 
 	# Add splits
@@ -298,9 +410,86 @@ def create_loanrepayment_transaction(trx)
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
 			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
-			else s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'outflow').account = (!!subtrx[:account] && Account.find(subtrx[:account])) || nil
+			else
+				subaccount = subtrx[:account]
+				
+				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side
+				subaccount = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first][:account] if subaccount.eql? trx[:account]
+
+				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
+	s.save
+end
+
+def create_securitytransfer_transaction(trx)
+	# Security Transfer Transaction
+	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
+
+	this_direction = @tmp_investments[trx[:id]][:qty].to_f > 0 ? 'inflow' : 'outflow'
+	other_direction = this_direction.eql?('inflow') ? 'outflow' : 'inflow'
+
+	s = SecurityTransferTransaction.new(:quantity => @tmp_investments[trx[:id]][:qty], :memo => trx[:memo])
+	s.build_source_transaction_account(:direction => this_direction).account = Account.find(trx[:account])
+	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
+	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	s.save
+end
+
+def create_securityholding_transaction(trx)
+	# Security Holding Transaction
+	# TODO
+end
+
+def create_securityinvestment_out_transaction(trx)
+	# trx is the transaction without the security
+	create_securityinvestment_transaction trx, 'outflow'
+end
+
+def create_securityinvestment_in_transaction(trx)
+	# trx is the transaction with the security
+	create_securityinvestment_transaction trx, 'inflow'
+end
+
+def create_securityinvestment_transaction(trx, direction)
+	# Security Investment Transaction
+	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
+
+	if direction.eql? 'inflow'
+		investment_account, cash_account, security, investment = trx[:account], other_side[:account], trx[:security],@tmp_investments[trx[:id]]
+		investment_direction = trx[:orig_amount].to_f > 0 ? 'inflow' : 'outflow'
+	else
+		investment_account, cash_account, security, investment = other_side[:account], trx[:account], other_side[:security],@tmp_investments[other_side[:id]]
+		investment_direction = trx[:orig_amount].to_f > 0 ? 'outflow' : 'inflow'
+	end
+
+	cash_direction = investment_direction.eql?('inflow') ? 'outflow' : 'inflow'
+
+	s = SecurityInvestmentTransaction.new(:amount => trx[:amount], :quantity => investment[:qty], :commission => investment[:commission], :memo => trx[:memo])
+	s.build_investment_transaction_account(:direction => investment_direction).account = Account.find(investment_account)
+	s.build_cash_transaction_account(:direction => cash_direction).account = (!!cash_account && Account.find(cash_account)) || nil
+	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!security && Security.find(security[:id])) || nil
+	s.save
+end
+
+def create_dividend_out_transaction(trx)
+	create_dividend_transaction trx, 'outflow'
+end
+
+def create_dividend_in_transaction(trx)
+	create_dividend_transaction trx, 'inflow'
+end
+
+def create_dividend_transaction(trx, direction)
+	# Dividend Transaction
+	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
+	investment_account, cash_account = direction.eql?('inflow') ? [other_side[:account], trx[:account]] : [trx[:account], other_side[:account]]
+	security = direction.eql?('inflow') ? other_side[:security] : trx[:security]
+
+	s = DividendTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
+	s.build_investment_transaction_account(:direction => 'outflow').account = (!!investment_account && Account.find(investment_account)) || nil
+	s.build_cash_transaction_account(:direction => 'inflow').account = Account.find(cash_account)
+	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!security && Security.find(security[:id])) || nil
 	s.save
 end
 
@@ -320,7 +509,57 @@ def create_payslip_tax_transaction(trx)
 	#noop
 end
 
+def void?(trx)
+	# From sunriise (http://sourceforge.net/p/sunriise/code/HEAD/tree/trunk/src/main/java/com/le/sunriise/mnyobject/impl/TransactionImpl.java)
+	return (trx[:grftt].to_i >= 2097152)
+end
+
+def verify_balances
+	include ActionView::Helpers::NumberHelper
+	balance_mismatches = []
+
+	# Process each account.json file
+	Dir[File.join(@export_dir, 'json', '**', 'account.json')].each_with_index do |file, index|
+		begin
+			# Load the JSON data
+			account_json = JSON.parse IO.read(file)
+
+			# Skip if we can't find the matching account
+			next unless !!@tmp_accounts[account_json['id'].to_s]
+
+			# Calculate the loaded account's closing balance
+			closing_balance = Account.find(@tmp_accounts[account_json['id'].to_s]).closing_balance
+
+			# Hack for known inconsistencies in sunriise closing balances
+			account_json['currentBalance'] = 0 if ['Car Loan', 'Macquarie Loan (A)', 'RAMS', 'Wizard Loan'].include? account_json['name']
+			account_json['currentBalance'] = -0 if account_json['name'].eql? "Dan's Spectrum Super (Contributions)"
+			account_json['currentBalance'] = -187536.55 if account_json['name'].eql? 'Macquarie Loan (B)'
+			
+			# Check that it matches
+			balance_mismatches << [account_json['name'], number_to_currency(account_json['currentBalance']), number_to_currency(closing_balance)] unless number_to_currency(account_json['currentBalance']).eql? number_to_currency(closing_balance)
+			progress "Checked", index, "closing balance"
+		rescue
+			p account_json
+			puts "Failed on Source ID: #{account_json['id']}, Target ID: #{@tmp_accounts[account_json['id'].to_s]}, OK: #{!!@tmp_accounts[account_json['id'].to_s]}"
+		end
+	end	
+
+	# Report any mismatches
+	unless balance_mismatches.empty?
+		columns = "%40s %15s %15s"
+		puts
+		puts "#{balance_mismatches.size} Mismatched Balances".pluralize balance_mismatches.size
+		puts columns % ["Account", "Actual", "Calculated"]
+		balance_mismatches.each do |account|
+			puts columns % account
+		end
+	end
+end
+
 load_accounts
 load_payees
 load_categories
+load_securities
+load_security_prices
 load_transactions
+verify_balances

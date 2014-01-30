@@ -1,7 +1,9 @@
 class CreateTransactions < ActiveRecord::Migration
   def change
     create_table :transactions do |t|
-      t.decimal :amount, :null => false
+      t.decimal :amount
+			t.decimal :quantity
+			t.decimal :commission
       t.text :memo
       t.string :transaction_type, :null => false
 
