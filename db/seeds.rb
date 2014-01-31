@@ -13,6 +13,15 @@ require 'json'
 @export_dir = File.join(Dir.home, 'Documents', 'sunriise')
 
 # Temporary hashes for lookups etc. during load
+@tmp_account_types = {
+	'0' => 'bank',
+	'1' => 'credit',
+	'2' => 'cash',
+	'3' => 'asset',
+	'4' => 'liability',
+	'5' => 'investment',
+	'6' => 'loan'
+}
 @tmp_accounts = {}
 @tmp_payees = {}
 @tmp_categories = {}
@@ -38,11 +47,24 @@ def load_accounts
 	Account.destroy_all
 	puts "done"
 
+	related_accounts = {}
+
 	CSV.foreach csv_file_path('ACCT'), :headers => true do |row|
-		@tmp_accounts[row['hacct']] = Account.create(:name => row['szFull'], :account_type => 'bank', :opening_balance => (!!row['amtOpen'] && row['amtOpen']) || 0).id
+		a = Account.create(:name => row['szFull'], :account_type => @tmp_account_types[row['at']], :opening_balance => (!!row['amtOpen'] && row['amtOpen']) || 0).id
+		@tmp_accounts[row['hacct']] = a
+		related_accounts[a] = row['hacctRel'] unless row['hacctRel'].nil?
 		progress "Loaded", $., "account" if $. % 10 == 0
 	end
 	progress "Loaded", $., "account"
+	puts
+
+	related_accounts.each_with_index do |(account, related_account), index|
+		a = Account.find(account)
+		a.related_account = Account.find(@tmp_accounts[related_account])
+		a.save
+		progress "Loaded", index, "related account"
+	end
+	progress "Loaded", related_accounts.length, "related account"
 	2.times { puts }
 end
 

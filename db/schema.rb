@@ -14,9 +14,10 @@
 ActiveRecord::Schema.define(version: 20140122015709) do
 
   create_table "accounts", force: true do |t|
-    t.string   "name",            null: false
-    t.string   "account_type",    null: false
-    t.decimal  "opening_balance", null: false
+    t.string   "name",               null: false
+    t.string   "account_type",       null: false
+    t.decimal  "opening_balance",    null: false
+    t.integer  "related_account_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
