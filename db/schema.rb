@@ -45,41 +45,53 @@ ActiveRecord::Schema.define(version: 20140122015709) do
   create_table "security_prices", id: false, force: true do |t|
     t.decimal  "price",       null: false
     t.date     "as_at_date",  null: false
-    t.integer  "security_id"
+    t.integer  "security_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "security_prices", ["security_id"], name: "index_security_prices_on_security_id"
 
   create_table "transaction_accounts", id: false, force: true do |t|
     t.string   "direction",      null: false
-    t.integer  "account_id"
-    t.integer  "transaction_id"
+    t.integer  "account_id",     null: false
+    t.integer  "transaction_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "transaction_accounts", ["account_id", "transaction_id"], name: "index_transaction_accounts_on_account_id_and_transaction_id", unique: true
+
   create_table "transaction_categories", id: false, force: true do |t|
-    t.integer  "transaction_id"
-    t.integer  "category_id"
+    t.integer  "transaction_id", null: false
+    t.integer  "category_id",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "transaction_categories", ["transaction_id", "category_id"], name: "index_transaction_categories_on_transaction_id_and_category_id", unique: true
 
   create_table "transaction_headers", id: false, force: true do |t|
     t.date     "transaction_date", null: false
-    t.integer  "transaction_id"
+    t.integer  "transaction_id",   null: false
     t.integer  "payee_id"
     t.integer  "security_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "transaction_headers", ["payee_id"], name: "index_transaction_headers_on_payee_id"
+  add_index "transaction_headers", ["security_id"], name: "index_transaction_headers_on_security_id"
+  add_index "transaction_headers", ["transaction_id"], name: "index_transaction_headers_on_transaction_id"
+
   create_table "transaction_splits", id: false, force: true do |t|
-    t.integer  "transaction_id"
-    t.integer  "parent_id"
+    t.integer  "transaction_id", null: false
+    t.integer  "parent_id",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "transaction_splits", ["transaction_id", "parent_id"], name: "index_transaction_splits_on_transaction_id_and_parent_id", unique: true
 
   create_table "transactions", force: true do |t|
     t.decimal  "amount"

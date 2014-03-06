@@ -48,7 +48,7 @@ Loot::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
+  root :to => 'accounts#index'
 
   # See how all your routes lay out with "rake routes"
 
@@ -57,7 +57,9 @@ Loot::Application.routes.draw do
   # match ':controller(/:action(/:id))(.:format)'
 
 	resources :accounts do
-		resources :transactions
+		resources :transactions do
+			resources :subtransactions
+		end
 	end
 
 	resources :payees, :categories

@@ -15,13 +15,12 @@ gem 'sqlite3'
 group :assets do
   gem 'sass-rails',   '~> 4.0.1'
   gem 'coffee-rails', '~> 4.0.1'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
-
+  gem 'therubyracer', :platforms => :ruby
+	gem 'less-rails'
   gem 'uglifier', '>= 2.4.0'
 end
 
+gem 'twitter-bootstrap-rails'
 gem 'haml-rails'
 gem 'jquery-rails'
 
@@ -32,7 +31,7 @@ gem 'jquery-rails'
 # gem 'jbuilder'
 
 # Use unicorn as the app server
-# gem 'unicorn'
+gem 'unicorn'
 
 # Deploy with Capistrano
 # gem 'capistrano'

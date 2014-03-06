@@ -3,7 +3,7 @@ class CreateSecurityPrices < ActiveRecord::Migration
     create_table :security_prices, :id => false do |t|
 			t.decimal :price, :null => false
       t.date :as_at_date, :null => false
-			t.references :security
+			t.references :security, :index => true, :null => false
 
       t.timestamps
     end

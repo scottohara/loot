@@ -1,0 +1,26 @@
+{
+  "name": "loot",
+  "version": "0.0.0",
+  "homepage": "https://github.com/scottohara/loot",
+  "authors": [
+    "Scott O'Hara <scott@oharagroup.net>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.1.1",
+    "angular": "~1.2.12",
+    "angular-ui-router": "0.2.8-bowratic-tedium",
+    "less": "~1.6.3",
+    "angular-ui-bootstrap": "~0.10.0",
+    "angular-ui": "~0.4.0",
+    "angular-bootstrap": "~0.10.0"
+  }
+}

@@ -31,6 +31,8 @@ require 'json'
 @tmp_transfers = {}
 @tmp_investments = {}
 @tmp_transactions = {}
+@tmp_buys = {}
+@tmp_sells = {}
 
 def progress(action, count, type)
 	reset_line = "\r\e[0K"
@@ -220,16 +222,16 @@ def load_transactions
 		@tmp_splits[row['htrnParent']] = [] unless @tmp_splits.has_key? row['htrnParent']
 		@tmp_splits[row['htrnParent']] << row['htrn']
 		@tmp_subtransactions << row['htrn']
-		progress "Loaded", $., "split" if $. % 10 == 0
+		progress "Prepared", $., "split" if $. % 10 == 0
 	end
-	progress "Loaded", $., "split"
+	progress "Prepared", $., "split"
 	puts
 
 	CSV.foreach csv_file_path('TRN_XFER'), :headers => true do |row|
 		@tmp_transfers[row['htrnLink']] = row['htrnFrom']
-		progress "Loaded", $., "transfer" if $. % 10 == 0
+		progress "Prepared", $., "transfer" if $. % 10 == 0
 	end
-	progress "Loaded", $., "transfer"
+	progress "Prepared", $., "transfer"
 	puts
 
 	CSV.foreach csv_file_path('TRN_INV'), :headers => true do |row|
@@ -238,9 +240,17 @@ def load_transactions
 			:qty => row['qty'].to_f,
 			:commission => row['amtCmn'].to_f
 		}
-		progress "Loaded", $., "investment" if $. % 10 == 0
+		progress "Prepared", $., "investment" if $. % 10 == 0
 	end
-	progress "Loaded", $., "investment"
+	progress "Prepared", $., "investment"
+	puts
+
+	CSV.foreach csv_file_path('LOT'), :headers => true do |row|
+		@tmp_buys[row['htrnBuy']] = '' unless row['htrnBuy'].nil?
+		@tmp_sells[row['htrnSell']] = '' unless row['htrnSell'].nil?
+		progress "Prepared", $., "investment lot" if $. % 10 == 0
+	end
+	progress "Prepared", $., "investment lot"
 	puts
 
 	CSV.foreach csv_file_path('TRN'), {:headers => true, :encoding => 'ISO-8859-1:UTF-8'} do |row|
@@ -288,6 +298,12 @@ def load_transactions
 			# Splits in are any rows where 'ps' is 0 and is the parent in a split and the amount is positive
 			when row['ps'].eql?('0') && @tmp_splits.has_key?(row['htrn']) && row['amt'].to_f >= 0 then 'split_in'
 
+			# Security Holding out is any row that has a security and is not part of a transfer and is a sell
+			when !row['hsec'].nil? && !@tmp_transfers.has_key?(row['htrn']) && !@tmp_transfers.has_value?(row['htrn']) && @tmp_sells.has_key?(row['htrn']) then 'securityholding_out'
+
+			# Security Holding in is any row that has a security and is not part of a transfer and is a buy
+			when !row['hsec'].nil? && !@tmp_transfers.has_key?(row['htrn']) && !@tmp_transfers.has_value?(row['htrn']) && @tmp_buys.has_key?(row['htrn']) then 'securityholding_in'
+
 			# Basic is any row where 'ps' is 0 and the row is not part of a split or a transfer
 			when row['ps'].eql?('0') && !@tmp_splits.has_key?(row['htrn']) && !@tmp_subtransactions.include?(row['htrn']) && !@tmp_transfers.has_key?(row['htrn']) && !@tmp_transfers.has_value?(row['htrn']) then 'basic'
 		end
@@ -307,16 +323,13 @@ def load_transactions
 
 		case
 			# Transfer is where both sides have a security
-			when !this_security.nil? && !other_security.nil? then trx[:type] = 'securitytransfer'
+			when !this_security.nil? && !other_security.nil? then trx[:type] = (@tmp_sells.has_key?(this_side) ? 'securitytransfer_out' : 'securitytransfer_in')
 
 			# Investment is where only one side has a security and is in investments
 			when (this_security.nil? ^ other_security.nil?) && (@tmp_investments.include?(this_side) || @tmp_investments.include?(other_side)) then trx[:type] = (this_security.nil? ? 'securityinvestment_out' : 'securityinvestment_in')
 
 			# Dividend is where only one side has a security and neither is in investments
 			when (this_security.nil? ^ other_security.nil?) && !@tmp_investments.include?(this_side) && !@tmp_investments.include?(other_side) then trx[:type] = (this_security.nil? ? 'dividend_in' : 'dividend_out')
-
-			# Holding is???
-			# TODO
 		end
 		progress "Prepared", index, "security transaction" if index % 10 == 0
 	end
@@ -444,23 +457,40 @@ def create_loanrepayment_transaction(trx)
 	s.save
 end
 
-def create_securitytransfer_transaction(trx)
+def create_securitytransfer_out_transaction(trx)
+	create_securitytransfer_transaction trx, 'outflow'
+end
+
+def create_securitytransfer_in_transaction(trx)
+	create_securitytransfer_transaction trx, 'inflow'
+end
+
+def create_securitytransfer_transaction(trx, direction)
 	# Security Transfer Transaction
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
-
-	this_direction = @tmp_investments[trx[:id]][:qty].to_f > 0 ? 'inflow' : 'outflow'
-	other_direction = this_direction.eql?('inflow') ? 'outflow' : 'inflow'
+	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
 	s = SecurityTransferTransaction.new(:quantity => @tmp_investments[trx[:id]][:qty], :memo => trx[:memo])
-	s.build_source_transaction_account(:direction => this_direction).account = Account.find(trx[:account])
+	s.build_source_transaction_account(:direction => direction).account = Account.find(trx[:account])
 	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
 	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
 	s.save
 end
 
-def create_securityholding_transaction(trx)
+def create_securityholding_out_transaction(trx)
+	create_securityholding_transaction trx, 'outflow'
+end
+
+def create_securityholding_in_transaction(trx)
+	create_securityholding_transaction trx, 'inflow'
+end
+
+def create_securityholding_transaction(trx, direction)
 	# Security Holding Transaction
-	# TODO
+	s = SecurityHoldingTransaction.new(:quantity => @tmp_investments[trx[:id]][:qty], :memo => trx[:memo])
+	s.build_transaction_account(:direction => direction).account = Account.find(trx[:account])
+	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	s.save
 end
 
 def create_securityinvestment_out_transaction(trx)

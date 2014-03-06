@@ -1,3 +1,50 @@
 // Place all the styles related to the Transactions controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+#more-transactions {
+	visibility: hidden;
+
+	td a {
+		height: 1px;
+	}
+}
+
+#transactions, #transactions-header {
+	td, th {
+		overflow-x: hidden;
+
+		&.transactionDate {
+			width: 10%;
+		}
+		
+		&.details {
+			width: 58%;
+
+			table {
+				width: 100%;
+				
+				td {
+					background-color: transparent !important;
+
+					&.payee, &.category, &.memo {
+						border-left: 0;
+					}
+
+					&.category {
+						width: 50%;
+					}
+
+					&.memo {
+						height: 20px;
+					}
+				}
+			}
+		}
+
+		&.amount {
+			width: 10%;
+			text-align: right;
+		}
+	}
+}

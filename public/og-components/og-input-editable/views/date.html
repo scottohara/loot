@@ -1,0 +1,4 @@
+<div og-input-editable>
+	<input ng-if="editing" type="date" ng-model="model"></input>
+	<span ng-if="!editing">{{model | date:'dd/MM/yyyy'}}</span>
+</div>

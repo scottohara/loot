@@ -5,4 +5,8 @@ class Category < ActiveRecord::Base
 	has_many :children, :class_name => 'Category', :foreign_key => 'parent_id'
 	has_many :transaction_categories
 	has_many :transactions, :through => :transaction_categories
+
+	def as_json(options={})
+		super :only => [:id, :name, :direction]
+	end
 end
