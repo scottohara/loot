@@ -518,8 +518,8 @@ def create_securityinvestment_transaction(trx, direction)
 	cash_direction = investment_direction.eql?('inflow') ? 'outflow' : 'inflow'
 
 	s = SecurityInvestmentTransaction.new(:amount => trx[:amount], :quantity => investment[:qty], :commission => investment[:commission], :memo => trx[:memo])
-	s.build_investment_transaction_account(:direction => investment_direction).account = Account.find(investment_account)
-	s.build_cash_transaction_account(:direction => cash_direction).account = (!!cash_account && Account.find(cash_account)) || nil
+	s.transaction_accounts.build(:direction => investment_direction).account = Account.find(investment_account)
+	s.transaction_accounts.build(:direction => cash_direction).account = (!!cash_account && Account.find(cash_account)) || nil
 	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!security && Security.find(security[:id])) || nil
 	s.save
 end
@@ -539,8 +539,8 @@ def create_dividend_transaction(trx, direction)
 	security = direction.eql?('inflow') ? other_side[:security] : trx[:security]
 
 	s = DividendTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_investment_transaction_account(:direction => 'outflow').account = (!!investment_account && Account.find(investment_account)) || nil
-	s.build_cash_transaction_account(:direction => 'inflow').account = Account.find(cash_account)
+	s.transaction_accounts.build(:direction => 'outflow').account = (!!investment_account && Account.find(investment_account)) || nil
+	s.transaction_accounts.build(:direction => 'inflow').account = Account.find(cash_account)
 	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!security && Security.find(security[:id])) || nil
 	s.save
 end

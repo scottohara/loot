@@ -35,6 +35,23 @@
 				});
 			};
 
+			// Saves a transaction
+			model.save = function(accountId, transaction) {
+				return $http({
+					method: transaction.id ? 'PATCH' : 'POST',
+					url: '/accounts/' + accountId + '/transactions' + (transaction.id ? '/' + transaction.id : ''),
+					data: transaction
+				});
+			};
+
+			// Deletes a transaction
+			model.destroy = function(accountId, transaction) {
+				return $http({
+					method: 'DELETE',
+					url: '/accounts/' + accountId + '/transactions/' + transaction.id
+				});
+			};
+
 			return model;
 		}
 	]);

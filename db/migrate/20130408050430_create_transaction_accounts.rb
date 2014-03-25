@@ -1,6 +1,6 @@
 class CreateTransactionAccounts < ActiveRecord::Migration
   def change
-    create_table :transaction_accounts, :id => false do |t|
+    create_table :transaction_accounts do |t|
       t.string :direction, :null => false
 			t.references :account, :null => false
 			t.references :transaction, :null => false

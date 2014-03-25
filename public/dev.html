@@ -4,7 +4,6 @@
 		<title>Dev</title>
 		<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css"></link>
 		<link rel="stylesheet/less" type="text/css" href="css/loot.less"></link>
-		<link rel="stylesheet/less" type="text/css" href="og-components/og-input-editable/css/og-input-editable.less"></link>
 		<link rel="stylesheet/less" type="text/css" href="og-components/og-table-loading/css/og-table-loading.less"></link>
 		<script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
 		<script type="text/javascript" src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -13,19 +12,27 @@
 		<script type="text/javascript" src="bower_components/less/dist/less-1.6.2.min.js"></script>
 		<script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
 		<script type="text/javascript" src="og-components/og-components.js"></script>
+		<script type="text/javascript" src="og-components/og-input-currency/directives/og-input-currency.js"></script>
+		<script type="text/javascript" src="og-components/og-input-number/directives/og-input-number.js"></script>
 		<script type="text/javascript" src="og-components/og-table-navigable/directives/og-table-navigable.js"></script>
-		<script type="text/javascript" src="og-components/og-table-editable/directives/og-table-editable.js"></script>
 		<script type="text/javascript" src="og-components/og-table-loading/directives/og-table-loading.js"></script>
-		<script type="text/javascript" src="og-components/og-input-editable/directives/og-input-editable.js"></script>
 		<script type="text/javascript" src="accounts/accounts.js"></script>
+		<script type="text/javascript" src="accounts/controllers/index.js"></script>
 		<script type="text/javascript" src="accounts/models/account.js"></script>
 		<script type="text/javascript" src="categories/categories.js"></script>
+		<script type="text/javascript" src="categories/controllers/index.js"></script>
 		<script type="text/javascript" src="categories/models/category.js"></script>
 		<script type="text/javascript" src="payees/payees.js"></script>
+		<script type="text/javascript" src="payees/controllers/index.js"></script>
 		<script type="text/javascript" src="payees/models/payee.js"></script>
+		<script type="text/javascript" src="securities/securities.js"></script>
+		<script type="text/javascript" src="securities/controllers/index.js"></script>
+		<script type="text/javascript" src="securities/models/security.js"></script>
 		<script type="text/javascript" src="loot/loot.js"></script>
 		<script type="text/javascript" src="transactions/transactions.js"></script>
-		<script type="text/javascript" src="transactions/controllers/transactions.js"></script>
+		<script type="text/javascript" src="transactions/controllers/index.js"></script>
+		<script type="text/javascript" src="transactions/controllers/edit.js"></script>
+		<script type="text/javascript" src="transactions/controllers/delete.js"></script>
 		<script type="text/javascript" src="transactions/models/transaction.js"></script>
 	</head>
 	<body ng-app="loot">

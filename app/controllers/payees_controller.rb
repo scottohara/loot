@@ -1,9 +1,7 @@
 class PayeesController < ApplicationController
-	respond_to :html, :json
+	respond_to :json
 
 	def index
-		@payees = Payee.order(:name)
-		respond_with @payees
+		respond_with Payee.order(:name)
 	end
-
 end

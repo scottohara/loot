@@ -9,6 +9,7 @@
 		'accounts',
 		'categories',
 		'payees',
+		'securities',
 		'transactions'
 	]);
 
@@ -22,16 +23,34 @@
 			$stateProvider
 				.state('accounts', {
 					url: '/accounts',
-					templateUrl: 'accounts/views/accounts.html'
+					templateUrl: 'accounts/views/index.html',
+					controller: 'accountIndexController'
+				})
+				.state('payees', {
+					url: '/payees',
+					templateUrl: 'payees/views/index.html',
+					controller: 'payeeIndexController'
+				})
+				.state('categories', {
+					url: '/categories',
+					templateUrl: 'categories/views/index.html',
+					controller: 'categoryIndexController'
 				})
 				.state('account', {
 					url: '/accounts/:accountId',
-					templateUrl: 'accounts/views/account.html'
+					templateUrl: 'accounts/views/edit.html'
 				})
 				.state('accountTransactions', {
 					url: '/accounts/:accountId/transactions',
-					templateUrl: 'transactions/views/transactions.html',
-					controller: 'transactionsController'
+					templateUrl: 'transactions/views/index.html',
+					controller: 'transactionIndexController',
+					resolve: {
+						account: ['$stateParams', 'accountModel',
+							function($stateParams, accountModel) {
+								return accountModel.find($stateParams.accountId);
+							}
+						]
+					}
 				});
 		}
 	]);

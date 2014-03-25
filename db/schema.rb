@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 20140122015709) do
     t.datetime "updated_at"
   end
 
-  create_table "security_prices", id: false, force: true do |t|
+  create_table "security_prices", force: true do |t|
     t.decimal  "price",       null: false
     t.date     "as_at_date",  null: false
     t.integer  "security_id", null: false
@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(version: 20140122015709) do
 
   add_index "security_prices", ["security_id"], name: "index_security_prices_on_security_id"
 
-  create_table "transaction_accounts", id: false, force: true do |t|
+  create_table "transaction_accounts", force: true do |t|
     t.string   "direction",      null: false
     t.integer  "account_id",     null: false
     t.integer  "transaction_id", null: false
@@ -61,19 +61,18 @@ ActiveRecord::Schema.define(version: 20140122015709) do
   end
 
   add_index "transaction_accounts", ["account_id", "transaction_id"], name: "index_transaction_accounts_on_account_id_and_transaction_id", unique: true
+  add_index "transaction_accounts", ["transaction_id", "account_id"], name: "index_transaction_accounts_on_transaction_id_and_account_id", unique: true
 
-  create_table "transaction_categories", id: false, force: true do |t|
-    t.integer  "transaction_id", null: false
-    t.integer  "category_id",    null: false
+  create_table "transaction_categories", primary_key: "transaction_id", force: true do |t|
+    t.integer  "category_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "transaction_categories", ["transaction_id", "category_id"], name: "index_transaction_categories_on_transaction_id_and_category_id", unique: true
+  add_index "transaction_categories", ["category_id"], name: "index_transaction_categories_on_category_id"
 
-  create_table "transaction_headers", id: false, force: true do |t|
+  create_table "transaction_headers", primary_key: "transaction_id", force: true do |t|
     t.date     "transaction_date", null: false
-    t.integer  "transaction_id",   null: false
     t.integer  "payee_id"
     t.integer  "security_id"
     t.datetime "created_at"
@@ -82,9 +81,8 @@ ActiveRecord::Schema.define(version: 20140122015709) do
 
   add_index "transaction_headers", ["payee_id"], name: "index_transaction_headers_on_payee_id"
   add_index "transaction_headers", ["security_id"], name: "index_transaction_headers_on_security_id"
-  add_index "transaction_headers", ["transaction_id"], name: "index_transaction_headers_on_transaction_id"
 
-  create_table "transaction_splits", id: false, force: true do |t|
+  create_table "transaction_splits", force: true do |t|
     t.integer  "transaction_id", null: false
     t.integer  "parent_id",      null: false
     t.datetime "created_at"

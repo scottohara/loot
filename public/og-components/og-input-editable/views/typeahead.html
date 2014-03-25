@@ -1,4 +1,0 @@
-<div og-input-editable>
-	<input ng-if="editing" type="text" ng-model="model" typeahead="item as item.name for item in source($viewValue, 10, sourceParams)" typeahead-editable="true" typeahead-on-select="onSelect($item)"></input>
-	<span ng-if="!editing">{{model.name}}</span>
-</div>

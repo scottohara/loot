@@ -1,9 +1,17 @@
 class AccountsController < ApplicationController
+	respond_to :json
+
 	def index
-		respond_to do |format|
-			format.html { @accounts = Account.account_list }
-			format.json { render :json => Account.all.order(:account_type, :name) }
+		if params.has_key? :include_balances
+			accounts = Account.account_list
+		else
+			accounts = Account.all.order(:account_type, :name)
 		end
+
+		render :json => accounts
 	end
 
+	def show
+		respond_with Account.find params[:id]
+	end
 end

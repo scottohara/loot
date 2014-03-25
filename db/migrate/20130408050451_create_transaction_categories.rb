@@ -1,11 +1,9 @@
 class CreateTransactionCategories < ActiveRecord::Migration
   def change
-    create_table :transaction_categories, :id => false do |t|
-			t.references :transaction, :null => false
-			t.references :category, :null => false
+    create_table :transaction_categories, :primary_key => :transaction_id do |t|
+			t.references :category, :index => true, :null => false
 
       t.timestamps
     end
-		add_index :transaction_categories, [:transaction_id, :category_id], :unique => true
   end
 end

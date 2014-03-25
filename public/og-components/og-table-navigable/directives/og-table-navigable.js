@@ -9,84 +9,52 @@
 		function() {
 			return {
 				restrict: 'A',
-				priority: 2,
-				controller: function($scope, $element) {
-					// Registered listeners
-					$scope.listeners = {};
-
-					// Add a listener
-					this.addListener = function(type, callback) {
-						if (!$scope.listeners.hasOwnProperty(type)) {
-							$scope.listeners[type] = [callback];
-						} else {
-							$scope.listeners[type].push(callback);
-						}
-					};
-					
-					// Remove a listener
-					this.removeListener = function(type, callback) {
-						if ($scope.listeners.hasOwnProperty(type)) {
-							var index = $scope.listeners[type].findIndex(function(listener) {
-								return callback === listener;
-							});
-
-							if (index) {
-								$scope.listeners[type].splice(index, 1);
-							}
-						}
-					};
-
-					// Returns all TR elements in the table
-					$scope.getRows = function() {
-						return $($element).children('tbody').children('tr');
-					};
-
-					// Returns the TR element the the specified index
-					this.getRowAtIndex = function(index) {
-						return $scope.getRows().eq(index);
-					};
+				scope: {
+					handlers: "=ogTableNavigable"
 				},
-				link: function(scope, iElement, iAttrs, ogTableNavigableController) {
-					// Store a reference to the controller
-					var controller = ogTableNavigableController;
+				link: function(scope, iElement) {
+					// Helper function to return all TR elements in the table body
+					var getRows = function() {
+						return $(iElement).children('tbody').children('tr');
+					};
 
-					//Selects a row in the table 
-					var selectRow = function(row) {
-						var	highlightClass = "warning",
-								selectedIndex = angular.element(row).scope().$index;
+					// Helper function to return the TR element for the specified index
+					var getRowAtIndex = function(index) {
+						return getRows().eq(index);
+					};
 
-						// If the row is already selected, do nothing
-						if (controller.currentRow === selectedIndex) {
-							return false;
+					// Focus a row in the table 
+					var focusRow = function(row) {
+						var	focusClass = "warning",
+								rowIndex = angular.element(row).scope().$index;
+
+						// If the row is already focussed, do nothing
+						if (scope.focusRow === rowIndex) {
+							return;
 						}
 
-						// Notify any listeners that current row is about to change
-						notifyListeners('rowWillChange');
+						// Clear highlighting on any previously focussed row
+						getRows().removeClass(focusClass);
 
-						// Clear existing selected row highlighting on any previously selected row
-						scope.getRows().removeClass(highlightClass);
-
-						// Highlight the selected row
-						row.addClass(highlightClass);
+						// Highlight the focussed row
+						row.addClass(focusClass);
 						
-						// Ensure the row is in the current viewport
+						// Ensure the focussed row is in the current viewport
 						scrollToRow(row);
 
-						// Store the selected row index
-						controller.currentRow = angular.element(row).scope().$index;
-
-						// True indicates that the row was selected
-						return true;
+						// Store the focussed row index
+						scope.focusRow = rowIndex;
 					};
 
 					// Checks if a row is off screen, and if so scrolls it into view
 					var scrollToRow = function(row) {
-
-						// Get the top/bottom of the selected row, and the top/bottom of the viewport
+						// Get the top/bottom of the focussed row, and the top/bottom of the viewport
 						var	rowTop = row.offset().top,
 								rowBottom = rowTop + row.height(),
 								viewTop = $(document).scrollTop(),
 								viewBottom = viewTop + $(window).height(),
+								rowBottom,
+								viewBottom,	
 								scrollAmount;
 
 						// Determine if the row is off screen
@@ -104,110 +72,128 @@
 						}
 					};
 
-					// Selects the row X before the currently selected row
-					var selectPreviousRow = function(num) {
-						// If there is no current row selected, or we're already at the first row, do nothing
-						if (controller.currentRow < 1) {
+					// Jump to X rows before or after the currently focussed row
+					var jumpToRow = function(offset) {
+						// If there is no current row focussed, do nothing
+						if (scope.focusRow === null) {
 							return;
 						}
 
-						// Determine the row to select
-						var targetRow = controller.currentRow - num;
-						if (targetRow < 0) {
-							targetRow = 0;
+						// Determine the row index to focus
+						var targetIndex = scope.focusRow + offset,
+								totalRows = getRows().length;
+
+						// Make sure we're not outside the bounds of the table
+						if (targetIndex < 0) {
+							targetIndex = 0;
+						} else if (targetIndex >= totalRows) {
+							targetIndex = totalRows - 1;
 						}
 
-						// Select the target row
-						var previousRow = controller.getRowAtIndex(targetRow);
-						if (previousRow.length > 0) {
-							// Select the row
-							selectRow(previousRow);
-						}
-					};
-
-					// Selects the row X after the currently selected row
-					var selectNextRow = function(num) {
-						// If there is no current row selected, do nothing
-						if (controller.currentRow === null) {
-							return;
-						}
-						
-						// Determine the row to select
-						var targetRow = controller.currentRow + num,
-								totalRows = scope.getRows().length;
-
-						if (targetRow >= totalRows) {
-							targetRow = totalRows - 1;
-						}
-
-						// Get the row immediately following the currently selected row
-						var nextRow = controller.getRowAtIndex(targetRow);
-						if (nextRow.length > 0) {
-							// Select the row
-							selectRow(nextRow);
+						// Focus the target row
+						var targetRow = getRowAtIndex(targetIndex);
+						if (targetRow.length > 0) {
+							focusRow(targetRow);
 						}
 					};
 
-					// Notify listeners
-					var notifyListeners = function(type, args) {
-						if (scope.listeners.hasOwnProperty(type)) {
-							scope.listeners[type].forEach(function(callback) {
-								callback(args);
-							});
-						}
+					// Helper function to determine the parent TR element (that is a direct descendent of the element for this directive)
+					// where an event occurred
+					var closestRow = function(target) {
+						return $(target).closest('[og-table-navigable] > tbody > tr');
 					};
 
-					// Declare a click handler to select a row by clicking it
+					// Declare a click handler to focus a row by clicking it
 					var clickHandler = function(event) {
-						// The event target could be any element in the table (including nested tables)
-						// We need to locate the parent TR element that is a direct descendent of the element for this directive
-						var clickedRow = $(event.target).closest('[og-table-navigable] > tbody > tr');
+						// The event target could be any element in the table (including nested tables), so we need the closest row
+						var clickedRow = closestRow(event.target);
 						if (clickedRow.length > 0) {
-							// Select the row and notify any listeners whether the row was already selected or not
-							notifyListeners('rowClicked', selectRow(clickedRow));
+							// Focus the clicked row
+							focusRow(clickedRow);
 						}
 					};
 
-					var KEYCODES = {
-						PAGEUP: 33,
-						PAGEDOWN: 34,
-						UP: 38,
-						DOWN: 40
+					// Declare a double-click handler to perform an action on a row
+					var doubleClickHandler = function(event) {
+						// If a select action wasn't specified for the directive, do nothing
+						if (!scope.handlers.selectAction) {
+							return;
+						}
+
+						// If the event target was a button, do nothing
+						if ('button' === event.target.localName) {
+							return;
+						}
+
+						// The event target could be any element in the table (including nested tables), so we need the closest row
+						var clickedRow = closestRow(event.target);
+						if (clickedRow.length > 0) {
+							// Invoke the select action for the clicked row
+							scope.handlers.selectAction(angular.element(clickedRow).scope().$index);
+						}
 					};
 
-					// Declare key up/down handlers to select a row with the arrow keys
-					var keyUpDown = function(event) {
-						switch (event.keyCode) {
-							case KEYCODES.PAGEUP:
-								selectPreviousRow(10);
-								event.preventDefault();
-								break;
+					var MOVEMENT_KEYS = {
+						33: -10,	// Page up 
+						34: 10,		// Page down
+						38: -1,		// Arrow up
+						40: 1,		// Arrow down
+						74: 1,		// J
+						75: -1		// K
+					};
 
-							case KEYCODES.PAGEDOWN:
-								selectNextRow(10);
-								event.preventDefault();
-								break;
+					var ACTION_KEYS = {
+						8: scope.handlers.deleteAction,		// Backspace
+						13: scope.handlers.selectAction,	// Enter
+						27: scope.handlers.cancelAction,	// Esc
+						45: scope.handlers.insertAction,	// Insert
+						46: scope.handlers.deleteAction		// Delete
+					};
 
-							case KEYCODES.UP:
-								selectPreviousRow(1);
-								event.preventDefault();
-								break;
+					var CTRL_ACTION_KEYS = {
+						78: scope.handlers.insertAction		// CTRL+N
+					};
 
-							case KEYCODES.DOWN:
-								selectNextRow(1);
+					// Declare key handler to focus a row with the arrow keys
+					var keyHandler = function(event) {
+						if (scope.handlers.navigationEnabled()) {
+							// Check if the key pressed was a movement key
+							if (MOVEMENT_KEYS.hasOwnProperty(event.keyCode)) {
+								// Jump the specified number of rows for the key
+								jumpToRow(MOVEMENT_KEYS[event.keyCode]);
 								event.preventDefault();
-								break;
+							}
+
+							// Check if the key pressed was an action key
+							if (ACTION_KEYS.hasOwnProperty(event.keyCode)) {
+								// If an action is defined, invoke it for the focussed row
+								if (ACTION_KEYS[event.keyCode]) {
+									ACTION_KEYS[event.keyCode](scope.focusRow);
+								}
+								event.preventDefault();
+							}
+
+							// Check if the key pressed was a CTRL action key
+							if (event.ctrlKey && CTRL_ACTION_KEYS.hasOwnProperty(event.keyCode)) {
+								// If an action is defined, invoke it for the focussed row
+								if (CTRL_ACTION_KEYS[event.keyCode]) {
+									CTRL_ACTION_KEYS[event.keyCode](scope.focusRow);
+								}
+								event.preventDefault();
+							}
 						}
 					};
 
 					// Attach the event handlers
 					iElement.on('click', clickHandler);
-					$(document).on('keydown', keyUpDown);
+					iElement.on('dblclick', doubleClickHandler);
+					$(document).on('keydown', keyHandler);
 
 					// When the element is destroyed, remove all event handlers
 					iElement.on('$destroy', function() {
 						iElement.off('click', clickHandler);
-						$(document).off('keydown', keyUpDown);
+						iElement.off('dblclick', doubleClickHandler);
+						$(document).off('keydown', keyHandler);
 					});
 				}
 			};

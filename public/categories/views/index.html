@@ -1,0 +1,6 @@
+<ul>
+	<li ng-repeat="category in categories">{{category.name}}</li>
+	<ul>
+		<li ng-repeat="subcategory in category.children">{{subcategory.name}}</li>
+	</ul>
+<ul>

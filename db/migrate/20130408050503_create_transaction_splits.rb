@@ -1,6 +1,6 @@
 class CreateTransactionSplits < ActiveRecord::Migration
   def change
-    create_table :transaction_splits, :id => false do |t|
+    create_table :transaction_splits do |t|
 			t.references :transaction, :null => false
 			t.belongs_to :parent, :null => false
 

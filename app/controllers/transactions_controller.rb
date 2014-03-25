@@ -1,25 +1,44 @@
 class TransactionsController < ApplicationController
-	respond_to :html, :json
+	respond_to :json
+	before_action :clean, :only => [:create, :update]
 
 	def index
-		@account = Account.find(params[:account_id])
-		respond_to do |format|
-			format.html do
-				@closing_date, @transactions = @account.transaction_ledger (!!params[:as_at] && params[:as_at] || Date.today.to_s)
-				@balance = @account.closing_balance @closing_date
+		opening_balance, transactions, at_end = Account.find(params[:account_id]).transaction_ledger params
+		render :json => {
+			:openingBalance => opening_balance.to_f,
+			:transactions => transactions,
+			:atEnd => at_end
+		}
+	end
 
-				render :layout => "moretransactions" unless params[:as_at].nil?
-			end
+	def create
+		render :json => Transaction.class_for(params['transaction_type']).create_from_json(@transaction)
+	end
 
-			format.json do
-				opening_balance, transactions = @account.transaction_ledger2 params
-
-				render :json => {
-					:openingBalance => opening_balance.to_f,
-					:transactions => transactions
-				}
-			end
+	def update
+		transaction = Transaction.find params[:id]
+		if transaction.transaction_type.eql? params['transaction_type']
+			# Type hasn't changed, so just update
+			render :json => Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
+		else
+			# Type has changed, so delete and recreate (maintaining previous transaction_id)
+			transaction = transaction.becomes Transaction.class_for(transaction.transaction_type)
+			transaction.destroy
+			create
 		end
 	end
 
+	def destroy
+		transaction = Transaction.find params[:id]
+		transaction = transaction.becomes Transaction.class_for(transaction.transaction_type)
+		transaction.destroy
+		head :status => :ok
+	end
+
+	def clean
+		# Remove any blank values
+		@transaction = params.delete_if do |k,v|
+			v.blank?
+		end
+	end
 end

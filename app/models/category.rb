@@ -6,7 +6,13 @@ class Category < ActiveRecord::Base
 	has_many :transaction_categories
 	has_many :transactions, :through => :transaction_categories
 
+	class << self
+		def find_or_new(category, parent = nil)
+			category['id'].present? ? self.find(category['id']) : self.new(:name => category, :direction => (!!parent && parent.direction || 'outflow'), :parent => parent)
+		end
+	end
+
 	def as_json(options={})
-		super :only => [:id, :name, :direction]
+		super :only => [:id, :name, :direction, :parent_id]
 	end
 end

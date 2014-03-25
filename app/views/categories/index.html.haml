@@ -1,7 +1,0 @@
-%ul
-  - @categories.each do |category|
-    %li #{category[:name]}
-    %ul
-      - category.children.each do |subcategory|
-        %li #{subcategory[:name]}
-

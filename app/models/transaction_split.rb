@@ -1,7 +1,7 @@
 class TransactionSplit < ActiveRecord::Base
 	belongs_to :transaction
 	belongs_to :parent, :class_name => 'SplitTransaction', :foreign_key => 'parent_id', :inverse_of => :transaction_splits
-	self.primary_key = [:transaction_id, :parent_id]
+	before_destroy :destroy_transaction
 	
 	def build_transaction(*args, &block)
 		super *args, &block
@@ -25,5 +25,9 @@ class TransactionSplit < ActiveRecord::Base
 			raise "Transaction type #{self.transasction.transaction_type} is not valid in a split transaction"
 		end
 		self.transaction
+	end
+
+	def destroy_transaction
+		self.transaction.becomes(Transaction.class_for(self.transaction.transaction_type)).destroy
 	end
 end
