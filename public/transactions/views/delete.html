@@ -6,10 +6,14 @@
 		<dl class="dl-horizontal">
 			<dt>Date</dt>
 			<dd>{{transaction.transaction_date | date:'dd/MM/yyyy'}}</dd>
-			<dt>Payee</dt>
-			<dd>{{transaction.payee.name}}</dd>
-			<dt>Amount</dt>
-			<dd>{{transaction.amount | currency}}</dd>
+			<dt ng-if="transaction.payee.name">Payee</dt>
+			<dd ng-if="transaction.payee.name">{{transaction.payee.name}}</dd>
+			<dt ng-if="transaction.security.name">Security</dt>
+			<dd ng-if="transaction.security.name">{{transaction.security.name}}</dd>
+			<dt ng-if="transaction.amount">Amount</dt>
+			<dd ng-if="transaction.amount">{{transaction.amount | currency}}</dd>
+			<dt ng-if="transaction.quantity">Quantity</dt>
+			<dd ng-if="transaction.quantity">{{transaction.quantity | number}}</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">

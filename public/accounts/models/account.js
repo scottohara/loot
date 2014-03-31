@@ -5,17 +5,15 @@
 	var mod = angular.module('accounts');
 
 	// Declare the Account model
-	mod.factory('accountModel', ['$http',
-		function($http) {
-			var model = {};
+	mod.factory('accountModel', ['$http', '$cacheFactory',
+		function($http, $cacheFactory) {
+			var	model = {},
+					cache = $cacheFactory('accounts');
 
 			// Retrieves the list of accounts
 			model.all = function(includeBalances) {
 				return $http.get('/accounts' + (includeBalances ? "?include_balances" : ""), {
-					headers: {
-						accept: 'application/json'
-					},
-					cache: !includeBalances
+					cache: includeBalances ? false : cache
 				}).then(function(response) {
 					return response.data;
 				});
@@ -29,13 +27,15 @@
 			// Retrieves a single account by it's ID
 			model.find = function(id) {
 				return $http.get('/accounts/' + id, {
-					headers: {
-						accept: 'application/json'
-					},
 					cache: true
 				}).then(function(response) {
 					return response.data;
 				});
+			};
+
+			// Flush the cache
+			model.flush = function() {
+				cache.removeAll();
 			};
 
 			return model;

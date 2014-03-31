@@ -28,11 +28,6 @@
 						var	focusClass = "warning",
 								rowIndex = angular.element(row).scope().$index;
 
-						// If the row is already focussed, do nothing
-						if (scope.focusRow === rowIndex) {
-							return;
-						}
-
 						// Clear highlighting on any previously focussed row
 						getRows().removeClass(focusClass);
 
@@ -130,6 +125,15 @@
 						if (clickedRow.length > 0) {
 							// Invoke the select action for the clicked row
 							scope.handlers.selectAction(angular.element(clickedRow).scope().$index);
+						}
+					};
+
+					// Expose a function on the handlers object for external controllers to focus on a row
+					scope.handlers.focusRow = function(index) {
+						// Focus the target row
+						var targetRow = getRowAtIndex(index);
+						if (targetRow.length > 0) {
+							focusRow(targetRow);
 						}
 					};
 

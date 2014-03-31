@@ -1,0 +1,27 @@
+<nav class="navbar navbar-default" role="navigation">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Loot</a>
+		</div>
+		<div ng-switch="isAuthenticated()" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li ui-sref-active="active">
+					<a ui-sref="root.accounts">Accounts</a>
+				</li>
+				<li ui-sref-active="active">
+					<a ui-sref="root.payees">Payees</a>
+				</li>
+				<li ui-sref-active="active">
+					<a ui-sref="root.categories">Categories</a>
+				</li>
+				<li ui-sref-active="active">
+					<a ui-sref="root.securities">Securities</a>
+				</li>
+			</ul>
+			<button ng-switch-when="true" type="button" class="btn btn-default navbar-btn navbar-right" ng-click="logout()">Logout</button>
+			<button ng-switch-default type="button" class="btn btn-primary navbar-btn navbar-right" ng-click="login()">Login</button>
+		</div>
+	</div>
+</nav>
+<div ng-if="!isAuthenticated()" class="alert alert-danger">You are not logged in. Click the Login button above to proceed.</div>
+<ui-view autoscroll="false"/>

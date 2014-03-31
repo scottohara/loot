@@ -470,10 +470,10 @@ def create_securitytransfer_transaction(trx, direction)
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
-	s = SecurityTransferTransaction.new(:quantity => @tmp_investments[trx[:id]][:qty], :memo => trx[:memo])
+	s = SecurityTransferTransaction.new(:memo => trx[:memo])
 	s.build_source_transaction_account(:direction => direction).account = Account.find(trx[:account])
 	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
-	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	s.build_header(:transaction_date => trx[:transaction_date], :quantity => @tmp_investments[trx[:id]][:qty]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
 	s.save
 end
 
@@ -487,9 +487,9 @@ end
 
 def create_securityholding_transaction(trx, direction)
 	# Security Holding Transaction
-	s = SecurityHoldingTransaction.new(:quantity => @tmp_investments[trx[:id]][:qty], :memo => trx[:memo])
+	s = SecurityHoldingTransaction.new(:memo => trx[:memo])
 	s.build_transaction_account(:direction => direction).account = Account.find(trx[:account])
-	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	s.build_header(:transaction_date => trx[:transaction_date], :quantity => @tmp_investments[trx[:id]][:qty]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
 	s.save
 end
 
@@ -517,10 +517,10 @@ def create_securityinvestment_transaction(trx, direction)
 
 	cash_direction = investment_direction.eql?('inflow') ? 'outflow' : 'inflow'
 
-	s = SecurityInvestmentTransaction.new(:amount => trx[:amount], :quantity => investment[:qty], :commission => investment[:commission], :memo => trx[:memo])
+	s = SecurityInvestmentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.transaction_accounts.build(:direction => investment_direction).account = Account.find(investment_account)
 	s.transaction_accounts.build(:direction => cash_direction).account = (!!cash_account && Account.find(cash_account)) || nil
-	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!security && Security.find(security[:id])) || nil
+	s.build_header(:transaction_date => trx[:transaction_date], :quantity => investment[:qty], :price => investment[:price], :commission => investment[:commission]).security = (!!security && Security.find(security[:id])) || nil
 	s.save
 end
 

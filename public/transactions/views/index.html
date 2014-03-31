@@ -17,6 +17,7 @@
 		<tr>
 			<td colspan="5">
 				<button class="btn btn-primary" ng-click="getTransactions('prev')">Previous</button>
+				<span>{{firstTransactionDate | date:"dd/MM/yyyy"}} - {{lastTransactionDate | date:"dd/MM/yyyy"}}</span>
 			</td>
 		</tr>
 		<tr og-table-loading="loading['prev']" colspan="5"></tr>
@@ -105,6 +106,7 @@
 		<tr>
 			<td colspan="5">
 				<button class="btn btn-primary" ng-click="getTransactions('next')">Next</button>
+				<span>{{firstTransactionDate | date:"dd/MM/yyyy"}} - {{lastTransactionDate | date:"dd/MM/yyyy"}}</span>
 			</td>
 		</tr>
 		<tr og-table-loading="loading['next']" colspan="5"></tr>

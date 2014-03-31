@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
 				FROM						accounts a
 				LEFT OUTER JOIN	(	SELECT		a2.id,
 																		th.security_id,
-																		ROUND(SUM(CASE ta.direction WHEN 'inflow' THEN t.quantity ELSE t.quantity * -1.0 END) * p.price,2) AS current_value
+																		ROUND(SUM(CASE ta.direction WHEN 'inflow' THEN th.quantity ELSE th.quantity * -1.0 END) * p.price,2) AS current_value
 													FROM			accounts a2
 													JOIN			transaction_accounts ta ON ta.account_id = a2.id
 													JOIN			transactions t ON t.id = ta.transaction_id
@@ -157,15 +157,9 @@ class Account < ActiveRecord::Base
 												ELSE a.name
 											END AS 'account_name',
 											t.amount,
-											t.quantity,
-											t.commission,
-											(	SELECT	sp.price
-												FROM		security_prices sp
-												WHERE		sp.security_id = th.security_id AND
-																sp.as_at_date <= th.transaction_date
-												GROUP BY sp.security_id
-												HAVING	MAX(sp.as_at_date) = sp.as_at_date
-											) as 'price',
+											th.quantity,
+											th.price,
+											th.commission,
 											ta.direction,
 											t.memo
 			FROM						transactions t
@@ -256,7 +250,7 @@ class Account < ActiveRecord::Base
 		if self.account_type.eql? 'investment'
 			# Get the total quantity of security inflows
 			security_quantities = self.transactions
-				.select("transaction_headers.security_id, transaction_accounts.direction, SUM(quantity) AS total_quantity")
+				.select("transaction_headers.security_id, transaction_accounts.direction, SUM(transaction_headers.quantity) AS total_quantity")
 				.where(:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
 				.joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
 				.where("transaction_headers.transaction_date <= '#{as_at}'")
@@ -375,7 +369,10 @@ class Account < ActiveRecord::Base
 		end
 
 		def basic_subcategory(trx)
-			[trx['category_id'].to_s, trx['category_name']] if trx['parent_category_id'].present?
+			{
+				:id => trx['category_id'].to_s,
+				:name => trx['category_name']
+			} if trx['parent_category_id'].present?
 		end
 
 		def psuedo_category(type, direction)

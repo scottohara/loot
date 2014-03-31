@@ -12,9 +12,6 @@
 			// Retrieves a batch of transactions for an account
 			model.findByAccount = function(id, fromDate, direction) {
 				return $http.get('/accounts/' + id + '/transactions', {
-					headers: {
-						accept: 'application/json'
-					},
 					params: {
 						as_at: fromDate,
 						direction: direction
@@ -26,11 +23,7 @@
 
 			// Retrieves subtransactions for a given split transaction
 			model.findSubtransactions = function(accountId, transactionId) {
-				return $http.get('/accounts/' + accountId + '/transactions/' + transactionId + '/subtransactions', {
-					headers: {
-						accept: 'application/json'
-					}
-				}).then(function(response) {
+				return $http.get('/accounts/' + accountId + '/transactions/' + transactionId + '/subtransactions').then(function(response) {
 					return response.data;
 				});
 			};
@@ -46,10 +39,7 @@
 
 			// Deletes a transaction
 			model.destroy = function(accountId, transaction) {
-				return $http({
-					method: 'DELETE',
-					url: '/accounts/' + accountId + '/transactions/' + transaction.id
-				});
+				return $http.delete('/accounts/' + accountId + '/transactions/' + transaction.id);
 			};
 
 			return model;

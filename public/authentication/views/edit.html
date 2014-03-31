@@ -1,0 +1,24 @@
+<form role="form" name="loginForm">
+	<div class="modal-header">
+		<h4>Login</h4>
+	</div>
+	<div class="modal-body">
+		<!-- User Name -->
+		<div class="form-group has-feedback" ng-class="{'has-error': loginForm.userName.$invalid}">
+			<label for="userName">Login</label>
+			<input id="userName" name="userName" class="form-control" ng-model="authentication.userName" placeholder="Login" required autofocus>
+			<span ng-show="loginForm.userName.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Password -->
+		<div class="form-group has-feedback" ng-class="{'has-error': loginForm.password.$invalid}">
+			<label for="password">Password</label>
+			<input name="password" type="password" class="form-control" ng-model="authentication.password" placeholder="Password" required>
+			<span ng-show="loginForm.password.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="submit" ng-disabled="loginForm.$invalid" ng-click="login()">Login</button>
+	</div>
+</form>

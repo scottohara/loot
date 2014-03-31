@@ -63,4 +63,5 @@ Loot::Application.routes.draw do
 	end
 
 	resources :payees, :categories, :securities
+	resources :logins, :only => [:create]
 end

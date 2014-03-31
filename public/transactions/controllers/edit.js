@@ -21,7 +21,7 @@
 			$scope.mode = (transaction ? "Edit" : "Add");
 
 			// Give the transaction date field initial focus
-			$("transactionDate").focus();
+			$("#transactionDate").focus();
 
 			// List of payees for the typeahead
 			$scope.payees = function(filter, limit) {

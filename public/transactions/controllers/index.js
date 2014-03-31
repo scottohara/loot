@@ -5,8 +5,8 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Index controller
-	mod.controller('transactionIndexController', ['$scope', '$modal', 'transactionModel', 'currencyFilter', 'account',
-		function($scope, $modal, transactionModel, currencyFilter, account) {
+	mod.controller('transactionIndexController', ['$scope', '$modal', '$timeout', 'transactionModel', 'currencyFilter', 'account',
+		function($scope, $modal, $timeout, transactionModel, currencyFilter, account) {
 			// Store the account we're working with in the scope
 			$scope.account = account;
 
@@ -45,13 +45,16 @@
 						}
 					}
 				}).result.then(function(transaction) {
-					var fromDate = new Date(transaction.transaction_date);
+					var	fromDate = new Date(transaction.transaction_date);
+
 					if (transaction.transaction_date <= $scope.firstTransactionDate) {
 						// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-						$scope.getTransactions('next', fromDate.setDate(fromDate.getDate() - 1));
+						fromDate.setDate(fromDate.getDate() - 1);
+						$scope.getTransactions('next', fromDate.toISOString(), transaction);
 					} else if (transaction.transaction_date >= $scope.lastTransactionDate && !$scope.atEnd) {
 						// Transaction date is later than the latest fetched transaction, refresh from the new date
-						$scope.getTransactions('prev', fromDate.setDate(fromDate.getDate() + 1));
+						fromDate.setDate(fromDate.getDate() + 1);
+						$scope.getTransactions('prev', fromDate.toISOString(), transaction);
 					} else {
 						// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
 						if (isNaN(index)) {
@@ -67,11 +70,11 @@
 
 						// Recalculate the running balances
 						updateRunningBalances();
-					}
 
-					// Enable navigation on the table
-					$scope.navigationDisabled = false;
-				}, function() {
+						// Refocus the transaction
+						focusTransaction(transaction);
+					}
+				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
 				});
@@ -96,10 +99,7 @@
 					}
 				}).result.then(function() {
 					$scope.transactions.splice(index, 1);
-
-					// Enable navigation on the table
-					$scope.navigationDisabled = false;
-				}, function() {
+				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
 				});
@@ -128,7 +128,7 @@
 			};
 
 			// Fetch a batch of transactions
-			$scope.getTransactions = function(direction, fromDate) {
+			$scope.getTransactions = function(direction, fromDate, transactionToFocus) {
 				// Show the loading spinner
 				$scope.loading[direction] = true;
 
@@ -146,7 +146,7 @@
 						// Store the opening balance & transactions
 						$scope.openingBalance = transactionBatch.openingBalance;
 						$scope.transactions = transactionBatch.transactions;
-						$scope.atEnd = transactionBatch.atEnd && ('next' === direction || !fromDate);
+						$scope.atEnd = transactionBatch.atEnd || (undefined === fromDate);
 
 						// Get the boundaries of the current transaction date range
 						$scope.firstTransactionDate = transactionBatch.transactions[0].transaction_date;
@@ -154,21 +154,17 @@
 
 						// Update the running balances
 						updateRunningBalances();
+
+						// Focus on the specified transaction (if provided)
+						if (transactionToFocus) {
+							focusTransaction(transactionToFocus);
+						}
 					}
-
-					// TODO Store the current scroll distance to the bottom
-					//var distanceToEnd = $window.height() - $window.scrollTop();   // or whatever this is…
-
-					// TODO Scroll back to the same distance to the bottom
-					//$window.scrollTo($window.height() - distanceToEnd); 
 
 					// Hide spinner
 					$scope.loading[direction] = false;
 				});
 			};
-
-			// TODO Scroll to the bottom
-			//$timeout($window.scrollTo($window.height())));
 
 			// Updates the running balance of all transactions
 			var updateRunningBalances = function() {
@@ -183,6 +179,24 @@
 				}, $scope.openingBalance);
 			};
 
+			// Finds a specific transaction and focusses that row in the table
+			var focusTransaction = function(transactionToFocus) {
+				var targetIndex;
+
+				// Find the transaction by it's id
+				angular.forEach($scope.transactions, function(transaction, index) {
+					if (transaction.id === transactionToFocus.id) {
+						targetIndex = index;
+					}
+				});
+
+				// Focus the row
+				$timeout(function() {
+					$scope.tableActions.focusRow(targetIndex)
+				}, 50);
+			};
+
+			// Helper function to sort by transaction date, then by transaction id
 			var byTransactionDateAndId = function(a, b) {
 				var x, y;
 

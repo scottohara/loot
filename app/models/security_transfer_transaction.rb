@@ -1,6 +1,6 @@
 class SecurityTransferTransaction < SecurityTransaction
-	validates :quantity, :presence => true
-	validates :amount, :commission, :absence => true
+	validates :amount, :absence => true
+	validate :validate_quantity_presence, :validate_price_absence, :validate_commission_absence
 	has_one :source_transaction_account, -> { where :direction => 'outflow' }, :class_name => 'TransactionAccount', :foreign_key => 'transaction_id', :dependent => :destroy
 	has_one :source_account, :class_name => 'Account', :through => :source_transaction_account, :source => :account
 	has_one :destination_transaction_account, -> { where :direction => 'inflow' }, :class_name => 'TransactionAccount', :foreign_key => 'transaction_id', :dependent => :destroy
@@ -14,10 +14,10 @@ class SecurityTransferTransaction < SecurityTransaction
 			source, destination = Account.find(json['account_id']), Account.find(json['account']['id'])
 			source, destination = destination, source if json['direction'].eql? 'inflow'
 
-			s = self.new(:id => json[:id], :quantity => json['quantity'], :memo => json['memo'])
+			s = self.new(:id => json[:id], :memo => json['memo'])
 			s.build_source_transaction_account(:direction => 'outflow').account = source
 			s.build_destination_transaction_account(:direction => 'inflow').account = destination
-			s.build_header(:transaction_date => json['transaction_date']).security = Security.find_or_new(json['security'])
+			s.build_header(:transaction_date => json['transaction_date'], :quantity => json['quantity']).security = Security.find_or_new(json['security'])
 			s.save!
 			s.as_json :direction => json['direction']
 		end
@@ -33,11 +33,11 @@ class SecurityTransferTransaction < SecurityTransaction
 		source, destination = Account.find(json['account_id']), Account.find(json['account']['id'])
 		source, destination = destination, source if json['direction'].eql? 'inflow'
 
-		self.quantity = json['quantity']
 		self.memo = json['memo']
 		self.source_account = source
 		self.destination_account = destination
 		self.header.transaction_date = json['transaction_date']
+		self.header.quantity = json['quantity']
 		self.header.security = Security.find_or_new(json['security'])
 		self.save!
 	end
@@ -53,7 +53,7 @@ class SecurityTransferTransaction < SecurityTransaction
 				:name => options[:direction].eql?('inflow') && 'Transfer From' || 'Transfer To'
 			},
 			:account => options[:direction].eql?('inflow') && self.source_account.as_json || self.destination_account.as_json,
-			:quantity => self.quantity,
+			:quantity => self.header.quantity,
 			:direction => options[:direction],
 			:memo => self.memo
 		}

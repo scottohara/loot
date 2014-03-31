@@ -12,7 +12,4 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require twitter/bootstrap
-//= require jquery.infinite
-//= require table-fixed-header
 //= require_tree .

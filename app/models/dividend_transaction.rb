@@ -1,6 +1,6 @@
 class DividendTransaction < SecurityTransaction
 	validates :amount, :presence => true
-	validates :quantity, :absence => true
+	validate :validate_quantity_absence, :validate_price_absence, :validate_commission_absence
 	has_many :transaction_accounts, :foreign_key => 'transaction_id', :autosave => true, :dependent => :destroy
 	has_many :accounts, :through => :transaction_accounts
 	after_initialize do |t|
@@ -27,13 +27,10 @@ class DividendTransaction < SecurityTransaction
 	def update_from_json(json)
 		self.amount = json['amount']
 		self.memo = json['memo']
-		self.cash_account = Account.find(json['account']['id'])
+		self.cash_account.account = Account.find(json['account']['id'])
 		self.header.transaction_date = json['transaction_date']
 		self.header.security = Security.find_or_new(json['security'])
 		self.save!
-
-		# If the cash account has changed, clear the association cache
-		self.accounts(true) unless self.cash_account.id.eql? json['account']['id']
 	end
 
 	def as_json(options={})
@@ -46,32 +43,14 @@ class DividendTransaction < SecurityTransaction
 				:id => 'DividendTo',
 				:name => 'Dividend To'
 			},
-			:account => self.cash_account.as_json,
+			:account => self.cash_account.account.as_json,
 			:amount => self.amount,
 			:direction => 'outflow',
 			:memo => self.memo
 		}
 	end
 
-	def investment_account
-		self.accounts.select {|account| account.account_type.eql? 'investment'}.first
-	end
-
 	def cash_account
-		self.accounts.select {|account| account.account_type.eql? 'bank'}.first
-	end
-
-	def cash_account=(account)
-		# Previous cash account
-		previous_cash_account = self.cash_account
-
-		# If the account is unchanged, do nothing
-		return if account.id.eql? previous_cash_account.id
-
-		# Get the (one and only) transaction account for the previous cash account
-		transaction_account = self.transaction_accounts.select {|trx_account| trx_account.account_id.eql? previous_cash_account.id}.first
-
-		# Update to the new account
-		transaction_account.account = account
+		self.transaction_accounts.select {|trx_account| trx_account.account.account_type.eql? 'bank'}.first
 	end
 end

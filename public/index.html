@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="loot">
 	<head>
-		<title>Dev</title>
+		<title ng-bind="'Loot - ' + $state.current.data.title">Loot</title>
 		<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css"></link>
 		<link rel="stylesheet/less" type="text/css" href="css/loot.less"></link>
 		<link rel="stylesheet/less" type="text/css" href="og-components/og-table-loading/css/og-table-loading.less"></link>
@@ -19,23 +19,27 @@
 		<script type="text/javascript" src="accounts/accounts.js"></script>
 		<script type="text/javascript" src="accounts/controllers/index.js"></script>
 		<script type="text/javascript" src="accounts/models/account.js"></script>
+		<script type="text/javascript" src="authentication/authentication.js"></script>
+		<script type="text/javascript" src="authentication/controllers/edit.js"></script>
+		<script type="text/javascript" src="authentication/models/authentication.js"></script>
 		<script type="text/javascript" src="categories/categories.js"></script>
 		<script type="text/javascript" src="categories/controllers/index.js"></script>
 		<script type="text/javascript" src="categories/models/category.js"></script>
+		<script type="text/javascript" src="loot/loot.js"></script>
+		<script type="text/javascript" src="loot/controllers/layout.js"></script>
 		<script type="text/javascript" src="payees/payees.js"></script>
 		<script type="text/javascript" src="payees/controllers/index.js"></script>
 		<script type="text/javascript" src="payees/models/payee.js"></script>
 		<script type="text/javascript" src="securities/securities.js"></script>
 		<script type="text/javascript" src="securities/controllers/index.js"></script>
 		<script type="text/javascript" src="securities/models/security.js"></script>
-		<script type="text/javascript" src="loot/loot.js"></script>
 		<script type="text/javascript" src="transactions/transactions.js"></script>
 		<script type="text/javascript" src="transactions/controllers/index.js"></script>
 		<script type="text/javascript" src="transactions/controllers/edit.js"></script>
 		<script type="text/javascript" src="transactions/controllers/delete.js"></script>
 		<script type="text/javascript" src="transactions/models/transaction.js"></script>
 	</head>
-	<body ng-app="loot">
+	<body>
 		<div class="container" ui-view></div>
 	</body>
 </html>
