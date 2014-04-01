@@ -32,3 +32,6 @@ gem 'unicorn'
 
 # To use debugger
 # gem 'debugger'
+
+# 12 factor gem for Heroku
+gem 'rails_12factor', :group => :production
