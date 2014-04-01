@@ -52,7 +52,7 @@ def load_accounts
 	related_accounts = {}
 
 	CSV.foreach csv_file_path('ACCT'), :headers => true do |row|
-		a = Account.create(:name => row['szFull'], :account_type => @tmp_account_types[row['at']], :opening_balance => (!!row['amtOpen'] && row['amtOpen']) || 0).id
+		a = Account.create(:name => row['szFull'], :account_type => @tmp_account_types[row['at']], :opening_balance => (!!row['amtOpen'] && row['amtOpen'].to_f) || 0).id
 		@tmp_accounts[row['hacct']] = a
 		related_accounts[a] = row['hacctRel'] unless row['hacctRel'].nil?
 		progress "Loaded", $., "account" if $. % 10 == 0

@@ -8,6 +8,8 @@ class SplitTransaction < PayeeCashTransaction
 		t.transaction_type = 'Split'
 	end
 
+	include Categorisable
+
 	class << self
 		def create_from_json(json)
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
@@ -69,6 +71,31 @@ class SplitTransaction < PayeeCashTransaction
 
 	def children
 		# Get the child transactions
+		transactions = TransactionSplit
+			.select(	"transactions.id",
+						 		"transactions.transaction_type",
+								"parent_transactions.transaction_type AS parent_transaction_type",
+						 		"categories.id AS category_id",
+								"categories.name AS category_name",
+								"categories.direction AS category_direction",
+								"parent_categories.id AS parent_category_id",
+								"parent_categories.name AS parent_category_name",
+								"accounts.id AS account_id",
+								"accounts.name AS account_name",
+								"transactions.amount",
+								"transaction_accounts.direction",
+						 		"transactions.memo")
+			.joins(		"JOIN transaction_accounts ON transaction_accounts.transaction_id = transaction_splits.parent_id")
+			.joins(		"JOIN transactions ON transactions.id = transaction_splits.transaction_id")
+			.joins(		"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id")
+			.joins(		"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id")
+			.joins(		"LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id")
+			.joins(		"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id")
+			.joins(		"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id")
+			.joins(		"LEFT OUTER JOIN accounts ON accounts.id = transfer_transaction_accounts.account_id")
+			.where(		"transaction_splits.parent_id = ?", self.id)
+
+=begin
 		transactions = ActiveRecord::Base.connection.execute <<-query
 			SELECT					t.id,
 											t.transaction_type,
@@ -107,26 +134,21 @@ class SplitTransaction < PayeeCashTransaction
 			LEFT OUTER JOIN	accounts a ON ta2.account_id = a.id
 			WHERE						ts.parent_id = #{self.id}
 		query
+=end
 
 		# Remap to the desired output format
 		transactions.map do |trx|
 			{
 				:id => trx['id'],
 				:transaction_type => trx['transaction_type'],
-				:category => {
-					:id => trx['category_id'],
-					:name => trx['category_name']
-				},
-				:subcategory => {
-					:id => trx['subcategory_id'],
-					:name => trx['subcategory_name']
-				},
+				:category => self.transaction_category(trx),
+				:subcategory => self.basic_subcategory(trx),
 				:account => {
 					:id => trx['account_id'],
 					:name => trx['account_name']
 				},
 				:amount => trx['amount'],
-				:direction => trx['direction'],
+				:direction => (trx['transaction_type'].eql?('Subtransfer') && (trx['parent_transaction_type'].eql?('Payslip') && 'outflow' || trx['direction']) || trx['category_direction']),
 				:memo => trx['memo']
 			}
 		end

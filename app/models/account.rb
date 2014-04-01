@@ -5,6 +5,8 @@ class Account < ActiveRecord::Base
 	has_many :transactions, :through => :transaction_accounts
 	belongs_to :related_account, :class_name => 'Account', :foreign_key => 'related_account_id'
 
+	include Categorisable
+
 	class << self
 		def account_list
 			# Get the current holding balance of all investment accounts
@@ -16,7 +18,7 @@ class Account < ActiveRecord::Base
 				FROM						accounts a
 				LEFT OUTER JOIN	(	SELECT		a2.id,
 																		th.security_id,
-																		ROUND(SUM(CASE ta.direction WHEN 'inflow' THEN th.quantity ELSE th.quantity * -1.0 END) * p.price,2) AS current_value
+																		ROUND(SUM(CASE ta.direction WHEN 'inflow' THEN th.quantity ELSE th.quantity * -1.0 END) * MAX(p.price),2) AS current_value
 													FROM			accounts a2
 													JOIN			transaction_accounts ta ON ta.account_id = a2.id
 													JOIN			transactions t ON t.id = ta.transaction_id
@@ -24,14 +26,17 @@ class Account < ActiveRecord::Base
 													JOIN			(	SELECT		sp.security_id,
 																								sp.price
 																			FROM			security_prices sp
-																			GROUP BY	sp.security_id
-																			HAVING		MAX(sp.as_at_date) = sp.as_at_date
+																			JOIN			(	SELECT		security_id,
+																														MAX(as_at_date) AS as_at_date
+																									FROM			security_prices
+																									GROUP BY	security_id
+																								) d ON sp.security_id = d.security_id AND sp.as_at_date = d.as_at_date
 																		) p ON th.security_id = p.security_id
 													WHERE			t.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
 																		a2.account_type = 'investment'
 													GROUP BY	a2.id,
 																		th.security_id
-													HAVING		current_value > 0
+													HAVING		ROUND(SUM(CASE ta.direction WHEN 'inflow' THEN th.quantity ELSE th.quantity * -1.0 END) * MAX(p.price),2) > 0
 												) AS h ON a.id = h.id
 				WHERE						a.account_type = 'investment'
 				GROUP BY				a.id
@@ -42,7 +47,7 @@ class Account < ActiveRecord::Base
 				SELECT					a.id,
 												a.name,
 												a.account_type,
-												a.opening_balance + ifnull(b.total,0) + ifnull(s.total,0) + ifnull(i.total,0) + ifnull(o.total,0) AS closing_balance
+												a.opening_balance + COALESCE(b.total,0) + COALESCE(s.total,0) + COALESCE(i.total,0) + COALESCE(o.total,0) AS closing_balance
 				FROM						accounts a
 				LEFT OUTER JOIN	(	SELECT		a.id,
 																		SUM(CASE c.direction WHEN 'inflow' THEN t.amount ELSE t.amount * -1.0 END) AS total
@@ -103,14 +108,14 @@ class Account < ActiveRecord::Base
 				cash_account['id'] = account['id']
 				cash_account['name'] = account['name']
 				cash_account['account_type'] = 'investment'
-				cash_account['closing_balance'] += account['total_value'] || 0
+				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + account['total_value'].to_f || 0
 				cash_account['related_account_id'] = account['related_account_id']
 			end
 
 			account_list.values.sort_by {|a| a['account_type']}.group_by {|a| "#{a['account_type'].capitalize} account".pluralize}.each_with_object({}) do |(type,accounts),hash|
 				hash[type] = {
 					:accounts => accounts.sort_by {|a| a['name']}.map {|a| {:id => a['id'], :name => a['name'], :closing_balance => a['closing_balance'], :related_account_id => a['related_account_id']}},
-					:total => accounts.map {|a| a['closing_balance']}.reduce(:+)
+					:total => accounts.map {|a| a['closing_balance'].to_f}.reduce(:+)
 				}
 			end
 
@@ -136,51 +141,45 @@ class Account < ActiveRecord::Base
 		direction = (!!opts[:direction] && opts[:direction].to_sym || :prev)
 
 		# Get the specified number of transactions up to the given date 
-		transactions = ActiveRecord::Base.connection.execute <<-query
-			SELECT					t.id,
-											t.transaction_type,
-											th.transaction_date,
-											th.payee_id,
-											p.name AS 'payee_name',
-											th.security_id,
-											s.name AS 'security_name',
-											c.id AS 'category_id',
-											c.name AS 'category_name',
-											c2.id AS 'parent_category_id',
-											c2.name AS 'parent_category_name',
-											CASE t.transaction_type
-												WHEN 'Subtransfer' THEN a2.id
-												ELSE a.id
-											END AS 'account_id',
-											CASE t.transaction_type
-												WHEN 'Subtransfer' THEN a2.name
-												ELSE a.name
-											END AS 'account_name',
-											t.amount,
-											th.quantity,
-											th.price,
-											th.commission,
-											ta.direction,
-											t.memo
-			FROM						transactions t
-			JOIN						transaction_accounts ta ON ta.transaction_id = t.id
-			LEFT OUTER JOIN	transaction_headers th ON th.transaction_id = t.id
-			LEFT OUTER JOIN	payees p ON th.payee_id = p.id
-			LEFT OUTER JOIN	securities s ON th.security_id = s.id
-			LEFT OUTER JOIN	transaction_categories tc ON tc.transaction_id = t.id
-			LEFT OUTER JOIN	categories c ON c.id = tc.category_id
-			LEFT OUTER JOIN	categories c2 ON c2.id = c.parent_id
-			LEFT OUTER JOIN	transaction_accounts ta2 ON ta2.transaction_id = t.id AND ta2.account_id != ta.account_id
-			LEFT OUTER JOIN	accounts a ON ta2.account_id = a.id
-			LEFT OUTER JOIN	transaction_splits ts ON ts.transaction_id = t.id
-			LEFT OUTER JOIN	transaction_accounts ta3 ON ta3.transaction_id = ts.parent_id
-			LEFT OUTER JOIN	accounts a2 ON ta3.account_id = a2.id
-			WHERE						ta.account_id = #{self.id} AND
-											th.transaction_date #{LEDGER_QUERY_OPTS[direction][:operator]} '#{as_at}'
-			ORDER BY				th.transaction_date #{LEDGER_QUERY_OPTS[direction][:order]},
-											t.id #{LEDGER_QUERY_OPTS[direction][:order]}
-			LIMIT						#{NUM_RESULTS}
-		query
+		transactions = Transaction
+			.select(		"transactions.id",
+						 			"transactions.transaction_type",
+						 			"transaction_headers.transaction_date",
+									"transaction_headers.payee_id",
+									"payees.name AS payee_name",
+									"transaction_headers.security_id",
+									"securities.name AS security_name",
+									"categories.id AS category_id",
+									"categories.name AS category_name",
+									"parent_categories.id AS parent_category_id",
+									"parent_categories.name AS parent_category_name",
+									"transfer_accounts.id AS transfer_account_id",
+									"transfer_accounts.name AS transfer_account_name",
+									"split_accounts.id AS split_account_id",
+									"split_accounts.name AS split_account_name",
+									"transactions.amount",
+									"transaction_headers.quantity",
+									"transaction_headers.price",
+									"transaction_headers.commission",
+									"transaction_accounts.direction",
+									"transactions.memo")
+			.joins(			"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id")
+			.joins(			"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+			.joins(			"LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id")
+			.joins(			"LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id")
+			.joins(			"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id")
+			.joins(			"LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id")
+			.joins(			"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id")
+			.joins(			"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id")
+			.joins(			"LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id")
+			.joins(			"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id")
+			.joins(			"LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id")
+			.joins(			"LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id")
+			.where(			"transaction_accounts.account_id = ?", self.id)
+			.where(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:operator]} ?", as_at)
+			.order(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:order]}",
+									"transactions.id #{LEDGER_QUERY_OPTS[direction][:order]}")
+			.limit(			NUM_RESULTS)
 
 		# Set to an empty array if we got no results
 		transactions = [] if transactions.nil?
@@ -228,11 +227,11 @@ class Account < ActiveRecord::Base
 					:id => trx['security_id'],
 					:name => trx['security_name']
 				},
-				:category => transaction_category(trx),
-				:subcategory => basic_subcategory(trx),
+				:category => self.transaction_category(trx),
+				:subcategory => self.basic_subcategory(trx),
 				:account => {
-					:id => trx['account_id'],
-					:name => trx['account_name']
+					:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
+					:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
 				},
 				:amount => trx['amount'],
 				:quantity => trx['quantity'],
@@ -324,60 +323,4 @@ class Account < ActiveRecord::Base
 	def as_json(options={})
 		super :only => [:id, :name, :account_type, :opening_balance]
 	end
-
-#	private
-		def transaction_category(trx)
-			id, name = case trx['transaction_type']
-				when 'Basic' then
-					basic_category trx
-
-				when 'Transfer', 'Subtransfer', 'SecurityTransfer' then
-					psuedo_category 'Transfer', trx['direction]']
-
-				when 'Split', 'Dividend' then
-					psuedo_category trx['transaction_type'], trx['direction']
-
-				when 'LoanRepayment' then
-					[trx['transaction_type'], 'Loan Repayment']
-
-				when 'SecurityHolding' then
-					trx['direction'].eql?('outflow') && ['RemoveShares', 'Remove Shares'] || ['AddShares', 'Add Shares']
-
-				when 'SecurityInvestment' then
-					if self.account_type.eql? 'investment' 
-						trx['direction'].eql?('outflow') && ['Sell', 'Sell'] || ['Buy', 'Buy']
-					else
-						psuedo_category 'Transfer', trx['direction']
-					end
-
-				else
-					[trx['transaction_type'], trx['transaction_type']]
-			end
-
-			{
-				:id => id,
-				:name => name
-			}
-		end
-
-		def basic_category(trx)
-			if trx['parent_category_id'].present?
-				[trx['parent_category_id'].to_s, trx['parent_category_name']]
-			else
-				[trx['category_id'].to_s, trx['category_name']]
-			end
-		end
-
-		def basic_subcategory(trx)
-			{
-				:id => trx['category_id'].to_s,
-				:name => trx['category_name']
-			} if trx['parent_category_id'].present?
-		end
-
-		def psuedo_category(type, direction)
-			suffix = direction.eql?('outflow') && 'To' || 'From'
-			[type + suffix, "#{type} #{suffix}"]
-		end
-	end
-#end
+end
