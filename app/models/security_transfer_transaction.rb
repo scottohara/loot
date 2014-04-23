@@ -17,7 +17,7 @@ class SecurityTransferTransaction < SecurityTransaction
 			s = self.new(:id => json[:id], :memo => json['memo'])
 			s.build_source_transaction_account(:direction => 'outflow').account = source
 			s.build_destination_transaction_account(:direction => 'inflow').account = destination
-			s.build_header(:transaction_date => json['transaction_date'], :quantity => json['quantity']).security = Security.find_or_new(json['security'])
+			s.build_header.update_from_json json
 			s.save!
 			s.as_json :direction => json['direction']
 		end
@@ -36,9 +36,7 @@ class SecurityTransferTransaction < SecurityTransaction
 		self.memo = json['memo']
 		self.source_account = source
 		self.destination_account = destination
-		self.header.transaction_date = json['transaction_date']
-		self.header.quantity = json['quantity']
-		self.header.security = Security.find_or_new(json['security'])
+		self.header.update_from_json json
 		self.save!
 	end
 
@@ -47,6 +45,11 @@ class SecurityTransferTransaction < SecurityTransaction
 			:id => self.id,
 			:transaction_type => self.transaction_type,
 			:transaction_date => self.header.transaction_date,
+			:schedule_account => self.header.schedule.present? && self.account.as_json || nil,
+			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
+			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
+			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
+			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
 			:security => self.header.security.as_json,
 			:category => {
 				:id => options[:direction].eql?('inflow') && 'TransferFrom' || 'TransferTo',

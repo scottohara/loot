@@ -12,7 +12,7 @@ class DividendTransaction < SecurityTransaction
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
 			s.transaction_accounts.build(:direction => 'outflow').account = Account.find(json['account_id'])
 			s.transaction_accounts.build(:direction => 'inflow').account = Account.find(json['account']['id'])
-			s.build_header(:transaction_date => json['transaction_date']).security = Security.find_or_new(json['security'])
+			s.build_header.update_from_json json
 			s.save!
 			s
 		end
@@ -28,8 +28,7 @@ class DividendTransaction < SecurityTransaction
 		self.amount = json['amount']
 		self.memo = json['memo']
 		self.cash_account.account = Account.find(json['account']['id'])
-		self.header.transaction_date = json['transaction_date']
-		self.header.security = Security.find_or_new(json['security'])
+		self.header.update_from_json json
 		self.save!
 	end
 
@@ -38,6 +37,11 @@ class DividendTransaction < SecurityTransaction
 			:id => self.id,
 			:transaction_type => self.transaction_type,
 			:transaction_date => self.header.transaction_date,
+			:schedule_account => self.header.schedule.present? && self.account.as_json || nil,
+			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
+			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
+			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
+			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
 			:security => self.header.security.as_json,
 			:category => {
 				:id => 'DividendTo',
@@ -48,6 +52,10 @@ class DividendTransaction < SecurityTransaction
 			:direction => 'outflow',
 			:memo => self.memo
 		}
+	end
+
+	def investment_account
+		self.transaction_accounts.select {|trx_account| trx_account.account.account_type.eql? 'investment'}.first
 	end
 
 	def cash_account

@@ -7,12 +7,13 @@
 	// Declare the Authentication model
 	mod.factory('authenticationModel', ['$window', '$http', '$cacheFactory',
 		function($window, $http, $cacheFactory) {
-			var model = {};
+			var model = {},
+					SESSION_STORAGE_KEY = "lootAuthenticationKey";
 
 			// Checks if the API authorisation header is set
 			model.isAuthenticated = function() {
 				// Get the encoded credentials from sessionStorage
-				var authenticationKey = $window.sessionStorage.getItem("lootAuthenticationKey");
+				var authenticationKey = $window.sessionStorage.getItem(SESSION_STORAGE_KEY);
 
 				if (authenticationKey) {
 					// Set the Authorization header for all http requests
@@ -36,7 +37,7 @@
 					}
 				}).then(function() {
 					// Login successful, store the encoded credentials in sessionStorage
-					$window.sessionStorage.setItem("lootAuthenticationKey", authenticationKey);
+					$window.sessionStorage.setItem(SESSION_STORAGE_KEY, authenticationKey);
 
 					// Set the Authorization header for all http requests
 					$http.defaults.headers.common.Authorization = authorisation(authenticationKey);
@@ -46,7 +47,7 @@
 			// Clear the API authorisation header and stored credentials
 			model.logout = function() {
 				// Remove the encoded credentials from sessionStorage
-				$window.sessionStorage.removeItem("lootAuthenticationKey");
+				$window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
 
 				// Clear the Authorization header for all http requests
 				$http.defaults.headers.common.Authorization = authorisation('');

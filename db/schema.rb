@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140122015709) do
+ActiveRecord::Schema.define(version: 20140406235014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20140122015709) do
     t.string   "name",               null: false
     t.string   "account_type",       null: false
     t.decimal  "opening_balance",    null: false
+    t.string   "status",             null: false
     t.integer  "related_account_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -39,8 +40,18 @@ ActiveRecord::Schema.define(version: 20140122015709) do
     t.datetime "updated_at"
   end
 
+  create_table "schedules", force: true do |t|
+    t.date     "next_due_date", null: false
+    t.string   "frequency",     null: false
+    t.boolean  "estimate",      null: false
+    t.boolean  "auto_enter",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "securities", force: true do |t|
     t.string   "name",       null: false
+    t.string   "code"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -75,9 +86,11 @@ ActiveRecord::Schema.define(version: 20140122015709) do
   add_index "transaction_categories", ["category_id"], name: "index_transaction_categories_on_category_id", using: :btree
 
   create_table "transaction_headers", primary_key: "transaction_id", force: true do |t|
-    t.date     "transaction_date", null: false
     t.integer  "payee_id"
     t.integer  "security_id"
+    t.integer  "schedule_id"
+    t.date     "transaction_date"
+    t.string   "status"
     t.decimal  "quantity"
     t.decimal  "price"
     t.decimal  "commission"

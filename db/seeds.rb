@@ -33,6 +33,8 @@ require 'json'
 @tmp_transactions = {}
 @tmp_buys = {}
 @tmp_sells = {}
+@tmp_head_bills = {}
+@tmp_bills = {}
 
 def progress(action, count, type)
 	reset_line = "\r\e[0K"
@@ -52,7 +54,7 @@ def load_accounts
 	related_accounts = {}
 
 	CSV.foreach csv_file_path('ACCT'), :headers => true do |row|
-		a = Account.create(:name => row['szFull'], :account_type => @tmp_account_types[row['at']], :opening_balance => (!!row['amtOpen'] && row['amtOpen'].to_f) || 0).id
+		a = Account.create(:name => row['szFull'], :account_type => @tmp_account_types[row['at']], :opening_balance => (!!row['amtOpen'] && row['amtOpen'].to_f)|| 0, :status => (row['fClosed'].eql?('false') && 'open') || 'closed').id
 		@tmp_accounts[row['hacct']] = a
 		related_accounts[a] = row['hacctRel'] unless row['hacctRel'].nil?
 		progress "Loaded", $., "account" if $. % 10 == 0
@@ -164,7 +166,7 @@ def load_securities
 	puts "done"
 
 	CSV.foreach csv_file_path('SEC'), :headers => true do |row|
-		@tmp_securities[row['hsec']] = { :id => Security.create(:name => row['szFull']).id, :prices => [] }
+		@tmp_securities[row['hsec']] = { :id => Security.create(:name => row['szFull'], :code => row['szSymbol']).id, :prices => [] }
 		progress "Loaded", $., "security" if $. % 10 == 0
 	end
 	progress "Loaded", $., "security"
@@ -264,7 +266,11 @@ def load_transactions
 			:payee => @tmp_payees[row['lHpay']],
 			:security => @tmp_securities[row['hsec']],
 			:category => ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]),
-			:grftt => row['grftt']
+			:grftt => row['grftt'],
+			:status => case row['cs']
+				when '1' then 'pending'
+				when '2' then 'cleared'
+			end
 		}
 
 		@tmp_transactions[row['htrn']][:type] = case
@@ -349,6 +355,75 @@ def load_transactions
 	puts
 end
 
+#Bills
+def load_bills
+	print "Deleting existing bills..."
+	Schedule.destroy_all
+	puts "done"
+
+	CSV.foreach csv_file_path('BILL'), :headers => true do |row|
+		@tmp_head_bills[row['hbillHead']] = {:next_unpaid_instance => row['iinstNextUnpaid'].to_i} if row['hbill'].to_i.eql?(row['hbillHead'].to_i) && row['cInstMax'].to_i.eql?(-1)
+
+		@tmp_bills[row['hbillHead']] = {
+			:instance => row['iinst'].to_i,
+			:last_date => row['dt'],
+			:estimate => !!row['cEstInst'].to_i.eql?(0),
+			:auto => !!!row['cDaysAutoEnter'].to_i.eql?(-1),
+			:transaction => row['lHtrn'],
+			:frequency => case row['frq'].to_i
+				when 2 then 'Fortnightly'
+				when 3 then 'Monthly'
+				when 4 then 'Quarterly'
+				when 5 then 'Yearly'
+			end
+		} unless @tmp_bills.has_key?(row['hbillHead']) && row['iinst'].to_i <= @tmp_bills[row['hbillHead']][:instance]
+
+		progress "Prepared", $., "bill"
+	end
+	progress "Prepared", $., "bill"
+	puts
+
+	loaded = 0
+	@tmp_head_bills.each do |id, bill|
+		bill[:next_date] = Date.parse(@tmp_bills[id][:last_date]) + case @tmp_bills[id][:frequency]
+			when 'Fortnightly' then ((bill[:next_unpaid_instance] - @tmp_bills[id][:instance]) * 2).weeks
+			when 'Monthly' then (bill[:next_unpaid_instance] - @tmp_bills[id][:instance]).months
+			when 'Quarterly' then ((bill[:next_unpaid_instance] - @tmp_bills[id][:instance]) * 3).months
+			when 'Yearly' then (bill[:next_unpaid_instance] - @tmp_bills[id][:instance]).years
+		end
+		loaded += 1
+		progress "Calculated", loaded, "bill next due date"
+	end
+	progress "Calculated", loaded, "bill next due date"
+	puts
+
+	loaded = 0
+	@tmp_head_bills.sort_by {|k,v| v[:next_date]}.each_with_index do |(id, bill), index|
+		begin
+			# Get the template transaction
+			trx = @tmp_transactions[@tmp_bills[id][:transaction]]
+
+			# Clear the date and replace with the schedule
+			trx[:transaction_date] = nil
+			trx[:next_due_date] = bill[:next_date]
+			trx[:frequency] = @tmp_bills[id][:frequency]
+			trx[:estimate] = @tmp_bills[id][:estimate]
+			trx[:auto_enter] = @tmp_bills[id][:auto]
+
+			# Create the template transaction
+			self.send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil? || !!!trx[:account]
+
+			loaded += 1
+			progress "Loaded", loaded, "bill"
+		rescue
+			p id, bill, trx, @tmp_bills[id]
+			raise
+		end
+	end
+	progress "Loaded", loaded, "bill"
+	2.times { puts }
+end
+
 def create_basic_transaction(trx)
 	# Basic Transaction
 	category = Category.find(trx[:category]) unless trx[:category].nil?
@@ -356,7 +431,9 @@ def create_basic_transaction(trx)
 
 	s = BasicTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.build_transaction_account(:direction => category_direction).account = Account.find(trx[:account])
-	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	h = s.build_header
+	header_transaction_date_or_schedule h, trx
+	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 	s.build_transaction_category.category = category
 	s.save
 end
@@ -373,7 +450,9 @@ def create_split_transaction(trx, direction)
 	# Split Transaction
 	s = SplitTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.build_transaction_account(:direction => direction).account = Account.find(trx[:account])
-	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	h = s.build_header
+	header_transaction_date_or_schedule h, trx
+	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 
 	# Add splits
 	@tmp_splits[trx[:id]].each do |trxid|
@@ -404,10 +483,15 @@ def create_transfer_transaction(trx, direction)
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
+	# Use status from other side unless this side is cleared or the other side is nil
+	trx[:status] = other_side[:status] unless trx[:status].eql?('cleared') || other_side[:status].nil?
+
 	s = TransferTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.build_source_transaction_account(:direction => direction).account = Account.find(trx[:account])
 	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
-	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	h = s.build_header
+	header_transaction_date_or_schedule h, trx
+	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 	s.save
 end
 
@@ -415,7 +499,9 @@ def create_payslip_transaction(trx)
 	# Payslip Transaction
 	s = PayslipTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.build_transaction_account(:direction => 'inflow').account = Account.find(trx[:account])
-	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	h = s.build_header
+	header_transaction_date_or_schedule h, trx
+	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 
 	# Add splits
 	@tmp_splits[trx[:id]].each do |trxid|
@@ -438,7 +524,9 @@ def create_loanrepayment_transaction(trx)
 	# Loan Repayment Transaction
 	s = LoanRepaymentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.build_transaction_account(:direction => 'outflow').account = Account.find(trx[:account])
-	s.build_header(:transaction_date => trx[:transaction_date]).payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	h = s.build_header
+	header_transaction_date_or_schedule h, trx
+	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 
 	# Add splits
 	@tmp_splits[trx[:id]].each do |trxid|
@@ -473,7 +561,9 @@ def create_securitytransfer_transaction(trx, direction)
 	s = SecurityTransferTransaction.new(:memo => trx[:memo])
 	s.build_source_transaction_account(:direction => direction).account = Account.find(trx[:account])
 	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
-	s.build_header(:transaction_date => trx[:transaction_date], :quantity => @tmp_investments[trx[:id]][:qty]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
+	header_transaction_date_or_schedule h, trx
+	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
 	s.save
 end
 
@@ -489,7 +579,9 @@ def create_securityholding_transaction(trx, direction)
 	# Security Holding Transaction
 	s = SecurityHoldingTransaction.new(:memo => trx[:memo])
 	s.build_transaction_account(:direction => direction).account = Account.find(trx[:account])
-	s.build_header(:transaction_date => trx[:transaction_date], :quantity => @tmp_investments[trx[:id]][:qty]).security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
+	header_transaction_date_or_schedule h, trx
+	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
 	s.save
 end
 
@@ -507,6 +599,9 @@ def create_securityinvestment_transaction(trx, direction)
 	# Security Investment Transaction
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 
+	# Use status from other side unless this side is cleared or the other side is nil
+	trx[:status] = other_side[:status] unless trx[:status].eql?('cleared') || other_side[:status].nil?
+
 	if direction.eql? 'inflow'
 		investment_account, cash_account, security, investment = trx[:account], other_side[:account], trx[:security],@tmp_investments[trx[:id]]
 		investment_direction = trx[:orig_amount].to_f > 0 ? 'inflow' : 'outflow'
@@ -520,7 +615,9 @@ def create_securityinvestment_transaction(trx, direction)
 	s = SecurityInvestmentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.transaction_accounts.build(:direction => investment_direction).account = Account.find(investment_account)
 	s.transaction_accounts.build(:direction => cash_direction).account = (!!cash_account && Account.find(cash_account)) || nil
-	s.build_header(:transaction_date => trx[:transaction_date], :quantity => investment[:qty], :price => investment[:price], :commission => investment[:commission]).security = (!!security && Security.find(security[:id])) || nil
+	h = s.build_header(:quantity => investment[:qty], :price => investment[:price], :commission => investment[:commission])
+	header_transaction_date_or_schedule h, trx
+	h.security = (!!security && Security.find(security[:id])) || nil
 	s.save
 end
 
@@ -538,10 +635,15 @@ def create_dividend_transaction(trx, direction)
 	investment_account, cash_account = direction.eql?('inflow') ? [other_side[:account], trx[:account]] : [trx[:account], other_side[:account]]
 	security = direction.eql?('inflow') ? other_side[:security] : trx[:security]
 
+	# Use status from other side unless this side is cleared or the other side is nil
+	trx[:status] = other_side[:status] unless trx[:status].eql?('cleared') || other_side[:status].nil?
+
 	s = DividendTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
 	s.transaction_accounts.build(:direction => 'outflow').account = (!!investment_account && Account.find(investment_account)) || nil
 	s.transaction_accounts.build(:direction => 'inflow').account = Account.find(cash_account)
-	s.build_header(:transaction_date => trx[:transaction_date]).security = (!!security && Security.find(security[:id])) || nil
+	h = s.build_header
+	header_transaction_date_or_schedule h, trx
+	h.security = (!!security && Security.find(security[:id])) || nil
 	s.save
 end
 
@@ -559,6 +661,15 @@ end
 
 def create_payslip_tax_transaction(trx)
 	#noop
+end
+
+def header_transaction_date_or_schedule(header, trx)
+	if trx[:transaction_date].nil?
+		header.build_schedule(:next_due_date => trx[:next_due_date], :frequency => trx[:frequency], :estimate => trx[:estimate], :auto_enter => trx[:auto_enter])
+	else
+		header.transaction_date = trx[:transaction_date]
+		header.status = trx[:status]
+	end
 end
 
 def void?(trx)
@@ -584,14 +695,13 @@ def verify_balances
 
 			# Hack for known inconsistencies in sunriise closing balances
 			account_json['currentBalance'] = 0 if ['Car Loan', 'Macquarie Loan (A)', 'RAMS', 'Wizard Loan'].include? account_json['name']
-			account_json['currentBalance'] = -0 if account_json['name'].eql? "Dan's Spectrum Super (Contributions)"
-			account_json['currentBalance'] = -187536.55 if account_json['name'].eql? 'Macquarie Loan (B)'
+			account_json['currentBalance'] = -156159.33 if account_json['name'].eql? 'Macquarie Loan (B)'
 			
 			# Check that it matches
 			balance_mismatches << [account_json['name'], number_to_currency(account_json['currentBalance']), number_to_currency(closing_balance)] unless number_to_currency(account_json['currentBalance']).eql? number_to_currency(closing_balance)
 			progress "Checked", index, "closing balance"
-		rescue
-			p account_json
+		rescue => e
+			p account_json, e
 			puts "Failed on Source ID: #{account_json['id']}, Target ID: #{@tmp_accounts[account_json['id'].to_s]}, OK: #{!!@tmp_accounts[account_json['id'].to_s]}"
 		end
 	end	
@@ -614,4 +724,5 @@ load_categories
 load_securities
 load_security_prices
 load_transactions
+load_bills
 verify_balances

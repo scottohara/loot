@@ -1,6 +1,7 @@
 class Account < ActiveRecord::Base
 	validates :name, :opening_balance, :presence => true
 	validates :account_type, :presence => true, :inclusion => {:in => %w(bank credit cash asset liability investment loan)}
+	validates :status, :inclusion => {:in => %w(open closed)}
 	has_many :transaction_accounts
 	has_many :transactions, :through => :transaction_accounts
 	belongs_to :related_account, :class_name => 'Account', :foreign_key => 'related_account_id'
@@ -145,6 +146,7 @@ class Account < ActiveRecord::Base
 			.select(		"transactions.id",
 						 			"transactions.transaction_type",
 						 			"transaction_headers.transaction_date",
+									"transaction_headers.status",
 									"transaction_headers.payee_id",
 									"payees.name AS payee_name",
 									"transaction_headers.security_id",
@@ -180,6 +182,9 @@ class Account < ActiveRecord::Base
 			.order(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:order]}",
 									"transactions.id #{LEDGER_QUERY_OPTS[direction][:order]}")
 			.limit(			NUM_RESULTS)
+
+		# Limit to unreconciled transactions if required
+		transactions = transactions.where("COALESCE(transaction_headers.status, '') != 'cleared'") if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
 
 		# Set to an empty array if we got no results
 		transactions = [] if transactions.nil?
@@ -219,6 +224,7 @@ class Account < ActiveRecord::Base
 				:id => trx['id'],
 				:transaction_type => trx['transaction_type'],
 				:transaction_date => trx['transaction_date'],
+				:status => trx['status'],
 				:payee => {
 					:id => trx['payee_id'],
 					:name => trx['payee_name']
@@ -227,8 +233,8 @@ class Account < ActiveRecord::Base
 					:id => trx['security_id'],
 					:name => trx['security_name']
 				},
-				:category => self.transaction_category(trx),
-				:subcategory => self.basic_subcategory(trx),
+				:category => self.class.transaction_category(trx, self.account_type),
+				:subcategory => self.class.basic_subcategory(trx),
 				:account => {
 					:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
 					:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
@@ -249,11 +255,13 @@ class Account < ActiveRecord::Base
 		if self.account_type.eql? 'investment'
 			# Get the total quantity of security inflows
 			security_quantities = self.transactions
-				.select("transaction_headers.security_id, transaction_accounts.direction, SUM(transaction_headers.quantity) AS total_quantity")
-				.where(:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
-				.joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
-				.where("transaction_headers.transaction_date <= '#{as_at}'")
-				.group("transaction_headers.security_id, transaction_accounts.direction")
+				.select(	"transaction_headers.security_id, transaction_accounts.direction, SUM(transaction_headers.quantity) AS total_quantity")
+				.where(		:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
+				.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.group(		"transaction_headers.security_id",
+									"transaction_accounts.direction")
 
 			# Reduce to a unique set of securities with the current quantity held
 			securities = {}
@@ -273,40 +281,44 @@ class Account < ActiveRecord::Base
 
 			# Get the total Basic transactions
 			totals += self.transactions
-				.select('categories.direction, SUM(amount) AS total_amount')
-				.where(:transaction_type => 'Basic')
-				.joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
-				.joins('JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id')
-				.joins('JOIN categories ON transaction_categories.category_id = categories.id')
-				.where("transaction_headers.transaction_date <= '#{as_at}'")
-				.group('categories.direction')
+				.select(	"categories.direction, SUM(transactions.amount) AS total_amount")
+				.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+				.joins(		"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id")
+				.joins(		"JOIN categories ON transaction_categories.category_id = categories.id")
+				.where(		:transaction_type => 'Basic')
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.group(		"categories.direction")
 
 			# Get the total Subtransfer transactions
 			totals += self.transactions
-				.select('transaction_accounts.direction, SUM(transactions.amount) AS total_amount')
-				.where(:transaction_type => 'Subtransfer')
-				.joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
-				.joins('JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id')
-				.joins('JOIN transactions t2 ON t2.id = transaction_splits.parent_id')
-				.where("transaction_headers.transaction_date <= '#{as_at}'")
-				.where("t2.transaction_type = 'Split' or t2.transaction_type = 'LoanRepayment' or t2.transaction_type = 'Payslip'")
+				.select(	"transaction_accounts.direction, SUM(transactions.amount) AS total_amount")
+				.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+				.joins(		"JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id")
+				.joins(		"JOIN transactions t2 ON t2.id = transaction_splits.parent_id")
+				.where(		:transaction_type => 'Subtransfer')
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.where(		"t2.transaction_type = 'Split' or t2.transaction_type = 'LoanRepayment' or t2.transaction_type = 'Payslip'")
 				.group('transaction_accounts.direction')
 
 			# Get the total other inflows
 			total_inflows = self.transactions
-				.where(:transaction_type => %w(Split Payslip Transfer Dividend SecurityInvestment))
-				.joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
-				.where("transaction_headers.transaction_date <= '#{as_at}'")
-				.where(:transaction_accounts => {:direction => 'inflow'})
-				.sum("amount")
+				.where(		:transaction_type => %w(Split Payslip Transfer Dividend SecurityInvestment))
+				.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.where(		:transaction_accounts => {:direction => 'inflow'})
+				.sum(			"amount")
 
 			# Get the total other outflows
 			total_outflows = self.transactions
-				.where(:transaction_type => %w(Split LoanRepayment Transfer SecurityInvestment))
-				.joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
-				.where("transaction_headers.transaction_date <= '#{as_at}'")
-				.where(:transaction_accounts => {:direction => 'outflow'})
-				.sum("amount")
+				.where(		:transaction_type => %w(Split LoanRepayment Transfer SecurityInvestment))
+				.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.where(		:transaction_accounts => {:direction => 'outflow'})
+				.sum(			"amount")
 			totals.each do |t|
 				total_outflows += t.total_amount if t.direction.eql? 'outflow'
 				total_inflows += t.total_amount if t.direction.eql? 'inflow'
@@ -317,10 +329,25 @@ class Account < ActiveRecord::Base
 	end
 
 	def num_transactions(as_at)
-		self.transactions.joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id').where("transaction_headers.transaction_date <= '#{as_at}'").count
+		self.transactions
+			.joins(	"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+			.where(	"transaction_headers.transaction_date <= ?", as_at)
+			.where(		"transaction_headers.transaction_date IS NOT NULL")
+			.count
+	end
+
+	def reconcile
+		# Get the set of pending transactions for the account
+		pending_transactions = self.transactions
+			.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+			.where(		"transaction_headers.status = 'pending'")
+			.pluck(	"transactions.id")
+
+		# Mark them all as cleared
+		TransactionHeader.where(:transaction_id => pending_transactions).update_all(:status => 'cleared')
 	end
 
 	def as_json(options={})
-		super :only => [:id, :name, :account_type, :opening_balance]
+		super :only => [:id, :name, :account_type, :opening_balance, :status]
 	end
 end

@@ -10,6 +10,7 @@
 		'accounts',
 		'categories',
 		'payees',
+		'schedules',
 		'securities',
 		'transactions'
 	]);
@@ -55,6 +56,14 @@
 					controller: 'accountIndexController',
 					data: {
 						title: 'Accounts'
+					}
+				})
+				.state('root.schedules', {
+					url: '/schedules',
+					templateUrl: 'schedules/views/index.html',
+					controller: 'scheduleIndexController',
+					data: {
+						title: 'Schedules'
 					}
 				})
 				.state('root.payees', {

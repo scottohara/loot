@@ -1,0 +1,194 @@
+<form role="form" name="scheduleForm">
+	<div class="modal-header">
+		<h4>{{mode}}</h4>
+	</div>
+	<div class="modal-body">
+		<!-- Schedule Account -->
+		<div class="form-group has-feedback" ng-class="{'has-error': scheduleForm.scheduleAccount.$invalid}">
+			<label for="scheduleAccount">Account</label>
+			<input name="scheduleAccount" class="form-control" ng-model="transaction.schedule_account" typeahead="account as account.name for account in accounts($viewValue, 10)" ng-blur="scheduleAccountSelected()" typeahead-editable="false" placeholder="Account" required>
+			<span ng-show="scheduleForm.scheduleAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Frequency -->
+		<div ng-if="mode != 'Enter Transaction'" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.frequency.$invalid}">
+			<label for="frequency">Frequency</label>
+			<input name="frequency" class="form-control" ng-model="schedule.frequency" typeahead="frequency for frequency in frequencies($viewValue, 10)" typeahead-editable="false" placeholder="Frequency" required>
+			<span ng-show="scheduleForm.frequency.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Transaction/Next Due Date -->
+		<div class="form-group has-feedback" ng-class="{'has-error': scheduleForm.transactionDate.$invalid}" ng-switch="mode">
+			<label for="transactionDate">{{mode == 'Enter Transaction' ? "" : "Next Due "}} Date</label>
+			<input ng-switch-when="Enter Transaction" id="transactionDate" name="transactionDate" class="form-control" type="date" ng-model="transaction.transaction_date" required autofocus>
+			<input ng-switch-default id="transactionDate" name="transactionDate" class="form-control" type="date" ng-model="schedule.next_due_date" required autofocus>
+			<span ng-show="scheduleForm.transactionDate.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Payee -->
+		<div ng-if="schedule.schedule_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': scheduleForm.payee.$invalid}">
+			<label for="payee">Payee</label>
+			<input name="payee" class="form-control" ng-model="transaction.payee" typeahead="payee as payee.name for payee in payees($viewValue, 10)" typeahead-editable="false" placeholder="Payee">
+			<span ng-show="scheduleForm.payee.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+		</div>
+		<!-- Security -->
+		<div ng-if="transaction.schedule_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': scheduleForm.security.$invalid}">
+			<label for="security">Security</label>
+			<input name="security" class="form-control" ng-model="transaction.security" typeahead="security as security.name for security in securities($viewValue, 10)" typeahead-editable="false" placeholder="Security">
+			<span ng-show="scheduleForm.security.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+		</div>
+		<!-- Investment Category -->
+		<div ng-if="transaction.schedule_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.category), 'has-error': scheduleForm.category.$invalid}">
+			<label for="category">Category</label>
+			<input name="category" class="form-control" ng-model="transaction.category" typeahead="category as category.name for category in investmentCategories($viewValue, 10)" ng-blur="investmentCategorySelected()" typeahead-editable="false" placeholder="Category" required>
+			<span ng-show="isString(transaction.category) || scheduleForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(transaction.category), 'glyphicon-remove': scheduleForm.category.$invalid}"></span>
+		</div>
+		<!-- Transaction Amount -->
+		<div ng-if="transaction.schedule_account.account_type != 'investment' || transaction.category.id == 'DividendTo'" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.amount.$invalid}">
+			<label for="amount">Amount</label>
+			<input name="amount" class="form-control" ng-class="{'negative': transaction.amount < -1}" ng-model="transaction.amount" placeholder="Transaction Amount" required og-input-currency>
+			<span ng-show="scheduleForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Category -->
+		<div ng-if="transaction.schedule_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.category), 'has-error': scheduleForm.category.$invalid}">
+			<label for="category">Category</label>
+			<input name="category" class="form-control" ng-model="transaction.category" typeahead="category as category.name for category in categories($viewValue, 10, null, true)" ng-blur="categorySelected()" placeholder="Category" required>
+			<span ng-show="isString(transaction.category) || scheduleForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(transaction.category), 'glyphicon-remove': scheduleForm.category.$invalid}"></span>
+		</div>
+		<!-- Subcategory -->
+		<div ng-if="transaction.schedule_account.account_type != 'investment' && ['TransferTo', 'TransferFrom', 'SplitTo', 'SplitFrom'].indexOf(transaction.category.id) == -1" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.subcategory)}">
+			<label for="subcategory">Subcategory</label>
+			<input name="subcategory" class="form-control" ng-disabled="!(isString(transaction.category) || transaction.category.id > 0)" ng-model="transaction.subcategory" typeahead="subcategory as subcategory.name for subcategory in categories($viewValue, 10, transaction.category)" placeholder="Subcategory">
+			<span ng-show="isString(transaction.subcategory)" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+		</div>
+		<!-- Account -->
+		<div ng-if="['TransferTo', 'TransferFrom', 'Buy', 'Sell', 'DividendTo'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.account.$invalid}">
+			<label for="account">Account</label>
+			<input name="account" class="form-control" ng-model="transaction.account" typeahead="account as account.name for account in accounts($viewValue, 10)" typeahead-editable="false" placeholder="Account" required>
+			<span ng-show="scheduleForm.account.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Quantity -->
+		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['TransferTo', 'TransferFrom', 'AddShares', 'RemoveShares', 'Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.quantity.$invalid}">
+			<label for="quantity">Quantity</label>
+			<input name="quantity" class="form-control" ng-class="{'negative': transaction.quantity < 0}" ng-model="transaction.quantity" placeholder="Quantity" required og-input-number>
+			<span ng-show="scheduleForm.quantity.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Price -->
+		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.price.$invalid}">
+			<label for="price">Price</label>
+			<input name="price" class="form-control" ng-class="{'negative': transaction.price < 0}" ng-model="transaction.price" placeholder="Price" required og-input-currency="3">
+			<span ng-show="scheduleForm.price.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Commission -->
+		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.commission.$invalid}">
+			<label for="commission">Commission</label>
+			<input name="commission" class="form-control" ng-class="{'negative': transaction.commission < 0}" ng-model="transaction.commission" placeholder="Commission" required og-input-currency>
+			<span ng-show="scheduleForm.commission.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Investment Amount -->
+		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group">
+			<label>Amount</label>
+			<div ng-class="{'text-danger': (transaction.quantity * transaction.price - transaction.commission) < 0}">{{transaction.quantity * transaction.price - transaction.commission | currency}}</div>
+		</div>
+		<!-- Subtransactions -->
+		<div ng-if="['SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(transaction.category.id) != -1">
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>Category</th>
+						<th>Subcategory</th>
+						<th>Memo</th>
+						<th>Amount</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="subtransaction in transaction.subtransactions">
+						<td>
+							<!-- Category -->
+							<ng-form name="categoryForm">
+								<div class="form-inline">
+									<div class="form-group has-feedback" ng-class="{'has-warning': isString(subtransaction.category), 'has-error': categoryForm.category.$invalid}">
+										<input name="category" class="form-control" ng-model="subtransaction.category" typeahead="category as category.name for category in categories($viewValue, 10)" ng-blur="categorySelected($index)" placeholder="Category" required>
+										<span ng-show="isString(subtransaction.category) || categoryForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(subtransaction.category), 'glyphicon-remove': categoryForm.category.$invalid}"></span>
+									</div>
+								</div>
+							</ng-form>
+						</td>
+						<td ng-switch="['TransferTo', 'TransferFrom'].indexOf(subtransaction.category.id)">
+							<ng-form name="accountForm">
+								<div class="form-inline">
+									<!-- Subcategory -->
+									<div ng-switch-when="-1" class="form-group has-feedback" ng-class="{'has-warning': isString(subtransaction.subcategory)}">
+										<input class="form-control" ng-disabled="!(isString(subtransaction.category) || subtransaction.category.id > 0)" ng-model="subtransaction.subcategory" typeahead="subcategory as subcategory.name for subcategory in categories($viewValue, 10, subtransaction.category)" placeholder="Subcategory">
+										<span ng-show="isString(subtransaction.subcategory)" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+									</div>
+									<!-- Account -->
+									<div ng-switch-default class="form-group has-feedback" ng-class="{'has-error': accountForm.account.$invalid}">
+										<input name="account" class="form-control" ng-model="subtransaction.account" typeahead="account as account.name for account in accounts($viewValue, 10)" typeahead-editable="false" placeholder="Account" required>
+										<span ng-show="accountForm.account.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+									</div>
+								</div>
+							</ng-form>
+						</td>
+						<td>
+							<!-- Memo -->
+							<input class="form-control" ng-model="subtransaction.memo" placeholder="Memo">
+						</td>
+						<td>
+							<!-- Amount -->
+							<ng-form name="amountForm">
+								<div class="form-inline">
+									<div class="form-group has-feedback" ng-class="{'has-error': amountForm.amount.$invalid}">
+										<input name="amount" class="form-control text-right" ng-class="{'negative': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}" ng-model="subtransaction.amount" placeholder="Amount" required og-input-currency>
+										<span ng-show="amountForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+									</div>
+								</div>
+							</ng-form>
+						</td>
+						<td>
+							<button class="btn btn-default" type="button" ng-click="deleteSubtransaction($index)">
+								<span class="glyphicon glyphicon-trash"></span>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td>
+							<button class="btn btn-xs btn-success" type="button" ng-click="addSubtransaction()">
+								<span class="glyphicon glyphicon-plus"> Add</span>
+							</button>
+						</td>
+						<td colspan="2" class="text-right">Allocated</td>
+						<td class="text-right">{{totalAllocated | currency}}</td>
+					</tr>
+					<tr>
+						<td colspan="3" class="text-right" ng-class="{'text-danger': transaction.amount - totalAllocated !== 0, 'text-success': transaction.amount - totalAllocated === 0}">Unallocated</td>
+						<td class="text-right" ng-class="{'text-danger': transaction.amount - totalAllocated !== 0, 'text-success': transaction.amount - totalAllocated === 0}">{{transaction.amount - totalAllocated | currency}}</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+		<!-- Memo -->
+		<div class="form-group">
+			<label for="memo">Memo</label>
+			<input name="memo" class="form-control" ng-model="transaction.memo" placeholder="Memo">
+		</div>
+		<div ng-if="mode != 'Enter Transaction'" class="form-group">
+			<!-- Estimate -->
+			<label class="checkbox">
+				<input type="checkbox" ng-model="schedule.estimate"> Amount is an estimate, because it varies
+			</label>
+			<!-- Auto-enter -->
+			<label class="checkbox">
+				<input type="checkbox" ng-model="schedule.auto_enter"> Automatically enter this transaction on the due date
+			</label>
+		</div>
+	</div>
+	<div class="modal-footer" ng-switch="mode">
+		<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button ng-switch-when="Enter Transaction" class="btn btn-primary" type="button" ng-click="edit()"><i class="glyphicon glyphicon-calendar"></i> Schedule</button>
+		<button ng-switch-when="Enter Transaction" class="btn btn-warning" type="button" ng-click="skip()"><i class="glyphicon glyphicon-repeat"></i> Skip</button>
+		<button ng-switch-when="Enter Transaction" class="btn btn-success" type="submit" ng-disabled="scheduleForm.$invalid" ng-click="enter()"><i class="glyphicon glyphicon-ok"></i> Enter</button>
+		<button ng-switch-default class="btn btn-primary" type="submit" ng-disabled="scheduleForm.$invalid" ng-click="save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+	</div>
+</form>

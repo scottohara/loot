@@ -33,6 +33,14 @@
 				});
 			};
 
+			// Updates all pending transactions for an account to cleared
+			model.reconcile = function(id) {
+				return $http({
+					method: 'PATCH',
+					url: '/accounts/' + id + '/reconcile'
+				});
+			};
+
 			// Flush the cache
 			model.flush = function() {
 				cache.removeAll();

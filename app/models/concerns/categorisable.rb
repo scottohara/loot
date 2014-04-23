@@ -13,8 +13,8 @@ module Categorisable
 	# 	'direction' => ...
 	# }
 
-	included do
-		def transaction_category(trx)
+	module ClassMethods
+		def transaction_category(trx, account_type = nil)
 			id, name = case trx['transaction_type']
 				when 'Basic' then
 					basic_category trx
@@ -32,7 +32,7 @@ module Categorisable
 					trx['direction'].eql?('outflow') && ['RemoveShares', 'Remove Shares'] || ['AddShares', 'Add Shares']
 
 				when 'SecurityInvestment' then
-					if self.account_type.eql? 'investment' 
+					if account_type.eql? 'investment' 
 						trx['direction'].eql?('outflow') && ['Sell', 'Sell'] || ['Buy', 'Buy']
 					else
 						psuedo_category 'Transfer', trx['direction']

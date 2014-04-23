@@ -15,9 +15,9 @@ class SecurityInvestmentTransaction < SecurityTransaction
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
 			s.transaction_accounts.build(:direction => json['direction']).account = Account.find(json['account_id'])
 			s.transaction_accounts.build(:direction => cash_direction).account = Account.find(json['account']['id'])
-			s.build_header(:transaction_date => json['transaction_date'], :quantity => json['quantity'], :price => json['price'], :commission => json['commission']).security = security
+			s.build_header.update_from_json json
 			s.save!
-			security.update_price! json['price'], json['transaction_date'], json[:id]
+			security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 			s
 		end
 
@@ -37,13 +37,9 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		self.investment_account.direction = json['direction']
 		self.cash_account.direction = cash_direction
 		self.cash_account.account = Account.find(json['account']['id'])
-		self.header.transaction_date = json['transaction_date']
-		self.header.quantity = json['quantity']
-		self.header.price = json['price']
-		self.header.commission = json['commission']
-		self.header.security = security
+		self.header.update_from_json json
 		self.save!
-		security.update_price! json['price'], json['transaction_date'], json[:id]
+		security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 	end
 
 	def as_json(options={})
@@ -51,6 +47,11 @@ class SecurityInvestmentTransaction < SecurityTransaction
 			:id => self.id,
 			:transaction_type => self.transaction_type,
 			:transaction_date => self.header.transaction_date,
+			:schedule_account => self.header.schedule.present? && self.account.as_json || nil,
+			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
+			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
+			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
+			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
 			:security => self.header.security.as_json,
 			:category => {
 				:id => self.investment_account.direction.eql?('inflow') && 'Buy' || 'Sell',

@@ -10,11 +10,12 @@
 			var model = {};
 
 			// Retrieves a batch of transactions for an account
-			model.findByAccount = function(id, fromDate, direction) {
+			model.findByAccount = function(id, fromDate, direction, unreconciledOnly) {
 				return $http.get('/accounts/' + id + '/transactions', {
 					params: {
 						as_at: fromDate,
-						direction: direction
+						direction: direction,
+						unreconciled: unreconciledOnly
 					}
 				}).then(function(response) {
 					return response.data;
@@ -40,6 +41,14 @@
 			// Deletes a transaction
 			model.destroy = function(accountId, transaction) {
 				return $http.delete('/accounts/' + accountId + '/transactions/' + transaction.id);
+			};
+
+			// Updates the status of a transaction
+			model.updateStatus = function(accountId, transactionId, status) {
+				return $http({
+					method: status ? 'PATCH' : 'DELETE',
+					url: '/accounts/' + accountId + '/transactions/' + transactionId + '/status' + (status ? '?' + status : '')
+				});
 			};
 
 			return model;

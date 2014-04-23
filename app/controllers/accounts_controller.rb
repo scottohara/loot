@@ -14,4 +14,9 @@ class AccountsController < ApplicationController
 	def show
 		respond_with Account.find params[:id]
 	end
+
+	def reconcile
+		Account.find(params[:id]).reconcile
+		head :status => :ok
+	end
 end

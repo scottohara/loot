@@ -15,10 +15,18 @@ table.accounts {
 }
 
 #transactions, #transactions-header {
+	& > tbody.reconciling > tr.pending > td {
+		background-color: rgba(0, 255, 0, 0.1);
+	}
+
 	td, th {
 		overflow-x: hidden;
 
 		&.transaction-date {
+			width: 10%;
+		}
+		
+		&.account {
 			width: 10%;
 		}
 		

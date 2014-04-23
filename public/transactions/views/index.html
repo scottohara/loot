@@ -15,21 +15,41 @@
 			<th class="amount">Balance</th>
 		</tr>
 		<tr>
-			<td colspan="5">
+			<td colspan="5" ng-switch="reconciling">
 				<button class="btn btn-primary" ng-click="getTransactions('prev')">Previous</button>
 				<span>{{firstTransactionDate | date:"dd/MM/yyyy"}} - {{lastTransactionDate | date:"dd/MM/yyyy"}}</span>
+				<span ng-switch-when="true" class="pull-right">
+					<div class="text-right">Target: {{reconcileTarget | currency}}</div>
+					<div class="text-right">Cleared: {{clearedTotal | currency }}</div>
+					<div class="text-right" ng-class="{'text-danger': unclearedTotal != 0, 'text-success': unclearedTotal == 0}">Uncleared: {{unclearedTotal | currency}}</div>
+					<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+					<button class="btn btn-success" type="submit" ng-click="save()" ng-disabled="unclearedTotal != 0"><i class="glyphicon glyphicon-ok"></i> Finished</button>
+				</span>
+				<span ng-switch-default class="pull-right">
+					<label>
+						<input type="checkbox" ng-model="unreconciledOnly" ng-click="toggleUnreconciledOnly($event.target.checked)">
+						Unreconciled Only
+					</label>
+					<button class="btn btn-default" ng-click="reconcile()"><i class="glyphicon glyphicon-pencil"></i> Reconcile</button>
+				</span>
 			</td>
 		</tr>
 		<tr og-table-loading="loading['prev']" colspan="5"></tr>
 	</thead>
-	<tbody>
-		<tr class="transaction" ng-repeat="transaction in transactions" ng-switch="account.account_type">
+	<tbody ng-class="{'reconciling': reconciling}">
+		<tr class="transaction" ng-repeat="transaction in transactions" ng-switch="account.account_type" ng-class="{'pending': transaction.status == 'pending'}">
 			<td>{{transaction.transaction_date | date:'dd/MM/yyyy'}}</td>
 			<td class="details">
 				<table class="table-condensed">
 					<tr>
-						<td ng-if="transaction.payee.id" colspan="2">{{transaction.payee.name}}</td>
-						<td ng-if="transaction.security.id" colspan="2">{{transaction.security.name}}</td>
+						<td colspan="2">
+							<span ng-if="transaction.payee.id">{{transaction.payee.name}}</span>
+							<span ng-if="transaction.security.id">{{transaction.security.name}}</span>
+							<small ng-switch="reconciling" class="pull-right">
+								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="pending" ng-false-value="" ng-change="togglePending(transaction)">
+								<i ng-switch-default class="glyphicon text-success" ng-class="{'glyphicon-lock': transaction.status == 'cleared', 'glyphicon-tag': transaction.status == 'pending'}"></i>
+							</small>
+						</td>
 					</tr>
 					<tr>
 						<td class="category">{{transaction.category.name}}</td>

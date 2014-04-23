@@ -7,13 +7,10 @@
 	// Declare the Transaction Edit controller
 	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'account', 'transaction',
 		function($scope, $modalInstance, filterFilter, limitToFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, account, transaction) {
-			var now = new Date(),
-					timeZoneOffsetMS = now.getTimezoneOffset() * 60 * 1000;
-
 			// Make the passed transaction available on the scope
 			$scope.transaction = angular.extend({
 				transaction_type: 'Basic',
-				transaction_date: new Date(now - timeZoneOffsetMS).toISOString().substring(0,10),
+				transaction_date: moment().format("YYYY-MM-DD"),
 				subtransactions: [{},{},{},{}]
 			}, transaction);
 

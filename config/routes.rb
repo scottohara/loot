@@ -59,9 +59,12 @@ Loot::Application.routes.draw do
 	resources :accounts do
 		resources :transactions do
 			resources :subtransactions
+			resource :status, :only => [:update, :destroy]
 		end
+
+		put 'reconcile', :on => :member
 	end
 
-	resources :payees, :categories, :securities
+	resources :payees, :categories, :securities, :schedules
 	resources :logins, :only => [:create]
 end

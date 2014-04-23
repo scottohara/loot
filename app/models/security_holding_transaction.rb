@@ -11,7 +11,7 @@ class SecurityHoldingTransaction < SecurityTransaction
 		def create_from_json(json)
 			s = self.new(:id => json[:id], :memo => json['memo'])
 			s.build_transaction_account(:direction => json['direction']).account = Account.find(json['account_id'])
-			s.build_header(:transaction_date => json['transaction_date'], :quantity => json['quantity']).security = Security.find_or_new(json['security'])
+			s.build_header.update_from_json json
 			s.save!
 			s
 		end
@@ -25,9 +25,7 @@ class SecurityHoldingTransaction < SecurityTransaction
 
 	def update_from_json(json)
 		self.memo = json['memo']
-		self.header.transaction_date = json['transaction_date']
-		self.header.quantity = json['quantity']
-		self.header.security = Security.find_or_new(json['security'])
+		self.header.update_from_json json
 		self.save!
 	end
 
@@ -36,6 +34,11 @@ class SecurityHoldingTransaction < SecurityTransaction
 			:id => self.id,
 			:transaction_type => self.transaction_type,
 			:transaction_date => self.header.transaction_date,
+			:schedule_account => self.header.schedule.present? && self.account.as_json || nil,
+			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
+			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
+			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
+			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
 			:security => self.header.security.as_json,
 			:category => {
 				:id => self.transaction_account.direction.eql?('inflow') && 'AddShares' || 'RemoveShares',
