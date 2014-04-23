@@ -15,6 +15,7 @@ class Account < ActiveRecord::Base
 				SELECT					a.id,
 												a.related_account_id,
 												a.name,
+												a.status,
 												SUM(h.current_value) as total_value
 				FROM						accounts a
 				LEFT OUTER JOIN	(	SELECT		a2.id,
@@ -47,6 +48,7 @@ class Account < ActiveRecord::Base
 			other_accounts = ActiveRecord::Base.connection.execute <<-query
 				SELECT					a.id,
 												a.name,
+												a.status,
 												a.account_type,
 												a.opening_balance + COALESCE(b.total,0) + COALESCE(s.total,0) + COALESCE(i.total,0) + COALESCE(o.total,0) AS closing_balance
 				FROM						accounts a
@@ -108,6 +110,7 @@ class Account < ActiveRecord::Base
 
 				cash_account['id'] = account['id']
 				cash_account['name'] = account['name']
+				cash_account['status'] = account['status']
 				cash_account['account_type'] = 'investment'
 				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + account['total_value'].to_f || 0
 				cash_account['related_account_id'] = account['related_account_id']
@@ -115,7 +118,13 @@ class Account < ActiveRecord::Base
 
 			account_list.values.sort_by {|a| a['account_type']}.group_by {|a| "#{a['account_type'].capitalize} account".pluralize}.each_with_object({}) do |(type,accounts),hash|
 				hash[type] = {
-					:accounts => accounts.sort_by {|a| a['name']}.map {|a| {:id => a['id'], :name => a['name'], :closing_balance => a['closing_balance'], :related_account_id => a['related_account_id']}},
+					:accounts => accounts.sort_by {|a| a['name']}.map {|a| {
+						:id => a['id'],
+						:name => a['name'],
+						:status => a['status'],
+						:closing_balance => a['closing_balance'],
+						:related_account_id => a['related_account_id']
+					}},
 					:total => accounts.map {|a| a['closing_balance'].to_f}.reduce(:+)
 				}
 			end

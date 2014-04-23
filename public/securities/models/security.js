@@ -11,12 +11,17 @@
 					cache = $cacheFactory('securities');
 
 			// Retrieves the list of securities
-			model.all = function() {
-				return $http.get('/securities', {
-					cache: cache
+			model.all = function(includeBalances) {
+				return $http.get('/securities' + (includeBalances ? "?include_balances" : ""), {
+					cache: includeBalances ? false : cache
 				}).then(function(response) {
 					return response.data;
 				});
+			};
+
+			// Retrieves the list of securities, including balances
+			model.allWithBalances = function() {
+				return model.all(true);
 			};
 
 			// Flush the cache

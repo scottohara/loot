@@ -1,3 +1,23 @@
-<ul>
-	<li ng-repeat="security in securities">{{security.name}}</li>
-<ul>
+<table class="securities table table-striped table-bordered table-hover">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Code</th>
+			<th class="amount">Quantity</th>
+			<th class="amount">Value</th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr ng-repeat="security in securities" ng-class="{'text-muted': security.current_holding <= 0}">
+			<td>{{security.name}}</td>
+			<td>{{security.code}}</td>
+			<td class="amount" ng-class="{'text-danger': security.current_holding < 0}">{{security.current_holding | number:3}}</td>
+			<td class="amount" ng-class="{'text-danger': security.current_value < 0}">{{security.current_value | currency}}</td>
+		</tr>
+	<tbody>
+	<tfoot>
+		<tr>
+			<th colspan="4" class="amount" ng-class="{'text-danger': totalValue < 0}">Total: {{totalValue | currency}}</th>
+		</tr>
+	</tfoot>
+</table>
