@@ -51,6 +51,18 @@
 				});
 			};
 
+			// Flags a transaction
+			model.flag = function(accountId, transaction) {
+				return $http.put('/accounts/' + accountId + '/transactions/' + transaction.id + '/flag', {
+					memo: transaction.flag
+				});
+			};
+
+			// Unflags a transaction
+			model.unflag = function(accountId, transactionId) {
+				return $http.delete('/accounts/' + accountId + '/transactions/' + transactionId + '/flag');
+			};
+
 			return model;
 		}
 	]);

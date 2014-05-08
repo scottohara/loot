@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140406235014) do
+ActiveRecord::Schema.define(version: 20140507031552) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,12 @@ ActiveRecord::Schema.define(version: 20140406235014) do
   end
 
   add_index "transaction_categories", ["category_id"], name: "index_transaction_categories_on_category_id", using: :btree
+
+  create_table "transaction_flags", primary_key: "transaction_id", force: true do |t|
+    t.string   "memo"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "transaction_headers", primary_key: "transaction_id", force: true do |t|
     t.integer  "payee_id"

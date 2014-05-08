@@ -38,7 +38,10 @@
 	</thead>
 	<tbody ng-class="{'reconciling': reconciling}">
 		<tr class="transaction" ng-repeat="transaction in transactions" ng-switch="account.account_type" ng-class="{'pending': transaction.status == 'pending'}">
-			<td>{{transaction.transaction_date | date:'dd/MM/yyyy'}}</td>
+			<td>
+				{{transaction.transaction_date | date:'dd/MM/yyyy'}}
+				<i class="action glyphicon glyphicon-flag text-danger pull-right" ng-class="{'active': transaction.flag}" tooltip="{{transaction.flag}}" ng-click="flag($index)"></i>
+			</td>
 			<td class="details">
 				<table class="table-condensed">
 					<tr>

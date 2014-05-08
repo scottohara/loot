@@ -173,7 +173,8 @@ class Account < ActiveRecord::Base
 									"transaction_headers.price",
 									"transaction_headers.commission",
 									"transaction_accounts.direction",
-									"transactions.memo")
+									"transactions.memo",
+						 			"transaction_flags.memo AS flag") 
 			.joins(			"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id")
 			.joins(			"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
 			.joins(			"LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id")
@@ -186,6 +187,7 @@ class Account < ActiveRecord::Base
 			.joins(			"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id")
 			.joins(			"LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id")
 			.joins(			"LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id")
+			.joins(			"LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id")
 			.where(			"transaction_accounts.account_id = ?", self.id)
 			.where(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:operator]} ?", as_at)
 			.order(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:order]}",
@@ -253,7 +255,8 @@ class Account < ActiveRecord::Base
 				:commission => trx['commission'],
 				:price => trx['price'],
 				:direction => trx['direction'],
-				:memo => trx['memo']
+				:memo => trx['memo'],
+				:flag => trx['flag']
 			}
 		end
 

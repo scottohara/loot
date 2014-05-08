@@ -249,6 +249,33 @@
 				$event.cancelBubble = true;
 			};
 
+			// Opens the flag transaction dialog
+			$scope.flag = function(index) {
+				// Disable navigation on the table
+				$scope.navigationDisabled = true;
+
+				// Show the modal
+				$modal.open({
+					templateUrl: 'transactions/views/flag.html',
+					controller: 'transactionFlagController',
+					backdrop: 'static',
+					resolve: {
+						account: function() {
+							return $scope.account;
+						},
+						transaction: function() {
+							return $scope.transactions[index];
+						}
+					}
+				}).result.then(function(transaction) {
+					// Update the existing transaction in the array
+					$scope.transactions[index] = transaction;
+				}).finally(function() {
+					// Enable navigation on the table
+					$scope.navigationDisabled = false;
+				});
+			};
+
 			// Launches the account reconciliation process
 			$scope.reconcile = function() {
 				// Show the modal

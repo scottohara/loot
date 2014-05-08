@@ -1,0 +1,15 @@
+<form role="form" name="transactionForm">
+	<div class="modal-header">
+		<h4>Flag Transaction</h4>
+	</div>
+	<div class="modal-body">
+		<div class="form-group has-feedback">
+			<textarea name="flag" class="form-control" ng-model="flag.memo" placeholder="Memo" autofocus></textarea>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button ng-if="flagged" class="btn btn-danger" type="button" ng-click="delete()">Delete</button>
+		<button class="btn btn-primary" type="submit" ng-click="save()">Save</button>
+	</div>
+</form>

@@ -60,6 +60,7 @@ Loot::Application.routes.draw do
 		resources :transactions do
 			resources :subtransactions
 			resource :status, :only => [:update, :destroy]
+			resource :flag, :only => [:update, :destroy]
 		end
 
 		put 'reconcile', :on => :member

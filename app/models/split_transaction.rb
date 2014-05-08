@@ -39,7 +39,9 @@ class SplitTransaction < PayeeCashTransaction
 					self.transaction_splits.build.build_transaction(:amount => child['amount'], :memo => child['memo'], :transaction_type => 'Basic').build_transaction_category.category = category
 				else
 					direction = child['direction'].eql?('inflow') && 'outflow' || 'inflow' 
-					self.transaction_splits.build.build_transaction(:amount => child['amount'], :memo => child['memo'], :transaction_type => 'Subtransfer').build_transaction_account(:direction => direction).account = Account.find(child['account']['id'])
+					t = self.transaction_splits.build.build_transaction(:amount => child['amount'], :memo => child['memo'], :transaction_type => 'Subtransfer')
+					t.build_transaction_account(:direction => direction).account = Account.find(child['account']['id'])
+					t.build_flag(:memo => child['flag']) if !!child['flag']
 			end
 		end
 	end
@@ -91,7 +93,8 @@ class SplitTransaction < PayeeCashTransaction
 								"accounts.name AS account_name",
 								"transactions.amount",
 								"transaction_accounts.direction",
-						 		"transactions.memo")
+						 		"transactions.memo",
+						 		"transaction_flags.memo AS flag") 
 			.joins(		"JOIN transaction_accounts ON transaction_accounts.transaction_id = transaction_splits.parent_id")
 			.joins(		"JOIN transactions ON transactions.id = transaction_splits.transaction_id")
 			.joins(		"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id")
@@ -100,6 +103,7 @@ class SplitTransaction < PayeeCashTransaction
 			.joins(		"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id")
 			.joins(		"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id")
 			.joins(		"LEFT OUTER JOIN accounts ON accounts.id = transfer_transaction_accounts.account_id")
+			.joins(		"LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id")
 			.where(		"transaction_splits.parent_id = ?", self.id)
 
 		# Remap to the desired output format
@@ -115,7 +119,8 @@ class SplitTransaction < PayeeCashTransaction
 				},
 				:amount => trx['amount'],
 				:direction => (trx['transaction_type'].eql?('Subtransfer') && (trx['parent_transaction_type'].eql?('Payslip') && 'outflow' || trx['direction']) || trx['category_direction']),
-				:memo => trx['memo']
+				:memo => trx['memo'],
+				:flag => trx['flag']
 			}
 		end
 	end

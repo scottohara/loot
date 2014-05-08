@@ -35,6 +35,7 @@ require 'json'
 @tmp_sells = {}
 @tmp_head_bills = {}
 @tmp_bills = {}
+@tmp_flags = {}
 
 def progress(action, count, type)
 	reset_line = "\r\e[0K"
@@ -219,6 +220,9 @@ def load_transactions
 	print "Deleting existing transaction splits..."
 	TransactionSplit.delete_all
 	puts "done"
+	print "Deleting existing transaction flags..."
+	TransactionFlag.delete_all
+	puts "done"
 
 	CSV.foreach csv_file_path('TRN_SPLIT'), :headers => true do |row|
 		@tmp_splits[row['htrnParent']] = [] unless @tmp_splits.has_key? row['htrnParent']
@@ -253,6 +257,13 @@ def load_transactions
 		progress "Prepared", $., "investment lot" if $. % 10 == 0
 	end
 	progress "Prepared", $., "investment lot"
+	puts
+
+	CSV.foreach csv_file_path('XBAG'), :headers => true do |row|
+		@tmp_flags[row['lHobj']] = row['szMemo'] if row['bt'].eql?('0')
+		progress "Prepared", $., "flag" if $. % 10 == 0
+	end
+	progress "Prepared", $., "flag"
 	puts
 
 	CSV.foreach csv_file_path('TRN'), {:headers => true, :encoding => 'ISO-8859-1:UTF-8'} do |row|
@@ -344,6 +355,7 @@ def load_transactions
 
 	@tmp_transactions.sort_by {|k,v| Date.parse v[:transaction_date]}.each_with_index do |(id, trx), index|
 		begin
+			# Only create transaction if the type and account are known, and it is not a void transaction
 			self.send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil? || !!!trx[:account] || void?(trx)
 			progress "Loaded", index, "transaction"
 		rescue
@@ -435,6 +447,7 @@ def create_basic_transaction(trx)
 	header_transaction_date_or_schedule h, trx
 	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
 	s.build_transaction_category.category = category
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -468,6 +481,8 @@ def create_split_transaction(trx, direction)
 				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => subdirection).account = Account.find(subaccount)
 		end 
 	end
+
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -492,6 +507,7 @@ def create_transfer_transaction(trx, direction)
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
 	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -517,6 +533,8 @@ def create_payslip_transaction(trx)
 				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
+
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -542,6 +560,8 @@ def create_loanrepayment_transaction(trx)
 				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
+
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -564,6 +584,7 @@ def create_securitytransfer_transaction(trx, direction)
 	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
 	header_transaction_date_or_schedule h, trx
 	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -582,6 +603,7 @@ def create_securityholding_transaction(trx, direction)
 	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
 	header_transaction_date_or_schedule h, trx
 	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -618,6 +640,7 @@ def create_securityinvestment_transaction(trx, direction)
 	h = s.build_header(:quantity => investment[:qty], :price => investment[:price], :commission => investment[:commission])
 	header_transaction_date_or_schedule h, trx
 	h.security = (!!security && Security.find(security[:id])) || nil
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -644,6 +667,7 @@ def create_dividend_transaction(trx, direction)
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
 	h.security = (!!security && Security.find(security[:id])) || nil
+	create_transaction_flag s, trx
 	s.save
 end
 
@@ -661,6 +685,10 @@ end
 
 def create_payslip_tax_transaction(trx)
 	#noop
+end
+
+def create_transaction_flag(transaction, trx)
+	transaction.build_flag(:memo => @tmp_flags[trx[:id]]) if @tmp_flags.include?(trx[:id])
 end
 
 def header_transaction_date_or_schedule(header, trx)

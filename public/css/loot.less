@@ -79,6 +79,21 @@ table.securities {
 			width: 10%;
 			text-align: right;
 		}
+
+		i.action {
+			opacity: 0;
+			transition: all ease 0.6s;
+			color: @text-muted;
+			
+			&.active {
+				opacity: 1;
+				.text-emphasis-variant(@state-danger-text);
+			}
+		}
+
+		&:hover i.action {
+			opacity: 1;
+		}
 	}
 }
 
