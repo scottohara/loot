@@ -37,6 +37,11 @@ GEM
     coffee-script-source (1.6.3)
     erubis (2.7.0)
     execjs (2.0.2)
+    factory_girl (4.4.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.4.1)
+      factory_girl (~> 4.4.0)
+      railties (>= 3.0.0)
     hike (1.2.3)
     i18n (0.6.9)
     json (1.8.1)
@@ -47,6 +52,9 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.25.1)
     minitest (4.7.5)
+    minitest-spec-rails (4.7.6)
+      minitest (~> 4.7)
+      rails (>= 3.0, < 4.1)
     multi_json (1.8.4)
     pg (0.17.1)
     polyglot (0.3.3)
@@ -79,6 +87,10 @@ GEM
       railties (>= 4.0.0, < 5.0)
       sass (>= 3.1.10)
       sprockets-rails (~> 2.0.0)
+    simplecov (0.7.1)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.7.1)
+    simplecov-html (0.7.1)
     sprockets (2.10.1)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -112,10 +124,13 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-rails (~> 4.0.1)
+  factory_girl_rails
+  minitest-spec-rails
   pg
   rails (= 4.0.2)
   rails_12factor
   sass-rails (~> 4.0.1)
+  simplecov (~> 0.7.1)
   therubyracer
   uglifier (>= 2.4.0)
   unicorn

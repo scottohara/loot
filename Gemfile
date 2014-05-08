@@ -35,3 +35,10 @@ gem 'unicorn'
 
 # 12 factor gem for Heroku
 gem 'rails_12factor', :group => :production
+
+group :test do
+	gem 'simplecov', '~> 0.7.1'
+	gem 'minitest-spec-rails'
+end
+
+gem 'factory_girl_rails', :group => [:development, :test]

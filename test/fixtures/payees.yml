@@ -1,7 +1,16 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-one:
-  name: MyString
+#coles:
+  #name: Coles
+   
+#anz:
+  #name: ANZ
 
-two:
-  name: MyString
+#kmart:
+  #name: K-Mart
+
+#nextgen:
+  #name: NextGen.Net
+
+#macquarie:
+  #name: Macquarie Mortgages
