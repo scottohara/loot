@@ -5,9 +5,9 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="account in accountType.accounts" ng-class="{'text-muted': account.status == 'closed'}">
+		<tr ng-repeat="account in accountType.accounts" ng-class="{'closed-account': account.status == 'closed'}">
 			<td>
-				<a ng-href="#/accounts/{{account.id}}/transactions" ng-class="{'text-muted': account.status == 'closed'}">{{account.name}}</a>
+				<a ng-href="#/accounts/{{account.id}}/transactions">{{account.name}}</a>
 				<span ng-if="account.related_account_id">(<a ng-href="#/accounts/{{account.related_account_id}}/transactions">Cash</a>)</span>
 			</td>
 			<td class="amount" ng-class="{'text-danger': account.closing_balance < 0}">{{account.closing_balance | currency}}</td>
