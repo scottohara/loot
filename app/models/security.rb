@@ -30,6 +30,7 @@ class Security < ActiveRecord::Base
 															) d ON sp.security_id = d.security_id AND sp.as_at_date = d.as_at_date
 									) p ON securities.id = p.security_id
 				WHERE			transactions.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
+									transaction_headers.transaction_date IS NOT NULL AND
 									accounts.account_type = 'investment'
 				GROUP BY	securities.id
 				ORDER BY	CASE WHEN SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) > 0 THEN 0 ELSE 1 END,

@@ -12,90 +12,99 @@ class Account < ActiveRecord::Base
 		def account_list
 			# Get the current holding balance of all investment accounts
 			investment_accounts = ActiveRecord::Base.connection.execute <<-query
-				SELECT					a.id,
-												a.related_account_id,
-												a.name,
-												a.status,
-												SUM(h.current_value) as total_value
-				FROM						accounts a
-				LEFT OUTER JOIN	(	SELECT		a2.id,
-																		th.security_id,
-																		ROUND(SUM(CASE ta.direction WHEN 'inflow' THEN th.quantity ELSE th.quantity * -1.0 END) * MAX(p.price),2) AS current_value
-													FROM			accounts a2
-													JOIN			transaction_accounts ta ON ta.account_id = a2.id
-													JOIN			transactions t ON t.id = ta.transaction_id
-													JOIN			transaction_headers th ON th.transaction_id = t.id
-													JOIN			(	SELECT		sp.security_id,
-																								sp.price
-																			FROM			security_prices sp
+				SELECT					accounts.id,
+												accounts.related_account_id,
+												accounts.name,
+												accounts.status,
+												SUM(security_holdings.current_value) as total_value
+				FROM						accounts
+				LEFT OUTER JOIN	(	SELECT		accounts.id,
+																		transaction_headers.security_id,
+																		ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(latest_prices.price),2) AS current_value
+													FROM			accounts
+													JOIN			transaction_accounts ON transaction_accounts.account_id = accounts.id
+													JOIN			transactions ON transactions.id = transaction_accounts.transaction_id
+													JOIN			transaction_headers ON transaction_headers.transaction_id = transactions.id
+													JOIN			(	SELECT		security_prices.security_id,
+																								security_prices.price
+																			FROM			security_prices
 																			JOIN			(	SELECT		security_id,
 																														MAX(as_at_date) AS as_at_date
 																									FROM			security_prices
 																									GROUP BY	security_id
-																								) d ON sp.security_id = d.security_id AND sp.as_at_date = d.as_at_date
-																		) p ON th.security_id = p.security_id
-													WHERE			t.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
-																		a2.account_type = 'investment'
-													GROUP BY	a2.id,
-																		th.security_id
-													HAVING		ROUND(SUM(CASE ta.direction WHEN 'inflow' THEN th.quantity ELSE th.quantity * -1.0 END) * MAX(p.price),2) > 0
-												) AS h ON a.id = h.id
-				WHERE						a.account_type = 'investment'
-				GROUP BY				a.id
+																								) latest_price_dates ON security_prices.security_id = latest_price_dates.security_id AND security_prices.as_at_date = latest_price_dates.as_at_date
+																		) latest_prices ON transaction_headers.security_id = latest_prices.security_id
+													WHERE			transactions.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
+																		transaction_headers.transaction_date IS NOT NULL AND
+																		accounts.account_type = 'investment'
+													GROUP BY	accounts.id,
+																		transaction_headers.security_id
+													HAVING		ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(latest_prices.price),2) > 0
+												) AS security_holdings ON security_holdings.id = accounts.id
+				WHERE						accounts.account_type = 'investment'
+				GROUP BY				accounts.id
 			query
 
 			# Get the current closing balance of all non-investment accounts
 			other_accounts = ActiveRecord::Base.connection.execute <<-query
-				SELECT					a.id,
-												a.name,
-												a.status,
-												a.account_type,
-												a.opening_balance + COALESCE(b.total,0) + COALESCE(s.total,0) + COALESCE(i.total,0) + COALESCE(o.total,0) AS closing_balance
-				FROM						accounts a
-				LEFT OUTER JOIN	(	SELECT		a.id,
-																		SUM(CASE c.direction WHEN 'inflow' THEN t.amount ELSE t.amount * -1.0 END) AS total
-													FROM			accounts a
-													JOIN			transaction_accounts ta ON ta.account_id = a.id
-													JOIN			transactions t ON t.id = ta.transaction_id
-													JOIN			transaction_categories tc ON tc.transaction_id = t.id
-													JOIN			categories c ON c.id = tc.category_id
-													WHERE			t.transaction_type = 'Basic' AND
-																		a.account_type != 'investment'
-													GROUP BY	a.id
-												) AS b ON a.id = b.id
-				LEFT OUTER JOIN	(	SELECT		a.id,
-																		SUM(CASE ta.direction WHEN 'inflow' THEN t.amount ELSE t.amount * -1.0 END) AS total
-													FROM			accounts a
-													JOIN			transaction_accounts ta ON ta.account_id = a.id
-													JOIN			transactions t ON t.id = ta.transaction_id
-													JOIN			transaction_splits ts ON ts.transaction_id = t.id
-													JOIN			transactions t2 ON t2.id = ts.parent_id
-													WHERE			t.transaction_type = 'Subtransfer' AND
-																		t2.transaction_type IN ('Split', 'LoanRepayment', 'Payslip') AND
-																		a.account_type != 'investment'
-													GROUP BY	a.id
-												) AS s ON a.id = s.id
-				LEFT OUTER JOIN	(	SELECT		a.id,
-																		SUM(t.amount) AS total
-													FROM			accounts a
-													JOIN			transaction_accounts ta ON ta.account_id = a.id
-													JOIN			transactions t ON t.id = ta.transaction_id
-													WHERE			t.transaction_type IN ('Split', 'Payslip', 'Transfer', 'Dividend', 'SecurityInvestment') AND
-																		ta.direction = 'inflow' AND
-																		a.account_type != 'investment'
-													GROUP BY	a.id
-												) AS i ON a.id = i.id
-				LEFT OUTER JOIN	(	SELECT		a.id,
-																		SUM(t.amount * -1.0) AS total
-													FROM			accounts a
-													JOIN			transaction_accounts ta ON ta.account_id = a.id
-													JOIN			transactions t ON t.id = ta.transaction_id
-													WHERE			t.transaction_type IN ('Split', 'LoanRepayment', 'Transfer', 'SecurityInvestment') AND
-																		ta.direction = 'outflow' AND
-																		a.account_type != 'investment'
-													GROUP BY	a.id
-												) AS o ON a.id = o.id
-				WHERE						a.account_type != 'investment'
+				SELECT					accounts.id,
+												accounts.name,
+												accounts.status,
+												accounts.account_type,
+												accounts.opening_balance + COALESCE(basic_transactions.total,0) + COALESCE(subtransfer_transactions.total,0) + COALESCE(inflow_transactions.total,0) + COALESCE(outflow_transactions.total,0) AS closing_balance
+				FROM						accounts
+				LEFT OUTER JOIN	(	SELECT		accounts.id,
+																		SUM(CASE categories.direction WHEN 'inflow' THEN transactions.amount ELSE transactions.amount * -1.0 END) AS total
+													FROM			accounts
+													JOIN			transaction_accounts ON transaction_accounts.account_id = accounts.id
+													JOIN			transactions ON transactions.id = transaction_accounts.transaction_id
+													JOIN			transaction_headers ON transaction_headers.transaction_id = transactions.id
+													JOIN			transaction_categories ON transaction_categories.transaction_id = transactions.id
+													JOIN			categories ON categories.id = transaction_categories.category_id
+													WHERE			transactions.transaction_type = 'Basic' AND
+																		transaction_headers.transaction_date IS NOT NULL AND
+																		accounts.account_type != 'investment'
+													GROUP BY	accounts.id
+												) AS basic_transactions ON basic_transactions.id = accounts.id
+				LEFT OUTER JOIN	(	SELECT		accounts.id,
+																		SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transactions.amount ELSE transactions.amount * -1.0 END) AS total
+													FROM			accounts
+													JOIN			transaction_accounts ON transaction_accounts.account_id = accounts.id
+													JOIN			transactions ON transactions.id = transaction_accounts.transaction_id
+													JOIN			transaction_headers ON transaction_headers.transaction_id = transactions.id
+													JOIN			transaction_splits ON transaction_splits.transaction_id = transactions.id
+													JOIN			transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id
+													WHERE			transactions.transaction_type = 'Subtransfer' AND
+																		parent_transactions.transaction_type IN ('Split', 'LoanRepayment', 'Payslip') AND
+																		transaction_headers.transaction_date IS NOT NULL AND
+																		accounts.account_type != 'investment'
+													GROUP BY	accounts.id
+												) AS subtransfer_transactions ON subtransfer_transactions.id = accounts.id
+				LEFT OUTER JOIN	(	SELECT		accounts.id,
+																		SUM(transactions.amount) AS total
+													FROM			accounts
+													JOIN			transaction_accounts ON transaction_accounts.account_id = accounts.id
+													JOIN			transactions ON transactions.id = transaction_accounts.transaction_id
+													JOIN			transaction_headers ON transaction_headers.transaction_id = transactions.id
+													WHERE			transactions.transaction_type IN ('Split', 'Payslip', 'Transfer', 'Dividend', 'SecurityInvestment') AND
+																		transaction_accounts.direction = 'inflow' AND
+																		transaction_headers.transaction_date IS NOT NULL AND
+																		accounts.account_type != 'investment'
+													GROUP BY	accounts.id
+												) AS inflow_transactions ON inflow_transactions.id = accounts.id
+				LEFT OUTER JOIN	(	SELECT		accounts.id,
+																		SUM(transactions.amount * -1.0) AS total
+													FROM			accounts
+													JOIN			transaction_accounts ON transaction_accounts.account_id = accounts.id
+													JOIN			transactions ON transactions.id = transaction_accounts.transaction_id
+													JOIN			transaction_headers ON transaction_headers.transaction_id = transactions.id
+													WHERE			transactions.transaction_type IN ('Split', 'LoanRepayment', 'Transfer', 'SecurityInvestment') AND
+																		transaction_accounts.direction = 'outflow' AND
+																		transaction_headers.transaction_date IS NOT NULL AND
+																		accounts.account_type != 'investment'
+													GROUP BY	accounts.id
+												) AS outflow_transactions ON outflow_transactions.id = accounts.id
+				WHERE						accounts.account_type != 'investment'
 			query
 
 			# Convert the array of accounts to a hash
@@ -119,11 +128,11 @@ class Account < ActiveRecord::Base
 			account_list.values.sort_by {|a| a['account_type']}.group_by {|a| "#{a['account_type'].capitalize} account".pluralize}.each_with_object({}) do |(type,accounts),hash|
 				hash[type] = {
 					:accounts => accounts.sort_by {|a| a['name']}.map {|a| {
-						:id => a['id'],
+						:id => a['id'].to_i,
 						:name => a['name'],
 						:status => a['status'],
-						:closing_balance => a['closing_balance'],
-						:related_account_id => a['related_account_id']
+						:closing_balance => a['closing_balance'].to_f,
+						:related_account_id => a['related_account_id'] && a['related_account_id'].to_i
 					}},
 					:total => accounts.map {|a| a['closing_balance'].to_f}.reduce(:+)
 				}
