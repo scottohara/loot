@@ -12,17 +12,14 @@ class ApplicationController < ActionController::Base
 	end
 
 	def internal_error(exception)
-		p exception
 		render :json => exception.message, :status => :internal_server_error
 	end
 
 	def record_invalid(exception)
-		p exception
 		render :json => exception.record.errors.full_messages.join(', '), :status => :unprocessable_entity
 	end
 
 	def record_not_found(exception)
-		p exception
 		render :json => exception.message, :status => :not_found
 	end
 end
