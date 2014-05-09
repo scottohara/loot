@@ -211,14 +211,27 @@
 			// Watch the subtransactions array and recalculate the total allocated
 			$scope.$watch('transaction.subtransactions', function() {
 				$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
-					return total + (Number(subtransaction.amount * (subtransaction.direction == $scope.transaction.direction ? 1 : -1)) || 0);
+					return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
 				}, 0);
 			}, true);
 
 			// List of accounts for the typeahead
 			$scope.accounts = function(filter, limit) {
 				return accountModel.all().then(function(accounts) {
-					return limitToFilter(filterFilter(accounts, filter), limit);
+					var accountFilter = {
+						name: filter,
+						account_type: '!investment'		// exclude investment accounts by default
+					};
+
+					// Filter the current account from the results (can't transfer to self)
+					accounts = filterFilter(accounts, {name: "!" + $scope.account.name});
+
+					// For security transfers, only include investment accounts
+					if ('SecurityTransfer' === $scope.transaction.transaction_type) {
+						accountFilter.account_type = 'investment';
+					}
+
+					return limitToFilter(filterFilter(accounts, accountFilter), limit);
 				});
 			};
 

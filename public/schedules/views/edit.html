@@ -6,7 +6,7 @@
 		<!-- Schedule Account -->
 		<div class="form-group has-feedback" ng-class="{'has-error': scheduleForm.scheduleAccount.$invalid}">
 			<label for="scheduleAccount">Account</label>
-			<input name="scheduleAccount" class="form-control" ng-model="transaction.schedule_account" typeahead="account as account.name for account in accounts($viewValue, 10)" ng-blur="scheduleAccountSelected()" typeahead-editable="false" placeholder="Account" required>
+			<input name="scheduleAccount" class="form-control" ng-model="transaction.schedule_account" typeahead="account as account.name for account in scheduleAccounts($viewValue, 10)" ng-blur="scheduleAccountSelected()" typeahead-editable="false" placeholder="Account" required>
 			<span ng-show="scheduleForm.scheduleAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Frequency -->
