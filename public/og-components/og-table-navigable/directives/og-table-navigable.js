@@ -39,6 +39,11 @@
 
 						// Store the focussed row index
 						scope.focusRow = rowIndex;
+
+						// If a focus action is defined, invoke it for the focussed row
+						if (scope.handlers.focusAction) {
+							scope.handlers.focusAction(rowIndex);
+						}
 					};
 
 					// Checks if a row is off screen, and if so scrolls it into view
@@ -100,39 +105,43 @@
 
 					// Declare a click handler to focus a row by clicking it
 					var clickHandler = function(event) {
-						// The event target could be any element in the table (including nested tables), so we need the closest row
-						var clickedRow = closestRow(event.target);
-						if (clickedRow.length > 0) {
-							// Focus the clicked row
-							focusRow(clickedRow);
+						if (scope.handlers.navigationEnabled()) {
+							// The event target could be any element in the table (including nested tables), so we need the closest row
+							var clickedRow = closestRow(event.target);
+							if (clickedRow.length > 0) {
+								// Focus the clicked row
+								focusRow(clickedRow);
+							}
 						}
 					};
 
 					// Declare a double-click handler to perform an action on a row
 					var doubleClickHandler = function(event) {
-						// If a select action wasn't specified for the directive, do nothing
-						if (!scope.handlers.selectAction) {
-							return;
-						}
+						if (scope.handlers.navigationEnabled()) {
+							// If a select action wasn't specified for the directive, do nothing
+							if (!scope.handlers.selectAction) {
+								return;
+							}
 
-						// If the event target was a button, do nothing
-						if ('button' === event.target.localName) {
-							return;
-						}
+							// If the event target was a button, do nothing
+							if ('button' === event.target.localName) {
+								return;
+							}
 
-						// The event target could be any element in the table (including nested tables), so we need the closest row
-						var clickedRow = closestRow(event.target);
-						if (clickedRow.length > 0) {
-							// Invoke the select action for the clicked row
-							scope.handlers.selectAction(angular.element(clickedRow).scope().$index);
+							// The event target could be any element in the table (including nested tables), so we need the closest row
+							var clickedRow = closestRow(event.target);
+							if (clickedRow.length > 0) {
+								// Invoke the select action for the clicked row
+								scope.handlers.selectAction(angular.element(clickedRow).scope().$index);
+							}
 						}
 					};
 
 					// Expose a function on the handlers object for external controllers to focus on a row
 					scope.handlers.focusRow = function(index) {
-						// Focus the target row
+						// Focus the target row (if not already focussed)
 						var targetRow = getRowAtIndex(index);
-						if (targetRow.length > 0) {
+						if (targetRow.length > 0 && scope.focusRow !== index) {
 							focusRow(targetRow);
 						}
 					};

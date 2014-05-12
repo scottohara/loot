@@ -106,12 +106,22 @@
 					data: {
 						title: 'Transactions'
 					},
+					resolve: {
+						transactionBatch: ['accountModel', 'transactionModel', 'account',
+							function(accountModel, transactionModel, account) {
+								return transactionModel.findByAccount(account.id, null, 'prev', accountModel.isUnreconciledOnly(account.id));
+							}
+						]
+					},
 					views: {
 						'@root': {
 							templateUrl: 'transactions/views/index.html',
 							controller: 'transactionIndexController'
 						}
 					}
+				})
+				.state('root.accounts.account.transactions.transaction', {
+					url: '/:transactionId'
 				});
 		}
 	]);

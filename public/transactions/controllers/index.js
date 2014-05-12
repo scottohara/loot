@@ -5,12 +5,17 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Index controller
-	mod.controller('transactionIndexController', ['$scope', '$modal', '$timeout', '$window', 'currencyFilter', 'transactionModel', 'accountModel', 'account',
-		function($scope, $modal, $timeout, $window, currencyFilter, transactionModel, accountModel, account) {
+	mod.controller('transactionIndexController', ['$scope', '$modal', '$timeout', '$window', '$state', 'currencyFilter', 'transactionModel', 'accountModel', 'account', 'transactionBatch',
+		function($scope, $modal, $timeout, $window, $state, currencyFilter, transactionModel, accountModel, account, transactionBatch) {
 			// Store the account we're working with in the scope
 			$scope.account = account;
 
 			var editTransaction = function(index) {
+				// Abort if the transaction is readonly
+				if (!isNaN(index) && isReadOnly(index)) {
+					return;
+				}
+
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 
@@ -49,10 +54,10 @@
 
 					if (!fromDate.isAfter($scope.firstTransactionDate)) {
 						// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-						$scope.getTransactions('next', fromDate.subtract('days', 1).toISOString(), transaction);
+						$scope.getTransactions('next', fromDate.subtract('days', 1).toISOString(), transaction.id);
 					} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 						// Transaction date is later than the latest fetched transaction, refresh from the new date
-						$scope.getTransactions('prev', fromDate.add('days', 1).toISOString(), transaction);
+						$scope.getTransactions('prev', fromDate.add('days', 1).toISOString(), transaction.id);
 					} else {
 						// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
 						if (isNaN(index)) {
@@ -70,7 +75,7 @@
 						updateRunningBalances();
 
 						// Refocus the transaction
-						focusTransaction(transaction);
+						focusTransaction(transaction.id);
 					}
 				}).finally(function() {
 					// Enable navigation on the table
@@ -79,6 +84,11 @@
 			};
 
 			var deleteTransaction = function(index) {
+				// Abort if the transaction is readonly
+				if (isReadOnly(index)) {
+					return;
+				}
+
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 
@@ -103,6 +113,21 @@
 				});
 			};
 
+			// Returns true if the transaction should not be editable/deletable
+			var isReadOnly = function(index) {
+				switch ($scope.transactions[index].transaction_type) {
+					case "Subtransfer":
+						return true;
+
+					case "Dividend":
+					case "SecurityInvestment":
+						return "investment" !== $scope.account.account_type;
+
+					default:
+						return false;
+				}
+			};
+
 			// Action handlers for navigable table
 			$scope.tableActions = {
 				navigationEnabled: function() {
@@ -113,7 +138,12 @@
 					// Same as select action, but don't pass any arguments
 					editTransaction();
 				},
-				deleteAction: deleteTransaction
+				deleteAction: deleteTransaction,
+				focusAction: function(index) {
+					$state.go('root.accounts.account.transactions.transaction', {
+						transactionId: $scope.transactions[index].id
+					});
+				}
 			};
 
 			// The current set of transactions
@@ -126,7 +156,7 @@
 			};
 
 			// Fetch a batch of transactions
-			$scope.getTransactions = function(direction, fromDate, transactionToFocus) {
+			$scope.getTransactions = function(direction, fromDate, transactionIdToFocus) {
 				// Show the loading spinner
 				$scope.loading[direction] = true;
 
@@ -140,33 +170,39 @@
 				}
 
 				transactionModel.findByAccount($scope.account.id, fromDate, direction, $scope.unreconciledOnly).then(function(transactionBatch) {
-					if (transactionBatch.transactions.length > 0) {
-						// Store the opening balance & transactions
-						$scope.openingBalance = transactionBatch.openingBalance;
-						$scope.transactions = transactionBatch.transactions;
-						$scope.atEnd = transactionBatch.atEnd || (undefined === fromDate);
-
-						// Get the boundaries of the current transaction date range
-						$scope.firstTransactionDate = transactionBatch.transactions[0].transaction_date;
-						$scope.lastTransactionDate = transactionBatch.transactions[transactionBatch.transactions.length -1].transaction_date;
-
-						// Update the running balances
-						updateRunningBalances();
-
-						// Focus on the specified transaction (if provided)
-						if (transactionToFocus) {
-							focusTransaction(transactionToFocus);
-						}
-
-						// Update the reconciled amounts if in reconcile mode
-						if ($scope.reconciling) {
-							updateReconciledTotals();
-						}
-					}
+					// Process the transaction batch
+					processTransactions(transactionBatch, fromDate, transactionIdToFocus);
 
 					// Hide spinner
 					$scope.loading[direction] = false;
 				});
+			};
+
+			// Processes a batch of transactions
+			var processTransactions = function(transactionBatch, fromDate, transactionIdToFocus) {
+				if (transactionBatch.transactions.length > 0) {
+					// Store the opening balance & transactions
+					$scope.openingBalance = transactionBatch.openingBalance;
+					$scope.transactions = transactionBatch.transactions;
+					$scope.atEnd = transactionBatch.atEnd || (undefined === fromDate);
+
+					// Get the boundaries of the current transaction date range
+					$scope.firstTransactionDate = transactionBatch.transactions[0].transaction_date;
+					$scope.lastTransactionDate = transactionBatch.transactions[transactionBatch.transactions.length -1].transaction_date;
+
+					// Update the running balances
+					updateRunningBalances();
+
+					// Focus on the specified transaction (if provided)
+					if (!isNaN(transactionIdToFocus)) {
+						focusTransaction(transactionIdToFocus);
+					}
+
+					// Update the reconciled amounts if in reconcile mode
+					if ($scope.reconciling) {
+						updateReconciledTotals();
+					}
+				}
 			};
 
 			// Updates the running balance of all transactions
@@ -183,12 +219,12 @@
 			};
 
 			// Finds a specific transaction and focusses that row in the table
-			var focusTransaction = function(transactionToFocus) {
+			var focusTransaction = function(transactionIdToFocus) {
 				var targetIndex;
 
 				// Find the transaction by it's id
 				angular.forEach($scope.transactions, function(transaction, index) {
-					if (transaction.id === transactionToFocus.id) {
+					if (transaction.id === transactionIdToFocus) {
 						targetIndex = index;
 					}
 				});
@@ -197,6 +233,8 @@
 				$timeout(function() {
 					$scope.tableActions.focusRow(targetIndex);
 				}, 50);
+
+				return targetIndex;
 			};
 
 			// Helper function to sort by transaction date, then by transaction id
@@ -214,14 +252,16 @@
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			};
 
-			// Fetch unreconciled transactions only by default
-			$scope.unreconciledOnly = true;
+			// Get the unreconciled only setting for the current account
+			$scope.unreconciledOnly = accountModel.isUnreconciledOnly($scope.account.id);
 
 			// Toggles the unreconciled only flag
-			$scope.toggleUnreconciledOnly = function(unreconciledOnly) {
+			$scope.toggleUnreconciledOnly = function(unreconciledOnly, fromDate, transactionIdToFocus) {
+				// Store the setting for the current account
+				accountModel.unreconciledOnly($scope.account.id, unreconciledOnly);
 				$scope.unreconciledOnly = unreconciledOnly;
 				$scope.transactions = [];
-				$scope.getTransactions('prev');
+				$scope.getTransactions('prev', fromDate, transactionIdToFocus);
 			};
 
 			// Shows/hides subtransactions
@@ -341,8 +381,58 @@
 				$scope.reconciling = false;
 			};
 
-			// Get the initial batch of transactions to display
-			$scope.getTransactions('prev');
+			// Switch to the other side of a transaction
+			$scope.switchAccount = function(transaction) {
+				// Disable navigation on the table
+				$scope.navigationDisabled = true;
+
+				// If the transaction is reconciled, make sure the account we're switching to shows reconciled transactions
+				if ('cleared' === transaction.status) {
+					accountModel.unreconciledOnly(transaction.account.id, false);
+				}
+
+				$state.go('root.accounts.account.transactions.transaction', {
+					accountId: transaction.account.id, 
+					transactionId: transaction.parent_id || transaction.id
+				});
+			};
+
+			// Process the initial batch of transactions to display
+			processTransactions(transactionBatch);
+
+			// Listen for state change events, and when the transactionId or accountId parameters change, ensure the row is focussed
+			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+				if (toParams.transactionId && (toParams.transactionId !== fromParams.transactionId || toParams.accountId !== fromParams.accountId)) {
+					if (!focusTransaction(Number(toParams.transactionId))) {
+						// Transaction was not found in the current set
+						
+						// Get the transaction details from the server
+						transactionModel.find(toParams.transactionId).then(function(transaction) {
+							var	fromDate = moment(transaction.transaction_date),
+									direction;
+
+							if (!fromDate.isAfter($scope.firstTransactionDate)) {
+								// Transaction date is earlier than the earliest fetched transaction
+								fromDate = fromDate.subtract('days', 1).toISOString();
+								direction = 'next';
+							} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
+								// Transaction date is later than the latest fetched transaction
+								fromDate = fromDate.add('days', 1).toISOString();
+								direction = 'prev';
+							}
+
+							if ($scope.unreconciledOnly) {
+								// If we're not already showing reconciled transactions, toggle the setting
+								$scope.toggleUnreconciledOnly(false, fromDate, toParams.transactionId);
+							} else {
+								// Otherwise just get refresh the transactions from the new date
+								$scope.getTransactions(direction, fromDate, toParams.transactionId);
+							}
+						});
+					}
+				}
+			});
+
 		}
 	]);
 })();

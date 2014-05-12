@@ -57,7 +57,10 @@
 					<tr>
 						<td class="category">{{transaction.category.name}}</td>
 						<td ng-if="transaction.transaction_type == 'Basic'" class="category">{{transaction.subcategory.name}}</td>
-						<td ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1" class="category">{{transaction.account.name}}</td>
+						<td ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1" class="category">
+							{{transaction.account.name}}
+							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.account.name}}" ng-click="switchAccount(transaction)"></i>
+						</td>
 						<td ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">
 							<button ng-click="toggleSubtransactions($event, transaction)" class="btn btn-xs btn-default toggle-subtransactions">
 								<i class="glyphicon" ng-class="{'glyphicon-chevron-down': !transaction.showSubtransactions, 'glyphicon-chevron-up': transaction.showSubtransactions}"></i>

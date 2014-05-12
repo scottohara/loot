@@ -5,8 +5,8 @@
 	var mod = angular.module('accounts');
 
 	// Declare the Account model
-	mod.factory('accountModel', ['$http', '$cacheFactory',
-		function($http, $cacheFactory) {
+	mod.factory('accountModel', ['$http', '$cacheFactory', '$window',
+		function($http, $cacheFactory, $window) {
 			var	model = {},
 					cache = $cacheFactory('accounts');
 
@@ -39,6 +39,18 @@
 					method: 'PATCH',
 					url: '/accounts/' + id + '/reconcile'
 				});
+			};
+
+			var UNRECONCILED_ONLY_LOCAL_STORAGE_KEY = 'lootUnreconciledOnly-';
+
+			// Get the unreconciled only setting for an account from local storage
+			model.isUnreconciledOnly = function(id) {
+				return $window.localStorage.getItem(UNRECONCILED_ONLY_LOCAL_STORAGE_KEY + id) !== 'false';
+			};
+
+			// Set the unreconciled only setting for an account in local storage
+			model.unreconciledOnly = function(id, unreconciledOnly) {
+				$window.localStorage.setItem(UNRECONCILED_ONLY_LOCAL_STORAGE_KEY + id, unreconciledOnly);
 			};
 
 			// Flush the cache

@@ -175,6 +175,7 @@ class Account < ActiveRecord::Base
 									"parent_categories.name AS parent_category_name",
 									"transfer_accounts.id AS transfer_account_id",
 									"transfer_accounts.name AS transfer_account_name",
+									"transaction_splits.parent_id AS split_parent_id",
 									"split_accounts.id AS split_account_id",
 									"split_accounts.name AS split_account_name",
 									"transactions.amount",
@@ -259,6 +260,7 @@ class Account < ActiveRecord::Base
 					:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
 					:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
 				},
+				:parent_id => trx['split_parent_id'],
 				:amount => trx['amount'],
 				:quantity => trx['quantity'],
 				:commission => trx['commission'],

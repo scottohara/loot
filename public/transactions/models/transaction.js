@@ -9,6 +9,13 @@
 		function($http) {
 			var model = {};
 
+			// Retrieves a single transaction
+			model.find = function(accountId, transactionId) {
+				return $http.get('/accounts/' + accountId + '/transactions/' + transactionId).then(function(response) {
+					return response.data;
+				});
+			};
+
 			// Retrieves a batch of transactions for an account
 			model.findByAccount = function(id, fromDate, direction, unreconciledOnly) {
 				return $http.get('/accounts/' + id + '/transactions', {

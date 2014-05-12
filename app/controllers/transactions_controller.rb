@@ -11,6 +11,11 @@ class TransactionsController < ApplicationController
 		}
 	end
 
+	def show
+		transaction = Transaction.find params[:id]
+		render :json => transaction.becomes(Transaction.class_for(transaction.transaction_type))
+	end
+
 	def create
 		render :json => Transaction.class_for(params['transaction_type']).create_from_json(@transaction)
 	end
