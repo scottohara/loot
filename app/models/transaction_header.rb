@@ -1,5 +1,4 @@
 class TransactionHeader < ActiveRecord::Base
-	validates :status, :inclusion => {:in => %w(pending cleared)}, :allow_blank => true
 	belongs_to :transaction
 	belongs_to :schedule, :dependent => :destroy, :autosave => true
 	self.primary_key = "transaction_id"

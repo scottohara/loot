@@ -403,7 +403,7 @@
 			// Listen for state change events, and when the transactionId or accountId parameters change, ensure the row is focussed
 			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.transactionId && (toParams.transactionId !== fromParams.transactionId || toParams.accountId !== fromParams.accountId)) {
-					if (!focusTransaction(Number(toParams.transactionId))) {
+					if (isNaN(focusTransaction(Number(toParams.transactionId)))) {
 						// Transaction was not found in the current set
 						
 						// Get the transaction details from the server

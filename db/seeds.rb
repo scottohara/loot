@@ -442,7 +442,7 @@ def create_basic_transaction(trx)
 	category_direction = (!!category && category.direction) || nil
 
 	s = BasicTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => category_direction).account = Account.find(trx[:account])
+	s.build_transaction_account(:direction => category_direction, :status => trx[:status]).account = Account.find(trx[:account])
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
 	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
@@ -462,7 +462,7 @@ end
 def create_split_transaction(trx, direction)
 	# Split Transaction
 	s = SplitTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => direction).account = Account.find(trx[:account])
+	s.build_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
 	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
@@ -473,12 +473,13 @@ def create_split_transaction(trx, direction)
 		case subtrx[:type]
 			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
 			else
-				subaccount, subdirection = subtrx[:account], direction
+				subaccount, subdirection, substatus = subtrx[:account], direction, subtrx[:status]
 				
 				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side (and reverse the direction)
-				subaccount, subdirection = @tmp_transactions[@tmp_transfers[subtrx[:id]]][:account], ['inflow','outflow'].reject {|dir| dir.eql? direction }.first if subaccount.eql? trx[:account]
+				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]]]
+				subaccount, subdirection, substatus = other_side[:account], ['inflow','outflow'].reject {|dir| dir.eql? direction }.first, other_side[:status] if subaccount.eql? trx[:account]
 
-				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => subdirection).account = Account.find(subaccount)
+				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => subdirection, :status => substatus).account = Account.find(subaccount)
 		end 
 	end
 
@@ -498,12 +499,9 @@ def create_transfer_transaction(trx, direction)
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
-	# Use status from other side unless this side is cleared or the other side is nil
-	trx[:status] = other_side[:status] unless trx[:status].eql?('cleared') || other_side[:status].nil?
-
 	s = TransferTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_source_transaction_account(:direction => direction).account = Account.find(trx[:account])
-	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
+	s.build_source_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
+	s.build_destination_transaction_account(:direction => other_direction, :status => other_side[:status]).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
 	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
@@ -514,7 +512,7 @@ end
 def create_payslip_transaction(trx)
 	# Payslip Transaction
 	s = PayslipTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => 'inflow').account = Account.find(trx[:account])
+	s.build_transaction_account(:direction => 'inflow', :status => trx[:status]).account = Account.find(trx[:account])
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
 	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
@@ -525,12 +523,13 @@ def create_payslip_transaction(trx)
 		case subtrx[:type]
 			when 'subtransaction', 'payslip_before_tax', 'payslip_tax' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
 			else
-				subaccount = subtrx[:account]
+				subaccount, substatus = subtrx[:account], subtrx[:status]
 				
 				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side
-				subaccount = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first][:account] if subaccount.eql? trx[:account]
+				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first]
+				subaccount, substatus = other_side[:account], other_side[:status] if subaccount.eql? trx[:account]
 
-				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = (!!subaccount && Account.find(subaccount)) || nil
+				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
 
@@ -541,7 +540,7 @@ end
 def create_loanrepayment_transaction(trx)
 	# Loan Repayment Transaction
 	s = LoanRepaymentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => 'outflow').account = Account.find(trx[:account])
+	s.build_transaction_account(:direction => 'outflow', :status => trx[:status]).account = Account.find(trx[:account])
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
 	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
@@ -552,12 +551,13 @@ def create_loanrepayment_transaction(trx)
 		case subtrx[:type]
 			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
 			else
-				subaccount = subtrx[:account]
+				subaccount, substatus = subtrx[:account], subtrx[:status]
 				
 				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side
-				subaccount = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first][:account] if subaccount.eql? trx[:account]
+				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first]
+				subaccount, substatus = other_side[:account], other_side[:status] if subaccount.eql? trx[:account]
 
-				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow').account = (!!subaccount && Account.find(subaccount)) || nil
+				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
 
@@ -579,8 +579,8 @@ def create_securitytransfer_transaction(trx, direction)
 	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
 	s = SecurityTransferTransaction.new(:memo => trx[:memo])
-	s.build_source_transaction_account(:direction => direction).account = Account.find(trx[:account])
-	s.build_destination_transaction_account(:direction => other_direction).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
+	s.build_source_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
+	s.build_destination_transaction_account(:direction => other_direction, :status => other_side[:status]).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
 	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
 	header_transaction_date_or_schedule h, trx
 	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
@@ -599,7 +599,7 @@ end
 def create_securityholding_transaction(trx, direction)
 	# Security Holding Transaction
 	s = SecurityHoldingTransaction.new(:memo => trx[:memo])
-	s.build_transaction_account(:direction => direction).account = Account.find(trx[:account])
+	s.build_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
 	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
 	header_transaction_date_or_schedule h, trx
 	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
@@ -621,22 +621,19 @@ def create_securityinvestment_transaction(trx, direction)
 	# Security Investment Transaction
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 
-	# Use status from other side unless this side is cleared or the other side is nil
-	trx[:status] = other_side[:status] unless trx[:status].eql?('cleared') || other_side[:status].nil?
-
 	if direction.eql? 'inflow'
-		investment_account, cash_account, security, investment = trx[:account], other_side[:account], trx[:security],@tmp_investments[trx[:id]]
+		investment_account, cash_account, security, investment, investment_status, cash_status = trx[:account], other_side[:account], trx[:security], @tmp_investments[trx[:id]], trx[:status], other_side[:status]
 		investment_direction = trx[:orig_amount].to_f > 0 ? 'inflow' : 'outflow'
 	else
-		investment_account, cash_account, security, investment = other_side[:account], trx[:account], other_side[:security],@tmp_investments[other_side[:id]]
+		investment_account, cash_account, security, investment, investment_status, cash_status = other_side[:account], trx[:account], other_side[:security], @tmp_investments[other_side[:id]], other_side[:status], trx[:status]
 		investment_direction = trx[:orig_amount].to_f > 0 ? 'outflow' : 'inflow'
 	end
 
 	cash_direction = investment_direction.eql?('inflow') ? 'outflow' : 'inflow'
 
 	s = SecurityInvestmentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.transaction_accounts.build(:direction => investment_direction).account = Account.find(investment_account)
-	s.transaction_accounts.build(:direction => cash_direction).account = (!!cash_account && Account.find(cash_account)) || nil
+	s.transaction_accounts.build(:direction => investment_direction, :status => investment_status).account = Account.find(investment_account)
+	s.transaction_accounts.build(:direction => cash_direction, :status => cash_status).account = (!!cash_account && Account.find(cash_account)) || nil
 	h = s.build_header(:quantity => investment[:qty], :price => investment[:price], :commission => investment[:commission])
 	header_transaction_date_or_schedule h, trx
 	h.security = (!!security && Security.find(security[:id])) || nil
@@ -654,19 +651,15 @@ end
 
 def create_dividend_transaction(trx, direction)
 	# Dividend Transaction
-	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
-	investment_account, cash_account = direction.eql?('inflow') ? [other_side[:account], trx[:account]] : [trx[:account], other_side[:account]]
-	security = direction.eql?('inflow') ? other_side[:security] : trx[:security]
-
-	# Use status from other side unless this side is cleared or the other side is nil
-	trx[:status] = other_side[:status] unless trx[:status].eql?('cleared') || other_side[:status].nil?
+	investment_trx, cash_trx = trx, @tmp_transactions[@tmp_transfers[trx[:id]]]
+	investment_trx, cash_trx = cash_trx, investment_trx if direction.eql? 'inflow'
 
 	s = DividendTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.transaction_accounts.build(:direction => 'outflow').account = (!!investment_account && Account.find(investment_account)) || nil
-	s.transaction_accounts.build(:direction => 'inflow').account = Account.find(cash_account)
+	s.transaction_accounts.build(:direction => 'outflow', :status => investment_trx[:status]).account = (!!investment_trx[:account] && Account.find(investment_trx[:account])) || nil
+	s.transaction_accounts.build(:direction => 'inflow', :status => cash_trx[:status]).account = Account.find(cash_trx[:account])
 	h = s.build_header
 	header_transaction_date_or_schedule h, trx
-	h.security = (!!security && Security.find(security[:id])) || nil
+	h.security = (!!investment_trx[:security] && Security.find(investment_trx[:security][:id])) || nil
 	create_transaction_flag s, trx
 	s.save
 end
@@ -696,7 +689,6 @@ def header_transaction_date_or_schedule(header, trx)
 		header.build_schedule(:next_due_date => trx[:next_due_date], :frequency => trx[:frequency], :estimate => trx[:estimate], :auto_enter => trx[:auto_enter])
 	else
 		header.transaction_date = trx[:transaction_date]
-		header.status = trx[:status]
 	end
 end
 

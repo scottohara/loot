@@ -5,7 +5,6 @@ class CreateTransactionHeaders < ActiveRecord::Migration
 			t.references :security, :index => true
 			t.references :schedule, :null => true
 			t.date :transaction_date
-			t.string :status
 			t.decimal :quantity
 			t.decimal :price
 			t.decimal :commission

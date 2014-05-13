@@ -164,7 +164,6 @@ class Account < ActiveRecord::Base
 			.select(		"transactions.id",
 						 			"transactions.transaction_type",
 						 			"transaction_headers.transaction_date",
-									"transaction_headers.status",
 									"transaction_headers.payee_id",
 									"payees.name AS payee_name",
 									"transaction_headers.security_id",
@@ -183,6 +182,7 @@ class Account < ActiveRecord::Base
 									"transaction_headers.price",
 									"transaction_headers.commission",
 									"transaction_accounts.direction",
+									"transaction_accounts.status",
 									"transactions.memo",
 						 			"transaction_flags.memo AS flag") 
 			.joins(			"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id")
@@ -205,7 +205,7 @@ class Account < ActiveRecord::Base
 			.limit(			NUM_RESULTS)
 
 		# Limit to unreconciled transactions if required
-		transactions = transactions.where("COALESCE(transaction_headers.status, '') != 'cleared'") if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
+		transactions = transactions.where("COALESCE(transaction_accounts.status, '') != 'cleared'") if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
 
 		# Set to an empty array if we got no results
 		transactions = [] if transactions.nil?
@@ -245,7 +245,6 @@ class Account < ActiveRecord::Base
 				:id => trx['id'],
 				:transaction_type => trx['transaction_type'],
 				:transaction_date => trx['transaction_date'],
-				:status => trx['status'],
 				:payee => {
 					:id => trx['payee_id'],
 					:name => trx['payee_name']
@@ -266,6 +265,7 @@ class Account < ActiveRecord::Base
 				:commission => trx['commission'],
 				:price => trx['price'],
 				:direction => trx['direction'],
+				:status => trx['status'],
 				:memo => trx['memo'],
 				:flag => trx['flag']
 			}
@@ -360,14 +360,10 @@ class Account < ActiveRecord::Base
 	end
 
 	def reconcile
-		# Get the set of pending transactions for the account
-		pending_transactions = self.transactions
-			.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
-			.where(		"transaction_headers.status = 'pending'")
-			.pluck(	"transactions.id")
-
-		# Mark them all as cleared
-		TransactionHeader.where(:transaction_id => pending_transactions).update_all(:status => 'cleared')
+		# Mark all pending transactions for the account as cleared
+		self.transaction_accounts
+			.where(:status => 'pending')
+			.update_all(:status => 'cleared')
 	end
 
 	def as_json(options={})

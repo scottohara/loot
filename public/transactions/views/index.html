@@ -50,7 +50,7 @@
 							<span ng-if="transaction.security.id">{{transaction.security.name}}</span>
 							<small ng-switch="reconciling" class="pull-right">
 								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="pending" ng-false-value="" ng-change="togglePending(transaction)">
-								<i ng-switch-default class="glyphicon text-success" ng-class="{'glyphicon-lock': transaction.status == 'cleared', 'glyphicon-tag': transaction.status == 'pending'}"></i>
+								<i ng-switch-default class="glyphicon" ng-class="{'glyphicon-lock': transaction.status == 'cleared', 'text-success': transaction.status == 'cleared', 'glyphicon-tag': transaction.status == 'pending', 'text-warning': transaction.status == 'pending'}"></i>
 							</small>
 						</td>
 					</tr>

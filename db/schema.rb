@@ -67,9 +67,10 @@ ActiveRecord::Schema.define(version: 20140507031552) do
   add_index "security_prices", ["security_id"], name: "index_security_prices_on_security_id", using: :btree
 
   create_table "transaction_accounts", force: true do |t|
-    t.string   "direction",      null: false
-    t.integer  "account_id",     null: false
     t.integer  "transaction_id", null: false
+    t.integer  "account_id",     null: false
+    t.string   "direction",      null: false
+    t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -96,7 +97,6 @@ ActiveRecord::Schema.define(version: 20140507031552) do
     t.integer  "security_id"
     t.integer  "schedule_id"
     t.date     "transaction_date"
-    t.string   "status"
     t.decimal  "quantity"
     t.decimal  "price"
     t.decimal  "commission"

@@ -20,7 +20,7 @@ class TransactionSplit < ActiveRecord::Base
 
 			# Instead, we need to manually do it...
 			self.transaction = SubtransferTransaction.new(self.transaction.attributes)
-			self.transaction.build_header(:transaction_date => self.parent.header.transaction_date, :status => self.parent.header.status).payee = self.parent.header.payee
+			self.transaction.build_header(:transaction_date => self.parent.header.transaction_date).payee = self.parent.header.payee
 		else
 			raise "Transaction type #{self.transasction.transaction_type} is not valid in a split transaction"
 		end
