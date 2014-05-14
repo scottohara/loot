@@ -37,27 +37,27 @@
 		<tr og-table-loading="loading['prev']" colspan="5"></tr>
 	</thead>
 	<tbody ng-class="{'reconciling': reconciling}">
-		<tr class="transaction" ng-repeat="transaction in transactions" ng-switch="account.account_type" ng-class="{'pending': transaction.status == 'pending'}">
-			<td>
+		<tr class="transaction" ng-repeat="transaction in transactions" ng-switch="account.account_type" ng-class="{'cleared': transaction.status == 'Cleared'}">
+			<td class="has-action">
 				{{transaction.transaction_date | date:'dd/MM/yyyy'}}
-				<i class="action glyphicon glyphicon-flag text-danger pull-right" ng-class="{'active': transaction.flag}" tooltip="{{transaction.flag}}" ng-click="flag($index)"></i>
+				<i class="action glyphicon glyphicon-flag text-danger pull-right flag" ng-class="{'active': transaction.flag}" tooltip="{{transaction.flag || 'Flag transaction...'}}" ng-click="flag($index)"></i>
 			</td>
 			<td class="details">
 				<table class="table-condensed">
 					<tr>
-						<td colspan="2">
+						<td colspan="2" class="has-action">
 							<span ng-if="transaction.payee.id">{{transaction.payee.name}}</span>
 							<span ng-if="transaction.security.id">{{transaction.security.name}}</span>
 							<small ng-switch="reconciling" class="pull-right">
-								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="pending" ng-false-value="" ng-change="togglePending(transaction)">
-								<i ng-switch-default class="glyphicon" ng-class="{'glyphicon-lock': transaction.status == 'cleared', 'text-success': transaction.status == 'cleared', 'glyphicon-tag': transaction.status == 'pending', 'text-warning': transaction.status == 'pending'}"></i>
+								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="Cleared" ng-false-value="" ng-change="toggleCleared(transaction)">
+								<span ng-switch-default transaction-status="{'account': account, 'transaction': transaction}"></span>
 							</small>
 						</td>
 					</tr>
 					<tr>
 						<td class="category">{{transaction.category.name}}</td>
 						<td ng-if="transaction.transaction_type == 'Basic'" class="category">{{transaction.subcategory.name}}</td>
-						<td ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1" class="category">
+						<td ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1" class="category has-action">
 							{{transaction.account.name}}
 							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.account.name}}" ng-click="switchAccount(transaction)"></i>
 						</td>

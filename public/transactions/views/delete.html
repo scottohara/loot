@@ -3,9 +3,9 @@
 		<h4>Delete Transaction?</h4>
 	</div>
 	<div class="modal-body">
-		<div ng-if="transaction.status == 'cleared' || transaction.related_status == 'cleared'" class="alert alert-danger">
+		<div ng-if="transaction.status == 'Reconciled' || transaction.related_status == 'Reconciled'" class="alert alert-danger">
 			<strong>Warning!</strong>
-			This transaction has been <span ng-if="transaction.status != 'cleared'">partially </span>reconciled
+			This transaction has been <span ng-if="transaction.status != 'Reconciled'">partially </span>reconciled
 		</div>
 		<dl class="dl-horizontal">
 			<dt>Date</dt>

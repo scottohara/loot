@@ -207,7 +207,7 @@ class Account < ActiveRecord::Base
 			.limit(			NUM_RESULTS)
 
 		# Limit to unreconciled transactions if required
-		transactions = transactions.where("COALESCE(transaction_accounts.status, '') != 'cleared'") if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
+		transactions = transactions.where("COALESCE(transaction_accounts.status, '') != 'Reconciled'") if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
 
 		# Set to an empty array if we got no results
 		transactions = [] if transactions.nil?
@@ -363,10 +363,10 @@ class Account < ActiveRecord::Base
 	end
 
 	def reconcile
-		# Mark all pending transactions for the account as cleared
+		# Mark all cleared transactions for the account as reconciled
 		self.transaction_accounts
-			.where(:status => 'pending')
-			.update_all(:status => 'cleared')
+			.where(:status => 'Cleared')
+			.update_all(:status => 'Reconciled')
 	end
 
 	def as_json(options={})

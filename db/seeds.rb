@@ -279,8 +279,8 @@ def load_transactions
 			:category => ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]),
 			:grftt => row['grftt'],
 			:status => case row['cs']
-				when '1' then 'pending'
-				when '2' then 'cleared'
+				when '1' then 'Cleared'
+				when '2' then 'Reconciled'
 			end
 		}
 

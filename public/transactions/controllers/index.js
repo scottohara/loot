@@ -382,9 +382,9 @@
 				// Target is the closing balance, minus the opening balance
 				$scope.reconcileTarget = Number(($scope.closingBalance - $scope.openingBalance).toFixed(2));
 
-				// Cleared total is the sum of all transaction amounts that are pending
+				// Cleared total is the sum of all transaction amounts that are cleared
 				$scope.clearedTotal = $scope.transactions.reduce(function(clearedAmount, transaction) {
-					if ('pending' === transaction.status) {
+					if ('Cleared' === transaction.status) {
 						clearedAmount += (transaction.amount * ('inflow' === transaction.direction ? 1 : -1));
 					}
 
@@ -395,15 +395,15 @@
 				$scope.unclearedTotal = Number(($scope.reconcileTarget - $scope.clearedTotal).toFixed(2));
 			};
 
-			// Toggles a transaction as pending
-			$scope.togglePending = function(transaction) {
+			// Toggles a transaction as cleared
+			$scope.toggleCleared = function(transaction) {
 				transactionModel.updateStatus($scope.account.id, transaction.id, transaction.status).then(function() {
 					// Update reconciled totals
 					updateReconciledTotals();
 				});
 			};
 
-			// Updates all pending transactions to cleared
+			// Updates all cleared transactions to reconciled
 			$scope.save = function() {
 				accountModel.reconcile($scope.account.id).then(function() {
 					// Remove the closing balance from local storage
@@ -424,7 +424,7 @@
 				$scope.navigationDisabled = true;
 
 				// If the transaction is reconciled, make sure the account we're switching to shows reconciled transactions
-				if ('cleared' === transaction.status) {
+				if ('Reconciled' === transaction.status) {
 					accountModel.unreconciledOnly(transaction.account.id, false);
 				}
 
