@@ -206,9 +206,6 @@ class Account < ActiveRecord::Base
 									"transactions.id #{LEDGER_QUERY_OPTS[direction][:order]}")
 			.limit(			NUM_RESULTS)
 
-		# Limit to unreconciled transactions if required
-		transactions = transactions.where("COALESCE(transaction_accounts.status, '') != 'Reconciled'") if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
-
 		# Set to an empty array if we got no results
 		transactions = [] if transactions.nil?
 
@@ -230,7 +227,7 @@ class Account < ActiveRecord::Base
 
 			transactions = transactions_
 		end
-		
+
 		# The opening balance for this batch of transactions is either:
 		# a) the account's opening balance (if we've gone backwards and reached the first transaction for the account)
 		# b) the account's closing balance as at the closing_date (if we've gone backwards)
@@ -241,6 +238,19 @@ class Account < ActiveRecord::Base
 			opening_balance = self.closing_balance as_at
 		end
 
+		# If we're only interested in unreconciled transactions, sum & drop all reconciled ones
+		if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
+			opening_balance = transactions.select {|trx| trx['status'].eql? 'Reconciled'}.reduce(opening_balance) do |total,trx|
+				total + (trx['amount'] * (trx['direction'].eql?('inflow') ? 1 : -1))
+			end
+
+			transactions_ = transactions.delete_if do |trx|
+				trx['status'].eql? 'Reconciled'
+			end
+
+			transactions = transactions_
+		end
+			
 		# Remap to the desired output format
 		transactions.map! do |trx|
 			{
