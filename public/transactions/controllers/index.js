@@ -11,8 +11,8 @@
 			$scope.account = account;
 
 			var editTransaction = function(index) {
-				// Abort if the transaction is readonly
-				if (!isNaN(index) && isReadOnly(index)) {
+				// Abort if the transaction can't be edited
+				if (!isNaN(index) && !isAllowed('edit', index)) {
 					return;
 				}
 
@@ -84,8 +84,8 @@
 			};
 
 			var deleteTransaction = function(index) {
-				// Abort if the transaction is readonly
-				if (isReadOnly(index)) {
+				// Abort if the transaction can't be deleted
+				if (!isAllowed('delete', index)) {
 					return;
 				}
 
@@ -113,19 +113,54 @@
 				});
 			};
 
-			// Returns true if the transaction should not be editable/deletable
-			var isReadOnly = function(index) {
+			// Returns true if the action is allowed for the transaction
+			var isAllowed = function(action, index) {
+				var	allowed = true,
+						confirm = {
+							header: "Switch account?"
+						};
+
+				// Check if the action is allowed
 				switch ($scope.transactions[index].transaction_type) {
 					case "Subtransfer":
-						return true;
+						allowed = false;
+						confirm.message = "This transaction is part of a split transaction. You can only " + action + " it from the parent account. Would you like to switch to the parent account now?";
+						break;
 
 					case "Dividend":
 					case "SecurityInvestment":
-						return "investment" !== $scope.account.account_type;
-
-					default:
-						return false;
+						if ("investment" !== $scope.account.account_type && "edit" === action) {
+							allowed = false;
+							confirm.message = "This is an investment transaction. You can only " + action + " if from the investment account. Would you like to switch to the investment account now?";
+						}
+						break;
 				}
+
+				// If the action is not allowed, show the confirmation prompt
+				if (!allowed) {
+					// Disable navigation on the table
+					$scope.navigationDisabled = true;
+
+					// Show the modal
+					$modal.open({
+						templateUrl: 'og-components/og-modal-confirm/views/confirm.html',
+						controller: 'ogModalConfirmController',
+						backdrop: 'static',
+						resolve: {
+							confirm: function() {
+								return confirm;
+							}
+						}
+					}).result.then(function() {
+						// Switch to the other account
+						$scope.switchAccount($scope.transactions[index]);
+					}).finally(function() {
+						// Enable navigation on the table
+						$scope.navigationDisabled = false;
+					});
+				}
+
+				return allowed;
 			};
 
 			// Action handlers for navigable table
@@ -224,15 +259,17 @@
 
 				// Find the transaction by it's id
 				angular.forEach($scope.transactions, function(transaction, index) {
-					if (transaction.id === transactionIdToFocus) {
+					if (isNaN(targetIndex) && transaction.id === transactionIdToFocus) {
 						targetIndex = index;
 					}
 				});
 
-				// Focus the row
-				$timeout(function() {
-					$scope.tableActions.focusRow(targetIndex);
-				}, 50);
+				// If found, focus the row
+				if (!isNaN(targetIndex)) {
+					$timeout(function() {
+						$scope.tableActions.focusRow(targetIndex);
+					}, 50);
+				}
 
 				return targetIndex;
 			};
@@ -256,12 +293,12 @@
 			$scope.unreconciledOnly = accountModel.isUnreconciledOnly($scope.account.id);
 
 			// Toggles the unreconciled only flag
-			$scope.toggleUnreconciledOnly = function(unreconciledOnly, fromDate, transactionIdToFocus) {
+			$scope.toggleUnreconciledOnly = function(unreconciledOnly, direction, fromDate, transactionIdToFocus) {
 				// Store the setting for the current account
 				accountModel.unreconciledOnly($scope.account.id, unreconciledOnly);
 				$scope.unreconciledOnly = unreconciledOnly;
 				$scope.transactions = [];
-				$scope.getTransactions('prev', fromDate, transactionIdToFocus);
+				$scope.getTransactions(direction || 'prev', fromDate, transactionIdToFocus);
 			};
 
 			// Shows/hides subtransactions
@@ -407,7 +444,7 @@
 						// Transaction was not found in the current set
 						
 						// Get the transaction details from the server
-						transactionModel.find(toParams.transactionId).then(function(transaction) {
+						transactionModel.find($scope.account.id, toParams.transactionId).then(function(transaction) {
 							var	fromDate = moment(transaction.transaction_date),
 									direction;
 
@@ -423,16 +460,15 @@
 
 							if ($scope.unreconciledOnly) {
 								// If we're not already showing reconciled transactions, toggle the setting
-								$scope.toggleUnreconciledOnly(false, fromDate, toParams.transactionId);
+								$scope.toggleUnreconciledOnly(false, direction, fromDate, Number(toParams.transactionId));
 							} else {
 								// Otherwise just get refresh the transactions from the new date
-								$scope.getTransactions(direction, fromDate, toParams.transactionId);
+								$scope.getTransactions(direction, fromDate, Number(toParams.transactionId));
 							}
 						});
 					}
 				}
 			});
-
 		}
 	]);
 })();

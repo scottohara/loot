@@ -19,7 +19,7 @@
 				// Store the closing balance in local storage
 				$window.localStorage.setItem(LOCAL_STORAGE_KEY, $scope.account.closingBalance);
 
-				// Clos the modal and return the balance
+				// Close the modal and return the balance
 				$modalInstance.close($scope.account.closingBalance);
 			};
 

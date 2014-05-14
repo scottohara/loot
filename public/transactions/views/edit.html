@@ -3,6 +3,10 @@
 		<h4>{{mode}} Transaction</h4>
 	</div>
 	<div class="modal-body">
+		<div ng-if="transaction.status == 'cleared' || transaction.related_status == 'cleared'" class="alert alert-danger">
+			<strong>Warning!</strong>
+			This transaction has been <span ng-if="transaction.status != 'cleared'">partially </span>reconciled
+		</div>
 		<!-- Transaction Date -->
 		<div class="form-group has-feedback" ng-class="{'has-error': transactionForm.transactionDate.$invalid}">
 			<label for="transactionDate">Date</label>

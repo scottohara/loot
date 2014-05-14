@@ -1,0 +1,12 @@
+<form role="form" name="transactionForm">
+	<div class="modal-header">
+		<h4>{{confirm.header}}</h4>
+	</div>
+	<div class="modal-body">
+		<p>{{confirm.message}}</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-{{confirm.noButtonStyle}}" type="button" ng-click="no()">No</button>
+		<button class="btn btn-{{confirm.yesButtonStyle}}" type="submit" ng-click="yes()">Yes</button>
+	</div>
+</form>

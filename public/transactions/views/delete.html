@@ -3,6 +3,10 @@
 		<h4>Delete Transaction?</h4>
 	</div>
 	<div class="modal-body">
+		<div ng-if="transaction.status == 'cleared' || transaction.related_status == 'cleared'" class="alert alert-danger">
+			<strong>Warning!</strong>
+			This transaction has been <span ng-if="transaction.status != 'cleared'">partially </span>reconciled
+		</div>
 		<dl class="dl-horizontal">
 			<dt>Date</dt>
 			<dd>{{transaction.transaction_date | date:'dd/MM/yyyy'}}</dd>

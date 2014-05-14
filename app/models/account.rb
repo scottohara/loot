@@ -174,9 +174,11 @@ class Account < ActiveRecord::Base
 									"parent_categories.name AS parent_category_name",
 									"transfer_accounts.id AS transfer_account_id",
 									"transfer_accounts.name AS transfer_account_name",
+									"transfer_transaction_accounts.status AS transfer_status",
 									"transaction_splits.parent_id AS split_parent_id",
 									"split_accounts.id AS split_account_id",
 									"split_accounts.name AS split_account_name",
+									"split_transaction_accounts.status AS split_parent_status",
 									"transactions.amount",
 									"transaction_headers.quantity",
 									"transaction_headers.price",
@@ -266,6 +268,7 @@ class Account < ActiveRecord::Base
 				:price => trx['price'],
 				:direction => trx['direction'],
 				:status => trx['status'],
+				:related_status => (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status'] || trx['transfer_status']),
 				:memo => trx['memo'],
 				:flag => trx['flag']
 			}
