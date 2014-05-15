@@ -1,6 +1,12 @@
-<ul>
-	<li ng-repeat="category in categories">{{category.name}}</li>
-	<ul>
-		<li ng-repeat="subcategory in category.children">{{subcategory.name}}</li>
-	</ul>
-<ul>
+<table id="categories" class="table table-striped table-bordered table-hover" og-table-navigable="tableActions">
+	<thead>
+		<tr>
+			<th>Category</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="category in categories">
+			<td>{{category.name}}</td>
+		</tr>
+	<tbody>
+</table>

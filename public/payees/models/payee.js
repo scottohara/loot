@@ -19,6 +19,20 @@
 				});
 			};
 
+			// Saves a payee
+			model.save = function(payee) {
+				return $http({
+					method: payee.id ? 'PATCH' : 'POST',
+					url: '/payees' + (payee.id ? '/' + payee.id : ''),
+					data: payee
+				});
+			};
+
+			// Deletes a payee
+			model.destroy = function(payee) {
+				return $http.delete('/payees/' + payee.id);
+			};
+
 			// Flush the cache
 			model.flush = function() {
 				cache.removeAll();

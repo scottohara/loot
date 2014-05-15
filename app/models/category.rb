@@ -11,8 +11,4 @@ class Category < ActiveRecord::Base
 			category['id'].present? ? self.find(category['id']) : self.new(:name => category, :direction => (!!parent && parent.direction || 'outflow'), :parent => parent)
 		end
 	end
-
-	def as_json(options={})
-		super :only => [:id, :name, :direction, :parent_id]
-	end
 end

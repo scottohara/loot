@@ -46,17 +46,29 @@
 				<table class="table-condensed">
 					<tr>
 						<td colspan="2" class="has-action">
-							<span ng-if="transaction.payee.id">{{transaction.payee.name}}</span>
-							<span ng-if="transaction.security.id">{{transaction.security.name}}</span>
-							<small ng-switch="reconciling" class="pull-right">
+							<small ng-switch="reconciling" class="transaction-status pull-right">
 								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="Cleared" ng-false-value="" ng-change="toggleCleared(transaction)">
 								<span ng-switch-default transaction-status="{'account': account, 'transaction': transaction}"></span>
 							</small>
+							<span ng-if="transaction.payee.id">
+								{{transaction.payee.name}}
+								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.payee.name}}" ng-click="switchPayee(transaction)"></i>
+							</span>
+							<span ng-if="transaction.security.id">
+								{{transaction.security.name}}
+								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.security.name}}" ng-click="switchSecurity(transaction)"></i>
+							</span>
 						</td>
 					</tr>
 					<tr>
-						<td class="category">{{transaction.category.name}}</td>
-						<td ng-if="transaction.transaction_type == 'Basic'" class="category">{{transaction.subcategory.name}}</td>
+						<td class="category has-action">
+							{{transaction.category.name}}
+							<i ng-if="transaction.transaction_type == 'Basic'" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.category.name}}" ng-click="switchCategory(transaction)"></i>
+						</td>
+						<td ng-if="transaction.transaction_type == 'Basic'" class="category has-action">
+							{{transaction.subcategory.name}}
+							<i ng-if="transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.subcategory.name}}" ng-click="switchSubcategory(transaction)"></i>
+						</td>
 						<td ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1" class="category has-action">
 							{{transaction.account.name}}
 							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.account.name}}" ng-click="switchAccount(transaction)"></i>

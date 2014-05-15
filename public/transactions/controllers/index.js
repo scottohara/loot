@@ -107,6 +107,7 @@
 					}
 				}).result.then(function() {
 					$scope.transactions.splice(index, 1);
+					$state.go('root.accounts.account.transactions');
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
@@ -430,6 +431,39 @@
 
 				$state.go('root.accounts.account.transactions.transaction', {
 					accountId: transaction.account.id, 
+					transactionId: transaction.parent_id || transaction.id
+				});
+			};
+
+			// Switch to the transaction's payee
+			$scope.switchPayee = function(transaction) {
+				$state.go('root.payees.payee', {
+					payeeId: transaction.payee.id, 
+					transactionId: transaction.parent_id || transaction.id
+				});
+			};
+	
+			// Switch to the transaction's security
+			$scope.switchSecurity = function(transaction) {
+				$state.go('root.securities.security', {
+					securityId: transaction.security.id, 
+					transactionId: transaction.parent_id || transaction.id
+				});
+			};
+
+			// Switch to the transaction's category
+			$scope.switchCategory = function(transaction) {
+				$state.go('root.categories.category', {
+					categoryId: transaction.category.id, 
+					transactionId: transaction.parent_id || transaction.id
+				});
+			};
+
+			// Switch to the transaction's subcategory
+			$scope.switchSubcategory = function(transaction) {
+				$state.go('root.categories.category.subcategories.subcategory', {
+					categoryId: transaction.category.id, 
+					subcategoryId: transaction.subcategory.id,
 					transactionId: transaction.parent_id || transaction.id
 				});
 			};

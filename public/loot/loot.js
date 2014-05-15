@@ -72,7 +72,17 @@
 					controller: 'payeeIndexController',
 					data: {
 						title: 'Payees'
+					},
+					resolve: {
+						payees: ['payeeModel',
+							function(payeeModel) {
+								return payeeModel.all();
+							}
+						]
 					}
+				})
+				.state('root.payees.payee', {
+					url: '/:payeeId'
 				})
 				.state('root.categories', {
 					url: '/categories',
@@ -80,7 +90,23 @@
 					controller: 'categoryIndexController',
 					data: {
 						title: 'Categories'
+					},
+					resolve: {
+						categories: ['categoryModel',
+							function(categoryModel) {
+								return categoryModel.allWithChildren();
+							}
+						]
 					}
+				})
+				.state('root.categories.category', {
+					url: '/:categoryId'
+				})
+				.state('root.categories.category.subcategories', {
+					url: '/subcategories'
+				})
+				.state('root.categories.category.subcategories.subcategory', {
+					url: '/:subcategoryId'
 				})
 				.state('root.securities', {
 					url: '/securities',
@@ -89,6 +115,9 @@
 					data: {
 						title: 'Securities'
 					}
+				})
+				.state('root.securities.security', {
+					url: '/:securityId'
 				})
 				.state('root.accounts.account', {
 					abstract: true,

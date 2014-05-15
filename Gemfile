@@ -7,6 +7,7 @@ gem 'rails', '4.0.2'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
+# Postgres
 gem 'pg'
 
 # Gems used only for assets and not required
@@ -35,6 +36,9 @@ gem 'unicorn'
 
 # 12 factor gem for Heroku
 gem 'rails_12factor', :group => :production
+
+# For JSON serialisation
+gem 'active_model_serializers'
 
 group :test do
 	gem 'simplecov', '~> 0.7.1'

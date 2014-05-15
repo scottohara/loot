@@ -11,15 +11,34 @@
 					cache = $cacheFactory('categories');
 
 			// Retrieves the list of categories
-			model.all = function(parent) {
-				return $http.get('/categories', {
+			model.all = function(parent, includeChildren) {
+				return $http.get('/categories' + (includeChildren ? "?include_children" : ""), {
 					params: {
 						parent: parent
 					},
-					cache: cache
+					cache: includeChildren ? false : cache
 				}).then(function(response) {
 					return response.data;
 				});
+			};
+
+			// Retrieves the list of categories, including children
+			model.allWithChildren = function(parent) {
+				return model.all(parent, true);
+			};
+
+			// Saves a category
+			model.save = function(category) {
+				return $http({
+					method: category.id ? 'PATCH' : 'POST',
+					url: '/categories' + (category.id ? '/' + category.id : ''),
+					data: category
+				});
+			};
+
+			// Deletes a category
+			model.destroy = function(category) {
+				return $http.delete('/categories/' + category.id);
 			};
 
 			// Flush the cache

@@ -25,15 +25,11 @@
 
 					// Focus a row in the table 
 					var focusRow = function(row) {
-						var	focusClass = "warning",
-								rowIndex = angular.element(row).scope().$index;
+						var rowIndex = angular.element(row).scope().$index;
 
-						// Clear highlighting on any previously focussed row
-						getRows().removeClass(focusClass);
+						// Highlight the row
+						highlightRow(row);
 
-						// Highlight the focussed row
-						row.addClass(focusClass);
-						
 						// Ensure the focussed row is in the current viewport
 						scrollToRow(row);
 
@@ -44,6 +40,17 @@
 						if (scope.handlers.focusAction) {
 							scope.handlers.focusAction(rowIndex);
 						}
+					};
+
+					// Highlight the focussed row in the table
+					var highlightRow = function(row) {
+						var	focusClass = "warning";
+						
+						// Clear highlighting on any previously focussed row
+						getRows().removeClass(focusClass);
+
+						// Highlight the focussed row
+						row.addClass(focusClass);
 					};
 
 					// Checks if a row is off screen, and if so scrolls it into view
@@ -141,8 +148,13 @@
 					scope.handlers.focusRow = function(index) {
 						// Focus the target row (if not already focussed)
 						var targetRow = getRowAtIndex(index);
-						if (targetRow.length > 0 && scope.focusRow !== index) {
-							focusRow(targetRow);
+						if (targetRow.length > 0) {
+							if (scope.focusRow !== index) {
+								focusRow(targetRow);
+							} else {
+								// Row is already focussed, just ensure it's highlighted
+								highlightRow(targetRow);
+							}
 						}
 					};
 
