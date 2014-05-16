@@ -3,14 +3,22 @@
 		<h4>Delete Category?</h4>
 	</div>
 	<div class="modal-body">
+		<div ng-if="category.num_children" class="alert alert-danger">
+			<strong>Warning!</strong>
+			All subcategories will also be deleted
+		</div>
 		<dl class="dl-horizontal">
 			<dt>Name</dt>
 			<dd>{{category.name}}</dd>
+			<dt ng-if="category.parent">Parent</dt>
+			<dd ng-if="category.parent">{{category.parent.name}}</dd>
+			<dt>Type</dt>
+			<dd>{{category.direction == 'inflow' ? 'Income' : 'Expense'}}</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">
 		<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
 		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-		<button class="btn btn-danger" type="submit" ng-click="delete()">Delete</button>
+		<button class="btn btn-danger" type="submit" ng-click="delete()"><i class="glyphicon glyphicon-remove"></i> Delete</button>
 	</div>
 </form>

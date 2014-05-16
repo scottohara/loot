@@ -7,8 +7,12 @@
 	// Declare the Category Index controller
 	mod.controller('categoryIndexController', ['$scope', '$modal', '$timeout', '$state', 'categoryModel', 'categories',
 		function($scope, $modal, $timeout, $state, categoryModel, categories) {
-			// Store the categories on the scope
-			$scope.categories = categories;
+			// Flatten the categories and subcategories and store on the scope
+			$scope.categories = categories.reduce(function(flattened, category) {
+				var children = category.children;
+				delete category.children;
+				return flattened.concat(category, children);
+			}, []);
 
 			var editCategory = function(index) {
 				// Disable navigation on the table
@@ -39,7 +43,7 @@
 					}
 
 					// Resort the array
-					$scope.categories.sort(byName);
+					$scope.categories.sort(byDirectionAndName);
 
 					// Refocus the category
 					focusCategory(category.id);
@@ -64,7 +68,10 @@
 						}
 					}
 				}).result.then(function() {
-					$scope.categories.splice(index, 1);
+					// Remove the category (and any children) from the array
+					$scope.categories.splice(index, 1 + $scope.categories[index].num_children);
+
+					// Go back to the parent state
 					$state.go('root.categories');
 				}).finally(function() {
 					// Enable navigation on the table
@@ -111,12 +118,17 @@
 				return targetIndex;
 			};
 
-			// Helper function to sort by category name
-			var byName = function(a, b) {
+			// Helper function to sort by direction, then by category name, then by subcategory name
+			var byDirectionAndName = function(a, b) {
 				var x, y;
 
-				x = a.name;
-				y = b.name;
+				if (a.direction === b.direction) {
+					x = a.parent ? a.parent.name + "#" + a.name : a.name;
+					y = b.parent ? b.parent.name + "#" + b.name : b.name;
+				} else {
+					x = a.direction;
+					y = b.direction;
+				}
 
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			};

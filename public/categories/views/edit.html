@@ -9,10 +9,25 @@
 			<input id="name" name="name" class="form-control" ng-model="category.name" placeholder="Category" required autofocus>
 			<span ng-show="categoryForm.name.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
+		<!-- Parent -->
+		<div ng-if="!category.num_children" class="form-group has-feedback" ng-class="{'has-error': categoryForm.parent.$invalid}">
+			<label for="parent">Parent</label>
+			<input name="parent" class="form-control" ng-model="category.parent" typeahead="parentCategory as parentCategory.name for parentCategory in parentCategories($viewValue, 10)" typeahead-editable="false" placeholder="Parent">
+			<span ng-show="categoryForm.parent.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Direction -->
+		<label ng-if="!category.parent" for="direction">Type</label>
+		<div ng-if="!category.parent" class="form-group" ng-class="{'has-error': categoryForm.direction.$invalid}">
+			<div class="btn-group has-feedback">
+				<label class="btn btn-default" name="direction" ng-model="category.direction" btn-radio="'inflow'" required><i class="glyphicon glyphicon-plus-sign text-success"></i> Income</label>
+				<label class="btn btn-default" name="direction" ng-model="category.direction" btn-radio="'outflow'" required><i class="glyphicon glyphicon-minus-sign text-danger"></i> Expense</label>
+			</div>
+			<span ng-show="categoryForm.direction.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
 	</div>
 	<div class="modal-footer">
 		<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
 		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-		<button class="btn btn-primary" type="submit" ng-disabled="payeeForm.$invalid" ng-click="save()">Save</button>
+		<button class="btn btn-primary" type="submit" ng-disabled="categoryForm.$invalid" ng-click="save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
 	</div>
 </form>

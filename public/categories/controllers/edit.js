@@ -5,19 +5,33 @@
 	var mod = angular.module('categories');
 
 	// Declare the Category Edit controller
-	mod.controller('categoryEditController', ['$scope', '$modalInstance', 'categoryModel', 'category',
-		function($scope, $modalInstance, categoryModel, category) {
+	mod.controller('categoryEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'categoryModel', 'category',
+		function($scope, $modalInstance, filterFilter, limitToFilter, categoryModel, category) {
 			// Make the passed category available on the scope
-			$scope.category = angular.extend({
-			}, category);
+			$scope.category = angular.extend({}, category);
 
 			$scope.mode = (category ? "Edit" : "Add");
 
 			// Give the name field initial focus
 			$("#name").focus();
 
+			// List of parent categories for the typeahead
+			$scope.parentCategories = function(filter, limit) {
+				return categoryModel.all().then(function(categories) {
+					return limitToFilter(filterFilter(categories, filter), limit);
+				});
+			};
+
 			// Save and close the modal
 			$scope.save = function() {
+				// Copy the parent details
+				if ($scope.category.parent) {
+					$scope.category.direction = $scope.category.parent.direction;
+					$scope.category.parent_id = $scope.category.parent.id;
+				} else {
+					$scope.category.parent_id = null;
+				}
+
 				$scope.errorMessage = null;
 				categoryModel.save($scope.category).then(function(category) {
 					$modalInstance.close(category.data);
