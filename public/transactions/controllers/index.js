@@ -420,7 +420,7 @@
 			};
 
 			// Switch to the other side of a transaction
-			$scope.switchAccount = function(transaction) {
+			$scope.switchAccount = function($event, transaction) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 
@@ -433,39 +433,39 @@
 					accountId: transaction.account.id, 
 					transactionId: transaction.parent_id || transaction.id
 				});
+				$event.stopPropagation();
 			};
 
 			// Switch to the transaction's payee
-			$scope.switchPayee = function(transaction) {
+			$scope.switchPayee = function($event, transaction) {
 				$state.go('root.payees.payee', {
-					payeeId: transaction.payee.id, 
-					transactionId: transaction.parent_id || transaction.id
+					payeeId: transaction.payee.id 
 				});
+				$event.stopPropagation();
 			};
 	
 			// Switch to the transaction's security
-			$scope.switchSecurity = function(transaction) {
+			$scope.switchSecurity = function($event, transaction) {
 				$state.go('root.securities.security', {
-					securityId: transaction.security.id, 
-					transactionId: transaction.parent_id || transaction.id
+					securityId: transaction.security.id 
 				});
+				$event.stopPropagation();
 			};
 
 			// Switch to the transaction's category
-			$scope.switchCategory = function(transaction) {
+			$scope.switchCategory = function($event, transaction) {
 				$state.go('root.categories.category', {
-					categoryId: transaction.category.id, 
-					transactionId: transaction.parent_id || transaction.id
+					categoryId: transaction.category.id
 				});
+				$event.stopPropagation();
 			};
 
 			// Switch to the transaction's subcategory
-			$scope.switchSubcategory = function(transaction) {
-				$state.go('root.categories.category.subcategories.subcategory', {
-					categoryId: transaction.category.id, 
-					subcategoryId: transaction.subcategory.id,
-					transactionId: transaction.parent_id || transaction.id
+			$scope.switchSubcategory = function($event, transaction) {
+				$state.go('root.categories.category', {
+					categoryId: transaction.subcategory.id
 				});
+				$event.stopPropagation();
 			};
 
 			// Process the initial batch of transactions to display

@@ -52,26 +52,26 @@
 							</small>
 							<span ng-if="transaction.payee.id">
 								{{transaction.payee.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.payee.name}}" ng-click="switchPayee(transaction)"></i>
+								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.payee.name}}" ng-click="switchPayee($event, transaction)"></i>
 							</span>
 							<span ng-if="transaction.security.id">
 								{{transaction.security.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.security.name}}" ng-click="switchSecurity(transaction)"></i>
+								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.security.name}}" ng-click="switchSecurity($event, transaction)"></i>
 							</span>
 						</td>
 					</tr>
 					<tr>
 						<td class="category has-action">
 							{{transaction.category.name}}
-							<i ng-if="transaction.transaction_type == 'Basic'" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.category.name}}" ng-click="switchCategory(transaction)"></i>
+							<i ng-if="transaction.transaction_type == 'Basic'" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.category.name}}" ng-click="switchCategory($event, transaction)"></i>
 						</td>
 						<td ng-if="transaction.transaction_type == 'Basic'" class="category has-action">
 							{{transaction.subcategory.name}}
-							<i ng-if="transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.subcategory.name}}" ng-click="switchSubcategory(transaction)"></i>
+							<i ng-if="transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.subcategory.name}}" ng-click="switchSubcategory($event, transaction)"></i>
 						</td>
 						<td ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1" class="category has-action">
 							{{transaction.account.name}}
-							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.account.name}}" ng-click="switchAccount(transaction)"></i>
+							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.account.name}}" ng-click="switchAccount($event, transaction)"></i>
 						</td>
 						<td ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">
 							<button ng-click="toggleSubtransactions($event, transaction)" class="btn btn-xs btn-default toggle-subtransactions">
