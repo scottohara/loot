@@ -1,7 +1,7 @@
 describe('tooltip', function() {
-  var elm, 
+  var elm,
       elmBody,
-      scope, 
+      scope,
       elmScope;
 
   // load the tooltip code
@@ -11,8 +11,8 @@ describe('tooltip', function() {
   beforeEach(module('template/tooltip/tooltip-popup.html'));
 
   beforeEach(inject(function($rootScope, $compile) {
-    elmBody = angular.element( 
-      '<div><span tooltip="tooltip text" tooltip-animation="false">Selector Text</span></div>' 
+    elmBody = angular.element(
+      '<div><span tooltip="tooltip text" tooltip-animation="false">Selector Text</span></div>'
     );
 
     scope = $rootScope;
@@ -24,7 +24,7 @@ describe('tooltip', function() {
 
   it('should not be open initially', inject(function() {
     expect( elmScope.tt_isOpen ).toBe( false );
-    
+
     // We can only test *that* the tooltip-popup element wasn't created as the
     // implementation is templated and replaced.
     expect( elmBody.children().length ).toBe( 1 );
@@ -51,23 +51,23 @@ describe('tooltip', function() {
 
   it('should have default placement of "top"', inject(function() {
     elm.trigger( 'mouseenter' );
-    expect( elmScope.tt_placement ).toBe( "top" );
+    expect( elmScope.tt_placement ).toBe( 'top' );
   }));
 
   it('should allow specification of placement', inject( function( $compile ) {
-    elm = $compile( angular.element( 
-      '<span tooltip="tooltip text" tooltip-placement="bottom">Selector Text</span>' 
+    elm = $compile( angular.element(
+      '<span tooltip="tooltip text" tooltip-placement="bottom">Selector Text</span>'
     ) )( scope );
     scope.$apply();
     elmScope = elm.scope();
 
     elm.trigger( 'mouseenter' );
-    expect( elmScope.tt_placement ).toBe( "bottom" );
+    expect( elmScope.tt_placement ).toBe( 'bottom' );
   }));
 
   it('should work inside an ngRepeat', inject( function( $compile ) {
 
-    elm = $compile( angular.element( 
+    elm = $compile( angular.element(
       '<ul>'+
         '<li ng-repeat="item in items">'+
           '<span tooltip="{{item.tooltip}}">{{item.name}}</span>'+
@@ -76,13 +76,13 @@ describe('tooltip', function() {
     ) )( scope );
 
     scope.items = [
-      { name: "One", tooltip: "First Tooltip" }
+      { name: 'One', tooltip: 'First Tooltip' }
     ];
-    
+
     scope.$digest();
-    
-    var tt = angular.element( elm.find("li > span")[0] );
-    
+
+    var tt = angular.element( elm.find('li > span')[0] );
+
     tt.trigger( 'mouseenter' );
 
     expect( tt.text() ).toBe( scope.items[0].name );
@@ -94,10 +94,10 @@ describe('tooltip', function() {
   it('should only have an isolate scope on the popup', inject( function ( $compile ) {
     var ttScope;
 
-    scope.tooltipMsg = "Tooltip Text";
-    scope.alt = "Alt Message";
+    scope.tooltipMsg = 'Tooltip Text';
+    scope.alt = 'Alt Message';
 
-    elmBody = $compile( angular.element( 
+    elmBody = $compile( angular.element(
       '<div><span alt={{alt}} tooltip="{{tooltipMsg}}" tooltip-animation="false">Selector Text</span></div>'
     ) )( scope );
 
@@ -105,7 +105,7 @@ describe('tooltip', function() {
     scope.$digest();
     elm = elmBody.find( 'span' );
     elmScope = elm.scope();
-    
+
     elm.trigger( 'mouseenter' );
     expect( elm.attr( 'alt' ) ).toBe( scope.alt );
 
@@ -143,7 +143,7 @@ describe('tooltip', function() {
     expect( elmBody.children().length ).toBe( 0 );
   }));
 
-  it('issue 1191 - isolate scope on the popup should always be child of correct element scope', inject( function ( $compile ) {
+  it('issue 1191 - isolate scope on the popup should always be child of correct element scope', function () {
     var ttScope;
     elm.trigger( 'mouseenter' );
 
@@ -159,7 +159,7 @@ describe('tooltip', function() {
     expect( ttScope.$parent ).toBe( elmScope );
 
     elm.trigger( 'mouseleave' );
-  }));
+  });
 
   describe('with specified enable expression', function() {
 
@@ -307,8 +307,8 @@ describe('tooltip', function() {
 
     it( 'should append to the body', inject( function( $compile, $document ) {
       $body = $document.find( 'body' );
-      elmBody = angular.element( 
-        '<div><span tooltip="tooltip text" tooltip-append-to-body="true">Selector Text</span></div>' 
+      elmBody = angular.element(
+        '<div><span tooltip="tooltip text" tooltip-append-to-body="true">Selector Text</span></div>'
       );
 
       $compile(elmBody)(scope);
@@ -318,7 +318,7 @@ describe('tooltip', function() {
 
       var bodyLength = $body.children().length;
       elm.trigger( 'mouseenter' );
-      
+
       expect( elmScope.tt_isOpen ).toBe( true );
       expect( elmBody.children().length ).toBe( 1 );
       expect( $body.children().length ).toEqual( bodyLength + 1 );
@@ -361,10 +361,7 @@ describe('tooltip', function() {
 });
 
 describe('tooltipWithDifferentSymbols', function() {
-    var elm, 
-        elmBody,
-        scope, 
-        elmScope;
+    var elmBody;
 
     // load the tooltip code
     beforeEach(module('ui.bootstrap.tooltip'));
@@ -438,11 +435,10 @@ describe( 'tooltipHtmlUnsafe', function() {
 });
 
 describe( '$tooltipProvider', function() {
-  var elm, 
+  var elm,
       elmBody,
-      scope, 
-      elmScope,
-      body;
+      scope,
+      elmScope;
 
   describe( 'popupDelay', function() {
     beforeEach(module('ui.bootstrap.tooltip', function($tooltipProvider){
@@ -487,8 +483,8 @@ describe( '$tooltipProvider', function() {
 
     it( 'should append to the body', inject( function( $rootScope, $compile, $document ) {
       $body = $document.find( 'body' );
-      elmBody = angular.element( 
-        '<div><span tooltip="tooltip text">Selector Text</span></div>' 
+      elmBody = angular.element(
+        '<div><span tooltip="tooltip text">Selector Text</span></div>'
       );
 
       scope = $rootScope;
@@ -499,7 +495,7 @@ describe( '$tooltipProvider', function() {
 
       var bodyLength = $body.children().length;
       elm.trigger( 'mouseenter' );
-      
+
       expect( elmScope.tt_isOpen ).toBe( true );
       expect( elmBody.children().length ).toBe( 1 );
       expect( $body.children().length ).toEqual( bodyLength + 1 );
@@ -539,7 +535,7 @@ describe( '$tooltipProvider', function() {
         elmBody = angular.element(
           '<div><input tooltip="tooltip text" /></div>'
         );
-        
+
         scope = $rootScope;
         $compile(elmBody)(scope);
         scope.$digest();
@@ -585,7 +581,7 @@ describe( '$tooltipProvider', function() {
         elmBody = angular.element(
           '<div><input tooltip="tooltip text" /></div>'
         );
-        
+
         scope = $rootScope;
         $compile(elmBody)(scope);
         scope.$digest();
@@ -612,7 +608,7 @@ describe( '$tooltipProvider', function() {
         elmBody = angular.element(
           '<div><span tooltip="tooltip text">Selector Text</span></div>'
         );
-        
+
         scope = $rootScope;
         $compile(elmBody)(scope);
         scope.$digest();

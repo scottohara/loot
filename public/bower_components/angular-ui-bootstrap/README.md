@@ -2,7 +2,9 @@
 
 ***
 
-[![Build Status](https://secure.travis-ci.org/angular-ui/bootstrap.png)](http://travis-ci.org/angular-ui/bootstrap) [![devDependency Status](https://david-dm.org/angular-ui/bootstrap/dev-status.png?branch=master)](https://david-dm.org/angular-ui/bootstrap#info=devDependencies)
+[![Build Status](https://secure.travis-ci.org/angular-ui/bootstrap.png)](http://travis-ci.org/angular-ui/bootstrap)
+[![devDependency Status](https://david-dm.org/angular-ui/bootstrap/dev-status.png?branch=master)](https://david-dm.org/angular-ui/bootstrap#info=devDependencies)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/angular-ui/bootstrap/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 ## Demo
 
@@ -38,7 +40,7 @@ Modern mobile browsers should work without problems.
 
 **IE 8 is not officially supported at the moment**. This project is run by volunteers and with the current number of commiters
 we are not in the position to guarantee IE8 support. If you need support for IE8 we would welcome a contributor who would like to take care about IE8.
-Alternativelly you could sponsor this project to guarantee IE8 support.
+Alternatively you could sponsor this project to guarantee IE8 support.
 
 We believe that most of the directives would work OK after:
 * including relevant shims (for ES5 we recommend https://github.com/kriskowal/es5-shim)
@@ -51,20 +53,30 @@ We are simply not regularly testing against IE8.
 ### Native, lightweight directives
 
 We are aiming at providing a set of AngularJS directives based on Bootstrap's markup and CSS. The goal is to provide **native AngularJS directives** without any dependency on jQuery or Bootstrap's JavaScript.
-It is often better to rewrite an existing JavaScript code and create a new, pure AngularJS directive. Most of the time the resulting directive is smaller as compared to the orginal JavaScript code size and better integrated into the AngularJS ecosystem.
+It is often better to rewrite an existing JavaScript code and create a new, pure AngularJS directive. Most of the time the resulting directive is smaller as compared to the original JavaScript code size and better integrated into the AngularJS ecosystem.
 
 ### Customizability
 
-All the directives in this repository should have their markup externalized as templates (loaded via `templateUrl`). In practice it means that you can **customize directive's markup at will**. One could even imagine providing a non-Boostrap version of the templates!
+All the directives in this repository should have their markup externalized as templates (loaded via `templateUrl`). In practice it means that you can **customize directive's markup at will**. One could even imagine providing a non-Bootstrap version of the templates!
 
 ### Take what you need and not more
 
-Each directive has its own AngularJS module without any dependencies on other modules or third-pary JavaScript code. In practice it means that you can **just grab the code for the directives you need** and you are not obliged to drag the whole repository.
+Each directive has its own AngularJS module without any dependencies on other modules or third-party JavaScript code. In practice it means that you can **just grab the code for the directives you need** and you are not obliged to drag the whole repository.
 
 ### Quality and stability
 
 Directives should work. All the time and in all browsers. This is why all the directives have a comprehensive suite of unit tests. All the automated tests are executed on each checkin in several browsers: Chrome, ChromeCanary, Firefox, Opera, Safari, IE9.
 In fact we are fortunate enough to **benefit from the same testing infrastructure as AngularJS**!
+
+## Support
+
+If you are having problems making some directives work, there are several ways to get help:
+
+* Live help in the IRC (`#angularjs` channel at the `freenode` network). Use this [webchat](https://webchat.freenode.net/) or your own IRC client.
+* Ask a question in [stackoverflow](http://stackoverflow.com/) under the [angular-ui-bootstrap](http://stackoverflow.com/questions/tagged/angular-ui-bootstrap) tag.
+* Write your question in our [mailing list](https://groups.google.com/forum/#!categories/angular-ui/bootstrap).
+
+Project's issue on GitHub should be used discuss bugs and features.
 
 ## Contributing to the project
 
@@ -74,14 +86,14 @@ We are always looking for the quality contributions! Please check the [CONTRIBUT
 #### Prepare your environment
 * Install [Node.js](http://nodejs.org/) and NPM (should come with)
 * Install global dev dependencies: `npm install -g grunt-cli karma`
-* Instal local dev dependencies: `npm install` while current directory is bootstrap repo
+* Install local dev dependencies: `npm install` while current directory is bootstrap repo
 
 #### Build
 * Build the whole project: `grunt` - this will run `lint`, `test`, and `concat` targets
 * To build modules, first run `grunt html2js` then `grunt build:module1:module2...:moduleN`
 
 You can generate a custom build, containing only needed modules, from the project's homepage.
-Alternativelly you can run local Grunt build from the command line and list needed modules as shown below:
+Alternatively you can run local Grunt build from the command line and list needed modules as shown below:
 
 ```
 grunt build:modal:tabs:alert:popover:dropdownToggle:buttons:progressbar
@@ -92,7 +104,7 @@ Check the Grunt build file for other tasks that are defined for this project.
 #### TDD
 * Run test: `grunt watch`
  
-This will start Karma server and will continously watch files in the project, executing tests upon every change.
+This will start Karma server and will continuously watch files in the project, executing tests upon every change.
 
 #### Test coverage
 Add the `--coverage` option (e.g. `grunt test --coverage`, `grunt watch --coverage`) to see reports on the test coverage. These coverage reports are found in the coverage folder.
