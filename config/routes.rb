@@ -68,4 +68,6 @@ Loot::Application.routes.draw do
 
 	resources :payees, :categories, :securities, :schedules
 	resources :logins, :only => [:create]
+
+	get '*unmatched_route', :to => 'application#routing_error'
 end
