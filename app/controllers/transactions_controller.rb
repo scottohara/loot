@@ -1,9 +1,10 @@
 class TransactionsController < ApplicationController
 	respond_to :json
 	before_action :clean, :only => [:create, :update]
+	before_action :context, :only => [:index, :last]
 
 	def index
-		opening_balance, transactions, at_end = Account.find(params[:account_id]).transaction_ledger params
+		opening_balance, transactions, at_end = @context.transaction_ledger params
 		render :json => {
 			:openingBalance => opening_balance.to_f,
 			:transactions => transactions,
@@ -36,10 +37,25 @@ class TransactionsController < ApplicationController
 		head :status => :ok
 	end
 
+	def last
+		render :json => @context.transactions.where(:transaction_type => Transaction.types_for(params[:account_type])).last.as_subclass
+	end
+
 	def clean
 		# Remove any blank values
 		@transaction = params.delete_if do |k,v|
 			v.blank?
+		end
+	end
+
+	def context
+		# Instantiate the parent resource based on what params were passed
+		@context = case
+			when params[:account_id] then Account.find(params[:account_id])
+			when params[:payee_id] then Payee.find(params[:payee_id])
+			when params[:category_id] then Category.find(params[:category_id])
+			when params[:security_id] then Security.find(params[:security_id])
+			else raise "Parent context could not be determined"
 		end
 	end
 end
