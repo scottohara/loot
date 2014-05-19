@@ -28,6 +28,6 @@ class TransactionSplit < ActiveRecord::Base
 	end
 
 	def destroy_transaction
-		self.transaction.becomes(Transaction.class_for(self.transaction.transaction_type)).destroy
+		self.transaction.as_subclass.destroy
 	end
 end

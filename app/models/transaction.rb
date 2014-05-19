@@ -4,7 +4,15 @@ class Transaction < ActiveRecord::Base
 
 	class << self
 		def class_for(type)
-			return "#{type}Transaction".constantize
+			"#{type}Transaction".constantize
 		end
+
+		def types_for(account_type)
+			account_type.eql?('investment') && %w(SecurityTransfer SecurityHolding SecurityInvestment Dividend) || %w(Basic Split Transfer Payslip LoanRepayment)
+		end
+	end
+
+	def as_subclass
+		self.becomes self.class.class_for(self.transaction_type)
 	end
 end

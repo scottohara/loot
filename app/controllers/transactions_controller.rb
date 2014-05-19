@@ -12,8 +12,7 @@ class TransactionsController < ApplicationController
 	end
 
 	def show
-		transaction = Transaction.find params[:id]
-		render :json => transaction.becomes(Transaction.class_for(transaction.transaction_type))
+		render :json => Transaction.find(params[:id]).as_subclass
 	end
 
 	def create
@@ -27,16 +26,13 @@ class TransactionsController < ApplicationController
 			render :json => Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
-			transaction = transaction.becomes Transaction.class_for(transaction.transaction_type)
-			transaction.destroy
+			transaction.as_subclass.destroy
 			create
 		end
 	end
 
 	def destroy
-		transaction = Transaction.find params[:id]
-		transaction = transaction.becomes Transaction.class_for(transaction.transaction_type)
-		transaction.destroy
+		Transaction.find(params[:id]).as_subclass.destroy
 		head :status => :ok
 	end
 

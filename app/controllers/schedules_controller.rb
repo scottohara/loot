@@ -17,16 +17,13 @@ class SchedulesController < ApplicationController
 			render :json => Transaction.class_for(params['transaction_type']).update_from_json(@schedule)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
-			schedule = schedule.becomes Transaction.class_for(schedule.transaction_type)
-			schedule.destroy
+			schedule.as_subclass.destroy
 			create
 		end
 	end
 
 	def destroy
-		schedule = Transaction.find params[:id]
-		schedule = schedule.becomes Transaction.class_for(schedule.transaction_type)
-		schedule.destroy
+		Transaction.find(params[:id]).as_subclass.destroy
 		head :status => :ok
 	end
 
