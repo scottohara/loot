@@ -36,7 +36,7 @@ class SchedulesController < ApplicationController
 		# Ensure that transaction date is nil
 		@schedule['transaction_date'] = nil
 
-		# Copy the schedule_account.id to account_id
-		@schedule['account_id'] = @schedule['schedule_account']['id']
+		# Copy the primary_account.id to account_id
+		@schedule['account_id'] = @schedule['primary_account']['id']
 	end
 end

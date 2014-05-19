@@ -4,10 +4,10 @@
 	</div>
 	<div class="modal-body">
 		<!-- Schedule Account -->
-		<div class="form-group has-feedback" ng-class="{'has-error': scheduleForm.scheduleAccount.$invalid}">
-			<label for="scheduleAccount">Account</label>
-			<input name="scheduleAccount" class="form-control" ng-model="transaction.schedule_account" typeahead="account as account.name for account in scheduleAccounts($viewValue, 10)" ng-blur="scheduleAccountSelected()" typeahead-editable="false" placeholder="Account" required>
-			<span ng-show="scheduleForm.scheduleAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		<div class="form-group has-feedback" ng-class="{'has-error': scheduleForm.primaryAccount.$invalid}">
+			<label for="primaryAccount">Account</label>
+			<input name="primaryAccount" class="form-control" ng-model="transaction.primary_account" typeahead="account as account.name for account in primaryAccounts($viewValue, 10)" ng-blur="primaryAccountSelected()" typeahead-editable="false" placeholder="Account" required>
+			<span ng-show="scheduleForm.primaryAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Frequency -->
 		<div ng-if="mode != 'Enter Transaction'" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.frequency.$invalid}">
@@ -23,37 +23,37 @@
 			<span ng-show="scheduleForm.transactionDate.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Payee -->
-		<div ng-if="schedule.schedule_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': scheduleForm.payee.$invalid}">
+		<div ng-if="schedule.primary_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': scheduleForm.payee.$invalid}">
 			<label for="payee">Payee</label>
 			<input name="payee" class="form-control" ng-model="transaction.payee" typeahead="payee as payee.name for payee in payees($viewValue, 10)" typeahead-editable="false" placeholder="Payee">
 			<span ng-show="scheduleForm.payee.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
 		</div>
 		<!-- Security -->
-		<div ng-if="transaction.schedule_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': scheduleForm.security.$invalid}">
+		<div ng-if="transaction.primary_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': scheduleForm.security.$invalid}">
 			<label for="security">Security</label>
 			<input name="security" class="form-control" ng-model="transaction.security" typeahead="security as security.name for security in securities($viewValue, 10)" typeahead-editable="false" placeholder="Security">
 			<span ng-show="scheduleForm.security.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
 		</div>
 		<!-- Investment Category -->
-		<div ng-if="transaction.schedule_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.category), 'has-error': scheduleForm.category.$invalid}">
+		<div ng-if="transaction.primary_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.category), 'has-error': scheduleForm.category.$invalid}">
 			<label for="category">Category</label>
 			<input name="category" class="form-control" ng-model="transaction.category" typeahead="category as category.name for category in investmentCategories($viewValue, 10)" ng-blur="investmentCategorySelected()" typeahead-editable="false" placeholder="Category" required>
 			<span ng-show="isString(transaction.category) || scheduleForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(transaction.category), 'glyphicon-remove': scheduleForm.category.$invalid}"></span>
 		</div>
 		<!-- Transaction Amount -->
-		<div ng-if="transaction.schedule_account.account_type != 'investment' || transaction.category.id == 'DividendTo'" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.amount.$invalid}">
+		<div ng-if="transaction.primary_account.account_type != 'investment' || transaction.category.id == 'DividendTo'" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.amount.$invalid}">
 			<label for="amount">Amount</label>
 			<input name="amount" class="form-control" ng-class="{'negative': transaction.amount < -1}" ng-model="transaction.amount" placeholder="Transaction Amount" required og-input-currency>
 			<span ng-show="scheduleForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Category -->
-		<div ng-if="transaction.schedule_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.category), 'has-error': scheduleForm.category.$invalid}">
+		<div ng-if="transaction.primary_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.category), 'has-error': scheduleForm.category.$invalid}">
 			<label for="category">Category</label>
 			<input name="category" class="form-control" ng-model="transaction.category" typeahead="category as category.name for category in categories($viewValue, 10, null, true)" ng-blur="categorySelected()" placeholder="Category" required>
 			<span ng-show="isString(transaction.category) || scheduleForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(transaction.category), 'glyphicon-remove': scheduleForm.category.$invalid}"></span>
 		</div>
 		<!-- Subcategory -->
-		<div ng-if="transaction.schedule_account.account_type != 'investment' && ['TransferTo', 'TransferFrom', 'SplitTo', 'SplitFrom'].indexOf(transaction.category.id) == -1" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.subcategory)}">
+		<div ng-if="transaction.primary_account.account_type != 'investment' && ['TransferTo', 'TransferFrom', 'SplitTo', 'SplitFrom'].indexOf(transaction.category.id) == -1" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.subcategory)}">
 			<label for="subcategory">Subcategory</label>
 			<input name="subcategory" class="form-control" ng-disabled="!(isString(transaction.category) || transaction.category.id > 0)" ng-model="transaction.subcategory" typeahead="subcategory as subcategory.name for subcategory in categories($viewValue, 10, transaction.category)" placeholder="Subcategory">
 			<span ng-show="isString(transaction.subcategory)" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
@@ -65,25 +65,25 @@
 			<span ng-show="scheduleForm.account.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Quantity -->
-		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['TransferTo', 'TransferFrom', 'AddShares', 'RemoveShares', 'Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.quantity.$invalid}">
+		<div ng-if="transaction.primary_account.account_type == 'investment' && ['TransferTo', 'TransferFrom', 'AddShares', 'RemoveShares', 'Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.quantity.$invalid}">
 			<label for="quantity">Quantity</label>
 			<input name="quantity" class="form-control" ng-class="{'negative': transaction.quantity < 0}" ng-model="transaction.quantity" placeholder="Quantity" required og-input-number>
 			<span ng-show="scheduleForm.quantity.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Price -->
-		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.price.$invalid}">
+		<div ng-if="transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.price.$invalid}">
 			<label for="price">Price</label>
 			<input name="price" class="form-control" ng-class="{'negative': transaction.price < 0}" ng-model="transaction.price" placeholder="Price" required og-input-currency="3">
 			<span ng-show="scheduleForm.price.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Commission -->
-		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.commission.$invalid}">
+		<div ng-if="transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.commission.$invalid}">
 			<label for="commission">Commission</label>
 			<input name="commission" class="form-control" ng-class="{'negative': transaction.commission < 0}" ng-model="transaction.commission" placeholder="Commission" required og-input-currency>
 			<span ng-show="scheduleForm.commission.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Investment Amount -->
-		<div ng-if="transaction.schedule_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group">
+		<div ng-if="transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group">
 			<label>Amount</label>
 			<div ng-class="{'text-danger': (transaction.quantity * transaction.price - transaction.commission) < 0}">{{transaction.quantity * transaction.price - transaction.commission | currency}}</div>
 		</div>

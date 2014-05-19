@@ -66,7 +66,7 @@ class Schedule < ActiveRecord::Base
 				{
 					:id => trx['id'],
 					:transaction_type => trx['transaction_type'],
-					:schedule_account => {
+					:primary_account => {
 						:id => trx['account_id'],
 						:name => trx['account_name'],
 						:account_type => trx['account_type']

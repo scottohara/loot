@@ -242,13 +242,13 @@
 				$scope.transaction.direction = direction;
 			};
 
-			// Handler for schedule account changes
-			$scope.scheduleAccountSelected = function() {
-				if ($scope.account_type && $scope.account_type !== $scope.transaction.schedule_account.account_type) {
+			// Handler for primary account changes
+			$scope.primaryAccountSelected = function() {
+				if ($scope.account_type && $scope.account_type !== $scope.transaction.primary_account.account_type) {
 					$scope.transaction.category = null;
 					$scope.transaction.subcategory = null;
 				}
-				$scope.account_type = $scope.transaction.schedule_account.account_type;
+				$scope.account_type = $scope.transaction.primary_account.account_type;
 			};
 
 			// Watch the subtransactions array and recalculate the total allocated
@@ -258,8 +258,8 @@
 				}, 0);
 			}, true);
 
-			// List of schdule accounts for the typeahead
-			$scope.scheduleAccounts = function(filter, limit) {
+			// List of primary accounts for the typeahead
+			$scope.primaryAccounts = function(filter, limit) {
 				return accountModel.all().then(function(accounts) {
 					return limitToFilter(filterFilter(accounts, filter), limit);
 				});
@@ -273,8 +273,8 @@
 						account_type: '!investment'		// exclude investment accounts by default
 					};
 
-					// Filter the current account from the results (can't transfer to self)
-					accounts = filterFilter(accounts, {name: "!" + $scope.transaction.schedule_account.name});
+					// Filter the primary account from the results (can't transfer to self)
+					accounts = filterFilter(accounts, {name: "!" + $scope.transaction.primary_account.name});
 
 					// For security transfers, only include investment accounts
 					if ('SecurityTransfer' === $scope.transaction.transaction_type) {
@@ -327,7 +327,7 @@
 				}
 
 				$scope.errorMessage = null;
-				transactionModel.save($scope.transaction.schedule_account.id, $scope.transaction).then(function() {
+				transactionModel.save($scope.transaction.primary_account.id, $scope.transaction).then(function() {
 					// Skip to the next due date
 					$scope.skip();
 				}, function(error) {
