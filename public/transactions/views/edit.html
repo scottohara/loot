@@ -16,13 +16,13 @@
 		<!-- Payee -->
 		<div ng-if="account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': transactionForm.payee.$invalid}">
 			<label for="payee">Payee</label>
-			<input name="payee" class="form-control" ng-model="transaction.payee" typeahead="payee as payee.name for payee in payees($viewValue, 10)" typeahead-editable="false" placeholder="Payee">
+			<input name="payee" class="form-control" ng-model="transaction.payee" typeahead="payee as payee.name for payee in payees($viewValue, 10)" ng-blur="payeeSelected()" typeahead-editable="false" placeholder="Payee">
 			<span ng-show="transactionForm.payee.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
 		</div>
 		<!-- Security -->
 		<div ng-if="account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': transactionForm.security.$invalid}">
 			<label for="security">Security</label>
-			<input name="security" class="form-control" ng-model="transaction.security" typeahead="security as security.name for security in securities($viewValue, 10)" typeahead-editable="false" placeholder="Security">
+			<input name="security" class="form-control" ng-model="transaction.security" typeahead="security as security.name for security in securities($viewValue, 10)" ng-blur="securitySelected()" typeahead-editable="false" placeholder="Security">
 			<span ng-show="transactionForm.security.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
 		</div>
 		<!-- Investment Category -->

@@ -19,6 +19,17 @@
 				});
 			};
 
+			// Retrieves the most recent transaction for a payee
+			model.findLastTransaction = function(payeeId, accountType) {
+				return $http.get('/payees/' + payeeId + '/transactions/last', {
+					params: {
+						account_type: accountType
+					}
+				}).then(function(response) {
+					return response.data;
+				});
+			};
+
 			// Saves a payee
 			model.save = function(payee) {
 				return $http({

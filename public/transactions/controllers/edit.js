@@ -81,6 +81,55 @@
 				return (typeof object === 'string') && object.length > 0;
 			};
 
+			// Handler for payee changes
+			$scope.payeeSelected = function() {
+				// If we're adding a new transaction and an existing payee is selected
+				if (!$scope.transaction.id && typeof $scope.transaction.payee === 'object') {
+					// Get the previous transaction for the payee
+					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.account.account_type).then(getSubtransactions).then(useLastTransaction);
+				}
+			};
+
+			// Handler for security changes
+			$scope.securitySelected = function() {
+				// If we're adding a new transaction and an existing security is selected
+				if (!$scope.transaction.id && typeof $scope.transaction.security === 'object') {
+					// Get the previous transaction for the security
+					securityModel.findLastTransaction($scope.transaction.security.id, $scope.account.account_type).then(getSubtransactions).then(useLastTransaction);
+				}
+			};
+
+			var getSubtransactions = function(transaction) {
+				// If the last transaction was a Split/Loan Repayment/Payslip; fetch the subtransactions
+				switch (transaction.transaction_type) {
+					case "Split":
+					case "LoanRepayment":
+					case "Payslip":
+						transaction.subtransactions = [];
+						return transactionModel.findSubtransactions(transaction.primary_account.id, transaction.id).then(function(subtransactions) {
+							// Strip the subtransaction ids
+							transaction.subtransactions = subtransactions.map(function(subtransaction) {
+								subtransaction.id = null;
+								return subtransaction;
+							});
+							
+							return transaction;
+						});
+					default:
+						return transaction;
+				}
+			}
+
+			var useLastTransaction = function(transaction) {
+				// Strip the id, transaction date and primary account
+				delete transaction.id;
+				delete transaction.transaction_date;
+				delete transaction.primary_account;
+
+				// Merge the last transaction details into the transaction on the scope
+				$scope.transaction = angular.extend($scope.transaction, transaction);
+			};
+
 			// Handler for category changes
 			// (index) is the subtransaction index, or null for the main transaction
 			$scope.categorySelected = function(index) {
@@ -90,7 +139,7 @@
 						parentId;
 
 				// Check the category selection
-				if (typeof transaction.category == 'object') {
+				if (typeof transaction.category === 'object') {
 					if (isNaN(index)) {
 						switch (transaction.category.id) {
 							case "TransferTo":
@@ -166,46 +215,48 @@
 						direction;
 
 				// Check the category selection
-				switch ($scope.transaction.category.id) {
-					case "TransferTo":
-						type = "SecurityTransfer";
-						direction = "outflow";
-						break;
+				if (typeof transaction.category === 'object') {
+					switch ($scope.transaction.category.id) {
+						case "TransferTo":
+							type = "SecurityTransfer";
+							direction = "outflow";
+							break;
 
-					case "TransferFrom":
-						type = "SecurityTransfer";
-						direction = "inflow";
-						break;
+						case "TransferFrom":
+							type = "SecurityTransfer";
+							direction = "inflow";
+							break;
 
-					case "RemoveShares":
-						type = "SecurityHolding";
-						direction = "outflow";
-						break;
+						case "RemoveShares":
+							type = "SecurityHolding";
+							direction = "outflow";
+							break;
 
-					case "AddShares":
-						type = "SecurityHolding";
-						direction = "inflow";
-						break;
+						case "AddShares":
+							type = "SecurityHolding";
+							direction = "inflow";
+							break;
 
-					case "Sell":
-						type = "SecurityInvestment";
-						direction = "outflow";
-						break;
+						case "Sell":
+							type = "SecurityInvestment";
+							direction = "outflow";
+							break;
 
-					case "Buy":
-						type = "SecurityInvestment";
-						direction = "inflow";
-						break;
+						case "Buy":
+							type = "SecurityInvestment";
+							direction = "inflow";
+							break;
 
-					case "DividendTo":
-						type = "Dividend";
-						direction = "outflow";
-						break;
+						case "DividendTo":
+							type = "Dividend";
+							direction = "outflow";
+							break;
+					}
+
+					// Update the transaction type & direction
+					$scope.transaction.transaction_type = type;
+					$scope.transaction.direction = direction;
 				}
-
-				// Update the transaction type & direction
-				$scope.transaction.transaction_type = type;
-				$scope.transaction.direction = direction;
 			};
 
 			// Watch the subtransactions array and recalculate the total allocated

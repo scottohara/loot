@@ -1,6 +1,7 @@
 class Payee < ActiveRecord::Base
 	validates :name, :presence => true
 	has_many :payee_transaction_headers
+	has_many :transactions, :through => :payee_transaction_headers
 
 	class << self
 		def find_or_new(payee)

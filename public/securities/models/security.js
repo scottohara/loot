@@ -19,6 +19,17 @@
 				});
 			};
 
+			// Retrieves the most recent transaction for a security
+			model.findLastTransaction = function(securityId, accountType) {
+				return $http.get('/securities/' + securityId + '/transactions/last', {
+					params: {
+						account_type: accountType
+					}
+				}).then(function(response) {
+					return response.data;
+				});
+			};
+
 			// Retrieves the list of securities, including balances
 			model.allWithBalances = function() {
 				return model.all(true);

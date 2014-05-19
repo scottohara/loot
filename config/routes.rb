@@ -56,9 +56,9 @@ Loot::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-	resources :accounts do
-		resources :transactions do
-			resources :subtransactions
+	resources :accounts, :except => [:new, :edit] do
+		resources :transactions, :except => [:new, :edit] do
+			resources :subtransactions, :only => [:index]
 			resource :status, :only => [:update, :destroy]
 			resource :flag, :only => [:update, :destroy]
 		end
@@ -66,7 +66,13 @@ Loot::Application.routes.draw do
 		put 'reconcile', :on => :member
 	end
 
-	resources :payees, :categories, :securities, :schedules
+	resources :payees, :categories, :securities, :except => [:new, :edit] do
+		resources :transactions, :only => [:index] do
+			get 'last', :on => :collection
+		end
+	end	
+
+	resources :schedules, :except => [:new, :edit, :show]
 	resources :logins, :only => [:create]
 
 	get '*unmatched_route', :to => 'application#routing_error'
