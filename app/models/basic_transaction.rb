@@ -21,7 +21,7 @@ class BasicTransaction < PayeeCashTransaction
 		end
 
 		def update_from_json(json)
-			s = self.includes(:header, :category).find(json[:id])
+			s = self.includes(:header).find(json[:id])
 			s.update_from_json(json)
 			s
 		end
@@ -34,7 +34,7 @@ class BasicTransaction < PayeeCashTransaction
 		self.amount = json['amount']
 		self.memo = json['memo']
 		self.header.update_from_json json
-		self.category = category
+		self.build_transaction_category.category = category
 		self.save!
 	end
 
