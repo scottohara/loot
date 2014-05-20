@@ -3,7 +3,7 @@ class SecuritiesController < ApplicationController
 
 	def index
 		render :json => if params.has_key? :include_balances
-			Security.security_list
+			Security.list
 		else
 			Security.order(:name)
 		end

@@ -9,7 +9,7 @@ class Security < ActiveRecord::Base
 			security['id'].present? ? self.find(security['id']) : self.new(:name => security)
 		end
 
-		def security_list
+		def list
 			ActiveRecord::Base.connection.execute <<-query
 				SELECT		securities.id,
 									securities.name,
