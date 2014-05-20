@@ -14,22 +14,22 @@
 			<span ng-show="transactionForm.transactionDate.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Payee -->
-		<div ng-if="account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': transactionForm.payee.$invalid}">
+		<div ng-if="account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.payee), 'has-error': transactionForm.payee.$invalid}">
 			<label for="payee">Payee</label>
-			<input name="payee" class="form-control" ng-model="transaction.payee" typeahead="payee as payee.name for payee in payees($viewValue, 10)" ng-blur="payeeSelected()" typeahead-editable="false" placeholder="Payee">
-			<span ng-show="transactionForm.payee.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+			<input name="payee" class="form-control" ng-model="transaction.payee" typeahead="payee as payee.name for payee in payees($viewValue, 10)" ng-blur="payeeSelected()" placeholder="Payee" required>
+			<span ng-show="isString(transaction.payee) || transactionForm.payee.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(transaction.payee), 'glyphicon-remove': transactionForm.payee.$invalid}"></span>
 		</div>
 		<!-- Security -->
-		<div ng-if="account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': transactionForm.security.$invalid}">
+		<div ng-if="account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.security), 'has-error': transactionForm.security.$invalid}">
 			<label for="security">Security</label>
-			<input name="security" class="form-control" ng-model="transaction.security" typeahead="security as security.name for security in securities($viewValue, 10)" ng-blur="securitySelected()" typeahead-editable="false" placeholder="Security">
-			<span ng-show="transactionForm.security.$invalid" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+			<input name="security" class="form-control" ng-model="transaction.security" typeahead="security as security.name for security in securities($viewValue, 10)" ng-blur="securitySelected()" placeholder="Security" required>
+			<span ng-show="isString(transaction.security) || transactionForm.security.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(transaction.security), 'glyphicon-remove': transactionForm.security.$invalid}"></span>
 		</div>
 		<!-- Investment Category -->
-		<div ng-if="account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': isString(transaction.category), 'has-error': transactionForm.category.$invalid}">
+		<div ng-if="account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-error': transactionForm.category.$invalid}">
 			<label for="category">Category</label>
 			<input name="category" class="form-control" ng-model="transaction.category" typeahead="category as category.name for category in investmentCategories($viewValue, 10)" ng-blur="investmentCategorySelected()" typeahead-editable="false" placeholder="Category" required>
-			<span ng-show="isString(transaction.category) || transactionForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': isString(transaction.category), 'glyphicon-remove': transactionForm.category.$invalid}"></span>
+			<span ng-show="transactionForm.category.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Transaction Amount -->
 		<div ng-if="account.account_type != 'investment' || transaction.category.id == 'DividendTo'" class="form-group has-feedback" ng-class="{'has-error': transactionForm.amount.$invalid}">
