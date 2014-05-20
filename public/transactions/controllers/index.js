@@ -5,8 +5,8 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Index controller
-	mod.controller('transactionIndexController', ['$scope', '$modal', '$timeout', '$window', '$state', 'currencyFilter', 'transactionModel', 'accountModel', 'account', 'transactionBatch',
-		function($scope, $modal, $timeout, $window, $state, currencyFilter, transactionModel, accountModel, account, transactionBatch) {
+	mod.controller('transactionIndexController', ['$scope', '$modal', '$timeout', '$window', '$state', 'transactionModel', 'accountModel', 'account', 'transactionBatch',
+		function($scope, $modal, $timeout, $window, $state, transactionModel, accountModel, account, transactionBatch) {
 			// Store the account we're working with in the scope
 			$scope.account = account;
 

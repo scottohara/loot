@@ -5,8 +5,8 @@
 	var mod = angular.module('schedules');
 
 	// Declare the Schedule Edit controller
-	mod.controller('scheduleEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'scheduleModel', 'schedule',
-		function($scope, $modalInstance, filterFilter, limitToFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
+	mod.controller('scheduleEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'scheduleModel', 'schedule',
+		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
 			// Make the passed schedule available on the scope
 			$scope.transaction = angular.extend({
 				transaction_type: 'Basic',
@@ -152,7 +152,7 @@
 					default:
 						return transaction;
 				}
-			}
+			};
 
 			var useLastTransaction = function(transaction) {
 				// Strip the id, primary account, next due date, transaction date and frequency
@@ -251,7 +251,7 @@
 						direction;
 
 				// Check the category selection
-				if (typeof transaction.category === 'object') {
+				if (typeof $scope.transaction.category === 'object') {
 					switch ($scope.transaction.category.id) {
 						case "TransferTo":
 							type = "SecurityTransfer";
@@ -307,8 +307,15 @@
 			// Watch the subtransactions array and recalculate the total allocated
 			$scope.$watch('transaction.subtransactions', function() {
 				$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
-					return total + (Number(subtransaction.amount * (subtransaction.direction == $scope.transaction.direction ? 1 : -1)) || 0);
+					return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
 				}, 0);
+
+				// If we're adding a new transaction, join the subtransaction memos and update the parent memo
+				if (!$scope.transaction.id) {
+					$scope.transaction.memo = $scope.transaction.subtransactions.reduce(function(memo, subtransaction) {
+						return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
+					}, "");
+				}
 			}, true);
 
 			// List of primary accounts for the typeahead
@@ -366,6 +373,22 @@
 				$scope.schedule.next_due_date = moment($scope.schedule.next_due_date).add($scope.scheduleFrequencies[$scope.schedule.frequency]).format("YYYY-MM-DD");
 			};
 
+			// Updates the transaction amount and memo when the quantity, price or commission change
+			$scope.updateInvestmentDetails = function() {
+				if ('SecurityInvestment' === $scope.schedule.transaction_type) {
+					$scope.transaction.amount = ($scope.transaction.quantity || 0) * ($scope.transaction.price || 0) - ($scope.transaction.commission || 0);
+				}
+
+				// If we're adding a new buy or sell transaction, update the memo with the details
+				if (!$scope.transaction.id && 'SecurityInvestment' === $scope.transaction.transaction_type) {
+					var	quantity = $scope.transaction.quantity > 0 ? $scope.transaction.quantity : "",
+							price = $scope.transaction.price > 0 ? " @ " + currencyFilter($scope.transaction.price) : "",
+							commission = $scope.transaction.commission > 0 ? " (less " + currencyFilter($scope.transaction.commission) + " commission)" : "";
+
+					$scope.transaction.memo = quantity + price + commission;
+				}
+			};
+
 			// Switches from Enter Transaction mode to Edit Schedule mode
 			$scope.edit = function() {
 				$scope.mode = "Edit Schedule";
@@ -374,11 +397,6 @@
 
 			// Enter a transaction based on the schedule, update the next due date and close the modal
 			$scope.enter = function() {
-				// For SecurityInvestment transactions, recalculate the amount before saving
-				if ('SecurityInvestment' === $scope.transaction.transaction_type) {
-					$scope.transaction.amount = $scope.transaction.quantity * $scope.transaction.price - $scope.transaction.commission;
-				}
-
 				$scope.errorMessage = null;
 				transactionModel.save($scope.transaction.primary_account.id, $scope.transaction).then(function() {
 					// Skip to the next due date
@@ -399,11 +417,6 @@
 
 			// Save and close the modal
 			$scope.save = function() {
-				// For SecurityInvestment transactions, recalculate the amount before saving
-				if ('SecurityInvestment' === $scope.schedule.transaction_type) {
-					$scope.schedule.amount = $scope.schedule.quantity * $scope.schedule.price - $scope.schedule.commission;
-				}
-
 				$scope.errorMessage = null;
 				scheduleModel.save($scope.schedule).then(function(schedule) {
 					$modalInstance.close(schedule.data);

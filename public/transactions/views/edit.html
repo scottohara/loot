@@ -58,25 +58,25 @@
 		<!-- Quantity -->
 		<div ng-if="account.account_type == 'investment' && ['TransferTo', 'TransferFrom', 'AddShares', 'RemoveShares', 'Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.quantity.$invalid}">
 			<label for="quantity">Quantity</label>
-			<input name="quantity" class="form-control" ng-class="{'negative': transaction.quantity < 0}" ng-model="transaction.quantity" placeholder="Quantity" required og-input-number>
+			<input name="quantity" class="form-control" ng-class="{'negative': transaction.quantity < 0}" ng-model="transaction.quantity" ng-change="updateInvestmentDetails()" placeholder="Quantity" required og-input-number>
 			<span ng-show="transactionForm.quantity.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Price -->
 		<div ng-if="account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.price.$invalid}">
 			<label for="price">Price</label>
-			<input name="price" class="form-control" ng-class="{'negative': transaction.price < 0}" ng-model="transaction.price" placeholder="Price" required og-input-currency="3">
+			<input name="price" class="form-control" ng-class="{'negative': transaction.price < 0}" ng-model="transaction.price" ng-change="updateInvestmentDetails()" placeholder="Price" required og-input-currency="3">
 			<span ng-show="transactionForm.price.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Commission -->
 		<div ng-if="account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.commission.$invalid}">
 			<label for="commission">Commission</label>
-			<input name="commission" class="form-control" ng-class="{'negative': transaction.commission < 0}" ng-model="transaction.commission" placeholder="Commission" required og-input-currency>
+			<input name="commission" class="form-control" ng-class="{'negative': transaction.commission < 0}" ng-model="transaction.commission" ng-change="updateInvestmentDetails()" placeholder="Commission" required og-input-currency>
 			<span ng-show="transactionForm.commission.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Investment Amount -->
 		<div ng-if="account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group">
 			<label>Amount</label>
-			<div ng-class="{'text-danger': (transaction.quantity * transaction.price - transaction.commission) < 0}">{{transaction.quantity * transaction.price - transaction.commission | currency}}</div>
+			<div ng-class="{'text-danger': transaction.amount < 0}">{{transaction.amount | currency}}</div>
 		</div>
 		<!-- Subtransactions -->
 		<div ng-if="['SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(transaction.category.id) != -1">

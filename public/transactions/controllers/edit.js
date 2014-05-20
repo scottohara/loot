@@ -5,8 +5,8 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Edit controller
-	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'account', 'transaction',
-		function($scope, $modalInstance, filterFilter, limitToFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, account, transaction) {
+	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'account', 'transaction',
+		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, account, transaction) {
 			// Make the passed transaction available on the scope
 			$scope.transaction = angular.extend({
 				transaction_type: 'Basic',
@@ -215,7 +215,7 @@
 						direction;
 
 				// Check the category selection
-				if (typeof transaction.category === 'object') {
+				if (typeof $scope.transaction.category === 'object') {
 					switch ($scope.transaction.category.id) {
 						case "TransferTo":
 							type = "SecurityTransfer";
@@ -303,13 +303,24 @@
 				$scope.transaction.subtransactions.splice(index, 1);
 			};
 
-			// Save and close the modal
-			$scope.save = function() {
-				// For SecurityInvestment transactions, recalculate the amount before saving
-				if ('SecurityInvestment' === $scope.transaction.transaction_type) {
-					$scope.transaction.amount = $scope.transaction.quantity * $scope.transaction.price - $scope.transaction.commission;
+			// Updates the transaction amount and memo when the quantity, price or commission change
+			$scope.updateInvestmentDetails = function() {
+				if ('SecurityInvestment' === $scope.schedule.transaction_type) {
+					$scope.transaction.amount = ($scope.transaction.quantity || 0) * ($scope.transaction.price || 0) - ($scope.transaction.commission || 0);
 				}
 
+				// If we're adding a new buy or sell transaction, update the memo with the details
+				if (!$scope.transaction.id && 'SecurityInvestment' === $scope.transaction.transaction_type) {
+					var	quantity = $scope.transaction.quantity > 0 ? $scope.transaction.quantity : "",
+							price = $scope.transaction.price > 0 ? " @ " + currencyFilter($scope.transaction.price) : "",
+							commission = $scope.transaction.commission > 0 ? " (less " + currencyFilter($scope.transaction.commission) + " commission)" : "";
+
+					$scope.transaction.memo = quantity + price + commission;
+				}
+			};
+
+			// Save and close the modal
+			$scope.save = function() {
 				$scope.errorMessage = null;
 				transactionModel.save($scope.account.id, $scope.transaction).then(function(transaction) {
 					$modalInstance.close(transaction.data);
