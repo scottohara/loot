@@ -29,6 +29,9 @@
 
 			// Saves a category
 			model.save = function(category) {
+				// Flush the $http cache
+				model.flush();
+
 				return $http({
 					method: category.id ? 'PATCH' : 'POST',
 					url: '/categories' + (category.id ? '/' + category.id : ''),
@@ -38,6 +41,9 @@
 
 			// Deletes a category
 			model.destroy = function(category) {
+				// Flush the $http cache
+				model.flush();
+
 				return $http.delete('/categories/' + category.id);
 			};
 

@@ -5,8 +5,8 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction model
-	mod.factory('transactionModel', ['$http',
-		function($http) {
+	mod.factory('transactionModel', ['$http', 'payeeModel', 'categoryModel', 'securityModel',
+		function($http, payeeModel, categoryModel, securityModel) {
 			var model = {};
 
 			// Retrieves a single transaction
@@ -38,6 +38,19 @@
 
 			// Saves a transaction
 			model.save = function(accountId, transaction) {
+				// If the payee, category, subcategory or security are new; flush the $http cache
+				if (typeof transaction.payee === 'string') {
+					payeeModel.flush();
+				}
+
+				if (typeof transaction.category === 'string' || typeof transaction.subcategory === 'string') {
+					categoryModel.flush();
+				}
+
+				if (typeof transaction.security === 'string') {
+					securityModel.flush();
+				}
+
 				return $http({
 					method: transaction.id ? 'PATCH' : 'POST',
 					url: '/accounts/' + accountId + '/transactions' + (transaction.id ? '/' + transaction.id : ''),

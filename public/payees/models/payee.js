@@ -32,6 +32,9 @@
 
 			// Saves a payee
 			model.save = function(payee) {
+				// Flush the $http cache
+				model.flush();
+
 				return $http({
 					method: payee.id ? 'PATCH' : 'POST',
 					url: '/payees' + (payee.id ? '/' + payee.id : ''),
@@ -41,6 +44,9 @@
 
 			// Deletes a payee
 			model.destroy = function(payee) {
+				// Flush the $http cache
+				model.flush();
+
 				return $http.delete('/payees/' + payee.id);
 			};
 
