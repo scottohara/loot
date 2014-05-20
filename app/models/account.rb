@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
 	include Categorisable
 
 	class << self
-		def account_list
+		def list
 			# Get the current holding balance of all investment accounts
 			investment_accounts = ActiveRecord::Base.connection.execute <<-query
 				SELECT					accounts.id,

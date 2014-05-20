@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
 
 	def index
 		if params.has_key? :include_balances
-			accounts = Account.account_list
+			accounts = Account.list
 		else
 			accounts = Account.all.order(:account_type, :name)
 		end
