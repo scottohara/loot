@@ -4,7 +4,7 @@ class TransactionsController < ApplicationController
 	before_action :context, :only => [:index, :last]
 
 	def index
-		opening_balance, transactions, at_end = @context.transaction_ledger params
+		opening_balance, transactions, at_end = @context.ledger params
 		render :json => {
 			:openingBalance => opening_balance.to_f,
 			:transactions => transactions,

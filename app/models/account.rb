@@ -155,7 +155,7 @@ class Account < ActiveRecord::Base
 		}
 	}
 
-	def transaction_ledger(opts)
+	def ledger(opts)
 		as_at = opts[:as_at] || '2400-12-31'
 		direction = (!!opts[:direction] && opts[:direction].to_sym || :prev)
 
