@@ -95,15 +95,15 @@ class SplitTransaction < PayeeCashTransaction
 								"transaction_accounts.direction",
 						 		"transactions.memo",
 						 		"transaction_flags.memo AS flag") 
-			.joins(		"JOIN transaction_accounts ON transaction_accounts.transaction_id = transaction_splits.parent_id")
-			.joins(		"JOIN transactions ON transactions.id = transaction_splits.transaction_id")
-			.joins(		"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id")
-			.joins(		"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id")
-			.joins(		"LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id")
-			.joins(		"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id")
-			.joins(		"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id")
-			.joins(		"LEFT OUTER JOIN accounts ON accounts.id = transfer_transaction_accounts.account_id")
-			.joins(		"LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id")
+			.joins([	"JOIN transaction_accounts ON transaction_accounts.transaction_id = transaction_splits.parent_id",
+								"JOIN transactions ON transactions.id = transaction_splits.transaction_id",
+								"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id",
+								"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id",
+								"LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id",
+								"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id",
+								"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id",
+								"LEFT OUTER JOIN accounts ON accounts.id = transfer_transaction_accounts.account_id",
+								"LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id"])
 			.where(		"transaction_splits.parent_id = ?", self.id)
 
 		# Remap to the desired output format
