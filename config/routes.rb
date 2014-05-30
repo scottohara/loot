@@ -56,21 +56,34 @@ Loot::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-	resources :accounts, :except => [:new, :edit] do
-		resources :transactions, :except => [:new, :edit] do
-			resources :subtransactions, :only => [:index]
-			resource :status, :only => [:update, :destroy]
-			resource :flag, :only => [:update, :destroy]
-		end
+	# Resource can be flagged
+	concern :flaggable do
+		resource :flag, :only => [:update, :destroy]
+	end
 
+	# Resource has a status
+	concern :reconcilable do
+		resource :status, :only => [:update, :destroy]
+	end
+
+	# Resource can be split
+	concern :splittable do
+		resources :subtransactions, :only => [:index]
+	end
+
+	# Resource will default to last used values
+	concern :defaultable do
+		get 'last', :on => :collection
+	end
+
+	resources :accounts, :except => [:new, :edit] do
+		resources :transactions, :concerns => [:splittable, :reconcilable, :flaggable, :defaultable], :except => [:new, :edit]
 		put 'reconcile', :on => :member
 	end
 
 	resources :payees, :categories, :securities, :except => [:new, :edit] do
-		resources :transactions, :only => [:index] do
-			get 'last', :on => :collection
-		end
-	end	
+		resources :transactions, :concerns => [:splittable, :flaggable, :defaultable], :except => [:new, :edit]
+	end
 
 	resources :schedules, :except => [:new, :edit, :show]
 	resources :logins, :only => [:create]

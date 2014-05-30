@@ -3,20 +3,23 @@ class Category < ActiveRecord::Base
 	validates :direction, :presence => true, :inclusion => {:in => %w(inflow outflow)}
 	belongs_to :parent, :class_name => 'Category', :foreign_key => 'parent_id'
 	has_many :children, :class_name => 'Category', :foreign_key => 'parent_id', :dependent => :destroy
-	has_many :transaction_categories
-	has_many :transactions, :through => :transaction_categories do
+	has_many :transaction_categories, -> (object) { rewhere(:category_id => object.children.pluck(:id).unshift(object.id)) }
+	has_many :transactions, :through => :transaction_categories, :source => :trx do
 		def ledger
 			joins([	"LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
-							"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id"])
+							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
+							"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id"])
 			.where(	"transactions.transaction_type != 'Subtransfer'")
 		end
 
 		def closing_balance
-			joins("JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id")
+			joins([	"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id",
+							"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id"])
 		end
 
 		def closing_balance_basic
-			closing_balance
+			joins([	"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
+							"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id"])
 		end
 	end
 

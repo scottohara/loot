@@ -10,9 +10,19 @@
 			var	model = {},
 					cache = $cacheFactory('categories');
 
+			// Returns the model type
+			model.type = function() {
+				return "category";
+			};
+
+			// Returns the API path
+			model.path = function(id) {
+				return '/categories' + (id ? '/' + id : '');
+			};
+
 			// Retrieves the list of categories
 			model.all = function(parent, includeChildren) {
-				return $http.get('/categories' + (includeChildren ? "?include_children" : ""), {
+				return $http.get(model.path() + (includeChildren ? "?include_children" : ""), {
 					params: {
 						parent: parent
 					},
@@ -27,6 +37,15 @@
 				return model.all(parent, true);
 			};
 
+			// Retrieves a single category
+			model.find = function(id) {
+				return $http.get(model.path(id), {
+					cache: true
+				}).then(function(response) {
+					return response.data;
+				});
+			};
+
 			// Saves a category
 			model.save = function(category) {
 				// Flush the $http cache
@@ -34,7 +53,7 @@
 
 				return $http({
 					method: category.id ? 'PATCH' : 'POST',
-					url: '/categories' + (category.id ? '/' + category.id : ''),
+					url: model.path(category.id),
 					data: category
 				});
 			};
@@ -44,7 +63,7 @@
 				// Flush the $http cache
 				model.flush();
 
-				return $http.delete('/categories/' + category.id);
+				return $http.delete(model.path(category.id));
 			};
 
 			// Flush the cache

@@ -5,6 +5,10 @@ class PayeesController < ApplicationController
 		respond_with Payee.order(:name)
 	end
 
+	def show
+		respond_with Payee.find params[:id]
+	end
+
 	def create
 		render :json => Payee.create(:name => params['name'])
 	end

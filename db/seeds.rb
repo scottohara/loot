@@ -37,6 +37,15 @@ require 'json'
 @tmp_bills = {}
 @tmp_flags = {}
 
+def noop(trx)
+	#noop
+end
+
+alias create_subtransaction_transaction noop
+alias create_subtransfer_transaction noop
+alias create_payslip_beforetax_transaction noop
+alias create_payslip_tax_transaction noop
+
 def progress(action, count, type)
 	reset_line = "\r\e[0K"
 	print "#{reset_line}#{action} #{count} #{type}".pluralize $.
@@ -471,7 +480,7 @@ def create_split_transaction(trx, direction)
 	@tmp_splits[trx[:id]].each do |trxid|
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
-			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			when 'subtransaction' then s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Sub').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
 			else
 				subaccount, subdirection, substatus = subtrx[:account], direction, subtrx[:status]
 				
@@ -479,7 +488,7 @@ def create_split_transaction(trx, direction)
 				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]]]
 				subaccount, subdirection, substatus = other_side[:account], ['inflow','outflow'].reject {|dir| dir.eql? direction }.first, other_side[:status] if subaccount.eql? trx[:account]
 
-				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => subdirection, :status => substatus).account = Account.find(subaccount)
+				s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => subdirection, :status => substatus).account = Account.find(subaccount)
 		end 
 	end
 
@@ -521,7 +530,7 @@ def create_payslip_transaction(trx)
 	@tmp_splits[trx[:id]].each do |trxid|
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
-			when 'subtransaction', 'payslip_before_tax', 'payslip_tax' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			when 'subtransaction', 'payslip_before_tax', 'payslip_tax' then s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Sub').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
 			else
 				subaccount, substatus = subtrx[:account], subtrx[:status]
 				
@@ -529,7 +538,7 @@ def create_payslip_transaction(trx)
 				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first]
 				subaccount, substatus = other_side[:account], other_side[:status] if subaccount.eql? trx[:account]
 
-				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
+				s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
 
@@ -549,7 +558,7 @@ def create_loanrepayment_transaction(trx)
 	@tmp_splits[trx[:id]].each do |trxid|
 		subtrx = @tmp_transactions[trxid]
 		case subtrx[:type]
-			when 'subtransaction' then s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Basic').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			when 'subtransaction' then s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Sub').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
 			else
 				subaccount, substatus = subtrx[:account], subtrx[:status]
 				
@@ -557,7 +566,7 @@ def create_loanrepayment_transaction(trx)
 				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first]
 				subaccount, substatus = other_side[:account], other_side[:status] if subaccount.eql? trx[:account]
 
-				s.transaction_splits.build.build_transaction(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
+				s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
 		end 
 	end
 
@@ -662,22 +671,6 @@ def create_dividend_transaction(trx, direction)
 	h.security = (!!investment_trx[:security] && Security.find(investment_trx[:security][:id])) || nil
 	create_transaction_flag s, trx
 	s.save
-end
-
-def create_subtransaction_transaction(trx)
-	#noop
-end
-
-def create_subtransfer_transaction(trx)
-	#noop
-end
-
-def create_payslip_beforetax_transaction(trx)
-	#noop
-end
-
-def create_payslip_tax_transaction(trx)
-	#noop
 end
 
 def create_transaction_flag(transaction, trx)

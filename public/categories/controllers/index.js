@@ -8,13 +8,13 @@
 	mod.controller('categoryIndexController', ['$scope', '$modal', '$timeout', '$state', 'categoryModel', 'categories',
 		function($scope, $modal, $timeout, $state, categoryModel, categories) {
 			// Flatten the categories and subcategories and store on the scope
-			$scope.categories = categories.reduce(function(flattened, category) {
+			$scope.categories = angular.copy(categories).reduce(function(flattened, category) {
 				var children = category.children;
 				delete category.children;
 				return flattened.concat(category, children);
 			}, []);
 
-			var editCategory = function(index) {
+			$scope.editCategory = function(index) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 
@@ -84,15 +84,18 @@
 				navigationEnabled: function() {
 					return !$scope.navigationDisabled;
 				},
-				selectAction: editCategory,
+				selectAction: function() {
+					$state.go('.transactions');
+				},
+				editAction: $scope.editCategory,
 				insertAction: function() {
 					// Same as select action, but don't pass any arguments
-					editCategory();
+					$scope.editCategory();
 				},
 				deleteAction: deleteCategory,
 				focusAction: function(index) {
-					$state.go('root.categories.category', {
-						categoryId: $scope.categories[index].id
+					$state.go(($state.includes('**.category') ? '^' : '') + '.category', {
+						id: $scope.categories[index].id
 					});
 				}
 			};
@@ -133,10 +136,10 @@
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			};
 
-			// Listen for state change events, and when the categoryId changes, ensure the row is focussed
+			// Listen for state change events, and when the category changes, ensure the row is focussed
 			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-				if (toParams.categoryId && toParams.categoryId !== fromParams.categoryId) {
-					focusCategory(Number(toParams.categoryId));
+				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
+					focusCategory(Number(toParams.id));
 				}
 			});
 		}

@@ -44,7 +44,7 @@
 								<tbody>
 									<tr ng-repeat="subtransaction in schedule.subtransactions">
 										<td>{{subtransaction.category.name}}</td>
-										<td ng-if="subtransaction.transaction_type == 'Basic'">{{subtransaction.subcategory.name}}</td>
+										<td ng-if="subtransaction.transaction_type == 'Sub'">{{subtransaction.subcategory.name}}</td>
 										<td ng-if="subtransaction.transaction_type == 'Subtransfer'">{{subtransaction.account.name}}</td>
 										<td>{{subtransaction.memo}}</td>
 										<td class="amount" ng-class="{'text-danger': (subtransaction.amount * (subtransaction.direction == schedule.direction ? 1 : -1)) < 0}">{{subtransaction.amount * (subtransaction.direction == schedule.direction ? 1 : -1) | currency}}</td>

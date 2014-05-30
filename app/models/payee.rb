@@ -1,9 +1,10 @@
 class Payee < ActiveRecord::Base
 	validates :name, :presence => true
 	has_many :payee_transaction_headers
-	has_many :transactions, :through => :payee_transaction_headers do
+	has_many :transactions, :through => :payee_transaction_headers, :source => :trx do
 		def ledger
 			joins([	"LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
+							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 			.where(	"transactions.transaction_type != 'Subtransfer'")
 		end

@@ -52,9 +52,7 @@ class Schedule < ActiveRecord::Base
 				.where(			"transactions.transaction_type != 'Subtransfer'")
 				.order(			"schedules.next_due_date ASC",
 										"transactions.id ASC")
-
-			# Set to an empty array if we got no results
-			schedules = [] if schedules.nil?
+				.to_a
 
 			# For Transfer/SecurityTransfers, only keep the source account side; and for SecurityInvestment/Dividends only keep the investment account side
 			schedules.reject! do |trx|
@@ -106,13 +104,13 @@ class Schedule < ActiveRecord::Base
 
 			overdue.each do |schedule|
 				# Find the associated transaction header
-				header = TransactionHeader.includes(:transaction).find_by_schedule_id schedule.id
+				header = TransactionHeader.includes(:trx).find_by_schedule_id schedule.id
 
 				# What type of transaction is it?
-				transaction_class = Transaction.class_for header.transaction.transaction_type
+				transaction_class = Transaction.class_for header.trx.transaction_type
 
 				# Find the transaction
-				transaction = transaction_class.includes(:header => [:schedule]).find header.transaction.id
+				transaction = transaction_class.includes(:header => [:schedule]).find header.trx.id
 
 				# Clear the schedule info and set the transaction date to the next due date
 				transaction.header.transaction_date = transaction.header.schedule.next_due_date

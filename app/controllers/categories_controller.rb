@@ -9,6 +9,10 @@ class CategoriesController < ApplicationController
 		end
 	end
 
+	def show
+		respond_with Category.find params[:id]
+	end
+
 	def create
 		render :json => Category.create(:name => params['name'], :direction => params['direction'], :parent_id => params['parent_id'])
 	end

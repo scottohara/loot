@@ -9,9 +9,14 @@
 		function($http, payeeModel, categoryModel, securityModel) {
 			var model = {};
 
+			// Returns the API path
+			model.path = function(id) {
+				return '/schedules' + (id ? '/' + id : '');
+			};
+
 			// Retrieves all schedules
 			model.all = function() {
-				return $http.get('/schedules').then(function(response) {
+				return $http.get(model.path()).then(function(response) {
 					return response.data;
 				});
 			};
@@ -33,14 +38,14 @@
 
 				return $http({
 					method: schedule.id ? 'PATCH' : 'POST',
-					url: '/schedules' + (schedule.id ? '/' + schedule.id : ''),
+					url: model.path(schedule.id),
 					data: schedule
 				});
 			};
 
 			// Deletes a schedule
 			model.destroy = function(schedule) {
-				return $http.delete('/schedules/' + schedule.id);
+				return $http.delete(model.path(schedule.id));
 			};
 
 			return model;

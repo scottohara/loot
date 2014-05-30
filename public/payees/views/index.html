@@ -6,7 +6,10 @@
 	</thead>
 	<tbody>
 		<tr ng-repeat="payee in payees">
-			<td>{{payee.name}}</td>
+			<td class="has-action">
+				{{payee.name}}
+				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit payee" ng-click="editPayee($index)"></i>
+			</td>
 		</tr>
 	<tbody>
 </table>

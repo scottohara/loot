@@ -27,6 +27,9 @@ module Transactable
 									"transactions.transaction_type",
 									"transaction_headers.transaction_date",
 									"transaction_headers.payee_id",
+									"accounts.id AS primary_account_id",
+									"accounts.name AS primary_account_name",
+									"accounts.account_type AS primary_account_type",
 									"payees.name AS payee_name",
 									"transaction_headers.security_id",
 									"securities.name AS security_name",
@@ -40,6 +43,8 @@ module Transactable
 									"transaction_splits.parent_id AS split_parent_id",
 									"split_accounts.id AS split_account_id",
 									"split_accounts.name AS split_account_name",
+									"split_accounts.account_type AS split_account_type",
+									"split_transaction_accounts.direction AS split_parent_direction",
 									"split_transaction_accounts.status AS split_parent_status",
 									"transactions.amount",
 									"transaction_headers.quantity",
@@ -56,7 +61,6 @@ module Transactable
 									"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id",
 									"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id",
 									"LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id",
-									"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 									"LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id",
 									"LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id",
 									"LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id"])
@@ -64,9 +68,7 @@ module Transactable
 			.order(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:order]}",
 									"transactions.id #{LEDGER_QUERY_OPTS[direction][:order]}")
 			.limit(			NUM_RESULTS)
-
-		# Set to an empty array if we got no results
-		transactions = [] if transactions.nil?
+			.to_a
 
 		# Have we reached the end of the transactions (in this direction)?
 		at_end = transactions.size < NUM_RESULTS
@@ -75,7 +77,7 @@ module Transactable
 		closing_date = transactions.last['transaction_date'] unless at_end
 
 		# If going backwards, reverse the results to be in chronological order
-		transactions.reverse! if direction.eql? :prev
+		transactions.to_a.reverse! if direction.eql? :prev
 
 		# If we're not at the end, drop any transactions for the last date so that we're only dealing with full days
 		unless at_end
@@ -116,6 +118,11 @@ module Transactable
 				:id => trx['id'],
 				:transaction_type => trx['transaction_type'],
 				:transaction_date => trx['transaction_date'],
+				:primary_account => {
+					:id => trx['primary_account_id'] || trx['split_account_id'],
+					:name => trx['primary_account_name'] || trx['split_account_name'],
+					:account_type => trx['primary_account_type'] || trx['split_account_type']
+				},
 				:payee => {
 					:id => trx['payee_id'],
 					:name => trx['payee_name']
@@ -135,7 +142,7 @@ module Transactable
 				:quantity => trx['quantity'],
 				:commission => trx['commission'],
 				:price => trx['price'],
-				:direction => trx['direction'],
+				:direction => trx['direction'] || trx['split_parent_direction'],
 				:status => trx['status'],
 				:related_status => (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status'] || trx['transfer_status']),
 				:memo => trx['memo'],
@@ -154,7 +161,7 @@ module Transactable
 			.select([	"categories.direction",
 								"SUM(transactions.amount) AS total_amount"])
 			.joins(		"JOIN categories ON transaction_categories.category_id = categories.id")
-			.where(		:transaction_type => 'Basic')
+			.where(		:transaction_type => %w(Basic Sub))
 			.where(		"transaction_headers.transaction_date <= ?", as_at)
 			.where(		"transaction_headers.transaction_date IS NOT NULL")
 			.group(		"categories.direction")

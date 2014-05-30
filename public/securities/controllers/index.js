@@ -12,7 +12,6 @@
 				$scope.totalValue = securities.reduce(function(totalValue, security) {
 					return totalValue + Number(Number(security.current_value).toFixed(2));
 				}, 0);
-				console.log($scope.totalValue);
 			});
 		}
 	]);

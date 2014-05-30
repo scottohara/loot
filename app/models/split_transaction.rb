@@ -2,8 +2,8 @@ class SplitTransaction < PayeeCashTransaction
 	has_one :transaction_account, :foreign_key => 'transaction_id', :autosave => true, :dependent => :destroy
 	has_one :account, :through => :transaction_account
 	has_many :transaction_splits, :foreign_key => 'parent_id', :inverse_of => :parent, :dependent => :destroy
-	has_many :subtransactions, -> { where :transaction_type => 'Basic' }, :class_name => 'Subtransaction', :through => :transaction_splits, :source => :transaction
-	has_many :subtransfers, -> { where :transaction_type =>'Subtransfer' }, :class_name => 'SubtransferTransaction', :through => :transaction_splits, :source => :transaction
+	has_many :subtransactions, -> { where :transaction_type => 'Sub' }, :class_name => 'SubTransaction', :through => :transaction_splits, :source => :trx
+	has_many :subtransfers, -> { where :transaction_type =>'Subtransfer' }, :class_name => 'SubtransferTransaction', :through => :transaction_splits, :source => :trx
 	after_initialize do |t|
 		t.transaction_type = 'Split'
 	end
@@ -13,7 +13,7 @@ class SplitTransaction < PayeeCashTransaction
 	class << self
 		def create_from_json(json)
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
-			s.build_transaction_account(:direction => json['direction']).account = Account.find(json['account_id'])
+			s.build_transaction_account(:direction => json['direction']).account = Account.find(json['primary_account']['id'])
 			s.build_header.update_from_json json
 			s.create_children(json['subtransactions'])
 			s.save!
@@ -32,16 +32,16 @@ class SplitTransaction < PayeeCashTransaction
 			# Keys could be symbols or strings
 			child = child.with_indifferent_access
 
-			case child['transaction_type']
-				when 'Basic' then
-					category = Category.find_or_new(child['category'])
-					category = Category.find_or_new(child['subcategory'], category) unless child['subcategory'].nil? || child['subcategory']['id'].nil?
-					self.transaction_splits.build.build_transaction(:amount => child['amount'], :memo => child['memo'], :transaction_type => 'Basic').build_transaction_category.category = category
-				else
-					direction = child['direction'].eql?('inflow') && 'outflow' || 'inflow' 
-					t = self.transaction_splits.build.build_transaction(:amount => child['amount'], :memo => child['memo'], :transaction_type => 'Subtransfer')
-					t.build_transaction_account(:direction => direction).account = Account.find(child['account']['id'])
-					t.build_flag(:memo => child['flag']) if !!child['flag']
+			t = self.transaction_splits.build.build_trx(:amount => child['amount'], :memo => child['memo'], :transaction_type => child['transaction_type'])
+			t.build_flag(:memo => child['flag']) if !!child['flag']
+
+			if child['transaction_type'].eql? 'Sub'
+				category = Category.find_or_new(child['category'])
+				category = Category.find_or_new(child['subcategory'], category) unless child['subcategory'].nil? || child['subcategory']['id'].nil?
+				t.build_transaction_category.category = category
+			else
+				direction = child['direction'].eql?('inflow') && 'outflow' || 'inflow' 
+				t.build_transaction_account(:direction => direction).account = Account.find(child['account']['id'])
 			end
 		end
 	end
@@ -50,6 +50,7 @@ class SplitTransaction < PayeeCashTransaction
 		self.amount = json['amount']
 		self.memo = json['memo']
 		self.transaction_account.direction = json['direction']
+		self.account = Account.find(json['primary_account']['id'])
 		self.header.update_from_json json
 		self.subtransactions.each &:destroy
 		self.subtransfers.each &:destroy

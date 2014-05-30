@@ -10,9 +10,19 @@
 			var	model = {},
 					cache = $cacheFactory('securities');
 
+			// Returns the model type
+			model.type = function() {
+				return "security";
+			};
+
+			// Returns the API path
+			model.path = function(id) {
+				return '/securities' + (id ? '/' + id : '');
+			};
+
 			// Retrieves the list of securities
 			model.all = function(includeBalances) {
-				return $http.get('/securities' + (includeBalances ? "?include_balances" : ""), {
+				return $http.get(model.path() + (includeBalances ? "?include_balances" : ""), {
 					cache: includeBalances ? false : cache
 				}).then(function(response) {
 					return response.data;
@@ -21,7 +31,7 @@
 
 			// Retrieves the most recent transaction for a security
 			model.findLastTransaction = function(securityId, accountType) {
-				return $http.get('/securities/' + securityId + '/transactions/last', {
+				return $http.get(model.path(securityId) + '/transactions/last', {
 					params: {
 						account_type: accountType
 					}

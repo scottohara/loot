@@ -3,9 +3,10 @@ class Account < ActiveRecord::Base
 	validates :account_type, :presence => true, :inclusion => {:in => %w(bank credit cash asset liability investment loan)}
 	validates :status, :inclusion => {:in => %w(open closed)}
 	has_many :transaction_accounts
-	has_many :transactions, :through => :transaction_accounts do
+	has_many :transactions, :through => :transaction_accounts, :source => :trx do
 		def ledger
 			joins([	"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id",
+							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 		end
 

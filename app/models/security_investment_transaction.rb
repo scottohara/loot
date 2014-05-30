@@ -13,7 +13,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 			security = Security.find_or_new json['security']
 
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
-			s.transaction_accounts.build(:direction => json['direction']).account = Account.find(json['account_id'])
+			s.transaction_accounts.build(:direction => json['direction']).account = Account.find(json['primary_account']['id'])
 			s.transaction_accounts.build(:direction => cash_direction).account = Account.find(json['account']['id'])
 			s.build_header.update_from_json json
 			s.save!
@@ -35,6 +35,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		self.amount = json['amount']
 		self.memo = json['memo']
 		self.investment_account.direction = json['direction']
+		self.investment_account.account = Account.find(json['primary_account']['id'])
 		self.cash_account.direction = cash_direction
 		self.cash_account.account = Account.find(json['account']['id'])
 		self.header.update_from_json json

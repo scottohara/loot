@@ -5,16 +5,21 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Edit controller
-	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'account', 'transaction',
-		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, account, transaction) {
+	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'contextModel', 'context', 'transaction',
+		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, contextModel, context, transaction) {
 			// Make the passed transaction available on the scope
 			$scope.transaction = angular.extend({
 				transaction_type: 'Basic',
 				transaction_date: moment().format("YYYY-MM-DD"),
+				primary_account: "account" === contextModel.type() ? context : undefined,
+				payee: "payee" === contextModel.type() ? context : undefined,
+				security: "security" === contextModel.type() ? context : undefined,
+				category: "category" === contextModel.type() ? (context.parent ? context.parent : context) : undefined,
+				subcategory: "category" === contextModel.type() && context.parent ? context : undefined,
 				subtransactions: [{},{},{},{}]
 			}, transaction);
 
-			$scope.account = account;
+			$scope.context = context;
 			$scope.mode = (transaction ? "Edit" : "Add");
 
 			// Give the transaction date field initial focus
@@ -86,7 +91,7 @@
 				// If we're adding a new transaction and an existing payee is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.payee === 'object') {
 					// Get the previous transaction for the payee
-					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.account.account_type).then(getSubtransactions).then(useLastTransaction);
+					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
 				}
 			};
 
@@ -95,7 +100,7 @@
 				// If we're adding a new transaction and an existing security is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.security === 'object') {
 					// Get the previous transaction for the security
-					securityModel.findLastTransaction($scope.transaction.security.id, $scope.account.account_type).then(getSubtransactions).then(useLastTransaction);
+					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
 				}
 			};
 
@@ -106,7 +111,7 @@
 					case "LoanRepayment":
 					case "Payslip":
 						transaction.subtransactions = [];
-						return transactionModel.findSubtransactions(transaction.primary_account.id, transaction.id).then(function(subtransactions) {
+						return transactionModel.findSubtransactions(contextModel.path(context.id), transaction.id).then(function(subtransactions) {
 							// Strip the subtransaction ids
 							transaction.subtransactions = subtransactions.map(function(subtransaction) {
 								subtransaction.id = null;
@@ -190,7 +195,7 @@
 								break;
 
 							default:
-								type = "Basic";
+								type = "Sub";
 								direction = transaction.category.direction;
 								break;
 						}
@@ -200,7 +205,7 @@
 				}
 
 				// Update the transaction type & direction
-				transaction.transaction_type = type || 'Basic';
+				transaction.transaction_type = type || (isNaN(index) ? 'Basic' : 'Sub');
 				transaction.direction = direction || 'outflow';
 
 				// Make sure the subcategory is still valid
@@ -282,7 +287,9 @@
 					};
 
 					// Filter the current account from the results (can't transfer to self)
-					accounts = filterFilter(accounts, {name: "!" + $scope.account.name});
+					if ($scope.transaction.primary_account) {
+						accounts = filterFilter(accounts, {name: "!" + $scope.transaction.primary_account.name});
+					}
 
 					// For security transfers, only include investment accounts
 					if ('SecurityTransfer' === $scope.transaction.transaction_type) {
@@ -322,7 +329,7 @@
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;
-				transactionModel.save($scope.account.id, $scope.transaction).then(function(transaction) {
+				transactionModel.save(contextModel.path(context.id), $scope.transaction).then(function(transaction) {
 					$modalInstance.close(transaction.data);
 				}, function(error) {
 					$scope.errorMessage = error.data;

@@ -10,7 +10,7 @@
 			// Store the payees on the scope
 			$scope.payees = payees;
 
-			var editPayee = function(index) {
+			$scope.editPayee = function(index) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 
@@ -77,15 +77,18 @@
 				navigationEnabled: function() {
 					return !$scope.navigationDisabled;
 				},
-				selectAction: editPayee,
+				selectAction: function() {
+					$state.go('.transactions');
+				},
+				editAction: $scope.editPayee,
 				insertAction: function() {
 					// Same as select action, but don't pass any arguments
-					editPayee();
+					$scope.editPayee();
 				},
 				deleteAction: deletePayee,
 				focusAction: function(index) {
-					$state.go('root.payees.payee', {
-						payeeId: $scope.payees[index].id
+					$state.go(($state.includes('**.payee') ? '^' : '') + '.payee', {
+						id: $scope.payees[index].id
 					});
 				}
 			};
@@ -121,10 +124,10 @@
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			};
 
-			// Listen for state change events, and when the payeeId changes, ensure the row is focussed
+			// Listen for state change events, and when the payee id changes, ensure the row is focussed
 			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-				if (toParams.payeeId && toParams.payeeId !== fromParams.payeeId) {
-					focusPayee(Number(toParams.payeeId));
+				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
+					focusPayee(Number(toParams.id));
 				}
 			});
 		}

@@ -9,16 +9,19 @@
 		function($http, payeeModel, categoryModel, securityModel) {
 			var model = {};
 
-			// Retrieves a single transaction
-			model.find = function(accountId, transactionId) {
-				return $http.get('/accounts/' + accountId + '/transactions/' + transactionId).then(function(response) {
-					return response.data;
-				});
+			// Returns the API path
+			model.path = function (id) {
+				return '/transactions' + (id ? '/' + id : '');
+			};
+ 
+			// Returns the full API path including parent context
+			model.fullPath = function (context, id) {
+				return context + model.path(id);
 			};
 
-			// Retrieves a batch of transactions for an account
-			model.findByAccount = function(id, fromDate, direction, unreconciledOnly) {
-				return $http.get('/accounts/' + id + '/transactions', {
+			// Retrieves a batch of transactions
+			model.all = function(context, fromDate, direction, unreconciledOnly) {
+				return $http.get(model.fullPath(context), {
 					params: {
 						as_at: fromDate,
 						direction: direction,
@@ -30,14 +33,21 @@
 			};
 
 			// Retrieves subtransactions for a given split transaction
-			model.findSubtransactions = function(accountId, transactionId) {
-				return $http.get('/accounts/' + accountId + '/transactions/' + transactionId + '/subtransactions').then(function(response) {
+			model.findSubtransactions = function(context, id) {
+				return $http.get(model.fullPath(context, id) + '/subtransactions').then(function(response) {
+					return response.data;
+				});
+			};
+
+			// Retrieves a single transaction
+			model.find = function(context, id) {
+				return $http.get(model.fullPath(context, id)).then(function(response) {
 					return response.data;
 				});
 			};
 
 			// Saves a transaction
-			model.save = function(accountId, transaction) {
+			model.save = function(context, transaction) {
 				// If the payee, category, subcategory or security are new; flush the $http cache
 				if (typeof transaction.payee === 'string') {
 					payeeModel.flush();
@@ -53,34 +63,34 @@
 
 				return $http({
 					method: transaction.id ? 'PATCH' : 'POST',
-					url: '/accounts/' + accountId + '/transactions' + (transaction.id ? '/' + transaction.id : ''),
+					url: model.fullPath(context, transaction.id),
 					data: transaction
 				});
 			};
 
 			// Deletes a transaction
-			model.destroy = function(accountId, transaction) {
-				return $http.delete('/accounts/' + accountId + '/transactions/' + transaction.id);
+			model.destroy = function(context, transaction) {
+				return $http.delete(fullPath(context, transaction.id));
 			};
 
 			// Updates the status of a transaction
-			model.updateStatus = function(accountId, transactionId, status) {
+			model.updateStatus = function(context, id, status) {
 				return $http({
 					method: status ? 'PATCH' : 'DELETE',
-					url: '/accounts/' + accountId + '/transactions/' + transactionId + '/status' + (status ? '?' + status : '')
+					url: model.fullPath(context, id) + '/status' + (status ? '?' + status : '')
 				});
 			};
 
 			// Flags a transaction
-			model.flag = function(accountId, transaction) {
-				return $http.put('/accounts/' + accountId + '/transactions/' + transaction.id + '/flag', {
+			model.flag = function(context, transaction) {
+				return $http.put(model.fullPath(context, transaction.id) + '/flag', {
 					memo: transaction.flag
 				});
 			};
 
 			// Unflags a transaction
-			model.unflag = function(accountId, transactionId) {
-				return $http.delete('/accounts/' + accountId + '/transactions/' + transactionId + '/flag');
+			model.unflag = function(context, id) {
+				return $http.delete(model.fullPath(context, id) + '/flag');
 			};
 
 			return model;

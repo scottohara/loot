@@ -10,9 +10,19 @@
 			var	model = {},
 					cache = $cacheFactory('payees');
 
+			// Returns the model type
+			model.type = function() {
+				return "payee";
+			};
+
+			// Returns the API path
+			model.path = function(id) {
+				return '/payees' + (id ? '/' + id : '');
+			};
+
 			// Retrieves the list of payees
 			model.all = function() {
-				return $http.get('/payees', {
+				return $http.get(model.path(), {
 					cache: cache
 				}).then(function(response) {
 					return response.data;
@@ -21,10 +31,19 @@
 
 			// Retrieves the most recent transaction for a payee
 			model.findLastTransaction = function(payeeId, accountType) {
-				return $http.get('/payees/' + payeeId + '/transactions/last', {
+				return $http.get(model.path(payeeId) + '/transactions/last', {
 					params: {
 						account_type: accountType
 					}
+				}).then(function(response) {
+					return response.data;
+				});
+			};
+
+			// Retrieves a single payee
+			model.find = function(id) {
+				return $http.get(model.path(id), {
+					cache: true
 				}).then(function(response) {
 					return response.data;
 				});
@@ -37,7 +56,7 @@
 
 				return $http({
 					method: payee.id ? 'PATCH' : 'POST',
-					url: '/payees' + (payee.id ? '/' + payee.id : ''),
+					url: model.path(payee.id),
 					data: payee
 				});
 			};
@@ -47,7 +66,7 @@
 				// Flush the $http cache
 				model.flush();
 
-				return $http.delete('/payees/' + payee.id);
+				return $http.delete(model.path(payee.id));
 			};
 
 			// Flush the cache

@@ -10,9 +10,19 @@
 			var	model = {},
 					cache = $cacheFactory('accounts');
 
+			// Returns the model type
+			model.type = function() {
+				return "account";
+			};
+
+			// Returns the API path
+			model.path = function(id) {
+				return '/accounts' + (id ? '/' + id : '');
+			};
+
 			// Retrieves the list of accounts
 			model.all = function(includeBalances) {
-				return $http.get('/accounts' + (includeBalances ? "?include_balances" : ""), {
+				return $http.get(model.path() + (includeBalances ? "?include_balances" : ""), {
 					cache: includeBalances ? false : cache
 				}).then(function(response) {
 					return response.data;
@@ -24,9 +34,9 @@
 				return model.all(true);
 			};
 
-			// Retrieves a single account by it's ID
+			// Retrieves a single account
 			model.find = function(id) {
-				return $http.get('/accounts/' + id, {
+				return $http.get(model.path(id), {
 					cache: true
 				}).then(function(response) {
 					return response.data;
@@ -37,7 +47,7 @@
 			model.reconcile = function(id) {
 				return $http({
 					method: 'PATCH',
-					url: '/accounts/' + id + '/reconcile'
+					url: model.path(id) + '/reconcile'
 				});
 			};
 

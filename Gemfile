@@ -2,7 +2,7 @@ ruby "2.1.0"
 
 source 'https://rubygems.org'
 
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.1'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -13,10 +13,10 @@ gem 'pg'
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails',   '~> 4.0.1'
+  gem 'sass-rails',   '~> 4.0.3'
   gem 'coffee-rails', '~> 4.0.1'
   gem 'therubyracer', :platforms => :ruby
-  gem 'uglifier', '>= 2.4.0'
+  gem 'uglifier', '>= 2.5.0'
 end
 
 # To use ActiveModel has_secure_password
@@ -41,7 +41,7 @@ gem 'rails_12factor', :group => :production
 gem 'active_model_serializers'
 
 group :test do
-	gem 'simplecov', '~> 0.7.1'
+	gem 'simplecov', '~> 0.8.2'
 	gem 'minitest-spec-rails'
 end
 

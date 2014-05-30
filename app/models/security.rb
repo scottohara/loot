@@ -2,7 +2,7 @@ class Security < ActiveRecord::Base
 	validates :name, :presence => true
 	has_many :prices, :class_name => 'SecurityPrice', :dependent => :destroy
 	has_many :security_transaction_headers
-	has_many :transactions, :through => :security_transaction_headers
+	has_many :transactions, :through => :security_transaction_headers, :source => :trx
 
 	class << self
 		def find_or_new(security)

@@ -5,8 +5,8 @@
 	var mod = angular.module('transactions');
 
 	// Declare the transactionStatus directive
-	mod.directive('transactionStatus', ['transactionModel',
-		function(transactionModel) {
+	mod.directive('transactionStatus', ['transactionModel', 'accountModel',
+		function(transactionModel, accountModel) {
 			return {
 				restrict: 'A',
 				scope: {
@@ -40,7 +40,7 @@
 					// Declare a click handler to toggle the status
 					var clickHandler = function() {
 						var status = "Unreconciled" === scope.nextStatus ? null : scope.nextStatus;
-						transactionModel.updateStatus(scope.transactionStatus.account.id, scope.transactionStatus.transaction.id, status).then(function() {
+						transactionModel.updateStatus(accountModel.path(scope.transactionStatus.account.id), scope.transactionStatus.transaction.id, status).then(function() {
 							setCurrentStatus(scope.nextStatus);
 						});
 					};

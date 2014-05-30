@@ -24,6 +24,49 @@
 			// Default to account list for any unmatched URLs
 			$urlRouterProvider.otherwise('/accounts');
 
+			var	basicState = function() {
+						return {
+							url: '/:id',
+						};
+					},
+					transactionsState = function(parentContext) {
+						return {
+							url: '/transactions',
+							data: {
+								title: parentContext.charAt(0).toUpperCase() + parentContext.substring(1) + ' Transactions'
+							},
+							resolve: {
+								contextModel: [parentContext + 'Model',
+									function(contextModel) {
+										return contextModel;
+									}
+								],
+								context: ['$stateParams', 'contextModel',
+									function($stateParams, contextModel) {
+										return contextModel.find($stateParams.id);
+									}
+								],
+								transactionBatch: ['transactionModel', 'contextModel', 'context',
+									function(transactionModel, contextModel, context) {
+										var unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
+										return transactionModel.all(contextModel.path(context.id), null, 'prev', unreconciledOnly);
+									}
+								]
+							},
+							views: {
+								'@root': {
+									templateUrl: 'transactions/views/index.html',
+									controller: 'transactionIndexController'
+								}
+							}
+						};
+					},
+					transactionState = function() {
+						return {
+							url: '/:transactionId'
+						};
+					};
+
 			$stateProvider
 				.state('root', {
 					abstract: true,
@@ -58,6 +101,9 @@
 						title: 'Accounts'
 					}
 				})
+				.state('root.accounts.account', basicState())
+				.state('root.accounts.account.transactions', transactionsState('account'))
+				.state('root.accounts.account.transactions.transaction', transactionState())
 				.state('root.schedules', {
 					url: '/schedules',
 					templateUrl: 'schedules/views/index.html',
@@ -81,9 +127,9 @@
 						]
 					}
 				})
-				.state('root.payees.payee', {
-					url: '/:payeeId'
-				})
+				.state('root.payees.payee', basicState())
+				.state('root.payees.payee.transactions', transactionsState('payee'))
+				.state('root.payees.payee.transactions.transaction', transactionState())
 				.state('root.categories', {
 					url: '/categories',
 					templateUrl: 'categories/views/index.html',
@@ -99,15 +145,9 @@
 						]
 					}
 				})
-				.state('root.categories.category', {
-					url: '/:categoryId'
-				})
-				.state('root.categories.category.subcategories', {
-					url: '/subcategories'
-				})
-				.state('root.categories.category.subcategories.subcategory', {
-					url: '/:subcategoryId'
-				})
+				.state('root.categories.category', basicState())
+				.state('root.categories.category.transactions', transactionsState('category'))
+				.state('root.categories.category.transactions.transaction', transactionState())
 				.state('root.securities', {
 					url: '/securities',
 					templateUrl: 'securities/views/index.html',
@@ -116,42 +156,7 @@
 						title: 'Securities'
 					}
 				})
-				.state('root.securities.security', {
-					url: '/:securityId'
-				})
-				.state('root.accounts.account', {
-					abstract: true,
-					url: '/:accountId',
-					resolve: {
-						account: ['$stateParams', 'accountModel',
-							function($stateParams, accountModel) {
-								return accountModel.find($stateParams.accountId);
-							}
-						]
-					}
-				})
-				.state('root.accounts.account.transactions', {
-					url: '/transactions',
-					data: {
-						title: 'Transactions'
-					},
-					resolve: {
-						transactionBatch: ['accountModel', 'transactionModel', 'account',
-							function(accountModel, transactionModel, account) {
-								return transactionModel.findByAccount(account.id, null, 'prev', accountModel.isUnreconciledOnly(account.id));
-							}
-						]
-					},
-					views: {
-						'@root': {
-							templateUrl: 'transactions/views/index.html',
-							controller: 'transactionIndexController'
-						}
-					}
-				})
-				.state('root.accounts.account.transactions.transaction', {
-					url: '/:transactionId'
-				});
+				.state('root.securities.security', basicState());
 		}
 	]);
 

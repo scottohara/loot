@@ -9,7 +9,7 @@ class TransferTransaction < PayeeCashTransaction
 
 	class << self
 		def create_from_json(json)
-			source, destination = Account.find(json['account_id']), Account.find(json['account']['id'])
+			source, destination = Account.find(json['primary_account']['id']), Account.find(json['account']['id'])
 			source, destination = destination, source if json['direction'].eql? 'inflow'
 
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
@@ -28,7 +28,7 @@ class TransferTransaction < PayeeCashTransaction
 	end
 
 	def update_from_json(json)
-		source, destination = Account.find(json['account_id']), Account.find(json['account']['id'])
+		source, destination = Account.find(json['primary_account']['id']), Account.find(json['account']['id'])
 		source, destination = destination, source if json['direction'].eql? 'inflow'
 
 		self.amount = json['amount']

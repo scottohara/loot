@@ -16,7 +16,7 @@ module Categorisable
 	module ClassMethods
 		def transaction_category(trx, account_type = nil)
 			id, name = case trx['transaction_type']
-				when 'Basic' then
+				when 'Basic', 'Sub' then
 					basic_category trx
 
 				when 'Transfer', 'Subtransfer', 'SecurityTransfer' then

@@ -176,6 +176,7 @@
 					};
 
 					var CTRL_ACTION_KEYS = {
+						69: scope.handlers.editAction,		// CTRL+E
 						78: scope.handlers.insertAction		// CTRL+N
 					};
 
