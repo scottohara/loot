@@ -140,7 +140,7 @@
 					case "LoanRepayment":
 					case "Payslip":
 						transaction.subtransactions = [];
-						return transactionModel.findSubtransactions(accountModel.path(transaction.primary_account.id), transaction.id).then(function(subtransactions) {
+						return transactionModel.findSubtransactions(transaction.id).then(function(subtransactions) {
 							// Strip the subtransaction ids
 							transaction.subtransactions = subtransactions.map(function(subtransaction) {
 								subtransaction.id = null;
@@ -398,7 +398,7 @@
 			// Enter a transaction based on the schedule, update the next due date and close the modal
 			$scope.enter = function() {
 				$scope.errorMessage = null;
-				transactionModel.save(accountModel.path($scope.transaction.primary_account.id), $scope.transaction).then(function() {
+				transactionModel.save($scope.transaction).then(function() {
 					// Skip to the next due date
 					$scope.skip();
 				}, function(error) {

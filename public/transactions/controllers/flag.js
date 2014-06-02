@@ -5,8 +5,8 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Flag controller
-	mod.controller('transactionFlagController', ['$scope', '$modalInstance', 'transactionModel', 'contextModel', 'context', 'transaction',
-		function($scope, $modalInstance, transactionModel, contextModel, context, transaction) {
+	mod.controller('transactionFlagController', ['$scope', '$modalInstance', 'transactionModel', 'transaction',
+		function($scope, $modalInstance, transactionModel, transaction) {
 			// Make the passed transaction available on the scope
 			$scope.transaction = transaction;
 
@@ -20,7 +20,7 @@
 			$scope.save = function() {
 				$scope.errorMessage = null;
 				$scope.transaction.flag = $scope.flag.memo;
-				transactionModel.flag(contextModel.path(context.id), $scope.transaction).then(function() {
+				transactionModel.flag($scope.transaction).then(function() {
 					$modalInstance.close($scope.transaction);
 				}, function(error) {
 					$scope.errorMessage = error.data;
@@ -30,7 +30,7 @@
 			// Delete and close the modal
 			$scope.delete = function() {
 				$scope.errorMessage = null;
-				transactionModel.unflag(contextModel.path(context.id), $scope.transaction.id).then(function() {
+				transactionModel.unflag($scope.transaction.id).then(function() {
 					$scope.transaction.flag = null;
 					$modalInstance.close($scope.transaction);
 				}, function(error) {

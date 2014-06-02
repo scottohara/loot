@@ -5,21 +5,11 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Edit controller
-	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'contextModel', 'context', 'transaction',
-		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, contextModel, context, transaction) {
+	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'transaction',
+		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
 			// Make the passed transaction available on the scope
-			$scope.transaction = angular.extend({
-				transaction_type: 'Basic',
-				transaction_date: moment().format("YYYY-MM-DD"),
-				primary_account: "account" === contextModel.type() ? context : undefined,
-				payee: "payee" === contextModel.type() ? context : undefined,
-				security: "security" === contextModel.type() ? context : undefined,
-				category: "category" === contextModel.type() ? (context.parent ? context.parent : context) : undefined,
-				subcategory: "category" === contextModel.type() && context.parent ? context : undefined,
-				subtransactions: [{},{},{},{}]
-			}, transaction);
+			$scope.transaction = transaction;
 
-			$scope.context = context;
 			$scope.mode = (transaction ? "Edit" : "Add");
 
 			// Give the transaction date field initial focus
@@ -111,7 +101,7 @@
 					case "LoanRepayment":
 					case "Payslip":
 						transaction.subtransactions = [];
-						return transactionModel.findSubtransactions(contextModel.path(context.id), transaction.id).then(function(subtransactions) {
+						return transactionModel.findSubtransactions(transaction.id).then(function(subtransactions) {
 							// Strip the subtransaction ids
 							transaction.subtransactions = subtransactions.map(function(subtransaction) {
 								subtransaction.id = null;
@@ -329,7 +319,7 @@
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;
-				transactionModel.save(contextModel.path(context.id), $scope.transaction).then(function(transaction) {
+				transactionModel.save($scope.transaction).then(function(transaction) {
 					$modalInstance.close(transaction.data);
 				}, function(error) {
 					$scope.errorMessage = error.data;

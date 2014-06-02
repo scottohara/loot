@@ -26,16 +26,19 @@
 					controller: 'transactionEditController',
 					backdrop: 'static',
 					resolve: {
-						contextModel: function() {
-							return contextModel;
-						},
-						context: function() {
-							return $scope.context;
-						},
 						transaction: function() {
-							// If we didn't get an index, we're adding a new transaction so just return null
+							// If we didn't get an index, we're adding a new transaction
 							if (isNaN(index)) {
-								return null;
+								return {
+									transaction_type: 'Basic',
+									transaction_date: moment().format("YYYY-MM-DD"),
+									primary_account: "account" === contextModel.type() ? context : undefined,
+									payee: "payee" === contextModel.type() ? context : undefined,
+									security: "security" === contextModel.type() ? context : undefined,
+									category: "category" === contextModel.type() ? (context.parent ? context.parent : context) : undefined,
+									subcategory: "category" === contextModel.type() && context.parent ? context : undefined,
+									subtransactions: [{},{},{},{}]
+								};
 							}
 
 							// If the selected transaction is a Split/Loan Repayment/Payslip; fetch the subtransactions first
@@ -44,7 +47,7 @@
 								case "LoanRepayment":
 								case "Payslip":
 									$scope.transactions[index].subtransactions = [];
-									return transactionModel.findSubtransactions(contextModel.path($scope.context.id), $scope.transactions[index].id).then(function(subtransactions) {
+									return transactionModel.findSubtransactions($scope.transactions[index].id).then(function(subtransactions) {
 										$scope.transactions[index].subtransactions = subtransactions;
 										return $scope.transactions[index];
 									});
@@ -130,12 +133,6 @@
 					controller: 'transactionDeleteController',
 					backdrop: 'static',
 					resolve: {
-						contextModel: function() {
-							return contextModel;
-						},
-						context: function() {
-							return $scope.context;
-						},
 						transaction: function() {
 							return $scope.transactions[index];
 						}
@@ -424,7 +421,7 @@
 					transaction.subtransactions = [];
 
 					// Resolve the subtransactions
-					transactionModel.findSubtransactions(contextModel.path($scope.context.id), transaction.id).then(function(subtransactions) {
+					transactionModel.findSubtransactions(transaction.id).then(function(subtransactions) {
 						transaction.subtransactions = subtransactions;
 
 						// Hide the loading indicator
@@ -446,12 +443,6 @@
 					controller: 'transactionFlagController',
 					backdrop: 'static',
 					resolve: {
-						contextModel: function() {
-							return contextModel;
-						},
-						context: function() {
-							return $scope.context;
-						},
 						transaction: function() {
 							return $scope.transactions[index];
 						}
@@ -535,7 +526,7 @@
 						// Transaction was not found in the current set
 						
 						// Get the transaction details from the server
-						transactionModel.find(contextModel.path($scope.context.id), toParams.transactionId).then(function(transaction) {
+						transactionModel.find(toParams.transactionId).then(function(transaction) {
 							var	fromDate = moment(transaction.transaction_date),
 									direction;
 

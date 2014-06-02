@@ -5,8 +5,8 @@
 	var mod = angular.module('schedules');
 
 	// Declare the Schedule Index controller
-	mod.controller('scheduleIndexController', ['$scope', '$modal', '$timeout', 'scheduleModel', 'transactionModel', 'accountModel',
-		function($scope, $modal, $timeout, scheduleModel, transactionModel, accountModel) {
+	mod.controller('scheduleIndexController', ['$scope', '$modal', '$timeout', 'scheduleModel', 'transactionModel',
+		function($scope, $modal, $timeout, scheduleModel, transactionModel) {
 			var editSchedule = function(index) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
@@ -29,7 +29,7 @@
 								case "LoanRepayment":
 								case "Payslip":
 									$scope.schedules[index].subtransactions = [];
-									return transactionModel.findSubtransactions(accountModel.path($scope.schedules[index].primary_account.id), $scope.schedules[index].id).then(function(subtransactions) {
+									return transactionModel.findSubtransactions($scope.schedules[index].id).then(function(subtransactions) {
 										$scope.schedules[index].subtransactions = subtransactions;
 										return $scope.schedules[index];
 									});
@@ -147,7 +147,7 @@
 					schedule.subtransactions = [];
 
 					// Resolve the subtransactions
-					transactionModel.findSubtransactions(accountModel.path(schedule.primary_account.id), schedule.id).then(function(subtransactions) {
+					transactionModel.findSubtransactions(schedule.id).then(function(subtransactions) {
 						schedule.subtransactions = subtransactions;
 
 						// Hide the loading indicator

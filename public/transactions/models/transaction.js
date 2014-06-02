@@ -33,21 +33,21 @@
 			};
 
 			// Retrieves subtransactions for a given split transaction
-			model.findSubtransactions = function(context, id) {
-				return $http.get(model.fullPath(context, id) + '/subtransactions').then(function(response) {
+			model.findSubtransactions = function(id) {
+				return $http.get(model.path(id) + '/subtransactions').then(function(response) {
 					return response.data;
 				});
 			};
 
 			// Retrieves a single transaction
-			model.find = function(context, id) {
-				return $http.get(model.fullPath(context, id)).then(function(response) {
+			model.find = function(id) {
+				return $http.get(model.path(id)).then(function(response) {
 					return response.data;
 				});
 			};
 
 			// Saves a transaction
-			model.save = function(context, transaction) {
+			model.save = function(transaction) {
 				// If the payee, category, subcategory or security are new; flush the $http cache
 				if (typeof transaction.payee === 'string') {
 					payeeModel.flush();
@@ -63,14 +63,14 @@
 
 				return $http({
 					method: transaction.id ? 'PATCH' : 'POST',
-					url: model.fullPath(context, transaction.id),
+					url: model.path(transaction.id),
 					data: transaction
 				});
 			};
 
 			// Deletes a transaction
-			model.destroy = function(context, transaction) {
-				return $http.delete(fullPath(context, transaction.id));
+			model.destroy = function(transaction) {
+				return $http.delete(model.path(transaction.id));
 			};
 
 			// Updates the status of a transaction
@@ -82,15 +82,15 @@
 			};
 
 			// Flags a transaction
-			model.flag = function(context, transaction) {
-				return $http.put(model.fullPath(context, transaction.id) + '/flag', {
+			model.flag = function(transaction) {
+				return $http.put(model.path(transaction.id) + '/flag', {
 					memo: transaction.flag
 				});
 			};
 
 			// Unflags a transaction
-			model.unflag = function(context, id) {
-				return $http.delete(model.fullPath(context, id) + '/flag');
+			model.unflag = function(id) {
+				return $http.delete(model.path(id) + '/flag');
 			};
 
 			return model;
