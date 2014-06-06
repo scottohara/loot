@@ -26,6 +26,18 @@
 				authenticationModel.logout();
 				$state.reload();
 			};
+
+			// Search
+			$scope.search = function() {
+				$state.go('root.transactions', {
+					query: $scope.query
+				});
+			};
+
+			// Globally disable/enable any table key-bindings
+			$scope.toggleNavigationGloballyDisabled = function(state) {
+				$scope.navigationGloballyDisabled = state;
+			};
 		}
 	]);
 })();

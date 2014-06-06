@@ -9,7 +9,7 @@
 		function($scope, $modal, $timeout, $window, $state, transactionModel, accountModel, contextModel, context, transactionBatch) {
 			// Store the context we're working with in the scope
 			$scope.context = context;
-			$scope.contextType = contextModel.type();
+			$scope.contextType = contextModel && contextModel.type();
 
 			var editTransaction = function(index) {
 				// Abort if the transaction can't be edited
@@ -32,11 +32,11 @@
 								return {
 									transaction_type: 'Basic',
 									transaction_date: moment().format("YYYY-MM-DD"),
-									primary_account: "account" === contextModel.type() ? context : undefined,
-									payee: "payee" === contextModel.type() ? context : undefined,
-									security: "security" === contextModel.type() ? context : undefined,
-									category: "category" === contextModel.type() ? (context.parent ? context.parent : context) : undefined,
-									subcategory: "category" === contextModel.type() && context.parent ? context : undefined,
+									primary_account: contextModel && "account" === contextModel.type() ? context : undefined,
+									payee: contextModel && "payee" === contextModel.type() ? context : undefined,
+									security: contextModel && "security" === contextModel.type() ? context : undefined,
+									category: contextModel && "category" === contextModel.type() ? (context.parent ? context.parent : context) : undefined,
+									subcategory: contextModel && "category" === contextModel.type() && context.parent ? context : undefined,
 									subtransactions: [{},{},{},{}]
 								};
 							}
@@ -57,28 +57,37 @@
 						}
 					}
 				}).result.then(function(transaction) {
-					var currentContext;
+					var	currentContext,
+							contextChanged = false;
 
-					switch ($scope.contextType) {
-						case "account":
-							currentContext = transaction.primary_account;
-							break;
+					if (!contextModel) {
+						// Search mode - check if the transaction memo still matches the search query
+						contextChanged = transaction.memo.indexOf($scope.context) > -1;
+					} else {
+						// Context mode - check if the transaction still matches the context id
+						switch ($scope.contextType) {
+							case "account":
+								currentContext = transaction.primary_account;
+								break;
 
-						case "payee":
-							currentContext = transaction.payee;
-							break;
+							case "payee":
+								currentContext = transaction.payee;
+								break;
 
-						case "security":
-							currentContext = transaction.security;
-							break;
+							case "security":
+								currentContext = transaction.security;
+								break;
 
-						case "category":
-							currentContext = context.parent ? transaction.subcategory : transaction.category;
-							break;
+							case "category":
+								currentContext = context.parent ? transaction.subcategory : transaction.category;
+								break;
+						}
+
+						contextChanged = currentContext.id !== $scope.context.id;
 					}
 
 					// If the context has changed, remove the transaction from the array
-					if (currentContext.id !== context.id) {
+					if (contextChanged) {
 						$scope.transactions.splice(index, 1);
 						if ($state.includes('**.transaction')) {
 							$state.go('^');
@@ -202,7 +211,7 @@
 			// Action handlers for navigable table
 			$scope.tableActions = {
 				navigationEnabled: function() {
-					return !$scope.navigationDisabled;
+					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
 				selectAction: editTransaction,
 				insertAction: function() {
@@ -228,6 +237,8 @@
 
 			// Fetch a batch of transactions
 			$scope.getTransactions = function(direction, fromDate, transactionIdToFocus) {
+				var transactionFetch;
+
 				// Show the loading spinner
 				$scope.loading[direction] = true;
 
@@ -240,7 +251,15 @@
 					}
 				}
 
-				transactionModel.all(contextModel.path($scope.context.id), fromDate, direction, $scope.unreconciledOnly).then(function(transactionBatch) {
+				if (contextModel) {
+					// Get all transactions for the context
+					transactionFetch = transactionModel.all(contextModel.path($scope.context.id), fromDate, direction, $scope.unreconciledOnly);
+				} else {
+					// Search for transactions matching the query
+					transactionFetch = transactionModel.query($scope.context, fromDate, direction);
+				}
+
+				transactionFetch.then(function(transactionBatch) {
 					// Process the transaction batch
 					processTransactions(transactionBatch, fromDate, transactionIdToFocus);
 

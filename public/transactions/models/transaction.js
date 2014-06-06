@@ -32,6 +32,19 @@
 				});
 			};
 
+			// Searches for a batch of transactions
+			model.query = function(query, fromDate, direction) {
+				return $http.get(model.path(), {
+					params: {
+						query: query,
+						as_at: fromDate,
+						direction: direction
+					}
+				}).then(function(response) {
+					return response.data;
+				});
+			};
+
 			// Retrieves subtransactions for a given split transaction
 			model.findSubtransactions = function(id) {
 				return $http.get(model.path(id) + '/subtransactions').then(function(response) {

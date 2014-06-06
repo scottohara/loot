@@ -22,7 +22,7 @@ module Transactable
 		direction = (!!opts[:direction] && opts[:direction].to_sym || :prev)
 
 		# Get the specified number of transactions up to the given date 
-		transactions = self.transactions.ledger
+		transactions = self.transactions.for_ledger(opts)
 			.select([		"transactions.id",
 									"transactions.transaction_type",
 									"transaction_headers.transaction_date",
@@ -94,9 +94,9 @@ module Transactable
 		# b) the closing balance as at the closing_date (if we've gone backwards)
 		# c) the closing balance as at the passed date (if we've gone forwards)
 		opening_balance = if direction.eql? :prev
-			at_end ? self.opening_balance : self.closing_balance(closing_date)
+			at_end ? self.opening_balance : self.closing_balance(opts.merge({:as_at => closing_date}))
 		else
-			opening_balance = self.closing_balance as_at
+			opening_balance = self.closing_balance opts
 		end
 
 		# If we're only interested in unreconciled transactions, sum & drop all reconciled ones
@@ -111,7 +111,7 @@ module Transactable
 
 			transactions = transactions_
 		end
-			
+
 		# Remap to the desired output format
 		transactions.map! do |trx|
 			{
@@ -131,8 +131,8 @@ module Transactable
 					:id => trx['security_id'],
 					:name => trx['security_name']
 				},
-				:category => self.class.transaction_category(trx, self.account_type),
-				:subcategory => self.class.basic_subcategory(trx),
+				:category => (self.is_a?(Class) && self || self.class).transaction_category(trx, self.account_type),
+				:subcategory => (self.is_a?(Class) && self || self.class).basic_subcategory(trx),
 				:account => {
 					:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
 					:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
@@ -153,11 +153,12 @@ module Transactable
 		[opening_balance, transactions, at_end]
 	end
 
-	def closing_balance(as_at = Date.today.to_s)
+	def closing_balance(opts)
+		as_at = opts[:as_at] || Date.today.to_s
 		totals = []
 
 		# Get the total Basic transactions
-		totals += self.transactions.closing_balance_basic
+		totals += self.transactions.for_basic_closing_balance(opts)
 			.select([	"categories.direction",
 								"SUM(transactions.amount) AS total_amount"])
 			.joins(		"JOIN categories ON transaction_categories.category_id = categories.id")
@@ -167,7 +168,7 @@ module Transactable
 			.group(		"categories.direction")
 
 		# Get the total Subtransfer transactions
-		totals += self.transactions.closing_balance
+		totals += self.transactions.for_closing_balance(opts)
 			.select([	"transaction_accounts.direction",
 								"SUM(transactions.amount) AS total_amount"])
 			.joins([	"JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
@@ -179,7 +180,7 @@ module Transactable
 			.group(		"transaction_accounts.direction")
 
 		# Get the total other inflows
-		total_inflows = self.transactions.closing_balance
+		total_inflows = self.transactions.for_closing_balance(opts)
 			.where(		:transaction_type => %w(Split Payslip Transfer Dividend SecurityInvestment))
 			.where(		"transaction_headers.transaction_date <= ?", as_at)
 			.where(		"transaction_headers.transaction_date IS NOT NULL")
@@ -187,7 +188,7 @@ module Transactable
 			.sum(			"amount")
 
 		# Get the total other outflows
-		total_outflows = self.transactions.closing_balance
+		total_outflows = self.transactions.for_closing_balance(opts)
 			.where(		:transaction_type => %w(Split LoanRepayment Transfer SecurityInvestment))
 			.where(		"transaction_headers.transaction_date <= ?", as_at)
 			.where(		"transaction_headers.transaction_date IS NOT NULL")

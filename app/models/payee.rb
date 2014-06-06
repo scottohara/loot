@@ -2,19 +2,20 @@ class Payee < ActiveRecord::Base
 	validates :name, :presence => true
 	has_many :payee_transaction_headers
 	has_many :transactions, :through => :payee_transaction_headers, :source => :trx do
-		def ledger
+		def for_ledger(opts)
 			joins([	"LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 			.where(	"transactions.transaction_type != 'Subtransfer'")
 		end
 
-		def closing_balance
+		def for_closing_balance(opts)
 			joins("JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id")
 		end
 
-		def closing_balance_basic
-			closing_balance.joins("JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id")
+		def for_basic_closing_balance(opts)
+			joins([	"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
+							"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 		end
 	end
 

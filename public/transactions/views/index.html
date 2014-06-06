@@ -52,61 +52,53 @@
 			<!-- Details table -->
 			<td class="details">
 				<table class="table-condensed">
-					<tr>
-						<td colspan="2" class="has-action" ng-switch="contextType == 'payee' || contextType == 'security'">
+					<!-- Primary Account -->
+					<tr ng-if="contextType != 'account'">
+						<td colspan="2" class="has-action">
+							{{transaction.primary_account.name}}
+							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.primary_account.name}}" ng-click="switchPrimaryAccount($event, transaction)"></i>
+						</td>
+					</tr>
+					<!-- Payee / Security -->
+					<tr ng-if="contextType != 'payee' && contextType != 'security'">
+						<td colspan="2" class="has-action">
 							<!-- Transaction status -->
 							<small ng-if="reconcilable" ng-switch="reconciling" class="transaction-status pull-right">
 								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="Cleared" ng-false-value="" ng-change="toggleCleared(transaction)">
 								<span ng-switch-default transaction-status="{'account': context, 'transaction': transaction}"></span>
 							</small>
-							<!-- Primary Account -->
-							<span ng-switch-when="true">
-								{{transaction.primary_account.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.primary_account.name}}" ng-click="switchPrimaryAccount($event, transaction)"></i>
-							</span>
 							<!-- Payee -->
-							<span ng-switch-default ng-if="transaction.payee.id">
+							<span ng-if="transaction.payee.id">
 								{{transaction.payee.name}}
 								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.payee.name}}" ng-click="switchPayee($event, transaction)"></i>
 							</span>
 							<!-- Security -->
-							<span ng-switch-default ng-if="transaction.security.id">
+							<span ng-if="transaction.security.id">
 								{{transaction.security.name}}
 								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.security.name}}" ng-click="switchSecurity($event, transaction)"></i>
 							</span>
 						</td>
 					</tr>
+					<!-- Category / Subcategory / Transfer or Other Account -->
 					<tr>
-						<td class="category has-action" ng-switch="!context.parent && contextType == 'category'">
-							<!-- Primary Account -->
-							<span ng-switch-when="true">
-								{{transaction.primary_account.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.primary_account.name}}" ng-click="switchPrimaryAccount($event, transaction)"></i>
-							</span>
-							<!-- Category -->
-							<span ng-switch-default>
-								{{transaction.category.name}}
-								<i ng-if="['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.category.name}}" ng-click="switchCategory($event, transaction)"></i>
-							</span>
+						<!-- Category -->
+						<td class="category has-action" ng-if="contextType != 'category' || (contextType == 'category' && context.parent)">
+							{{transaction.category.name}}
+							<i ng-if="['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.category.name}}" ng-click="switchCategory($event, transaction)"></i>
 						</td>
-						<td class="category has-action" ng-switch="context.parent && contextType == 'category'">
-							<!-- Primary Account -->
-							<span ng-switch-when="true">
-								{{transaction.primary_account.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.primary_account.name}}" ng-click="switchPrimaryAccount($event, transaction)"></i>
-							</span>
-							<!-- Subcategory -->
-							<span ng-switch-default ng-if="['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1">
+						<!-- Subcategory / Transfer or Other Account -->
+						<td class="category has-action" ng-if="contextType != 'category' || (contextType == 'category' && !context.parent)">
+							<span ng-if="['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1">
 								{{transaction.subcategory.name}}
 								<i ng-if="transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.subcategory.name}}" ng-click="switchSubcategory($event, transaction)"></i>
 							</span>
 							<!-- Transfer / Other Account -->
-							<span ng-switch-default ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1">
+							<span ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1">
 								{{transaction.account.name}}
 								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.account.name}}" ng-click="switchAccount($event, transaction)"></i>
 							</span>
 							<!-- Toggle subtransactions -->
-							<span ng-switch-default ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">
+							<span ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">
 								<button ng-click="toggleSubtransactions($event, transaction)" class="btn btn-xs btn-default toggle-subtransactions">
 									<i class="glyphicon" ng-class="{'glyphicon-chevron-down': !transaction.showSubtransactions, 'glyphicon-chevron-up': transaction.showSubtransactions}"></i>
 								</button>

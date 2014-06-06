@@ -4,18 +4,19 @@ class Account < ActiveRecord::Base
 	validates :status, :inclusion => {:in => %w(open closed)}
 	has_many :transaction_accounts
 	has_many :transactions, :through => :transaction_accounts, :source => :trx do
-		def ledger
+		def for_ledger(opts)
 			joins([	"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 		end
 
-		def closing_balance
+		def for_closing_balance(opts)
 			joins("JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
 		end
 
-		def closing_balance_basic
-			closing_balance.joins("JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id")
+		def for_basic_closing_balance(opts)
+			joins([	"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id",
+							"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 		end
 	end
 	belongs_to :related_account, :class_name => 'Account', :foreign_key => 'related_account_id'
@@ -155,7 +156,9 @@ class Account < ActiveRecord::Base
 		end
 	end
 
-	def closing_balance(as_at = Date.today.to_s)
+	def closing_balance(opts)
+		as_at = opts[:as_at] || Date.today.to_s
+
 		if self.account_type.eql? 'investment'
 			# Get the total quantity of security inflows
 			security_quantities = self.transactions
@@ -181,9 +184,9 @@ class Account < ActiveRecord::Base
 			total_security_value = 0 if total_security_value.nil?
 
 			# Add the balance from the associated cash account
-			total_security_value + self.related_account.closing_balance
+			total_security_value + self.related_account.closing_balance(opts)
 		else
-			super as_at
+			super opts
 		end
 	end
 

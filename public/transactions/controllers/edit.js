@@ -256,15 +256,17 @@
 
 			// Watch the subtransactions array and recalculate the total allocated
 			$scope.$watch('transaction.subtransactions', function() {
-				$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
-					return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
-				}, 0);
+				if ($scope.transaction.subtransactions) {
+					$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
+						return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
+					}, 0);
 
-				// If we're adding a new transaction, join the subtransaction memos and update the parent memo
-				if (!$scope.transaction.id) {
-					$scope.transaction.memo = $scope.transaction.subtransactions.reduce(function(memo, subtransaction) {
-						return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
-					}, "");
+					// If we're adding a new transaction, join the subtransaction memos and update the parent memo
+					if (!$scope.transaction.id) {
+						$scope.transaction.memo = $scope.transaction.subtransactions.reduce(function(memo, subtransaction) {
+							return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
+						}, "");
+					}
 				}
 			}, true);
 

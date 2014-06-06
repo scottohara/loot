@@ -55,7 +55,7 @@ class TransactionsController < ApplicationController
 			when params[:payee_id] then Payee.find(params[:payee_id])
 			when params[:category_id] then Category.find(params[:category_id])
 			when params[:security_id] then Security.find(params[:security_id])
-			else raise "Parent context could not be determined"
+			else Transaction
 		end
 	end
 end

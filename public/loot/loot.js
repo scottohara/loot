@@ -29,6 +29,12 @@
 							url: '/:id',
 						};
 					},
+					transactionViews = {
+						'@root': {
+							templateUrl: 'transactions/views/index.html',
+							controller: 'transactionIndexController'
+						}
+					},
 					transactionsState = function(parentContext) {
 						return {
 							url: '/transactions',
@@ -53,12 +59,7 @@
 									}
 								]
 							},
-							views: {
-								'@root': {
-									templateUrl: 'transactions/views/index.html',
-									controller: 'transactionIndexController'
-								}
-							}
+							views: transactionViews
 						};
 					},
 					transactionState = function() {
@@ -156,7 +157,30 @@
 						title: 'Securities'
 					}
 				})
-				.state('root.securities.security', basicState());
+				.state('root.securities.security', basicState())
+				.state('root.transactions', {
+					url: '/transactions?query',
+					data: {
+						title: 'Search Transactions'
+					},
+					resolve: {
+						contextModel: function() {
+							return null;
+						},
+						context: ['$stateParams',
+							function($stateParams) {
+								return $stateParams.query;
+							}
+						],
+						transactionBatch: ['transactionModel', 'context',
+							function(transactionModel, context) {
+								return transactionModel.query(context, null, 'prev');
+							}
+						]
+					},
+					views: transactionViews
+				})
+				.state('root.transactions.transaction', transactionState());
 		}
 	]);
 

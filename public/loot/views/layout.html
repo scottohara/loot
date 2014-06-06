@@ -23,6 +23,16 @@
 			</ul>
 			<button ng-switch-when="true" type="button" class="btn btn-default navbar-btn navbar-right" ng-click="logout()"><i class="glyphicon glyphicon-log-out"></i> Logout</button>
 			<button ng-switch-default type="button" class="btn btn-primary navbar-btn navbar-right" ng-click="login()"><i class="glyphicon glyphicon-log-in"></i> Login</button>
+			<div class="col-sm-3 col-md-3 pull-right">
+				<form class="navbar-form" role="search">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Search" ng-model="query" ng-focus="toggleNavigationGloballyDisabled(true)" ng-blur="toggleNavigationGloballyDisabled(false)">
+						<span class="input-group-btn">
+							<button type="submit"class="btn btn-default" ng-click="search()"><i class="glyphicon glyphicon-search"></i>
+						</span>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </nav>

@@ -12,11 +12,6 @@ Loot::Application.routes.draw do
 		resources :subtransactions, :only => [:index]
 	end
 
-	# Resource can be searched
-	concern :searchable do
-		get 'search', :on => :collection
-	end
-
 	# Resource has a status
 	concern :reconcilable do
 		resource :status, :only => [:update, :destroy]
@@ -36,7 +31,7 @@ Loot::Application.routes.draw do
 		resources :transactions, :only => [:index], :concerns => [:defaultable]
 	end
 
-	resources :transactions, :except => [:index, :new, :edit], :concerns => [:flaggable, :splittable, :searchable]
+	resources :transactions, :except => [:new, :edit], :concerns => [:flaggable, :splittable]
 	resources :schedules, :except => [:new, :edit, :show]
 	resources :logins, :only => [:create]
 

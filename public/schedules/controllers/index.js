@@ -83,7 +83,7 @@
 			// Action handlers for navigable table
 			$scope.tableActions = {
 				navigationEnabled: function() {
-					return !$scope.navigationDisabled;
+					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
 				selectAction: editSchedule,
 				insertAction: function() {
