@@ -15,7 +15,8 @@
 				$modal.open({
 					templateUrl: 'authentication/views/edit.html',
 					controller: 'authenticationEditController',
-					backdrop: 'static'
+					backdrop: 'static',
+					size: 'sm'
 				}).result.then(function() {
 					$state.reload();
 				});

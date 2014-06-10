@@ -19,6 +19,7 @@
 					templateUrl: 'schedules/views/edit.html',
 					controller: 'scheduleEditController',
 					backdrop: 'static',
+					size: 'lg',
 					resolve: {
 						schedule: function() {
 							// If we didn't get an index, we're adding a new schedule so just return null

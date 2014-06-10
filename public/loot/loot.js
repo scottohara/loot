@@ -83,7 +83,8 @@
 									return $modal.open({
 										templateUrl: 'authentication/views/edit.html',
 										controller: 'authenticationEditController',
-										backdrop: 'static'
+										backdrop: 'static',
+										size: 'sm'
 									}).result.catch(function() {
 										// If the login modal is dismissed, catch here so
 										// that the promise resolves and the state transition
@@ -205,6 +206,11 @@
 	mod.run(['$rootScope', '$state',
 		function($rootScope, $state) {
 			$rootScope.$state = $state;
+
+			//TODO - debugging
+			$rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+				console.log(toState, toParams, fromState, fromParams, error);
+			});
 		}
 	]);
 })();

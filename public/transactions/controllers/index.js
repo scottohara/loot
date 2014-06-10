@@ -25,6 +25,7 @@
 					templateUrl: 'transactions/views/edit.html',
 					controller: 'transactionEditController',
 					backdrop: 'static',
+					size: 'lg',
 					resolve: {
 						transaction: function() {
 							// If we didn't get an index, we're adding a new transaction
@@ -382,6 +383,7 @@
 						templateUrl: 'transactions/views/reconcile.html',
 						controller: 'transactionReconcileController',
 						backdrop: 'static',
+						size: 'sm',
 						resolve: {
 							account: function() {
 								return $scope.context;
@@ -461,6 +463,7 @@
 					templateUrl: 'transactions/views/flag.html',
 					controller: 'transactionFlagController',
 					backdrop: 'static',
+					size: 'sm',
 					resolve: {
 						transaction: function() {
 							return $scope.transactions[index];
