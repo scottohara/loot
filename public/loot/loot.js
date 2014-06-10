@@ -111,8 +111,16 @@
 					controller: 'scheduleIndexController',
 					data: {
 						title: 'Schedules'
+					},
+					resolve: {
+						schedules: ['scheduleModel',
+							function(scheduleModel) {
+								return scheduleModel.all();
+							}
+						]
 					}
 				})
+				.state('root.schedules.schedule', basicState())
 				.state('root.payees', {
 					url: '/payees',
 					templateUrl: 'payees/views/index.html',

@@ -5,8 +5,11 @@
 	var mod = angular.module('schedules');
 
 	// Declare the Schedule Index controller
-	mod.controller('scheduleIndexController', ['$scope', '$modal', '$timeout', 'scheduleModel', 'transactionModel',
-		function($scope, $modal, $timeout, scheduleModel, transactionModel) {
+	mod.controller('scheduleIndexController', ['$scope', '$modal', '$timeout', '$state', 'scheduleModel', 'transactionModel', 'schedules',
+		function($scope, $modal, $timeout, $state, scheduleModel, transactionModel, schedules) {
+			// Store the schedules on the scope
+			$scope.schedules = schedules;
+
 			var editSchedule = function(index) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
@@ -51,7 +54,7 @@
 					$scope.schedules.sort(byNextDueDateAndId);
 
 					// Refocus the schedule
-					focusSchedule(schedule);
+					focusSchedule(schedule.id);
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
@@ -74,6 +77,7 @@
 					}
 				}).result.then(function() {
 					$scope.schedules.splice(index, 1);
+					$state.go('root.schedules');
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
@@ -86,36 +90,41 @@
 					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
 				selectAction: editSchedule,
+				editAction: editSchedule,
 				insertAction: function() {
 					// Same as select action, but don't pass any arguments
 					editSchedule();
 				},
-				deleteAction: deleteSchedule
+				deleteAction: deleteSchedule,
+				focusAction: function(index) {
+					$state.go(($state.includes('**.schedule') ? '^' : '') + '.schedule', {
+						id: $scope.schedules[index].id
+					});
+				}
 			};
 
 			// Today's date (for checking if a schedule is overdue
 			$scope.today = moment().format("YYYY-MM-DD");
 
-			// Fetch the schedules
-			scheduleModel.all().then(function(schedules) {
-				$scope.schedules = schedules;
-			});
-
 			// Finds a specific schedule and focusses that row in the table
-			var focusSchedule = function(scheduleToFocus) {
+			var focusSchedule = function(scheduleIdToFocus) {
 				var targetIndex;
 
 				// Find the schedule by it's id
 				angular.forEach($scope.schedules, function(schedule, index) {
-					if (schedule.id === scheduleToFocus.id) {
+					if (isNaN(targetIndex) && schedule.id === scheduleIdToFocus) {
 						targetIndex = index;
 					}
 				});
 
-				// Focus the row
-				$timeout(function() {
-					$scope.tableActions.focusRow(targetIndex);
-				}, 50);
+				// If found, focus the row
+				if (!isNaN(targetIndex)) {
+					$timeout(function() {
+						$scope.tableActions.focusRow(targetIndex);
+					}, 50);
+				}
+
+				return targetIndex;
 			};
 
 			// Helper function to sort by next due date, then by transaction id
@@ -157,6 +166,13 @@
 
 				$event.cancelBubble = true;
 			};
+
+			// Listen for state change events, and when the schedule id changes, ensure the row is focussed
+			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
+					focusSchedule(Number(toParams.id));
+				}
+			});
 		}
 	]);
 })();
