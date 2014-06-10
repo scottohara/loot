@@ -29,6 +29,11 @@
 				});
 			};
 
+			// Retrieves the list of securities, including balances
+			model.allWithBalances = function() {
+				return model.all(true);
+			};
+
 			// Retrieves the most recent transaction for a security
 			model.findLastTransaction = function(securityId, accountType) {
 				return $http.get(model.path(securityId) + '/transactions/last', {
@@ -40,9 +45,33 @@
 				});
 			};
 
-			// Retrieves the list of securities, including balances
-			model.allWithBalances = function() {
-				return model.all(true);
+			// Retrieves a single security
+			model.find = function(id) {
+				return $http.get(model.path(id), {
+					cache: true
+				}).then(function(response) {
+					return response.data;
+				});
+			};
+
+			// Saves a security
+			model.save = function(security) {
+				// Flush the $http cache
+				model.flush();
+
+				return $http({
+					method: security.id ? 'PATCH' : 'POST',
+					url: model.path(security.id),
+					data: security
+				});
+			};
+
+			// Deletes a security
+			model.destroy = function(security) {
+				// Flush the $http cache
+				model.flush();
+
+				return $http.delete(model.path(security.id));
 			};
 
 			// Flush the cache

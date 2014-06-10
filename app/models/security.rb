@@ -2,7 +2,25 @@ class Security < ActiveRecord::Base
 	validates :name, :presence => true
 	has_many :prices, :class_name => 'SecurityPrice', :dependent => :destroy
 	has_many :security_transaction_headers
-	has_many :transactions, :through => :security_transaction_headers, :source => :trx
+	has_many :transactions, :through => :security_transaction_headers, :source => :trx do
+		def for_ledger(opts)
+			joins([	"LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
+							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
+							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
+			.where(	"transactions.transaction_type != 'Subtransfer'")
+		end
+
+		def for_closing_balance(opts)
+			joins("JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id")
+		end
+
+		def for_basic_closing_balance(opts)
+			joins([	"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
+							"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
+		end
+	end
+
+	include Transactable
 
 	class << self
 		def find_or_new(security)
@@ -10,7 +28,7 @@ class Security < ActiveRecord::Base
 		end
 
 		def list
-			ActiveRecord::Base.connection.execute <<-query
+			securities = ActiveRecord::Base.connection.execute <<-query
 				SELECT		securities.id,
 									securities.name,
 									securities.code,
@@ -37,6 +55,17 @@ class Security < ActiveRecord::Base
 				ORDER BY	CASE WHEN SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) > 0 THEN 0 ELSE 1 END,
 									securities.name
 			query
+
+			# Remap to the desired output format
+			securities.map do |security|
+				{
+					:id => security['id'].to_i,
+					:name => security['name'],
+					:code => security['code'],
+					:current_holding => security['current_holding'],
+					:current_value => security['current_value']
+				}
+			end
 		end
 	end
 
@@ -62,6 +91,14 @@ class Security < ActiveRecord::Base
 			# No existing price for this date, so create one
 			self.prices.create(:price => price, :as_at_date => as_at_date)
 		end
+	end
+
+	def opening_balance
+		0
+	end
+
+	def account_type
+		"investment"
 	end
 
 	def as_json(options={})

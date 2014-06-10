@@ -1,4 +1,4 @@
-<table class="securities table table-striped table-bordered table-hover">
+<table id="securities" class="table table-striped table-bordered table-hover" og-table-navigable="tableActions">
 	<thead>
 		<tr>
 			<th>Name</th>
@@ -9,7 +9,10 @@
 	</thead>
 	<tbody>
 	<tr ng-repeat="security in securities" ng-class="{'text-muted': security.current_holding <= 0}">
-			<td>{{security.name}}</td>
+			<td class="has-action">
+				{{security.name}}
+				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit security" ng-click="editSecurity($index)"></i>
+			</td>
 			<td>{{security.code}}</td>
 			<td class="amount" ng-class="{'text-danger': security.current_holding < 0}">{{security.current_holding | number:3}}</td>
 			<td class="amount" ng-class="{'text-danger': security.current_value < 0}">{{security.current_value | currency}}</td>

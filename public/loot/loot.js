@@ -155,9 +155,18 @@
 					controller: 'securityIndexController',
 					data: {
 						title: 'Securities'
+					},
+					resolve: {
+						securities: ['securityModel',
+							function(securityModel) {
+								return securityModel.allWithBalances();
+							}
+						]
 					}
 				})
 				.state('root.securities.security', basicState())
+				.state('root.securities.security.transactions', transactionsState('security'))
+				.state('root.securities.security.transactions.transaction', transactionState())
 				.state('root.transactions', {
 					url: '/transactions?query',
 					data: {

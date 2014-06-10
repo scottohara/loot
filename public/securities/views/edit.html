@@ -1,0 +1,23 @@
+<form role="form" name="securityForm">
+	<div class="modal-header">
+		<h4>{{mode}} Security</h4>
+	</div>
+	<div class="modal-body">
+		<!-- Name -->
+		<div class="form-group has-feedback" ng-class="{'has-error': securityForm.name.$invalid}">
+			<label for="name">Name</label>
+			<input id="name" name="name" class="form-control" ng-model="security.name" placeholder="Security" required autofocus>
+			<span ng-show="securityForm.name.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+		</div>
+		<!-- Code -->
+		<div class="form-group">
+			<label for="code">Code</label>
+			<input id="code" name="code" class="form-control" ng-model="security.code" placeholder="Code">
+		</div>
+	</div>
+	<div class="modal-footer">
+		<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="submit" ng-disabled="securityForm.$invalid" ng-click="save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+	</div>
+</form>
