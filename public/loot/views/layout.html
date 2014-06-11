@@ -5,20 +5,60 @@
 		</div>
 		<div ng-switch="isAuthenticated()" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
-				<li ui-sref-active="active">
-					<a ui-sref="root.accounts"><i class="glyphicon glyphicon-list-alt"></i> Accounts</a>
+				<li class="dropdown" ui-sref-active="active">
+					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-list-alt"></i> Accounts <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li>
+							<a ui-sref="root.accounts">Account List</a>
+						</li>
+						<li class="divider"></li>
+						<li class="dropdown-header">Recent accounts</li>
+						<li ng-repeat="account in recentlyAccessedAccounts()">
+						<a ui-sref="root.accounts.account.transactions({id: account.id})">{{account.name}}</a>
+						</li>
+					</ul>
 				</li>
 				<li ui-sref-active="active">
 					<a ui-sref="root.schedules"><i class="glyphicon glyphicon-calendar"></i> Schedules</a>
 				</li>
-				<li ui-sref-active="active">
-					<a ui-sref="root.payees"><i class="glyphicon glyphicon-user"></i> Payees</a>
+				<li class="dropdown" ui-sref-active="active">
+					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> Payees <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li>
+							<a ui-sref="root.payees">Payee List</a>
+						</li>
+						<li class="divider"></li>
+						<li class="dropdown-header">Recent payees</li>
+						<li ng-repeat="payee in recentlyAccessedPayees()">
+							<a ui-sref="root.payees.payee.transactions({id: payee.id})">{{payee.name}}</a>
+						</li>
+					</ul>
 				</li>
-				<li ui-sref-active="active">
-					<a ui-sref="root.categories"><i class="glyphicon glyphicon-tags"></i> Categories</a>
+				<li class="dropdown" ui-sref-active="active">
+					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-tags"></i> Categories <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li>
+							<a ui-sref="root.categories">Category List</a>
+						</li>
+						<li class="divider"></li>
+						<li class="dropdown-header">Recent categories</li>
+						<li ng-repeat="category in recentlyAccessedCategories()">
+							<a ui-sref="root.categories.category.transactions({id: category.id})">{{category.name}}</a>
+						</li>
+					</ul>
 				</li>
-				<li ui-sref-active="active">
-					<a ui-sref="root.securities"><i class="glyphicon glyphicon-globe"></i> Securities</a>
+				<li class="dropdown" ui-sref-active="active">
+					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-globe"></i> Securities <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li>
+							<a ui-sref="root.securities">Security List</a>
+						</li>
+						<li class="divider"></li>
+						<li class="dropdown-header">Recent securities</li>
+						<li ng-repeat="security in recentlyAccessedSecurities()">
+							<a ui-sref="root.securities.security.transactions({id: security.id})">{{security.name}}</a>
+						</li>
+					</ul>
 				</li>
 			</ul>
 			<button ng-switch-when="true" type="button" class="btn btn-default navbar-btn navbar-right" ng-click="logout()"><i class="glyphicon glyphicon-log-out"></i> Logout</button>

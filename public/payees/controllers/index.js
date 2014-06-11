@@ -21,18 +21,26 @@
 					backdrop: 'static',
 					resolve: {
 						payee: function() {
+							var payee;
+
 							// If we didn't get an index, we're adding a new payee so just return null
-							if (isNaN(index)) {
-								return null;
+							if (!isNaN(index)) {
+								payee = $scope.payees[index];
+
+								// Add the payee to the LRU cache
+								payeeModel.addRecent(payee);
 							}
 
-							return $scope.payees[index];
+							return payee;
 						}
 					}
 				}).result.then(function(payee) {
 					if (isNaN(index)) {
 						// Add new payee to the end of the array
 						$scope.payees.push(payee);
+
+						// Add the payee to the LRU cache
+						payeeModel.addRecent(payee);
 					} else {
 						// Update the existing payee in the array
 						$scope.payees[index] = payee;

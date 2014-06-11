@@ -26,18 +26,26 @@
 					backdrop: 'static',
 					resolve: {
 						security: function() {
+							var security;
+
 							// If we didn't get an index, we're adding a new security so just return null
-							if (isNaN(index)) {
-								return null;
+							if (!isNaN(index)) {
+								security = $scope.securities[index];
+
+								// Add the security to the LRU cache
+								securityModel.addRecent(security);
 							}
 
-							return $scope.securities[index];
+							return security;
 						}
 					}
 				}).result.then(function(security) {
 					if (isNaN(index)) {
 						// Add new security to the end of the array
 						$scope.securities.push(security);
+
+						// Add the security to the LRU cache
+						securityModel.addRecent(security);
 					} else {
 						// Update the existing security in the array
 						$scope.securities[index] = security;

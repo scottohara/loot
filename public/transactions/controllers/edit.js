@@ -5,8 +5,8 @@
 	var mod = angular.module('transactions');
 
 	// Declare the Transaction Edit controller
-	mod.controller('transactionEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'transaction',
-		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
+	mod.controller('transactionEditController', ['$scope', '$modalInstance', '$q', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'transaction',
+		function($scope, $modalInstance, $q, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
 			// Make the passed transaction available on the scope
 			$scope.transaction = transaction;
 
@@ -113,7 +113,7 @@
 					default:
 						return transaction;
 				}
-			}
+			};
 
 			var useLastTransaction = function(transaction) {
 				// Strip the id, transaction date and primary account
@@ -318,10 +318,79 @@
 				}
 			};
 
+			// Helper function to update the LRU caches after saving a transaction
+			var updateLruCaches = function(transaction) {
+				// Create a deferred so that we return a promise
+				var q = $q.defer(),
+						resolve = true;
+
+				// Add the primary account to the LRU cache
+				accountModel.addRecent(transaction.data.primary_account);
+
+				// Add the payee or security to the LRU cache
+				if ('investment' !== transaction.data.primary_account.account_type) {
+					payeeModel.addRecent(transaction.data.payee);
+				} else {
+					securityModel.addRecent(transaction.data.security);
+				}
+
+				switch (transaction.data.transaction_type) {
+					case 'Basic':
+						// Add the category and subcategory to the LRU cache
+						categoryModel.addRecent(transaction.data.category);
+						if (transaction.data.subcategory) {
+							categoryModel.addRecent(transaction.data.subcategory);
+						}
+						break;
+
+					case 'Transfer':
+					case 'SecurityTransfer':
+					case 'SecurityInvestment':
+					case 'Dividend':
+						// Add the account to the LRU cache
+						accountModel.addRecent(transaction.data.account);
+						break;
+
+					case 'Split':
+					case 'LoanRepayment':
+					case 'Payslip':
+						// Delay resolving the promise
+						resolve = false;
+
+						transactionModel.findSubtransactions(transaction.data.id).then(function(subtransactions) {
+							angular.forEach(subtransactions, function(subtransaction) {
+								if ('Transfer' === subtransaction.transaction_type) {
+									// Add the account to the LRU cache
+									accountModel.addRecent(subtransaction.account);
+								} else {
+									// Add the category and subcategory to the LRU cache
+									categoryModel.addRecent(subtransaction.category);
+									if (subtransaction.subcategory) {
+										categoryModel.addRecent(subtransaction.subcategory);
+									}
+								}
+							});
+
+							// Resolve the promise
+							q.resolve(transaction);
+						});
+						break;
+				}
+
+				// Resolve the promise (unless explicitly delayed)
+				if (resolve) {
+					q.resolve(transaction);
+				}
+
+				// Return the promise
+				return q.promise;
+			};
+
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;
-				transactionModel.save($scope.transaction).then(function(transaction) {
+				transactionModel.save($scope.transaction).then(updateLruCaches).then(function(transaction) {
+					// Close the modal
 					$modalInstance.close(transaction.data);
 				}, function(error) {
 					$scope.errorMessage = error.data;

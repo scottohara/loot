@@ -25,18 +25,26 @@
 					backdrop: 'static',
 					resolve: {
 						category: function() {
+							var category;
+
 							// If we didn't get an index, we're adding a new category so just return null
-							if (isNaN(index)) {
-								return null;
+							if (!isNaN(index)) {
+								category = $scope.categories[index];
+
+								// Add the category to the LRU cache
+								categoryModel.addRecent(category);
 							}
 
-							return $scope.categories[index];
+							return category;
 						}
 					}
 				}).result.then(function(category) {
 					if (isNaN(index)) {
 						// Add new category to the end of the array
 						$scope.categories.push(category);
+
+						// Add the category to the LRU cache
+						categoryModel.addRecent(category);
 					} else {
 						// Update the existing category in the array
 						$scope.categories[index] = category;

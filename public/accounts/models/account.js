@@ -5,11 +5,19 @@
 	var mod = angular.module('accounts');
 
 	// Declare the Account model
-	mod.factory('accountModel', ['$http', '$cacheFactory', '$window',
-		function($http, $cacheFactory, $window) {
+	mod.factory('accountModel', ['$http', '$cacheFactory', '$window', 'ogLruCacheFactory',
+		function($http, $cacheFactory, $window, ogLruCacheFactory) {
 			var	model = {},
-					cache = $cacheFactory('accounts');
+					cache = $cacheFactory('accounts'),
+					UNRECONCILED_ONLY_LOCAL_STORAGE_KEY = 'lootUnreconciledOnly-',
+					LRU_LOCAL_STORAGE_KEY = "lootRecentAccounts",
+					LRU_CAPACITY = 10,
+					lruCache;
 
+			// Create an LRU cache and populate with the recent account list from local storage
+			lruCache = ogLruCacheFactory(LRU_CAPACITY, JSON.parse($window.localStorage.getItem(LRU_LOCAL_STORAGE_KEY)) || {});
+			model.recent = lruCache.list();
+			
 			// Returns the model type
 			model.type = function() {
 				return "account";
@@ -39,6 +47,7 @@
 				return $http.get(model.path(id), {
 					cache: true
 				}).then(function(response) {
+					model.addRecent(response.data);
 					return response.data;
 				});
 			};
@@ -50,8 +59,6 @@
 					url: model.path(id) + '/reconcile'
 				});
 			};
-
-			var UNRECONCILED_ONLY_LOCAL_STORAGE_KEY = 'lootUnreconciledOnly-';
 
 			// Get the unreconciled only setting for an account from local storage
 			model.isUnreconciledOnly = function(id) {
@@ -66,6 +73,15 @@
 			// Flush the cache
 			model.flush = function() {
 				cache.removeAll();
+			};
+
+			// Put an item into the LRU cache
+			model.addRecent = function(account) {
+				// Put the item into the LRU cache
+				model.recent = lruCache.put(account);
+
+				// Update local storage with the new list
+				$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
 			};
 
 			return model;

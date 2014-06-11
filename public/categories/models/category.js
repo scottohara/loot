@@ -5,11 +5,18 @@
 	var mod = angular.module('categories');
 
 	// Declare the Category model
-	mod.factory('categoryModel', ['$http', '$cacheFactory',
-		function($http, $cacheFactory) {
+	mod.factory('categoryModel', ['$http', '$cacheFactory', '$window', 'ogLruCacheFactory',
+		function($http, $cacheFactory, $window, ogLruCacheFactory) {
 			var	model = {},
-					cache = $cacheFactory('categories');
+					cache = $cacheFactory('categories'),
+					LRU_LOCAL_STORAGE_KEY = "lootRecentCategories",
+					LRU_CAPACITY = 10,
+					lruCache;
 
+			// Create an LRU cache and populate with the recent account list from local storage
+			lruCache = ogLruCacheFactory(LRU_CAPACITY, JSON.parse($window.localStorage.getItem(LRU_LOCAL_STORAGE_KEY)) || {});
+			model.recent = lruCache.list();
+			
 			// Returns the model type
 			model.type = function() {
 				return "category";
@@ -42,6 +49,7 @@
 				return $http.get(model.path(id), {
 					cache: true
 				}).then(function(response) {
+					model.addRecent(response.data);
 					return response.data;
 				});
 			};
@@ -69,6 +77,15 @@
 			// Flush the cache
 			model.flush = function() {
 				cache.removeAll();
+			};
+
+			// Put an item into the LRU cache
+			model.addRecent = function(category) {
+				// Put the item into the LRU cache
+				model.recent = lruCache.put(category);
+
+				// Update local storage with the new list
+				$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
 			};
 
 			return model;

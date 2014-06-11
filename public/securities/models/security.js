@@ -5,11 +5,18 @@
 	var mod = angular.module('securities');
 
 	// Declare the Security model
-	mod.factory('securityModel', ['$http', '$cacheFactory',
-		function($http, $cacheFactory) {
+	mod.factory('securityModel', ['$http', '$cacheFactory', '$window', 'ogLruCacheFactory',
+		function($http, $cacheFactory, $window, ogLruCacheFactory) {
 			var	model = {},
-					cache = $cacheFactory('securities');
+					cache = $cacheFactory('securities'),
+					LRU_LOCAL_STORAGE_KEY = "lootRecentSecurities",
+					LRU_CAPACITY = 10,
+					lruCache;
 
+			// Create an LRU cache and populate with the recent account list from local storage
+			lruCache = ogLruCacheFactory(LRU_CAPACITY, JSON.parse($window.localStorage.getItem(LRU_LOCAL_STORAGE_KEY)) || {});
+			model.recent = lruCache.list();
+			
 			// Returns the model type
 			model.type = function() {
 				return "security";
@@ -50,6 +57,7 @@
 				return $http.get(model.path(id), {
 					cache: true
 				}).then(function(response) {
+					model.addRecent(response.data);
 					return response.data;
 				});
 			};
@@ -77,6 +85,15 @@
 			// Flush the cache
 			model.flush = function() {
 				cache.removeAll();
+			};
+
+			// Put an item into the LRU cache
+			model.addRecent = function(security) {
+				// Put the item into the LRU cache
+				model.recent = lruCache.put(security);
+
+				// Update local storage with the new list
+				$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
 			};
 
 			return model;
