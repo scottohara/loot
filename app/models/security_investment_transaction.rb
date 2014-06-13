@@ -44,28 +44,21 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	end
 
 	def as_json(options={})
-		{
-			:id => self.id,
-			:transaction_type => self.transaction_type,
-			:transaction_date => self.header.transaction_date,
+		super.merge({
 			:primary_account => self.investment_account.account.as_json,
-			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
-			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
-			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
-			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
-			:security => self.header.security.as_json,
 			:category => {
 				:id => self.investment_account.direction.eql?('inflow') && 'Buy' || 'Sell',
 				:name => self.investment_account.direction.eql?('inflow') && 'Buy' || 'Sell'
 			},
 			:account => self.cash_account.account.as_json,
 			:amount => self.amount,
+			:direction => self.investment_account.direction,
+			:status => self.investment_account.status,
+			:related_status => self.cash_account.status,
 			:quantity => self.header.quantity,
 			:price => self.header.price,
-			:commission => self.header.commission,
-			:direction => self.investment_account.direction,
-			:memo => self.memo
-		}
+			:commission => self.header.commission
+		})
 	end
 
 	def investment_account

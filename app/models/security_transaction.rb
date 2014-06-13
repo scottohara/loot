@@ -16,4 +16,8 @@ class SecurityTransaction < Transaction
 	def validate_absence(attr)
 		errors[:base] << "#{attr.capitalize} must be blank" unless instance_eval "header.#{attr}.blank?"
 	end
+
+	def as_json(options={})
+		super.merge self.header.as_json
+	end
 end

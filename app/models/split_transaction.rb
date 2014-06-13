@@ -59,24 +59,15 @@ class SplitTransaction < PayeeCashTransaction
 	end
 
 	def as_json(options={})
-		{
-			:id => self.id,
-			:transaction_type => self.transaction_type,
-			:transaction_date => self.header.transaction_date,
+		super.merge({
 			:primary_account => self.account.as_json,
-			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
-			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
-			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
-			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
-			:payee => self.header.payee.as_json,
 			:category => {
 				:id => self.transaction_account.direction.eql?('inflow') && 'SplitFrom' || 'SplitTo',
 				:name => self.transaction_account.direction.eql?('inflow') && 'Split From' || 'Split To'
 			},
-			:amount => self.amount,
 			:direction => self.transaction_account.direction,
-			:memo => self.memo
-		}
+			:status => self.transaction_account.status
+		})
 	end
 
 	def children

@@ -54,4 +54,13 @@ class Transaction < ActiveRecord::Base
 	def as_subclass
 		self.becomes self.class.class_for(self.transaction_type)
 	end
+
+	def as_json(options={})
+		{
+			:id => self.id,
+			:transaction_type => self.transaction_type,
+			:memo => self.memo,
+			:flag => self.flag.present? && self.flag.memo || nil
+		}
+	end
 end

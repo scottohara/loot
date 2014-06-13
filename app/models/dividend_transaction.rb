@@ -34,16 +34,8 @@ class DividendTransaction < SecurityTransaction
 	end
 
 	def as_json(options={})
-		{
-			:id => self.id,
-			:transaction_type => self.transaction_type,
-			:transaction_date => self.header.transaction_date,
+		super.merge({
 			:primary_account => self.investment_account.account.as_json,
-			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
-			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
-			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
-			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
-			:security => self.header.security.as_json,
 			:category => {
 				:id => 'DividendTo',
 				:name => 'Dividend To'
@@ -51,8 +43,9 @@ class DividendTransaction < SecurityTransaction
 			:account => self.cash_account.account.as_json,
 			:amount => self.amount,
 			:direction => 'outflow',
-			:memo => self.memo
-		}
+			:status => self.investment_account.status,
+			:related_status => self.cash_account.status
+		})
 	end
 
 	def investment_account

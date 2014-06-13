@@ -5,24 +5,17 @@ class SubtransferTransaction < PayeeCashTransaction
 	has_one :account, :through => :transaction_account
 
 	def as_json(options={})
-		{
-			:id => self.id,
-			:transaction_type => self.transaction_type,
-			:transaction_date => self.header.transaction_date,
+		super.merge({
 			:primary_account => self.account.as_json,
-			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
-			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
-			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
-			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
-			:payee => self.header.payee.as_json,
 			:category => {
 				:id => options[:direction].eql?('inflow') && 'TransferFrom' || 'TransferTo',
 				:name => options[:direction].eql?('inflow') && 'Transfer From' || 'Transfer To'
 			},
 			:account => self.parent.account.as_json,
-			:amount => self.amount,
 			:direction => self.transaction_account.direction,
-			:memo => self.memo
-		}
+			:status => self.transaction_account.status,
+			:related_status => self.parent.transaction_account.status,
+			:parent_id => self.parent.id
+		})
 	end
 end

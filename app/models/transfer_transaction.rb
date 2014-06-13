@@ -23,7 +23,7 @@ class TransferTransaction < PayeeCashTransaction
 		def update_from_json(json)
 			s = self.includes(:header, :source_account, :destination_account).find(json[:id])
 			s.update_from_json(json)
-			s
+			s.as_json :direction => json['direction']
 		end
 	end
 
@@ -40,24 +40,19 @@ class TransferTransaction < PayeeCashTransaction
 	end
 
 	def as_json(options={})
-		{
-			:id => self.id,
-			:transaction_type => self.transaction_type,
-			:transaction_date => self.header.transaction_date,
-			:primary_account => options[:direction].eql?('outflow') && self.source_account.as_json || self.destination_account.as_json,
-			:next_due_date => self.header.schedule.present? && self.header.schedule.next_due_date || nil,
-			:frequency => self.header.schedule.present? && self.header.schedule.frequency || nil,
-			:estimate => self.header.schedule.present? && self.header.schedule.estimate || nil,
-			:auto_enter => self.header.schedule.present? && self.header.schedule.auto_enter || nil,
-			:payee => self.header.payee.as_json,
+		primary_account, other_account, category_direction, status, related_status = self.source_account, self.destination_account, 'To', self.source_transaction_account.status, self.destination_transaction_account.status
+		primary_account, other_account, category_direction, status, related_status = other_account, primary_account, 'From', related_status, status if options[:direction].eql? 'inflow'
+
+		super.merge({
+			:primary_account => primary_account.as_json,
 			:category => {
-				:id => options[:direction].eql?('inflow') && 'TransferFrom' || 'TransferTo',
-				:name => options[:direction].eql?('inflow') && 'Transfer From' || 'Transfer To'
+				:id => "Transfer#{category_direction}",
+				:name => "Transfer #{category_direction}"
 			},
-			:account => options[:direction].eql?('inflow') && self.source_account.as_json || self.destination_account.as_json,
-			:amount => self.amount,
+			:account => other_account.as_json,
 			:direction => options[:direction],
-			:memo => self.memo
-		}
+			:status => status,
+			:related_status => related_status
+		})
 	end
 end

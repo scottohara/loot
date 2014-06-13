@@ -10,4 +10,10 @@ class SecurityTransactionHeader < TransactionHeader
 		self.security = Security.find_or_new(json['security'])
 		self
 	end
+
+	def as_json(options={})
+		super.merge({
+			:security => self.security.as_json
+		})
+	end
 end
