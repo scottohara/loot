@@ -2,10 +2,10 @@ class SecuritiesController < ApplicationController
 	respond_to :json
 
 	def index
-		render :json => if params.has_key? :include_balances
-			Security.list
+		if params.has_key? :include_balances
+			respond_with Security.list
 		else
-			Security.order(:name)
+			respond_with Security.order(:name), :except => [:closing_balance]
 		end
 	end
 
@@ -24,7 +24,7 @@ class SecuritiesController < ApplicationController
 	end
 
 	def destroy
-		Securit.find(params[:id]).destroy
+		Security.find(params[:id]).destroy
 		head :status => :ok
 	end
 end

@@ -2,7 +2,7 @@ class PayeesController < ApplicationController
 	respond_to :json
 
 	def index
-		respond_with Payee.order(:name)
+		respond_with Payee.order(:name), :except => [:closing_balance]
 	end
 
 	def show

@@ -3,9 +3,9 @@ class CategoriesController < ApplicationController
 
 	def index
 		if params.has_key? :include_children
-			respond_with Category.where(:parent_id => params[:parent]).includes(:parent, :children).order(:direction, :name)
+			respond_with Category.where(:parent_id => params[:parent]).includes(:parent, :children).order(:direction, :name), :except => [:closing_balance]
 		else
-			respond_with Category.where(:parent_id => params[:parent]).order(:direction, :name), :except => [:parent, :children, :num_children]
+			respond_with Category.where(:parent_id => params[:parent]).order(:direction, :name), :except => [:parent, :children, :num_children, :closing_balance]
 		end
 	end
 

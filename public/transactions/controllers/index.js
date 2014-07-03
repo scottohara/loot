@@ -120,6 +120,11 @@
 
 							// Refocus the transaction
 							focusTransaction(transaction.id);
+
+							// Refetch the context (to get the updated closing balance)
+							contextModel.find($scope.context.id).then(function(context) {
+								$scope.context = context;
+							});
 						}
 					}
 				}).finally(function() {

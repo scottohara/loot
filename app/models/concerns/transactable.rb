@@ -153,53 +153,83 @@ module Transactable
 		[opening_balance, transactions, at_end]
 	end
 
-	def closing_balance(opts)
+	def closing_balance(opts={})
 		as_at = opts[:as_at] || Date.today.to_s
-		totals = []
 
-		# Get the total Basic transactions
-		totals += self.transactions.for_basic_closing_balance(opts)
-			.select([	"categories.direction",
-								"SUM(transactions.amount) AS total_amount"])
-			.joins(		"JOIN categories ON transaction_categories.category_id = categories.id")
-			.where(		:transaction_type => %w(Basic Sub))
-			.where(		"transaction_headers.transaction_date <= ?", as_at)
-			.where(		"transaction_headers.transaction_date IS NOT NULL")
-			.group(		"categories.direction")
+		if self.account_type.eql? 'investment'
+			# Get the total quantity of security inflows
+			security_quantities = self.transactions.for_closing_balance(opts)
+				.select([	"transaction_headers.security_id",
+									"transaction_accounts.direction",
+									"SUM(transaction_headers.quantity) AS total_quantity"])
+				.where(		:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.group(		"transaction_headers.security_id",
+									"transaction_accounts.direction")
 
-		# Get the total Subtransfer transactions
-		totals += self.transactions.for_closing_balance(opts)
-			.select([	"transaction_accounts.direction",
-								"SUM(transactions.amount) AS total_amount"])
-			.joins([	"JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
-								"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id"])
-			.where(		:transaction_type => 'Subtransfer')
-			.where(		"transaction_headers.transaction_date <= ?", as_at)
-			.where(		"transaction_headers.transaction_date IS NOT NULL")
-			.where(		"parent_transactions.transaction_type = 'Split' or parent_transactions.transaction_type = 'LoanRepayment' or parent_transactions.transaction_type = 'Payslip'")
-			.group(		"transaction_accounts.direction")
+			p security_quantities.to_sql
 
-		# Get the total other inflows
-		total_inflows = self.transactions.for_closing_balance(opts)
-			.where(		:transaction_type => %w(Split Payslip Transfer Dividend SecurityInvestment))
-			.where(		"transaction_headers.transaction_date <= ?", as_at)
-			.where(		"transaction_headers.transaction_date IS NOT NULL")
-			.where(		:transaction_accounts => {:direction => 'inflow'})
-			.sum(			"amount")
+			# Reduce to a unique set of securities with the current quantity held
+			securities = security_quantities.reduce(Hash.new(0)) do |securities, s|
+				securities[s.security_id] += s.total_quantity * (s.direction.eql?('inflow') ? 1 : -1)
+				securities
+			end
 
-		# Get the total other outflows
-		total_outflows = self.transactions.for_closing_balance(opts)
-			.where(		:transaction_type => %w(Split LoanRepayment Transfer SecurityInvestment))
-			.where(		"transaction_headers.transaction_date <= ?", as_at)
-			.where(		"transaction_headers.transaction_date IS NOT NULL")
-			.where(		:transaction_accounts => {:direction => 'outflow'})
-			.sum(			"amount")
+			# Calculate the current value of the securities held
+			total_security_value = securities.collect{|(security,qty)|Security.find(security).price(as_at) * qty}.reduce(:+) || 0
 
-		totals.each do |t|
-			total_outflows += t.total_amount if t.direction.eql? 'outflow'
-			total_inflows += t.total_amount if t.direction.eql? 'inflow'
+			# Add the balance from the associated cash account
+			total_security_value + self.related_account.closing_balance(opts) if !!self.related_account
+
+			total_security_value
+		else
+			totals = []
+
+			# Get the total Basic transactions
+			totals += self.transactions.for_basic_closing_balance(opts)
+				.select([	"categories.direction",
+									"SUM(transactions.amount) AS total_amount"])
+				.joins(		"JOIN categories ON transaction_categories.category_id = categories.id")
+				.where(		:transaction_type => %w(Basic Sub))
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.group(		"categories.direction")
+
+			# Get the total Subtransfer transactions
+			totals += self.transactions.for_closing_balance(opts)
+				.select([	"transaction_accounts.direction",
+									"SUM(transactions.amount) AS total_amount"])
+				.joins([	"JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
+									"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id"])
+				.where(		:transaction_type => 'Subtransfer')
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.where(		"parent_transactions.transaction_type = 'Split' or parent_transactions.transaction_type = 'LoanRepayment' or parent_transactions.transaction_type = 'Payslip'")
+				.group(		"transaction_accounts.direction")
+
+			# Get the total other inflows
+			total_inflows = self.transactions.for_closing_balance(opts)
+				.where(		:transaction_type => %w(Split Payslip Transfer Dividend SecurityInvestment))
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.where(		:transaction_accounts => {:direction => 'inflow'})
+				.sum(			"amount")
+
+			# Get the total other outflows
+			total_outflows = self.transactions.for_closing_balance(opts)
+				.where(		:transaction_type => %w(Split LoanRepayment Transfer SecurityInvestment))
+				.where(		"transaction_headers.transaction_date <= ?", as_at)
+				.where(		"transaction_headers.transaction_date IS NOT NULL")
+				.where(		:transaction_accounts => {:direction => 'outflow'})
+				.sum(			"amount")
+
+			totals.each do |t|
+				total_outflows += t.total_amount if t.direction.eql? 'outflow'
+				total_inflows += t.total_amount if t.direction.eql? 'inflow'
+			end
+
+			self.opening_balance + total_inflows - total_outflows
 		end
-
-		self.opening_balance + total_inflows - total_outflows
 	end
 end

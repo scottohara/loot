@@ -156,48 +156,10 @@ class Account < ActiveRecord::Base
 		end
 	end
 
-	def closing_balance(opts)
-		as_at = opts[:as_at] || Date.today.to_s
-
-		if self.account_type.eql? 'investment'
-			# Get the total quantity of security inflows
-			security_quantities = self.transactions
-				.select([	"transaction_headers.security_id",
-									"transaction_accounts.direction",
-									"SUM(transaction_headers.quantity) AS total_quantity"])
-				.where(		:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
-				.joins(		"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
-				.where(		"transaction_headers.transaction_date <= ?", as_at)
-				.where(		"transaction_headers.transaction_date IS NOT NULL")
-				.group(		"transaction_headers.security_id",
-									"transaction_accounts.direction")
-
-			# Reduce to a unique set of securities with the current quantity held
-			securities = {}
-			security_quantities.each do |s|
-				securities[s.security_id] = 0 unless securities.has_key? s.security_id
-				securities[s.security_id] += s.total_quantity * (s.direction.eql?('inflow') ? 1 : -1)
-			end
-
-			# Calculate the current value of the securities held
-			total_security_value = securities.collect{|(security,qty)|Security.find(security).price(as_at) * qty}.reduce(:+)
-			total_security_value = 0 if total_security_value.nil?
-
-			# Add the balance from the associated cash account
-			total_security_value + self.related_account.closing_balance(opts)
-		else
-			super opts
-		end
-	end
-
 	def reconcile
 		# Mark all cleared transactions for the account as reconciled
 		self.transaction_accounts
 			.where(:status => 'Cleared')
 			.update_all(:status => 'Reconciled')
-	end
-
-	def as_json(options={})
-		super :only => [:id, :name, :account_type, :opening_balance, :status]
 	end
 end

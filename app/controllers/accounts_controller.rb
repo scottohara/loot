@@ -3,12 +3,10 @@ class AccountsController < ApplicationController
 
 	def index
 		if params.has_key? :include_balances
-			accounts = Account.list
+			respond_with Account.list
 		else
-			accounts = Account.all.order(:account_type, :name)
+			respond_with Account.all.order(:account_type, :name), :except => [:closing_balance]
 		end
-
-		render :json => accounts
 	end
 
 	def show

@@ -174,10 +174,12 @@
 	<tfoot>
 		<tr>
 			<!-- Pagination -->
-			<td colspan="5">
+			<td colspan="2">
 				<button class="btn btn-primary" ng-click="getTransactions('next')">Next</button>
 				<span>{{firstTransactionDate | date:"dd/MM/yyyy"}} - {{lastTransactionDate | date:"dd/MM/yyyy"}}</span>
 			</td>
+			<td colspan="2"><strong ng-if="contextType != null" class="pull-right">Closing Balance:</strong></td>
+			<td><strong class="pull-right" ng-class="{'text-danger': context.closing_balance < 0}">{{context.closing_balance | currency}}</strong></td>
 		</tr>
 		<!-- Loading indicator -->
 		<tr og-table-loading="loading['next']" colspan="5"></tr>

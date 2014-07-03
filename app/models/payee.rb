@@ -34,8 +34,4 @@ class Payee < ActiveRecord::Base
 	def account_type
 		nil
 	end
-
-	def as_json(options={})
-		super :only => [:id, :name]
-	end
 end

@@ -11,7 +11,9 @@ class Security < ActiveRecord::Base
 		end
 
 		def for_closing_balance(opts)
-			joins("JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id")
+			joins([	"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
+					 		"JOIN accounts ON accounts.id = transaction_accounts.account_id"])
+			.where(	"accounts.account_type = 'investment'")
 		end
 
 		def for_basic_closing_balance(opts)
@@ -101,7 +103,7 @@ class Security < ActiveRecord::Base
 		"investment"
 	end
 
-	def as_json(options={})
-		super :only => [:id, :name, :code]
+	def related_account
+		nil
 	end
 end
