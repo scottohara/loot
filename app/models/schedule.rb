@@ -112,8 +112,7 @@ class Schedule < ActiveRecord::Base
 				# Find the transaction
 				transaction = transaction_class.includes(:header => [:schedule]).find header.trx.id
 
-				# Clear the schedule info and set the transaction date to the next due date
-				transaction.header.transaction_date = transaction.header.schedule.next_due_date
+				# Clear the schedule info
 				transaction.header.schedule = nil
 
 				# Get the JSON representation of the scheduled transaction
@@ -136,15 +135,21 @@ class Schedule < ActiveRecord::Base
 				# The models are expecting string-based keys
 				transaction_json = transaction_json.with_indifferent_access
 
-				# Create a new instance of the transaction
-				transaction_class.create_from_json transaction_json
+				# Create new instances of the transaction until the next due date is in the future
+				while schedule.next_due_date.past?
+					# Set the transaction date to the next due date
+					transaction_json[:transaction_date] = schedule.next_due_date
 
-				# Update the schedule's next due date
-				schedule.next_due_date += case schedule.frequency
-					when 'Fortnightly' then 2.weeks
-					when 'Monthly' then 1.month
-					when 'Quarterly' then 3.months
-					when 'Yearly' then 1.year
+					# Create the transaction instance
+					transaction_class.create_from_json transaction_json
+
+					# Update the schedule's next due date
+					schedule.next_due_date += case schedule.frequency
+						when 'Fortnightly' then 2.weeks
+						when 'Monthly' then 1.month
+						when 'Quarterly' then 3.months
+						when 'Yearly' then 1.year
+					end
 				end
 
 				# Save the schedule
