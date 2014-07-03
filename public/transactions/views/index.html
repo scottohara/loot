@@ -1,3 +1,4 @@
+<h3>{{context.name}}</h3>
 <table id="transactions" class="table table-striped table-bordered table-hover table-condensed" og-table-navigable="tableActions">
 	<thead id="transactions-header" ng-switch="context.account_type">
 		<!-- Investment account column headings -->
@@ -17,12 +18,12 @@
 			<th class="amount">Balance</th>
 		</tr>
 		<tr>
-			<td colspan="5" ng-switch="reconciling">
+			<td colspan="5" class="has-dropdown">
 				<!-- Pagination -->
 				<button class="btn btn-primary" ng-click="getTransactions('prev')">Previous</button>
 				<span>{{firstTransactionDate | date:"dd/MM/yyyy"}} - {{lastTransactionDate | date:"dd/MM/yyyy"}}</span>
 				<!-- Account reconciliation progress -->
-				<span ng-switch-when="true" class="pull-right">
+				<span ng-if="reconciling" class="pull-right">
 					<div class="text-right">Target: {{reconcileTarget | currency}}</div>
 					<div class="text-right">Cleared: {{clearedTotal | currency }}</div>
 					<div class="text-right" ng-class="{'text-danger': unclearedTotal != 0, 'text-success': unclearedTotal == 0}">Uncleared: {{unclearedTotal | currency}}</div>
@@ -30,13 +31,22 @@
 					<button class="btn btn-success" type="submit" ng-click="save()" ng-disabled="unclearedTotal != 0"><i class="glyphicon glyphicon-ok"></i> Finished</button>
 				</span>
 				<!-- Account reconciliation tools -->
-				<span ng-if="reconcilable" ng-switch-default class="pull-right">
-					<label>
-						<input type="checkbox" ng-model="unreconciledOnly" ng-click="toggleUnreconciledOnly($event.target.checked)">
-						Unreconciled Only
-					</label>
-					<button class="btn btn-default" ng-click="reconcile()"><i class="glyphicon glyphicon-pencil"></i> Reconcile</button>
-				</span>
+				<div ng-if="reconcilable && !reconciling" class="btn-group pull-right" dropdown>
+					<button type="button" class="btn btn-default dropdown-toggle">
+						<i class="glyphicon glyphicon-cog"></i> <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a ng-click="toggleUnreconciledOnly(!unreconciledOnly)" ng-switch="unreconciledOnly" dropdown-toggle>
+								<i ng-switch-when="true" class="glyphicon glyphicon-ok text-success"></i>
+								<i ng-switch-default class="glyphicon glyphicon-remove text-danger"></i>
+								 Unreconciled Only
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li><a ng-click="reconcile()" dropdown-toggle><i class="glyphicon glyphicon-pencil"></i> Reconcile...</a></li>
+					</ul>
+				</div>
 			</td>
 		</tr>
 		<!-- Loading indicator -->
