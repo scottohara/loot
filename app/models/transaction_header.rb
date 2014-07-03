@@ -25,8 +25,8 @@ class TransactionHeader < ActiveRecord::Base
 	end
 
 	def as_json(options={})
-		(self.schedule.present? && self.schedule.as_json || {}).merge({
+		super.merge((self.schedule.present? && self.schedule.as_json || {}).merge({
 			:transaction_date => self.transaction_date
-		})
+		}))
 	end
 end
