@@ -54,6 +54,9 @@
 				$("#nextDueDate").focus();
 			}
 
+			// Prefetch the payees list so that the cache is populated
+			payeeModel.all();
+
 			// List of payees for the typeahead
 			$scope.payees = function(filter, limit) {
 				return payeeModel.all().then(function(payees) {
