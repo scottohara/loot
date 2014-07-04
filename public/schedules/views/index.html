@@ -11,7 +11,12 @@
 	</thead>
 	<tbody>
 		<tr class="transaction" ng-repeat="schedule in schedules" ng-class="{'text-danger': schedule.next_due_date < today}">
-			<td>{{schedule.next_due_date | date:'dd/MM/yyyy'}}</td>
+			<td>
+				{{schedule.next_due_date | date:'dd/MM/yyyy'}}
+				<div ng-if="schedule.overdue_count > 1">
+					<small><em>({{schedule.overdue_count}} occurences overdue)</em></small>
+				</div>
+			</td>
 			<td>{{schedule.primary_account.name}}</td>
 			<td class="details">
 				<table class="table-condensed">

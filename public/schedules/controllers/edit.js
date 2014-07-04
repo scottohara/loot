@@ -371,6 +371,7 @@
 			// Calculates the next due date
 			$scope.calculateNextDue = function() {
 				$scope.schedule.next_due_date = moment($scope.schedule.next_due_date).add($scope.scheduleFrequencies[$scope.schedule.frequency]).format("YYYY-MM-DD");
+				$scope.overdue_count--;
 			};
 
 			// Updates the transaction amount and memo when the quantity, price or commission change

@@ -4,6 +4,7 @@ class Schedule < ActiveRecord::Base
 	has_one :transaction_header
 
 	include Categorisable
+	include Measurable
 
 	class << self
 		def ledger
@@ -92,7 +93,8 @@ class Schedule < ActiveRecord::Base
 					:commission => trx['commission'],
 					:price => trx['price'],
 					:direction => trx['direction'],
-					:memo => trx['memo']
+					:memo => trx['memo'],
+					:overdue_count => self.periods_since(trx['frequency'], trx['next_due_date'])
 				}
 			end
 		end
@@ -144,12 +146,12 @@ class Schedule < ActiveRecord::Base
 					transaction_class.create_from_json transaction_json
 
 					# Update the schedule's next due date
-					schedule.next_due_date += case schedule.frequency
-						when 'Fortnightly' then 2.weeks
-						when 'Monthly' then 1.month
-						when 'Quarterly' then 3.months
-						when 'Yearly' then 1.year
-					end
+					schedule.next_due_date.advance(case schedule.frequency
+						when 'Fortnightly' then {:weeks => 2}
+						when 'Monthly' then {:months => 1}
+						when 'Quarterly' then {:months => 3}
+						when 'Yearly' then {:years => 1}
+					end)
 				end
 
 				# Save the schedule
