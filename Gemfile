@@ -2,7 +2,7 @@ ruby "2.1.0"
 
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.1'
+gem 'rails', '4.1.4'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -46,3 +46,6 @@ group :test do
 end
 
 gem 'factory_girl_rails', :group => [:development, :test]
+
+# Use pry instead of IRB
+gem 'pry-rails', :group => :development
