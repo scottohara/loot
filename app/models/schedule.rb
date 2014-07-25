@@ -146,7 +146,7 @@ class Schedule < ActiveRecord::Base
 					transaction_class.create_from_json transaction_json
 
 					# Update the schedule's next due date
-					schedule.next_due_date.advance(case schedule.frequency
+					schedule.next_due_date = schedule.next_due_date.advance(case schedule.frequency
 						when 'Fortnightly' then {:weeks => 2}
 						when 'Monthly' then {:months => 1}
 						when 'Quarterly' then {:months => 3}
