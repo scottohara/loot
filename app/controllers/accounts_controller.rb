@@ -5,7 +5,7 @@ class AccountsController < ApplicationController
 		if params.has_key? :include_balances
 			respond_with Account.list
 		else
-			respond_with Account.all.order(:account_type, :name), :except => [:closing_balance]
+			respond_with Account.all.order(:account_type, :name), :except => [:closing_balance, :num_transactions]
 		end
 	end
 

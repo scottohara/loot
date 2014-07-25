@@ -5,7 +5,7 @@ class SecuritiesController < ApplicationController
 		if params.has_key? :include_balances
 			respond_with Security.list
 		else
-			respond_with Security.order(:name), :except => [:closing_balance]
+			respond_with Security.order(:name), :except => [:closing_balance, :num_transactions]
 		end
 	end
 

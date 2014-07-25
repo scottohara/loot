@@ -63,25 +63,51 @@
 			};
 
 			var deleteSecurity = function(index) {
-				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				// Check if the security can be deleted
+				securityModel.find($scope.securities[index].id).then(function(security) {
+					// Disable navigation on the table
+					$scope.navigationDisabled = true;
 
-				// Show the modal
-				$modal.open({
-					templateUrl: 'securities/views/delete.html',
-					controller: 'securityDeleteController',
-					backdrop: 'static',
-					resolve: {
-						security: function() {
-							return $scope.securities[index];
-						}
+					var modalOptions = {
+						backdrop: 'static'
+					};
+
+					// Check if the security has any transactions
+					if (security.num_transactions > 0) {
+						// Show an alert modal
+						modalOptions = angular.extend({
+							templateUrl: 'og-components/og-modal-alert/views/alert.html',
+							controller: 'ogModalAlertController',
+							resolve: {
+								alert: function() {
+									return {
+										header: "Security has existing transactions",
+										message: "You must first delete these transactions, or reassign to another security before attempting to delete this security."
+									};
+								}
+							}
+						}, modalOptions);
+					} else {
+						// Show the delete security modal
+						modalOptions = angular.extend({
+							templateUrl: 'securities/views/delete.html',
+							controller: 'securityDeleteController',
+							resolve: {
+								security: function() {
+									return $scope.securities[index];
+								}
+							}
+						}, modalOptions);
 					}
-				}).result.then(function() {
-					$scope.securities.splice(index, 1);
-					$state.go('root.securities');
-				}).finally(function() {
-					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+
+					// Show the modal
+					$modal.open(modalOptions).result.then(function() {
+						$scope.securities.splice(index, 1);
+						$state.go('root.securities');
+					}).finally(function() {
+						// Enable navigation on the table
+						$scope.navigationDisabled = false;
+					});
 				});
 			};
 

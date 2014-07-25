@@ -58,25 +58,51 @@
 			};
 
 			var deletePayee = function(index) {
-				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				// Check if the payee can be deleted
+				payeeModel.find($scope.payees[index].id).then(function(payee) {
+					// Disable navigation on the table
+					$scope.navigationDisabled = true;
 
-				// Show the modal
-				$modal.open({
-					templateUrl: 'payees/views/delete.html',
-					controller: 'payeeDeleteController',
-					backdrop: 'static',
-					resolve: {
-						payee: function() {
-							return $scope.payees[index];
-						}
+					var modalOptions = {
+						backdrop: 'static'
+					};
+
+					// Check if the payee has any transactions
+					if (payee.num_transactions > 0) {
+						// Show an alert modal
+						modalOptions = angular.extend({
+							templateUrl: 'og-components/og-modal-alert/views/alert.html',
+							controller: 'ogModalAlertController',
+							resolve: {
+								alert: function() {
+									return {
+										header: "Payee has existing transactions",
+										message: "You must first delete these transactions, or reassign to another payee before attempting to delete this payee."
+									};
+								}
+							}
+						}, modalOptions);
+					} else {
+						// Show the delete payee modal
+						modalOptions = angular.extend({
+							templateUrl: 'payees/views/delete.html',
+							controller: 'payeeDeleteController',
+							resolve: {
+								payee: function() {
+									return $scope.payees[index];
+								}
+							}
+						}, modalOptions);
 					}
-				}).result.then(function() {
-					$scope.payees.splice(index, 1);
-					$state.go('root.payees');
-				}).finally(function() {
-					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+
+					// Show the modal
+					$modal.open(modalOptions).result.then(function() {
+						$scope.payees.splice(index, 1);
+						$state.go('root.payees');
+					}).finally(function() {
+						// Enable navigation on the table
+						$scope.navigationDisabled = false;
+					});
 				});
 			};
 

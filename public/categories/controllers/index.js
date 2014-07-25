@@ -62,28 +62,54 @@
 			};
 
 			var deleteCategory = function(index) {
-				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				// Check if the category can be deleted
+				categoryModel.find($scope.categories[index].id).then(function(category) {
+					// Disable navigation on the table
+					$scope.navigationDisabled = true;
 
-				// Show the modal
-				$modal.open({
-					templateUrl: 'categories/views/delete.html',
-					controller: 'categoryDeleteController',
-					backdrop: 'static',
-					resolve: {
-						category: function() {
-							return $scope.categories[index];
-						}
+					var modalOptions = {
+						backdrop: 'static'
+					};
+
+					// Check if the category has any transactions
+					if (category.num_transactions > 0) {
+						// Show an alert modal
+						modalOptions = angular.extend({
+							templateUrl: 'og-components/og-modal-alert/views/alert.html',
+							controller: 'ogModalAlertController',
+							resolve: {
+								alert: function() {
+									return {
+										header: "Category has existing transactions",
+										message: "You must first delete these transactions, or reassign to another category before attempting to delete this category."
+									};
+								}
+							}
+						}, modalOptions);
+					} else {
+						// Show the delete category modal
+						modalOptions = angular.extend({
+							templateUrl: 'categories/views/delete.html',
+							controller: 'categoryDeleteController',
+							resolve: {
+								category: function() {
+									return $scope.categories[index];
+								}
+							}
+						}, modalOptions);
 					}
-				}).result.then(function() {
-					// Remove the category (and any children) from the array
-					$scope.categories.splice(index, 1 + $scope.categories[index].num_children);
 
-					// Go back to the parent state
-					$state.go('root.categories');
-				}).finally(function() {
-					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					// Show the modal
+					$modal.open(modalOptions).result.then(function() {
+						// Remove the category (and any children) from the array
+						$scope.categories.splice(index, 1 + $scope.categories[index].num_children);
+
+						// Go back to the parent state
+						$state.go('root.categories');
+					}).finally(function() {
+						// Enable navigation on the table
+						$scope.navigationDisabled = false;
+					});
 				});
 			};
 

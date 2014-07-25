@@ -1,6 +1,6 @@
 class CategorySerializer < ActiveModel::Serializer
 	has_many :children
-  attributes :id, :name, :direction, :parent_id, :num_children, :parent, :closing_balance
+  attributes :id, :name, :direction, :parent_id, :num_children, :parent, :closing_balance, :num_transactions
 
 	def num_children
 		object.children.size
@@ -8,5 +8,9 @@ class CategorySerializer < ActiveModel::Serializer
 
 	def parent
 		CategorySerializer.new object.parent, :only => [:id, :name, :direction]
+	end
+
+	def num_transactions
+		object.transactions.count
 	end
 end
