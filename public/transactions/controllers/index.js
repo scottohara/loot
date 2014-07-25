@@ -219,7 +219,18 @@
 				navigationEnabled: function() {
 					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
-				selectAction: editTransaction,
+				selectAction: function(index) {
+					if (!$scope.reconciling) {
+						// When not reconciling, select action is to edit the transaction
+						editTransaction(index);
+					} else {
+						// When reconciling, select action is to toggle the cleared status
+						var transaction = $scope.transactions[index];
+						transaction.status = ("Cleared" === transaction.status ? "" : "Cleared");
+						$scope.toggleCleared(transaction);
+					}
+				},
+				editAction: editTransaction,
 				insertAction: function() {
 					// Same as select action, but don't pass any arguments
 					editTransaction();
