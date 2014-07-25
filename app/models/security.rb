@@ -34,7 +34,7 @@ class Security < ActiveRecord::Base
 				SELECT		securities.id,
 									securities.name,
 									securities.code,
-									SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) AS current_holding,
+									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),3) AS current_holding,
 									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(p.price),2) AS current_value
 				FROM			securities
 				JOIN			transaction_headers ON transaction_headers.security_id = securities.id
@@ -50,22 +50,39 @@ class Security < ActiveRecord::Base
 																GROUP BY	security_id
 															) d ON sp.security_id = d.security_id AND sp.as_at_date = d.as_at_date
 									) p ON securities.id = p.security_id
-				WHERE			transactions.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
-									transaction_headers.transaction_date IS NOT NULL AND
+				WHERE			transaction_headers.transaction_date IS NOT NULL AND
+									transactions.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
 									accounts.account_type = 'investment'
 				GROUP BY	securities.id
-				ORDER BY	CASE WHEN SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) > 0 THEN 0 ELSE 1 END,
+				ORDER BY	CASE WHEN ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),3) > 0 THEN 0 ELSE 1 END,
 									securities.name
 			query
 
 			# Remap to the desired output format
-			securities.map do |security|
+			security_list = securities.map do |security|
 				{
 					:id => security['id'].to_i,
 					:name => security['name'],
 					:code => security['code'],
 					:current_holding => security['current_holding'],
 					:current_value => security['current_value']
+				}
+			end
+
+			unused_securities = self
+				.joins(		"LEFT OUTER JOIN transaction_headers ON transaction_headers.security_id = securities.id AND transaction_headers.transaction_date IS NOT NULL")
+				.group(		:id)
+				.having(	"COUNT(transaction_headers.transaction_id) = 0")
+				.order(:name)
+
+			security_list + unused_securities.map do |security|
+				{
+					:id => security['id'].to_i,
+					:name => security['name'],
+					:code => security['code'],
+					:current_holding => 0,
+					:current_value => 0,
+					:unused => true
 				}
 			end
 		end

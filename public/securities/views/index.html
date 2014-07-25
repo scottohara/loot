@@ -12,6 +12,7 @@
 			<td class="has-action">
 				{{security.name}}
 				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit security" ng-click="editSecurity($index)"></i>
+				<em ng-if="security.unused" class="text-info pull-right">No transactions</em>
 			</td>
 			<td>{{security.code}}</td>
 			<td class="amount" ng-class="{'text-danger': security.current_holding < 0}">{{security.current_holding | number:3}}</td>
