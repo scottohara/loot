@@ -45,7 +45,7 @@
 			// Retrieves a single account
 			model.find = function(id) {
 				return $http.get(model.path(id), {
-					cache: true
+					cache: cache
 				}).then(function(response) {
 					model.addRecent(response.data);
 					return response.data;
