@@ -168,8 +168,6 @@ module Transactable
 				.group(		"transaction_headers.security_id",
 									"transaction_accounts.direction")
 
-			p security_quantities.to_sql
-
 			# Reduce to a unique set of securities with the current quantity held
 			securities = security_quantities.reduce(Hash.new(0)) do |securities, s|
 				securities[s.security_id] += s.total_quantity * (s.direction.eql?('inflow') ? 1 : -1)
@@ -180,7 +178,7 @@ module Transactable
 			total_security_value = securities.collect{|(security,qty)|Security.find(security).price(as_at) * qty}.reduce(:+) || 0
 
 			# Add the balance from the associated cash account
-			total_security_value + self.related_account.closing_balance(opts) if !!self.related_account
+			total_security_value += self.related_account.closing_balance(opts) if !!self.related_account
 
 			total_security_value
 		else
