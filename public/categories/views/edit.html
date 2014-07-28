@@ -17,12 +17,12 @@
 		</div>
 		<!-- Direction -->
 		<label ng-if="!category.parent" for="direction">Type</label>
-		<div ng-if="!category.parent" class="form-group" ng-class="{'has-error': categoryForm.direction.$invalid}">
-			<div class="btn-group has-feedback">
+		<div ng-if="!category.parent" class="form-group">
+			<div class="btn-group">
 				<label class="btn btn-default" name="direction" ng-model="category.direction" btn-radio="'inflow'" required><i class="glyphicon glyphicon-plus-sign text-success"></i> Income</label>
 				<label class="btn btn-default" name="direction" ng-model="category.direction" btn-radio="'outflow'" required><i class="glyphicon glyphicon-minus-sign text-danger"></i> Expense</label>
 			</div>
-			<span ng-show="categoryForm.direction.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<span ng-show="categoryForm.direction.$invalid" class="text-danger glyphicon glyphicon-remove"></span>
 		</div>
 	</div>
 	<div class="modal-footer">
