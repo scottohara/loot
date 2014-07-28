@@ -39,13 +39,45 @@
 						}
 					}
 				}).result.then(function(category) {
+					var parentIndex;
+
 					if (isNaN(index)) {
 						// Add new category to the end of the array
 						$scope.categories.push(category);
 
 						// Add the category to the LRU cache
 						categoryModel.addRecent(category);
+
+						// If the new category has a parent, increment the parent's children count
+						if (!isNaN(category.parent_id)) {
+							// Find the parent category by it's id
+							parentIndex = categoryIndexById(category.parent_id);
+
+							// If found, increment the number of children
+							if (!isNaN(parentIndex)) {
+								$scope.categories[parentIndex].num_children++;
+							}
+						}
 					} else {
+						// If the edited category parent has changed, increment/decrement the parent(s) children count
+						if (category.parent_id !== $scope.categories[index].parent_id) {
+							// Decrement the original parent (if required)
+							if (!isNaN($scope.categories[index].parent_id)) {
+								parentIndex = categoryIndexById($scope.categories[index].parent_id);
+								if (!isNaN(parentIndex)) {
+									$scope.categories[parentIndex].num_children--;
+								}
+							}
+
+							// Increment the new parent (if required)
+							if (!isNaN(category.parent_id)) {
+								parentIndex = categoryIndexById(category.parent_id);
+								if (!isNaN(parentIndex)) {
+									$scope.categories[parentIndex].num_children++;
+								}
+							}
+						}
+
 						// Update the existing category in the array
 						$scope.categories[index] = category;
 					}
@@ -101,6 +133,17 @@
 
 					// Show the modal
 					$modal.open(modalOptions).result.then(function() {
+						// If the deleted category has a parent, decrement the parent's children count
+						if (!isNaN($scope.categories[index].parent_id)) {
+							// Find the parent category by it's id
+							var parentIndex = categoryIndexById($scope.categories[index].parent_id);
+
+							// If found, decrement the number of children
+							if (!isNaN(parentIndex)) {
+								$scope.categories[parentIndex].num_children--;
+							}
+						}
+
 						// Remove the category (and any children) from the array
 						$scope.categories.splice(index, 1 + $scope.categories[index].num_children);
 
@@ -136,14 +179,8 @@
 
 			// Finds a specific category and focusses that row in the table
 			var focusCategory = function(categoryIdToFocus) {
-				var targetIndex;
-
 				// Find the category by it's id
-				angular.forEach($scope.categories, function(category, index) {
-					if (isNaN(targetIndex) && category.id === categoryIdToFocus) {
-						targetIndex = index;
-					}
-				});
+				var targetIndex = categoryIndexById(categoryIdToFocus);
 
 				// If found, focus the row
 				if (!isNaN(targetIndex)) {
@@ -151,6 +188,19 @@
 						$scope.tableActions.focusRow(targetIndex);
 					}, 50);
 				}
+
+				return targetIndex;
+			};
+
+			// Helper function to find a category by it's id and return it's index
+			var categoryIndexById = function(id) {
+				var targetIndex;
+
+				angular.forEach($scope.categories, function(category, index) {
+					if (isNaN(targetIndex) && category.id === id) {
+						targetIndex = index;
+					}
+				});
 
 				return targetIndex;
 			};
