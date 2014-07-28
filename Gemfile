@@ -48,4 +48,7 @@ end
 gem 'factory_girl_rails', :group => [:development, :test]
 
 # Use pry instead of IRB
-gem 'pry-rails', :group => :development
+group :development do
+	gem 'pry-rails'
+	gem 'pry-nav'
+end
