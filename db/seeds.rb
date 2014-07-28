@@ -708,7 +708,7 @@ def verify_balances
 
 			# Hack for known inconsistencies in sunriise closing balances
 			account_json['currentBalance'] = 0 if ['Car Loan', 'Macquarie Loan (A)', 'RAMS', 'Wizard Loan'].include? account_json['name']
-			account_json['currentBalance'] = -156159.33 if account_json['name'].eql? 'Macquarie Loan (B)'
+			account_json['currentBalance'] = -214393.65 if account_json['name'].eql? 'Macquarie Loan (B)'
 			
 			# Check that it matches
 			balance_mismatches << [account_json['name'], number_to_currency(account_json['currentBalance']), number_to_currency(closing_balance)] unless number_to_currency(account_json['currentBalance']).eql? number_to_currency(closing_balance)
