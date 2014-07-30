@@ -8,13 +8,16 @@ Angular.js + Bootstrap on the frontend
 
 Getting Started
 ===============
-1. Clone the repository (`git clone git://github.com/scottohara/loot.git`)
-2. (Optional) Configure database.yml (uses postgres by default)
-3. (Optional) Export your existing MS Money data (see below)
-4. Initialise the database (`rake db:setup`, or if you have no data to import `rake db:create && rake db:migrate`)
-5. Configure environment variables for the username and password to login as (`export LOOT_USERNAME=user && export LOOT_PASSWORD=pass`)
-6. Start the server (`unicorn`)
-7. Browse to http://localhost:8080/index.html and login using the credentials configured at step #5
+1. Clone the repository (`git clone git://github.com/scottohara/loot.git`) and switch to it (`cd loot`)
+2. Install the server-side dependencies (`bundle install`)
+3. Install the client-side dev dependencies (`npm install`) (Note: you should have `./node_modules/.bin` in your shell path; so that locally installed packages are preferred over globally installed ones)
+4. Install the client-side dependencies (`bower install`)
+5. (Optional) Configure database.yml (uses postgres by default)
+6. (Optional) Export your existing MS Money data (see below)
+7. Initialise the database (`rake db:setup`, or if you have no data to import `rake db:create && rake db:migrate`)
+8. Configure environment variables for the username and password to login as (`export LOOT_USERNAME=user && export LOOT_PASSWORD=pass`)
+9. Start the server (`unicorn`)
+10. Browse to http://localhost:8080/index.html and login using the credentials configured at step #5
 
 Exporting MS Money data
 =======================
