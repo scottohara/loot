@@ -10,7 +10,8 @@
 		// Dependencies
 		var $httpBackend,
 				$http,
-				cache,
+				$cacheFactory,
+				$cache,
 				$window,
 				ogLruCacheFactory,
 				ogLruCache;
@@ -20,21 +21,10 @@
 
 		// Mock the dependencies
 		beforeEach(module(function($provide, $injector) {
-			cache = {
-				put: sinon.stub(),
-				get: sinon.stub(),
-				info: sinon.stub(),
-				remove: sinon.stub(),
-				removeAll: sinon.stub(),
-				destroy: sinon.stub()
-			};
+			$cacheFactory = $injector.get("$cacheFactoryMockProvider").$get();
+			$cache = $cacheFactory();
 
-			$window = {
-				localStorage: {
-					getItem: sinon.stub(),
-					setItem: sinon.stub()
-				}
-			};
+			$window = $injector.get("$windowMockProvider").$get();
 			$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(null);
 			$window.localStorage.getItem.withArgs("lootUnreconciledOnly-123").returns("true");
 			$window.localStorage.getItem.withArgs("lootUnreconciledOnly-456").returns("false");
@@ -42,7 +32,7 @@
 			ogLruCacheFactory = $injector.get("ogLruCacheFactoryMockProvider").$get();
 			ogLruCache = ogLruCacheFactory();
 
-			$provide.value("$cacheFactory", function() { return cache; });
+			$provide.value("$cacheFactory", $cacheFactory);
 			$provide.value("$window", $window);
 			$provide.value("ogLruCacheFactory", ogLruCacheFactory);
 		}));
@@ -217,7 +207,7 @@
 		describe("flush", function() {
 			it("should flush the account cache", function() {
 				accountModel.flush();
-				cache.removeAll.should.have.been.called;
+				$cache.removeAll.should.have.been.called;
 			});
 		});
 
