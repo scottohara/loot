@@ -12,7 +12,12 @@
 			localStorage: {
 				getItem: sinon.stub(),
 				setItem: sinon.stub()
-			}
+			},
+			sessionStorage: {
+				getItem: sinon.stub(),
+				setItem: sinon.stub()
+			},
+			btoa: sinon.stub().returns("base64 encoded")
 		};
 
 		provider.$get = function() {
