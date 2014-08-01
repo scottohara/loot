@@ -2,14 +2,14 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('schedules');
+	var mod = angular.module("schedules");
 
 	// Declare the Schedule Edit controller
-	mod.controller('scheduleEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'currencyFilter', 'payeeModel', 'securityModel', 'categoryModel', 'accountModel', 'transactionModel', 'scheduleModel', 'schedule',
+	mod.controller("scheduleEditController", ["$scope", "$modalInstance", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule",
 		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
 			// Make the passed schedule available on the scope
 			$scope.transaction = angular.extend({
-				transaction_type: 'Basic',
+				transaction_type: "Basic",
 				next_due_date: moment().format("YYYY-MM-DD"),
 				subtransactions: [{},{},{},{}]
 			}, schedule);
@@ -115,13 +115,13 @@
 
 			// Returns true if the passed value is typeof string (and is not empty)
 			$scope.isString = function(object) {
-				return (typeof object === 'string') && object.length > 0;
+				return (typeof object === "string") && object.length > 0;
 			};
 
 			// Handler for payee changes
 			$scope.payeeSelected = function() {
 				// If we're adding a new transaction and an existing payee is selected
-				if (!$scope.transaction.id && typeof $scope.transaction.payee === 'object') {
+				if (!$scope.transaction.id && typeof $scope.transaction.payee === "object") {
 					// Get the previous transaction for the payee
 					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
 				}
@@ -130,7 +130,7 @@
 			// Handler for security changes
 			$scope.securitySelected = function() {
 				// If we're adding a new transaction and an existing security is selected
-				if (!$scope.transaction.id && typeof $scope.transaction.security === 'object') {
+				if (!$scope.transaction.id && typeof $scope.transaction.security === "object") {
 					// Get the previous transaction for the security
 					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
 				}
@@ -178,7 +178,7 @@
 						parentId;
 
 				// Check the category selection
-				if (typeof transaction.category === 'object') {
+				if (typeof transaction.category === "object") {
 					if (isNaN(index)) {
 						switch (transaction.category.id) {
 							case "TransferTo":
@@ -239,8 +239,8 @@
 				}
 
 				// Update the transaction type & direction
-				transaction.transaction_type = type || (isNaN(index) ? 'Basic' : 'Sub');
-				transaction.direction = direction || 'outflow';
+				transaction.transaction_type = type || (isNaN(index) ? "Basic" : "Sub");
+				transaction.direction = direction || "outflow";
 
 				// Make sure the subcategory is still valid
 				if (transaction.subcategory && transaction.subcategory.parent_id !== parentId) {
@@ -254,7 +254,7 @@
 						direction;
 
 				// Check the category selection
-				if (typeof $scope.transaction.category === 'object') {
+				if (typeof $scope.transaction.category === "object") {
 					switch ($scope.transaction.category.id) {
 						case "TransferTo":
 							type = "SecurityTransfer";
@@ -308,7 +308,7 @@
 			};
 
 			// Watch the subtransactions array and recalculate the total allocated
-			$scope.$watch('transaction.subtransactions', function() {
+			$scope.$watch("transaction.subtransactions", function() {
 				$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
 					return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
 				}, 0);
@@ -333,15 +333,15 @@
 				return accountModel.all().then(function(accounts) {
 					var accountFilter = {
 						name: filter,
-						account_type: '!investment'		// exclude investment accounts by default
+						account_type: "!investment"		// exclude investment accounts by default
 					};
 
 					// Filter the primary account from the results (can't transfer to self)
 					accounts = filterFilter(accounts, {name: "!" + $scope.transaction.primary_account.name});
 
 					// For security transfers, only include investment accounts
-					if ('SecurityTransfer' === $scope.transaction.transaction_type) {
-						accountFilter.account_type = 'investment';
+					if ("SecurityTransfer" === $scope.transaction.transaction_type) {
+						accountFilter.account_type = "investment";
 					}
 
 					return limitToFilter(filterFilter(accounts, accountFilter), limit);
@@ -379,12 +379,12 @@
 
 			// Updates the transaction amount and memo when the quantity, price or commission change
 			$scope.updateInvestmentDetails = function() {
-				if ('SecurityInvestment' === $scope.schedule.transaction_type) {
+				if ("SecurityInvestment" === $scope.schedule.transaction_type) {
 					$scope.transaction.amount = ($scope.transaction.quantity || 0) * ($scope.transaction.price || 0) - ($scope.transaction.commission || 0);
 				}
 
 				// If we're adding a new buy or sell transaction, update the memo with the details
-				if (!$scope.transaction.id && 'SecurityInvestment' === $scope.transaction.transaction_type) {
+				if (!$scope.transaction.id && "SecurityInvestment" === $scope.transaction.transaction_type) {
 					var	quantity = $scope.transaction.quantity > 0 ? $scope.transaction.quantity : "",
 							price = $scope.transaction.price > 0 ? " @ " + currencyFilter($scope.transaction.price) : "",
 							commission = $scope.transaction.commission > 0 ? " (less " + currencyFilter($scope.transaction.commission) + " commission)" : "";

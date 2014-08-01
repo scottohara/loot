@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('securities');
+	var mod = angular.module("securities");
 
 	// Declare the Security Delete controller
-	mod.controller('securityDeleteController', ['$scope', '$modalInstance', 'securityModel', 'security',
+	mod.controller("securityDeleteController", ["$scope", "$modalInstance", "securityModel", "security",
 		function($scope, $modalInstance, securityModel, security) {
 			// Make the passed security available on the scope
 			$scope.security = security;

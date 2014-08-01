@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('categories');
+	var mod = angular.module("categories");
 
 	// Declare the Category Delete controller
-	mod.controller('categoryDeleteController', ['$scope', '$modalInstance', 'categoryModel', 'category',
+	mod.controller("categoryDeleteController", ["$scope", "$modalInstance", "categoryModel", "category",
 		function($scope, $modalInstance, categoryModel, category) {
 			// Make the passed category available on the scope
 			$scope.category = category;

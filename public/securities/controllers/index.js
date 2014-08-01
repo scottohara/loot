@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('securities');
+	var mod = angular.module("securities");
 
 	// Declare the Security Index controller
-	mod.controller('securityIndexController', ['$scope', '$modal', '$timeout', '$state', 'securityModel', 'securities',
+	mod.controller("securityIndexController", ["$scope", "$modal", "$timeout", "$state", "securityModel", "securities",
 		function($scope, $modal, $timeout, $state, securityModel, securities) {
 			// Store the securities on the scope
 			$scope.securities = securities;
@@ -21,9 +21,9 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'securities/views/edit.html',
-					controller: 'securityEditController',
-					backdrop: 'static',
+					templateUrl: "securities/views/edit.html",
+					controller: "securityEditController",
+					backdrop: "static",
 					resolve: {
 						security: function() {
 							var security;
@@ -69,15 +69,15 @@
 					$scope.navigationDisabled = true;
 
 					var modalOptions = {
-						backdrop: 'static'
+						backdrop: "static"
 					};
 
 					// Check if the security has any transactions
 					if (security.num_transactions > 0) {
 						// Show an alert modal
 						modalOptions = angular.extend({
-							templateUrl: 'og-components/og-modal-alert/views/alert.html',
-							controller: 'ogModalAlertController',
+							templateUrl: "og-components/og-modal-alert/views/alert.html",
+							controller: "ogModalAlertController",
 							resolve: {
 								alert: function() {
 									return {
@@ -90,8 +90,8 @@
 					} else {
 						// Show the delete security modal
 						modalOptions = angular.extend({
-							templateUrl: 'securities/views/delete.html',
-							controller: 'securityDeleteController',
+							templateUrl: "securities/views/delete.html",
+							controller: "securityDeleteController",
 							resolve: {
 								security: function() {
 									return $scope.securities[index];
@@ -103,7 +103,7 @@
 					// Show the modal
 					$modal.open(modalOptions).result.then(function() {
 						$scope.securities.splice(index, 1);
-						$state.go('root.securities');
+						$state.go("root.securities");
 					}).finally(function() {
 						// Enable navigation on the table
 						$scope.navigationDisabled = false;
@@ -117,7 +117,7 @@
 					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
 				selectAction: function() {
-					$state.go('.transactions');
+					$state.go(".transactions");
 				},
 				editAction: $scope.editSecurity,
 				insertAction: function() {
@@ -126,7 +126,7 @@
 				},
 				deleteAction: deleteSecurity,
 				focusAction: function(index) {
-					$state.go(($state.includes('**.security') ? '^' : '') + '.security', {
+					$state.go(($state.includes("**.security") ? "^" : "") + ".security", {
 						id: $scope.securities[index].id
 					});
 				}
@@ -169,7 +169,7 @@
 			};
 
 			// Listen for state change events, and when the security id changes, ensure the row is focussed
-			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
 					focusSecurity(Number(toParams.id));
 				}

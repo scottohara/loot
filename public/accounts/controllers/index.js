@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('accounts');
+	var mod = angular.module("accounts");
 
 	// Declare the Account Index controller
-	mod.controller('accountIndexController', ['$scope', 'accountModel',
+	mod.controller("accountIndexController", ["$scope", "accountModel",
 		function($scope, accountModel) {
 			accountModel.allWithBalances().then(function(accounts) {
 				$scope.accounts = accounts;

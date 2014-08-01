@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('transactions');
+	var mod = angular.module("transactions");
 
 	// Declare the Transaction Delete controller
-	mod.controller('transactionDeleteController', ['$scope', '$modalInstance', 'transactionModel', 'transaction',
+	mod.controller("transactionDeleteController", ["$scope", "$modalInstance", "transactionModel", "transaction",
 		function($scope, $modalInstance, transactionModel, transaction) {
 			// Make the passed transaction available on the scope
 			$scope.transaction = transaction;

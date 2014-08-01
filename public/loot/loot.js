@@ -1,61 +1,61 @@
 (function () {
-	"use strict"
+	"use strict";
 
 	// Declare the loot module and it's dependencies
-	var mod = angular.module('loot', [
-		'ui.router',
-		'ui.bootstrap',
-		'ogComponents',
-		'authentication',
-		'accounts',
-		'categories',
-		'payees',
-		'schedules',
-		'securities',
-		'transactions'
+	var mod = angular.module("loot", [
+		"ui.router",
+		"ui.bootstrap",
+		"ogComponents",
+		"authentication",
+		"accounts",
+		"categories",
+		"payees",
+		"schedules",
+		"securities",
+		"transactions"
 	]);
 
 	// Define the States and URL routing
-	mod.config(['$httpProvider', '$stateProvider', '$urlRouterProvider',
+	mod.config(["$httpProvider", "$stateProvider", "$urlRouterProvider",
 		function($httpProvider, $stateProvider, $urlRouterProvider) {
 			// All HTTP requests will be JSON
-			$httpProvider.defaults.headers.common.Accept = 'application/json';
+			$httpProvider.defaults.headers.common.Accept = "application/json";
 
 			// Default to account list for any unmatched URLs
-			$urlRouterProvider.otherwise('/accounts');
+			$urlRouterProvider.otherwise("/accounts");
 
 			var	basicState = function() {
 						return {
-							url: '/:id',
+							url: "/:id",
 						};
 					},
 					transactionViews = {
-						'@root': {
-							templateUrl: 'transactions/views/index.html',
-							controller: 'transactionIndexController'
+						"@root": {
+							templateUrl: "transactions/views/index.html",
+							controller: "transactionIndexController"
 						}
 					},
 					transactionsState = function(parentContext) {
 						return {
-							url: '/transactions',
+							url: "/transactions",
 							data: {
-								title: parentContext.charAt(0).toUpperCase() + parentContext.substring(1) + ' Transactions'
+								title: parentContext.charAt(0).toUpperCase() + parentContext.substring(1) + " Transactions"
 							},
 							resolve: {
-								contextModel: [parentContext + 'Model',
+								contextModel: [parentContext + "Model",
 									function(contextModel) {
 										return contextModel;
 									}
 								],
-								context: ['$stateParams', 'contextModel',
+								context: ["$stateParams", "contextModel",
 									function($stateParams, contextModel) {
 										return contextModel.find($stateParams.id);
 									}
 								],
-								transactionBatch: ['transactionModel', 'contextModel', 'context',
+								transactionBatch: ["transactionModel", "contextModel", "context",
 									function(transactionModel, contextModel, context) {
 										var unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
-										return transactionModel.all(contextModel.path(context.id), null, 'prev', unreconciledOnly);
+										return transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
 									}
 								]
 							},
@@ -64,27 +64,27 @@
 					},
 					transactionState = function() {
 						return {
-							url: '/:transactionId'
+							url: "/:transactionId"
 						};
 					};
 
 			$stateProvider
-				.state('root', {
+				.state("root", {
 					abstract: true,
-					templateUrl: 'loot/views/layout.html',
-					controller: 'layoutController',
+					templateUrl: "loot/views/layout.html",
+					controller: "layoutController",
 					data: {
-						title: 'Welcome'
+						title: "Welcome"
 					},
 					resolve: {
-						authenticated: ['$modal', 'authenticationModel',
+						authenticated: ["$modal", "authenticationModel",
 							function($modal, authenticationModel) {
 								if (!authenticationModel.isAuthenticated()) {
 									return $modal.open({
-										templateUrl: 'authentication/views/edit.html',
-										controller: 'authenticationEditController',
-										backdrop: 'static',
-										size: 'sm'
+										templateUrl: "authentication/views/edit.html",
+										controller: "authenticationEditController",
+										backdrop: "static",
+										size: "sm"
 									}).result.catch(function() {
 										// If the login modal is dismissed, catch here so
 										// that the promise resolves and the state transition
@@ -95,120 +95,120 @@
 						]
 					}
 				})
-				.state('root.accounts', {
-					url: '/accounts',
-					templateUrl: 'accounts/views/index.html',
-					controller: 'accountIndexController',
+				.state("root.accounts", {
+					url: "/accounts",
+					templateUrl: "accounts/views/index.html",
+					controller: "accountIndexController",
 					data: {
-						title: 'Accounts'
+						title: "Accounts"
 					}
 				})
-				.state('root.accounts.account', basicState())
-				.state('root.accounts.account.transactions', transactionsState('account'))
-				.state('root.accounts.account.transactions.transaction', transactionState())
-				.state('root.schedules', {
-					url: '/schedules',
-					templateUrl: 'schedules/views/index.html',
-					controller: 'scheduleIndexController',
+				.state("root.accounts.account", basicState())
+				.state("root.accounts.account.transactions", transactionsState("account"))
+				.state("root.accounts.account.transactions.transaction", transactionState())
+				.state("root.schedules", {
+					url: "/schedules",
+					templateUrl: "schedules/views/index.html",
+					controller: "scheduleIndexController",
 					data: {
-						title: 'Schedules'
+						title: "Schedules"
 					},
 					resolve: {
-						schedules: ['scheduleModel',
+						schedules: ["scheduleModel",
 							function(scheduleModel) {
 								return scheduleModel.all();
 							}
 						]
 					}
 				})
-				.state('root.schedules.schedule', basicState())
-				.state('root.payees', {
-					url: '/payees',
-					templateUrl: 'payees/views/index.html',
-					controller: 'payeeIndexController',
+				.state("root.schedules.schedule", basicState())
+				.state("root.payees", {
+					url: "/payees",
+					templateUrl: "payees/views/index.html",
+					controller: "payeeIndexController",
 					data: {
-						title: 'Payees'
+						title: "Payees"
 					},
 					resolve: {
-						payees: ['payeeModel',
+						payees: ["payeeModel",
 							function(payeeModel) {
 								return payeeModel.all();
 							}
 						]
 					}
 				})
-				.state('root.payees.payee', basicState())
-				.state('root.payees.payee.transactions', transactionsState('payee'))
-				.state('root.payees.payee.transactions.transaction', transactionState())
-				.state('root.categories', {
-					url: '/categories',
-					templateUrl: 'categories/views/index.html',
-					controller: 'categoryIndexController',
+				.state("root.payees.payee", basicState())
+				.state("root.payees.payee.transactions", transactionsState("payee"))
+				.state("root.payees.payee.transactions.transaction", transactionState())
+				.state("root.categories", {
+					url: "/categories",
+					templateUrl: "categories/views/index.html",
+					controller: "categoryIndexController",
 					data: {
-						title: 'Categories'
+						title: "Categories"
 					},
 					resolve: {
-						categories: ['categoryModel',
+						categories: ["categoryModel",
 							function(categoryModel) {
 								return categoryModel.allWithChildren();
 							}
 						]
 					}
 				})
-				.state('root.categories.category', basicState())
-				.state('root.categories.category.transactions', transactionsState('category'))
-				.state('root.categories.category.transactions.transaction', transactionState())
-				.state('root.securities', {
-					url: '/securities',
-					templateUrl: 'securities/views/index.html',
-					controller: 'securityIndexController',
+				.state("root.categories.category", basicState())
+				.state("root.categories.category.transactions", transactionsState("category"))
+				.state("root.categories.category.transactions.transaction", transactionState())
+				.state("root.securities", {
+					url: "/securities",
+					templateUrl: "securities/views/index.html",
+					controller: "securityIndexController",
 					data: {
-						title: 'Securities'
+						title: "Securities"
 					},
 					resolve: {
-						securities: ['securityModel',
+						securities: ["securityModel",
 							function(securityModel) {
 								return securityModel.allWithBalances();
 							}
 						]
 					}
 				})
-				.state('root.securities.security', basicState())
-				.state('root.securities.security.transactions', transactionsState('security'))
-				.state('root.securities.security.transactions.transaction', transactionState())
-				.state('root.transactions', {
-					url: '/transactions?query',
+				.state("root.securities.security", basicState())
+				.state("root.securities.security.transactions", transactionsState("security"))
+				.state("root.securities.security.transactions.transaction", transactionState())
+				.state("root.transactions", {
+					url: "/transactions?query",
 					data: {
-						title: 'Search Transactions'
+						title: "Search Transactions"
 					},
 					resolve: {
 						contextModel: function() {
 							return null;
 						},
-						context: ['$stateParams',
+						context: ["$stateParams",
 							function($stateParams) {
 								return $stateParams.query;
 							}
 						],
-						transactionBatch: ['transactionModel', 'context',
+						transactionBatch: ["transactionModel", "context",
 							function(transactionModel, context) {
-								return transactionModel.query(context, null, 'prev');
+								return transactionModel.query(context, null, "prev");
 							}
 						]
 					},
 					views: transactionViews
 				})
-				.state('root.transactions.transaction', transactionState());
+				.state("root.transactions.transaction", transactionState());
 		}
 	]);
 
 	// Runtime initialisation
-	mod.run(['$rootScope', '$state',
+	mod.run(["$rootScope", "$state",
 		function($rootScope, $state) {
 			$rootScope.$state = $state;
 
 			//TODO - debugging
-			$rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+			$rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
 				console.log(toState, toParams, fromState, fromParams, error);
 			});
 		}

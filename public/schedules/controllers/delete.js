@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('schedules');
+	var mod = angular.module("schedules");
 
 	// Declare the Schedule Delete controller
-	mod.controller('scheduleDeleteController', ['$scope', '$modalInstance', 'scheduleModel', 'schedule',
+	mod.controller("scheduleDeleteController", ["$scope", "$modalInstance", "scheduleModel", "schedule",
 		function($scope, $modalInstance, scheduleModel, schedule) {
 			// Make the passed schedule available on the scope
 			$scope.schedule = schedule;

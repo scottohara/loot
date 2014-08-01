@@ -2,18 +2,18 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('ogComponents');
+	var mod = angular.module("ogComponents");
 
 	// Declare the ogInputNumber directive
-	mod.directive('ogInputNumber', ['numberFilter', '$timeout',
+	mod.directive("ogInputNumber", ["numberFilter", "$timeout",
 		function(numberFilter, $timeout) {
 			return {
-				restrict: 'A',
-				require: 'ngModel',
+				restrict: "A",
+				require: "ngModel",
 				link: function(scope, iElement, iAttrs, ngModel) {
 					// Converts formatted value to raw value
 					var formattedToRaw = function(value) {
-						return Number(value.replace(/[^0-9\-\.]/g, '')) || 0;
+						return Number(value.replace(/[^0-9\-\.]/g, "")) || 0;
 					};
 
 					// View to model
@@ -25,13 +25,13 @@
 					});
 
 					// Update view when tabbing in/out of the field
-					iElement.on('focus', function(event) {
+					iElement.on("focus", function() {
 						iElement.val(numberFilter(formattedToRaw(iElement.val())));
 						$timeout(function() {
 							$(iElement).select();
 						}, 50);
 					});
-					iElement.on('blur', function() {
+					iElement.on("blur", function() {
 						iElement.val(numberFilter(formattedToRaw(iElement.val())));
 					});
 				}

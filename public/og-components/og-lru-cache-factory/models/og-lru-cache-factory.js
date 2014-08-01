@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('ogComponents');
+	var mod = angular.module("ogComponents");
 
-	// Declare the ogLruCache model
-	mod.factory('ogLruCacheFactory', [
+	// Declare the ogLruCacheFactory model
+	mod.factory("ogLruCacheFactory", [
 		function() {
 			// Cache object
 			var	LruCache = function(capacity, data) {

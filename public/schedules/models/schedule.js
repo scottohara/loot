@@ -2,16 +2,16 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('schedules');
+	var mod = angular.module("schedules");
 
 	// Declare the Schedule model
-	mod.factory('scheduleModel', ['$http', 'payeeModel', 'categoryModel', 'securityModel',
+	mod.factory("scheduleModel", ["$http", "payeeModel", "categoryModel", "securityModel",
 		function($http, payeeModel, categoryModel, securityModel) {
 			var model = {};
 
 			// Returns the API path
 			model.path = function(id) {
-				return '/schedules' + (id ? '/' + id : '');
+				return "/schedules" + (id ? "/" + id : "");
 			};
 
 			// Retrieves all schedules
@@ -24,20 +24,20 @@
 			// Saves a schedule
 			model.save = function(schedule) {
 				// If the payee, category, subcategory or security are new; flush the $http cache
-				if (typeof schedule.payee === 'string') {
+				if (typeof schedule.payee === "string") {
 					payeeModel.flush();
 				}
 
-				if (typeof schedule.category === 'string' || typeof schedule.subcategory === 'string') {
+				if (typeof schedule.category === "string" || typeof schedule.subcategory === "string") {
 					categoryModel.flush();
 				}
 
-				if (typeof schedule.security === 'string') {
+				if (typeof schedule.security === "string") {
 					securityModel.flush();
 				}
 
 				return $http({
-					method: schedule.id ? 'PATCH' : 'POST',
+					method: schedule.id ? "PATCH" : "POST",
 					url: model.path(schedule.id),
 					data: schedule
 				});

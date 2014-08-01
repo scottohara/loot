@@ -2,19 +2,19 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('ogComponents');
+	var mod = angular.module("ogComponents");
 
 	// Declare the ogTableLoading directive
-	mod.directive('ogTableLoading', [
+	mod.directive("ogTableLoading", [
 		function() {
 			return {
-				restrict: 'A',
+				restrict: "A",
 				replace: true,
 				scope: {
-					isLoading: '=ogTableLoading',
-					colspan: '='
+					isLoading: "=ogTableLoading",
+					colspan: "="
 				},
-				templateUrl: 'og-components/og-table-loading/views/loading.html'
+				templateUrl: "og-components/og-table-loading/views/loading.html"
 			};
 		}
 	]);

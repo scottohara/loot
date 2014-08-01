@@ -76,26 +76,39 @@
     "yui"           : false,    // Yahoo User Interface
 
     // Legacy
-    "nomen"         : true,     // true: Prohibit dangling `_` in variables
+    "nomen"         : false,     // true: Prohibit dangling `_` in variables
     "onevar"        : false,    // true: Allow only one `var` statement per function
     "passfail"      : false,    // true: Stop on first error
     "white"         : false,    // true: Check against strict whitespace and indentation rules
 
     // Custom Globals
     "globals"       : {         // additional predefined global variables
-			/*// Phantom.js
-			"main"        : true,
-			"page"        : true,
-			"phantom"     : false,
-			"require"     : false,
-			"waitFor"     : true,
-			"WebPage"     : false,
+			// Angular.js
+			"angular"     : false,
 
-			// Require.js
-			"define"      : false,
-			"require"     : false,
+			// Moment.js
+			"moment"      : false,
 
-			// Framework
-			"$"           : false     // only needed for run-qunit.js, which does not use AMD/require.js*/
+			// jQuery
+			"$"           : false,
+
+			// Mocha
+			"describe"    : false,
+			"it"          : false,
+			"beforeEach"  : false,
+			"afterEach"   : false,
+			"before"      : false,
+			"after"       : false,
+
+			// Sinon
+			"sinon"       : false,
+
+			// Angular-mocks
+			"module"      : false,
+			"inject"      : false,
+
+			// Gulp
+			"require"     : false,
+			"process"     : false
 		}
 }

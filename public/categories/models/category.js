@@ -2,13 +2,13 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('categories');
+	var mod = angular.module("categories");
 
 	// Declare the Category model
-	mod.factory('categoryModel', ['$http', '$cacheFactory', '$window', 'ogLruCacheFactory',
+	mod.factory("categoryModel", ["$http", "$cacheFactory", "$window", "ogLruCacheFactory",
 		function($http, $cacheFactory, $window, ogLruCacheFactory) {
 			var	model = {},
-					cache = $cacheFactory('categories'),
+					cache = $cacheFactory("categories"),
 					LRU_LOCAL_STORAGE_KEY = "lootRecentCategories",
 					LRU_CAPACITY = 10,
 					lruCache;
@@ -24,7 +24,7 @@
 
 			// Returns the API path
 			model.path = function(id) {
-				return '/categories' + (id ? '/' + id : '');
+				return "/categories" + (id ? "/" + id : "");
 			};
 
 			// Retrieves the list of categories
@@ -60,7 +60,7 @@
 				model.flush();
 
 				return $http({
-					method: category.id ? 'PATCH' : 'POST',
+					method: category.id ? "PATCH" : "POST",
 					url: model.path(category.id),
 					data: category
 				});

@@ -2,17 +2,17 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('transactions');
+	var mod = angular.module("transactions");
 
 	// Declare the transactionStatus directive
-	mod.directive('transactionStatus', ['transactionModel', 'accountModel',
+	mod.directive("transactionStatus", ["transactionModel", "accountModel",
 		function(transactionModel, accountModel) {
 			return {
-				restrict: 'A',
+				restrict: "A",
 				scope: {
-					transactionStatus: '=transactionStatus'
+					transactionStatus: "=transactionStatus"
 				},
-				templateUrl: 'transactions/views/status.html',
+				templateUrl: "transactions/views/status.html",
 				link: function(scope, iElement) {
 
 					// Set the current status & icon, calculate the next status
@@ -22,17 +22,17 @@
 						switch (status) {
 							case "Reconciled":
 								scope.nextStatus = "Unreconciled";
-								scope.icon = 'lock';
+								scope.icon = "lock";
 								break;
 
 							case "Cleared":
 								scope.nextStatus = "Reconciled";
-								scope.icon = 'tag';
+								scope.icon = "tag";
 								break;
 
 							default:
 								scope.nextStatus = "Cleared";
-								scope.icon = 'tag';
+								scope.icon = "tag";
 								break;
 						}
 					};
@@ -49,11 +49,11 @@
 					setCurrentStatus(scope.transactionStatus.transaction.status || "Unreconciled");
 
 					// Attach the event handlers
-					iElement.on('click', clickHandler);
+					iElement.on("click", clickHandler);
 
 					// When the element is destroyed, remove all event handlers
-					iElement.on('$destroy', function() {
-						iElement.off('click', clickHandler);
+					iElement.on("$destroy", function() {
+						iElement.off("click", clickHandler);
 					});
 				}
 			};

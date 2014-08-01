@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('payees');
+	var mod = angular.module("payees");
 
 	// Declare the Payee Edit controller
-	mod.controller('payeeEditController', ['$scope', '$modalInstance', 'payeeModel', 'payee',
+	mod.controller("payeeEditController", ["$scope", "$modalInstance", "payeeModel", "payee",
 		function($scope, $modalInstance, payeeModel, payee) {
 			// Make the passed payee available on the scope
 			$scope.payee = angular.extend({

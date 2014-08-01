@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('transactions');
+	var mod = angular.module("transactions");
 
 	// Declare the Transaction Index controller
-	mod.controller('transactionIndexController', ['$scope', '$modal', '$timeout', '$window', '$state', 'transactionModel', 'accountModel', 'contextModel', 'context', 'transactionBatch',
+	mod.controller("transactionIndexController", ["$scope", "$modal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch",
 		function($scope, $modal, $timeout, $window, $state, transactionModel, accountModel, contextModel, context, transactionBatch) {
 			// Store the context we're working with in the scope
 			$scope.context = context;
@@ -13,7 +13,7 @@
 
 			var editTransaction = function(index) {
 				// Abort if the transaction can't be edited
-				if (!isNaN(index) && !isAllowed('edit', index)) {
+				if (!isNaN(index) && !isAllowed("edit", index)) {
 					return;
 				}
 
@@ -22,16 +22,16 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'transactions/views/edit.html',
-					controller: 'transactionEditController',
-					backdrop: 'static',
-					size: 'lg',
+					templateUrl: "transactions/views/edit.html",
+					controller: "transactionEditController",
+					backdrop: "static",
+					size: "lg",
 					resolve: {
 						transaction: function() {
 							// If we didn't get an index, we're adding a new transaction
 							if (isNaN(index)) {
 								return {
-									transaction_type: 'Basic',
+									transaction_type: "Basic",
 									transaction_date: moment().format("YYYY-MM-DD"),
 									primary_account: contextModel && "account" === contextModel.type() ? context : undefined,
 									payee: contextModel && "payee" === contextModel.type() ? context : undefined,
@@ -90,18 +90,18 @@
 					// If the context has changed, remove the transaction from the array
 					if (contextChanged) {
 						$scope.transactions.splice(index, 1);
-						if ($state.includes('**.transaction')) {
-							$state.go('^');
+						if ($state.includes("**.transaction")) {
+							$state.go("^");
 						}
 					} else {
 						var	fromDate = moment(transaction.transaction_date);
 
 						if (!fromDate.isAfter($scope.firstTransactionDate)) {
 							// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-							$scope.getTransactions('next', fromDate.subtract('days', 1).toISOString(), transaction.id);
+							$scope.getTransactions("next", fromDate.subtract("days", 1).toISOString(), transaction.id);
 						} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 							// Transaction date is later than the latest fetched transaction, refresh from the new date
-							$scope.getTransactions('prev', fromDate.add('days', 1).toISOString(), transaction.id);
+							$scope.getTransactions("prev", fromDate.add("days", 1).toISOString(), transaction.id);
 						} else {
 							// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
 							if (isNaN(index)) {
@@ -135,7 +135,7 @@
 
 			var deleteTransaction = function(index) {
 				// Abort if the transaction can't be deleted
-				if (!isAllowed('delete', index)) {
+				if (!isAllowed("delete", index)) {
 					return;
 				}
 
@@ -144,9 +144,9 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'transactions/views/delete.html',
-					controller: 'transactionDeleteController',
-					backdrop: 'static',
+					templateUrl: "transactions/views/delete.html",
+					controller: "transactionDeleteController",
+					backdrop: "static",
 					resolve: {
 						transaction: function() {
 							return $scope.transactions[index];
@@ -154,8 +154,8 @@
 					}
 				}).result.then(function() {
 					$scope.transactions.splice(index, 1);
-					if ($state.includes('**.transaction')) {
-						$state.go('^');
+					if ($state.includes("**.transaction")) {
+						$state.go("^");
 					}
 				}).finally(function() {
 					// Enable navigation on the table
@@ -194,9 +194,9 @@
 
 					// Show the modal
 					$modal.open({
-						templateUrl: 'og-components/og-modal-confirm/views/confirm.html',
-						controller: 'ogModalConfirmController',
-						backdrop: 'static',
+						templateUrl: "og-components/og-modal-confirm/views/confirm.html",
+						controller: "ogModalConfirmController",
+						backdrop: "static",
 						resolve: {
 							confirm: function() {
 								return confirm;
@@ -237,7 +237,7 @@
 				},
 				deleteAction: deleteTransaction,
 				focusAction: function(index) {
-					$state.go(($state.includes('**.transaction') ? '^' : '') + '.transaction', {
+					$state.go(($state.includes("**.transaction") ? "^" : "") + ".transaction", {
 						transactionId: $scope.transactions[index].id
 					});
 				}
@@ -260,7 +260,7 @@
 				$scope.loading[direction] = true;
 
 				if (!fromDate) {
-					var fromIndex = ('prev' === direction ? 0 : $scope.transactions.length - 1);
+					var fromIndex = ("prev" === direction ? 0 : $scope.transactions.length - 1);
 
 					// Get the from date (depending on which direction we're fetching)
 					if ($scope.transactions[fromIndex]) {
@@ -315,13 +315,13 @@
 			// Updates the running balance of all transactions
 			var updateRunningBalances = function() {
 				// Do nothing for investment accounts
-				if ('investment' === $scope.context.account_type) {
+				if ("investment" === $scope.context.account_type) {
 					return;
 				}
 
 				$scope.transactions.reduce(function(openingBalance, transaction) {
-					transaction['balance'] = openingBalance + (transaction.amount * ('inflow' === transaction.direction ? 1 : -1));
-					return transaction['balance'];
+					transaction.balance = openingBalance + (transaction.amount * ("inflow" === transaction.direction ? 1 : -1));
+					return transaction.balance;
 				}, $scope.openingBalance);
 			};
 
@@ -374,14 +374,14 @@
 					accountModel.unreconciledOnly($scope.context.id, unreconciledOnly);
 					$scope.unreconciledOnly = unreconciledOnly;
 					$scope.transactions = [];
-					$scope.getTransactions(direction || 'prev', fromDate, transactionIdToFocus);
+					$scope.getTransactions(direction || "prev", fromDate, transactionIdToFocus);
 				};
 
 				// Updates all cleared transactions to reconciled
 				$scope.save = function() {
 					accountModel.reconcile($scope.context.id).then(function() {
 						// Remove the closing balance from local storage
-						$window.localStorage.removeItem('lootClosingBalance-' + $scope.context.id);
+						$window.localStorage.removeItem("lootClosingBalance-" + $scope.context.id);
 
 						$scope.reconciling = false;
 					});
@@ -396,10 +396,10 @@
 				$scope.reconcile = function() {
 					// Show the modal
 					$modal.open({
-						templateUrl: 'transactions/views/reconcile.html',
-						controller: 'transactionReconcileController',
-						backdrop: 'static',
-						size: 'sm',
+						templateUrl: "transactions/views/reconcile.html",
+						controller: "transactionReconcileController",
+						backdrop: "static",
+						size: "sm",
 						resolve: {
 							account: function() {
 								return $scope.context;
@@ -424,8 +424,8 @@
 
 					// Cleared total is the sum of all transaction amounts that are cleared
 					$scope.clearedTotal = $scope.transactions.reduce(function(clearedAmount, transaction) {
-						if ('Cleared' === transaction.status) {
-							clearedAmount += (transaction.amount * ('inflow' === transaction.direction ? 1 : -1));
+						if ("Cleared" === transaction.status) {
+							clearedAmount += (transaction.amount * ("inflow" === transaction.direction ? 1 : -1));
 						}
 
 						return Number(clearedAmount.toFixed(2));
@@ -476,10 +476,10 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'transactions/views/flag.html',
-					controller: 'transactionFlagController',
-					backdrop: 'static',
-					size: 'sm',
+					templateUrl: "transactions/views/flag.html",
+					controller: "transactionFlagController",
+					backdrop: "static",
+					size: "sm",
 					resolve: {
 						transaction: function() {
 							return $scope.transactions[index];
@@ -498,11 +498,11 @@
 			var switchTo = function($event, state, id, transaction) {
 				// For Subtransactions, don't switch to the parent
 				// (only applies when switching between Category <=> Subcategory transaction lists)
-				if ('Sub' === transaction.transaction_type) {
+				if ("Sub" === transaction.transaction_type) {
 					transaction.parent_id = null;
 				}
 				
-				$state.go('root.' + state + '.transactions.transaction', {
+				$state.go("root." + state + ".transactions.transaction", {
 					id: id,
 					transactionId: transaction.parent_id || transaction.id
 				});
@@ -517,11 +517,11 @@
 				$scope.navigationDisabled = true;
 				
 				// If the transaction is reconciled, make sure the account we're switching to shows reconciled transactions
-				if ('Reconciled' === transaction.status) {
+				if ("Reconciled" === transaction.status) {
 					accountModel.unreconciledOnly(id, false);
 				}
 
-				switchTo($event, 'accounts.account', id, transaction);
+				switchTo($event, "accounts.account", id, transaction);
 			};
 
 			// Switch to the other side of a transaction
@@ -536,29 +536,29 @@
 
 			// Switch to the transaction's payee
 			$scope.switchPayee = function($event, transaction) {
-				switchTo($event, 'payees.payee', transaction.payee.id, transaction);
+				switchTo($event, "payees.payee", transaction.payee.id, transaction);
 			};
 	
 			// Switch to the transaction's security
 			$scope.switchSecurity = function($event, transaction) {
-				switchTo($event, 'securities.security', transaction.security.id, transaction);
+				switchTo($event, "securities.security", transaction.security.id, transaction);
 			};
 
 			// Switch to the transaction's category
 			$scope.switchCategory = function($event, transaction) {
-				switchTo($event, 'categories.category', transaction.category.id, transaction);
+				switchTo($event, "categories.category", transaction.category.id, transaction);
 			};
 
 			// Switch to the transaction's subcategory
 			$scope.switchSubcategory = function($event, transaction) {
-				switchTo($event, 'categories.category', transaction.subcategory.id, transaction);
+				switchTo($event, "categories.category", transaction.subcategory.id, transaction);
 			};
 
 			// Process the initial batch of transactions to display
 			processTransactions(transactionBatch);
 
 			// Listen for state change events, and when the transactionId or id parameters change, ensure the row is focussed
-			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.transactionId && (toParams.transactionId !== fromParams.transactionId || toParams.id !== fromParams.id)) {
 					if (isNaN(focusTransaction(Number(toParams.transactionId)))) {
 						// Transaction was not found in the current set
@@ -570,12 +570,12 @@
 
 							if (!fromDate.isAfter($scope.firstTransactionDate)) {
 								// Transaction date is earlier than the earliest fetched transaction
-								fromDate = fromDate.subtract('days', 1).toISOString();
-								direction = 'next';
+								fromDate = fromDate.subtract("days", 1).toISOString();
+								direction = "next";
 							} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 								// Transaction date is later than the latest fetched transaction
-								fromDate = fromDate.add('days', 1).toISOString();
-								direction = 'prev';
+								fromDate = fromDate.add("days", 1).toISOString();
+								direction = "prev";
 							}
 
 							if ($scope.unreconciledOnly) {

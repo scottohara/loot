@@ -2,14 +2,14 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('ogComponents');
+	var mod = angular.module("ogComponents");
 
 	// Declare the Alert controller
-	mod.controller('ogModalAlertController', ['$scope', '$modalInstance', 'alert',
+	mod.controller("ogModalAlertController", ["$scope", "$modalInstance", "alert",
 		function($scope, $modalInstance, alert) {
 			// Make the passed alert details available on the scope
 			$scope.alert = angular.extend({
-				closeButtonStyle: 'primary'
+				closeButtonStyle: "primary"
 			}, alert);
 
 			// Close the modal

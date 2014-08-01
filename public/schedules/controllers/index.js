@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('schedules');
+	var mod = angular.module("schedules");
 
 	// Declare the Schedule Index controller
-	mod.controller('scheduleIndexController', ['$scope', '$modal', '$timeout', '$state', 'scheduleModel', 'transactionModel', 'schedules',
+	mod.controller("scheduleIndexController", ["$scope", "$modal", "$timeout", "$state", "scheduleModel", "transactionModel", "schedules",
 		function($scope, $modal, $timeout, $state, scheduleModel, transactionModel, schedules) {
 			// Store the schedules on the scope
 			$scope.schedules = schedules;
@@ -16,10 +16,10 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'schedules/views/edit.html',
-					controller: 'scheduleEditController',
-					backdrop: 'static',
-					size: 'lg',
+					templateUrl: "schedules/views/edit.html",
+					controller: "scheduleEditController",
+					backdrop: "static",
+					size: "lg",
 					resolve: {
 						schedule: function() {
 							// If we didn't get an index, we're adding a new schedule so just return null
@@ -68,9 +68,9 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'schedules/views/delete.html',
-					controller: 'scheduleDeleteController',
-					backdrop: 'static',
+					templateUrl: "schedules/views/delete.html",
+					controller: "scheduleDeleteController",
+					backdrop: "static",
 					resolve: {
 						schedule: function() {
 							return $scope.schedules[index];
@@ -78,7 +78,7 @@
 					}
 				}).result.then(function() {
 					$scope.schedules.splice(index, 1);
-					$state.go('root.schedules');
+					$state.go("root.schedules");
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
@@ -98,7 +98,7 @@
 				},
 				deleteAction: deleteSchedule,
 				focusAction: function(index) {
-					$state.go(($state.includes('**.schedule') ? '^' : '') + '.schedule', {
+					$state.go(($state.includes("**.schedule") ? "^" : "") + ".schedule", {
 						id: $scope.schedules[index].id
 					});
 				}
@@ -169,7 +169,7 @@
 			};
 
 			// Listen for state change events, and when the schedule id changes, ensure the row is focussed
-			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
 					focusSchedule(Number(toParams.id));
 				}

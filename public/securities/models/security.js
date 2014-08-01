@@ -2,13 +2,13 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('securities');
+	var mod = angular.module("securities");
 
 	// Declare the Security model
-	mod.factory('securityModel', ['$http', '$cacheFactory', '$window', 'ogLruCacheFactory',
+	mod.factory("securityModel", ["$http", "$cacheFactory", "$window", "ogLruCacheFactory",
 		function($http, $cacheFactory, $window, ogLruCacheFactory) {
 			var	model = {},
-					cache = $cacheFactory('securities'),
+					cache = $cacheFactory("securities"),
 					LRU_LOCAL_STORAGE_KEY = "lootRecentSecurities",
 					LRU_CAPACITY = 10,
 					lruCache;
@@ -24,7 +24,7 @@
 
 			// Returns the API path
 			model.path = function(id) {
-				return '/securities' + (id ? '/' + id : '');
+				return "/securities" + (id ? "/" + id : "");
 			};
 
 			// Retrieves the list of securities
@@ -43,7 +43,7 @@
 
 			// Retrieves the most recent transaction for a security
 			model.findLastTransaction = function(securityId, accountType) {
-				return $http.get(model.path(securityId) + '/transactions/last', {
+				return $http.get(model.path(securityId) + "/transactions/last", {
 					params: {
 						account_type: accountType
 					}
@@ -68,7 +68,7 @@
 				model.flush();
 
 				return $http({
-					method: security.id ? 'PATCH' : 'POST',
+					method: security.id ? "PATCH" : "POST",
 					url: model.path(security.id),
 					data: security
 				});

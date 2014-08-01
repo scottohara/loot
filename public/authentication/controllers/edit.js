@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('authentication');
+	var mod = angular.module("authentication");
 
 	// Declare the Authentication Edit controller
-	mod.controller('authenticationEditController', ['$scope', '$modalInstance', 'authenticationModel',
+	mod.controller("authenticationEditController", ["$scope", "$modalInstance", "authenticationModel",
 		function($scope, $modalInstance, authenticationModel) {
 			$scope.authentication = {};
 

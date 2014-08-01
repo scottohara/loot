@@ -2,13 +2,13 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('payees');
+	var mod = angular.module("payees");
 
 	// Declare the Payee model
-	mod.factory('payeeModel', ['$http', '$cacheFactory', '$window', 'ogLruCacheFactory',
+	mod.factory("payeeModel", ["$http", "$cacheFactory", "$window", "ogLruCacheFactory",
 		function($http, $cacheFactory, $window, ogLruCacheFactory) {
 			var	model = {},
-					cache = $cacheFactory('payees'),
+					cache = $cacheFactory("payees"),
 					LRU_LOCAL_STORAGE_KEY = "lootRecentPayees",
 					LRU_CAPACITY = 10,
 					lruCache;
@@ -24,7 +24,7 @@
 
 			// Returns the API path
 			model.path = function(id) {
-				return '/payees' + (id ? '/' + id : '');
+				return "/payees" + (id ? "/" + id : "");
 			};
 
 			// Retrieves the list of payees
@@ -38,7 +38,7 @@
 
 			// Retrieves the most recent transaction for a payee
 			model.findLastTransaction = function(payeeId, accountType) {
-				return $http.get(model.path(payeeId) + '/transactions/last', {
+				return $http.get(model.path(payeeId) + "/transactions/last", {
 					params: {
 						account_type: accountType
 					}
@@ -63,7 +63,7 @@
 				model.flush();
 
 				return $http({
-					method: payee.id ? 'PATCH' : 'POST',
+					method: payee.id ? "PATCH" : "POST",
 					url: model.path(payee.id),
 					data: payee
 				});

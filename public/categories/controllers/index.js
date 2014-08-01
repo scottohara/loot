@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('categories');
+	var mod = angular.module("categories");
 
 	// Declare the Category Index controller
-	mod.controller('categoryIndexController', ['$scope', '$modal', '$timeout', '$state', 'categoryModel', 'categories',
+	mod.controller("categoryIndexController", ["$scope", "$modal", "$timeout", "$state", "categoryModel", "categories",
 		function($scope, $modal, $timeout, $state, categoryModel, categories) {
 			// Flatten the categories and subcategories and store on the scope
 			$scope.categories = angular.copy(categories).reduce(function(flattened, category) {
@@ -20,9 +20,9 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'categories/views/edit.html',
-					controller: 'categoryEditController',
-					backdrop: 'static',
+					templateUrl: "categories/views/edit.html",
+					controller: "categoryEditController",
+					backdrop: "static",
 					resolve: {
 						category: function() {
 							var category;
@@ -100,15 +100,15 @@
 					$scope.navigationDisabled = true;
 
 					var modalOptions = {
-						backdrop: 'static'
+						backdrop: "static"
 					};
 
 					// Check if the category has any transactions
 					if (category.num_transactions > 0) {
 						// Show an alert modal
 						modalOptions = angular.extend({
-							templateUrl: 'og-components/og-modal-alert/views/alert.html',
-							controller: 'ogModalAlertController',
+							templateUrl: "og-components/og-modal-alert/views/alert.html",
+							controller: "ogModalAlertController",
 							resolve: {
 								alert: function() {
 									return {
@@ -121,8 +121,8 @@
 					} else {
 						// Show the delete category modal
 						modalOptions = angular.extend({
-							templateUrl: 'categories/views/delete.html',
-							controller: 'categoryDeleteController',
+							templateUrl: "categories/views/delete.html",
+							controller: "categoryDeleteController",
 							resolve: {
 								category: function() {
 									return $scope.categories[index];
@@ -148,7 +148,7 @@
 						$scope.categories.splice(index, 1 + $scope.categories[index].num_children);
 
 						// Go back to the parent state
-						$state.go('root.categories');
+						$state.go("root.categories");
 					}).finally(function() {
 						// Enable navigation on the table
 						$scope.navigationDisabled = false;
@@ -162,7 +162,7 @@
 					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
 				selectAction: function() {
-					$state.go('.transactions');
+					$state.go(".transactions");
 				},
 				editAction: $scope.editCategory,
 				insertAction: function() {
@@ -171,7 +171,7 @@
 				},
 				deleteAction: deleteCategory,
 				focusAction: function(index) {
-					$state.go(($state.includes('**.category') ? '^' : '') + '.category', {
+					$state.go(($state.includes("**.category") ? "^" : "") + ".category", {
 						id: $scope.categories[index].id
 					});
 				}
@@ -221,7 +221,7 @@
 			};
 
 			// Listen for state change events, and when the category changes, ensure the row is focussed
-			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
 					focusCategory(Number(toParams.id));
 				}

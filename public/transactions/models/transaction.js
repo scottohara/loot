@@ -2,16 +2,16 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('transactions');
+	var mod = angular.module("transactions");
 
 	// Declare the Transaction model
-	mod.factory('transactionModel', ['$http', 'payeeModel', 'categoryModel', 'securityModel',
+	mod.factory("transactionModel", ["$http", "payeeModel", "categoryModel", "securityModel",
 		function($http, payeeModel, categoryModel, securityModel) {
 			var model = {};
 
 			// Returns the API path
 			model.path = function (id) {
-				return '/transactions' + (id ? '/' + id : '');
+				return "/transactions" + (id ? "/" + id : "");
 			};
  
 			// Returns the full API path including parent context
@@ -47,7 +47,7 @@
 
 			// Retrieves subtransactions for a given split transaction
 			model.findSubtransactions = function(id) {
-				return $http.get(model.path(id) + '/subtransactions').then(function(response) {
+				return $http.get(model.path(id) + "/subtransactions").then(function(response) {
 					return response.data;
 				});
 			};
@@ -62,20 +62,20 @@
 			// Saves a transaction
 			model.save = function(transaction) {
 				// If the payee, category, subcategory or security are new; flush the $http cache
-				if (typeof transaction.payee === 'string') {
+				if (typeof transaction.payee === "string") {
 					payeeModel.flush();
 				}
 
-				if (typeof transaction.category === 'string' || typeof transaction.subcategory === 'string') {
+				if (typeof transaction.category === "string" || typeof transaction.subcategory === "string") {
 					categoryModel.flush();
 				}
 
-				if (typeof transaction.security === 'string') {
+				if (typeof transaction.security === "string") {
 					securityModel.flush();
 				}
 
 				return $http({
-					method: transaction.id ? 'PATCH' : 'POST',
+					method: transaction.id ? "PATCH" : "POST",
 					url: model.path(transaction.id),
 					data: transaction
 				});
@@ -89,21 +89,21 @@
 			// Updates the status of a transaction
 			model.updateStatus = function(context, id, status) {
 				return $http({
-					method: status ? 'PATCH' : 'DELETE',
-					url: model.fullPath(context, id) + '/status' + (status ? '?' + status : '')
+					method: status ? "PATCH" : "DELETE",
+					url: model.fullPath(context, id) + "/status" + (status ? "?" + status : "")
 				});
 			};
 
 			// Flags a transaction
 			model.flag = function(transaction) {
-				return $http.put(model.path(transaction.id) + '/flag', {
+				return $http.put(model.path(transaction.id) + "/flag", {
 					memo: transaction.flag
 				});
 			};
 
 			// Unflags a transaction
 			model.unflag = function(id) {
-				return $http.delete(model.path(id) + '/flag');
+				return $http.delete(model.path(id) + "/flag");
 			};
 
 			return model;

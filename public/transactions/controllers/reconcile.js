@@ -2,12 +2,12 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('transactions');
+	var mod = angular.module("transactions");
 
 	// Declare the Transaction Reconcile controller
-	mod.controller('transactionReconcileController', ['$scope', '$modalInstance', '$window', 'account',
+	mod.controller("transactionReconcileController", ["$scope", "$modalInstance", "$window", "account",
 		function($scope, $modalInstance, $window, account) {
-			var LOCAL_STORAGE_KEY = 'lootClosingBalance-' + account.id;
+			var LOCAL_STORAGE_KEY = "lootClosingBalance-" + account.id;
 
 			// Get the closing balance from local storage (if exists)
 			$scope.account = {

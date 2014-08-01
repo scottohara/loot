@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('payees');
+	var mod = angular.module("payees");
 
 	// Declare the Payee Index controller
-	mod.controller('payeeIndexController', ['$scope', '$modal', '$timeout', '$state', 'payeeModel', 'payees',
+	mod.controller("payeeIndexController", ["$scope", "$modal", "$timeout", "$state", "payeeModel", "payees",
 		function($scope, $modal, $timeout, $state, payeeModel, payees) {
 			// Store the payees on the scope
 			$scope.payees = payees;
@@ -16,9 +16,9 @@
 
 				// Show the modal
 				$modal.open({
-					templateUrl: 'payees/views/edit.html',
-					controller: 'payeeEditController',
-					backdrop: 'static',
+					templateUrl: "payees/views/edit.html",
+					controller: "payeeEditController",
+					backdrop: "static",
 					resolve: {
 						payee: function() {
 							var payee;
@@ -64,15 +64,15 @@
 					$scope.navigationDisabled = true;
 
 					var modalOptions = {
-						backdrop: 'static'
+						backdrop: "static"
 					};
 
 					// Check if the payee has any transactions
 					if (payee.num_transactions > 0) {
 						// Show an alert modal
 						modalOptions = angular.extend({
-							templateUrl: 'og-components/og-modal-alert/views/alert.html',
-							controller: 'ogModalAlertController',
+							templateUrl: "og-components/og-modal-alert/views/alert.html",
+							controller: "ogModalAlertController",
 							resolve: {
 								alert: function() {
 									return {
@@ -85,8 +85,8 @@
 					} else {
 						// Show the delete payee modal
 						modalOptions = angular.extend({
-							templateUrl: 'payees/views/delete.html',
-							controller: 'payeeDeleteController',
+							templateUrl: "payees/views/delete.html",
+							controller: "payeeDeleteController",
 							resolve: {
 								payee: function() {
 									return $scope.payees[index];
@@ -98,7 +98,7 @@
 					// Show the modal
 					$modal.open(modalOptions).result.then(function() {
 						$scope.payees.splice(index, 1);
-						$state.go('root.payees');
+						$state.go("root.payees");
 					}).finally(function() {
 						// Enable navigation on the table
 						$scope.navigationDisabled = false;
@@ -112,7 +112,7 @@
 					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
 				selectAction: function() {
-					$state.go('.transactions');
+					$state.go(".transactions");
 				},
 				editAction: $scope.editPayee,
 				insertAction: function() {
@@ -121,7 +121,7 @@
 				},
 				deleteAction: deletePayee,
 				focusAction: function(index) {
-					$state.go(($state.includes('**.payee') ? '^' : '') + '.payee', {
+					$state.go(($state.includes("**.payee") ? "^" : "") + ".payee", {
 						id: $scope.payees[index].id
 					});
 				}
@@ -159,7 +159,7 @@
 			};
 
 			// Listen for state change events, and when the payee id changes, ensure the row is focussed
-			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
 					focusPayee(Number(toParams.id));
 				}

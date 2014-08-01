@@ -2,14 +2,14 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('accounts');
+	var mod = angular.module("accounts");
 
 	// Declare the Account model
-	mod.factory('accountModel', ['$http', '$cacheFactory', '$window', 'ogLruCacheFactory',
+	mod.factory("accountModel", ["$http", "$cacheFactory", "$window", "ogLruCacheFactory",
 		function($http, $cacheFactory, $window, ogLruCacheFactory) {
 			var	model = {},
-					cache = $cacheFactory('accounts'),
-					UNRECONCILED_ONLY_LOCAL_STORAGE_KEY = 'lootUnreconciledOnly-',
+					cache = $cacheFactory("accounts"),
+					UNRECONCILED_ONLY_LOCAL_STORAGE_KEY = "lootUnreconciledOnly-",
 					LRU_LOCAL_STORAGE_KEY = "lootRecentAccounts",
 					LRU_CAPACITY = 10,
 					lruCache;
@@ -25,7 +25,7 @@
 
 			// Returns the API path
 			model.path = function(id) {
-				return '/accounts' + (id ? '/' + id : '');
+				return "/accounts" + (id ? "/" + id : "");
 			};
 
 			// Retrieves the list of accounts
@@ -55,14 +55,14 @@
 			// Updates all pending transactions for an account to cleared
 			model.reconcile = function(id) {
 				return $http({
-					method: 'PATCH',
-					url: model.path(id) + '/reconcile'
+					method: "PATCH",
+					url: model.path(id) + "/reconcile"
 				});
 			};
 
 			// Get the unreconciled only setting for an account from local storage
 			model.isUnreconciledOnly = function(id) {
-				return $window.localStorage.getItem(UNRECONCILED_ONLY_LOCAL_STORAGE_KEY + id) !== 'false';
+				return $window.localStorage.getItem(UNRECONCILED_ONLY_LOCAL_STORAGE_KEY + id) !== "false";
 			};
 
 			// Set the unreconciled only setting for an account in local storage

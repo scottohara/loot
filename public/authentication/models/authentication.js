@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('authentication');
+	var mod = angular.module("authentication");
 
 	// Declare the Authentication model
-	mod.factory('authenticationModel', ['$window', '$http', '$cacheFactory',
+	mod.factory("authenticationModel", ["$window", "$http", "$cacheFactory",
 		function($window, $http, $cacheFactory) {
 			var model = {},
 					SESSION_STORAGE_KEY = "lootAuthenticationKey";
@@ -31,9 +31,9 @@
 				var authenticationKey = $window.btoa(username + ":" + password);
 
 				// Validate the credentials
-				return $http.post('/logins', null, {
+				return $http.post("/logins", null, {
 					headers: {
-						'Authorization': authorisation(authenticationKey)
+						"Authorization": authorisation(authenticationKey)
 					}
 				}).then(function() {
 					// Login successful, store the encoded credentials in sessionStorage
@@ -50,7 +50,7 @@
 				$window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
 
 				// Clear the Authorization header for all http requests
-				$http.defaults.headers.common.Authorization = authorisation('');
+				$http.defaults.headers.common.Authorization = authorisation("");
 
 				// Clear all http caches (except the template cache)
 				angular.forEach($cacheFactory.info(), function(cache) {
@@ -62,7 +62,7 @@
 
 			// Helper function to construct basic authorization header value
 			var authorisation = function(authenticationKey) {
-				return 'Basic ' + authenticationKey;
+				return "Basic " + authenticationKey;
 			};
 
 			return model;

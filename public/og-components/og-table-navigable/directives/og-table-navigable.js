@@ -2,20 +2,20 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('ogComponents');
+	var mod = angular.module("ogComponents");
 
 	// Declare the ogTableNavigable directive
-	mod.directive('ogTableNavigable', [
+	mod.directive("ogTableNavigable", [
 		function() {
 			return {
-				restrict: 'A',
+				restrict: "A",
 				scope: {
 					handlers: "=ogTableNavigable"
 				},
 				link: function(scope, iElement) {
 					// Helper function to return all TR elements in the table body
 					var getRows = function() {
-						return $(iElement).children('tbody').children('tr');
+						return $(iElement).children("tbody").children("tr");
 					};
 
 					// Helper function to return the TR element for the specified index
@@ -60,8 +60,6 @@
 								rowBottom = rowTop + row.height(),
 								viewTop = $(document).scrollTop(),
 								viewBottom = viewTop + $(window).height(),
-								rowBottom,
-								viewBottom,	
 								scrollAmount;
 
 						// Determine if the row is off screen
@@ -107,7 +105,7 @@
 					// Helper function to determine the parent TR element (that is a direct descendent of the element for this directive)
 					// where an event occurred
 					var closestRow = function(target) {
-						return $(target).closest('[og-table-navigable] > tbody > tr');
+						return $(target).closest("[og-table-navigable] > tbody > tr");
 					};
 
 					// Declare a click handler to focus a row by clicking it
@@ -131,7 +129,7 @@
 							}
 
 							// If the event target was a button, do nothing
-							if ('button' === event.target.localName) {
+							if ("button" === event.target.localName) {
 								return;
 							}
 
@@ -211,15 +209,15 @@
 					};
 
 					// Attach the event handlers
-					iElement.on('click', clickHandler);
-					iElement.on('dblclick', doubleClickHandler);
-					$(document).on('keydown', keyHandler);
+					iElement.on("click", clickHandler);
+					iElement.on("dblclick", doubleClickHandler);
+					$(document).on("keydown", keyHandler);
 
 					// When the element is destroyed, remove all event handlers
-					iElement.on('$destroy', function() {
-						iElement.off('click', clickHandler);
-						iElement.off('dblclick', doubleClickHandler);
-						$(document).off('keydown', keyHandler);
+					iElement.on("$destroy", function() {
+						iElement.off("click", clickHandler);
+						iElement.off("dblclick", doubleClickHandler);
+						$(document).off("keydown", keyHandler);
 					});
 				}
 			};

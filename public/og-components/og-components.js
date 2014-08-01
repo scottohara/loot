@@ -1,6 +1,6 @@
 (function() {
 	"use strict";
 
-	// Declare the ogComponents modules and it's dependencies
-	var mod = angular.module('ogComponents', []);
+	// Declare the ogComponents module and it's dependencies
+	angular.module("ogComponents", []);
 })();

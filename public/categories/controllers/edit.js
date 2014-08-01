@@ -2,10 +2,10 @@
 	"use strict";
 
 	// Reopen the module
-	var mod = angular.module('categories');
+	var mod = angular.module("categories");
 
 	// Declare the Category Edit controller
-	mod.controller('categoryEditController', ['$scope', '$modalInstance', 'filterFilter', 'limitToFilter', 'categoryModel', 'category',
+	mod.controller("categoryEditController", ["$scope", "$modalInstance", "filterFilter", "limitToFilter", "categoryModel", "category",
 		function($scope, $modalInstance, filterFilter, limitToFilter, categoryModel, category) {
 			// Make the passed category available on the scope
 			$scope.category = angular.extend({}, category);
