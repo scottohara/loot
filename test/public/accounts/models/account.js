@@ -17,32 +17,37 @@
 				ogLruCache;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "accounts"));
+		beforeEach(module("lootMocks", "accounts", function(mockDependenciesProvider) {
+			mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"]);
+		}));
 
-		// Mock the dependencies
-		beforeEach(module(function($provide, $injector) {
-			$cacheFactory = $injector.get("$cacheFactoryMockProvider").$get();
-			$cache = $cacheFactory();
-
-			$window = $injector.get("$windowMockProvider").$get();
+		// Inject any dependencies that need to be configured first
+		beforeEach(inject(function(_$window_) {
+			$window = _$window_;
 			$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(null);
 			$window.localStorage.getItem.withArgs("lootUnreconciledOnly-123").returns("true");
 			$window.localStorage.getItem.withArgs("lootUnreconciledOnly-456").returns("false");
-
-			ogLruCacheFactory = $injector.get("ogLruCacheFactoryMockProvider").$get();
-			ogLruCache = ogLruCacheFactory();
-
-			$provide.value("$cacheFactory", $cacheFactory);
-			$provide.value("$window", $window);
-			$provide.value("ogLruCacheFactory", ogLruCacheFactory);
 		}));
 
-		// Inject the object under test and the $httpBackend
-		beforeEach(inject(function(_accountModel_, _$httpBackend_, _$http_) {
+		// Inject the object under test and it's remaining dependencies
+		beforeEach(inject(function(_accountModel_, _$httpBackend_, _$http_, _$cacheFactory_, _ogLruCacheFactory_) {
 			accountModel = _accountModel_;
+
 			$httpBackend = _$httpBackend_;
 			$http = _$http_;
+
+			$cacheFactory = _$cacheFactory_;
+			$cache = $cacheFactory();
+
+			ogLruCacheFactory = _ogLruCacheFactory_;
+			ogLruCache = ogLruCacheFactory();
 		}));
+
+		// After each spec, verify that there are no outstanding http expectations or requests
+		afterEach(function() {
+			$httpBackend.verifyNoOutstandingExpectation();
+			$httpBackend.verifyNoOutstandingRequest();
+		});
 
 		it ("should fetch the list of recent accounts from localStorage", function() {
 			$window.localStorage.getItem.should.have.been.calledWith("lootRecentAccounts");

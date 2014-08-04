@@ -6,7 +6,7 @@
 			karmaConfigFilePath = "./karma.conf.js";
 
 	// Run JSHint & client-side unit tests
-	gulp.task("tdd", function() {
+	gulp.task("bdd", function() {
 		var configFile = require(karmaConfigFilePath),
 				config,
 				configParser = {
@@ -47,5 +47,5 @@
 	});
 
 	// Default tasks
-	gulp.task("default", ["tdd"]);
+	gulp.task("default", ["bdd"]);
 })();

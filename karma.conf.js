@@ -58,6 +58,9 @@ module.exports = function(config) {
 			"public/!(bower_components)/**/*.js",
 
 			// Test files
+			"test/public/mocks/!(loot)/*.js",
+			"test/public/mocks/!(loot)/**/*.js",
+			"test/public/mocks/loot/*.js",
 			"test/public/**/*.js"
 		],
 

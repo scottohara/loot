@@ -15,25 +15,28 @@
 				$window;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "authentication"));
-
-		// Mock the dependencies
-		beforeEach(module(function($provide, $injector) {
-			$cacheFactory = $injector.get("$cacheFactoryMockProvider").$get();
-			$cache = $cacheFactory();
-
-			$window = $injector.get("$windowMockProvider").$get();
-
-			$provide.value("$cacheFactory", $cacheFactory);
-			$provide.value("$window", $window);
+		beforeEach(module("lootMocks", "authentication", function(mockDependenciesProvider) {
+			mockDependenciesProvider.load(["$cacheFactory", "$window"]);
 		}));
 
 		// Inject the object under test and the $httpBackend
-		beforeEach(inject(function(_authenticationModel_, _$httpBackend_, _$http_) {
+		beforeEach(inject(function(_authenticationModel_, _$httpBackend_, _$http_, _$cacheFactory_, _$window_) {
 			authenticationModel = _authenticationModel_;
+
 			$httpBackend = _$httpBackend_;
 			$http = _$http_;
+
+			$cacheFactory = _$cacheFactory_;
+			$cache = $cacheFactory();
+
+			$window = _$window_;
 		}));
+
+		// After each spec, verify that there are no outstanding http expectations or requests
+		afterEach(function() {
+			$httpBackend.verifyNoOutstandingExpectation();
+			$httpBackend.verifyNoOutstandingRequest();
+		});
 
 		describe("isAuthenticated", function() {
 			it("should fetch the authentication key from sessionStorage", function() {
@@ -67,13 +70,12 @@
 
 		describe("login", function() {
 			beforeEach(function() {
-				$httpBackend.expectPOST(/logins/, null, {Authorization: "Basic base64 encoded"}).respond(200, "authentication key");
+				$httpBackend.expectPOST(/logins/, undefined, function(headers) { return headers.Authorization === "Basic base64 encoded"; }).respond(200, "authentication key");
 				authenticationModel.login("username", "password");
 				$httpBackend.flush();
 			});
 
 			it("should dispatch a POST request to /logins, containing an Authorization header", function() {
-				// TODO - check auth key
 			});
 
 			it("should save the authentication key to sessionStorage", function() {
@@ -83,60 +85,26 @@
 			it("should set the default $http Authorization header", function() {
 				$http.defaults.headers.common.Authorization.should.equal("Basic base64 encoded");
 			});
+
 		});
 
 		describe("logout", function() {
-			/*var expectedUrl = /accounts$/,
-					expectedResponse = "accounts without balances";
-
-			it("should dispatch a GET request to /accounts", function() {
-				$httpBackend.expect("GET", expectedUrl).respond(200);
-				accountModel.all();
-				$httpBackend.flush();
-			});
-			
-			it("should cache the response in the $http cache", function() {
-				var httpGet = sinon.stub($http, "get").returns({
-					then: function() {}
-				});
-
-				accountModel.all();
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+			beforeEach(function() {
+				authenticationModel.logout();
 			});
 
-			it("should return a list of all accounts without their balances", function() {
-				$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-				accountModel.all().should.eventually.equal(expectedResponse);
-				$httpBackend.flush();
+			it("should remove the authentication key from sessionStorage", function() {
+				$window.sessionStorage.removeItem.should.have.been.calledWith("lootAuthenticationKey");
 			});
 
-			describe("(include balances)", function() {
-				beforeEach(function() {
-					expectedUrl = /accounts\?include_balances/;
-					expectedResponse = "accounts with balances";
-				});
+			it("should clear the default $http Authorization header", function() {
+				$http.defaults.headers.common.Authorization.should.equal("Basic ");
+			});
 
-				it("should dispatch a GET request to /accounts?include_balances", function() {
-					$httpBackend.expect("GET", expectedUrl).respond(200);
-					accountModel.all(true);
-					$httpBackend.flush();
-				});
-				
-				it("should not cache the response in the $http cache", function() {
-					var httpGet = sinon.stub($http, "get").returns({
-						then: function() {}
-					});
-
-					accountModel.all(true);
-					httpGet.firstCall.args[1].should.have.a.property("cache").that.is.false;
-				});
-
-				it("should return a list of all accounts including their balances", function() {
-					$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-					accountModel.all(true).should.eventually.equal(expectedResponse);
-					$httpBackend.flush();
-				});
-			});*/
+			it("should clear all $http caches except the template cache", function() {
+				$cache.removeAll.should.have.been.called;
+				$cacheFactory.get("templates").removeAll.should.not.have.been.called;
+			});
 		});
 	});
 })();

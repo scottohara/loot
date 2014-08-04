@@ -15,6 +15,7 @@
 			},
 			sessionStorage: {
 				getItem: sinon.stub(),
+				removeItem: sinon.stub(),
 				setItem: sinon.stub()
 			},
 			btoa: sinon.stub().returns("base64 encoded")

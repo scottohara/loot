@@ -7,6 +7,7 @@
 	// Declare the $cacheFactoryMock provider
 	mod.provider("$cacheFactoryMock", function() {
 		var provider = this;
+
 		// Mock $cache object
 		provider.$cache = {
 			put: sinon.stub(),
@@ -17,12 +18,30 @@
 			destroy: sinon.stub()
 		};
 
+		// Mock templates cache
+		provider.templatesCache = {
+			removeAll: sinon.stub()
+		};
+
+		// Mock $cacheFactory object
+		provider.$cacheFactory = function() {
+			// Return the mock $cache object
+			return provider.$cache;
+		};
+
+		// Returns the list of caches
+		provider.$cacheFactory.info = sinon.stub().returns([
+			{id: "templates"},
+			{id: "test"}
+		]);
+
+		// Returns a cache by it's name
+		provider.$cacheFactory.get = sinon.stub();
+		provider.$cacheFactory.get.withArgs("templates").returns(provider.templatesCache);
+		provider.$cacheFactory.get.withArgs("test").returns(provider.$cache);
+
 		provider.$get = function() {
-			// Factory function
-			return function() {
-				// Return the mock $cache object
-				return provider.$cache;
-			};
+			return provider.$cacheFactory;
 		};
 	});
 })();
