@@ -10,8 +10,8 @@
 			// Cache object
 			var	LruCache = function(capacity, data) {
 				this.capacity = capacity;
-				this.head = data.head || null;
-				this.tail = data.tail || null;
+				this.head = data.head;
+				this.tail = data.tail;
 				this.items = data.items || {};
 
 				// Check if the cache has exceeded it's capacity
@@ -75,9 +75,9 @@
 				return this.list();
 			};
 
-			// Check if the cache has exceeded it's capacity
+			// Check if the cache has exceeded it's capacity and trim as necessary
 			LruCache.prototype.checkCapacity = function() {
-				if (Object.keys(this.items).length > this.capacity) {
+				while (Object.keys(this.items).length > this.capacity) {
 					var	oldTail = this.items[this.tail],
 							newTail;
 					
@@ -105,7 +105,7 @@
 					// Safety check
 					if (iterations > this.capacity) {
 						// Something is wrong, we've iterated more times than the cache capacity allows
-						throw new Error("Possible infinite loop in LRU cache. Head: " + this.head + ", Tail: " + this.tail + ", Item: " + JSON.stringify(item), "Items: " + JSON.stringify(this.items));
+						throw new Error("Possible infinite loop in LRU cache. Head: " + this.head + ", Tail: " + this.tail + ", Item: " + JSON.stringify(item) + ", Items: " + JSON.stringify(this.items));
 					}
 
 					list.push({

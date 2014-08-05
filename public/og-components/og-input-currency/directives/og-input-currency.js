@@ -11,9 +11,12 @@
 				restrict: "A",
 				require: "ngModel",
 				scope: {
-					decimalPlaces: "=ogInputCurrency"
+					decimalPlaces: "@ogInputCurrency"
 				},
 				link: function(scope, iElement, iAttrs, ngModel) {
+					// Default to decimal places if not specified
+					var decimalPlaces = !!(scope.decimalPlaces) && Number(scope.decimalPlaces) || 2;
+
 					// Converts formatted value to raw value
 					var formattedToRaw = function(value) {
 						return Number(value.replace(/[^0-9\-\.]/g, "")) || 0;
@@ -21,7 +24,7 @@
 
 					// Converts raw value to formatted value
 					var rawToFormatted = function(value) {
-						return scope.decimalPlaces ? "$" + numberFilter(value || 0, scope.decimalPlaces) : currencyFilter(value || 0);
+						return "$" + numberFilter(value || 0, decimalPlaces);
 					};
 
 					// View to model
@@ -32,7 +35,7 @@
 
 					// Update view when tabbing in/out of the field
 					iElement.on("focus", function() {
-						iElement.val(numberFilter(formattedToRaw(iElement.val()), scope.decimalPlaces || 2));
+						iElement.val(numberFilter(formattedToRaw(iElement.val()), decimalPlaces));
 						$timeout(function() {
 							$(iElement).select();
 						}, 50);

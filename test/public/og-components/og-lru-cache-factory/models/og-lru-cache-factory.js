@@ -28,7 +28,6 @@
 
 			describe("LruCache (empty)", function() {
 				beforeEach(function() {
-					//ogLruCache.checkCapacity = sinon.stub();
 					ogLruCache = ogLruCacheFactory(10, {});
 				});
 			
@@ -37,14 +36,10 @@
 				});
 
 				it("should have no head, tail or items", function() {
-					ogLruCache.should.have.a.property("head");
-					(ogLruCache.head === null).should.be.true;
-					ogLruCache.should.have.a.property("tail");
-					(ogLruCache.tail === null).should.be.true;
+					(!(ogLruCache.head)).should.be.true;
+					(!(ogLruCache.tail)).should.be.true;
 					Object.keys(ogLruCache.items).length.should.equal(0);
 				});
-
-				it("should check if it has exceeded it's capacity"); //TODO
 			});
 
 			describe("LruCache", function() {
@@ -52,22 +47,30 @@
 						data,
 						list;
 
+				// Helper function that adds an item to the data object used to populate the LruCache
+				var addItem = function(data, id) {
+					data.items[id] = {
+						id: id,
+						name: "item " + id,
+						older: id === 0 ? null : id - 1,
+						newer: id === 10 ? null : id + 1
+					};
+				};
+
 				beforeEach(function() {
 					capacity = 10;
 					data = {
 						head: 10,
-						tail: 1,
+						tail: 0,
 						items: {}
 					};
 					list = [];
 
+					// Add one extra item to the data object (to test that capacity is checked on initialisation)
+					addItem(data, 0);
+
 					for (var i = 1; i <= capacity; i++) {
-						data.items[i] = {
-							id: i,
-							name: "item " + i,
-							older: i === 1 ? null : i - 1,
-							newer: i === 10 ? null : i + 1
-						};
+						addItem(data, i);
 
 						list.unshift({
 							id: i,
@@ -75,7 +78,14 @@
 						});
 					}
 
+					// Create the LruCache
 					ogLruCache = ogLruCacheFactory(capacity, data);
+
+					// Reset tail back to what it should be
+					data.tail = 1;
+
+					// Spy on the checkCapacity function
+					sinon.spy(ogLruCache, "checkCapacity");
 				});
 
 				it("should have a head, tail and items", function() {
@@ -89,65 +99,56 @@
 						ogLruCache.put({id: data.head, name: "item " + data.head}).should.deep.equal(list);
 					});
 
-					it("should move an existing item to the head of the list", function() {
-						var newItem = {id: data.tail, name: "item " + data.tail},
-								oldHead = ogLruCache.items[ogLruCache.head],
-								oldTail = angular.copy(ogLruCache.items[ogLruCache.tail]),
-								newHead,
-								newTail,
-								newList;
+					var scenarios = [
+						{
+							description: "move an existing item to the head of the list",
+							item: {id: 1, name: "item 1"},
+							checkCapacity: false
+						},
+						{
+							description: "add a new item to the list and check the list capacity",
+							item: {id: 11, name: "item 11"},
+							checkCapacity: true
+						}
+					];
 
-						// Move the tail item to the head
-						newList = ogLruCache.put(newItem);
-						newHead = ogLruCache.items[ogLruCache.head];
-						newTail = ogLruCache.items[ogLruCache.tail];
+					scenarios.forEach(function(scenario) {
+						it("should " + scenario.description, function() {
+							var oldHead = ogLruCache.items[ogLruCache.head],
+									oldTail = angular.copy(ogLruCache.items[ogLruCache.tail]),
+									newHead,
+									newTail,
+									newList;
 
-						ogLruCache.head.should.equal(newItem.id);
-						ogLruCache.tail.should.equal(oldTail.newer);
-						(newHead.newer === null).should.be.true;
-						newHead.older.should.equal(oldHead.id);
-						oldHead.newer.should.equal(newHead.id);
-						(newTail.older === null).should.be.true;
+							newList = ogLruCache.put(scenario.item);
+							newHead = ogLruCache.items[ogLruCache.head];
+							newTail = ogLruCache.items[ogLruCache.tail];
 
-						list.pop();
-						list.unshift(newItem);
-						newList.should.deep.equal(list);
-					});
+							ogLruCache.head.should.equal(scenario.item.id);
+							ogLruCache.tail.should.equal(oldTail.newer);
+							(!(newHead.newer)).should.be.true;
+							newHead.older.should.equal(oldHead.id);
+							oldHead.newer.should.equal(newHead.id);
+							(!(newTail.older)).should.be.true;
 
-					it("should add a new item to the list and check the list capacity", function() {
-						ogLruCache.checkCapacity = sinon.stub();
+							list.pop();
+							list.unshift(scenario.item);
+							newList.should.deep.equal(list);
 
-						var newItem = {id: 11, name: "item 11"},
-								oldHead = ogLruCache.items[ogLruCache.head],
-								oldTail = angular.copy(ogLruCache.items[ogLruCache.tail]),
-								newHead,
-								newTail,
-								newList;
-
-						newList = ogLruCache.put(newItem);
-						newHead = ogLruCache.items[ogLruCache.head];
-						newTail = ogLruCache.items[ogLruCache.tail];
-
-						ogLruCache.head.should.equal(newItem.id);
-						ogLruCache.tail.should.equal(oldTail.newer);
-						(newHead.newer === null).should.be.true;
-						newHead.older.should.equal(oldHead.id);
-						oldHead.newer.should.equal(newHead.id);
-						(newTail.older === null).should.be.true;
-
-						list.pop();
-						list.unshift(newItem);
-						newList.should.deep.equal(list);
-
-						ogLruCache.checkCapacity.should.have.been.called;
+							if (scenario.checkCapacity) {
+								ogLruCache.checkCapacity.should.have.been.called;
+							} else {
+								ogLruCache.checkCapacity.should.not.have.been.called;
+							}
+						});
 					});
 				});
 
 				describe("checkCapacity", function() {
-					it("should remove the last item from the list when the capacity has been exceeded", function() {
-						ogLruCache.capacity = 8;
+					it("should remove all items from the list that exceed the capacity", function() {
+						ogLruCache.capacity = 3;
 						ogLruCache.checkCapacity();
-						Object.keys(ogLruCache.items).length.should.equal(9);
+						Object.keys(ogLruCache.items).length.should.equal(3);
 					});
 				});
 
@@ -158,7 +159,7 @@
 
 					it("should throw an error if it iterates more than the specified capacity", function() {
 						ogLruCache.items[data.head].older = data.head;
-						ogLruCache.list().should.throw("Possible infinite loop in LRU cache. Head: " + data.head + ", Tail: " + data.tail + ", Item: " + data.items[data.head] + ", Items: " + JSON.stringify(data.items));
+						ogLruCache.list.bind(ogLruCache).should.throw("Possible infinite loop in LRU cache. Head: " + data.head + ", Tail: " + data.tail + ", Item: " + JSON.stringify(data.items[data.head]) + ", Items: " + JSON.stringify(data.items));
 					});
 				});
 
