@@ -21,7 +21,7 @@
 
 					// Model to view
 					ngModel.$formatters.unshift(function(value) {
-						return numberFilter(value || 0);
+						return numberFilter(!!(value) && Number(value) || 0);
 					});
 
 					// Update view when tabbing in/out of the field

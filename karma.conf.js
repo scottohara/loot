@@ -56,6 +56,7 @@ module.exports = function(config) {
 			// Source files
 			"public/!(bower_components)/*.js",
 			"public/!(bower_components)/**/*.js",
+			"public/!(bower_components)/**/views/*.html",
 
 			// Test files
 			"test/public/mocks/!(loot)/*.js",
@@ -71,7 +72,12 @@ module.exports = function(config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
+			"**/public/**/views/*.html": ["ng-html2js"],
 			"**/public/!(bower_components)/**/*.js": ["jshint", "coverage"]
+		},
+
+		ngHtml2JsPreprocessor: {
+			stripPrefix: 'public/'
 		},
 
 		// test results reporter to use

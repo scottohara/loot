@@ -14,7 +14,7 @@
 					decimalPlaces: "@ogInputCurrency"
 				},
 				link: function(scope, iElement, iAttrs, ngModel) {
-					// Default to decimal places if not specified
+					// Default to 2 decimal places if not specified
 					var decimalPlaces = !!(scope.decimalPlaces) && Number(scope.decimalPlaces) || 2;
 
 					// Converts formatted value to raw value
@@ -24,7 +24,12 @@
 
 					// Converts raw value to formatted value
 					var rawToFormatted = function(value) {
-						return "$" + numberFilter(value || 0, decimalPlaces);
+						value = numberFilter(!!(value) && Number(value) || 0, decimalPlaces);
+						if (value.indexOf("-") === 0) {
+							return "-$" + value.substring(1);
+						} else {
+							return "$" + value;
+						}
 					};
 
 					// View to model
