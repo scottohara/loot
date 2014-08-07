@@ -21,7 +21,7 @@ module.exports = function(config) {
 			
 			// Bower components to include (but not watch)
 			{
-				pattern: "public/bower_components/angular/angular.min.js",
+				pattern: "public/bower_components/angular/angular.js",
 				watched: false
 			},
 			{
@@ -77,7 +77,7 @@ module.exports = function(config) {
 		},
 
 		ngHtml2JsPreprocessor: {
-			stripPrefix: 'public/'
+			stripPrefix: "public/"
 		},
 
 		// test results reporter to use

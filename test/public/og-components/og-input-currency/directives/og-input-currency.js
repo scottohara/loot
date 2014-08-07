@@ -22,7 +22,7 @@
 			ogInputCurrency.compile();
 		}));
 
-		describe("model changed", function() {
+		describe("on model change", function() {
 			beforeEach(function() {
 				expected = "$0.00";
 			});
@@ -61,7 +61,7 @@
 			});
 		});
 
-		describe("input changed", function() {
+		describe("on input change", function() {
 			beforeEach(function() {
 				expected = 0;
 			});
@@ -86,7 +86,7 @@
 			});
 		});
 
-		describe("input focussed", function() {
+		describe("on focus", function() {
 			var mockJQueryInstance;
 
 			beforeEach(function() {
@@ -113,7 +113,7 @@
 			});
 		});
 
-		describe("input blurred", function() {
+		describe("on blur", function() {
 			it("should format the value", function() {
 				ogInputCurrency.element.val("-1234.56");
 				ogInputCurrency.element.triggerHandler("blur");

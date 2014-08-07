@@ -12,7 +12,7 @@
 				replace: true,
 				scope: {
 					isLoading: "=ogTableLoading",
-					colspan: "="
+					colspan: "@"
 				},
 				templateUrl: "og-components/og-table-loading/views/loading.html"
 			};

@@ -7,7 +7,8 @@
 		"ogComponentsMocks",
 		"categoriesMocks",
 		"payeesMocks",
-		"securitiesMocks"
+		"securitiesMocks",
+		"transactionsMocks"
 	]);
 
 	// Declare the mockDependencies provider
@@ -51,6 +52,9 @@
 					default:
 						helper.container = "div";
 				}
+
+				// Create a new scope
+				helper.scope = $rootScope.$new();
 			};
 
 			// Compiles the directive and returns an array containing
@@ -60,9 +64,6 @@
 				var directive;
 
 				options = options || {};
-
-				// Create a new scope
-				helper.scope = $rootScope.$new();
 
 				// Configure the directive with any passed options
 				directive = helper.directive + (options.hasOwnProperty(helper.directive) ? "=\"" + options[helper.directive] + "\"" : "");
