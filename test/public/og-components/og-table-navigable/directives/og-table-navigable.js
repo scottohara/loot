@@ -13,9 +13,11 @@
 		// Configure & compile the object under test
 		beforeEach(inject(function(directiveTest) {
 			ogTableNavigable = directiveTest;
-			ogTableNavigable.configure("og-table-navigable", "table");
-			ogTableNavigable.scope.model = {};
-			// navigationEnabled: fn() -> bool
+			ogTableNavigable.configure("og-table-navigable", "table", "<tbody><tr ng-repeat=\"row in rows\"><td></td></tr></tbody>");
+			ogTableNavigable.scope.rows = [{},{}];
+			ogTableNavigable.scope.model = {
+				navigationEnabled: function() { return true; }
+			};
 			// selectAction: fn(idx)
 			// editAction: fn(idx)
 			// insertAction: fn()
@@ -29,43 +31,51 @@
 			ogTableNavigable.scope.model.focusRow.should.be.a.function;
 		});
 
-		/*it("should be hidden", function() {
-			ogTableNavigable.scope.$digest();
-			ogTableNavigable.element.hasClass("ng-hide").should.be.true;
+		describe("on click", function() {
+			it("should do nothing when navigation is disabled", function() {
+				ogTableNavigable.scope.model.navigationEnabled = function() { return false; };
+				ogTableNavigable.element.isolateScope().clickHandler();
+				(undefined === ogTableNavigable.element.isolateScope().focusRow).should.be.true;
+			});
+
+			it("should do nothing if the closest parent TR element to where the event occurred could not be determined", function() {
+				ogTableNavigable.element.isolateScope().clickHandler({});
+				(undefined === ogTableNavigable.element.isolateScope().focusRow).should.be.true;
+			});
+
+			it("should focus the closest parent TR element to where the event occurred", function() {
+				var cellInLastRow = $(ogTableNavigable.element).find("tbody > tr > td").last();
+				ogTableNavigable.element.isolateScope().clickHandler({target: cellInLastRow});
+				ogTableNavigable.element.isolateScope().focusRow.should.equal(1);
+			});
 		});
 
-		describe("isLoading", function() {
+		describe("on double-click", function() {
+			it("should do nothing when navigation is disabled");
+			it("should do nothing if a selectAction hander is not defined");
+			it("should do nothing if the event was triggered by a button click");
+			it("should do nothing if the closest parent TR element to where the event occurred could not be determined");
+			it("should invoke the selectAction handler for the closest parent TR element to where the event occurred");
+		});
+
+		describe.skip("on destroy", function() {
 			beforeEach(function() {
-				ogTableNavigable.scope.model = true;
-			});
-
-			it("should be visible", function() {
-				ogTableNavigable.scope.$digest();
-				ogTableNavigable.element.hasClass("ng-hide").should.be.false;
-			});
-
-			it("should include a TD spanning the specified number of columns", function() {
-				var td;
-
-				ogTableNavigable.compile({
-					"og-table-loading": "model",
-					"colspan": 3
-				});
-				ogTableNavigable.scope.$digest();
-				td = ogTableNavigable.element.find("td");
-				td.should.not.be.empty;
-				td.attr("colspan").should.equal("3");
-			});
-		});*/
-
-		describe("on destroy", function() {
-			beforeEach(function() {
-				ogTableNavigable.element.triggerHandler("$destroy");
+				//ogTableNavigable.element.triggerHandler("$destroy");
 			});
 
 			it("should remove the click handler from the element", function() {
 				ogTableNavigable.element.triggerHandler("click");
-				ogTableNavigable.element.find("tr.warning").should.be.empty;
+				(ogTableNavigable.element.isolateScope().focusRow === null).should.be.true;
+			});
+
+			it("should remove the double-click handler from the element", function() {
+				//ogTableNavigable.element.triggerHandler("dblclick");
+				//ogTableNavigable.element.find("tr.warning").should.be.empty;
+			});
+
+			it("should remove the keydown handler from the element", function() {
+				//ogTableNavigable.element.triggerHandler("keydown");
+				//ogTableNavigable.element.find("tr.warning").should.be.empty;
 			});
 		});
 	});

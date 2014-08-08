@@ -109,7 +109,7 @@
 					};
 
 					// Declare a click handler to focus a row by clicking it
-					var clickHandler = function(event) {
+					scope.clickHandler = function(event) {
 						if (scope.handlers.navigationEnabled()) {
 							// The event target could be any element in the table (including nested tables), so we need the closest row
 							var clickedRow = closestRow(event.target);
@@ -121,7 +121,7 @@
 					};
 
 					// Declare a double-click handler to perform an action on a row
-					var doubleClickHandler = function(event) {
+					scope.doubleClickHandler = function(event) {
 						if (scope.handlers.navigationEnabled()) {
 							// If a select action wasn't specified for the directive, do nothing
 							if (!scope.handlers.selectAction) {
@@ -209,14 +209,14 @@
 					};
 
 					// Attach the event handlers
-					iElement.on("click", clickHandler);
-					iElement.on("dblclick", doubleClickHandler);
+					iElement.on("click", scope.clickHandler);
+					iElement.on("dblclick", scope.doubleClickHandler);
 					$(document).on("keydown", keyHandler);
 
 					// When the element is destroyed, remove all event handlers
 					iElement.on("$destroy", function() {
-						iElement.off("click", clickHandler);
-						iElement.off("dblclick", doubleClickHandler);
+						iElement.off("click", scope.clickHandler);
+						iElement.off("dblclick", scope.doubleClickHandler);
 						$(document).off("keydown", keyHandler);
 					});
 				}

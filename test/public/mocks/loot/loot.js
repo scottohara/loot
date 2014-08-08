@@ -34,10 +34,11 @@
 		function($rootScope, $compile) {
 			var helper = {};
 
-			// Configures the name of the directive and the element tag
-			helper.configure = function(directive, tagName) {
+			// Configures the name of the directive and the element tag (and optionally, any contents)
+			helper.configure = function(directive, tagName, content) {
 				helper.directive = directive;
 				helper.tagName = tagName;
+				helper.content = content || "";
 
 				switch (tagName) {
 					case "tr":
@@ -75,7 +76,7 @@
 				}, directive);
 
 				// Compile the directive into the specified element tag using the new scope, and return the element
-				helper.element = $compile("<" + helper.container + "><" + helper.tagName + " ng-model=\"model\" " + directive + "></" + helper.tagName + "></" + helper.container + ">")(helper.scope).find(helper.tagName);
+				helper.element = $compile("<" + helper.container + "><" + helper.tagName + " ng-model=\"model\" " + directive + ">" + helper.content + "</" + helper.tagName + "></" + helper.container + ">")(helper.scope).find(helper.tagName);
 			};
 
 			return helper;

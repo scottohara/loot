@@ -88,9 +88,9 @@ module.exports = function(config) {
 		coverageReporter: {
 			reporters: [
 				{type: "text"},
-				{type: "text-summary"}
+				{type: "text-summary"},
+				{type: "html", dir: "coverage"}
 			],
-			dir: ".",
 			subdir: "."
 		},
 
