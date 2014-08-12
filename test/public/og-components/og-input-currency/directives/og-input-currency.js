@@ -87,13 +87,15 @@
 		});
 
 		describe("on focus", function() {
-			var mockJQueryInstance;
+			var mockJQueryInstance,
+					realJQueryInstance;
 
 			beforeEach(function() {
 				mockJQueryInstance = {
 					select: sinon.stub()
 				};
 
+				realJQueryInstance = window.$;
 				window.$ = sinon.stub();
 				window.$.withArgs(ogInputCurrency.element).returns(mockJQueryInstance);
 
@@ -110,6 +112,10 @@
 				$timeout.flush();
 				mockJQueryInstance.select.should.have.been.called;
 				$timeout.verifyNoPendingTasks();
+			});
+
+			afterEach(function() {
+				window.$ = realJQueryInstance;
 			});
 		});
 

@@ -5,6 +5,8 @@
 	var mod = angular.module("lootMocks", [
 		"ogAngularMocks",
 		"ogComponentsMocks",
+		"accountsMocks",
+		"authenticationMocks",
 		"categoriesMocks",
 		"payeesMocks",
 		"securitiesMocks",
@@ -80,6 +82,24 @@
 			};
 
 			return helper;
+		}
+	]);
+
+	// Declare the controllerTest helper
+	mod.factory("controllerTest", ["$rootScope", "$controller",
+		function($rootScope, $controller) {
+			// Loads the controller and returns a scope object
+			return function(controller) {
+				// Create a new scope
+				var scope = $rootScope.$new();
+
+				// Load the controller
+				$controller(controller, {
+					$scope: scope
+				});
+
+				return scope;
+			};
 		}
 	]);
 })();

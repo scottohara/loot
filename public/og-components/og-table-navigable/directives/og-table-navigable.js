@@ -14,27 +14,27 @@
 				},
 				link: function(scope, iElement) {
 					// Helper function to return all TR elements in the table body
-					var getRows = function() {
+					scope.getRows = function() {
 						return $(iElement).children("tbody").children("tr");
 					};
 
 					// Helper function to return the TR element for the specified index
-					var getRowAtIndex = function(index) {
-						return getRows().eq(index);
+					scope.getRowAtIndex = function(index) {
+						return scope.getRows().eq(index);
 					};
 
 					// Focus a row in the table 
-					var focusRow = function(row) {
+					scope.focusRow = function(row) {
 						var rowIndex = angular.element(row).scope().$index;
 
 						// Highlight the row
-						highlightRow(row);
+						scope.highlightRow(row);
 
 						// Ensure the focussed row is in the current viewport
-						scrollToRow(row);
+						scope.scrollToRow(row);
 
 						// Store the focussed row index
-						scope.focusRow = rowIndex;
+						scope.focussedRow = rowIndex;
 
 						// If a focus action is defined, invoke it for the focussed row
 						if (scope.handlers.focusAction) {
@@ -43,18 +43,18 @@
 					};
 
 					// Highlight the focussed row in the table
-					var highlightRow = function(row) {
+					scope.highlightRow = function(row) {
 						var	focusClass = "warning";
 						
 						// Clear highlighting on any previously focussed row
-						getRows().removeClass(focusClass);
+						scope.getRows().removeClass(focusClass);
 
 						// Highlight the focussed row
 						row.addClass(focusClass);
 					};
 
 					// Checks if a row is off screen, and if so scrolls it into view
-					var scrollToRow = function(row) {
+					scope.scrollToRow = function(row) {
 						// Get the top/bottom of the focussed row, and the top/bottom of the viewport
 						var	rowTop = row.offset().top,
 								rowBottom = rowTop + row.height(),
@@ -78,15 +78,15 @@
 					};
 
 					// Jump to X rows before or after the currently focussed row
-					var jumpToRow = function(offset) {
+					scope.jumpToRow = function(offset) {
 						// If there is no current row focussed, do nothing
-						if (scope.focusRow === null) {
+						if (scope.focussedRow === null) {
 							return;
 						}
 
 						// Determine the row index to focus
-						var targetIndex = scope.focusRow + offset,
-								totalRows = getRows().length;
+						var targetIndex = scope.focussedRow + offset,
+								totalRows = scope.getRows().length;
 
 						// Make sure we're not outside the bounds of the table
 						if (targetIndex < 0) {
@@ -96,9 +96,9 @@
 						}
 
 						// Focus the target row
-						var targetRow = getRowAtIndex(targetIndex);
+						var targetRow = scope.getRowAtIndex(targetIndex);
 						if (targetRow.length > 0) {
-							focusRow(targetRow);
+							scope.focusRow(targetRow);
 						}
 					};
 
@@ -115,7 +115,7 @@
 							var clickedRow = closestRow(event.target);
 							if (clickedRow.length > 0) {
 								// Focus the clicked row
-								focusRow(clickedRow);
+								scope.focusRow(clickedRow);
 							}
 						}
 					};
@@ -145,13 +145,13 @@
 					// Expose a function on the handlers object for external controllers to focus on a row
 					scope.handlers.focusRow = function(index) {
 						// Focus the target row (if not already focussed)
-						var targetRow = getRowAtIndex(index);
+						var targetRow = scope.getRowAtIndex(index);
 						if (targetRow.length > 0) {
-							if (scope.focusRow !== index) {
-								focusRow(targetRow);
+							if (scope.focussedRow !== index) {
+								scope.focusRow(targetRow);
 							} else {
 								// Row is already focussed, just ensure it's highlighted
-								highlightRow(targetRow);
+								scope.highlightRow(targetRow);
 							}
 						}
 					};
@@ -179,12 +179,12 @@
 					};
 
 					// Declare key handler to focus a row with the arrow keys
-					var keyHandler = function(event) {
+					scope.keyHandler = function(event) {
 						if (scope.handlers.navigationEnabled()) {
 							// Check if the key pressed was a movement key
 							if (MOVEMENT_KEYS.hasOwnProperty(event.keyCode)) {
 								// Jump the specified number of rows for the key
-								jumpToRow(MOVEMENT_KEYS[event.keyCode]);
+								scope.jumpToRow(MOVEMENT_KEYS[event.keyCode]);
 								event.preventDefault();
 							}
 
@@ -192,7 +192,7 @@
 							if (ACTION_KEYS.hasOwnProperty(event.keyCode)) {
 								// If an action is defined, invoke it for the focussed row
 								if (ACTION_KEYS[event.keyCode]) {
-									ACTION_KEYS[event.keyCode](scope.focusRow);
+									ACTION_KEYS[event.keyCode](scope.focussedRow);
 								}
 								event.preventDefault();
 							}
@@ -201,7 +201,7 @@
 							if (event.ctrlKey && CTRL_ACTION_KEYS.hasOwnProperty(event.keyCode)) {
 								// If an action is defined, invoke it for the focussed row
 								if (CTRL_ACTION_KEYS[event.keyCode]) {
-									CTRL_ACTION_KEYS[event.keyCode](scope.focusRow);
+									CTRL_ACTION_KEYS[event.keyCode](scope.focussedRow);
 								}
 								event.preventDefault();
 							}
@@ -209,14 +209,27 @@
 					};
 
 					// Attach the event handlers
-					iElement.on("click", scope.clickHandler);
-					iElement.on("dblclick", scope.doubleClickHandler);
+					// (The handlers are wrapped in functions to aid with unit testing)
+					var clickHandler = function(event) {
+						scope.clickHandler(event);
+					};
+
+					var doubleClickHandler = function(event) {
+						scope.doubleClickHandler(event);
+					};
+
+					var keyHandler = function(event) {
+						scope.keyHandler(event);
+					};
+
+					iElement.on("click", clickHandler);
+					iElement.on("dblclick", doubleClickHandler);
 					$(document).on("keydown", keyHandler);
 
 					// When the element is destroyed, remove all event handlers
 					iElement.on("$destroy", function() {
-						iElement.off("click", scope.clickHandler);
-						iElement.off("dblclick", scope.doubleClickHandler);
+						iElement.off("click", clickHandler);
+						iElement.off("dblclick", doubleClickHandler);
 						$(document).off("keydown", keyHandler);
 					});
 				}

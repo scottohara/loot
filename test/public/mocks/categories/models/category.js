@@ -14,7 +14,7 @@
 		};
 
 		provider.$get = function() {
-			// Rturn the mock categoryModel object
+			// Return the mock categoryModel object
 			return provider.categoryModel;
 		};
 	});

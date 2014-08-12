@@ -90,7 +90,7 @@
 			"moment"      : false,
 
 			// jQuery
-			"$"           : false,
+			"$"           : true,
 
 			// Mocha
 			"describe"    : false,

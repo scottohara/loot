@@ -16,7 +16,7 @@
 		};
 
 		provider.$get = function() {
-			// Rturn the mock transactionModel object
+			// Return the mock transactionModel object
 			return provider.transactionModel;
 		};
 	});

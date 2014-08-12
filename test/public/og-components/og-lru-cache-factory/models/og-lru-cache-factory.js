@@ -101,8 +101,14 @@
 
 					var scenarios = [
 						{
-							description: "move an existing item to the head of the list",
+							description: "move an existing item from the tail of the list to the head of the list",
 							item: {id: 1, name: "item 1"},
+							checkCapacity: false
+						},
+						{
+							description: "move an existing item to the head of the list",
+							item: {id: 2, name: "item 2"},
+							currentIndex: 8,
 							checkCapacity: false
 						},
 						{
@@ -115,7 +121,7 @@
 					scenarios.forEach(function(scenario) {
 						it("should " + scenario.description, function() {
 							var oldHead = ogLruCache.items[ogLruCache.head],
-									oldTail = angular.copy(ogLruCache.items[ogLruCache.tail]),
+									expectedTail = scenario.currentIndex ? ogLruCache.items[ogLruCache.tail].id : ogLruCache.items[ogLruCache.tail].newer,
 									newHead,
 									newTail,
 									newList;
@@ -125,13 +131,17 @@
 							newTail = ogLruCache.items[ogLruCache.tail];
 
 							ogLruCache.head.should.equal(scenario.item.id);
-							ogLruCache.tail.should.equal(oldTail.newer);
+							ogLruCache.tail.should.equal(expectedTail);
 							(!(newHead.newer)).should.be.true;
 							newHead.older.should.equal(oldHead.id);
 							oldHead.newer.should.equal(newHead.id);
 							(!(newTail.older)).should.be.true;
 
-							list.pop();
+							if (scenario.currentIndex) {
+								list.splice(scenario.currentIndex, 1);
+							} else {
+								list.pop();
+							}
 							list.unshift(scenario.item);
 							newList.should.deep.equal(list);
 
@@ -141,6 +151,33 @@
 								ogLruCache.checkCapacity.should.not.have.been.called;
 							}
 						});
+					});
+
+					it("should add a new item to an empty list and check the list capacity", function() {
+						ogLruCache.head = undefined;
+						ogLruCache.tail = undefined;
+						ogLruCache.items = {};
+
+						var item = {id: 11, name: "item 11"},
+								newHead,
+								newTail,
+								newList;
+
+						newList = ogLruCache.put(item);
+						newHead = ogLruCache.items[ogLruCache.head];
+						newTail = ogLruCache.items[ogLruCache.tail];
+
+						ogLruCache.head.should.equal(item.id);
+						ogLruCache.tail.should.equal(item.id);
+						(!(newHead.newer)).should.be.true;
+						(!(newHead.older)).should.be.true;
+						(!(newTail.newer)).should.be.true;
+						(!(newTail.older)).should.be.true;
+
+						list = [item];
+						newList.should.deep.equal(list);
+
+						ogLruCache.checkCapacity.should.have.been.called;
 					});
 				});
 

@@ -14,7 +14,7 @@
 		};
 
 		provider.$get = function() {
-			// Rturn the mock securityModel object
+			// Return the mock securityModel object
 			return provider.securityModel;
 		};
 	});

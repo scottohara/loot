@@ -14,7 +14,7 @@
 		};
 
 		provider.$get = function() {
-			// Rturn the mock payeeModel object
+			// Return the mock payeeModel object
 			return provider.payeeModel;
 		};
 	});
