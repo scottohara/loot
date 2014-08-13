@@ -10,7 +10,9 @@
 
 		// Mock authenticationModel object
 		provider.authenticationModel = {
-			login: sinon.stub()
+			login: sinon.stub(),
+			logout: sinon.stub(),
+			isAuthenticated: true
 		};
 
 		// Successful login response

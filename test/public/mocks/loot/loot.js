@@ -9,6 +9,7 @@
 		"authenticationMocks",
 		"categoriesMocks",
 		"payeesMocks",
+		"schedulesMocks",
 		"securitiesMocks",
 		"transactionsMocks"
 	]);

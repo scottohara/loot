@@ -10,6 +10,7 @@
 
 		// Mock accountModel object
 		provider.accountModel = {
+			recent: "recent accounts list",
 			allWithBalances: sinon.stub().returns({
 				then: function(callback) {
 					callback(provider.accountModel.accounts);
@@ -25,6 +26,19 @@
 		provider.$get = function() {
 			// Return the mock accountModel object
 			return provider.accountModel;
+		};
+	});
+
+	// Declare the accountMock provider
+	mod.provider("accountMock", function() {
+		var provider = this;
+
+		// Mock account object
+		provider.account = {id: 1};
+
+		provider.$get = function() {
+			// Return the mock account object
+			return provider.account;
 		};
 	});
 })();

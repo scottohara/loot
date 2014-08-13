@@ -21,6 +21,9 @@
 			btoa: sinon.stub().returns("base64 encoded")
 		};
 
+		// Configure stub responses
+		provider.$window.localStorage.getItem.withArgs("lootClosingBalance-1").returns(1000);
+
 		provider.$get = function() {
 			// Return the mock $window object
 			return provider.$window;
