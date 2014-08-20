@@ -36,7 +36,7 @@
 				(null === scheduleDeleteController.errorMessage).should.be.true;
 			});
 
-			it("should call scheduleModel.destroy() with the schedule", function() {
+			it("should delete the schedule", function() {
 				scheduleDeleteController.delete();
 				scheduleModel.destroy.should.have.been.calledWith(schedule);
 			});
@@ -49,7 +49,7 @@
 			it("should display an error message when the schedule delete is unsuccessful", function() {
 				scheduleDeleteController.schedule.id = -1;
 				scheduleDeleteController.delete();
-				scheduleDeleteController.errorMessage.should.equal("delete unsuccessful");
+				scheduleDeleteController.errorMessage.should.equal("unsuccessful");
 			});
 		});
 

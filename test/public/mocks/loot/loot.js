@@ -23,7 +23,7 @@
 			// Process each dependency
 			angular.forEach(dependencies, function(dependency) {
 				// Replace the original with the mock version
-				$provide.value(dependency, $injector.get(dependency + "MockProvider").$get());
+				$provide.value(dependency, $injector.invoke($injector.get(dependency + "MockProvider").$get));
 			});
 		};
 

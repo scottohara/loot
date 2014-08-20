@@ -73,8 +73,13 @@
 
 			// List of categories for the typeahead
 			$scope.categories = function(filter, limit, parent, includeSplits) {
-				// If the parent was specified, pass the parent's id (or -1 if no id)
-				var parentId = parent ? parent.id || -1 : null;
+				// If a parent was specified but it doesn't have an id, return an empty array
+				if (parent && isNaN(parent.id)) {
+					return [];
+				}
+				
+				// If the parent was specified, pass the parent's id
+				var parentId = parent ? parent.id : null;
 
 				return categoryModel.all(parentId).then(function(categories) {
 					// For the category dropdown, include psuedo-categories that change the transaction type
@@ -123,7 +128,7 @@
 				// If we're adding a new transaction and an existing payee is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.payee === "object") {
 					// Get the previous transaction for the payee
-					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
+					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction);
 				}
 			};
 
@@ -132,11 +137,12 @@
 				// If we're adding a new transaction and an existing security is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.security === "object") {
 					// Get the previous transaction for the security
-					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
+					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction);
 				}
 			};
 
-			var getSubtransactions = function(transaction) {
+			// Fetches the subtransactions for a transaction
+			$scope.getSubtransactions = function(transaction) {
 				// If the last transaction was a Split/Loan Repayment/Payslip; fetch the subtransactions
 				switch (transaction.transaction_type) {
 					case "Split":
@@ -157,7 +163,8 @@
 				}
 			};
 
-			var useLastTransaction = function(transaction) {
+			// Merges the details of a previous transaction into the current one
+			$scope.useLastTransaction = function(transaction) {
 				// Strip the id, primary account, next due date, transaction date and frequency
 				delete transaction.id;
 				delete transaction.primary_account;
@@ -309,15 +316,17 @@
 
 			// Watch the subtransactions array and recalculate the total allocated
 			$scope.$watch("transaction.subtransactions", function() {
-				$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
-					return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
-				}, 0);
+				if ($scope.transaction.subtransactions) {
+					$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
+						return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
+					}, 0);
 
-				// If we're adding a new transaction, join the subtransaction memos and update the parent memo
-				if (!$scope.transaction.id) {
-					$scope.transaction.memo = $scope.transaction.subtransactions.reduce(function(memo, subtransaction) {
-						return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
-					}, "");
+					// If we're adding a new transaction, join the subtransaction memos and update the parent memo
+					if (!$scope.transaction.id) {
+						$scope.transaction.memo = $scope.transaction.subtransactions.reduce(function(memo, subtransaction) {
+							return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
+						}, "");
+					}
 				}
 			}, true);
 
@@ -337,7 +346,9 @@
 					};
 
 					// Filter the primary account from the results (can't transfer to self)
-					accounts = filterFilter(accounts, {name: "!" + $scope.transaction.primary_account.name});
+					if ($scope.transaction.primary_account) {
+						accounts = filterFilter(accounts, {name: "!" + $scope.transaction.primary_account.name});
+					}
 
 					// For security transfers, only include investment accounts
 					if ("SecurityTransfer" === $scope.transaction.transaction_type) {
@@ -374,12 +385,15 @@
 			// Calculates the next due date
 			$scope.calculateNextDue = function() {
 				$scope.schedule.next_due_date = moment($scope.schedule.next_due_date).add($scope.scheduleFrequencies[$scope.schedule.frequency]).format("YYYY-MM-DD");
-				$scope.overdue_count--;
+
+				if ($scope.schedule.overdue_count > 0) {
+					$scope.schedule.overdue_count--;
+				}
 			};
 
 			// Updates the transaction amount and memo when the quantity, price or commission change
 			$scope.updateInvestmentDetails = function() {
-				if ("SecurityInvestment" === $scope.schedule.transaction_type) {
+				if ("SecurityInvestment" === $scope.transaction.transaction_type) {
 					$scope.transaction.amount = ($scope.transaction.quantity || 0) * ($scope.transaction.price || 0) - ($scope.transaction.commission || 0);
 				}
 

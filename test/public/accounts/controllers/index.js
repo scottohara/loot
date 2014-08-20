@@ -21,7 +21,7 @@
 			accountIndexController = controllerTest("accountIndexController");
 		}));
 
-		it("should call accountModel.allWithBalances()", function() {
+		it("should fetch the list of accounts with balances", function() {
 			accountModel.allWithBalances.should.have.been.called;
 		});
 

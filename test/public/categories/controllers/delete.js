@@ -36,7 +36,7 @@
 				(null === categoryDeleteController.errorMessage).should.be.true;
 			});
 
-			it("should call categoryModel.destroy() with the category", function() {
+			it("should delete the category", function() {
 				categoryDeleteController.delete();
 				categoryModel.destroy.should.have.been.calledWith(category);
 			});

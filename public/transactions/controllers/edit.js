@@ -34,8 +34,13 @@
 
 			// List of categories for the typeahead
 			$scope.categories = function(filter, limit, parent, includeSplits) {
-				// If the parent was specified, pass the parent's id (or -1 if no id)
-				var parentId = parent ? parent.id || -1 : null;
+				// If a parent was specified but it doesn't have an id, return an empty array
+				if (parent && isNaN(parent.id)) {
+					return [];
+				}
+				
+				// If the parent was specified, pass the parent's id
+				var parentId = parent ? parent.id : null;
 
 				return categoryModel.all(parentId).then(function(categories) {
 					// For the category dropdown, include psuedo-categories that change the transaction type
@@ -84,7 +89,7 @@
 				// If we're adding a new transaction and an existing payee is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.payee === "object") {
 					// Get the previous transaction for the payee
-					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
+					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction);
 				}
 			};
 
@@ -93,11 +98,12 @@
 				// If we're adding a new transaction and an existing security is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.security === "object") {
 					// Get the previous transaction for the security
-					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then(getSubtransactions).then(useLastTransaction);
+					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction);
 				}
 			};
 
-			var getSubtransactions = function(transaction) {
+			// Fetches the subtransactions for a transaction
+			$scope.getSubtransactions = function(transaction) {
 				// If the last transaction was a Split/Loan Repayment/Payslip; fetch the subtransactions
 				switch (transaction.transaction_type) {
 					case "Split":
@@ -118,7 +124,8 @@
 				}
 			};
 
-			var useLastTransaction = function(transaction) {
+			// Merges the details of a previous transaction into the current one
+			$scope.useLastTransaction = function(transaction) {
 				// Strip the id, transaction date and primary account
 				delete transaction.id;
 				delete transaction.transaction_date;
@@ -307,7 +314,7 @@
 
 			// Updates the transaction amount and memo when the quantity, price or commission change
 			$scope.updateInvestmentDetails = function() {
-				if ("SecurityInvestment" === $scope.schedule.transaction_type) {
+				if ("SecurityInvestment" === $scope.transaction.transaction_type) {
 					$scope.transaction.amount = ($scope.transaction.quantity || 0) * ($scope.transaction.price || 0) - ($scope.transaction.commission || 0);
 				}
 
@@ -322,7 +329,7 @@
 			};
 
 			// Helper function to update the LRU caches after saving a transaction
-			var updateLruCaches = function(transaction) {
+			$scope.updateLruCaches = function(transaction) {
 				// Create a deferred so that we return a promise
 				var q = $q.defer(),
 						resolve = true;
@@ -389,13 +396,14 @@
 				return q.promise;
 			};
 
+
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;
-				transactionModel.save($scope.transaction).then(updateLruCaches).then(function(transaction) {
+				transactionModel.save($scope.transaction).then($scope.updateLruCaches).then(function(transaction) {
 					// Close the modal
 					$modalInstance.close(transaction.data);
-				}, function(error) {
+				}).catch(function(error) {
 					$scope.errorMessage = error.data;
 				});
 			};

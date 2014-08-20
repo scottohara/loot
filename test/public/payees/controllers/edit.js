@@ -78,7 +78,7 @@
 				(null === payeeEditController.errorMessage).should.be.true;
 			});
 
-			it("should call payeeModel.save() with the payee", function() {
+			it("should save the payee", function() {
 				payeeEditController.save();
 				payeeModel.save.should.have.been.calledWith(payee);
 			});

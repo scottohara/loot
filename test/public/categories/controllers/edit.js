@@ -72,13 +72,13 @@
 		});
 
 		describe("parentCategories", function() {
-			it("should call categoryModel.all()", function() {
+			it("should fetch the list of parent categories", function() {
 				categoryEditController.parentCategories();
 				categoryModel.all.should.have.been.called;
 			});
 
 			it("should return a filtered & limited list of parent categories", function() {
-				categoryEditController.parentCategories("a", 3).should.deep.equal([
+				categoryEditController.parentCategories("a", 3).should.eventually.deep.equal([
 					{id: 1, name: "aa"},
 					{id: 4, name: "ba"},
 					{id: 5, name: "ab"}
@@ -108,7 +108,7 @@
 				(null === categoryEditController.errorMessage).should.be.true;
 			});
 
-			it("should call categoryModel.save() with the category", function() {
+			it("should save the category", function() {
 				categoryEditController.save();
 				categoryModel.save.should.have.been.calledWith(sinon.match(category));
 			});

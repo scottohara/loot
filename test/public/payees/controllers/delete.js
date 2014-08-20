@@ -36,7 +36,7 @@
 				(null === payeeDeleteController.errorMessage).should.be.true;
 			});
 
-			it("should call payeeModel.destroy() with the payee", function() {
+			it("should delete the payee", function() {
 				payeeDeleteController.delete();
 				payeeModel.destroy.should.have.been.calledWith(payee);
 			});

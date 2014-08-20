@@ -133,7 +133,7 @@
 				categoryModel.all = sinon.stub().returns(expected);
 			});
 
-			it("should call categoryModel.all(true)", function() {
+			it("should fetch the list of categories with children", function() {
 				categoryModel.allWithChildren("parent");
 				categoryModel.all.should.have.been.calledWith("parent", true);
 			});

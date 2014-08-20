@@ -58,7 +58,7 @@
 				layoutController.logout();
 			});
 
-			it("should call authenticationModel.logout()", function() {
+			it("should logout the user", function() {
 				authenticationModel.logout.should.have.been.called;
 			});
 

@@ -1,0 +1,854 @@
+(function() {
+	"use strict";
+
+	/*jshint expr: true */
+
+	describe("scheduleEditController", function() {
+		// The object under test
+		var scheduleEditController;
+
+		// Dependencies
+		var controllerTest,
+				$modalInstance,
+				payeeModel,
+				securityModel,
+				categoryModel,
+				accountModel,
+				transactionModel,
+				scheduleModel,
+				schedule,
+				mockJQueryInstance,
+				realJQueryInstance;
+
+		// Load the modules
+		beforeEach(module("lootMocks", "schedules", function(mockDependenciesProvider) {
+			mockDependenciesProvider.load(["$modalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"]);
+		}));
+
+		// Configure & compile the object under test
+		beforeEach(inject(function(_controllerTest_, _$modalInstance_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _scheduleModel_, _schedule_) {
+			controllerTest = _controllerTest_;
+			$modalInstance = _$modalInstance_;
+			payeeModel = _payeeModel_;
+			securityModel = _securityModel_;
+			categoryModel = _categoryModel_;
+			accountModel = _accountModel_;
+			transactionModel = _transactionModel_;
+			scheduleModel = _scheduleModel_;
+			schedule = _schedule_;
+			mockJQueryInstance = {
+				focus: sinon.stub()
+			};
+
+			realJQueryInstance = window.$;
+			window.$ = sinon.stub();
+			window.$.withArgs("#transactionDate").returns(mockJQueryInstance);
+			window.$.withArgs("#nextDueDate").returns(mockJQueryInstance);
+
+			scheduleEditController = controllerTest("scheduleEditController");
+		}));
+
+		afterEach(function() {
+			window.$ = realJQueryInstance;
+		});
+
+		describe("when a schedule is provided", function() {
+			var originalSchedule;
+
+			beforeEach(function() {
+				originalSchedule = angular.copy(schedule);
+				schedule.id = null;
+				schedule.transaction_date = schedule.next_due_date;
+			});
+
+			it("should make the passed schedule available on the $scope", function() {
+				scheduleEditController.transaction.should.deep.equal(schedule);
+			});
+
+			it("should default the transaction type to Basic if not specified", function() {
+				delete schedule.transaction_type;
+				scheduleEditController = controllerTest("scheduleEditController");
+				scheduleEditController.transaction.transaction_type.should.equal("Basic");
+			});
+
+			it("should default the next due date to the current day if not specified", function() {
+				delete schedule.next_due_date;
+				scheduleEditController = controllerTest("scheduleEditController");
+				scheduleEditController.transaction.next_due_date.should.equal(moment().format("YYYY-MM-DD"));
+			});
+
+			it("should create four empty subtransactions if none are specified", function() {
+				delete schedule.subtransactions;
+				scheduleEditController = controllerTest("scheduleEditController");
+				scheduleEditController.transaction.subtransactions.should.deep.equal([{},{},{},{}]);
+			});
+			
+			it("should set the mode to Enter Transaction", function() {
+				scheduleEditController.mode.should.equal("Enter Transaction");
+			});
+
+			it("should make a copy of the transaction as schedule on the $scope", function() {
+				scheduleEditController.schedule.id.should.not.be.null;
+				scheduleEditController.schedule.should.deep.equal(originalSchedule);
+			});
+
+			it("should clear the transaction id", function() {
+				(null === scheduleEditController.transaction.id).should.be.true;
+			});
+
+			it("should set the transaction date to the next due date", function() {
+				scheduleEditController.transaction.transaction_date.should.equal(schedule.next_due_date);
+			});
+
+			it("should focus the transaction date field", function() {
+				mockJQueryInstance.focus.should.have.been.called;
+			});
+		});
+
+		describe.skip("when a schedule is not provided", function() {
+			beforeEach(function() {
+				schedule = undefined;
+				scheduleEditController = controllerTest("scheduleEditController");
+			});
+
+			it("should set an empty transaction object on the $scope", function() {
+				scheduleEditController.transaction.should.be.an.Object;
+				scheduleEditController.transaction.should.be.empty;
+			});
+
+			it("should default the transaction type to Basic", function() {
+				scheduleEditController.transaction.transaction_type.should.equal("Basic");
+			});
+
+			it("should default the next due date to the current day", function() {
+				scheduleEditController.transaction.next_due_date.should.equal(moment().format("YYYY-MM-DD"));
+			});
+
+			it("should create four empty subtransactions", function() {
+				scheduleEditController.transaction.subtransactions.should.deep.equal([{},{},{},{}]);
+			});
+			
+			it("should set the mode to Add Schedule", function() {
+				scheduleEditController.mode.should.equal("Add Schedule");
+			});
+
+			it("should make alias the transaction as schedule on the $scope", function() {
+				scheduleEditController.schedule.should.equal(scheduleEditController.transaction);
+			});
+
+			it("should focus the next due date field", function() {
+				mockJQueryInstance.focus.should.have.been.called;
+			});
+		});
+
+		it("should prefetch the payees list to populate the cache", function() {
+			payeeModel.all.should.have.been.called;
+		});
+
+		describe("payees", function() {
+			var payees;
+
+			beforeEach(function() {
+				payees = scheduleEditController.payees("a", 3);
+			});
+
+			it("should fetch the list of payees", function() {
+				payeeModel.all.should.have.been.called;
+			});
+
+			it("should return a filtered & limited list of payees", function() {
+				payees.should.eventually.deep.equal([
+					{id: 1, name: "aa"},
+					{id: 4, name: "ba"},
+					{id: 5, name: "ab"}
+				]);
+			});
+		});
+
+		describe("securities", function() {
+			var securities;
+
+			beforeEach(function() {
+				securities = scheduleEditController.securities("a", 3);
+			});
+
+			it("should fetch the list of securities", function() {
+				securityModel.all.should.have.been.called;
+			});
+
+			it("should return a filtered & limited list of securities", function() {
+				securities.should.eventually.deep.equal([
+					{id: 1, name: "aa"},
+					{id: 4, name: "ba"},
+					{id: 5, name: "ab"}
+				]);
+			});
+		});
+
+		describe("categories", function() {
+			var categories;
+
+			it("should return an empty array if the parent category is new", function() {
+				categories = scheduleEditController.categories("a", 3, {});
+				categories.should.be.an.Array;
+				categories.should.be.empty;
+			});
+
+			describe("(parent categories)", function() {
+				it("should fetch the list of parent categories", function() {
+					categories = scheduleEditController.categories("a", 3, undefined, false);
+					categoryModel.all.should.have.been.calledWith(null);
+				});
+
+				it("should include transfer categories", function() {
+					categories = scheduleEditController.categories("a", 5, undefined, false);
+					categories.should.eventually.deep.equal([
+						{ id: "TransferTo", name: "Transfer To" },
+						{ id: "TransferFrom", name: "Transfer From" },
+						{ id: 1, name: "aa" },
+						{ id: 4, name: "ba" },
+						{ id: 5, name: "ab" }
+					]);
+				});
+
+				it("should include split categories if requested", function() {
+					categories = scheduleEditController.categories("a", 7, undefined, true);
+					categories.should.eventually.deep.equal([
+						{ id: "TransferTo", name: "Transfer To" },
+						{ id: "TransferFrom", name: "Transfer From" },
+						{ id: "Payslip", name: "Payslip" },
+						{ id: "LoanRepayment", name: "Loan Repayment" },
+						{ id: 1, name: "aa" },
+						{ id: 4, name: "ba" },
+						{ id: 5, name: "ab" }
+					]);
+				});
+			});
+
+			describe("(subcategories)", function() {
+				it("should fetch the subcategories for the specified parent category", function() {
+					categories = scheduleEditController.categories("a", 3, {id: 1});
+					categoryModel.all.should.have.been.calledWith(1);
+				});
+				it("should eventually return a filtered & limited list of payees", function() {
+					categories = scheduleEditController.categories("a", 3, {id: 1});
+					categories.should.eventually.deep.equal([
+						{ id: 1, name: "aa" },
+						{ id: 4, name: "ba" },
+						{ id: 5, name: "ab" }
+					]);
+				});
+			});
+		});
+
+		describe("investmentCategories", function() {
+			it("should return a filtered & limited list of investment categories", function() {
+				scheduleEditController.investmentCategories("a", 3).should.deep.equal([
+					{ id: "AddShares", name: "Add Shares" },
+					{ id: "RemoveShares", name: "Remove Shares" },
+					{ id: "TransferTo", name: "Transfer To" }
+				]);
+			});
+		});
+
+		describe("isString", function() {
+			it("should return false if the object is not a string", function() {
+				scheduleEditController.isString({}).should.be.false;
+			});
+
+			it("should return false if the object is an empty string", function() {
+				scheduleEditController.isString("").should.be.false;
+			});
+
+			it("should return true if the object is a string and is not empty", function() {
+				scheduleEditController.isString("test").should.be.true;
+			});
+		});
+		
+		describe("payeeSeleted", function() {
+			var payee,
+					primary_account;
+
+			beforeEach(function() {
+				scheduleEditController.transaction.id = undefined;
+				payee = {id: 1};
+				primary_account = {account_type: "account type"};
+				scheduleEditController.transaction.payee = payee;
+				scheduleEditController.transaction.primary_account = primary_account;
+				sinon.stub(scheduleEditController, "getSubtransactions");
+				sinon.stub(scheduleEditController, "useLastTransaction");
+			});
+
+			it("should do nothing when editing an existing transaction", function() {
+				scheduleEditController.transaction.id = 1;
+				scheduleEditController.transaction.payee = {};
+				scheduleEditController.payeeSelected();
+				payeeModel.findLastTransaction.should.not.have.been.called;
+			});
+
+			it("should do nothing when the selected payee is not an existing payee", function() {
+				scheduleEditController.transaction.payee = "payee";
+				scheduleEditController.payeeSelected();
+				payeeModel.findLastTransaction.should.not.have.been.called;
+			});
+
+			it("should fetch the last transaction for the selected payee", function() {
+				scheduleEditController.payeeSelected();
+				payeeModel.findLastTransaction.should.have.been.calledWith(payee.id, primary_account.account_type);
+			});
+
+			it("should fetch the subtransactions for the last transaction", function() {
+				scheduleEditController.payeeSelected();
+				scheduleEditController.getSubtransactions.should.have.been.called;
+			});
+
+			it("should default the transaction details from the last transaction", function() {
+				scheduleEditController.payeeSelected();
+				scheduleEditController.useLastTransaction.should.have.been.called;
+			});
+		});
+
+		describe("securitySelected", function() {
+			var security,
+					primary_account;
+
+			beforeEach(function() {
+				scheduleEditController.transaction.id = undefined;
+				security = {id: 1};
+				primary_account = {account_type: "account type"};
+				scheduleEditController.transaction.security = security;
+				scheduleEditController.transaction.primary_account = primary_account;
+				sinon.stub(scheduleEditController, "getSubtransactions");
+				sinon.stub(scheduleEditController, "useLastTransaction");
+			});
+
+			it("should do nothing when editing an existing transaction", function() {
+				scheduleEditController.transaction.id = 1;
+				scheduleEditController.transaction.security = {};
+				scheduleEditController.securitySelected();
+				securityModel.findLastTransaction.should.not.have.been.called;
+			});
+
+			it("should do nothing when the selected security is not an existing security", function() {
+				scheduleEditController.transaction.security = "security";
+				scheduleEditController.securitySelected();
+				securityModel.findLastTransaction.should.not.have.been.called;
+			});
+
+			it("should fetch the last transaction for the selected security", function() {
+				scheduleEditController.securitySelected();
+				securityModel.findLastTransaction.should.have.been.calledWith(security.id, primary_account.account_type);
+			});
+
+			it("should fetch the subtransactions for the last transaction", function() {
+				scheduleEditController.securitySelected();
+				scheduleEditController.getSubtransactions.should.have.been.called;
+			});
+
+			it("should default the transaction details from the last transaction", function() {
+				scheduleEditController.securitySelected();
+				scheduleEditController.useLastTransaction.should.have.been.called;
+			});
+		});
+
+		describe("getSubtransactions", function() {
+			var transaction;
+
+			beforeEach(function() {
+				transaction = {id: 1};
+			});
+
+			it("should return the transaction if it is not a split, loan repayment or payslip", function() {
+				scheduleEditController.getSubtransactions(transaction).should.deep.equal(transaction);
+			});
+
+			var scenarios = ["Split", "LoanRepayment", "Payslip"];
+
+			scenarios.forEach(function(scenario) {
+				it("should fetch the subtransactions for the transaction", function() {
+					transaction.transaction_type = scenario;
+					scheduleEditController.getSubtransactions(transaction);
+					transaction.subtransactions.should.be.an.Array;
+					transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
+				});
+			});
+
+			it("should eventually return a list of subtransactions stripped of their ids", function() {
+				transaction.transaction_type = "Split";
+
+				var expected = angular.copy(transaction);
+				expected.subtransactions = [
+					{id: null, transaction_type: "Transfer", account: "subtransfer account"},
+					{id: null, category: "subtransaction category"},
+					{id: null, category: "another subtransaction category", subcategory: "subtransaction subcategory"}
+				];
+
+				transaction = scheduleEditController.getSubtransactions(transaction);
+				transaction.should.eventually.deep.equal(expected);
+			});
+		});
+		
+		describe("useLastTransaction", function() {
+			var transaction;
+
+			beforeEach(function() {
+				// The previous transaction to merge
+				transaction = {
+					id: 1,
+					transaction_date: "transaction date",
+					next_due_date: "next due date",
+					frequency: "frequency",
+					primary_account: "primary account",
+					payee: "payee",
+					amount: 100
+				};
+
+				// The current transaction to merge into
+				scheduleEditController.transaction = {
+					payee: "original payee",
+					category: "original category"
+				};
+
+				scheduleEditController.useLastTransaction(transaction);
+			});
+
+			it("should strip the transaction of it's id, transaction date, next due date, frequency & primary account", function() {
+				(undefined === transaction.id).should.be.true;
+				(undefined === transaction.transaction_date).should.be.true;
+				(undefined === transaction.next_due_date).should.be.true;
+				(undefined === transaction.frequency).should.be.true;
+				(undefined === transaction.primary_account).should.be.true;
+			});
+
+			it("should merge the transaction details into $scope.transaction", function() {
+				transaction.category = "original category";
+				scheduleEditController.transaction.should.deep.equal(transaction);
+			});
+		});
+
+		describe("categorySelected", function() {
+			describe("(main transaction)", function() {
+				beforeEach(function() {
+					scheduleEditController.transaction.category = {direction: "inflow"};
+				});
+
+				var scenarios = [
+					{id: "TransferTo", type: "Transfer", direction: "outflow"},
+					{id: "TransferFrom", type: "Transfer", direction: "inflow"},
+					{id: "SplitTo", type: "Split", direction: "outflow"},
+					{id: "SplitFrom", type: "Split", direction: "inflow"},
+					{id: "Payslip", type: "Payslip", direction: "inflow"},
+					{id: "LoanRepayment", type: "LoanRepayment", direction: "outflow"},
+					{id: "anything else", type: "Basic", direction: "the category direction"},
+				];
+
+				scenarios.forEach(function(scenario) {
+					it("should set the transaction type to " + scenario.type + " and the direction to " + scenario.direction + " if the category is " + scenario.id, function() {
+						scheduleEditController.transaction.category.id = scenario.id;
+						scheduleEditController.categorySelected();
+						scheduleEditController.transaction.transaction_type.should.equal(scenario.type);
+
+						if ("Basic" === scenario.type) {
+							scheduleEditController.transaction.direction.should.equal(scheduleEditController.transaction.category.direction);
+						} else {
+							scheduleEditController.transaction.direction.should.equal(scenario.direction);
+						}
+					});
+				});
+
+				it("should set the transaction type to Basic if the selected category is not an existing category", function() {
+					scheduleEditController.transaction.category = "new category";
+					scheduleEditController.categorySelected();
+					scheduleEditController.transaction.transaction_type.should.equal("Basic");
+				});
+			});
+
+			describe("(subtransaction)", function() {
+				beforeEach(function() {
+					scheduleEditController.transaction.subtransactions = [
+						{category: {direction: "inflow"}}
+					];
+				});
+
+				var scenarios = [
+					{id: "TransferTo", type: "Transfer", direction: "outflow"},
+					{id: "TransferFrom", type: "Transfer", direction: "inflow"},
+					{id: "anything else", type: "Sub", direction: "the category direction"},
+				];
+
+				scenarios.forEach(function(scenario) {
+					it("should set the transaction type to " + scenario.type + " and the direction to " + scenario.direction + " if the category is " + scenario.id, function() {
+						scheduleEditController.transaction.subtransactions[0].category.id = scenario.id;
+						scheduleEditController.categorySelected(0);
+						scheduleEditController.transaction.subtransactions[0].transaction_type.should.equal(scenario.type);
+
+						if ("Sub" === scenario.type) {
+							scheduleEditController.transaction.subtransactions[0].direction.should.equal(scheduleEditController.transaction.subtransactions[0].category.direction);
+						} else {
+							scheduleEditController.transaction.subtransactions[0].direction.should.equal(scenario.direction);
+						}
+					});
+				});
+
+				it("should set the transaction type to Sub if the selected category is not an existing category", function() {
+					scheduleEditController.transaction.subtransactions[0].category = "new category";
+					scheduleEditController.categorySelected(0);
+					scheduleEditController.transaction.subtransactions[0].transaction_type.should.equal("Sub");
+				});
+			});
+
+			it("should set the direction to outflow if the selected category is not an existing category", function() {
+				scheduleEditController.categorySelected();
+				scheduleEditController.transaction.direction.should.equal("outflow");
+			});
+
+			it("should clear the subcategory if it's parent no longer matches the selected category", function() {
+				scheduleEditController.transaction.subcategory = {
+					parent_id: 1
+				};
+				scheduleEditController.categorySelected();
+				(null === scheduleEditController.transaction.subcategory).should.be.true;
+			});
+		});
+
+		describe("investmentCategorySelected", function() {
+			beforeEach(function() {
+				scheduleEditController.transaction.category = {};
+			});
+
+			it("should do nothing if the selected category is not an existing category", function() {
+				var transaction_type = "transaction type",
+						direction = "direction";
+
+				scheduleEditController.transaction.category = "new category";
+				scheduleEditController.transaction.transaction_type = transaction_type;
+				scheduleEditController.transaction.direction = direction;
+				scheduleEditController.investmentCategorySelected();
+				scheduleEditController.transaction.transaction_type.should.equal(transaction_type);
+				scheduleEditController.transaction.direction.should.equal(direction);
+			});
+
+			var scenarios = [
+				{id: "TransferTo", type: "SecurityTransfer", direction: "outflow"},
+				{id: "TransferFrom", type: "SecurityTransfer", direction: "inflow"},
+				{id: "RemoveShares", type: "SecurityHolding", direction: "outflow"},
+				{id: "AddShares", type: "SecurityHolding", direction: "inflow"},
+				{id: "Sell", type: "SecurityInvestment", direction: "outflow"},
+				{id: "Buy", type: "SecurityInvestment", direction: "inflow"},
+				{id: "DividendTo", type: "Dividend", direction: "outflow"},
+			];
+
+			scenarios.forEach(function(scenario) {
+				it("should set the transaction type to " + scenario.type + " and the direction to " + scenario.direction + " if the category is " + scenario.id, function() {
+					scheduleEditController.transaction.category.id = scenario.id;
+					scheduleEditController.investmentCategorySelected();
+					scheduleEditController.transaction.transaction_type.should.equal(scenario.type);
+					scheduleEditController.transaction.direction.should.equal(scenario.direction);
+				});
+			});
+		});
+
+		describe("primaryAccountSelected", function() {
+			var account_type;
+
+			beforeEach(function() {
+				account_type = "new account type";
+				scheduleEditController.transaction.primary_account = {account_type: account_type};
+			});
+
+			it("should clear the category and subcategory if the account type no longer matches the primary account type", function() {
+				scheduleEditController.account_type = "old account type";
+				scheduleEditController.primaryAccountSelected();
+				(null === scheduleEditController.transaction.category).should.be.true;
+				(null === scheduleEditController.transaction.subcategory).should.be.true;
+			});
+			
+			it("should set the account type to the primary account type", function() {
+				scheduleEditController.primaryAccountSelected();
+				scheduleEditController.account_type.should.equal("new account type");
+			});
+		});
+
+		describe("$watch subtransations", function() {
+			var memo;
+
+			beforeEach(function() {
+				memo = "memo";
+				scheduleEditController.transaction.direction = "outflow";
+				scheduleEditController.transaction.memo = memo;
+				scheduleEditController.transaction.subtransactions = [
+					{amount: 10, direction: "outflow", memo: "memo 1"},
+					{amount: 5, direction: "inflow", memo: "memo 2"}
+				];
+			});
+
+			it("should do nothing if there are no subtransactions", function() {
+				scheduleEditController.transaction.subtransactions = undefined;
+				scheduleEditController.$digest();
+				(undefined === scheduleEditController.totalAllocated).should.be.true;
+			});
+
+			it("should calculate the total and make it available on the scope", function() {
+				scheduleEditController.$digest();
+				scheduleEditController.totalAllocated.should.equal(5);
+			});
+
+			it("should not set the main transaction memo when editing an existing transaction", function() {
+				scheduleEditController.transaction.id = 1;
+				scheduleEditController.$digest();
+				scheduleEditController.transaction.memo.should.equal(memo);
+			});
+
+			it("should join the sub transaction memos and set the main transaction memo when adding a new transaction", function() {
+				scheduleEditController.$digest();
+				scheduleEditController.transaction.memo.should.equal("memo 1; memo 2");
+			});
+		});
+
+		describe("primaryAccounts", function() {
+			var accounts;
+
+			beforeEach(function() {
+				accounts = scheduleEditController.primaryAccounts("a", 3);
+			});
+
+			it("should fetch the list of accounts", function() {
+				accountModel.all.should.have.been.called;
+			});
+
+			it("should return a filtered & limited list of accounts", function() {
+				accounts.should.eventually.deep.equal([
+					{id: 1, name: "aa"},
+					{id: 4, name: "ba"},
+					{id: 5, name: "ab"}
+				]);
+			});
+		});
+
+		describe("accounts", function() {
+			var accounts;
+
+			it("should fetch the list of accounts", function() {
+				scheduleEditController.accounts();
+				accountModel.all.should.have.been.called;
+			});
+
+			it("should remove the current account from the list", function() {
+				scheduleEditController.transaction.primary_account = {name: "aa"};
+				accounts = scheduleEditController.accounts("a", 2);
+				accounts.should.eventually.deep.equal([
+					{id: 4, name: "ba"},
+					{id: 5, name: "ab"}
+				]);
+			});
+
+			it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", function() {
+				accounts = scheduleEditController.accounts("b", 2);
+				accounts.should.eventually.deep.equal([
+					{id: 4, name: "ba"},
+					{id: 5, name: "ab"}
+				]);
+			});
+
+			it("should return a filtered & limited list of investment accounts when the transaction type is Security Transfer", function() {
+				scheduleEditController.transaction.transaction_type = "SecurityTransfer";
+				accounts = scheduleEditController.accounts("b", 2);
+				accounts.should.eventually.deep.equal([
+					{id: 2, name: "bb", account_type: "investment"},
+					{id: 6, name: "bc", account_type: "investment"}
+				]);
+			});
+		});
+
+		describe("frequencies", function() {
+			it("should return a filtered & limited list of frequencies", function() {
+				scheduleEditController.frequencies("t", 2).should.deep.equal(["Fortnightly", "Monthly"]);
+			});
+		});
+
+		describe("addSubtransaction", function() {
+			it("should add an empty object to the subtransactions array", function() {
+				scheduleEditController.transaction.subtransactions = [];
+				scheduleEditController.addSubtransaction();
+				scheduleEditController.transaction.subtransactions.should.deep.equal([{}]);
+			});
+		});
+
+		describe("deleteSubtransaction", function() {
+			it("should remove an item from the subtransactions array at the specified index", function() {
+				scheduleEditController.transaction.subtransactions = [1, 2, 3];
+				scheduleEditController.deleteSubtransaction(1);
+				scheduleEditController.transaction.subtransactions.should.deep.equal([1, 3]);
+			});
+		});
+
+		describe("calculateNextDue", function() {
+			var scenarios = [
+				{frequency: "Fortnightly", period: "weeks", amount: 2},
+				{frequency: "Monthly", period: "month", amount: 1},
+				{frequency: "Quarterly", period: "months", amount: 3},
+				{frequency: "Yearly", period: "year", amount: 1}
+			];
+
+			scenarios.forEach(function(scenario) {
+				it("should add " + scenario.amount + " " + scenario.period + " to the next due date when the frequency is " + scenario.frequency, function() {
+					var next_due_date = scheduleEditController.schedule.next_due_date;
+					scheduleEditController.schedule.frequency = scenario.frequency;
+					scheduleEditController.calculateNextDue();
+					scheduleEditController.schedule.next_due_date.should.equal(moment(next_due_date).add(scenario.period, scenario.amount).format("YYYY-MM-DD"));
+				});
+			});
+
+			it("should decrement the overdue count when greater than zero", function() {
+				scheduleEditController.schedule.overdue_count = 1;
+				scheduleEditController.calculateNextDue();
+				scheduleEditController.schedule.overdue_count.should.equal(0);
+			});
+
+			it("should leave the overdue account unchanged when zero", function() {
+				scheduleEditController.schedule.overdue_count = 0;
+				scheduleEditController.calculateNextDue();
+				scheduleEditController.schedule.overdue_count.should.equal(0);
+			});
+		});
+
+		describe("updateInvestmentDetails", function() {
+			var amount,
+					memo;
+
+			beforeEach(function() {
+				amount = 100;
+				memo = "memo";
+				scheduleEditController.transaction.id = undefined;
+				scheduleEditController.transaction.transaction_type = "SecurityInvestment";
+				scheduleEditController.transaction.quantity = 2;
+				scheduleEditController.transaction.price = 10;
+				scheduleEditController.transaction.commission = 1;
+				scheduleEditController.transaction.amount = amount;
+				scheduleEditController.transaction.memo = memo;
+			});
+
+			it("should do nothing when the transaction type is not SecurityInvestment", function() {
+				scheduleEditController.transaction.transaction_type = undefined;
+				scheduleEditController.updateInvestmentDetails();
+				scheduleEditController.transaction.amount.should.equal(amount);
+				scheduleEditController.transaction.memo.should.equal(memo);
+			});
+
+			it("should set the transaction amount to zero and the memo to an empty string if the price, quantity and commission are not specified for Security Investment transactions", function() {
+				scheduleEditController.transaction.quantity = undefined;
+				scheduleEditController.transaction.price = undefined;
+				scheduleEditController.transaction.commission = undefined;
+				scheduleEditController.updateInvestmentDetails();
+				scheduleEditController.transaction.amount.should.equal(0);
+				scheduleEditController.transaction.memo.should.be.empty;
+			});
+
+			it("should calculate the transaction amount from the price, quantity and commission for Security Investment transactions", function() {
+				scheduleEditController.updateInvestmentDetails();
+				scheduleEditController.transaction.amount.should.equal(19);
+			});
+
+			it("should not update the memo when editing an existing Security Investment transaction", function() {
+				scheduleEditController.transaction.id = 1;
+				scheduleEditController.updateInvestmentDetails();
+				scheduleEditController.transaction.memo.should.equal(memo);
+			});
+
+			it("should update the memo with the price, quantity and commission when adding a new Security Investment transaction", function() {
+				scheduleEditController.updateInvestmentDetails();
+				scheduleEditController.transaction.memo.should.equal("2 @ $10.00 (less $1.00 commission)");
+			});
+		});
+
+		describe("edit", function() {
+			beforeEach(function() {
+				scheduleEditController.edit();
+			});
+
+			it("should set the mode to Edit Schedule", function() {
+				scheduleEditController.mode.should.equal("Edit Schedule");
+			});
+
+			it("should set the transaction to the schedule", function() {
+				scheduleEditController.transaction.should.equal(scheduleEditController.schedule);
+			});
+		});
+
+		describe("enter", function() {
+			beforeEach(function() {
+				sinon.stub(scheduleEditController, "skip");
+				scheduleEditController.transaction.id = 1;
+			});
+
+			it("should reset any previous error messages", function() {
+				scheduleEditController.errorMessage = "error message";
+				scheduleEditController.enter();
+				(null === scheduleEditController.errorMessage).should.be.true;
+			});
+
+			it("should save the schedule", function() {
+				scheduleEditController.enter();
+				transactionModel.save.should.have.been.calledWith(scheduleEditController.transaction);
+			});
+
+			it("should update the next due date when the transaction save is successful", function() {
+				scheduleEditController.enter();
+				scheduleEditController.skip.should.have.been.called;
+			});
+
+			it("should display an error message when the transaction save is unsuccessful", function() {
+				scheduleEditController.transaction.id = -1;
+				scheduleEditController.enter();
+				scheduleEditController.errorMessage.should.equal("unsuccessful");
+			});
+		});
+
+		describe("skip", function() {
+			beforeEach(function() {
+				sinon.stub(scheduleEditController, "calculateNextDue");
+				sinon.stub(scheduleEditController, "save");
+				scheduleEditController.skip();
+			});
+
+			it("should calculate the next due date", function() {
+				scheduleEditController.calculateNextDue.should.have.been.called;
+			});
+
+			it("should save the schedule", function() {
+				scheduleEditController.save.should.have.been.called;
+			});
+		});
+
+		describe("save", function() {
+			it("should reset any previous error messages", function() {
+				scheduleEditController.errorMessage = "error message";
+				scheduleEditController.save();
+				(null === scheduleEditController.errorMessage).should.be.true;
+			});
+
+			it("should save the schedule", function() {
+				scheduleEditController.save();
+				scheduleModel.save.should.have.been.calledWith(schedule);
+			});
+
+			it("should close the modal when the schedule save is successful", function() {
+				scheduleEditController.save();
+				$modalInstance.close.should.have.been.calledWith(schedule);
+			});
+
+			it("should display an error message when the schedule save is unsuccessful", function() {
+				scheduleEditController.schedule.id = -1;
+				scheduleEditController.save();
+				scheduleEditController.errorMessage.should.equal("unsuccessful");
+			});
+		});
+
+		describe("cancel", function() {
+			it("should dismiss the modal", function() {
+				scheduleEditController.cancel();
+				$modalInstance.dismiss.should.have.been.called;
+			});
+		});
+	});
+})();

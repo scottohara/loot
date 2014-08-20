@@ -250,13 +250,13 @@
 				ogTableNavigable.element.isolateScope().highlightRow.should.not.have.been.called;
 			});
 
-			it("should call focusRow() on the target row if not already focussed", function() {
+			it("should focus the target row if not already focussed", function() {
 				ogTableNavigable.element.isolateScope().handlers.focusRow(1);
 				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(lastRow);
 				ogTableNavigable.element.isolateScope().highlightRow.should.not.have.been.called;
 			});
 
-			it("should call highlightRow() on the target row if already focussed", function() {
+			it("should highlight the target row if already focussed", function() {
 				ogTableNavigable.element.isolateScope().focussedRow = 1;
 				ogTableNavigable.element.isolateScope().handlers.focusRow(1);
 				ogTableNavigable.element.isolateScope().focusRow.should.not.have.been.called;

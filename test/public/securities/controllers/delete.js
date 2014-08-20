@@ -36,7 +36,7 @@
 				(null === securityDeleteController.errorMessage).should.be.true;
 			});
 
-			it("should call securityModel.destroy() with the security", function() {
+			it("should delete the security", function() {
 				securityDeleteController.delete();
 				securityModel.destroy.should.have.been.calledWith(security);
 			});

@@ -58,7 +58,7 @@
 				(null === authenticationEditController.errorMessage).should.be.true;
 			});
 
-			it("should call authenticationModel.login() with the username & password", function() {
+			it("should attempt to login with the username & password", function() {
 				authenticationEditController.login();
 				authenticationModel.login.should.have.been.calledWith("gooduser", "goodpassword");
 			});
@@ -72,7 +72,7 @@
 				authenticationEditController.authentication.userName = "baduser";
 				authenticationEditController.authentication.password = "badpassword";
 				authenticationEditController.login();
-				authenticationEditController.errorMessage.should.equal("login unsuccessful");
+				authenticationEditController.errorMessage.should.equal("unsuccessful");
 			});
 		});
 

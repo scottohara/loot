@@ -36,7 +36,7 @@
 				(null === transactionDeleteController.errorMessage).should.be.true;
 			});
 
-			it("should call transactionModel.destroy() with the transaction", function() {
+			it("should delete the transaction", function() {
 				transactionDeleteController.delete();
 				transactionModel.destroy.should.have.been.calledWith(transaction);
 			});

@@ -78,7 +78,7 @@
 				(null === securityEditController.errorMessage).should.be.true;
 			});
 
-			it("should call securityModel.save() with the security", function() {
+			it("should save the security", function() {
 				securityEditController.save();
 				securityModel.save.should.have.been.calledWith(security);
 			});

@@ -52,7 +52,7 @@
 				(null === transactionFlagController.errorMessage).should.be.true;
 			});
 
-			it("should call transactionModel.flag() with the transaction", function() {
+			it("should flag the transaction", function() {
 				transactionFlagController.save();
 				transactionModel.flag.should.have.been.calledWith(transaction);
 			});
@@ -76,7 +76,7 @@
 				(null === transactionFlagController.errorMessage).should.be.true;
 			});
 
-			it("should call transactionModel.unflag() with the transaction id", function() {
+			it("should unflag the transaction", function() {
 				transactionFlagController.delete();
 				transactionModel.unflag.should.have.been.calledWith(transaction.id);
 			});
