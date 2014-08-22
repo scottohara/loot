@@ -25,7 +25,7 @@
 		provider.payees = [
 			{id: 1, name: "aa"},
 			{id: 2, name: "bb"},
-			{id: 3, name: "cc"},
+			{id: 3, name: "cc", num_transactions: 2},
 			{id: 4, name: "ba"},
 			{id: 5, name: "ab"},
 			{id: 6, name: "bc"},
@@ -56,13 +56,19 @@
 		error = {
 			args: {id: -1}
 		};
-
 		// Mock payeeModel object
 		provider.payeeModel = {
 			recent: "recent payees list",
 			all: $q.promisify({
 				response: payeesMockProvider.$get()
 			}),
+			find: function(id) {
+				// Get the matching payee
+				var payee = payeesMockProvider.$get()[id - 1];
+
+				// Return a promise-like object that resolves with the payee
+				return $q.promisify({response: payee})();
+			},
 			findLastTransaction: $q.promisify({
 				response: {}
 			}),
@@ -71,6 +77,9 @@
 			flush: sinon.stub(),
 			addRecent: sinon.stub()
 		};
+
+		// Spy on find()
+		sinon.spy(provider.payeeModel, "find");
 
 		provider.$get = function() {
 			// Return the mock payeeModel object

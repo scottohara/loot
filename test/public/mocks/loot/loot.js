@@ -3,7 +3,7 @@
 
 	// Declare the lootMocks module and it's dependencies
 	var mod = angular.module("lootMocks", [
-		"ogAngularMocks",
+		"ogBowerComponentsMocks",
 		"ogComponentsMocks",
 		"accountsMocks",
 		"authenticationMocks",

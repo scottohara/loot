@@ -50,14 +50,14 @@
 					$scope.payees.sort(byName);
 
 					// Refocus the payee
-					focusPayee(payee.id);
+					$scope.focusPayee(payee.id);
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
 				});
 			};
 
-			var deletePayee = function(index) {
+			$scope.deletePayee = function(index) {
 				// Check if the payee can be deleted
 				payeeModel.find($scope.payees[index].id).then(function(payee) {
 					// Disable navigation on the table
@@ -119,7 +119,7 @@
 					// Same as select action, but don't pass any arguments
 					$scope.editPayee();
 				},
-				deleteAction: deletePayee,
+				deleteAction: $scope.deletePayee,
 				focusAction: function(index) {
 					$state.go(($state.includes("**.payee") ? "^" : "") + ".payee", {
 						id: $scope.payees[index].id
@@ -128,7 +128,7 @@
 			};
 
 			// Finds a specific payee and focusses that row in the table
-			var focusPayee = function(payeeIdToFocus) {
+			$scope.focusPayee = function(payeeIdToFocus) {
 				var targetIndex;
 
 				// Find the payee by it's id
@@ -159,10 +159,15 @@
 			};
 
 			// Listen for state change events, and when the payee id changes, ensure the row is focussed
-			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+			$scope.stateChangeSuccessHandler = function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-					focusPayee(Number(toParams.id));
+					$scope.focusPayee(Number(toParams.id));
 				}
+			};
+
+			// Handler is wrapped in a function to aid with unit testing
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+				$scope.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams);
 			});
 		}
 	]);
