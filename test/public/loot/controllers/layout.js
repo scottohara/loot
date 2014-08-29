@@ -48,8 +48,14 @@
 				}));
 			});
 
-			it("should reload the current state when the login modal returns", function() {
+			it("should reload the current state when the login modal is closed", function() {
+				$modal.close();
 				$state.reload.should.have.been.called;
+			});
+
+			it("should not reload the current state when the login modal is dismissed", function() {
+				$modal.dismiss();
+				$state.reload.should.not.have.been.called;
 			});
 		});
 

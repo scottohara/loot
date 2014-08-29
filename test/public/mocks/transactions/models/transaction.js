@@ -21,6 +21,33 @@
 		};
 	});
 
+	// Declare the transactionBatchMock provider
+	mod.provider("transactionBatchMock", function() {
+		var provider = this;
+
+		// Mock transactionBatch object
+		provider.transactionBatch = {
+			openingBalance: 100,
+			atEnd: true,
+			transactions: [
+				{id: 1, transaction_date: moment().subtract("days", 9).format("YYYY-MM-DD"), amount: 1, direction: "outflow"},
+				{id: 2, transaction_date: moment().subtract("days", 8).format("YYYY-MM-DD"), amount: 2, direction: "inflow", payee: {id: 1}},
+				{id: 3, transaction_date: moment().subtract("days", 7).format("YYYY-MM-DD"), amount: 3, direction: "outflow"},
+				{id: 4, transaction_date: moment().subtract("days", 6).format("YYYY-MM-DD"), amount: 4, direction: "inflow"},
+				{id: 5, transaction_date: moment().subtract("days", 5).format("YYYY-MM-DD"), amount: 5, direction: "outflow"},
+				{id: 6, transaction_date: moment().subtract("days", 4).format("YYYY-MM-DD"), amount: 6, direction: "inflow"},
+				{id: 7, transaction_date: moment().subtract("days", 3).format("YYYY-MM-DD"), amount: 7, direction: "outflow"},
+				{id: 8, transaction_date: moment().subtract("days", 2).format("YYYY-MM-DD"), amount: 8, direction: "inflow"},
+				{id: 9, transaction_date: moment().subtract("days", 1).format("YYYY-MM-DD"), amount: 9, direction: "outflow"}
+			]
+		};
+
+		provider.$get = function() {
+			// Return the mock transactionBatch object
+			return provider.transactionBatch;
+		};
+	});
+
 	// Declare the transactionModelMock provider
 	mod.provider("transactionModelMock", function(transactionMockProvider, $qMockProvider) {
 		var provider = this,

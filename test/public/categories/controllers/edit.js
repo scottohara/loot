@@ -79,9 +79,12 @@
 
 			it("should return a filtered & limited list of parent categories", function() {
 				categoryEditController.parentCategories("a", 3).should.eventually.deep.equal([
-					{id: 1, name: "aa"},
-					{id: 4, name: "ba"},
-					{id: 5, name: "ab"}
+					{id: 1, name: "aa", direction: "inflow", num_children: 2, children: [
+						{id: 10, name: "aa_1", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}},
+						{id: 11, name: "aa_2", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}}
+					]},
+					{id: 4, name: "ba", direction: "outflow", num_children: 0, children: []},
+					{id: 5, name: "ab", direction: "inflow", num_children: 0, children: []}
 				]);
 			});
 		});

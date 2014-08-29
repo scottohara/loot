@@ -11,9 +11,9 @@
 			$scope.context = context;
 			$scope.contextType = contextModel && contextModel.type();
 
-			var editTransaction = function(index) {
+			$scope.editTransaction = function(index) {
 				// Abort if the transaction can't be edited
-				if (!isNaN(index) && !isAllowed("edit", index)) {
+				if (!isNaN(index) && !$scope.isAllowed("edit", index)) {
 					return;
 				}
 
@@ -116,10 +116,10 @@
 							$scope.transactions.sort(byTransactionDateAndId);
 
 							// Recalculate the running balances
-							updateRunningBalances();
+							$scope.updateRunningBalances();
 
 							// Refocus the transaction
-							focusTransaction(transaction.id);
+							$scope.focusTransaction(transaction.id);
 
 							// Refetch the context (to get the updated closing balance)
 							contextModel.find($scope.context.id).then(function(context) {
@@ -135,7 +135,7 @@
 
 			var deleteTransaction = function(index) {
 				// Abort if the transaction can't be deleted
-				if (!isAllowed("delete", index)) {
+				if (!$scope.isAllowed("delete", index)) {
 					return;
 				}
 
@@ -164,7 +164,7 @@
 			};
 
 			// Returns true if the action is allowed for the transaction
-			var isAllowed = function(action, index) {
+			$scope.isAllowed = function(action, index) {
 				var	allowed = true,
 						confirm = {
 							header: "Switch account?"
@@ -222,7 +222,7 @@
 				selectAction: function(index) {
 					if (!$scope.reconciling) {
 						// When not reconciling, select action is to edit the transaction
-						editTransaction(index);
+						$scope.editTransaction(index);
 					} else {
 						// When reconciling, select action is to toggle the cleared status
 						var transaction = $scope.transactions[index];
@@ -230,10 +230,10 @@
 						$scope.toggleCleared(transaction);
 					}
 				},
-				editAction: editTransaction,
+				editAction: $scope.editTransaction,
 				insertAction: function() {
 					// Same as select action, but don't pass any arguments
-					editTransaction();
+					$scope.editTransaction();
 				},
 				deleteAction: deleteTransaction,
 				focusAction: function(index) {
@@ -298,22 +298,22 @@
 					$scope.lastTransactionDate = transactionBatch.transactions[transactionBatch.transactions.length -1].transaction_date;
 
 					// Update the running balances
-					updateRunningBalances();
+					$scope.updateRunningBalances();
 
 					// Focus on the specified transaction (if provided)
 					if (!isNaN(transactionIdToFocus)) {
-						focusTransaction(transactionIdToFocus);
+						$scope.focusTransaction(transactionIdToFocus);
 					}
 
 					// Update the reconciled amounts if in reconcile mode
 					if ($scope.reconciling) {
-						updateReconciledTotals();
+						$scope.updateReconciledTotals();
 					}
 				}
 			};
 
 			// Updates the running balance of all transactions
-			var updateRunningBalances = function() {
+			$scope.updateRunningBalances = function() {
 				// Do nothing for investment accounts
 				if ("investment" === $scope.context.account_type) {
 					return;
@@ -326,7 +326,7 @@
 			};
 
 			// Finds a specific transaction and focusses that row in the table
-			var focusTransaction = function(transactionIdToFocus) {
+			$scope.focusTransaction = function(transactionIdToFocus) {
 				var targetIndex;
 
 				// Find the transaction by it's id
@@ -560,7 +560,7 @@
 			// Listen for state change events, and when the transactionId or id parameters change, ensure the row is focussed
 			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.transactionId && (toParams.transactionId !== fromParams.transactionId || toParams.id !== fromParams.id)) {
-					if (isNaN(focusTransaction(Number(toParams.transactionId)))) {
+					if (isNaN($scope.focusTransaction(Number(toParams.transactionId)))) {
 						// Transaction was not found in the current set
 						
 						// Get the transaction details from the server

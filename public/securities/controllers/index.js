@@ -52,17 +52,17 @@
 					}
 
 					// Resort the array
-					$scope.security.sort(byHoldingAndName);
+					$scope.securities.sort(byHoldingAndName);
 
 					// Refocus the security
-					focusSecurity(security.id);
+					$scope.focusSecurity(security.id);
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
 				});
 			};
 
-			var deleteSecurity = function(index) {
+			$scope.deleteSecurity = function(index) {
 				// Check if the security can be deleted
 				securityModel.find($scope.securities[index].id).then(function(security) {
 					// Disable navigation on the table
@@ -124,7 +124,7 @@
 					// Same as select action, but don't pass any arguments
 					$scope.editSecurity();
 				},
-				deleteAction: deleteSecurity,
+				deleteAction: $scope.deleteSecurity,
 				focusAction: function(index) {
 					$state.go(($state.includes("**.security") ? "^" : "") + ".security", {
 						id: $scope.securities[index].id
@@ -133,7 +133,7 @@
 			};
 
 			// Finds a specific security and focusses that row in the table
-			var focusSecurity = function(securityIdToFocus) {
+			$scope.focusSecurity = function(securityIdToFocus) {
 				var targetIndex;
 
 				// Find the security by it's id
@@ -161,18 +161,23 @@
 					x = a.name;
 					y = b.name;
 				} else {
-					x = (a.current_holding > 0);
-					y = (b.current_holding > 0);
+					x = (a.current_holding <= 0);
+					y = (b.current_holding <= 0);
 				}
 
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			};
 
 			// Listen for state change events, and when the security id changes, ensure the row is focussed
-			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+			$scope.stateChangeSuccessHandler = function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-					focusSecurity(Number(toParams.id));
+					$scope.focusSecurity(Number(toParams.id));
 				}
+			};
+
+			// Handler is wrapped in a function to aid with unit testing
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+				$scope.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams);
 			});
 		}
 	]);

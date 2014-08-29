@@ -86,14 +86,14 @@
 					$scope.categories.sort(byDirectionAndName);
 
 					// Refocus the category
-					focusCategory(category.id);
+					$scope.focusCategory(category.id);
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
 				});
 			};
 
-			var deleteCategory = function(index) {
+			$scope.deleteCategory = function(index) {
 				// Check if the category can be deleted
 				categoryModel.find($scope.categories[index].id).then(function(category) {
 					// Disable navigation on the table
@@ -169,7 +169,7 @@
 					// Same as select action, but don't pass any arguments
 					$scope.editCategory();
 				},
-				deleteAction: deleteCategory,
+				deleteAction: $scope.deleteCategory,
 				focusAction: function(index) {
 					$state.go(($state.includes("**.category") ? "^" : "") + ".category", {
 						id: $scope.categories[index].id
@@ -178,7 +178,7 @@
 			};
 
 			// Finds a specific category and focusses that row in the table
-			var focusCategory = function(categoryIdToFocus) {
+			$scope.focusCategory = function(categoryIdToFocus) {
 				// Find the category by it's id
 				var targetIndex = categoryIndexById(categoryIdToFocus);
 
@@ -220,11 +220,16 @@
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			};
 
-			// Listen for state change events, and when the category changes, ensure the row is focussed
-			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+			// Listen for state change events, and when the security id changes, ensure the row is focussed
+			$scope.stateChangeSuccessHandler = function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-					focusCategory(Number(toParams.id));
+					$scope.focusCategory(Number(toParams.id));
 				}
+			};
+
+			// Handler is wrapped in a function to aid with unit testing
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+				$scope.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams);
 			});
 		}
 	]);

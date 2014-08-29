@@ -59,6 +59,7 @@
 		// Mock payeeModel object
 		provider.payeeModel = {
 			recent: "recent payees list",
+			type: sinon.stub().returns("payee"),
 			all: $q.promisify({
 				response: payeesMockProvider.$get()
 			}),

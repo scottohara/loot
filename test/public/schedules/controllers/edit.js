@@ -178,9 +178,9 @@
 
 			it("should return a filtered & limited list of securities", function() {
 				securities.should.eventually.deep.equal([
-					{id: 1, name: "aa"},
-					{id: 4, name: "ba"},
-					{id: 5, name: "ab"}
+					{id: 1, name: "aa", current_value: 1.006, current_holding: 1},
+					{id: 4, name: "ba", current_value: 4, current_holding: 1},
+					{id: 5, name: "ab", current_value: 5, current_holding: 1}
 				]);
 			});
 		});
@@ -205,9 +205,12 @@
 					categories.should.eventually.deep.equal([
 						{ id: "TransferTo", name: "Transfer To" },
 						{ id: "TransferFrom", name: "Transfer From" },
-						{ id: 1, name: "aa" },
-						{ id: 4, name: "ba" },
-						{ id: 5, name: "ab" }
+						{id: 1, name: "aa", direction: "inflow", num_children: 2, children: [
+							{id: 10, name: "aa_1", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}},
+							{id: 11, name: "aa_2", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}}
+						]},
+						{id: 4, name: "ba", direction: "outflow", num_children: 0, children: []},
+						{id: 5, name: "ab", direction: "inflow", num_children: 0, children: []}
 					]);
 				});
 
@@ -218,9 +221,12 @@
 						{ id: "TransferFrom", name: "Transfer From" },
 						{ id: "Payslip", name: "Payslip" },
 						{ id: "LoanRepayment", name: "Loan Repayment" },
-						{ id: 1, name: "aa" },
-						{ id: 4, name: "ba" },
-						{ id: 5, name: "ab" }
+						{id: 1, name: "aa", direction: "inflow", num_children: 2, children: [
+							{id: 10, name: "aa_1", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}},
+							{id: 11, name: "aa_2", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}}
+						]},
+						{id: 4, name: "ba", direction: "outflow", num_children: 0, children: []},
+						{id: 5, name: "ab", direction: "inflow", num_children: 0, children: []}
 					]);
 				});
 			});
@@ -233,9 +239,12 @@
 				it("should eventually return a filtered & limited list of payees", function() {
 					categories = scheduleEditController.categories("a", 3, {id: 1});
 					categories.should.eventually.deep.equal([
-						{ id: 1, name: "aa" },
-						{ id: 4, name: "ba" },
-						{ id: 5, name: "ab" }
+						{id: 1, name: "aa", direction: "inflow", num_children: 2, children: [
+							{id: 10, name: "aa_1", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}},
+							{id: 11, name: "aa_2", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}}
+						]},
+						{id: 4, name: "ba", direction: "outflow", num_children: 0, children: []},
+						{id: 5, name: "ab", direction: "inflow", num_children: 0, children: []}
 					]);
 				});
 			});
