@@ -60,6 +60,9 @@
 		provider.payeeModel = {
 			recent: "recent payees list",
 			type: sinon.stub().returns("payee"),
+			path: function(id) {
+				return "/payees/" + id;
+			},
 			all: $q.promisify({
 				response: payeesMockProvider.$get()
 			}),

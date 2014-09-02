@@ -49,7 +49,7 @@
 	});
 
 	// Declare the transactionModelMock provider
-	mod.provider("transactionModelMock", function(transactionMockProvider, $qMockProvider) {
+	mod.provider("transactionModelMock", function(transactionMockProvider, transactionBatchMockProvider, $qMockProvider) {
 		var provider = this,
 				success,
 				error,
@@ -67,6 +67,18 @@
 
 		// Mock transactionModel object
 		provider.transactionModel = {
+			all: $q.promisify({
+				args: "/payees/1",
+				response: transactionBatchMockProvider.$get()
+			}, {
+				args: "/payees/-1"
+			}),
+			query: $q.promisify({
+				args: "search",
+				response: transactionBatchMockProvider.$get()
+			}, {
+				args: "dontsearch"
+			}),
 			findSubtransactions: $q.promisify({
 				response: [
 					{id: 1, transaction_type: "Transfer", account: "subtransfer account"},

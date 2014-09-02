@@ -13,7 +13,7 @@
 
 			$scope.editTransaction = function(index) {
 				// Abort if the transaction can't be edited
-				if (!isNaN(index) && !$scope.isAllowed("edit", index)) {
+				if (!isNaN(index) && !$scope.isAllowed("edit", $scope.transactions[index])) {
 					return;
 				}
 
@@ -33,11 +33,11 @@
 								return {
 									transaction_type: "Basic",
 									transaction_date: moment().format("YYYY-MM-DD"),
-									primary_account: contextModel && "account" === contextModel.type() ? context : undefined,
-									payee: contextModel && "payee" === contextModel.type() ? context : undefined,
-									security: contextModel && "security" === contextModel.type() ? context : undefined,
-									category: contextModel && "category" === contextModel.type() ? (context.parent ? context.parent : context) : undefined,
-									subcategory: contextModel && "category" === contextModel.type() && context.parent ? context : undefined,
+									primary_account: "account" === $scope.contextType ? $scope.context : undefined,
+									payee: "payee" === $scope.contextType ? $scope.context : undefined,
+									security: "security" === $scope.contextType ? $scope.context : undefined,
+									category: "category" === $scope.contextType ? ($scope.context.parent ? $scope.context.parent : $scope.context) : undefined,
+									subcategory: "category" === $scope.contextType && $scope.context.parent ? $scope.context : undefined,
 									subtransactions: [{},{},{},{}]
 								};
 							}
@@ -58,37 +58,8 @@
 						}
 					}
 				}).result.then(function(transaction) {
-					var	currentContext,
-							contextChanged = false;
-
-					if (!contextModel) {
-						// Search mode - check if the transaction memo still matches the search query
-						contextChanged = transaction.memo.indexOf($scope.context) > -1;
-					} else {
-						// Context mode - check if the transaction still matches the context id
-						switch ($scope.contextType) {
-							case "account":
-								currentContext = transaction.primary_account;
-								break;
-
-							case "payee":
-								currentContext = transaction.payee;
-								break;
-
-							case "security":
-								currentContext = transaction.security;
-								break;
-
-							case "category":
-								currentContext = context.parent ? transaction.subcategory : transaction.category;
-								break;
-						}
-
-						contextChanged = currentContext.id !== $scope.context.id;
-					}
-
 					// If the context has changed, remove the transaction from the array
-					if (contextChanged) {
+					if ($scope.contextChanged(transaction)) {
 						$scope.transactions.splice(index, 1);
 						if ($state.includes("**.transaction")) {
 							$state.go("^");
@@ -133,9 +104,38 @@
 				});
 			};
 
-			var deleteTransaction = function(index) {
+			$scope.contextChanged = function(transaction) {
+				var	currentContext;
+
+				// Check if the transaction still matches the context
+				switch ($scope.contextType) {
+					case "account":
+						currentContext = transaction.primary_account;
+						break;
+
+					case "payee":
+						currentContext = transaction.payee;
+						break;
+
+					case "security":
+						currentContext = transaction.security;
+						break;
+
+					case "category":
+						currentContext = $scope.context.parent ? transaction.subcategory : transaction.category;
+						break;
+
+					default:
+						// Search mode - check if the transaction memo still matches the search query
+						return transaction.memo.indexOf($scope.context) === -1;
+				}
+
+				return currentContext.id !== $scope.context.id;
+			};
+
+			$scope.deleteTransaction = function(index) {
 				// Abort if the transaction can't be deleted
-				if (!$scope.isAllowed("delete", index)) {
+				if (!$scope.isAllowed("delete", $scope.transactions[index])) {
 					return;
 				}
 
@@ -164,54 +164,63 @@
 			};
 
 			// Returns true if the action is allowed for the transaction
-			$scope.isAllowed = function(action, index) {
+			$scope.isAllowed = function(action, transaction) {
 				var	allowed = true,
-						confirm = {
-							header: "Switch account?"
-						};
+						message;
 
 				// Check if the action is allowed
-				switch ($scope.transactions[index].transaction_type) {
+				switch (transaction.transaction_type) {
 					case "Sub":
 					case "Subtransfer":
 						allowed = false;
-						confirm.message = "This transaction is part of a split transaction. You can only " + action + " it from the parent account. Would you like to switch to the parent account now?";
+						message = "This transaction is part of a split transaction. You can only " + action + " it from the parent account. Would you like to switch to the parent account now?";
 						break;
 
 					case "Dividend":
 					case "SecurityInvestment":
-						if ("investment" !== $scope.transactions[index].primary_account.account_type && "edit" === action) {
+						if ("investment" !== transaction.primary_account.account_type && "edit" === action) {
 							allowed = false;
-							confirm.message = "This is an investment transaction. You can only " + action + " if from the investment account. Would you like to switch to the investment account now?";
+							message = "This is an investment transaction. You can only " + action + " if from the investment account. Would you like to switch to the investment account now?";
 						}
 						break;
 				}
 
 				// If the action is not allowed, show the confirmation prompt
 				if (!allowed) {
-					// Disable navigation on the table
-					$scope.navigationDisabled = true;
-
-					// Show the modal
-					$modal.open({
-						templateUrl: "og-components/og-modal-confirm/views/confirm.html",
-						controller: "ogModalConfirmController",
-						backdrop: "static",
-						resolve: {
-							confirm: function() {
-								return confirm;
-							}
-						}
-					}).result.then(function() {
-						// Switch to the other account
-						switchAccount(null, $scope.transactions[index].account.id || $scope.transactions[index].primary_account.id, $scope.transactions[index]);
-					}).finally(function() {
-						// Enable navigation on the table
-						$scope.navigationDisabled = false;
-					});
+					$scope.promptToSwitchAccounts(message, transaction);
 				}
 
 				return allowed;
+			};
+
+			$scope.promptToSwitchAccounts = function(message, transaction) {
+				// Disable navigation on the table
+				$scope.navigationDisabled = true;
+
+				// Show the modal
+				$modal.open({
+					templateUrl: "og-components/og-modal-confirm/views/confirm.html",
+					controller: "ogModalConfirmController",
+					backdrop: "static",
+					resolve: {
+						confirm: function() {
+							return {
+								header: "Switch account?",
+								message: message
+							};
+						}
+					}
+				}).result.then(function() {
+					// Switch to the other account
+					if (transaction.account && transaction.account.id) {
+						$scope.switchAccount(null, transaction);
+					} else {
+						$scope.switchPrimaryAccount(null, transaction);
+					}
+				}).finally(function() {
+					// Enable navigation on the table
+					$scope.navigationDisabled = false;
+				});
 			};
 
 			// Action handlers for navigable table
@@ -235,7 +244,7 @@
 					// Same as select action, but don't pass any arguments
 					$scope.editTransaction();
 				},
-				deleteAction: deleteTransaction,
+				deleteAction: $scope.deleteTransaction,
 				focusAction: function(index) {
 					$state.go(($state.includes("**.transaction") ? "^" : "") + ".transaction", {
 						transactionId: $scope.transactions[index].id
@@ -268,7 +277,7 @@
 					}
 				}
 
-				if (contextModel) {
+				if ($scope.contextType) {
 					// Get all transactions for the context
 					transactionFetch = transactionModel.all(contextModel.path($scope.context.id), fromDate, direction, $scope.unreconciledOnly);
 				} else {
@@ -278,7 +287,7 @@
 
 				transactionFetch.then(function(transactionBatch) {
 					// Process the transaction batch
-					processTransactions(transactionBatch, fromDate, transactionIdToFocus);
+					$scope.processTransactions(transactionBatch, fromDate, transactionIdToFocus);
 
 					// Hide spinner
 					$scope.loading[direction] = false;
@@ -286,7 +295,7 @@
 			};
 
 			// Processes a batch of transactions
-			var processTransactions = function(transactionBatch, fromDate, transactionIdToFocus) {
+			$scope.processTransactions = function(transactionBatch, fromDate, transactionIdToFocus) {
 				if (transactionBatch.transactions.length > 0) {
 					// Store the opening balance & transactions
 					$scope.openingBalance = transactionBatch.openingBalance;
@@ -555,10 +564,10 @@
 			};
 
 			// Process the initial batch of transactions to display
-			processTransactions(transactionBatch);
+			$scope.processTransactions(transactionBatch);
 
 			// Listen for state change events, and when the transactionId or id parameters change, ensure the row is focussed
-			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+			$scope.stateChangeSuccessHandler = function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.transactionId && (toParams.transactionId !== fromParams.transactionId || toParams.id !== fromParams.id)) {
 					if (isNaN($scope.focusTransaction(Number(toParams.transactionId)))) {
 						// Transaction was not found in the current set
@@ -588,6 +597,11 @@
 						});
 					}
 				}
+			};
+
+			// Handler is wrapped in a function to aid with unit testing
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+				$scope.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams);
 			});
 		}
 	]);
