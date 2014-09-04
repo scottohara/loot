@@ -9,7 +9,10 @@
 		var provider = this;
 
 		// Mock category object
-		provider.category = {id: 1};
+		provider.category = {id: 1, name: "aa", direction: "inflow", num_children: 2, children: [
+			{id: 10, name: "aa_1", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}},
+			{id: 11, name: "aa_2", direction: "inflow", num_children: 0, parent_id: 1, parent: {name: "aa"}}
+		]};
 
 		provider.$get = function() {
 			// Return the mock category object
@@ -68,10 +71,14 @@
 
 		// Mock categoryModel object
 		provider.categoryModel = {
+			path: function(id) {
+				return "/categories/" + id;
+			},
 			recent: "recent categories list",
 			all: $q.promisify({
 				response: categoriesMockProvider.$get()
 			}),
+			allWithChildren: sinon.stub().returns(categoriesMockProvider.$get()),
 			find: function(id) {
 				var category;
 

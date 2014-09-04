@@ -12,6 +12,7 @@
 		provider.transaction = {
 			id: 1,
 			primary_account: {},
+			transaction_date: moment().subtract(1, "day").format("YYYY-MM-DD"),
 			flag: "transaction flag"
 		};
 
@@ -68,10 +69,10 @@
 		// Mock transactionModel object
 		provider.transactionModel = {
 			all: $q.promisify({
-				args: "/payees/1",
+				args: "/1",
 				response: transactionBatchMockProvider.$get()
 			}, {
-				args: "/payees/-1"
+				args: "/-1"
 			}),
 			query: $q.promisify({
 				args: "search",
@@ -85,6 +86,11 @@
 					{id: 2, category: "subtransaction category"},
 					{id: 3, category: "another subtransaction category", subcategory: "subtransaction subcategory"}
 				]
+			}, {
+				args: -1
+			}),
+			find: $q.promisify({
+				response: transactionMockProvider.$get()
 			}),
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),

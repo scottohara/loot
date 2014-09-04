@@ -10,7 +10,7 @@
 			// Store the schedules on the scope
 			$scope.schedules = schedules;
 
-			var editSchedule = function(index) {
+			$scope.editSchedule = function(index) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 
@@ -55,14 +55,14 @@
 					$scope.schedules.sort(byNextDueDateAndId);
 
 					// Refocus the schedule
-					focusSchedule(schedule.id);
+					$scope.focusSchedule(schedule.id);
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
 				});
 			};
 
-			var deleteSchedule = function(index) {
+			$scope.deleteSchedule = function(index) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 
@@ -90,13 +90,13 @@
 				navigationEnabled: function() {
 					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
 				},
-				selectAction: editSchedule,
-				editAction: editSchedule,
+				selectAction: $scope.editSchedule,
+				editAction: $scope.editSchedule,
 				insertAction: function() {
 					// Same as select action, but don't pass any arguments
-					editSchedule();
+					$scope.editSchedule();
 				},
-				deleteAction: deleteSchedule,
+				deleteAction: $scope.deleteSchedule,
 				focusAction: function(index) {
 					$state.go(($state.includes("**.schedule") ? "^" : "") + ".schedule", {
 						id: $scope.schedules[index].id
@@ -108,7 +108,7 @@
 			$scope.today = moment().format("YYYY-MM-DD");
 
 			// Finds a specific schedule and focusses that row in the table
-			var focusSchedule = function(scheduleIdToFocus) {
+			$scope.focusSchedule = function(scheduleIdToFocus) {
 				var targetIndex;
 
 				// Find the schedule by it's id
@@ -169,10 +169,15 @@
 			};
 
 			// Listen for state change events, and when the schedule id changes, ensure the row is focussed
-			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+			$scope.stateChangeSuccessHandler = function(event, toState, toParams, fromState, fromParams) {
 				if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-					focusSchedule(Number(toParams.id));
+					$scope.focusSchedule(Number(toParams.id));
 				}
+			};
+
+			// Handler is wrapped in a function to aid with unit testing
+			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+				$scope.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams);
 			});
 		}
 	]);

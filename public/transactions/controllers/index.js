@@ -69,10 +69,10 @@
 
 						if (!fromDate.isAfter($scope.firstTransactionDate)) {
 							// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-							$scope.getTransactions("next", fromDate.subtract("days", 1).toISOString(), transaction.id);
+							$scope.getTransactions("next", fromDate.subtract("days", 1).format("YYYY-MM-DD"), transaction.id);
 						} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 							// Transaction date is later than the latest fetched transaction, refresh from the new date
-							$scope.getTransactions("prev", fromDate.add("days", 1).toISOString(), transaction.id);
+							$scope.getTransactions("prev", fromDate.add("days", 1).format("YYYY-MM-DD"), transaction.id);
 						} else {
 							// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
 							if (isNaN(index)) {
@@ -427,7 +427,7 @@
 				};
 
 				// Helper function to calculate the total cleared/uncleared totals
-				var updateReconciledTotals = function() {
+				$scope.updateReconciledTotals = function() {
 					// Target is the closing balance, minus the opening balance
 					$scope.reconcileTarget = Number(($scope.closingBalance - $scope.openingBalance).toFixed(2));
 
@@ -448,7 +448,7 @@
 				$scope.toggleCleared = function(transaction) {
 					transactionModel.updateStatus(contextModel.path($scope.context.id), transaction.id, transaction.status).then(function() {
 						// Update reconciled totals
-						updateReconciledTotals();
+						$scope.updateReconciledTotals();
 					});
 				};
 			}
@@ -463,7 +463,7 @@
 					// Show the loading indicator
 					transaction.loadingSubtransactions = true;
 
-					// Clear the array?
+					// Clear the array
 					transaction.subtransactions = [];
 
 					// Resolve the subtransactions
@@ -504,7 +504,7 @@
 			};
 
 			// Helper function for switching states
-			var switchTo = function($event, state, id, transaction) {
+			$scope.switchTo = function($event, state, id, transaction) {
 				// For Subtransactions, don't switch to the parent
 				// (only applies when switching between Category <=> Subcategory transaction lists)
 				if ("Sub" === transaction.transaction_type) {
@@ -521,7 +521,7 @@
 				}
 			};
 
-			var switchAccount = function($event, id, transaction) {
+			$scope.switchToAccount = function($event, id, transaction) {
 				// Disable navigation on the table
 				$scope.navigationDisabled = true;
 				
@@ -530,37 +530,37 @@
 					accountModel.unreconciledOnly(id, false);
 				}
 
-				switchTo($event, "accounts.account", id, transaction);
+				$scope.switchTo($event, "accounts.account", id, transaction);
 			};
 
 			// Switch to the other side of a transaction
 			$scope.switchAccount = function($event, transaction) {
-				switchAccount($event, transaction.account.id, transaction);
+				$scope.switchToAccount($event, transaction.account.id, transaction);
 			};
 
 			// Switch to the primary account of a transaction
 			$scope.switchPrimaryAccount = function($event, transaction) {
-				switchAccount($event, transaction.primary_account.id, transaction);
+				$scope.switchToAccount($event, transaction.primary_account.id, transaction);
 			};
 
 			// Switch to the transaction's payee
 			$scope.switchPayee = function($event, transaction) {
-				switchTo($event, "payees.payee", transaction.payee.id, transaction);
+				$scope.switchTo($event, "payees.payee", transaction.payee.id, transaction);
 			};
 	
 			// Switch to the transaction's security
 			$scope.switchSecurity = function($event, transaction) {
-				switchTo($event, "securities.security", transaction.security.id, transaction);
+				$scope.switchTo($event, "securities.security", transaction.security.id, transaction);
 			};
 
 			// Switch to the transaction's category
 			$scope.switchCategory = function($event, transaction) {
-				switchTo($event, "categories.category", transaction.category.id, transaction);
+				$scope.switchTo($event, "categories.category", transaction.category.id, transaction);
 			};
 
 			// Switch to the transaction's subcategory
 			$scope.switchSubcategory = function($event, transaction) {
-				switchTo($event, "categories.category", transaction.subcategory.id, transaction);
+				$scope.switchTo($event, "categories.category", transaction.subcategory.id, transaction);
 			};
 
 			// Process the initial batch of transactions to display
@@ -579,13 +579,15 @@
 
 							if (!fromDate.isAfter($scope.firstTransactionDate)) {
 								// Transaction date is earlier than the earliest fetched transaction
-								fromDate = fromDate.subtract("days", 1).toISOString();
+								fromDate = fromDate.subtract("days", 1);
 								direction = "next";
 							} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 								// Transaction date is later than the latest fetched transaction
-								fromDate = fromDate.add("days", 1).toISOString();
+								fromDate = fromDate.add("days", 1);
 								direction = "prev";
 							}
+
+							fromDate = fromDate.format("YYYY-MM-DD");
 
 							if ($scope.unreconciledOnly) {
 								// If we're not already showing reconciled transactions, toggle the setting

@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe.only("transactionIndexController", function() {
+	describe("transactionIndexController", function() {
 		// The object under test
 		var transactionIndexController;
 
@@ -48,7 +48,24 @@
 		it("should make the passed context type available on the scope", function() {
 			transactionIndexController.contextType.should.equal(contextModel.type());
 		});
-			
+
+		it("should not set a context type when a context model was not specified");
+
+		// TODO - needs transactionBatch.length to be 0
+		it.skip("should set an empty array of transactions on the scope", function() {
+			transactionIndexController.transactions.should.be.an.Array;
+			transactionIndexController.transactions.should.be.empty;
+		});
+
+		it("should process the passed transaction batch", function() {
+			transactionIndexController.openingBalance = transactionBatch.openingBalance;
+		});
+
+		it("should set the previous/next loading indicators to false", function() {
+			transactionIndexController.loading.prev.should.be.false;
+			transactionIndexController.loading.next.should.be.false;
+		});
+
 		describe("editTransaction", function() {
 			var transaction,
 					contextChangedStub;
@@ -190,7 +207,7 @@
 					transaction.transaction_date = moment(transactionIndexController.firstTransactionDate).subtract(1, "day").format("YYYY-MM-DD");
 					transactionIndexController.editTransaction(1);
 					$modal.close(transaction);
-					transactionIndexController.getTransactions.should.have.been.calledWith("next", moment(transaction.transaction_date).subtract(1, "day").toISOString(), transaction.id);
+					transactionIndexController.getTransactions.should.have.been.calledWith("next", moment(transaction.transaction_date).subtract(1, "day").format("YYYY-MM-DD"), transaction.id);
 				});
 			});
 
@@ -209,7 +226,7 @@
 				it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", function() {
 					transactionIndexController.atEnd = false;
 					$modal.close(transaction);
-					transactionIndexController.getTransactions.should.have.been.calledWith("prev", moment(transaction.transaction_date).add(1, "day").toISOString(), transaction.id);
+					transactionIndexController.getTransactions.should.have.been.calledWith("prev", moment(transaction.transaction_date).add(1, "day").format("YYYY-MM-DD"), transaction.id);
 				});
 			});
 
@@ -679,7 +696,6 @@
 		});
 
 		describe("updateRunningBalances", function() {
-
 			it("should do nothing for investment accounts", function() {
 				transactionIndexController.context.account_type = "investment";
 				transactionIndexController.updateRunningBalances();
@@ -714,55 +730,408 @@
 			});
 		});
 
-		describe("(account context)", function() {
-			//TODO
+		// TODO - needs account context
+		describe.skip("(account context)", function() {
+			it("should set a flag on the scope to enable reconciling", function() {
+				transactionIndexController.reconcilable.should.be.true;
+			});
+
+			it("should fetch the unreconciled only setting for the current account", function() {
+				accountModel.isUnreconciledOnly.should.have.been.calledWith(transactionIndexController.context.id);
+			});
+
+			describe("toggleUnreconciledOnly", function() {
+				var direction,
+						fromDate,
+						transactionIdToFocus;
+
+				beforeEach(function() {
+					transactionIndexController.unreconciledOnly = false;
+					sinon.stub(transactionIndexController, "getTransactions");
+					direction = "next";
+					fromDate = "from date";
+					transactionIdToFocus = 1;
+				});
+
+				it("should update the unreconciled only setting for the current account", function() {
+					transactionIndexController.toggleUnreconciledOnly(true);
+					accountModel.unreconciledOnly.should.have.been.calledWith(transactionIndexController.context.id, true);
+				});
+
+				it("should set a flag on the scope to indicate that we're showing unreconciled transactions only", function() {
+					transactionIndexController.toggleUnreconciledOnly(true);
+					transactionIndexController.unreconciledOnly.should.be.true;
+				});
+
+				it("should clear the list of transactions", function() {
+					transactionIndexController.toggleUnreconciledOnly(true);
+					transactionIndexController.transactions.should.be.empty;
+				});
+
+				it("should refetch a batch of transactions in the specified direction", function() {
+					transactionIndexController.toggleUnreconciledOnly(true, direction, fromDate, transactionIdToFocus);
+					transactionIndexController.getTransactions.should.have.been.calledWith(direction, fromDate, transactionIdToFocus);
+				});
+
+				it("should refetch a batch of transactions in the previous direction if a direction is not specified", function() {
+					direction = undefined;
+					transactionIndexController.toggleUnreconciledOnly(true, direction, fromDate, transactionIdToFocus);
+					transactionIndexController.getTransactions.should.have.been.calledWith("prev", fromDate, transactionIdToFocus);
+				});
+			});
+
+			describe("save", function() {
+				var contextId;
+
+				beforeEach(function() {
+					contextId = 1;
+					transactionIndexController.context.id = contextId;
+					transactionIndexController.reconciling = true;
+					transactionIndexController.save();
+				});
+
+				it("should update all cleared transactions to reconciled", function() {
+					accountModel.reconciled.should.have.been.calledWith(contextId);
+				});
+
+				it("should cleared the account's closing balance", function() {
+					$window.localStorage.removeItem.should.have.been.calledWith("lootClosingBalance-1");
+				});
+
+				it("should exit reconcile mode", function() {
+					transactionIndexController.reconciling.should.be.false;
+				});
+			});
+
+			describe("cancel", function() {
+				it("should exit reconcile mode", function() {
+					transactionIndexController.reconciling = true;
+					transactionIndexController.save();
+					transactionIndexController.reconciling.should.be.false;
+				});
+			});
+
+			describe("reconcile", function() {
+				beforeEach(function() {
+					transactionIndexController.reconciling = false;
+					transactionIndexController.reconcile();
+				});
+
+				it("should prompt the user for the accounts closing balance", function() {
+					$modal.open.should.have.been.called;
+					$modal.resolves.account.should.deep.equal(transactionIndexController.context);
+				});
+
+				it("should make the closing balance available on the scope when the modal is closed", function() {
+					var closingBalance = 100;
+					$modal.close(closingBalance);
+					transactionIndexController.closingBalance.should.equal(closingBalance);
+				});
+
+				it("should enter reconcile mode when the modal is closed", function() {
+					$modal.close();
+					transactionIndexController.reconciling.should.be.true;
+				});
+
+				it("should refetch the list of unreconciled transactions", function() {
+					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(true);
+				});
+			});
+
+			describe("updateReconciledTotals", function() {
+				beforeEach(function() {
+					transactionIndexController.openingBalance = 100.0005;
+					transactionIndexController.closingBalance = 300.0004;
+					transactionIndexController.updateReconciledTotals();
+				});
+
+				it("should set the reconcile target to the difference between the opening and closing balances", function() {
+					transactionIndexController.reconcileTarget.should.equal(200.01);
+				});
+
+				it("should set the cleared total to the sum of all cleared transaction amounts", function() {
+					transactionIndexController.clearedTotal.should.equal(123); //TODO - cleared total
+				});
+
+				it("should set the uncleared total to the difference between the cleared total and the reconcile target", function() {
+					transactionIndexController.unclearedTotal.should.equal(123); //TODO - uncleared total
+				});
+			});
+
+			describe("toggleCleared", function() {
+				var transaction;
+
+				beforeEach(function() {
+					transaction = {
+						id: 1,
+						status: "status"
+					};
+				});
+
+				it("should update the transaction status", function() {
+					transactionModel.updateStatus.should.have.been.calledWith("payees/1", transaction.id, transaction.status);
+				});
+
+				it("should update the reconciled totals", function() {
+					transactionIndexController.updateReconciledTotals.should.have.been.called;
+				});
+			});
 		});
 
 		describe("toggleSubtransactions", function() {
-			//TODO
+			var event,
+					transaction;
+
+			beforeEach(function() {
+				event = {
+					cancelBubble: false
+				};
+				transaction = {
+					id: -1,
+					showSubtransactions: true
+				};
+			});
+
+			it("should toggle a flag on the transaction indicating whether subtransactions are shown", function() {
+				transactionIndexController.toggleSubtransactions(event, transaction);
+				transaction.showSubtransactions.should.be.false;
+			});
+
+			it("should do nothing if we're not showing subtransactions", function() {
+				transactionIndexController.toggleSubtransactions(event, transaction);
+				transactionModel.findSubtransactions.should.not.have.been.called;
+			});
+			
+			describe("(on shown)", function() {
+				beforeEach(function() {
+					transaction.showSubtransactions = false;
+					transaction.loadingSubtransactions = false;
+					transaction.subtransactions = undefined;
+				});
+
+				it("should show a loading indicator", function() {
+					transactionIndexController.toggleSubtransactions(event, transaction);
+					transaction.showSubtransactions.should.be.true;
+					transaction.loadingSubtransactions.should.be.true;
+				});
+
+				it("should clear the subtransactions for the transaction", function() {
+					transactionIndexController.toggleSubtransactions(event, transaction);
+					transaction.subtransactions.should.be.an.Array;
+					transaction.subtransactions.should.be.empty;
+				});
+
+				it("should fetch the subtransactions", function() {
+					transaction.id = 1;
+					transactionIndexController.toggleSubtransactions(event, transaction);
+					transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
+				});
+
+				it("should update the transaction with it's subtransactions", function() {
+					var subtransactions = [
+						{id: 1, transaction_type: "Transfer", account: "subtransfer account"},
+						{id: 2, category: "subtransaction category"},
+						{id: 3, category: "another subtransaction category", subcategory: "subtransaction subcategory"}
+					];
+					transaction.id = 1;
+					transactionIndexController.toggleSubtransactions(event, transaction);
+					transaction.subtransactions.should.deep.equal(subtransactions);
+				});
+
+				it("should hide the loading indicator", function() {
+					transaction.id = 1;
+					transactionIndexController.toggleSubtransactions(event, transaction);
+					transaction.loadingSubtransactions.should.be.false;
+				});
+			});
+ 
+			it("should prevent the event from bubbling", function() {
+				transactionIndexController.toggleSubtransactions(event, transaction);
+				event.cancelBubble.should.be.true;
+			});
 		});
 
 		describe("flag", function() {
-			//TODO
+			var transaction;
+
+			beforeEach(function() {
+				transaction = angular.copy(transactionIndexController.transactions[1]);
+				transactionIndexController.flag(1);
+			});
+
+			it("should disable navigation on the table", function() {
+				transactionIndexController.navigationDisabled.should.be.true;
+			});
+
+			it("should show the flag modal for the transaction", function() {
+				$modal.open.should.have.been.called;
+				$modal.resolves.transaction.should.deep.equal(transaction);
+			});
+
+			it("should update the transaction in the list of transactions when the modal is closed", function() {
+				transaction.flag = "test flag";
+				$modal.close(transaction);
+				transactionIndexController.transactions[1].should.deep.equal(transaction);
+			});
+
+			it("should enable navigation on the table when the modal is closed", function() {
+				$modal.close(transaction);
+				transactionIndexController.navigationDisabled.should.be.false;
+			});
+
+			it("should enable navigation on the table when the modal is dismissed", function() {
+				$modal.dismiss();
+				transactionIndexController.navigationDisabled.should.be.false;
+			});
+		});
+
+		describe("switchTo", function() {
+			var transaction,
+					stateParams;
+			
+			beforeEach(function() {
+				transaction = {
+					id: "transaction id",
+					parent_id: "parent id"
+				};
+
+				stateParams = {
+					id: "test id",
+					transactionId: transaction.id
+				};
+			});
+
+			it("should transition to the specified state passing the transaction id", function() {
+				transaction.parent_id = undefined;
+				transactionIndexController.switchTo(undefined, "state", stateParams.id, transaction);
+				$state.go.should.have.been.calledWith("root.state.transactions.transaction", stateParams);
+			});
+
+			it("should transition to the specified state passing the parent transaction id if present", function() {
+				stateParams.transactionId = transaction.parent_id;
+				transactionIndexController.switchTo(undefined, "state", stateParams.id, transaction);
+				$state.go.should.have.been.calledWith("root.state.transactions.transaction", stateParams);
+			});
+
+			it("should transition to the specified state passing the transaction id for a Subtransaction", function() {
+				transaction.transaction_type = "Sub";
+				transactionIndexController.switchTo(undefined, "state", stateParams.id, transaction);
+				$state.go.should.have.been.calledWith("root.state.transactions.transaction", stateParams);
+			});
+		});
+
+		describe("switchToAccount", function() {
+			var id,
+					transaction;
+
+			beforeEach(function() {
+				sinon.stub(transactionIndexController, "switchTo");
+				id = "test id";
+				transaction = {};
+			});
+
+			it("should disable navigation on the table", function() {
+				transactionIndexController.switchToAccount(undefined, id, transaction);
+				transactionIndexController.navigationDisabled.should.be.true;
+			});
+
+			it("should not toggle the unreconciled only setting for the account if the transaction is not reconciled", function() {
+				transactionIndexController.switchToAccount(undefined, id, transaction);
+				accountModel.unreconciledOnly.should.not.have.been.called;
+			});
+
+			it("should toggle the unreconciled only setting for the account if the transaction is reconciled", function() {
+				transaction.status = "Reconciled";
+				transactionIndexController.switchToAccount(undefined, id, transaction);
+				accountModel.unreconciledOnly.should.have.been.calledWith(id, false);
+			});
+
+			it("should transition to the specified state", function() {
+				var event = "test event";
+				transactionIndexController.switchToAccount(event, id, transaction);
+				transactionIndexController.switchTo.should.have.been.calledWith(event, "accounts.account", id, transaction);
+			});
 		});
 
 		describe("switchAccount", function() {
-			//TODO
+			it("should switch to the other side of the transaction", function() {
+				var event = "test event",
+						transaction = {account: {id: 1}, primary_account: {id: 2}};
+
+				sinon.stub(transactionIndexController, "switchToAccount");
+				transactionIndexController.switchAccount(event, transaction);
+				transactionIndexController.switchToAccount.should.have.been.calledWith(event, transaction.account.id, transaction);
+			});
 		});
 
 		describe("switchPrimaryAccount", function() {
-			//TODO
+			it("should switch to the primary account of the transaction", function() {
+				var event = "test event",
+						transaction = {account: {id: 1}, primary_account: {id: 2}};
+
+				sinon.stub(transactionIndexController, "switchToAccount");
+				transactionIndexController.switchPrimaryAccount(event, transaction);
+				transactionIndexController.switchToAccount.should.have.been.calledWith(event, transaction.primary_account.id, transaction);
+			});
 		});
 
 		describe("switchPayee", function() {
-			//TODO
+			it("should switch to the payee of the transaction", function() {
+				var event = "test event",
+						transaction = {payee: {id: 1}};
+
+				sinon.stub(transactionIndexController, "switchTo");
+				transactionIndexController.switchPayee(event, transaction);
+				transactionIndexController.switchTo.should.have.been.calledWith(event, "payees.payee", transaction.payee.id, transaction);
+			});
 		});
 
 		describe("switchSecurity", function() {
-			//TODO
+			it("should switch to the security of the transaction", function() {
+				var event = "test event",
+						transaction = {security: {id: 1}};
+
+				sinon.stub(transactionIndexController, "switchTo");
+				transactionIndexController.switchSecurity(event, transaction);
+				transactionIndexController.switchTo.should.have.been.calledWith(event, "securities.security", transaction.security.id, transaction);
+			});
 		});
 
 		describe("switchCategory", function() {
-			//TODO
+			it("should switch to the category of the transaction", function() {
+				var event = "test event",
+						transaction = {category: {id: 1}};
+
+				sinon.stub(transactionIndexController, "switchTo");
+				transactionIndexController.switchCategory(event, transaction);
+				transactionIndexController.switchTo.should.have.been.calledWith(event, "categories.category", transaction.category.id, transaction);
+			});
 		});
 
 		describe("swithSubcategory", function() {
-			//TODO
+			it("should switch to the subcategory of the transaction", function() {
+				var event = "test event",
+						transaction = {subcategory: {id: 1}};
+
+				sinon.stub(transactionIndexController, "switchTo");
+				transactionIndexController.switchSubcategory(event, transaction);
+				transactionIndexController.switchTo.should.have.been.calledWith(event, "categories.category", transaction.subcategory.id, transaction);
+			});
 		});
 
 		describe("stateChangeSuccessHandler", function() {
 			var toState,
 					toParams,
 					fromState,
-					fromParams;
+					fromParams,
+					focusTransactionStub;
 
 			beforeEach(function() {
 				toState = {name: "state"};
 				toParams = {id: 1, transactionId: 1};
 				fromState = angular.copy(toState);
 				fromParams = angular.copy(toParams);
-				sinon.stub(transactionIndexController, "focusTransaction");
-				sinon.stub(transactionModel, "find");
+				focusTransactionStub = sinon.stub(transactionIndexController, "focusTransaction").returns(1);
 			});
 
 			it("should do nothing when a transaction id state parameter is not specified", function() {
@@ -774,12 +1143,6 @@
 			it("should do nothing when state parameters have not changed", function() {
 				transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 				transactionIndexController.focusTransaction.should.not.have.been.called;
-			});
-
-			it("should ensure the transaction is focussed when the state name changes", function() {
-				toState.name = "new state";
-				transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
-				transactionIndexController.focusTransaction.should.have.been.calledWith(toParams.transactionId);
 			});
 
 			it("should ensure the transaction is focussed when the id state param changes", function() {
@@ -795,7 +1158,52 @@
 			});
 
 			describe("(transaction not found)", function() {
-				//TODO
+				beforeEach(function() {
+					sinon.stub(transactionIndexController, "getTransactions");
+					focusTransactionStub.withArgs(3).returns(NaN);
+					toParams.transactionId = 3;
+				});
+
+				it("should fetch the transaction details", function() {
+					transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
+					transactionModel.find.should.have.been.calledWith(toParams.transactionId);
+				});
+
+				describe("(showing unreconciled only)", function() {
+					// TODO - only available in account context
+					it.skip("should toggle to show all transactions", function() {
+						var transactionDate = moment().subtract("days", 1).format("YYYY-MM-DD");
+						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
+						transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(false, undefined, transactionDate, toParams.transactionId);
+					});
+				});
+
+				describe("(transaction date is before the current batch)", function() {
+					it("should fetch a new transaction batch starting from the new transaction date", function() {
+						var fromDate = moment().subtract("days", 2).format("YYYY-MM-DD");
+						transactionIndexController.firstTransactionDate = moment().format("YYYY-MM-DD");
+						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
+						transactionIndexController.getTransactions.should.have.been.calledWith("next", fromDate);
+					});
+				});
+
+				describe("(transaction date is after the current batch)", function() {
+					it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", function() {
+						var fromDate = moment().format("YYYY-MM-DD");
+						transactionIndexController.lastTransactionDate = moment().subtract("days", 2).format("YYYY-MM-DD");
+						transactionIndexController.atEnd = false;
+						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
+						transactionIndexController.getTransactions.should.have.been.calledWith("prev", fromDate);
+					});
+
+					it("should fetch a new transaction batch for the current transaction date if we're already at the end", function() {
+						var fromDate = moment().subtract("days", 1).format("YYYY-MM-DD");
+						transactionIndexController.lastTransactionDate = moment().subtract("days", 2).format("YYYY-MM-DD");
+						transactionIndexController.atEnd = true;
+						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
+						transactionIndexController.getTransactions.should.have.been.calledWith(undefined, fromDate);
+					});
+				});
 			});
 		});
 

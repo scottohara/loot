@@ -33,7 +33,8 @@
 									provider.$modal.finallyCallback = callback;
 								}
 							};
-						}
+						},
+						catch: sinon.stub()
 					}
 				};
 			},

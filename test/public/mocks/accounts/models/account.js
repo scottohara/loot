@@ -58,7 +58,7 @@
 	});
 
 	// Declare the accountModelMock provider
-	mod.provider("accountModelMock", function(accountsMockProvider, accountsWithBalancesMockProvider, $qMockProvider) {
+	mod.provider("accountModelMock", function(accountMockProvider, accountsMockProvider, accountsWithBalancesMockProvider, $qMockProvider) {
 		var provider = this,
 				$q = $qMockProvider.$get(),
 				all,
@@ -74,16 +74,22 @@
 			response: accountsWithBalancesMockProvider.$get()
 		});
 
-		// Configure the differnet responses for all()
+		// Configure the different responses for all()
 		all.withArgs(true).returns(allWithBalances());
 
 		// Mock accountModel object
 		provider.accountModel = {
+			path: function(id) {
+				return "/accounts/" + id;
+			},
 			recent: "recent accounts list",
 			all: sinon.stub().returns(all()),
 			allWithBalances: sinon.stub().returns(all(true)),
+			find: sinon.stub().returns(accountMockProvider.$get()),
 			addRecent: sinon.stub(),
-			accounts: accountsWithBalancesMockProvider.$get()
+			accounts: accountsWithBalancesMockProvider.$get(),
+			isUnreconciledOnly: sinon.stub().returns(true),
+			unreconciledOnly: sinon.stub()
 		};
 
 		provider.$get = function() {

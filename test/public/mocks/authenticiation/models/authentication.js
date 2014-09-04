@@ -13,7 +13,7 @@
 		provider.authenticationModel = {
 			login: $q.promisify("gooduser", "baduser"),
 			logout: sinon.stub(),
-			isAuthenticated: true
+			isAuthenticated: sinon.stub().returns(true)
 		};
 
 		provider.$get = function() {

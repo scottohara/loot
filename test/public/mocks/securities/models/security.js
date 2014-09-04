@@ -9,7 +9,7 @@
 		var provider = this;
 
 		// Mock security object
-		provider.security = {id: 1};
+		provider.security = {id: 1, name: "aa", current_value: 1.006, current_holding: 1};
 
 		provider.$get = function() {
 			// Return the mock security object
@@ -59,10 +59,14 @@
 
 		// Mock securityModel object
 		provider.securityModel = {
+			path: function(id) {
+				return "/securities/" + id;
+			},
 			recent: "recent securities list",
 			all: $q.promisify({
 				response: securitiesMockProvider.$get()
 			}),
+			allWithBalances: sinon.stub().returns(securitiesMockProvider.$get()),
 			find: function(id) {
 				// Get the matching security
 				var security = securitiesMockProvider.$get()[id - 1];
