@@ -51,10 +51,9 @@
 			});
 		});
 
-		describe.skip("when a security is not provided", function() {
+		describe("when a security is not provided", function() {
 			beforeEach(function() {
-				security = undefined;
-				securityEditController = controllerTest("securityEditController");
+				securityEditController = controllerTest("securityEditController", {security: undefined});
 			});
 
 			it("should set an empty security object on the $scope", function() {

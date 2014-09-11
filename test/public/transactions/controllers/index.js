@@ -49,10 +49,13 @@
 			transactionIndexController.contextType.should.equal(contextModel.type());
 		});
 
-		it("should not set a context type when a context model was not specified");
+		it("should not set a context type when a context model was not specified", function() {
+			transactionIndexController = controllerTest("transactionIndexController", {contextModel: undefined});
+			(undefined === transactionIndexController.contextType).should.be.true;
+		});
 
-		// TODO - needs transactionBatch.length to be 0
-		it.skip("should set an empty array of transactions on the scope", function() {
+		it("should set an empty array of transactions on the scope", function() {
+			transactionIndexController = controllerTest("transactionIndexController", {transactionBatch: {transactions: {length: 0}}});
 			transactionIndexController.transactions.should.be.an.Array;
 			transactionIndexController.transactions.should.be.empty;
 		});
@@ -518,9 +521,9 @@
 				});
 			});
 
-			// TODO - need to set contextType to "account" and recompile the controller
-			describe.skip("(reconciling)", function() {
+			describe("(reconciling)", function() {
 				beforeEach(function() {
+					transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
 					transactionIndexController.reconciling = true;
 					sinon.stub(transactionIndexController, "toggleCleared");
 				});
@@ -635,7 +638,6 @@
 				transactionIndexController.lastTransactionDate = undefined;
 				sinon.stub(transactionIndexController, "updateRunningBalances");
 				sinon.stub(transactionIndexController, "focusTransaction");
-				//sinon.stub(transactionIndexController, "updateReconciledTotals");   // TODO - only available in account context
 			});
 
 			it("should do nothing if no transactions to process", function() {
@@ -687,8 +689,9 @@
 				transactionIndexController.focusTransaction.should.have.been.calledWith(1);
 			});
 
-			// TODO - only available in account context
-			it.skip("should update the reconciled totals when reconciling", function() {
+			it("should update the reconciled totals when reconciling", function() {
+				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
+				sinon.stub(transactionIndexController, "updateReconciledTotals");
 				transactionIndexController.reconciling = true;
 				transactionIndexController.processTransactions(transactionBatch);
 				transactionIndexController.updateReconciledTotals.should.have.been.called;
@@ -730,8 +733,11 @@
 			});
 		});
 
-		// TODO - needs account context
-		describe.skip("(account context)", function() {
+		describe("(account context)", function() {
+			beforeEach(function() {
+				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
+			});
+
 			it("should set a flag on the scope to enable reconciling", function() {
 				transactionIndexController.reconcilable.should.be.true;
 			});
@@ -791,7 +797,7 @@
 				});
 
 				it("should update all cleared transactions to reconciled", function() {
-					accountModel.reconciled.should.have.been.calledWith(contextId);
+					accountModel.reconcile.should.have.been.calledWith(contextId);
 				});
 
 				it("should cleared the account's closing balance", function() {
@@ -806,13 +812,14 @@
 			describe("cancel", function() {
 				it("should exit reconcile mode", function() {
 					transactionIndexController.reconciling = true;
-					transactionIndexController.save();
+					transactionIndexController.cancel();
 					transactionIndexController.reconciling.should.be.false;
 				});
 			});
 
 			describe("reconcile", function() {
 				beforeEach(function() {
+					sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
 					transactionIndexController.reconciling = false;
 					transactionIndexController.reconcile();
 				});
@@ -833,15 +840,16 @@
 					transactionIndexController.reconciling.should.be.true;
 				});
 
-				it("should refetch the list of unreconciled transactions", function() {
+				it("should refetch the list of unreconciled transactions when the modal is closed", function() {
+					$modal.close();
 					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(true);
 				});
 			});
 
 			describe("updateReconciledTotals", function() {
 				beforeEach(function() {
-					transactionIndexController.openingBalance = 100.0005;
-					transactionIndexController.closingBalance = 300.0004;
+					transactionIndexController.openingBalance = 100.002;
+					transactionIndexController.closingBalance = 300.008;
 					transactionIndexController.updateReconciledTotals();
 				});
 
@@ -850,11 +858,11 @@
 				});
 
 				it("should set the cleared total to the sum of all cleared transaction amounts", function() {
-					transactionIndexController.clearedTotal.should.equal(123); //TODO - cleared total
+					transactionIndexController.clearedTotal.should.equal(2);
 				});
 
 				it("should set the uncleared total to the difference between the cleared total and the reconcile target", function() {
-					transactionIndexController.unclearedTotal.should.equal(123); //TODO - uncleared total
+					transactionIndexController.unclearedTotal.should.equal(198.01);
 				});
 			});
 
@@ -866,10 +874,12 @@
 						id: 1,
 						status: "status"
 					};
+					sinon.stub(transactionIndexController, "updateReconciledTotals");
+					transactionIndexController.toggleCleared(transaction);
 				});
 
 				it("should update the transaction status", function() {
-					transactionModel.updateStatus.should.have.been.calledWith("payees/1", transaction.id, transaction.status);
+					transactionModel.updateStatus.should.have.been.calledWith("/accounts/1", transaction.id, transaction.status);
 				});
 
 				it("should update the reconciled totals", function() {
@@ -987,7 +997,8 @@
 
 		describe("switchTo", function() {
 			var transaction,
-					stateParams;
+					stateParams,
+					$event;
 			
 			beforeEach(function() {
 				transaction = {
@@ -998,6 +1009,10 @@
 				stateParams = {
 					id: "test id",
 					transactionId: transaction.id
+				};
+
+				$event = {
+					stopPropagation: sinon.stub()
 				};
 			});
 
@@ -1017,6 +1032,11 @@
 				transaction.transaction_type = "Sub";
 				transactionIndexController.switchTo(undefined, "state", stateParams.id, transaction);
 				$state.go.should.have.been.calledWith("root.state.transactions.transaction", stateParams);
+			});
+
+			it("should stop the event from propagating if present", function() {
+				transactionIndexController.switchTo($event, "state", stateParams.id, transaction);
+				$event.stopPropagation.should.have.been.called;
 			});
 		});
 
@@ -1170,9 +1190,12 @@
 				});
 
 				describe("(showing unreconciled only)", function() {
-					// TODO - only available in account context
-					it.skip("should toggle to show all transactions", function() {
+					it("should toggle to show all transactions", function() {
+						transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
+						sinon.stub(transactionIndexController, "focusTransaction").returns(NaN);
+						sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
 						var transactionDate = moment().subtract("days", 1).format("YYYY-MM-DD");
+						transactionIndexController.unreconciledOnly = true;
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(false, undefined, transactionDate, toParams.transactionId);
 					});

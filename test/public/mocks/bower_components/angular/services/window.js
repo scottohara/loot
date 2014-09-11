@@ -11,6 +11,7 @@
 		provider.$window = {
 			localStorage: {
 				getItem: sinon.stub(),
+				removeItem: sinon.stub(),
 				setItem: sinon.stub()
 			},
 			sessionStorage: {

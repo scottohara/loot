@@ -51,10 +51,9 @@
 			});
 		});
 
-		describe.skip("when a payee is not provided", function() {
+		describe("when a payee is not provided", function() {
 			beforeEach(function() {
-				payee = undefined;
-				payeeEditController = controllerTest("payeeEditController");
+				payeeEditController = controllerTest("payeeEditController", {payee: undefined});
 			});
 
 			it("should set an empty payee object on the $scope", function() {

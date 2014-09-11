@@ -51,10 +51,9 @@
 			});
 		});
 
-		describe.skip("when a category is not provided", function() {
+		describe("when a category is not provided", function() {
 			beforeEach(function() {
-				category = undefined;
-				categoryEditController = controllerTest("categoryEditController");
+				categoryEditController = controllerTest("categoryEditController", {category: undefined});
 			});
 
 			it("should set an empty category object on the $scope", function() {

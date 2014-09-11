@@ -32,6 +32,25 @@
 		};
 	});
 
+	describe("mockDependenciesProvider", function() {
+		// The object under test
+		var mockDependenciesProvider;
+
+		// Load the modules
+		beforeEach(module("lootMocks"));
+
+		// Inject the object under test
+		beforeEach(inject(function(_mockDependencies_) {
+			mockDependenciesProvider = _mockDependencies_;
+		}));
+
+		describe("$get", function() {
+			it("should return the mockDependencies provider", function() {
+				mockDependenciesProvider.should.have.a.property("load");
+			});
+		});
+	});
+
 	// Declare the directiveTest helper
 	mod.factory("directiveTest", ["$rootScope", "$compile",
 		function($rootScope, $compile) {
@@ -64,7 +83,7 @@
 			// Compiles the directive and returns an array containing
 			// - the DOM element into which the directive was compiled
 			// - the scope object that it was compiled with
-			helper.compile = function(options) {
+			helper.compile = function(options, replace) {
 				var directive;
 
 				options = options || {};
@@ -78,8 +97,13 @@
 					return memo;
 				}, directive);
 
-				// Compile the directive into the specified element tag using the new scope, and return the element
-				helper.element = $compile("<" + helper.container + "><" + helper.tagName + " ng-model=\"model\" " + directive + ">" + helper.content + "</" + helper.tagName + "></" + helper.container + ">")(helper.scope).find(helper.tagName);
+				// Compile the directive into the specified element tag using the new scope
+				helper.element = $compile("<" + helper.container + "><" + helper.tagName + " ng-model=\"model\" " + directive + ">" + helper.content + "</" + helper.tagName + "></" + helper.container + ">")(helper.scope);
+
+				// Unless the element is to be replaced, find the element within the compiled directive
+				if (!replace) {
+					helper.element = helper.element.find(helper.tagName);
+				}
 			};
 
 			return helper;
@@ -90,16 +114,16 @@
 	mod.factory("controllerTest", ["$rootScope", "$controller",
 		function($rootScope, $controller) {
 			// Loads the controller and returns a scope object
-			return function(controller) {
+			return function(controller, locals) {
+				locals = locals || {};
+
 				// Create a new scope
-				var scope = $rootScope.$new();
+				locals.$scope = $rootScope.$new();
 
 				// Load the controller
-				$controller(controller, {
-					$scope: scope
-				});
+				$controller(controller, locals);
 
-				return scope;
+				return locals.$scope;
 			};
 		}
 	]);

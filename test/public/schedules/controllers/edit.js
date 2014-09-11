@@ -105,29 +105,23 @@
 			});
 		});
 
-		describe.skip("when a schedule is not provided", function() {
+		describe("when a schedule is not provided", function() {
+			var transaction;
+
 			beforeEach(function() {
-				schedule = undefined;
-				scheduleEditController = controllerTest("scheduleEditController");
+				transaction = {
+					transaction_type: "Basic",
+					next_due_date: moment().format("YYYY-MM-DD"),
+					subtransactions: [{},{},{},{}]
+				};
+
+				scheduleEditController = controllerTest("scheduleEditController", {schedule: undefined});
 			});
 
 			it("should set an empty transaction object on the $scope", function() {
-				scheduleEditController.transaction.should.be.an.Object;
-				scheduleEditController.transaction.should.be.empty;
+				scheduleEditController.transaction.should.deep.equal(transaction);
 			});
 
-			it("should default the transaction type to Basic", function() {
-				scheduleEditController.transaction.transaction_type.should.equal("Basic");
-			});
-
-			it("should default the next due date to the current day", function() {
-				scheduleEditController.transaction.next_due_date.should.equal(moment().format("YYYY-MM-DD"));
-			});
-
-			it("should create four empty subtransactions", function() {
-				scheduleEditController.transaction.subtransactions.should.deep.equal([{},{},{},{}]);
-			});
-			
 			it("should set the mode to Add Schedule", function() {
 				scheduleEditController.mode.should.equal("Add Schedule");
 			});

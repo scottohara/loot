@@ -59,17 +59,16 @@
 			});
 		});
 
-		describe.skip("when a transaction is not provided", function() {
+		describe("when a transaction is not provided", function() {
 			beforeEach(function() {
-				transaction = undefined;
-				transactionEditController = controllerTest("transactionEditController");
+				transactionEditController = controllerTest("transactionEditController", {transaction: {}});
 			});
 
-			it("should set an empty transaction object on the $scope", function() {
+			it("should make the passed transaction available on the $scope", function() {
 				transactionEditController.transaction.should.be.an.Object;
 				transactionEditController.transaction.should.be.empty;
 			});
-
+			
 			it("should set the mode to Add", function() {
 				transactionEditController.mode.should.equal("Add");
 			});

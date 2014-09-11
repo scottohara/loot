@@ -28,15 +28,15 @@
 
 		// Mock schedules object
 		provider.schedules = [
-			{id: 1, transaction_date: moment().subtract("days", 9).format("YYYY-MM-DD")},
-			{id: 2, transaction_date: moment().subtract("days", 8).format("YYYY-MM-DD")},
-			{id: 3, transaction_date: moment().subtract("days", 7).format("YYYY-MM-DD")},
-			{id: 4, transaction_date: moment().subtract("days", 6).format("YYYY-MM-DD")},
-			{id: 5, transaction_date: moment().subtract("days", 5).format("YYYY-MM-DD")},
-			{id: 6, transaction_date: moment().subtract("days", 4).format("YYYY-MM-DD")},
-			{id: 7, transaction_date: moment().subtract("days", 3).format("YYYY-MM-DD")},
-			{id: 8, transaction_date: moment().subtract("days", 2).format("YYYY-MM-DD")},
-			{id: 9, transaction_date: moment().subtract("days", 1).format("YYYY-MM-DD")}
+			{id: 1, next_due_date: moment().subtract("days", 9).format("YYYY-MM-DD")},
+			{id: 2, next_due_date: moment().subtract("days", 8).format("YYYY-MM-DD")},
+			{id: 3, next_due_date: moment().subtract("days", 7).format("YYYY-MM-DD")},
+			{id: 4, next_due_date: moment().subtract("days", 6).format("YYYY-MM-DD")},
+			{id: 5, next_due_date: moment().subtract("days", 5).format("YYYY-MM-DD")},
+			{id: 6, next_due_date: moment().subtract("days", 4).format("YYYY-MM-DD")},
+			{id: 7, next_due_date: moment().subtract("days", 3).format("YYYY-MM-DD")},
+			{id: 8, next_due_date: moment().subtract("days", 2).format("YYYY-MM-DD")},
+			{id: 9, next_due_date: moment().subtract("days", 1).format("YYYY-MM-DD"), }
 		];
 
 		provider.$get = function() {

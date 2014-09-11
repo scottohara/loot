@@ -4,9 +4,6 @@
 	/*jshint expr: true */
 
 	describe("lootStatesProvider", function() {
-		// The object under test
-		var lootStatesProvider;
-
 		// Dependencies
 		var	$rootScope,
 				$state,
@@ -39,8 +36,6 @@
 
 		// Inject the object under test and it's dependencies
 		beforeEach(inject(function(_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$modal_, _authenticationModel_, _accountModel_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_) {
-			lootStatesProvider = _lootStates_;
-
 			$rootScope = _$rootScope_;
 			$state = _$state_;
 			$injector = _$injector_;
@@ -84,11 +79,21 @@
 				authenticationModel.isAuthenticated.should.have.been.called;
 			});
 
-			it("should resolve the authentication status of a non-logged in user and show the login modal", function() {
-				authenticationModel.isAuthenticated.returns(false);
-				$injector.invoke(stateConfig.resolve.authenticated);
-				authenticationModel.isAuthenticated.should.have.been.called;
-				$modal.open.should.have.been.called;
+			describe("(non-logged in user)", function() {
+				beforeEach(function() {
+					authenticationModel.isAuthenticated.returns(false);
+					$injector.invoke(stateConfig.resolve.authenticated);
+				});
+
+				it("should resolve the authentication status of a non-logged in user and show the login modal", function() {
+					authenticationModel.isAuthenticated.should.have.been.called;
+					$modal.open.should.have.been.called;
+				});
+
+				it("should resolve the authentication status of a non-logged in user when the login modal is dismissed", function() {
+					$modal.dismiss();
+					$modal.catchCallback.should.have.been.called;
+				});
 			});
 		});
 

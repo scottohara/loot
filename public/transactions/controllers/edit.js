@@ -10,7 +10,7 @@
 			// Make the passed transaction available on the scope
 			$scope.transaction = transaction;
 
-			$scope.mode = (transaction ? "Edit" : "Add");
+			$scope.mode = (transaction.id ? "Edit" : "Add");
 
 			// Give the transaction date field initial focus
 			$("#transactionDate").focus();

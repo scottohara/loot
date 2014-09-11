@@ -79,6 +79,7 @@
 
 		// Mock accountModel object
 		provider.accountModel = {
+			type: sinon.stub().returns("account"),
 			path: function(id) {
 				return "/accounts/" + id;
 			},
@@ -88,6 +89,7 @@
 			find: sinon.stub().returns(accountMockProvider.$get()),
 			addRecent: sinon.stub(),
 			accounts: accountsWithBalancesMockProvider.$get(),
+			reconcile: $q.promisify(),
 			isUnreconciledOnly: sinon.stub().returns(true),
 			unreconciledOnly: sinon.stub()
 		};

@@ -50,9 +50,6 @@
 								callbackResult = errorCallback(promiseValue);
 							}
 							return updateValueAndReturn(callbackResult, this);
-						},
-						finally: function(callback) {
-							return callback();
 						}
 					}
 				};

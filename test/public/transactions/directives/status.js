@@ -8,8 +8,7 @@
 		var transactionStatus;
 
 		// Dependencies
-		var $httpBackend,
-				transactionModel;
+		var transactionModel;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "transactions", function(mockDependenciesProvider) {
@@ -20,7 +19,7 @@
 		beforeEach(module("transactions/views/status.html"));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(directiveTest, _$httpBackend_, _transactionModel_) {
+		beforeEach(inject(function(directiveTest, _transactionModel_) {
 			transactionStatus = directiveTest;
 			transactionStatus.configure("transaction-status", "div");
 			transactionStatus.scope.model = {
@@ -32,7 +31,6 @@
 				}
 			};
 
-			$httpBackend = _$httpBackend_;
 			transactionModel = _transactionModel_;
 		}));
 
@@ -116,11 +114,11 @@
 				i.hasClass("active").should.be.false;
 			});
 
-			it.skip("should be opaque when the current status is not Unreconciled", function() {
+			it("should be opaque when the current status is not Unreconciled", function() {
 				transactionStatus.scope.model.transaction.status = "Cleared";
 				transactionStatus.compile({"transaction-status": "model"});
 				transactionStatus.scope.$digest();
-				i.hasClass("active").should.be.true;
+				transactionStatus.element.find("i").hasClass("active").should.be.true;
 			});
 
 			it("should display a tooltip with the current and next status", function() {
@@ -128,9 +126,10 @@
 			});
 		});
 
-		describe.skip("on click", function() {
+		describe("on click", function() {
 			beforeEach(function() {
 				transactionStatus.compile({"transaction-status": "model"});
+				transactionStatus.scope.$digest();
 			});
 
 			it("should update the transaction status to the next status if not Unreconciled", function() {
@@ -155,11 +154,16 @@
 		});
 
 		describe("on destroy", function() {
-			it("should remove the click handler from the element", function() {
+			beforeEach(function() {
 				transactionStatus.compile({"transaction-status": "model"});
+				transactionStatus.scope.$digest();
+				sinon.stub(transactionStatus.element.isolateScope(), "clickHandler");
 				transactionStatus.element.triggerHandler("$destroy");
+			});
+
+			it("should remove the click handler from the element", function() {
 				transactionStatus.element.triggerHandler("click");
-				transactionModel.updateStatus.should.not.have.been.called;
+				transactionStatus.element.isolateScope().clickHandler.should.not.have.been.called;
 			});
 		});
 	});

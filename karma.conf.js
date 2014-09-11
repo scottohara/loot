@@ -25,7 +25,7 @@ module.exports = function(config) {
 				watched: false
 			},
 			{
-				pattern: "public/bower_components/angular-ui-router/release/angular-ui-router.min.js",
+				pattern: "public/bower_components/angular-ui-router/release/angular-ui-router.js",
 				watched: false
 			},
 			{

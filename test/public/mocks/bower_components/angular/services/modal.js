@@ -34,7 +34,11 @@
 								}
 							};
 						},
-						catch: sinon.stub()
+						catch: function(callback) {
+							// Store the callback and spy on it
+							provider.$modal.catchCallback = callback;
+							sinon.spy(provider.$modal, "catchCallback");
+						}
 					}
 				};
 			},
@@ -45,6 +49,10 @@
 				}
 			},
 			dismiss: function() {
+				if (provider.$modal.catchCallback) {
+					provider.$modal.catchCallback();
+				}
+
 				if (provider.$modal.finallyCallback) {
 					provider.$modal.finallyCallback();
 				}
