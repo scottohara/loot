@@ -44,6 +44,11 @@
 		describe("editCategory", function() {
 			var category;
 
+			// Helper function to resort the categories array by id
+			var byId = function(a, b) {
+				return a.id < b.id ? -1 : 1;
+			};
+
 			beforeEach(function() {
 				sinon.stub(categoryIndexController, "focusCategory");
 				category = angular.copy(categoryIndexController.categories[1]);
@@ -76,6 +81,30 @@
 					categoryIndexController.categories[0].num_children.should.equal(1);
 				});
 
+				it("should not attempt to decrement original parent's children count if there was no original parent", function() {
+					categoryIndexController.categories[1].parent_id = undefined;
+					var originalCategories = angular.copy(categoryIndexController.categories);
+					originalCategories[1].parent_id = 2;
+					originalCategories[3].num_children = 3;
+					category.parent_id = 2;
+					$modal.close(category);
+					originalCategories.sort(byId);
+					categoryIndexController.categories.sort(byId);
+					categoryIndexController.categories.should.deep.equal(originalCategories);
+				});
+
+				it("should not attempt to decrement original parent's children count if the parent could not be found", function() {
+					categoryIndexController.categories[1].parent_id = 999;
+					var originalCategories = angular.copy(categoryIndexController.categories);
+					originalCategories[1].parent_id = 2;
+					originalCategories[3].num_children = 3;
+					category.parent_id = 2;
+					$modal.close(category);
+					originalCategories.sort(byId);
+					categoryIndexController.categories.sort(byId);
+					categoryIndexController.categories.should.deep.equal(originalCategories);
+				});
+
 				it("should increment the new parent's children count when the parent category changes", function() {
 					category.parent_id = 3;
 					category.parent.name = "cc";
@@ -83,6 +112,28 @@
 					categoryIndexController.categories[5].num_children.should.equal(3);
 				});
 				
+				it("should not attempt to increment new parent's children count if there is no new parent", function() {
+					var originalCategories = angular.copy(categoryIndexController.categories);
+					originalCategories[1].parent_id = undefined;
+					originalCategories[0].num_children = 1;
+					category.parent_id = undefined;
+					$modal.close(category);
+					originalCategories.sort(byId);
+					categoryIndexController.categories.sort(byId);
+					categoryIndexController.categories.should.deep.equal(originalCategories);
+				});
+
+				it("should not attempt to increment new parent's children count if the parent could not be found", function() {
+					var originalCategories = angular.copy(categoryIndexController.categories);
+					originalCategories[1].parent_id = 999;
+					originalCategories[0].num_children = 1;
+					category.parent_id = 999;
+					$modal.close(category);
+					originalCategories.sort(byId);
+					categoryIndexController.categories.sort(byId);
+					categoryIndexController.categories.should.deep.equal(originalCategories);
+				});
+
 				it("should update the category in the list of categories when the modal is closed", function() {
 					category.name = "edited category";
 					$modal.close(category);
@@ -116,6 +167,16 @@
 					category.parent_id = 1;
 					$modal.close(category);
 					categoryIndexController.categories[0].num_children.should.equal(3);
+				});
+
+				it("should not attempt to increment parent's children count if the parent could not be found", function() {
+					var originalCategories = angular.copy(categoryIndexController.categories);
+					category.parent_id = 998;
+					$modal.close(category);
+					originalCategories.sort(byId);
+					categoryIndexController.categories.sort(byId);
+					categoryIndexController.categories.pop();
+					categoryIndexController.categories.should.deep.equal(originalCategories);
 				});
 			});
 
@@ -185,6 +246,15 @@
 				categoryIndexController.deleteCategory(1);
 				$modal.close(category);
 				categoryIndexController.categories[0].num_children.should.equal(1);
+			});
+
+			it("should not attempt to decrement parent's children count if the parent could not be found", function() {
+				categoryIndexController.categories[9].parent_id = 999;
+				var originalCategories = angular.copy(categoryIndexController.categories);
+				originalCategories.splice(9, 1);
+				categoryIndexController.deleteCategory(9);
+				$modal.close(category);
+				categoryIndexController.categories.should.deep.equal(originalCategories);
 			});
 
 			it("should remove a parent category and it's children from the categories list when the modal is closed", function() {

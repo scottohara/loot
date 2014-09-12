@@ -230,7 +230,7 @@
 					categories = scheduleEditController.categories("a", 3, {id: 1});
 					categoryModel.all.should.have.been.calledWith(1);
 				});
-				it("should eventually return a filtered & limited list of payees", function() {
+				it("should eventually return a filtered & limited list of subcategories", function() {
 					categories = scheduleEditController.categories("a", 3, {id: 1});
 					categories.should.eventually.deep.equal([
 						{id: 1, name: "aa", direction: "inflow", num_children: 2, children: [
@@ -581,7 +581,8 @@
 				scheduleEditController.transaction.memo = memo;
 				scheduleEditController.transaction.subtransactions = [
 					{amount: 10, direction: "outflow", memo: "memo 1"},
-					{amount: 5, direction: "inflow", memo: "memo 2"}
+					{amount: 5, direction: "inflow", memo: "memo 2"},
+					{}
 				];
 			});
 

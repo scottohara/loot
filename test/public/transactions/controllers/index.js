@@ -190,18 +190,24 @@
 
 			describe("(on context changed)", function() {
 				beforeEach(function() {
-					$state.currentState("**.transaction");
 					contextChangedStub.returns(true);
 					transactionIndexController.editTransaction(1);
-					$modal.close(transaction);
 				});
 
 				it("should remove the transaction from the list of transactions", function() {
+					$modal.close(transaction);
 					transactionIndexController.transactions.should.not.include(transaction);
 				});
 
 				it("should transition to the parent state if the transaction was focussed", function() {
+					$state.currentState("**.transaction");
+					$modal.close(transaction);
 					$state.go.should.have.been.calledWith("^");
+				});
+
+				it("should not transition to the parent state if the transaction was not focussed", function() {
+					$modal.close(transaction);
+					$state.go.should.not.have.been.calledWith("^");
 				});
 			});
 
@@ -604,6 +610,12 @@
 				var lastTransactionDate = transactionIndexController.transactions[transactionIndexController.transactions.length - 1].transaction_date;
 				transactionIndexController.getTransactions("next");
 				transactionModel.all.should.have.been.calledWith("/payees/1", lastTransactionDate, "next");
+			});
+
+			it("should fetch transactions without a from date in either direction if there are no transactions", function() {
+				transactionIndexController.transactions = [];
+				transactionIndexController.getTransactions();
+				transactionModel.all.should.have.been.calledWith("/payees/1", undefined);
 			});
 
 			it("should fetch transactions from a specified transaction date in either direction", function() {
