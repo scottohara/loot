@@ -248,7 +248,7 @@
 
 				it("should resort the transaction list when the modal is closed", function() {
 					transaction.id = 999;
-					transaction.transaction_date = moment().subtract(1, "days").format("YYYY-MM-DD");
+					transaction.transaction_date = moment().subtract(1, "day").format("YYYY-MM-DD");
 					transactionIndexController.editTransaction(1);
 					$modal.close(transaction);
 					transactionIndexController.transactions.pop().should.deep.equal(transaction);
@@ -1206,7 +1206,7 @@
 						transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
 						sinon.stub(transactionIndexController, "focusTransaction").returns(NaN);
 						sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
-						var transactionDate = moment().subtract("days", 1).format("YYYY-MM-DD");
+						var transactionDate = moment().subtract(1, "day").format("YYYY-MM-DD");
 						transactionIndexController.unreconciledOnly = true;
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(false, undefined, transactionDate, toParams.transactionId);
@@ -1215,7 +1215,7 @@
 
 				describe("(transaction date is before the current batch)", function() {
 					it("should fetch a new transaction batch starting from the new transaction date", function() {
-						var fromDate = moment().subtract("days", 2).format("YYYY-MM-DD");
+						var fromDate = moment().subtract(2, "days").format("YYYY-MM-DD");
 						transactionIndexController.firstTransactionDate = moment().format("YYYY-MM-DD");
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.getTransactions.should.have.been.calledWith("next", fromDate);
@@ -1225,15 +1225,15 @@
 				describe("(transaction date is after the current batch)", function() {
 					it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", function() {
 						var fromDate = moment().format("YYYY-MM-DD");
-						transactionIndexController.lastTransactionDate = moment().subtract("days", 2).format("YYYY-MM-DD");
+						transactionIndexController.lastTransactionDate = moment().subtract(2, "days").format("YYYY-MM-DD");
 						transactionIndexController.atEnd = false;
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.getTransactions.should.have.been.calledWith("prev", fromDate);
 					});
 
 					it("should fetch a new transaction batch for the current transaction date if we're already at the end", function() {
-						var fromDate = moment().subtract("days", 1).format("YYYY-MM-DD");
-						transactionIndexController.lastTransactionDate = moment().subtract("days", 2).format("YYYY-MM-DD");
+						var fromDate = moment().subtract(1, "day").format("YYYY-MM-DD");
+						transactionIndexController.lastTransactionDate = moment().subtract(2, "days").format("YYYY-MM-DD");
 						transactionIndexController.atEnd = true;
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.getTransactions.should.have.been.calledWith(undefined, fromDate);

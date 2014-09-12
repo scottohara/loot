@@ -69,10 +69,10 @@
 
 						if (!fromDate.isAfter($scope.firstTransactionDate)) {
 							// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-							$scope.getTransactions("next", fromDate.subtract("days", 1).format("YYYY-MM-DD"), transaction.id);
+							$scope.getTransactions("next", fromDate.subtract(1, "days").format("YYYY-MM-DD"), transaction.id);
 						} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 							// Transaction date is later than the latest fetched transaction, refresh from the new date
-							$scope.getTransactions("prev", fromDate.add("days", 1).format("YYYY-MM-DD"), transaction.id);
+							$scope.getTransactions("prev", fromDate.add(1, "days").format("YYYY-MM-DD"), transaction.id);
 						} else {
 							// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
 							if (isNaN(index)) {
@@ -579,11 +579,11 @@
 
 							if (!fromDate.isAfter($scope.firstTransactionDate)) {
 								// Transaction date is earlier than the earliest fetched transaction
-								fromDate = fromDate.subtract("days", 1);
+								fromDate = fromDate.subtract(1, "day");
 								direction = "next";
 							} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 								// Transaction date is later than the latest fetched transaction
-								fromDate = fromDate.add("days", 1);
+								fromDate = fromDate.add(1, "day");
 								direction = "prev";
 							}
 

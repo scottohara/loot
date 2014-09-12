@@ -699,7 +699,7 @@
 					var next_due_date = scheduleEditController.schedule.next_due_date;
 					scheduleEditController.schedule.frequency = scenario.frequency;
 					scheduleEditController.calculateNextDue();
-					scheduleEditController.schedule.next_due_date.should.equal(moment(next_due_date).add(scenario.period, scenario.amount).format("YYYY-MM-DD"));
+					scheduleEditController.schedule.next_due_date.should.equal(moment(next_due_date).add(scenario.amount, scenario.period).format("YYYY-MM-DD"));
 				});
 			});
 

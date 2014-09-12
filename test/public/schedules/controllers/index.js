@@ -100,7 +100,7 @@
 
 			it("should resort the schedule list when the modal is closed", function() {
 				schedule.id = 999;
-				schedule.next_due_date = moment().subtract(1, "days").format("YYYY-MM-DD");
+				schedule.next_due_date = moment().subtract(1, "day").format("YYYY-MM-DD");
 				scheduleIndexController.editSchedule(1);
 				$modal.close(schedule);
 				scheduleIndexController.schedules.pop().should.deep.equal(schedule);
