@@ -39,5 +39,6 @@ Running Tests
 =============
 Frontend specs are implemented using [mocha](http://visionmedia.github.io/mocha/)+[chai](http://chaijs.com/)+[sinon](http://sinonjs.org/).
 Two gulp tasks are available to run the test suite:
+
 1. `gulp bdd` (or simply `gulp`, as `bdd` is the default task) watches for any file changes and runs the full test suite
 2. `gulp test` does the same, but includes [instanbul](http://gotwarlost.github.io/istanbul/) code coverage reporting. Summary coverage reports are written to stdout, and detailed HTML reports are available in `/loot/coverage/index.html`
