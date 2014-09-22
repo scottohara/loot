@@ -49,9 +49,17 @@ module Loot
     # config.active_record.schema_format = :sql
 
     # Enable the asset pipeline
-    config.assets.enabled = true
+    config.assets.enabled = false
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+		# Don't generate assets, javascripts or helpers
+		config.generators do |g|
+			g.stylesheets = false
+			g.javascripts = false
+			g.helper = false
+			g.template_engine = false
+		end
   end
 end
