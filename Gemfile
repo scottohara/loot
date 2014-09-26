@@ -19,6 +19,7 @@ gem 'active_model_serializers'
 group :test do
 	gem 'simplecov', '~> 0.8.2'
 	gem 'minitest-spec-rails'
+	gem 'database_cleaner'
 end
 
 gem 'factory_girl_rails', :group => [:development, :test]
