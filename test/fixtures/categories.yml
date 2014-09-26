@@ -1,66 +1,8 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+outflow_category:
+  name: Test ouflow category
+  direction: outflow
 
-#groceries:
-  #name: Groceries
-  #direction: outflow
-
-#food:
-  #name: Food
-  #direction: outflow
-  #parent: groceries
-
-#clothing:
-  #name: Clothing
-  #direction: outflow
-
-#recreational:
-  #name: Recreational
-  #direction: outflow
-  #parent: clothing
-
-#protective:
-  #name: Protective
-  #direction: outflow
-  #parent: clothing
-
-#employment:
-  #name: Employment
-  #direction: inflow
-
-#salary:
-  #name: Salary
-  #direction: inflow
-  #parent: employment
-
-#superannuation:
-  #name: Superannuation
-  #direction: inflow
-  #parent: employment
-
-#tax:
-  #name: Tax
-  #direction: outflow
-
-#income_tax:
-  #name: Salary
-  #direction: outflow
-  #parent: tax
-
-#loan:
-  #name: Loan
-  #direction: outflow
-     
-#principal:
-  #name: Principal
-  #direction: outflow
-  #parent: loan
-
-#interest:
-  #name: Interest
-  #direction: outflow
-  #parent: loan
-
-#fees:
-  #name: Fees
-  #direction: outflow
-  #parent: loan
+outflow_subcategory:
+  name: Test outflow subcategory
+  direction: outflow
+  parent: outflow_category

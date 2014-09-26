@@ -15,7 +15,7 @@ FactoryGirl.define do
 			end
 		end
 
-		sequence(:name) { |n| "Test Category #{n}" }
+		sequence(:name) { |n| "Category #{n}" }
 		outflow
 
 		factory :inflow_category, traits: [:inflow]

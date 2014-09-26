@@ -1,0 +1,49 @@
+basic_payee_header:
+  payee: payee
+  transaction_date: 2014-01-01
+  trx: basic
+
+basic_reconciled_payee_header:
+  payee: payee
+  transaction_date: 2014-01-01
+  trx: basic_reconciled
+
+transfer_payee_header:
+  payee: payee
+  transaction_date: 2014-01-02
+  trx: transfer
+
+transfer_reconciled_payee_header:
+  payee: payee
+  transaction_date: 2014-01-02
+  trx: transfer_reconciled
+
+split_payee_header:
+  payee: payee
+  transaction_date: 2014-01-03
+  trx: split
+
+split_reconciled_payee_header:
+  payee: payee
+  transaction_date: 2014-01-03
+  trx: split_reconciled
+
+payslip_payee_header:
+  payee: payee
+  transaction_date: 2014-01-04
+  trx: payslip
+
+payslip_reconciled_payee_header:
+  payee: payee
+  transaction_date: 2014-01-04
+  trx: payslip_reconciled
+
+loan_repayment_payee_header:
+  payee: payee
+  transaction_date: 2014-01-05
+  trx: loan_repayment
+
+loan_repayment_reconciled_payee_header:
+  payee: payee
+  transaction_date: 2014-01-05
+  trx: loan_repayment_reconciled

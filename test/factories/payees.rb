@@ -1,5 +1,5 @@
 FactoryGirl.define do
 	factory :payee do
-		name "Test Payee"
+		sequence(:name) { |n| "Payee #{n}" }
 	end
 end

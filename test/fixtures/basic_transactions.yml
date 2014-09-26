@@ -1,9 +1,0 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-#
-#food:
-#  amount: 100
-#  memo: Food
-#  transaction_type: Basic
-#  header: food
-#  account: bank_account
-#  category: food

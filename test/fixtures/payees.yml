@@ -1,16 +1,2 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-
-#coles:
-  #name: Coles
-   
-#anz:
-  #name: ANZ
-
-#kmart:
-  #name: K-Mart
-
-#nextgen:
-  #name: NextGen.Net
-
-#macquarie:
-  #name: Macquarie Mortgages
+payee:
+  name: Test payee

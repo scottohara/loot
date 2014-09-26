@@ -1,5 +1,6 @@
 require 'test_helper'
 
+=begin
 describe Category do
 	let(:category_name) { "Test Category"}
 	let(:valid_attributes) { {:name => category_name, :direction => 'outflow'} }
@@ -71,3 +72,4 @@ describe Category do
 		end
 	end
 end
+=end

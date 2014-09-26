@@ -1,47 +1,11 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+bank_account:
+  name: Bank account
+  opening_balance: 1500
+  account_type: bank
+  status: open
 
-#bank_account:
-  #name: bank account
-  #account_type: bank
-  #opening_balance: 50
-  #status: open
-
-#credit_account:
-  #name: credit account
-  #account_type: credit
-  #opening_balance: 0
-  #status: open
-
-#loan_account:
-  #name: loan account
-  #account_type: loan
-  #opening_balance: 200000
-  #status: open
-
-#investment_account:
-  #name: investment account
-  #account_type: investment
-  #opening_balance: 0
-  #status: open
-  #related_account: cash_account
-
-#cash_account:
-  #name: cash account
-  #account_type: cash
-  #opening_balance: 100
-  #status: open
-  #related_account: investment_account
-
-#old_investment_account:
-  #name: old investment account
-  #account_type: investment
-  #opening_balance: 0
-  #status: closed
-  #related_account: old_cash_account
-
-#old_cash_account:
-  #name: old cash account
-  #account_type: cash
-  #opening_balance: 0
-  #status: closed
-  #related_account: old_investment_account
+credit_card_account:
+  name: Credit card account
+  opening_balance: 0
+  account_type: credit
+  status: open

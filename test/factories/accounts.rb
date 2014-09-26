@@ -1,9 +1,17 @@
 FactoryGirl.define do
 	factory :account, aliases: [:bank_account] do
 		account_type "bank"
-		sequence(:name) { "Test #{account_type} account" }
+		sequence(:name) { |n| "#{account_type} account #{n}" }
 		opening_balance 1000
 		status "open"
+
+		ignore do
+			num_transactions 0
+		end
+
+		after :build do |account, evaluator|
+			create_list :basic_transaction, evaluator.num_transactions, account: account
+		end
 
 		trait :credit do
 			account_type "credit"

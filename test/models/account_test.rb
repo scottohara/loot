@@ -1,6 +1,163 @@
 require 'test_helper'
+#require 'models/concerns/transactable_spec'
 
 describe Account do
+	describe "ledger" do
+		before(:all) do
+			# Reopen the module and change the size of the result set to just 5 transactions
+			module Transactable
+				self.send(:remove_const, "NUM_RESULTS")
+				self.const_set("NUM_RESULTS", 5)
+			end
+		end
+
+		subject { accounts(:bank_account) }
+
+		it "should return the earliest set of transactions, including reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-03", :direction => :prev},
+				:expected_opening_balance => 1500,
+				:expected_transactions => [:basic, :basic_reconciled, :transfer, :transfer_reconciled],
+				:expected_at_end? => true
+			}
+		end
+
+		it "should return an earlier set of transactions, including reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-04", :direction => :prev},
+				:expected_opening_balance => 1300,
+				:expected_transactions => [:transfer, :transfer_reconciled, :split_reconciled, :split],
+				:expected_at_end? => false
+			}
+		end
+
+		it "should return a later set of transactions, including reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-02", :direction => :next},
+				:expected_opening_balance => 900,
+				:expected_transactions => [:split_reconciled, :split, :payslip_reconciled, :payslip, :loan_repayment],
+				:expected_at_end? => false
+			}
+		end
+
+		it "should return the latest set of transactions, including reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-03", :direction => :next},
+				:expected_opening_balance => 300,
+				:expected_transactions => [:payslip_reconciled, :payslip, :loan_repayment, :loan_repayment_reconciled],
+				:expected_at_end? => true
+			}
+		end
+
+		it "should return the earliest set of transactions, excluding reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-03", :direction => :prev, :unreconciled => "true"},
+				:expected_opening_balance => 1200,
+				:expected_transactions => [:basic, :transfer],
+				:expected_at_end? => true
+			}
+		end
+
+		it "should return an earlier set of transactions, excluding reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-04", :direction => :prev, :unreconciled => "true"},
+				:expected_opening_balance => 800,
+				:expected_transactions => [:transfer, :split],
+				:expected_at_end? => false
+			}
+		end
+
+		it "should return a later set of transactions, excluding reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-02", :direction => :next, :unreconciled => "true"},
+				:expected_opening_balance => 1000,
+				:expected_transactions => [:split, :payslip, :loan_repayment],
+				:expected_at_end? => false
+			}
+		end
+
+		it "should return the latest set of transactions, excluding reconciled ones" do
+			@scenario = {
+				:opts => {:as_at => "2014-01-03", :direction => :next, :unreconciled => "true"},
+				:expected_opening_balance => 200,
+				:expected_transactions => [:payslip, :loan_repayment],
+				:expected_at_end? => true
+			}
+		end
+
+		after { ledger_assertions @scenario }
+
+		private
+
+		def ledger_assertions(scenario)
+			opening_balance, transactions, at_end = subject.ledger scenario[:opts]
+			opening_balance.must_equal scenario[:expected_opening_balance]
+			transaction_differences(scenario[:expected_transactions], transactions).must_be_nil
+			at_end.must_equal scenario[:expected_at_end?]
+		end
+
+		def compact(transaction)
+			expected_keys = [:id, :transaction_type, :transaction_date, :parent_id, :amount, :quantity, :commission, :price, :direction, :status, :related_status, :memo, :flag]
+			nested_keys = {
+				:primary_account => [:id, :name, :account_type],
+				:payee => [:id, :name],
+				:security => [:id, :name],
+				:category => [:id, :name],
+				:subcategory => [:id, :name],
+				:account => [:id, :name]
+			}
+
+			# Remove any keys that we don't care about
+			transaction = transaction.extract!(*expected_keys, *nested_keys.keys)
+			
+			# ..and the same for any nested keys
+			nested_keys.each do |nested_key, keys|
+				unless transaction[nested_key].nil?
+					transaction[nested_key] = transaction[nested_key].extract!(*keys)
+					transaction[nested_key].compact!
+					transaction[nested_key] = nil if transaction[nested_key].empty?
+				end
+			end
+
+			# Category/subcategory IDs need to be strings
+			transaction[:category][:id] = transaction[:category][:id].to_s if transaction[:category]
+			transaction[:subcategory][:id] = transaction[:subcategory][:id].to_s if transaction[:subcategory]
+
+			# Remove any nil values
+			transaction.compact
+		end
+
+		def transaction_differences(expected, actual)
+			# Make sure the array lengths match
+			return [expected.size, actual.size] unless expected.size.eql? actual.size 
+
+			diff = nil
+
+			# Check each expected transaction against it's actual counterpart
+			expected.each_with_index do |trx, index|
+				# Convert the expected transaction to JSON and compact
+				expected_json = compact(transactions(trx).as_subclass.as_json({:direction => 'outflow'}))
+
+				# Compact the actual transaction
+				actual_json = compact(actual[index])
+
+				# Break if we find a mismatch
+				unless expected_json.hash.eql? actual_json.hash
+					diff = {
+						:expected => expected_json.delete_if {|key,value| actual_json[key].eql? value },
+						:actual => actual_json.extract!(expected_json.keys)
+					}
+					break
+				end
+			end
+
+			diff
+		end
+	end
+
+	#include TransactableSpec
+	#ledger_specs
+	
 =begin
 	let(:valid_attributes) { {:name => 'Test Account', :account_type => 'bank', :opening_balance => 100, :status => 'open'} }
 	let(:account) { Account.new valid_attributes }
@@ -134,6 +291,7 @@ describe Account do
 	end
 =end
 
+=begin
 	describe "account list" do
 		let(:bank_account) { FactoryGirl.create(:bank_account) }
 
@@ -160,4 +318,5 @@ describe Account do
 			returned_account.closing_balance.must_equal(bank_account.opening_balance + total_transaction_value)
 		end
 	end
+=end
 end
