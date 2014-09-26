@@ -123,4 +123,9 @@ class Security < ActiveRecord::Base
 	def related_account
 		nil
 	end
+
+	def as_json(options={})
+		# Defer to serializer
+		SecuritySerializer.new(self).as_json options
+	end
 end

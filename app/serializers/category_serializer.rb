@@ -7,7 +7,7 @@ class CategorySerializer < ActiveModel::Serializer
 	end
 
 	def parent
-		CategorySerializer.new object.parent, :only => [:id, :name, :direction]
+		CategorySerializer.new object.parent, :only => [:id, :name, :direction] if object.parent
 	end
 
 	def num_transactions

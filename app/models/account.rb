@@ -162,4 +162,9 @@ class Account < ActiveRecord::Base
 			.where(:status => 'Cleared')
 			.update_all(:status => 'Reconciled')
 	end
+
+	def as_json(options={})
+		# Defer to serializer
+		AccountSerializer.new(self).as_json options
+	end
 end

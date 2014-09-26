@@ -34,4 +34,9 @@ class Payee < ActiveRecord::Base
 	def account_type
 		nil
 	end
+
+	def as_json(options={})
+		# Defer to serializer
+		PayeeSerializer.new(self).as_json options
+	end
 end

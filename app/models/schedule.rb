@@ -161,11 +161,11 @@ class Schedule < ActiveRecord::Base
 	end
 
 	def as_json(options={})
-		super.merge({
+		{
 			:next_due_date => self.next_due_date,
 			:frequency => self.frequency,
 			:estimate => self.estimate,
 			:auto_enter => self.auto_enter
-		})
+		}
 	end
 end

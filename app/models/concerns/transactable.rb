@@ -76,17 +76,19 @@ module Transactable
 		# Get the date of the last transaction in the results
 		closing_date = transactions.last['transaction_date'] unless at_end
 
-		# If going backwards, reverse the results to be in chronological order
-		transactions.to_a.reverse! if direction.eql? :prev
+		if direction.eql? :prev
+			# If going backwards, reverse the results to be in chronological order
+			transactions.to_a.reverse!
 
-		# If we're not at the end, drop any transactions for the last date so that we're only dealing with full days
-		unless at_end
-			# Drop transactions from the closing date
-			transactions_ = transactions.drop_while do |trx|
-				trx['transaction_date'].eql? closing_date
+			# If we're not at the end, drop any transactions for the last date so that we're only dealing with full days
+			unless at_end
+				# Drop transactions from the closing date
+				transactions_ = transactions.drop_while do |trx|
+					trx['transaction_date'].eql? closing_date
+				end
+
+				transactions = transactions_
 			end
-
-			transactions = transactions_
 		end
 
 		# The opening balance for this batch of transactions is either:

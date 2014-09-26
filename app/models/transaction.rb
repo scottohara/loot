@@ -56,11 +56,11 @@ class Transaction < ActiveRecord::Base
 	end
 
 	def as_json(options={})
-		super.merge({
+		{
 			:id => self.id,
 			:transaction_type => self.transaction_type,
 			:memo => self.memo,
 			:flag => self.flag.present? && self.flag.memo || nil
-		})
+		}
 	end
 end

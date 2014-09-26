@@ -20,7 +20,7 @@ module Categorisable
 					basic_category trx
 
 				when 'Transfer', 'Subtransfer', 'SecurityTransfer' then
-					psuedo_category 'Transfer', trx['direction]'], trx['parent_transaction_type']
+					psuedo_category 'Transfer', trx['direction'], trx['parent_transaction_type']
 
 				when 'Split', 'Dividend' then
 					psuedo_category trx['transaction_type'], trx['direction']
