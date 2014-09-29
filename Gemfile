@@ -16,13 +16,12 @@ gem 'rails_12factor', :group => :production
 # For JSON serialisation
 gem 'active_model_serializers'
 
-group :test do
-	gem 'simplecov', '~> 0.8.2'
-	gem 'minitest-spec-rails'
+group :development, :test do
+	gem 'rspec-rails'
+	gem 'factory_girl_rails'
 	gem 'database_cleaner'
+	gem 'simplecov'
 end
-
-gem 'factory_girl_rails', :group => [:development, :test]
 
 # Use pry instead of IRB
 group :development do

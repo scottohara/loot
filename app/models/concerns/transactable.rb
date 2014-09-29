@@ -18,57 +18,11 @@ module Transactable
 	}
 
 	def ledger(opts)
-		as_at = opts[:as_at] || '2400-12-31'
-		direction = (!!opts[:direction] && opts[:direction].to_sym || :prev)
+		# Check the options and set defaults where required
+		opts = self.ledger_options opts
 
-		# Get the specified number of transactions up to the given date 
-		transactions = self.transactions.for_ledger(opts)
-			.select([		"transactions.id",
-									"transactions.transaction_type",
-									"transaction_headers.transaction_date",
-									"transaction_headers.payee_id",
-									"accounts.id AS primary_account_id",
-									"accounts.name AS primary_account_name",
-									"accounts.account_type AS primary_account_type",
-									"payees.name AS payee_name",
-									"transaction_headers.security_id",
-									"securities.name AS security_name",
-									"categories.id AS category_id",
-									"categories.name AS category_name",
-									"parent_categories.id AS parent_category_id",
-									"parent_categories.name AS parent_category_name",
-									"transfer_accounts.id AS transfer_account_id",
-									"transfer_accounts.name AS transfer_account_name",
-									"transfer_transaction_accounts.status AS transfer_status",
-									"transaction_splits.parent_id AS split_parent_id",
-									"split_accounts.id AS split_account_id",
-									"split_accounts.name AS split_account_name",
-									"split_accounts.account_type AS split_account_type",
-									"split_transaction_accounts.direction AS split_parent_direction",
-									"split_transaction_accounts.status AS split_parent_status",
-									"transactions.amount",
-									"transaction_headers.quantity",
-									"transaction_headers.price",
-									"transaction_headers.commission",
-									"transaction_accounts.direction",
-									"transaction_accounts.status",
-									"transactions.memo",
-									"transaction_flags.memo AS flag"]) 
-			.joins([		"LEFT OUTER JOIN accounts ON accounts.id = transaction_accounts.account_id",
-									"LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id",
-									"LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id",
-									"LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id",
-									"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id",
-									"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id",
-									"LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id",
-									"LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id",
-									"LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id",
-									"LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id"])
-			.where(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:operator]} ?", as_at)
-			.order(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[direction][:order]}",
-									"transactions.id #{LEDGER_QUERY_OPTS[direction][:order]}")
-			.limit(			NUM_RESULTS)
-			.to_a
+		# Query the database for transactions
+		transactions = self.find_for_ledger opts
 
 		# Have we reached the end of the transactions (in this direction)?
 		at_end = transactions.size < NUM_RESULTS
@@ -76,81 +30,18 @@ module Transactable
 		# Get the date of the last transaction in the results
 		closing_date = transactions.last['transaction_date'] unless at_end
 
-		if direction.eql? :prev
-			# If going backwards, reverse the results to be in chronological order
-			transactions.to_a.reverse!
+		# If going backwards, reverse the results to be in chronological order and remove any transaction
+		# for the opening date so that the batch contains only full days
+		transactions = self.drop_opening_date if opts[:direction].eql? :prev
 
-			# If we're not at the end, drop any transactions for the last date so that we're only dealing with full days
-			unless at_end
-				# Drop transactions from the closing date
-				transactions_ = transactions.drop_while do |trx|
-					trx['transaction_date'].eql? closing_date
-				end
-
-				transactions = transactions_
-			end
-		end
-
-		# The opening balance for this batch of transactions is either:
-		# a) the opening balance (if we've gone backwards and reached the first transaction)
-		# b) the closing balance as at the closing_date (if we've gone backwards)
-		# c) the closing balance as at the passed date (if we've gone forwards)
-		opening_balance = if direction.eql? :prev
-			at_end ? self.opening_balance : self.closing_balance(opts.merge({:as_at => closing_date}))
-		else
-			opening_balance = self.closing_balance opts
-		end
+		# Get the opening balance
+		opening_balance = self.ledger_opening_balance opts, at_end, closing_date
 
 		# If we're only interested in unreconciled transactions, sum & drop all reconciled ones
-		if !!opts[:unreconciled] && opts[:unreconciled].eql?('true')
-			opening_balance = transactions.select {|trx| trx['status'].eql?('Reconciled') && !trx['amount'].nil?}.reduce(opening_balance) do |total,trx|
-				total + (trx['amount'] * (trx['direction'].eql?('inflow') ? 1 : -1))
-			end
-
-			transactions_ = transactions.delete_if do |trx|
-				trx['status'].eql? 'Reconciled'
-			end
-
-			transactions = transactions_
-		end
+		opening_balance, transactions = self.exclude_reconciled(opening_balance, transactions) if opts[:unreconciled]
 
 		# Remap to the desired output format
-		transactions.map! do |trx|
-			{
-				:id => trx['id'],
-				:transaction_type => trx['transaction_type'],
-				:transaction_date => trx['transaction_date'],
-				:primary_account => {
-					:id => trx['primary_account_id'] || trx['split_account_id'],
-					:name => trx['primary_account_name'] || trx['split_account_name'],
-					:account_type => trx['primary_account_type'] || trx['split_account_type']
-				},
-				:payee => {
-					:id => trx['payee_id'],
-					:name => trx['payee_name']
-				},
-				:security => {
-					:id => trx['security_id'],
-					:name => trx['security_name']
-				},
-				:category => (self.is_a?(Class) && self || self.class).transaction_category(trx, self.account_type),
-				:subcategory => (self.is_a?(Class) && self || self.class).basic_subcategory(trx),
-				:account => {
-					:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
-					:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
-				},
-				:parent_id => trx['split_parent_id'],
-				:amount => trx['amount'],
-				:quantity => trx['quantity'],
-				:commission => trx['commission'],
-				:price => trx['price'],
-				:direction => trx['direction'] || trx['split_parent_direction'],
-				:status => trx['status'],
-				:related_status => (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status'] || trx['transfer_status']),
-				:memo => trx['memo'],
-				:flag => trx['flag']
-			}
-		end
+		transactions.map!(&method(:to_ledger_json))
 
 		[opening_balance, transactions, at_end]
 	end
@@ -231,5 +122,137 @@ module Transactable
 
 			self.opening_balance + total_inflows - total_outflows
 		end
+	end
+
+	private unless Rails.env.eql? "test"
+	
+	def ledger_options(opts={})
+		# Default at_at if not specified or invalid
+		opts[:as_at] = Date.parse(opts[:as_at]).to_s rescue "2400-12-31"
+
+		# Default direction if not specified or invalid
+		opts[:direction] = (opts[:direction].to_sym rescue :prev)
+		opts[:direction] = :prev unless LEDGER_QUERY_OPTS.has_key? opts[:direction]
+
+		# Default unreconciled if not specified or invalid
+		opts[:unreconciled] = opts[:unreconciled].eql? "true"
+
+		opts
+	end
+
+	def find_for_ledger(opts)
+		# Get the specified number of transactions up to the given date 
+		self.transactions.for_ledger(opts)
+			.select([		"transactions.id",
+									"transactions.transaction_type",
+									"transaction_headers.transaction_date",
+									"transaction_headers.payee_id",
+									"accounts.id AS primary_account_id",
+									"accounts.name AS primary_account_name",
+									"accounts.account_type AS primary_account_type",
+									"payees.name AS payee_name",
+									"transaction_headers.security_id",
+									"securities.name AS security_name",
+									"categories.id AS category_id",
+									"categories.name AS category_name",
+									"parent_categories.id AS parent_category_id",
+									"parent_categories.name AS parent_category_name",
+									"transfer_accounts.id AS transfer_account_id",
+									"transfer_accounts.name AS transfer_account_name",
+									"transfer_transaction_accounts.status AS transfer_status",
+									"transaction_splits.parent_id AS split_parent_id",
+									"split_accounts.id AS split_account_id",
+									"split_accounts.name AS split_account_name",
+									"split_accounts.account_type AS split_account_type",
+									"split_transaction_accounts.direction AS split_parent_direction",
+									"split_transaction_accounts.status AS split_parent_status",
+									"transactions.amount",
+									"transaction_headers.quantity",
+									"transaction_headers.price",
+									"transaction_headers.commission",
+									"transaction_accounts.direction",
+									"transaction_accounts.status",
+									"transactions.memo",
+									"transaction_flags.memo AS flag"]) 
+			.joins([		"LEFT OUTER JOIN accounts ON accounts.id = transaction_accounts.account_id",
+									"LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id",
+									"LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id",
+									"LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id",
+									"LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id",
+									"LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id",
+									"LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id",
+									"LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id",
+									"LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id",
+									"LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id"])
+			.where(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[opts[:direction]][:operator]} ?", opts[:as_at])
+			.order(			"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[opts[:direction]][:order]}",
+									"transactions.id #{LEDGER_QUERY_OPTS[opts[:direction]][:order]}")
+			.limit(			NUM_RESULTS)
+			.to_a
+	end
+
+	def drop_opening_date(transactions, at_end, opening_date)
+		# Reverse the transactions so they are in chronological order
+		transactions.reverse!
+
+		# If we're not at the end, drop any transactions for the opening date so that we're only dealing with full days
+		at_end ? transactions : transactions.drop_while {|trx| trx['transaction_date'].eql? opening_date}
+	end
+
+	def ledger_opening_balance(opts, at_end, closing_date)
+		# The opening balance is either:
+		# a) the opening balance (when going backwards and reach the first transaction)
+		# b) the closing balance as at the closing_date (when going backwards)
+		# c) the closing balance as at the passed date (when going forwards)
+		if opts[:direction].eql? :prev
+			at_end ? self.opening_balance : self.closing_balance(opts.merge({:as_at => closing_date}))
+		else
+			self.closing_balance opts
+		end
+	end
+
+	def exclude_reconciled(opening_balance, transactions)
+		opening_balance = transactions.select {|trx| trx['status'].eql?('Reconciled') && !trx['amount'].nil?}.reduce(opening_balance) do |total,trx|
+			total + (trx['amount'] * (trx['direction'].eql?('inflow') ? 1 : -1))
+		end
+
+		[opening_balance, transactions.delete_if {|trx| trx['status'].eql? 'Reconciled'}]
+	end
+
+	def to_ledger_json(trx)
+		{
+			:id => trx['id'],
+			:transaction_type => trx['transaction_type'],
+			:transaction_date => trx['transaction_date'],
+			:primary_account => {
+				:id => trx['primary_account_id'] || trx['split_account_id'],
+				:name => trx['primary_account_name'] || trx['split_account_name'],
+				:account_type => trx['primary_account_type'] || trx['split_account_type']
+			},
+			:payee => {
+				:id => trx['payee_id'],
+				:name => trx['payee_name']
+			},
+			:security => {
+				:id => trx['security_id'],
+				:name => trx['security_name']
+			},
+			:category => (self.is_a?(Class) && self || self.class).transaction_category(trx, self.account_type),
+			:subcategory => (self.is_a?(Class) && self || self.class).basic_subcategory(trx),
+			:account => {
+				:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
+				:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
+			},
+			:parent_id => trx['split_parent_id'],
+			:amount => trx['amount'],
+			:quantity => trx['quantity'],
+			:commission => trx['commission'],
+			:price => trx['price'],
+			:direction => trx['direction'] || trx['split_parent_direction'],
+			:status => trx['status'],
+			:related_status => (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status'] || trx['transfer_status']),
+			:memo => trx['memo'],
+			:flag => trx['flag']
+		}
 	end
 end

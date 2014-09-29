@@ -39,7 +39,7 @@ FactoryGirl.define do
 		end
 
 		factory :credit_account, traits: [:credit]
-		factory :investment_account, traits: [:investement]
+		factory :investment_account, traits: [:investment]
 		factory :cash_account, traits: [:cash]
 		factory :loan_account, traits: [:loan]
 		factory :closed_account, traits: [:closed]
