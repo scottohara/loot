@@ -1,7 +1,0 @@
-basic_category:
-  trx: basic
-  category: outflow_subcategory
-
-basic_reconcile_category:
-  trx: basic_reconciled
-  category: outflow_subcategory

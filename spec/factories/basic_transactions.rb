@@ -7,10 +7,11 @@ FactoryGirl.define do
 		ignore do
 			account { FactoryGirl.build(:account) }
 			category { FactoryGirl.build(:category) }
+			status nil
 		end
 
 		after :build do |trx, evaluator|
-			trx.transaction_account = FactoryGirl.build :transaction_account, account: evaluator.account
+			trx.transaction_account = FactoryGirl.build :transaction_account, account: evaluator.account, status: evaluator.status
 			trx.category = evaluator.category
 		end
 	end

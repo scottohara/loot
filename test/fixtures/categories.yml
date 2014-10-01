@@ -1,8 +1,0 @@
-outflow_category:
-  name: Test ouflow category
-  direction: outflow
-
-outflow_subcategory:
-  name: Test outflow subcategory
-  direction: outflow
-  parent: outflow_category

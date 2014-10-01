@@ -17,12 +17,12 @@ module Transactable
 		}
 	}
 
-	def ledger(opts)
+	def ledger(opts={})
 		# Check the options and set defaults where required
 		opts = self.ledger_options opts
 
 		# Query the database for transactions
-		transactions = self.find_for_ledger opts
+		transactions = self.ledger_query opts
 
 		# Have we reached the end of the transactions (in this direction)?
 		at_end = transactions.size < NUM_RESULTS
@@ -30,9 +30,9 @@ module Transactable
 		# Get the date of the last transaction in the results
 		closing_date = transactions.last['transaction_date'] unless at_end
 
-		# If going backwards, reverse the results to be in chronological order and remove any transaction
+		# If going backwards, reverse the results to be in chronological order and remove any transactions
 		# for the opening date so that the batch contains only full days
-		transactions = self.drop_opening_date if opts[:direction].eql? :prev
+		transactions = self.drop_opening_date transactions, at_end, closing_date if opts[:direction].eql? :prev
 
 		# Get the opening balance
 		opening_balance = self.ledger_opening_balance opts, at_end, closing_date
@@ -127,7 +127,7 @@ module Transactable
 	private unless Rails.env.eql? "test"
 	
 	def ledger_options(opts={})
-		# Default at_at if not specified or invalid
+		# Default as_at if not specified or invalid
 		opts[:as_at] = Date.parse(opts[:as_at]).to_s rescue "2400-12-31"
 
 		# Default direction if not specified or invalid
@@ -140,7 +140,7 @@ module Transactable
 		opts
 	end
 
-	def find_for_ledger(opts)
+	def ledger_query(opts)
 		# Get the specified number of transactions up to the given date 
 		self.transactions.for_ledger(opts)
 			.select([		"transactions.id",

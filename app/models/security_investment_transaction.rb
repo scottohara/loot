@@ -44,17 +44,17 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	end
 
 	def as_json(options={})
+		primary_account, other_account = self.investment_account, self.cash_account
+		primary_account, other_account = other_account, primary_account if options[:primary_account].eql? other_account.account_id
+
 		super.merge({
-			:primary_account => self.investment_account.account.as_json,
-			:category => {
-				:id => self.investment_account.direction.eql?('inflow') && 'Buy' || 'Sell',
-				:name => self.investment_account.direction.eql?('inflow') && 'Buy' || 'Sell'
-			},
-			:account => self.cash_account.account.as_json,
+			:primary_account => primary_account.account.as_json,
+			:category => self.class.transaction_category({'transaction_type' => self.transaction_type, 'direction' => primary_account.direction}, primary_account.account.account_type),
+			:account => other_account.account.as_json,
 			:amount => self.amount,
-			:direction => self.investment_account.direction,
-			:status => self.investment_account.status,
-			:related_status => self.cash_account.status,
+			:direction => primary_account.direction,
+			:status => primary_account.status,
+			:related_status => other_account.status,
 			:quantity => self.header.quantity,
 			:price => self.header.price,
 			:commission => self.header.commission
