@@ -10,21 +10,29 @@ FactoryGirl.define do
 			reconciled 0
 		end
 
-		trait :all_transaction_types do
+		trait :with_all_transaction_types do
 			after :build do |account|
 				if account.account_type.eql? "investment"
-					create(:security_investment_transaction, :flagged, investment_account: account, status: "Cleared")		# flagged and cleared
+					create(:security_purchase_transaction, :flagged, investment_account: account, cash_account: account.related_account, status: "Cleared")		# flagged and cleared
+					create(:security_sale_transaction, investment_account: account, cash_account: account.related_account)
 					create(:security_transfer_transaction, source_account: account)
-					create(:security_holding_transaction, account: account)
-					create(:dividend_transaction, investment_account: account)
+					create(:security_transfer_transaction, destination_account: account)
+					create(:security_add_transaction, account: account)
+					create(:security_remove_transaction, account: account)
+					create(:dividend_transaction, investment_account: account, cash_account: account.related_account)
 				else
-					create(:basic_transaction, :flagged, account: account, status: "Cleared")			#flagged and cleared
+					create(:basic_expense_transaction, :flagged, account: account, status: "Cleared")			#flagged and cleared
+					create(:basic_income_transaction, account: account)
 					create(:transfer_transaction, source_account: account) 
-					create(:split_transaction, account: account, subtransactions: 1, subtransfers: 1)
-					create(:subtransfer_transaction, account: account)
+					create(:transfer_transaction, destination_account: account) 
+					create(:split_to_transaction, account: account, subtransactions: 1, subtransfers: 1)
+					create(:split_from_transaction, account: account, subtransactions: 1, subtransfers: 1)
+					create(:subtransfer_to_transaction, account: account)
+					create(:subtransfer_from_transaction, account: account)
 					create(:payslip_transaction, account: account, subtransactions: 1, subtransfers: 1)
 					create(:loan_repayment_transaction, account: account, subtransactions: 1, subtransfers: 1)
-					create(:security_investment_transaction, cash_account: account)
+					create(:security_purchase_transaction, cash_account: account)
+					create(:security_sale_transaction, cash_account: account)
 					create(:dividend_transaction, cash_account: account) 
 				end
 			end

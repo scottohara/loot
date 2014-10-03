@@ -1,17 +1,17 @@
 FactoryGirl.define do
-	factory :security_investment_transaction do
+	factory :security_investment_transaction, aliases: [:security_purchase_transaction] do
 		# Default attributes for security transaction
 		security_transaction
-		amount { price * quantity - commission }
+		amount { price * quantity + (commission * (direction.eql?("Buy") ? 1 : -1)) }
 
 		# Default accounts if none specified
 		ignore do
 			investment_account { FactoryGirl.build(:investment_account, related_account: cash_account) }
 			cash_account { FactoryGirl.build(:bank_account) }
-			direction { "Buy" }
-			price 2
-			quantity 10
-			commission 19 
+			direction "Buy"
+			price 1
+			quantity 1
+			commission 1
 			status nil
 		end
 
@@ -22,5 +22,15 @@ FactoryGirl.define do
 			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.investment_account, direction: (evaluator.direction.eql?("Buy") ? "inflow" : "outflow"), status: evaluator.status)
 			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.cash_account, direction: (evaluator.direction.eql?("Buy") ? "outflow" : "inflow"))
 		end
+
+		after :create do |trx|
+			trx.header.security.update_price! trx.header.price, trx.header.transaction_date, trx.id
+		end
+
+		trait :inflow do
+			direction "Sell"
+		end
+
+		factory :security_sale_transaction, traits: [:inflow]
 	end
 end

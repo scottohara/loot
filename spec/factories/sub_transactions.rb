@@ -1,5 +1,5 @@
 FactoryGirl.define do
-	factory :sub_transaction do
+	factory :sub_transaction, aliases: [:sub_expense_transaction] do
 		# Default attributes for cash transaction
 		cash_transaction
 		transaction_type "Sub"
@@ -14,5 +14,11 @@ FactoryGirl.define do
 			trx.parent = evaluator.parent
 			trx.category = evaluator.category
 		end
+
+		trait :inflow do
+			category { FactoryGirl.build(:inflow_category) }
+		end
+
+		factory :sub_income_transaction, traits: [:inflow]
 	end
 end

@@ -1,5 +1,19 @@
 FactoryGirl.define do
 	factory :category, aliases: [:outflow_category] do
+		ignore do
+			transactions 0
+		end
+
+		trait :with_all_transaction_types do
+			after :build do |category|
+				create(:basic_transaction, :flagged, category: category, status: "Cleared")			#flagged and cleared
+				create(:split_transaction, direction: category.direction, category: category, subtransactions: 1)
+			end
+		end
+
+		after :build do |category, evaluator|
+			create_list :basic_transaction, evaluator.transactions, category: category
+		end
 
 		trait :outflow do
 			direction "outflow"

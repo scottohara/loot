@@ -62,9 +62,9 @@ module Transactable
 									"transaction_accounts.direction")
 
 			# Reduce to a unique set of securities with the current quantity held
-			securities = security_quantities.reduce(Hash.new(0)) do |securities, s|
-				securities[s.security_id] += s.total_quantity * (s.direction.eql?('inflow') ? 1 : -1)
-				securities
+			securities = security_quantities.reduce(Hash.new(0)) do |secs, s|
+				secs[s.security_id] += s.total_quantity * (s.direction.eql?('inflow') ? 1 : -1)
+				secs
 			end
 
 			# Calculate the current value of the securities held

@@ -1,5 +1,5 @@
 FactoryGirl.define do
-	factory :security_holding_transaction do
+	factory :security_holding_transaction, aliases: [:security_add_transaction] do
 		# Default attributes for security transaction
 		security_transaction
 
@@ -14,5 +14,11 @@ FactoryGirl.define do
 			trx.header.quantity = evaluator.quantity
 			trx.transaction_account = FactoryGirl.build(:transaction_account, account: evaluator.account, direction: (evaluator.direction.eql?("Add") ? "inflow" : "outflow"))
 		end
+
+		trait :outflow do
+			direction "Remove"
+		end
+
+		factory :security_remove_transaction, traits: [:outflow]
 	end
 end
