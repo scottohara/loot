@@ -7,7 +7,6 @@ class Security < ActiveRecord::Base
 			joins([	"LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
-			.where(	"transactions.transaction_type != 'Subtransfer'")
 		end
 
 		def for_closing_balance(opts)

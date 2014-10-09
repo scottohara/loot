@@ -6,6 +6,8 @@ RSpec.describe Account, :type => :model do
 		it_behaves_like Transactable do
 			let(:context_factory) { :bank_account }
 			let(:ledger_json_key) { :primary_account }
+			let(:expected_transactions_filter) { "" }
+			let(:expected_closing_balances) { {:with_date => 999, :without_date => 999 } }
 		end
 	end
 
@@ -13,6 +15,8 @@ RSpec.describe Account, :type => :model do
 		it_behaves_like Transactable do
 			let(:context_factory) { :investment_account }
 			let(:ledger_json_key) { :primary_account }
+			let(:expected_transactions_filter) { "" }
+			let(:expected_closing_balances) { {:with_date => 999, :without_date => 999 } }
 		end
 	end
 
@@ -20,11 +24,7 @@ RSpec.describe Account, :type => :model do
 		# Custom matcher that checks if a set of transactions are all unreconciled
 		matcher :all_be_unreconciled do
 			match do |transactions|
-				transactions.select! do |transaction|
-					transaction[:status].eql? "Reconciled"
-				end
-
-				transactions.empty?
+				transactions.none? {|transaction| transaction[:status].eql? "Reconciled"}
 			end
 		end
 
@@ -39,37 +39,4 @@ RSpec.describe Account, :type => :model do
 			end
 		end
 	end
-
-	describe "closing_balance" do
-		context "investment account" do
-			let(:account) { create(:investment_account, :with_all_transaction_types) }
-
-			it "should return the closing balance as the passed date" do
-				as_at = account.transactions.first.as_subclass.header.transaction_date + 4
-				expect(account.closing_balance({:as_at => as_at})).to eq 998
-			end
-
-			context "when a date is not passed" do
-				it "should return the closing balance as at today" do
-					expect(account.closing_balance).to eq 999
-				end
-			end
-		end
-
-		context "non-investment account" do
-			let(:account) { create(:bank_account, :with_all_transaction_types) }
-
-			it "should return the closing balance as the passed date" do
-				as_at = account.transactions.first.as_subclass.header.transaction_date + 5
-				expect(account.closing_balance({:as_at => as_at})).to eq 998
-			end
-
-			context "when a date is not passed" do
-				it "should return the closing balance as at today" do
-					expect(account.closing_balance).to eq 999
-				end
-			end
-		end
-	end
-
 end

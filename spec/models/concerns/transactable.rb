@@ -1,4 +1,8 @@
+require 'models/concerns/categorisable'
+
 RSpec.shared_examples Transactable do
+	it_behaves_like Categorisable
+
 	describe "ledger" do
 		# Custom matcher that compares a set of transactions against another set
 		matcher :match_ledger_transactions do |expected|
@@ -6,35 +10,41 @@ RSpec.shared_examples Transactable do
 				@diffs = []
 
 				# Make sure the array lengths match
-				return false unless expected.size.eql? actual.size 
+				return false unless expected.size.eql? actual.uniq{|t| t[:id]}.size 
 
 				# Check each expected transaction against it's actual counterpart
-				expected.each_with_index do |trx, index|
+				expected.all? do |trx|
+					# Find the matching actual transaction
+					actual_trx = actual.find {|t| t[:id].eql? trx[:id]}
+
 					# Convert the expected transaction to JSON and compact
-					expected_json = compact(trx.as_subclass.as_json({:direction => actual[index][:direction], :primary_account => actual[index][:primary_account][:id]}))
+					expected_json = compact(trx.as_subclass.as_json({:direction => actual_trx[:direction], :primary_account => actual_trx[:primary_account][:id]}))
 
 					# Compact the actual transaction
-					actual_json = compact(actual[index])
+					actual_json = compact(actual_trx)
 
 					@diffs << {
-						:index => index,
+						:id => trx.id,
 						:type => trx.transaction_type,
 						:expected => expected_json.delete_if {|key,value| actual_json[key].eql? value },
 						:actual => actual_json.slice(*expected_json.keys)
 					} unless expected_json.hash.eql? actual_json.hash
-				end
 
-				@diffs.empty?
+					@diffs.empty?
+				end
 			end
 
 			failure_message do
 				if @diffs.empty?
+					p expected.map{|t| "#{t.id} - #{t.transaction_type}"}.uniq.sort
+					p actual.map{|t| "#{t[:id]} - #{t[:transaction_type]}"}.uniq.sort
+
 					# Size mismatch
-					"expected #{expected.size} #{"transaction".pluralize} but got #{actual.size}"
+					"expected #{expected.size} #{"transaction".pluralize} but got #{actual.uniq{|t| t[:id]}.size}"
 				else
 					# Content mismatch
 					@diffs.reduce("") do |message, diff|
-						message += "Transaction #:\t#{diff[:index]} (#{diff[:type]})\n"
+						message += "Transaction #:\t#{diff[:id]} (#{diff[:type]})\n"
 						message += "Expected:\t#{diff[:expected]}\n"
 						message += "Actual:\t\t#{diff[:actual]}\n\n"
 					end
@@ -76,11 +86,7 @@ RSpec.shared_examples Transactable do
 		# Custom matcher that checks if a set of transactions are all for a particular context
 		matcher :all_belong_to do |subject, key|
 			match do |transactions|
-				transactions.reject! do |transaction|
-					transaction[key][:id].to_s.eql? subject.id.to_s
-				end
-
-				transactions.empty?
+				transactions.all? {|transaction| transaction[key][:id].to_s.eql? subject.id.to_s }
 			end
 		end
 
@@ -88,8 +94,9 @@ RSpec.shared_examples Transactable do
 			context = create(context_factory, :with_all_transaction_types)
 
 			_, transactions, _ = context.ledger
+			expected_transactions = context.transactions.where expected_transactions_filter
 
-			expect(transactions).to match_ledger_transactions(context.transactions)
+			expect(transactions).to match_ledger_transactions expected_transactions
 		end
 
 		it "should only include transactions belonging to the context" do
@@ -99,7 +106,7 @@ RSpec.shared_examples Transactable do
 
 			_, transactions, _ = context.ledger
 
-			expect(transactions.size).to eq 2
+			expect(transactions.uniq{|t| t[:id]}.size).to eq 2
 			expect(transactions).to all_belong_to(context, ledger_json_key)
 		end
 		
@@ -148,25 +155,50 @@ RSpec.shared_examples Transactable do
 		end
 
 		after :each, :spec_type => :range do
+			FactoryGirl.reload
+
 			# Create the context with 15 basic transactions
 			context = create(context_factory, transactions: 15)
 
-			# Get the date of the first transaction
-			start_date = context.transactions.first.as_subclass.header.transaction_date
-
 			# Reopen the module and change the size of the result set
 			module Transactable
+				self.const_set("ORIG_NUM_RESULTS", self.const_get("NUM_RESULTS"))
 				self.send :remove_const, "NUM_RESULTS"
 				self.const_set("NUM_RESULTS", 9)
 			end
 
 			# Get the ledger
-			_, transactions, at_end = context.ledger({:as_at => (start_date + @as_at).to_s, :direction => direction})
+			_, transactions, at_end = context.ledger({:as_at => (Date.parse("2014-01-01") + @as_at).to_s, :direction => direction})
 
-			expect(transactions.size).to eq range.size
-			expect(transactions.first[:transaction_date]).to eq (start_date + range.first)
-			expect(transactions.last[:transaction_date]).to eq (start_date + range.last)
+			expect(transactions.uniq{|t| t[:id]}.size).to eq range.size
+			expect(transactions.first[:transaction_date]).to eq (Date.parse("2014-01-01") + range.first)
+			expect(transactions.last[:transaction_date]).to eq (Date.parse("2014-01-01") + range.last)
 			expect(at_end).to be expected_at_end
+
+			# Reopen the module and reset the size of the result set
+			module Transactable
+				self.send :remove_const, "NUM_RESULTS"
+				self.const_set("NUM_RESULTS", self.const_get("ORIG_NUM_RESULTS"))
+				self.send :remove_const, "ORIG_NUM_RESULTS"
+			end
+		end
+	end
+
+	describe "closing_balance" do
+		let(:context) { create(context_factory, :with_all_transaction_types) }
+
+		before :each do
+			FactoryGirl.reload
+		end
+
+		it "should return the closing balance as the passed date" do
+			expect(context.closing_balance({:as_at => "2014-01-01"})).to eq expected_closing_balances[:with_date]
+		end
+
+		context "when a date is not passed" do
+			it "should return the closing balance as at today" do
+				expect(context.closing_balance).to eq expected_closing_balances[:without_date]
+			end
 		end
 	end
 

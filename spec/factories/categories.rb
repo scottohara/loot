@@ -1,7 +1,11 @@
 FactoryGirl.define do
 	factory :category, aliases: [:outflow_category] do
+		sequence(:name) { |n| "Category #{n}" }
+		outflow
+
 		ignore do
 			transactions 0
+			children 0
 		end
 
 		trait :with_all_transaction_types do
@@ -13,6 +17,7 @@ FactoryGirl.define do
 
 		after :build do |category, evaluator|
 			create_list :basic_transaction, evaluator.transactions, category: category
+			create_list :category, evaluator.children, parent: category
 		end
 
 		trait :outflow do
@@ -23,17 +28,19 @@ FactoryGirl.define do
 			direction "inflow"
 		end
 
-		trait :parent do
-			after(:build) do |category|
-				category.parent = build(:category, category.direction.to_sym)
+		trait :parent_category do
+			after :build do |category|
+				category.parent = FactoryGirl.build :category, category.direction.to_sym
 			end
 		end
 
-		sequence(:name) { |n| "Category #{n}" }
-		outflow
+		trait :with_children do
+			children 2
+		end
 
 		factory :inflow_category, traits: [:inflow]
-		factory :subcategory, traits: [:parent]
-		factory :inflow_subcategory, traits: [:inflow, :parent]
+		factory :subcategory, traits: [:parent_category]
+		factory :inflow_subcategory, traits: [:inflow, :parent_category]
+		factory :category_with_children, traits: [:with_children]
 	end
 end
