@@ -3,7 +3,7 @@ require 'models/concerns/categorisable'
 RSpec.shared_examples Transactable do
 	it_behaves_like Categorisable
 
-	describe "ledger" do
+	describe "#ledger" do
 		# Custom matcher that compares a set of transactions against another set
 		matcher :match_ledger_transactions do |expected|
 			match do |actual|
@@ -184,7 +184,7 @@ RSpec.shared_examples Transactable do
 		end
 	end
 
-	describe "closing_balance" do
+	describe "#closing_balance" do
 		let(:context) { create(context_factory, :with_all_transaction_types) }
 
 		before :each do
@@ -202,7 +202,7 @@ RSpec.shared_examples Transactable do
 		end
 	end
 
-	describe "ledger_options" do
+	describe "#ledger_options" do
 		subject { described_class.new }
 
 		it "should set default values for missing options" do
@@ -238,7 +238,7 @@ RSpec.shared_examples Transactable do
 		end
 	end
 
-	describe "drop_opening_date" do
+	describe "#drop_opening_date" do
 		subject { described_class.new }
 
 		let(:transactions) do
@@ -269,7 +269,7 @@ RSpec.shared_examples Transactable do
 		end
 	end
 
-	describe "ledger_opening_balance" do
+	describe "#ledger_opening_balance" do
 		subject { described_class.new }
 
 		context "when fetching backwards" do
@@ -303,7 +303,7 @@ RSpec.shared_examples Transactable do
 		end
 	end
 
-	describe "exclude_reconciled" do
+	describe "#exclude_reconciled" do
 		subject { described_class.new }
 
 		before :each do

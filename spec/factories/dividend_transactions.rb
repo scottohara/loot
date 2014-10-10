@@ -8,11 +8,12 @@ FactoryGirl.define do
 		ignore do
 			investment_account { FactoryGirl.build(:investment_account, related_account: cash_account) }
 			cash_account { FactoryGirl.build(:bank_account) }
+			status nil
 		end
 
 		after :build do |trx, evaluator|
-			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.investment_account, direction: "outflow")
-			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.cash_account, direction: "inflow")
+			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.investment_account, direction: "outflow", status: evaluator.status)
+			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.cash_account, direction: "inflow", status: evaluator.status)
 		end
 	end
 end

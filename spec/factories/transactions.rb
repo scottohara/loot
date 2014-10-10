@@ -9,7 +9,7 @@ FactoryGirl.define do
 
 	trait :flagged do
 		after :build do |trx|
-			trx.flag = FactoryGirl.build :transaction_flag
+			trx.flag = FactoryGirl.build :transaction_flag, memo: "Transaction flag"
 		end
 	end
 end

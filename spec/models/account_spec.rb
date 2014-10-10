@@ -20,7 +20,7 @@ RSpec.describe Account, :type => :model do
 		end
 	end
 
-	describe "ledger" do
+	describe "#ledger" do
 		# Custom matcher that checks if a set of transactions are all unreconciled
 		matcher :all_be_unreconciled do
 			match do |transactions|
@@ -37,6 +37,21 @@ RSpec.describe Account, :type => :model do
 				expect(transactions.size).to eq 2
 				expect(transactions).to all_be_unreconciled
 			end
+		end
+	end
+
+	describe "#as_json" do
+		subject { create(:account, name: "Test Account", transactions: 1) }
+		let(:json) { subject.as_json }
+
+		it "should return a JSON representation" do
+			expect(json).to include(:id => subject.id)
+			expect(json).to include(:name => "Test Account")
+			expect(json).to include(:account_type => "bank")
+			expect(json).to include(:opening_balance => 1000)
+			expect(json).to include(:status => "open")
+			expect(json).to include(:closing_balance => subject.closing_balance)
+			expect(json).to include(:num_transactions => 1)
 		end
 	end
 end

@@ -8,12 +8,13 @@ FactoryGirl.define do
 		ignore do
 			parent { FactoryGirl.build(:split_transaction) }
 			account { FactoryGirl.build(:account) }
+			status nil
 		end
 
 		after :build do |trx, evaluator|
 			trx.parent = evaluator.parent
 			trx.parent.amount = trx.amount
-			trx.transaction_account = FactoryGirl.build :transaction_account, account: evaluator.account, direction: (evaluator.parent.transaction_account.direction.eql?("inflow") && "outflow" || "inflow")
+			trx.transaction_account = FactoryGirl.build :transaction_account, account: evaluator.account, direction: (evaluator.parent.transaction_account.direction.eql?("inflow") && "outflow" || "inflow"), status: evaluator.status
 		end
 
 		trait :inflow do

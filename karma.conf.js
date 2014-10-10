@@ -91,7 +91,7 @@ module.exports = function(config) {
 				{type: "text-summary"},
 				{type: "html", dir: "coverage"}
 			],
-			subdir: "."
+			subdir: "frontend"
 		},
 
 		// web server port

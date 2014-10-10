@@ -1,5 +1,5 @@
 RSpec.shared_examples Categorisable do
-	describe "transaction_category" do
+	describe "::transaction_category" do
 		subject { described_class }
 		let(:trx) { {} }
 		let(:account) { {:type => "cash"} }
@@ -140,7 +140,7 @@ RSpec.shared_examples Categorisable do
 		end
 	end
 
-	describe "basic_category" do
+	describe "::basic_category" do
 		subject { described_class }
 		let(:trx) { {'category_id' => 1, 'category_name' => "name"} }
 
@@ -166,7 +166,7 @@ RSpec.shared_examples Categorisable do
 		end
 	end
 
-	describe "basic_subcategory" do
+	describe "::basic_subcategory" do
 		subject { described_class }
 		let(:trx) { {'category_id' => 1, 'category_name' => "name"} }
 
@@ -188,7 +188,7 @@ RSpec.shared_examples Categorisable do
 		end
 	end
 
-	describe "psuedo_category" do
+	describe "::psuedo_category" do
 		subject { described_class }
 
 		context "outflow" do

@@ -8,11 +8,12 @@ FactoryGirl.define do
 			account { FactoryGirl.build(:investment_account) }
 			direction "Add"
 			quantity 10
+			status nil
 		end
 
 		after :build do |trx, evaluator|
 			trx.header.quantity = evaluator.quantity
-			trx.transaction_account = FactoryGirl.build(:transaction_account, account: evaluator.account, direction: (evaluator.direction.eql?("Add") ? "inflow" : "outflow"))
+			trx.transaction_account = FactoryGirl.build(:transaction_account, account: evaluator.account, direction: (evaluator.direction.eql?("Add") ? "inflow" : "outflow"), status: evaluator.status)
 		end
 
 		trait :outflow do
