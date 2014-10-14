@@ -13,6 +13,30 @@ RSpec.describe Security, :type => :model do
 		let(:expected_closing_balances) { {:with_date => 1, :without_date => 0 } }
 	end
 
+	describe "#opening_balance" do
+		subject { create(:security) }
+
+		it "should return zero" do
+			expect(subject.opening_balance).to eq 0
+		end
+	end
+
+	describe "#account_type" do
+		subject { create(:security) }
+		
+		it "should return 'investment'" do
+			expect(subject.account_type).to eq "investment"
+		end
+	end
+
+	describe "#related_account" do
+		subject { create(:security) }
+		
+		it "should return nil" do
+			expect(subject.related_account).to be_nil
+		end
+	end
+
 	describe "#as_json" do
 		subject { create(:security, name: "Test Security", code: "TEST", transactions: 1) }
 		let(:json) { subject.as_json }

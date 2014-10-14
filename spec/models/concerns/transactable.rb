@@ -160,12 +160,8 @@ RSpec.shared_examples Transactable do
 			# Create the context with 15 basic transactions
 			context = create(context_factory, transactions: 15)
 
-			# Reopen the module and change the size of the result set
-			module Transactable
-				self.const_set("ORIG_NUM_RESULTS", self.const_get("NUM_RESULTS"))
-				self.send :remove_const, "NUM_RESULTS"
-				self.const_set("NUM_RESULTS", 9)
-			end
+			# Change the size of the result set
+			stub_const("Transactable::NUM_RESULTS", 9)
 
 			# Get the ledger
 			_, transactions, at_end = context.ledger({:as_at => (Date.parse("2014-01-01") + @as_at).to_s, :direction => direction})
@@ -174,13 +170,6 @@ RSpec.shared_examples Transactable do
 			expect(transactions.first[:transaction_date]).to eq (Date.parse("2014-01-01") + range.first)
 			expect(transactions.last[:transaction_date]).to eq (Date.parse("2014-01-01") + range.last)
 			expect(at_end).to be expected_at_end
-
-			# Reopen the module and reset the size of the result set
-			module Transactable
-				self.send :remove_const, "NUM_RESULTS"
-				self.const_set("NUM_RESULTS", self.const_get("ORIG_NUM_RESULTS"))
-				self.send :remove_const, "ORIG_NUM_RESULTS"
-			end
 		end
 	end
 

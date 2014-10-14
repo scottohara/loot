@@ -20,6 +20,22 @@ RSpec.describe Category, :type => :model do
 		end
 	end
 
+	describe "#opening_balance" do
+		subject { create(:category) }
+
+		it "should return zero" do
+			expect(subject.opening_balance).to eq 0
+		end
+	end
+
+	describe "#account_type" do
+		subject { create(:category) }
+		
+		it "should return nil" do
+			expect(subject.account_type).to be_nil
+		end
+	end
+
 	describe "#as_json" do
 		let(:json) { subject.as_json }
 

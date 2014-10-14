@@ -1,10 +1,91 @@
 require 'rails_helper'
 
 RSpec.describe SecurityTransferTransaction, :type => :model do
+	matcher :match_json do |expected, source_account, destination_account|
+		match do |actual|
+			actual[:transaction_type].eql? "SecurityTransfer" and \
+			actual[:id].eql? expected[:id] and \
+			actual[:memo].eql? expected['memo'] and \
+			actual[:primary_account][:id].eql? source_account.id and \
+			actual[:account][:id].eql? destination_account.id
+		end
+	end
+
 	describe "::create_from_json" do
+		let(:primary_account) { create :investment_account }
+		let(:account) { create :investment_account }
+		let(:json) { {
+			:id => 1,
+			"memo" => "Test json",
+			"primary_account" => {
+				"id" => primary_account.id
+			},
+			"account" => {
+				"id" => account.id
+			}
+		} }
+
+		before :each do
+			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
+			expect(Account).to receive(:find).with(json['account']['id']).and_return account
+			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("quantity")
+		end
+
+		context "outflow" do
+			it "should create a transaction from a JSON representation" do
+				json["direction"] = "outflow"
+			end
+		end
+
+		context "inflow" do
+			it "should create a transaction from a JSON representation" do
+				json["direction"] = "inflow"
+			end
+		end
+
+		after :each do
+			expect(SecurityTransferTransaction.create_from_json(json)).to match_json json, primary_account, account
+		end
 	end
 
 	describe "::update_from_json" do
+		let(:primary_account) { create :investment_account }
+		let(:account) { create :investment_account }
+		let(:transaction) { create :security_transfer_transaction }
+		let(:json) { {
+			:id => transaction.id,
+			"memo" => "Test json",
+			"primary_account" => {
+				"id" => primary_account.id
+			},
+			"account" => {
+				"id" => account.id
+			}
+		} }
+
+		before :each do
+			expect(SecurityTransferTransaction).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
+			expect(Account).to receive(:find).with(json['account']['id']).and_return account
+			expect(transaction.header).to receive(:update_from_json).with json
+		end
+
+		context "outflow" do
+			it "should update a transaction from a JSON representation" do
+				json["direction"] = "outflow"
+			end
+		end
+
+		context "inflow" do
+			it "should update a transaction from a JSON representation" do
+				json["direction"] = "inflow"
+			end
+		end
+
+		after :each do
+			expect(SecurityTransferTransaction.update_from_json(json)).to match_json json, primary_account, account
+		end
 	end
 
 	describe "#as_json" do

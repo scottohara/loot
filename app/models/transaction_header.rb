@@ -12,12 +12,12 @@ class TransactionHeader < ActiveRecord::Base
 	end
 
 	def update_from_json(json)
+		self.transaction_date = json['transaction_date']
+
 		if json['transaction_date'].nil?
-			self.transaction_date = nil
-			self.build_schedule if self.schedule.nil?
-			self.schedule.assign_attributes :next_due_date => json['next_due_date'], :frequency => json['frequency'], :estimate => !!json['estimate'], :auto_enter => !!json['auto_enter']
+			schedule = self.schedule || self.build_schedule
+			schedule.assign_attributes :next_due_date => json['next_due_date'], :frequency => json['frequency'], :estimate => !!json['estimate'], :auto_enter => !!json['auto_enter']
 		else
-			self.transaction_date = json['transaction_date']
 			self.schedule.destroy unless self.schedule.nil?
 		end
 

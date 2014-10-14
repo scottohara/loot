@@ -9,6 +9,22 @@ RSpec.describe Payee, :type => :model do
 		let(:expected_closing_balances) { {:with_date => -1, :without_date => 0 } }
 	end
 
+	describe "#opening_balance" do
+		subject { create(:payee) }
+
+		it "should return zero" do
+			expect(subject.opening_balance).to eq 0
+		end
+	end
+
+	describe "#account_type" do
+		subject { create(:payee) }
+		
+		it "should return nil" do
+			expect(subject.account_type).to be_nil
+		end
+	end
+
 	describe "#as_json" do
 		subject { create(:payee, name: "Test Payee", transactions: 1) }
 		let(:json) { subject.as_json }

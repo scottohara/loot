@@ -1,10 +1,71 @@
 require 'rails_helper'
 
 RSpec.describe DividendTransaction, :type => :model do
+	matcher :match_json do |expected, investment_account, cash_account|
+		match do |actual|
+			actual.transaction_type.eql? "Dividend" and \
+			actual.id.eql? expected[:id] and \
+			actual.amount.eql? expected['amount'] and \
+			actual.memo.eql? expected['memo'] and \
+			actual.investment_account.direction.eql? "outflow" and \
+			actual.investment_account.account.eql? investment_account and \
+			actual.cash_account.direction.eql? "inflow" and \
+			actual.cash_account.account.eql? cash_account
+		end
+	end
+
 	describe "::create_from_json" do
+		let(:investment_account) { create :investment_account }
+		let(:cash_account) { create :bank_account }
+		let(:json) { {
+			:id => 1,
+			"amount" => 1,
+			"memo" => "Test json",
+			"primary_account" => {
+				"id" => investment_account.id
+			},
+			"account" => {
+				"id" => cash_account.id
+			}
+		} }
+
+		before :each do
+			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
+			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
+			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
+		end
+
+		it "should create a transaction from a JSON representation" do
+			expect(DividendTransaction.create_from_json(json)).to match_json json, investment_account, cash_account
+		end
 	end
 
 	describe "::update_from_json" do
+		let(:investment_account) { create :investment_account }
+		let(:cash_account) { create :bank_account }
+		let(:transaction) { create :dividend_transaction }
+		let(:json) { {
+			:id => transaction.id,
+			"amount" => 1,
+			"memo" => "Test json",
+			"primary_account" => {
+				"id" => investment_account.id
+			},
+			"account" => {
+				"id" => cash_account.id
+			}
+		} }
+
+		before :each do
+			expect(DividendTransaction).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
+			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
+			expect(transaction.header).to receive(:update_from_json).with json
+		end
+
+		it "should update a transaction from a JSON representation" do
+			expect(DividendTransaction.update_from_json(json)).to match_json json, investment_account, cash_account
+		end
 	end
 
 	describe "#as_json" do
