@@ -1,6 +1,41 @@
 require 'rails_helper'
+require 'models/concerns/categorisable'
 
 RSpec.describe Transaction, :type => :model do
+	it_behaves_like Categorisable
+
+	describe "::class_for" do
+		subject { described_class }
+		
+		it "should return the transaction class for a given type" do
+			expect(subject.class_for("Basic")).to be BasicTransaction
+		end
+	end
+
+	describe "::types_for" do
+		subject { described_class }
+
+		context "non-investment accounts" do
+			it "should return the set of non-investment transactions" do
+				expect(subject.types_for("bank")).to eq %w(Basic Split Transfer Payslip LoanRepayment)
+			end
+		end
+
+		context "investment accounts" do
+			it "should return the set of investment transactions" do
+				expect(subject.types_for("investment")).to eq %w(SecurityTransfer SecurityHolding SecurityInvestment Dividend)
+			end
+		end
+	end
+
+	describe "::transactions" do
+		subject { described_class }
+
+		it "should return self" do
+			expect(subject.transactions).to eql subject
+		end
+	end
+
 	describe "::opening_balance" do
 		subject { described_class }
 
@@ -14,6 +49,14 @@ RSpec.describe Transaction, :type => :model do
 		
 		it "should return nil" do
 			expect(subject.account_type).to be_nil
+		end
+	end
+
+	describe "#as_subclass" do
+		subject { create(:transaction) }
+
+		it "should become an instance matching the transaction type" do
+			expect(subject.as_subclass.class).to be BasicTransaction
 		end
 	end
 

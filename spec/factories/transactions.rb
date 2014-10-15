@@ -12,4 +12,10 @@ FactoryGirl.define do
 			trx.flag = FactoryGirl.build :transaction_flag, memo: "Transaction flag"
 		end
 	end
+
+	factory :transaction do
+		transaction_type "Basic"
+		amount
+		memo
+	end
 end

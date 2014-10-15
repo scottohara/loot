@@ -9,6 +9,24 @@ RSpec.describe Payee, :type => :model do
 		let(:expected_closing_balances) { {:with_date => -1, :without_date => 0 } }
 	end
 
+	describe "::find_or_new" do
+		context "existing payee" do
+			let(:payee) { create :payee }
+
+			it "should return the existing payee" do
+				expect(Payee.find_or_new({"id" => payee.id})).to eq payee
+			end
+		end
+
+		context "new payee" do
+			let(:payee_name) { "New payee" }
+
+			it "should return a newly created payee" do
+				expect(Payee.find_or_new(payee_name).name).to eq payee_name
+			end
+		end
+	end
+
 	describe "#opening_balance" do
 		subject { create(:payee) }
 

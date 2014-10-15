@@ -162,4 +162,22 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			expect(json).to include(:commission => 1)
 		end
 	end
+
+	describe "#investment_account" do
+		let(:account) { create :investment_account }
+		subject { create :security_investment_transaction, investment_account: account }
+
+		it "should return the first account of type 'investment'" do
+			expect(subject.investment_account.account).to eq account
+		end
+	end
+
+	describe "#cash_account" do
+		let(:account) { create :bank_account }
+		subject { create :security_investment_transaction, cash_account: account }
+
+		it "should return the first account of type 'bank'" do
+			expect(subject.cash_account.account).to eq account
+		end
+	end
 end

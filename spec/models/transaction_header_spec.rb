@@ -1,6 +1,64 @@
 require 'rails_helper'
 
 RSpec.describe TransactionHeader, :type => :model do
+	describe "#validate_transaction_date_or_schedule_presence" do
+		subject { TransactionHeader.new }
+		let(:error_message) { "Either transaction date or schedule can't be blank" }
+
+		it "should be an error if both transaction date and schedule are blank" do
+			subject.validate_transaction_date_or_schedule_presence
+			expect(subject.errors[:base]).to include(error_message)
+		end
+
+		it "should not be an error if transaction date is not blank" do
+			subject.transaction_date = Date.today
+			subject.validate_transaction_date_or_schedule_presence
+			expect(subject.errors[:base]).to_not include(error_message)
+		end
+
+		it "should not be an error if schedule is not blank" do
+			subject.schedule = build :schedule
+			subject.validate_transaction_date_or_schedule_presence
+			expect(subject.errors[:base]).to_not include(error_message)
+		end
+
+		it "should not be an error if both transaction date and schedule are not blank" do
+			subject.transaction_date = Date.today
+			subject.schedule = build :schedule
+			subject.validate_transaction_date_or_schedule_presence
+			expect(subject.errors[:base]).to_not include(error_message)
+		end
+	end
+
+	describe "#validate_transaction_date_or_schedule_absence" do
+		subject { TransactionHeader.new }
+		let(:error_message) { "Either transaction date or schedule must be blank" }
+
+		it "should be an error if both transaction date and schedule are not blank" do
+			subject.transaction_date = Date.today
+			subject.schedule = build :schedule
+			subject.validate_transaction_date_or_schedule_absence
+			expect(subject.errors[:base]).to include(error_message)
+		end
+
+		it "should not be an error if transaction date is blank" do
+			subject.schedule = build :schedule
+			subject.validate_transaction_date_or_schedule_absence
+			expect(subject.errors[:base]).to_not include(error_message)
+		end
+
+		it "should not be an error if schedule is blank" do
+			subject.transaction_date = Date.today
+			subject.validate_transaction_date_or_schedule_absence
+			expect(subject.errors[:base]).to_not include(error_message)
+		end
+
+		it "should not be an error if both transaction date and schedule are blank" do
+			subject.validate_transaction_date_or_schedule_absence
+			expect(subject.errors[:base]).to_not include(error_message)
+		end
+	end
+
 	matcher :match_json do |expected|
 		match do |actual|
 			actual.transaction_date.eql? expected['transaction_date']

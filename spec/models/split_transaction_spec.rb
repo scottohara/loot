@@ -1,6 +1,9 @@
 require 'rails_helper'
+require 'models/concerns/categorisable'
 
 RSpec.describe SplitTransaction, :type => :model do
+	it_behaves_like Categorisable
+
 	matcher :match_json do |expected, account|
 		match do |actual|
 			actual.transaction_type.eql? "Split" and \

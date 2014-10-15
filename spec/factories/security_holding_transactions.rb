@@ -9,9 +9,11 @@ FactoryGirl.define do
 			direction "Add"
 			quantity 10
 			status nil
+			transaction_date nil
 		end
 
 		after :build do |trx, evaluator|
+			trx.header.transaction_date = evaluator.transaction_date unless evaluator.transaction_date.nil?
 			trx.header.quantity = evaluator.quantity
 			trx.transaction_account = FactoryGirl.build(:transaction_account, account: evaluator.account, direction: (evaluator.direction.eql?("Add") ? "inflow" : "outflow"), status: evaluator.status)
 		end

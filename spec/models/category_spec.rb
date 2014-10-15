@@ -20,6 +20,38 @@ RSpec.describe Category, :type => :model do
 		end
 	end
 
+	describe "::find_or_new" do
+		context "existing category" do
+			let(:category) { create :category }
+
+			it "should return the existing category" do
+				expect(Category.find_or_new({"id" => category.id})).to eq category
+			end
+		end
+
+		context "new category" do
+			let(:category_name) { "New category" }
+
+			it "should return a newly created category" do
+				category = Category.find_or_new category_name
+				expect(category.name).to eq category_name
+				expect(category.direction).to eq "outflow"
+				expect(category.parent).to be_nil
+			end
+
+			context "with parent" do
+				let(:parent) { create :inflow_category }
+
+				it "should return a newly created category" do
+					category = Category.find_or_new category_name, parent
+					expect(category.name).to eq category_name
+					expect(category.direction).to eq "inflow"
+					expect(category.parent).to eq parent
+				end
+			end
+		end
+	end
+
 	describe "#opening_balance" do
 		subject { create(:category) }
 

@@ -40,6 +40,20 @@ RSpec.describe Account, :type => :model do
 		end
 	end
 
+	describe "#reconcile" do
+		subject { create :account, transactions: 2, reconciled: 1 }
+
+		it "should mark all cleared transactions as reconciled" do
+			trx = subject.transaction_accounts.where(:status => nil).first
+			trx.update_attributes(:status => "Cleared")
+
+			subject.reconcile
+
+			expect(subject.transaction_accounts.where(:status => 'Cleared').size).to eq 0
+			expect(subject.transaction_accounts.where(:status => 'Reconciled').size).to eq 2
+		end
+	end
+
 	describe "#as_json" do
 		subject { create(:account, name: "Test Account", transactions: 1) }
 		let(:json) { subject.as_json }
