@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
 																		accounts.account_type = 'investment'
 													GROUP BY	accounts.id,
 																		transaction_headers.security_id
-													HAVING		ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(latest_prices.price),2) > 0
+													HAVING		ABS(ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(latest_prices.price),2)) > 0
 												) AS security_holdings ON security_holdings.id = accounts.id
 				WHERE						accounts.account_type = 'investment'
 				GROUP BY				accounts.id

@@ -22,6 +22,13 @@ FactoryGirl.define do
 			direction "Remove"
 		end
 
+		trait :scheduled do
+			after :build do |trx|
+				trx.header.transaction_date = nil
+				trx.header.schedule = build :schedule
+			end
+		end
+
 		factory :security_remove_transaction, traits: [:outflow]
 	end
 end

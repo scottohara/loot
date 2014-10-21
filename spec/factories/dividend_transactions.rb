@@ -15,5 +15,16 @@ FactoryGirl.define do
 			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.investment_account, direction: "outflow", status: evaluator.status)
 			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.cash_account, direction: "inflow", status: evaluator.status)
 		end
+
+		trait :scheduled do
+			ignore do
+				next_due_date { Date.today.advance({:months => -1}) }
+			end
+
+			after :build do |trx, evaluator|
+				trx.header.transaction_date = nil
+				trx.header.schedule = build :schedule, next_due_date: evaluator.next_due_date
+			end
+		end
 	end
 end

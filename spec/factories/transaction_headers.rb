@@ -5,6 +5,7 @@ FactoryGirl.define do
 
 	trait :scheduled do
 		schedule
+		transaction_date nil
 	end
 
 	factory :transaction_header do

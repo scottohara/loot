@@ -5,12 +5,12 @@ RSpec.shared_examples Transactable do
 
 	describe "#ledger" do
 		# Custom matcher that compares a set of transactions against another set
-		matcher :match_ledger_transactions do |expected|
+		matcher :match_ledger_transactions do |expected, account_type|
 			match do |actual|
 				@diffs = []
 
 				# Make sure the array lengths match
-				return false unless expected.size.eql? actual.uniq{|t| t[:id]}.size 
+				return false unless expected.uniq{|t| t[:id]}.size.eql? actual.uniq{|t| t[:id]}.size 
 
 				# Check each expected transaction against it's actual counterpart
 				expected.all? do |trx|
@@ -36,11 +36,8 @@ RSpec.shared_examples Transactable do
 
 			failure_message do
 				if @diffs.empty?
-					p expected.map{|t| "#{t.id} - #{t.transaction_type}"}.uniq.sort
-					p actual.map{|t| "#{t[:id]} - #{t[:transaction_type]}"}.uniq.sort
-
 					# Size mismatch
-					"expected #{expected.size} #{"transaction".pluralize} but got #{actual.uniq{|t| t[:id]}.size}"
+					"expected #{expected.uniq{|t| t[:id]}.size} #{"transaction".pluralize} but got #{actual.uniq{|t| t[:id]}.size}"
 				else
 					# Content mismatch
 					@diffs.reduce("") do |message, diff|
@@ -90,13 +87,13 @@ RSpec.shared_examples Transactable do
 			end
 		end
 
-		it "should handle all types of transactions" do
-			context = create(context_factory, :with_all_transaction_types)
+		it "should handle all types of transactions and ignore scheduled transactions" do
+			context = create(context_factory, :with_all_transaction_types, scheduled: 1)
 
 			_, transactions, _ = context.ledger
-			expected_transactions = context.transactions.where expected_transactions_filter
+			expected_transactions = context.transactions.for_ledger({}).where("transaction_headers.transaction_date IS NOT NULL")
 
-			expect(transactions).to match_ledger_transactions expected_transactions
+			expect(transactions).to match_ledger_transactions expected_transactions, context.account_type
 		end
 
 		it "should only include transactions belonging to the context" do
@@ -174,7 +171,7 @@ RSpec.shared_examples Transactable do
 	end
 
 	describe "#closing_balance" do
-		let(:context) { create(context_factory, :with_all_transaction_types) }
+		let(:context) { create(context_factory, :with_all_transaction_types, scheduled: 1) }
 
 		before :each do
 			FactoryGirl.reload

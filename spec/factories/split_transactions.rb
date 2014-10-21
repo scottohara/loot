@@ -10,18 +10,26 @@ FactoryGirl.define do
 			category { FactoryGirl.build(:category, direction: direction) }
 			subtransactions 0
 			subtransfers 0
+			subtransfer_account { FactoryGirl.build(:account) }
 			status nil
 		end
 
 		after :build do |trx, evaluator|
 			trx.transaction_account = FactoryGirl.build :transaction_account, account: evaluator.account, direction: evaluator.direction, status: evaluator.status
 			create_list (evaluator.direction.eql?("outflow") ? :sub_expense_transaction : :sub_income_transaction), evaluator.subtransactions, parent: trx, category: evaluator.category
-			create_list :subtransfer_transaction, evaluator.subtransfers, parent: trx, payee: evaluator.payee
+			create_list :subtransfer_transaction, evaluator.subtransfers, parent: trx, payee: evaluator.payee, account: evaluator.subtransfer_account
 			trx.amount = (trx.subtransactions.pluck(:amount).reduce(:+) || 0) + (trx.subtransfers.pluck(:amount).reduce(:+) || 0)
 		end
 
 		trait :inflow do
 			direction "inflow"
+		end
+
+		trait :scheduled do
+			after :build do |trx|
+				trx.header.transaction_date = nil
+				trx.header.schedule = build :schedule
+			end
 		end
 
 		factory :split_from_transaction, traits: [:inflow]

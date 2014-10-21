@@ -31,6 +31,17 @@ FactoryGirl.define do
 			direction "Sell"
 		end
 
+		trait :scheduled do
+			ignore do
+				next_due_date { Date.today.advance({:months => -1}) }
+			end
+
+			after :build do |trx, evaluator|
+				trx.header.transaction_date = nil
+				trx.header.schedule = build :schedule, next_due_date: evaluator.next_due_date
+			end
+		end
+
 		factory :security_sale_transaction, traits: [:inflow]
 	end
 end

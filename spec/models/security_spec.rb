@@ -9,7 +9,6 @@ RSpec.describe Security, :type => :model do
 	it_behaves_like Transactable do
 		let(:context_factory) { :security }
 		let(:ledger_json_key) { :security }
-		let(:expected_transactions_filter) { "" }
 		let(:expected_closing_balances) { {:with_date => 1, :without_date => 0 } }
 	end
 
@@ -28,6 +27,56 @@ RSpec.describe Security, :type => :model do
 			it "should return a newly created security" do
 				expect(Security.find_or_new(security_name).name).to eq security_name
 			end
+		end
+	end
+
+	describe "::list" do
+		subject { described_class }
+		let!(:security) { create :security, :with_all_transaction_types, transactions: 1, scheduled: 1 }
+		let!(:unused_security) { create :security }
+		let!(:unused_security_scheduled) { create :security, scheduled: 1 }
+		let!(:security_with_prices) { create :security, transactions: 2 }
+
+		let(:json) { [
+			{
+				:id => security.id,
+				:name => security.name,
+				:code => security.code,
+				:current_holding => "10.000",
+				:current_value => "10.00"
+			},
+			{
+				:id => security_with_prices.id,
+				:name => security_with_prices.name,
+				:code => security_with_prices.code,
+				:current_holding => "20.000",
+				:current_value => "40.00"
+			},
+			{
+				:id => unused_security.id,
+				:name => unused_security.name,
+				:code => unused_security.code,
+				:current_holding => 0,
+				:current_value => 0,
+				:unused => true
+			},
+			{
+				:id => unused_security_scheduled.id,
+				:name => unused_security_scheduled.name,
+				:code => unused_security_scheduled.code,
+				:current_holding => 0,
+				:current_value => 0,
+				:unused => true
+			}
+		] }
+
+		before :each do
+			# Set the price to $2 as at today
+			security_with_prices.update_price! 2, Date.today, nil
+		end
+
+		it "should return the list of securities and their balances" do
+			expect(subject.list).to eq json
 		end
 	end
 

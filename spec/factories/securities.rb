@@ -5,16 +5,20 @@ FactoryGirl.define do
 
 		ignore do
 			transactions 0
+			scheduled 0
 		end
 
 		trait :with_all_transaction_types do
-			after :build do |security|
+			after :build do |security, evaluator|
 				create(:security_purchase_transaction, :flagged, security: security, status: "Cleared")		# flagged and cleared
 				create(:security_sale_transaction, security: security)
 				create(:security_transfer_transaction, security: security)
 				create(:security_add_transaction, security: security)
 				create(:security_remove_transaction, security: security)
 				create(:dividend_transaction, security: security)
+
+				# Create any scheduled transactions
+				create_list :security_holding_transaction, evaluator.scheduled, :scheduled, security: security
 			end
 		end
 

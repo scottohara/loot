@@ -165,7 +165,8 @@ class Schedule < ActiveRecord::Base
 			:next_due_date => self.next_due_date,
 			:frequency => self.frequency,
 			:estimate => self.estimate,
-			:auto_enter => self.auto_enter
+			:auto_enter => self.auto_enter,
+			:overdue_count => self.class.periods_since(self.frequency, self.next_due_date)
 		}
 	end
 end

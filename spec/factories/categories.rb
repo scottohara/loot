@@ -6,12 +6,16 @@ FactoryGirl.define do
 		ignore do
 			transactions 0
 			children 0
+			scheduled 0
 		end
 
 		trait :with_all_transaction_types do
-			after :build do |category|
+			after :build do |category, evaluator|
 				create(:basic_transaction, :flagged, category: category, status: "Cleared")			#flagged and cleared
 				create(:split_transaction, direction: category.direction, category: category, subtransactions: 1)
+
+				# Create any scheduled transactions
+				create_list :basic_transaction, evaluator.scheduled, :scheduled, category: category
 			end
 		end
 

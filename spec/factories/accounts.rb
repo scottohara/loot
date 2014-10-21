@@ -8,10 +8,11 @@ FactoryGirl.define do
 		ignore do
 			transactions 0
 			reconciled 0
+			scheduled 0
 		end
 
 		trait :with_all_transaction_types do
-			after :build do |account|
+			after :build do |account, evaluator|
 				if account.account_type.eql? "investment"
 					create(:security_purchase_transaction, :flagged, investment_account: account, cash_account: account.related_account, status: "Cleared")		# flagged and cleared
 					create(:security_sale_transaction, investment_account: account, cash_account: account.related_account)
@@ -20,6 +21,9 @@ FactoryGirl.define do
 					create(:security_add_transaction, account: account)
 					create(:security_remove_transaction, account: account)
 					create(:dividend_transaction, investment_account: account, cash_account: account.related_account)
+					
+					# Create any scheduled transactions
+					create_list :security_holding_transaction, evaluator.scheduled, :scheduled, account: account
 				else
 					create(:basic_expense_transaction, :flagged, account: account, status: "Cleared")			#flagged and cleared
 					create(:basic_income_transaction, account: account)
@@ -34,6 +38,9 @@ FactoryGirl.define do
 					create(:security_purchase_transaction, cash_account: account)
 					create(:security_sale_transaction, cash_account: account)
 					create(:dividend_transaction, cash_account: account) 
+	
+					# Create any scheduled transactions
+					create_list :basic_transaction, evaluator.scheduled, :scheduled, account: account
 				end
 			end
 		end
