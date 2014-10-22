@@ -8,7 +8,6 @@ RSpec.describe SubtransferTransaction, :type => :model do
 	end
 
 	describe "#as_json" do
-		subject { create(:subtransfer_transaction, status: "Reconciled") }
 
 		before :each do
 			expect(subject.account).to receive(:as_json).and_return("account json")
@@ -16,18 +15,17 @@ RSpec.describe SubtransferTransaction, :type => :model do
 		end
 
 		context "outflow" do
+			subject { create(:subtransfer_to_transaction, status: "Reconciled") }
 			let(:json) { subject.as_json({:direction => "outflow"}) }
 
 			it "should return a JSON representation" do
-				pending "this is failing because the factory set the direction to be the reverse of the parent.  Not sure if this is correct?"
 				expect(json).to include(:category => {:id => "TransferTo", :name => "Transfer To"})
-
-				#TODO - this is failing because the factory set the direction to be the reverse of the parent.  Not sure if this is correct?
 				expect(json).to include(:direction => "outflow")
 			end
 		end
 
 		context "inflow" do
+			subject { create(:subtransfer_from_transaction, status: "Reconciled") }
 			let(:json) { subject.as_json({:direction => "inflow"}) }
 
 			it "should return a JSON representation" do

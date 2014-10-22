@@ -14,11 +14,6 @@ class Security < ActiveRecord::Base
 					 		"JOIN accounts ON accounts.id = transaction_accounts.account_id"])
 			.where(	"accounts.account_type = 'investment'")
 		end
-
-		def for_basic_closing_balance(opts)
-			joins([	"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
-							"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
-		end
 	end
 
 	include Transactable

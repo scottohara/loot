@@ -6,7 +6,6 @@ RSpec.describe Account, :type => :model do
 		it_behaves_like Transactable do
 			let(:context_factory) { :bank_account }
 			let(:ledger_json_key) { :primary_account }
-			let(:expected_transactions_filter) { {:join_headers => true, :where => "" } }
 			let(:expected_closing_balances) { {:with_date => 999, :without_date => 999 } }
 		end
 	end

@@ -1,8 +1,16 @@
 require 'rails_helper'
+require 'models/concerns/transactable'
 require 'models/concerns/categorisable'
 
 RSpec.describe Transaction, :type => :model do
 	it_behaves_like Categorisable
+
+	it_behaves_like Transactable do
+		let(:as_class_method) { true }
+		let(:context_factory) { :bank_account }
+		let(:ledger_json_key) { :memo }
+		let(:expected_closing_balances) { {:with_date => -1, :without_date => 1 } }
+	end
 
 	describe "::class_for" do
 		subject { described_class }

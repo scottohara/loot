@@ -6,7 +6,7 @@ FactoryGirl.define do
 
 		# Default account, subtransactions and subtransfers if none specified
 		ignore do
-			parent { FactoryGirl.build(:split_transaction) }
+			parent { FactoryGirl.build(:split_from_transaction) }
 			account { FactoryGirl.build(:account) }
 			status nil
 		end
@@ -18,7 +18,7 @@ FactoryGirl.define do
 		end
 
 		trait :inflow do
-			parent { FactoryGirl.build(:split_from_transaction) }
+			parent { FactoryGirl.build(:split_to_transaction) }
 		end
 
 		factory :subtransfer_from_transaction, traits: [:inflow]

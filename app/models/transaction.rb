@@ -37,7 +37,7 @@ class Transaction < ActiveRecord::Base
 
 		def for_basic_closing_balance(opts)
 			joins([	"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id",
-							"JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
+							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 							"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id"])
 			.where(	"LOWER(transactions.memo) LIKE ?", "%#{opts[:query].downcase}%")
 		end
