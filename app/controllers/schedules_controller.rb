@@ -7,7 +7,7 @@ class SchedulesController < ApplicationController
 	end
 
 	def create
-		render :json => Transaction.class_for(params['transaction_type']).create_from_json(@schedule)
+		render :json => create_schedule
 	end
 
 	def update
@@ -18,7 +18,7 @@ class SchedulesController < ApplicationController
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			schedule.as_subclass.destroy
-			create
+			render :json => create_schedule
 		end
 	end
 
@@ -38,5 +38,9 @@ class SchedulesController < ApplicationController
 
 		# Copy the primary_account.id to account_id
 		@schedule['account_id'] = @schedule['primary_account']['id']
+	end
+
+	def create_schedule
+		Transaction.class_for(params['transaction_type']).create_from_json(@schedule)
 	end
 end

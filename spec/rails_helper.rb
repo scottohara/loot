@@ -69,3 +69,20 @@ RSpec.configure do |config|
 		end
 	end
 end
+
+# Shared context for JSON controllers
+RSpec.shared_context "JSON controller", :type => :controller do
+	before :each, :request do
+		expect(controller).to receive(:authenticate_user)
+		request.env['HTTP_ACCEPT'] = 'application/json'
+	end
+
+	after :each do
+		expect(response).to have_http_status defined?(expected_status) && expected_status || 200
+	end
+
+	after :each, :json do
+		expect(response.content_type).to eq "application/json"
+		expect(response.body).to eq json
+	end
+end

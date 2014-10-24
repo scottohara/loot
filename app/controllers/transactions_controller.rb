@@ -17,7 +17,7 @@ class TransactionsController < ApplicationController
 	end
 
 	def create
-		render :json => Transaction.class_for(params['transaction_type']).create_from_json(@transaction)
+		render :json => create_transaction
 	end
 
 	def update
@@ -28,7 +28,7 @@ class TransactionsController < ApplicationController
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			transaction.as_subclass.destroy
-			create
+			render :json => create_transaction
 		end
 	end
 
@@ -57,5 +57,9 @@ class TransactionsController < ApplicationController
 			when params[:security_id] then Security.find(params[:security_id])
 			else Transaction
 		end
+	end
+
+	def create_transaction
+		Transaction.class_for(params['transaction_type']).create_from_json(@transaction)
 	end
 end
