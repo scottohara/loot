@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery
+	protect_from_forgery
 	before_action :authenticate_user, :except => [:routing_error]
 	rescue_from StandardError, :with => :internal_error
 	rescue_from ActiveRecord::RecordInvalid, :with => :record_invalid
@@ -23,11 +23,7 @@ class ApplicationController < ActionController::Base
 		render :json => exception.message, :status => :not_found
 	end
 
-	def routing_error()
+	def routing_error
 		render :json => "Path #{params[:unmatched_route]} is not valid", :status => :not_found
 	end
 end
-
-
-
-
