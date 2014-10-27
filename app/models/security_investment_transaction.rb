@@ -1,6 +1,7 @@
 class SecurityInvestmentTransaction < SecurityTransaction
 	validates :amount, :presence => true
 	validate :validate_quantity_presence, :validate_price_presence, :validate_commission_presence
+	validate :validate_amount_matches_investment_details
 	has_many :transaction_accounts, :foreign_key => 'transaction_id', :autosave => true, :dependent => :destroy
 	has_many :accounts, :through => :transaction_accounts
 	after_initialize do |t|
@@ -10,14 +11,13 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	class << self
 		def create_from_json(json)
 			cash_direction = json['direction'].eql?('inflow') && 'outflow' || 'inflow'
-			security = Security.find_or_new json['security']
 
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
 			s.transaction_accounts.build(:direction => json['direction']).account = Account.find(json['primary_account']['id'])
 			s.transaction_accounts.build(:direction => cash_direction).account = Account.find(json['account']['id'])
 			s.build_header.update_from_json json
 			s.save!
-			security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
+			s.header.security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 			s
 		end
 
@@ -28,9 +28,12 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		end
 	end
 
+	def validate_amount_matches_investment_details
+		errors[:base] << "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.eql?(header.price * header.quantity + (header.commission * (investment_account.direction.eql?("inflow") ? 1 : -1)))
+	end
+
 	def update_from_json(json)
 		cash_direction = json['direction'].eql?('inflow') && 'outflow' || 'inflow'
-		security = Security.find_or_new json['security']
 
 		self.amount = json['amount']
 		self.memo = json['memo']
@@ -40,7 +43,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		self.cash_account.account = Account.find(json['account']['id'])
 		self.header.update_from_json json
 		self.save!
-		security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
+		self.header.security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 	end
 
 	def as_json(options={})

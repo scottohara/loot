@@ -20,7 +20,7 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 		let(:cash_account) { create :bank_account }
 		let(:json) { {
 			:id => 1,
-			"amount" => 1,
+			"amount" => amount,
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => investment_account.id
@@ -28,14 +28,16 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			"account" => {
 				"id" => cash_account.id
 			},
-			"price" => 1
+			"price" => 2,
+			"quantity" => 10,
+			"commission" => 5
 		} }
 
 		before :each do
 			expect(Security).to receive(:find_or_new).with(json['security']).and_return security
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
-			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("quantity")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("price")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("commission")
@@ -60,8 +62,13 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			end
 		end
 
-		context "outflow", :create_from_json => true, :direction => "outflow" do; end
-		context "inflow", :create_from_json => true, :direction => "inflow" do; end
+		context "outflow", :create_from_json => true, :direction => "outflow" do
+			let(:amount) { 15 }
+		end
+
+		context "inflow", :create_from_json => true, :direction => "inflow" do
+			let(:amount) { 25 }
+		end
 
 		after :each do
 			expect(SecurityInvestmentTransaction.create_from_json(json)).to match_json json, investment_account, cash_account
@@ -75,7 +82,7 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 		let(:transaction) { create :security_investment_transaction }
 		let(:json) { {
 			:id => transaction.id,
-			"amount" => 1,
+			"amount" => amount,
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => investment_account.id
@@ -83,7 +90,9 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			"account" => {
 				"id" => cash_account.id
 			},
-			"price" => 1
+			"price" => 2,
+			"quantity" => 10,
+			"commission" => 5
 		} }
 
 		before :each do
@@ -91,7 +100,7 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			expect(Security).to receive(:find_or_new).with(json['security']).and_return security
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
-			expect(transaction.header).to receive(:update_from_json).with json
+			expect(transaction.header).to receive(:update_from_json).with(json).and_call_original
 		end
 
 		shared_examples "update from json", :update_from_json do
@@ -113,14 +122,55 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			end
 		end
 
-		context "outflow", :update_from_json => true, :direction => "outflow" do; end
-		context "inflow", :update_from_json => true, :direction => "inflow" do; end
+		context "outflow", :update_from_json => true, :direction => "outflow" do
+			let(:amount) { 15 }
+		end
+
+		context "inflow", :update_from_json => true, :direction => "inflow" do
+			let(:amount) { 25 }
+		end
 
 		after :each do
 			expect(SecurityInvestmentTransaction.update_from_json(json)).to match_json json, investment_account, cash_account
 		end
 	end
 
+	describe "#validate_amount_matches_investment_details" do
+		subject { SecurityInvestmentTransaction.new }
+
+		before :each do |example|
+			subject.build_header :price => 2, :quantity => 10, :commission => 5
+			subject.transaction_accounts.build(:direction => example.metadata[:direction]).account = create :investment_account
+		end
+
+		shared_examples "validate amount", :validate_amount do
+			context "when amount doesn't match the investment details" do
+				it "should be an error" do
+					subject.amount = 1
+					subject.validate_amount_matches_investment_details
+					expect(subject.errors[:base]).to include(error_message)
+				end
+			end
+
+			context "when amount matches the investment details" do
+				it "should not be an error" do
+					subject.amount = valid_amount 
+					subject.validate_amount_matches_investment_details
+					expect(subject.errors[:base]).to_not include(error_message)
+				end
+			end
+		end
+
+		context "outflow", :validate_amount => true, :direction => "outflow" do
+			let(:error_message) { "Amount must equal price times quantity less commission" }
+			let(:valid_amount) { 15 }
+		end
+		
+		context "inflow", :validate_amount => true, :direction => "inflow" do
+			let(:error_message) { "Amount must equal price times quantity plus commission" }
+			let(:valid_amount) { 25 }
+		end
+	end
 	describe "#as_json" do
 		subject { create(:security_investment_transaction, status: "Reconciled") }
 

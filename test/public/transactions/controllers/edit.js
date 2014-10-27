@@ -605,29 +605,39 @@
 				transactionEditController.transaction.memo.should.equal(memo);
 			});
 
-			it("should set the transaction amount to zero and the memo to an empty string if the price, quantity and commission are not specified for Security Investment transactions", function() {
-				transactionEditController.transaction.quantity = undefined;
-				transactionEditController.transaction.price = undefined;
-				transactionEditController.transaction.commission = undefined;
-				transactionEditController.updateInvestmentDetails();
-				transactionEditController.transaction.amount.should.equal(0);
-				transactionEditController.transaction.memo.should.be.empty;
-			});
-
-			it("should calculate the transaction amount from the price, quantity and commission for Security Investment transactions", function() {
-				transactionEditController.updateInvestmentDetails();
-				transactionEditController.transaction.amount.should.equal(19);
-			});
-
 			it("should not update the memo when editing an existing Security Investment transaction", function() {
 				transactionEditController.transaction.id = 1;
 				transactionEditController.updateInvestmentDetails();
 				transactionEditController.transaction.memo.should.equal(memo);
 			});
 
-			it("should update the memo with the price, quantity and commission when adding a new Security Investment transaction", function() {
-				transactionEditController.updateInvestmentDetails();
-				transactionEditController.transaction.memo.should.equal("2 @ $10.00 (less $1.00 commission)");
+			var scenarios = [
+				{direction: "outflow", amount: 19, memo: "less"},
+				{direction: "inflow", amount: 21, memo: "plus"}
+			];
+
+			scenarios.forEach(function(scenario) {
+				it("should set the transaction amount to zero and the memo to an empty string if the price, quantity and commission are not specified for a Security Investment transaction when the direction is " + scenario.direction, function() {
+					transactionEditController.transaction.direction = scenario.direction;
+					transactionEditController.transaction.quantity = undefined;
+					transactionEditController.transaction.price = undefined;
+					transactionEditController.transaction.commission = undefined;
+					transactionEditController.updateInvestmentDetails();
+					transactionEditController.transaction.amount.should.equal(0);
+					transactionEditController.transaction.memo.should.be.empty;
+				});
+
+				it("should calculate the transaction amount from the price, quantity and commission for a Security Investment transaction when the direction is " + scenario.direction, function() {
+					transactionEditController.transaction.direction = scenario.direction;
+					transactionEditController.updateInvestmentDetails();
+					transactionEditController.transaction.amount.should.equal(scenario.amount);
+				});
+
+				it("should update the memo with the price, quantity and commission when adding a new Security Investment transaction when the direction is " + scenario.direction, function() {
+					transactionEditController.transaction.direction = scenario.direction;
+					transactionEditController.updateInvestmentDetails();
+					transactionEditController.transaction.memo.should.equal("2 @ $10.00 (" + scenario.memo + " $1.00 commission)");
+				});
 			});
 		});
 

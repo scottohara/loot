@@ -315,14 +315,22 @@
 			// Updates the transaction amount and memo when the quantity, price or commission change
 			$scope.updateInvestmentDetails = function() {
 				if ("SecurityInvestment" === $scope.transaction.transaction_type) {
-					$scope.transaction.amount = ($scope.transaction.quantity || 0) * ($scope.transaction.price || 0) - ($scope.transaction.commission || 0);
+					// Base amount is the quantity multiplied by the price
+					$scope.transaction.amount = ($scope.transaction.quantity || 0) * ($scope.transaction.price || 0);
+
+					// For a purchase, commission is added to the cost; for a sale, commission is subtracted from the proceeds
+					if ("inflow" === $scope.transaction.direction) {
+						$scope.transaction.amount += ($scope.transaction.commission || 0);
+					} else {
+						$scope.transaction.amount -= ($scope.transaction.commission || 0);
+					}
 				}
 
 				// If we're adding a new buy or sell transaction, update the memo with the details
 				if (!$scope.transaction.id && "SecurityInvestment" === $scope.transaction.transaction_type) {
 					var	quantity = $scope.transaction.quantity > 0 ? $scope.transaction.quantity : "",
 							price = $scope.transaction.price > 0 ? " @ " + currencyFilter($scope.transaction.price) : "",
-							commission = $scope.transaction.commission > 0 ? " (less " + currencyFilter($scope.transaction.commission) + " commission)" : "";
+							commission = $scope.transaction.commission > 0 ? " (" + ("inflow" === $scope.transaction.direction ? "plus" : "less") + " " + currencyFilter($scope.transaction.commission) + " commission)" : "";
 
 					$scope.transaction.memo = quantity + price + commission;
 				}
