@@ -4,7 +4,7 @@ FactoryGirl.define do
 		security_transaction
 
 		# Default accounts if none specified
-		ignore do
+		transient do
 			account { FactoryGirl.build(:investment_account) }
 			direction "Add"
 			quantity 10

@@ -4,7 +4,7 @@ FactoryGirl.define do
 		cash_transaction
 
 		# Default payee if none specified
-		ignore do
+		transient do
 			payee { FactoryGirl.build(:payee) }
 		end
 

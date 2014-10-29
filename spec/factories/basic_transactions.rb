@@ -4,7 +4,7 @@ FactoryGirl.define do
 		payee_cash_transaction
 
 		# Default account and category if none specified
-		ignore do
+		transient do
 			account { FactoryGirl.build(:account) }
 			category { FactoryGirl.build(:category) }
 			status nil
@@ -20,7 +20,7 @@ FactoryGirl.define do
 		end
 
 		trait :scheduled do
-			ignore do
+			transient do
 				next_due_date { Date.today.advance({:months => -1}) }
 				frequency "Monthly"
 				auto_enter true

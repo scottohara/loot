@@ -5,7 +5,7 @@ FactoryGirl.define do
 		amount
 
 		# Default accounts if none specified
-		ignore do
+		transient do
 			investment_account { FactoryGirl.build(:investment_account, related_account: cash_account) }
 			cash_account { FactoryGirl.build(:bank_account) }
 			status nil
@@ -17,7 +17,7 @@ FactoryGirl.define do
 		end
 
 		trait :scheduled do
-			ignore do
+			transient do
 				next_due_date { Date.today.advance({:months => -1}) }
 			end
 

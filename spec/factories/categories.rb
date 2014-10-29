@@ -3,7 +3,7 @@ FactoryGirl.define do
 		sequence(:name) { |n| "Category #{n}" }
 		outflow
 
-		ignore do
+		transient do
 			transactions 0
 			children 0
 			scheduled 0

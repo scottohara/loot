@@ -4,7 +4,7 @@ FactoryGirl.define do
 		payee_cash_transaction
 
 		# Default account, subtransactions and subtransfers if none specified
-		ignore do
+		transient do
 			account { FactoryGirl.build(:account) }
 			direction "outflow"
 			category { FactoryGirl.build(:category, direction: direction) }

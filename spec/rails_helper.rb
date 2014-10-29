@@ -55,7 +55,9 @@ RSpec.configure do |config|
 
 	# FactoryGirl configuration
 	config.include FactoryGirl::Syntax::Methods
-	config.before(:suite) { FactoryGirl.lint }
+
+	# Lint all factories (except TransactionAccount)
+	config.before(:suite) { FactoryGirl.lint FactoryGirl.factories.reject {|factory| factory.name.eql? :transaction_account} }
 
 	# DatabaseCleaner configuration
 	config.before :suite do

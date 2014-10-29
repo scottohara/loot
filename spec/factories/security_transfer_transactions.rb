@@ -4,7 +4,7 @@ FactoryGirl.define do
 		security_transaction
 
 		# Default accounts if none specified
-		ignore do
+		transient do
 			source_account { FactoryGirl.build(:investment_account) }
 			destination_account { FactoryGirl.build(:investment_account) }
 			quantity 10
@@ -18,7 +18,7 @@ FactoryGirl.define do
 		end
 
 		trait :scheduled do
-			ignore do
+			transient do
 				next_due_date { Date.today.advance({:months => -1}) }
 			end
 

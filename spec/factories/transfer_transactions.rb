@@ -4,14 +4,14 @@ FactoryGirl.define do
 		payee_cash_transaction
 
 		# Default accounts if none specified
-		ignore do
+		transient do
 			source_account { FactoryGirl.build(:account) }
 			destination_account { FactoryGirl.build(:account) }
 			status nil
 		end
 
 		trait :scheduled do
-			ignore do
+			transient do
 				next_due_date { Date.today.advance({:months => -1}) }
 			end
 

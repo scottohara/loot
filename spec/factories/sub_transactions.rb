@@ -5,7 +5,7 @@ FactoryGirl.define do
 		transaction_type "Sub"
 
 		# Default account, subtransactions and subtransfers if none specified
-		ignore do
+		transient do
 			parent { FactoryGirl.build(:split_transaction) }
 			category { FactoryGirl.build(:category) }
 		end

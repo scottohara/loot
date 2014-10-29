@@ -3,7 +3,7 @@ FactoryGirl.define do
 		memo
 
 		# Default security if none specified
-		ignore do
+		transient do
 			security { FactoryGirl.build(:security) }
 		end
 

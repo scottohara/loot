@@ -5,7 +5,7 @@ FactoryGirl.define do
 		opening_balance 1000
 		status "open"
 
-		ignore do
+		transient do
 			transactions 0
 			reconciled 0
 			scheduled 0
@@ -58,7 +58,7 @@ FactoryGirl.define do
 			account_type "investment"
 			opening_balance 0
 
-			ignore do
+			transient do
 				related_account { FactoryGirl.build(:bank_account) }
 			end
 

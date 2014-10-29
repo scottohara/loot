@@ -3,7 +3,7 @@ FactoryGirl.define do
 		sequence(:name) { |n| "Security #{n}" }
 		sequence(:code, "A") { |n| n }
 
-		ignore do
+		transient do
 			transactions 0
 			scheduled 0
 		end

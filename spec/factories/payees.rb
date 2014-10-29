@@ -2,7 +2,7 @@ FactoryGirl.define do
 	factory :payee do
 		sequence(:name) { |n| "Payee #{n}" }
 
-		ignore do
+		transient do
 			transactions 0
 			scheduled 0
 		end
