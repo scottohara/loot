@@ -11,13 +11,14 @@ class SecurityTransferTransaction < SecurityTransaction
 
 	class << self
 		def create_from_json(json)
-			source, destination = Account.find(json['primary_account']['id']), Account.find(json['account']['id'])
-			source, destination = destination, source if json['direction'].eql? 'inflow'
+			source, destination, source_status, destination_status = Account.find(json['primary_account']['id']), Account.find(json['account']['id']), json['status'], json['related_status']
+			source, destination, source_status, destination_status = destination, source, destination_status, source_status if json['direction'].eql? 'inflow'
 
 			s = self.new(:id => json[:id], :memo => json['memo'])
-			s.build_source_transaction_account(:direction => 'outflow').account = source
-			s.build_destination_transaction_account(:direction => 'inflow').account = destination
+			s.build_source_transaction_account(:direction => 'outflow', :status => source_status).account = source
+			s.build_destination_transaction_account(:direction => 'inflow', :status => destination_status).account = destination
 			s.build_header.update_from_json json
+			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
 			s.save!
 			s.as_json :direction => json['direction']
 		end

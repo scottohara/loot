@@ -13,9 +13,10 @@ class SecurityInvestmentTransaction < SecurityTransaction
 			cash_direction = json['direction'].eql?('inflow') && 'outflow' || 'inflow'
 
 			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
-			s.transaction_accounts.build(:direction => json['direction']).account = Account.find(json['primary_account']['id'])
-			s.transaction_accounts.build(:direction => cash_direction).account = Account.find(json['account']['id'])
+			s.transaction_accounts.build(:direction => json['direction'], :status => json['status']).account = Account.find(json['primary_account']['id'])
+			s.transaction_accounts.build(:direction => cash_direction, :status => json['related_status']).account = Account.find(json['account']['id'])
 			s.build_header.update_from_json json
+			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
 			s.save!
 			s.header.security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 			s
@@ -29,7 +30,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	end
 
 	def validate_amount_matches_investment_details
-		errors[:base] << "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.eql?(header.price * header.quantity + (header.commission * (investment_account.direction.eql?("inflow") ? 1 : -1)))
+		errors[:base] << "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.eql? (header.price * header.quantity + (header.commission * (investment_account.direction.eql?("inflow") ? 1 : -1))).round(2)
 	end
 
 	def update_from_json(json)

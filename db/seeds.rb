@@ -1,11 +1,3 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-
 require 'csv'
 require 'json'
 
@@ -446,18 +438,18 @@ def load_bills
 end
 
 def create_basic_transaction(trx)
-	# Basic Transaction
 	category = Category.find(trx[:category]) unless trx[:category].nil?
-	category_direction = (!!category && category.direction) || nil
 
-	s = BasicTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => category_direction, :status => trx[:status]).account = Account.find(trx[:account])
-	h = s.build_header
-	header_transaction_date_or_schedule h, trx
-	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
-	s.build_transaction_category.category = category
-	create_transaction_flag s, trx
-	s.save
+	BasicTransaction.create_from_json({
+		'category' => !!category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
+		'subcategory' => !!category && category.parent.present? && {'id' => category.id} || nil,
+		'amount' => trx[:amount],
+		'memo' => trx[:memo],
+		'status' => trx[:status],
+		'primary_account' => {'id' => trx[:account]},
+		'payee' => !!trx[:payee] && {'id' => trx[:payee]} || nil,
+		'flag' => @tmp_flags[trx[:id]]
+	}.merge(header_json(trx)))
 end
 
 def create_split_out_transaction(trx)
@@ -469,31 +461,39 @@ def create_split_in_transaction(trx)
 end
 
 def create_split_transaction(trx, direction)
-	# Split Transaction
-	s = SplitTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
-	h = s.build_header
-	header_transaction_date_or_schedule h, trx
-	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	SplitTransaction.create_from_json({
+		'amount' => trx[:amount],
+		'memo' => trx[:memo],
+		'primary_account' => {'id' => trx[:account]},
+		'direction' => direction,
+		'status' => trx[:status],
+		'payee' => !!trx[:payee] && {'id' => trx[:payee]} || nil,
+		'flag' => @tmp_flags[trx[:id]],
+		'subtransactions' => @tmp_splits[trx[:id]].map do |trxid|
+			subtrx = @tmp_transactions[trxid]
 
-	# Add splits
-	@tmp_splits[trx[:id]].each do |trxid|
-		subtrx = @tmp_transactions[trxid]
-		case subtrx[:type]
-			when 'subtransaction' then s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Sub').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			if subtrx[:type].eql? 'subtransaction'
+				category = !!subtrx[:category] && Category.find(subtrx[:category]) || nil
 			else
-				subaccount, subdirection, substatus = subtrx[:account], direction, subtrx[:status]
-				
-				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side (and reverse the direction)
+				subaccount, substatus = subtrx[:account], subtrx[:status]
+
+				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side
 				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]]]
-				subaccount, subdirection, substatus = other_side[:account], ['inflow','outflow'].reject {|dir| dir.eql? direction }.first, other_side[:status] if subaccount.eql? trx[:account]
+				subaccount, substatus = other_side[:account], other_side[:status] if subaccount.eql? trx[:account]
+			end
 
-				s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => subdirection, :status => substatus).account = Account.find(subaccount)
-		end 
-	end
-
-	create_transaction_flag s, trx
-	s.save
+			{
+				'amount' => subtrx[:amount],
+				'memo' => subtrx[:memo],
+				'transaction_type' => subtrx[:type].eql?('subtransaction') ? "Sub" : "Subtransfer",
+				'category' => !!category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
+				'subcategory' => !!category && category.parent.present? && {'id' => category.id} || nil,
+				'direction' => direction,
+				'account' => {'id' => subaccount},
+				'status' => substatus,
+			}
+		end
+	}.merge(header_json(trx)))
 end
 
 def create_transfer_out_transaction(trx)
@@ -506,72 +506,90 @@ end
 
 def create_transfer_transaction(trx, direction)
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
-	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
-	s = TransferTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_source_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
-	s.build_destination_transaction_account(:direction => other_direction, :status => other_side[:status]).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
-	h = s.build_header
-	header_transaction_date_or_schedule h, trx
-	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
-	create_transaction_flag s, trx
-	s.save
+	TransferTransaction.create_from_json({
+		'primary_account' => {'id' => trx[:account]},
+		'account' => {'id' => other_side[:account]},
+		'status' => trx[:status],
+		'related_status' => other_side[:status],
+		'direction' => direction,
+		'amount' => trx[:amount],
+		'memo' => trx[:memo],
+		'payee' => !!trx[:payee] && {'id' => trx[:payee]} || nil,
+		'flag' => @tmp_flags[trx[:id]]
+	}.merge(header_json(trx)))
 end
 
 def create_payslip_transaction(trx)
-	# Payslip Transaction
-	s = PayslipTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => 'inflow', :status => trx[:status]).account = Account.find(trx[:account])
-	h = s.build_header
-	header_transaction_date_or_schedule h, trx
-	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	PayslipTransaction.create_from_json({
+		'amount' => trx[:amount],
+		'memo' => trx[:memo],
+		'primary_account' => {'id' => trx[:account]},
+		'direction' => 'inflow',
+		'status' => trx[:status],
+		'payee' => !!trx[:payee] && {'id' => trx[:payee]} || nil,
+		'flag' => @tmp_flags[trx[:id]],
+		'subtransactions' => @tmp_splits[trx[:id]].map do |trxid|
+			subtrx = @tmp_transactions[trxid]
 
-	# Add splits
-	@tmp_splits[trx[:id]].each do |trxid|
-		subtrx = @tmp_transactions[trxid]
-		case subtrx[:type]
-			when 'subtransaction', 'payslip_before_tax', 'payslip_tax' then s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Sub').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			if %w(subtransaction payslip_before_tax payslip_tax).include? subtrx[:type]
+				category = !!subtrx[:category] && Category.find(subtrx[:category]) || nil
 			else
 				subaccount, substatus = subtrx[:account], subtrx[:status]
-				
+
 				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side
 				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first]
 				subaccount, substatus = other_side[:account], other_side[:status] if subaccount.eql? trx[:account]
+			end
 
-				s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
-		end 
-	end
-
-	create_transaction_flag s, trx
-	s.save
+			{
+				'amount' => subtrx[:amount],
+				'memo' => subtrx[:memo],
+				'transaction_type' => %w(subtransaction payslip_before_tax payslip_tax).include?(subtrx[:type]) ? "Sub" : "Subtransfer",
+				'category' => !!category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
+				'subcategory' => !!category && category.parent.present? && {'id' => category.id} || nil,
+				'direction' => 'outflow',
+				'account' => {'id' => subaccount},
+				'status' => substatus,
+			}
+		end
+	}.merge(header_json(trx)))
 end
 
 def create_loanrepayment_transaction(trx)
-	# Loan Repayment Transaction
-	s = LoanRepaymentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.build_transaction_account(:direction => 'outflow', :status => trx[:status]).account = Account.find(trx[:account])
-	h = s.build_header
-	header_transaction_date_or_schedule h, trx
-	h.payee = (!!trx[:payee] && Payee.find(trx[:payee])) || nil
+	LoanRepaymentTransaction.create_from_json({
+		'amount' => trx[:amount],
+		'memo' => trx[:memo],
+		'primary_account' => {'id' => trx[:account]},
+		'direction' => 'outflow',
+		'status' => trx[:status],
+		'payee' => !!trx[:payee] && {'id' => trx[:payee]} || nil,
+		'flag' => @tmp_flags[trx[:id]],
+		'subtransactions' => @tmp_splits[trx[:id]].map do |trxid|
+			subtrx = @tmp_transactions[trxid]
 
-	# Add splits
-	@tmp_splits[trx[:id]].each do |trxid|
-		subtrx = @tmp_transactions[trxid]
-		case subtrx[:type]
-			when 'subtransaction' then s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Sub').build_transaction_category.category = (!!subtrx[:category] && Category.find(subtrx[:category])) || nil
+			if subtrx[:type].eql? 'subtransaction'
+				category = !!subtrx[:category] && Category.find(subtrx[:category]) || nil
 			else
 				subaccount, substatus = subtrx[:account], subtrx[:status]
-				
+
 				# If the subtransfer account is the same as the parent account, we need to lookup the account for the other side
 				other_side = @tmp_transactions[@tmp_transfers[subtrx[:id]] || @tmp_transfers.rassoc(subtrx[:id]).first]
 				subaccount, substatus = other_side[:account], other_side[:status] if subaccount.eql? trx[:account]
+			end
 
-				s.transaction_splits.build.build_trx(:amount => subtrx[:amount], :memo => subtrx[:memo], :transaction_type => 'Subtransfer').build_transaction_account(:direction => 'inflow', :status => substatus).account = (!!subaccount && Account.find(subaccount)) || nil
-		end 
-	end
-
-	create_transaction_flag s, trx
-	s.save
+			{
+				'amount' => subtrx[:amount],
+				'memo' => subtrx[:memo],
+				'transaction_type' => subtrx[:type].eql?('subtransaction') ? "Sub" : "Subtransfer",
+				'category' => !!category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
+				'subcategory' => !!category && category.parent.present? && {'id' => category.id} || nil,
+				'direction' => 'inflow',
+				'account' => {'id' => subaccount},
+				'status' => substatus,
+			}
+		end
+	}.merge(header_json(trx)))
 end
 
 def create_securitytransfer_out_transaction(trx)
@@ -583,18 +601,19 @@ def create_securitytransfer_in_transaction(trx)
 end
 
 def create_securitytransfer_transaction(trx, direction)
-	# Security Transfer Transaction
 	other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
-	other_direction = direction.eql?('inflow') ? 'outflow' : 'inflow'
 
-	s = SecurityTransferTransaction.new(:memo => trx[:memo])
-	s.build_source_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
-	s.build_destination_transaction_account(:direction => other_direction, :status => other_side[:status]).account = (!!other_side[:account] && Account.find(other_side[:account])) || nil
-	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
-	header_transaction_date_or_schedule h, trx
-	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
-	create_transaction_flag s, trx
-	s.save
+	SecurityTransferTransaction.create_from_json({
+		'primary_account' => {'id' => trx[:account]},
+		'account' => {'id' => other_side[:account]},
+		'status' => trx[:status],
+		'related_status' => other_side[:status],
+		'direction' => direction,
+		'memo' => trx[:memo],
+		'quantity' => @tmp_investments[trx[:id]][:qty],
+		'security' => !!trx[:security] && {'id' => trx[:security][:id]} || nil,
+		'flag' => @tmp_flags[trx[:id]]
+	}.merge(header_json(trx)))
 end
 
 def create_securityholding_out_transaction(trx)
@@ -606,14 +625,15 @@ def create_securityholding_in_transaction(trx)
 end
 
 def create_securityholding_transaction(trx, direction)
-	# Security Holding Transaction
-	s = SecurityHoldingTransaction.new(:memo => trx[:memo])
-	s.build_transaction_account(:direction => direction, :status => trx[:status]).account = Account.find(trx[:account])
-	h = s.build_header(:quantity => @tmp_investments[trx[:id]][:qty])
-	header_transaction_date_or_schedule h, trx
-	h.security = (!!trx[:security] && Security.find(trx[:security][:id])) || nil
-	create_transaction_flag s, trx
-	s.save
+	SecurityHoldingTransaction.create_from_json({
+		'memo' => trx[:memo],
+		'direction' => direction,
+		'status' => trx[:status],
+		'primary_account' => {'id' => trx[:account]},
+		'quantity' => @tmp_investments[trx[:id]][:qty],
+		'security' => !!trx[:security] && {'id' => trx[:security][:id]} || nil,
+		'flag' => @tmp_flags[trx[:id]]
+	}.merge(header_json(trx)))
 end
 
 def create_securityinvestment_out_transaction(trx)
@@ -638,16 +658,20 @@ def create_securityinvestment_transaction(trx, direction)
 		investment_direction = trx[:orig_amount].to_f > 0 ? 'outflow' : 'inflow'
 	end
 
-	cash_direction = investment_direction.eql?('inflow') ? 'outflow' : 'inflow'
-
-	s = SecurityInvestmentTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.transaction_accounts.build(:direction => investment_direction, :status => investment_status).account = Account.find(investment_account)
-	s.transaction_accounts.build(:direction => cash_direction, :status => cash_status).account = (!!cash_account && Account.find(cash_account)) || nil
-	h = s.build_header(:quantity => investment[:qty], :price => investment[:price], :commission => investment[:commission])
-	header_transaction_date_or_schedule h, trx
-	h.security = (!!security && Security.find(security[:id])) || nil
-	create_transaction_flag s, trx
-	s.save
+	SecurityInvestmentTransaction.create_from_json({
+		'amount' => trx[:amount],
+		'memo' => trx[:memo],
+		'direction' => investment_direction,
+		'primary_account' => {'id' => investment_account},
+		'account' => {'id' => cash_account},
+		'status' => investment_status,
+		'related_status' => cash_status,
+		'quantity' => investment[:qty],
+		'price' => investment[:price],
+		'commission' => investment[:commission],
+		'security' => !!security && {'id' => security[:id]} || nil,
+		'flag' => @tmp_flags[trx[:id]]
+	}.merge(header_json(trx)))
 end
 
 def create_dividend_out_transaction(trx)
@@ -663,25 +687,30 @@ def create_dividend_transaction(trx, direction)
 	investment_trx, cash_trx = trx, @tmp_transactions[@tmp_transfers[trx[:id]]]
 	investment_trx, cash_trx = cash_trx, investment_trx if direction.eql? 'inflow'
 
-	s = DividendTransaction.new(:amount => trx[:amount], :memo => trx[:memo])
-	s.transaction_accounts.build(:direction => 'outflow', :status => investment_trx[:status]).account = (!!investment_trx[:account] && Account.find(investment_trx[:account])) || nil
-	s.transaction_accounts.build(:direction => 'inflow', :status => cash_trx[:status]).account = Account.find(cash_trx[:account])
-	h = s.build_header
-	header_transaction_date_or_schedule h, trx
-	h.security = (!!investment_trx[:security] && Security.find(investment_trx[:security][:id])) || nil
-	create_transaction_flag s, trx
-	s.save
+	DividendTransaction.create_from_json({
+		'amount' => trx[:amount],
+		'memo' => trx[:memo],
+		'primary_account' => {'id' => investment_trx[:account]},
+		'account' => {'id' => cash_trx[:account]},
+		'status' => investment_trx[:status],
+		'related_status' => cash_trx[:status],
+		'security' => !!investment_trx && {'id' => investment_trx[:security][:id]} || nil,
+		'flag' => @tmp_flags[trx[:id]]
+	}.merge(header_json(trx)))
 end
 
-def create_transaction_flag(transaction, trx)
-	transaction.build_flag(:memo => @tmp_flags[trx[:id]]) if @tmp_flags.include?(trx[:id])
-end
-
-def header_transaction_date_or_schedule(header, trx)
+def header_json(trx)
 	if trx[:transaction_date].nil?
-		header.build_schedule(:next_due_date => trx[:next_due_date], :frequency => trx[:frequency], :estimate => trx[:estimate], :auto_enter => trx[:auto_enter])
-	else
-		header.transaction_date = trx[:transaction_date]
+		{
+			'next_due_date' => trx[:next_due_date],
+			'frequency' => trx[:frequency],
+			'estimate' => trx[:estimate],
+			'auto_enter' => trx[:auto_enter]
+		}
+	else 
+		{
+			'transaction_date' => trx[:transaction_date]
+		}
 	end
 end
 
@@ -703,13 +732,12 @@ def verify_balances
 			# Skip if we can't find the matching account
 			next unless !!@tmp_accounts[account_json['id'].to_s]
 
+			# Skip any loans (for some reason, the suriise closing balances aren't accurate)
+			next if @tmp_account_types[account_json['type'].to_s].eql? 'loan'
+
 			# Calculate the loaded account's closing balance
 			closing_balance = Account.find(@tmp_accounts[account_json['id'].to_s]).closing_balance
 
-			# Hack for known inconsistencies in sunriise closing balances
-			account_json['currentBalance'] = 0 if ['Car Loan', 'Macquarie Loan (A)', 'RAMS', 'Wizard Loan'].include? account_json['name']
-			account_json['currentBalance'] = -214393.65 if account_json['name'].eql? 'Macquarie Loan (B)'
-			
 			# Check that it matches
 			balance_mismatches << [account_json['name'], number_to_currency(account_json['currentBalance']), number_to_currency(closing_balance)] unless number_to_currency(account_json['currentBalance']).eql? number_to_currency(closing_balance)
 			progress "Checked", index, "closing balance"

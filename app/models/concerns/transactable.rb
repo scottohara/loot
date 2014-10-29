@@ -19,10 +19,10 @@ module Transactable
 
 	def ledger(opts={})
 		# Check the options and set defaults where required
-		opts = self.ledger_options opts
+		opts = ledger_options opts
 
 		# Query the database for transactions
-		transactions = self.ledger_query opts
+		transactions = ledger_query opts
 
 		# Have we reached the end of the transactions (in this direction)?
 		at_end = transactions.size < NUM_RESULTS
@@ -32,13 +32,13 @@ module Transactable
 
 		# If going backwards, reverse the results to be in chronological order and remove any transactions
 		# for the opening date so that the batch contains only full days
-		transactions = self.drop_opening_date transactions, at_end, closing_date if opts[:direction].eql? :prev
+		transactions = drop_opening_date transactions, at_end, closing_date if opts[:direction].eql? :prev
 
 		# Get the opening balance
-		opening_balance = self.ledger_opening_balance opts, at_end, closing_date
+		opening_balance = ledger_opening_balance opts, at_end, closing_date
 
 		# If we're only interested in unreconciled transactions, sum & drop all reconciled ones
-		opening_balance, transactions = self.exclude_reconciled(opening_balance, transactions) if opts[:unreconciled]
+		opening_balance, transactions = exclude_reconciled(opening_balance, transactions) if opts[:unreconciled]
 
 		# Remap to the desired output format
 		transactions.map!(&method(:to_ledger_json))
@@ -47,7 +47,7 @@ module Transactable
 	end
 
 	def closing_balance(opts={})
-		as_at = opts[:as_at] || Date.today.to_s
+		as_at = Date.parse(opts[:as_at]).to_s rescue "2400-12-31"
 
 		if self.account_type.eql? 'investment'
 			# Get the total quantity of security inflows
