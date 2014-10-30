@@ -174,13 +174,17 @@
 		</div>
 		<div ng-if="mode != 'Enter Transaction'" class="form-group">
 			<!-- Estimate -->
-			<label class="checkbox">
-				<input type="checkbox" ng-model="schedule.estimate"> Amount is an estimate, because it varies
-			</label>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" ng-model="schedule.estimate"> Amount is an estimate, because it varies
+				</label>
+			</div>
 			<!-- Auto-enter -->
-			<label class="checkbox">
-				<input type="checkbox" ng-model="schedule.auto_enter"> Automatically enter this transaction on the due date
-			</label>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" ng-model="schedule.auto_enter"> Automatically enter this transaction on the due date
+				</label>
+			</div>
 		</div>
 	</div>
 	<div class="modal-footer" ng-switch="mode">
