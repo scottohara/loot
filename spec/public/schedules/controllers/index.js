@@ -38,7 +38,7 @@
 		});
 
 		it("should make today's date available on the $scope", function() {
-			scheduleIndexController.today.should.equal(moment().format("YYYY-MM-DD"));
+			scheduleIndexController.today.should.deep.equal(moment().startOf("day").toDate());
 		});
 
 		describe("editSchedule", function() {
@@ -100,21 +100,21 @@
 
 			it("should resort the schedule list when the modal is closed", function() {
 				schedule.id = 999;
-				schedule.next_due_date = moment().subtract(1, "day").format("YYYY-MM-DD");
+				schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
 				scheduleIndexController.editSchedule(1);
 				$modal.close({data: schedule});
 				scheduleIndexController.schedules.pop().should.deep.equal(schedule);
 			});
 
 			it("should focus the schedule when the modal is closed if the schedule was edited", function() {
-				schedule.next_due_date = moment().subtract(1, "day").format("YYYY-MM-DD");
+				schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
 				scheduleIndexController.editSchedule(1);
 				$modal.close({data: schedule});
 				scheduleIndexController.focusSchedule.should.have.been.calledWith(schedule.id);
 			});
 
 			it("should focus the schedule now at the original index when the modal is closed if the schedule was entered or skipped", function() {
-				schedule.next_due_date = moment().subtract(1, "day").format("YYYY-MM-DD");
+				schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
 				scheduleIndexController.editSchedule(1);
 				$modal.close({data: schedule, skipped: true});
 				scheduleIndexController.focusSchedule.should.have.been.calledWith(scheduleIndexController.schedules[1].id);

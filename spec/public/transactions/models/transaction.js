@@ -56,11 +56,38 @@
 			});
 		});
 
+		describe("parse", function() {
+			var	transaction;
+
+			beforeEach(function() {
+				transaction = transactionModel.parse({transaction_date: moment().format("YYYY-MM-DD HH:MM:SS")});
+			});
+
+			it("should convert the transaction date from a string to a date", function() {
+				transaction.transaction_date.should.be.a.Date;
+				transaction.transaction_date.should.deep.equal(moment().startOf("day").toDate());
+			});
+		});
+
+		describe("stringify", function() {
+			var	transaction;
+
+			beforeEach(function() {
+				transaction = transactionModel.stringify({transaction_date: moment().startOf("day").toDate()});
+			});
+
+			it("should convert the transaction date from a date to a string", function() {
+				transaction.transaction_date.should.be.a.String;
+				transaction.transaction_date.should.deep.equal(moment().format("YYYY-MM-DD"));
+			});
+		});
+
 		describe("all", function() {
-			var expectedResponse = "transactions",
+			var expectedResponse = {transactions: ["transaction 1", "transaction 2"]},
 					actualResponse;
 
 			beforeEach(function() {
+				transactionModel.parse = sinon.stub().returnsArg(0);
 				$httpBackend.expectGET(/context\/transactions\?as_at=fromDate&direction=direction&unreconciled=unreconciledOnly/).respond(200, expectedResponse);
 				actualResponse = transactionModel.all("context", "fromDate", "direction", "unreconciledOnly");
 				$httpBackend.flush();
@@ -69,16 +96,21 @@
 			it("should dispatch a GET request to /{context}/transactions?as_at={fromDate}&direction={direction}&unreconciled={unreconciledOnly}", function() {
 			});
 			
+			it("should parse each transaction returned", function() {
+				transactionModel.parse.should.have.been.calledTwice;
+			});
+
 			it("should return a list of transactions", function() {
-				actualResponse.should.eventually.equal(expectedResponse);
+				actualResponse.should.eventually.deep.equal(expectedResponse);
 			});
 		});
 
 		describe("query", function() {
-			var expectedResponse = "transactions",
+			var expectedResponse = {transactions: ["transaction 1", "transaction 2"]},
 					actualResponse;
 
 			beforeEach(function() {
+				transactionModel.parse = sinon.stub().returnsArg(0);
 				$httpBackend.expectGET(/transactions\?as_at=fromDate&direction=direction&query=query/).respond(200, expectedResponse);
 				actualResponse = transactionModel.query("query", "fromDate", "direction");
 				$httpBackend.flush();
@@ -87,8 +119,12 @@
 			it("should dispatch a GET request to /transactions?as_at={fromDate}&direction={direction}&query={query}", function() {
 			});
 			
+			it("should parse each transaction returned", function() {
+				transactionModel.parse.should.have.been.calledTwice;
+			});
+
 			it("should return a list of transactions", function() {
-				actualResponse.should.eventually.equal(expectedResponse);
+				actualResponse.should.eventually.deep.equal(expectedResponse);
 			});
 		});
 
@@ -115,6 +151,7 @@
 					actualResponse;
 
 			beforeEach(function() {
+				transactionModel.parse = sinon.stub().returnsArg(0);
 				$httpBackend.expectGET(/transactions\/123/).respond(200, expectedResponse);
 				actualResponse = transactionModel.find(123);
 				$httpBackend.flush();
@@ -123,35 +160,61 @@
 			it("should dispatch a GET request to /transactions/123", function() {
 			});
 			
+			it("should parse the transaction", function() {
+				transactionModel.parse.should.have.been.calledWith(expectedResponse);
+			});
+
 			it("should return the transaction", function() {
 				actualResponse.should.eventually.equal(expectedResponse);
 			});
 		});
 
 		describe("save", function() {
+			var expectedResponse = "transaction";
+
 			beforeEach(function() {
 				transactionModel.invalidateCaches = sinon.stub();
-				$httpBackend.whenPOST(/transactions$/).respond(200);
-				$httpBackend.whenPATCH(/transactions\/123$/).respond(200);
+				transactionModel.stringify = sinon.stub().returnsArg(0);
+				transactionModel.parse = sinon.stub().returnsArg(0);
+				$httpBackend.whenPOST(/transactions$/).respond(200, expectedResponse);
+				$httpBackend.whenPATCH(/transactions\/123$/).respond(200, expectedResponse);
 			});
 
 			it("should invalidate the associated $http caches", function() {
 				transactionModel.save({});
 				transactionModel.invalidateCaches.should.have.been.called;
+				$httpBackend.flush();
+			});
+
+			it("should stringify the transaction", function() {
+				var transaction = {};
+				transactionModel.save(transaction);
+				transactionModel.stringify.should.have.been.calledWith(transaction);
+				$httpBackend.flush();
 			});
 
 			it("should dispatch a POST request to /transactions when an id is not provided", function() {
 				$httpBackend.expectPOST(/transactions$/, {});
 				transactionModel.save({});
+				$httpBackend.flush();
 			});
 
 			it("should dispatch a PATCH request to /transactions/{id} when an id is provided", function() {
 				$httpBackend.expectPATCH(/transactions\/123$/, {id: 123});
 				transactionModel.save({id: 123});
+				$httpBackend.flush();
 			});
 
-			afterEach(function() {
+			it("should parse the transaction", function() {
+				transactionModel.save({});
 				$httpBackend.flush();
+				transactionModel.parse.should.have.been.calledWith(expectedResponse);
+			});
+
+			it("should return the transaction", function() {
+				var actualResponse = transactionModel.save({});
+				$httpBackend.flush();
+				actualResponse.should.eventually.equal(expectedResponse);
 			});
 		});
 

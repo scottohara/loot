@@ -413,7 +413,7 @@
 				// For any that have changed, invalidate the original from the $http cache
 				angular.forEach(Object.keys(models), function(key) {
 					originalValue = transaction[key] && transaction[key].id || undefined;
-					savedValue = savedTransaction.data[key] && savedTransaction.data[key].id || undefined;
+					savedValue = savedTransaction[key] && savedTransaction[key].id || undefined;
 
 					if (originalValue && originalValue !== savedValue) {
 						models[key].flush(originalValue);
@@ -466,21 +466,21 @@
 						resolve = true;
 
 				// Add the primary account to the LRU cache
-				accountModel.addRecent(transaction.data.primary_account);
+				accountModel.addRecent(transaction.primary_account);
 
 				// Add the payee or security to the LRU cache
-				if ("investment" !== transaction.data.primary_account.account_type) {
-					payeeModel.addRecent(transaction.data.payee);
+				if ("investment" !== transaction.primary_account.account_type) {
+					payeeModel.addRecent(transaction.payee);
 				} else {
-					securityModel.addRecent(transaction.data.security);
+					securityModel.addRecent(transaction.security);
 				}
 
-				switch (transaction.data.transaction_type) {
+				switch (transaction.transaction_type) {
 					case "Basic":
 						// Add the category and subcategory to the LRU cache
-						categoryModel.addRecent(transaction.data.category);
-						if (transaction.data.subcategory) {
-							categoryModel.addRecent(transaction.data.subcategory);
+						categoryModel.addRecent(transaction.category);
+						if (transaction.subcategory) {
+							categoryModel.addRecent(transaction.subcategory);
 						}
 						break;
 
@@ -489,7 +489,7 @@
 					case "SecurityInvestment":
 					case "Dividend":
 						// Add the account to the LRU cache
-						accountModel.addRecent(transaction.data.account);
+						accountModel.addRecent(transaction.account);
 						break;
 
 					case "Split":
@@ -498,7 +498,7 @@
 						// Delay resolving the promise
 						resolve = false;
 
-						transactionModel.findSubtransactions(transaction.data.id).then(function(subtransactions) {
+						transactionModel.findSubtransactions(transaction.id).then(function(subtransactions) {
 							angular.forEach(subtransactions, function(subtransaction) {
 								if ("Transfer" === subtransaction.transaction_type) {
 									// Add the account to the LRU cache
@@ -532,7 +532,7 @@
 				$scope.errorMessage = null;
 				transactionModel.save($scope.transaction).then($scope.invalidateCaches).then($scope.updateLruCaches).then(function(transaction) {
 					// Close the modal
-					$modalInstance.close(transaction.data);
+					$modalInstance.close(transaction);
 				}).catch(function(error) {
 					$scope.errorMessage = error.data;
 				});

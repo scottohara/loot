@@ -80,7 +80,7 @@
 			it("should default the next due date to the current day if not specified", function() {
 				delete schedule.next_due_date;
 				scheduleEditController = controllerTest("scheduleEditController");
-				scheduleEditController.transaction.next_due_date.should.equal(moment().format("YYYY-MM-DD"));
+				scheduleEditController.transaction.next_due_date.should.deep.equal(moment().startOf("day").toDate());
 			});
 
 			it("should set the mode to Enter Transaction", function() {
@@ -97,7 +97,7 @@
 			});
 
 			it("should set the transaction date to the next due date", function() {
-				scheduleEditController.transaction.transaction_date.should.equal(schedule.next_due_date);
+				scheduleEditController.transaction.transaction_date.should.deep.equal(schedule.next_due_date);
 			});
 		});
 
@@ -107,7 +107,7 @@
 			beforeEach(function() {
 				transaction = {
 					transaction_type: "Basic",
-					next_due_date: moment().format("YYYY-MM-DD"),
+					next_due_date: moment().startOf("day").toDate(),
 					autoFlag: false
 				};
 
@@ -859,7 +859,7 @@
 					var next_due_date = scheduleEditController.schedule.next_due_date;
 					scheduleEditController.schedule.frequency = scenario.frequency;
 					scheduleEditController.calculateNextDue();
-					scheduleEditController.schedule.next_due_date.should.equal(moment(next_due_date).add(scenario.amount, scenario.period).format("YYYY-MM-DD"));
+					scheduleEditController.schedule.next_due_date.should.deep.equal(moment(next_due_date).add(scenario.amount, scenario.period).toDate());
 				});
 			});
 

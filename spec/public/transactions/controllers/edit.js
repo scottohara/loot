@@ -799,7 +799,7 @@
 					
 			it("should do nothing if the original values are undefined", function() {
 				transactionEditController = controllerTest("transactionEditController", {transaction: {}});
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				accountModel.flush.should.not.have.been.called;
 				payeeModel.flush.should.not.have.been.called;
 				categoryModel.flush.should.not.have.been.called;
@@ -807,7 +807,7 @@
 			});
 
 			it("should do nothing if the original values are unchanged", function() {
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				accountModel.flush.should.not.have.been.called;
 				payeeModel.flush.should.not.have.been.called;
 				categoryModel.flush.should.not.have.been.called;
@@ -816,37 +816,37 @@
 
 			it("should invalidate the original primary account if changed", function() {
 				saved.primary_account.id = 2;
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				accountModel.flush.should.have.been.calledWith(original.primary_account.id);
 			});
 
 			it("should invalidate the original payee if changed", function() {
 				saved.payee.id = 2;
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				payeeModel.flush.should.have.been.calledWith(original.payee.id);
 			});
 
 			it("should invalidate the original category if changed", function() {
 				saved.category.id = 2;
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				categoryModel.flush.should.have.been.calledWith(original.category.id);
 			});
 
 			it("should invalidate the original subcategory if changed", function() {
 				saved.subcategory.id = 2;
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				categoryModel.flush.should.have.been.calledWith(original.subcategory.id);
 			});
 
 			it("should invalidate the original account if changed", function() {
 				saved.account.id = 2;
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				accountModel.flush.should.have.been.calledWith(original.account.id);
 			});
 
 			it("should invalidate the original security if changed", function() {
 				saved.security.id = 2;
-				transactionEditController.invalidateCaches({data: saved});
+				transactionEditController.invalidateCaches(saved);
 				securityModel.flush.should.have.been.calledWith(original.security.id);
 			});
 
@@ -856,7 +856,7 @@
 				it("should fetch the subtransactions when the type is " + scenario, function() {
 					original.transaction_type = scenario;
 					transactionEditController = controllerTest("transactionEditController", {transaction: original});
-					transactionEditController.invalidateCaches({data: saved});
+					transactionEditController.invalidateCaches(saved);
 					transactionModel.findSubtransactions.should.have.been.calledWith(original.id);
 				});
 
@@ -864,7 +864,7 @@
 					original.transaction_type = scenario;
 					subtransaction = undefined;
 					transactionEditController = controllerTest("transactionEditController", {transaction: original});
-					transactionEditController.invalidateCaches({data: saved});
+					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.not.have.been.called;
 					accountModel.flush.should.not.have.been.called;
 				});
@@ -875,7 +875,7 @@
 					subtransaction.subcategory.id = undefined;
 					subtransaction.account.id = undefined;
 					transactionEditController = controllerTest("transactionEditController", {transaction: original});
-					transactionEditController.invalidateCaches({data: saved});
+					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.not.have.been.called;
 					accountModel.flush.should.not.have.been.called;
 				});
@@ -883,27 +883,27 @@
 				it("should invalidate the subtransaction category if defined", function() {
 					original.transaction_type = scenario;
 					transactionEditController = controllerTest("transactionEditController", {transaction: original});
-					transactionEditController.invalidateCaches({data: saved});
+					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.have.been.calledWith(subtransaction.category.id);
 				});
 
 				it("should invalidate the subtransaction subcategory if defined", function() {
 					original.transaction_type = scenario;
 					transactionEditController = controllerTest("transactionEditController", {transaction: original});
-					transactionEditController.invalidateCaches({data: saved});
+					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.have.been.calledWith(subtransaction.subcategory.id);
 				});
 
 				it("should invalidate the subtransfer account if defined", function() {
 					original.transaction_type = scenario;
 					transactionEditController = controllerTest("transactionEditController", {transaction: original});
-					transactionEditController.invalidateCaches({data: saved});
+					transactionEditController.invalidateCaches(saved);
 					accountModel.flush.should.have.been.calledWith(subtransaction.account.id);
 				});
 			});
 
 			it("should eventually be fulfilled", function() {
-				transactionEditController.invalidateCaches({data: saved}).should.be.fulfilled;
+				transactionEditController.invalidateCaches(saved).should.be.fulfilled;
 			});
 		});
 
@@ -924,36 +924,36 @@
 			});
 					
 			it("should add the primary account to the recent list", function() {
-				transactionEditController.updateLruCaches({data: data});
+				transactionEditController.updateLruCaches(data);
 				accountModel.addRecent.should.have.been.calledWith(data.primary_account);
 			});
 
 			it("should add the payee to the recent list for a non-investment account", function() {
-				transactionEditController.updateLruCaches({data: data});
+				transactionEditController.updateLruCaches(data);
 				payeeModel.addRecent.should.have.been.calledWith(data.payee);
 				securityModel.addRecent.should.not.have.been.called;
 			});
 
 			it("should add the security to the recent list for an investment account", function() {
 				data.primary_account = {account_type: "investment"};
-				transactionEditController.updateLruCaches({data: data});
+				transactionEditController.updateLruCaches(data);
 				securityModel.addRecent.should.have.been.calledWith(data.security);
 				payeeModel.addRecent.should.not.have.been.called;
 			});
 
 			it("should add the category to the recent list if the type is Basic", function() {
-				transactionEditController.updateLruCaches({data: data});
+				transactionEditController.updateLruCaches(data);
 				categoryModel.addRecent.should.have.been.calledWith(data.category);
 			});
 
 			it("should not try to add the subcategory to the recent list if the type is Basic but there is no subcategory", function() {
 				data.subcategory = undefined;
-				transactionEditController.updateLruCaches({data: data});
+				transactionEditController.updateLruCaches(data);
 				categoryModel.addRecent.should.have.been.calledOnce;
 			});
 
 			it("should add the subcategory to the recent list if the type is Basic", function() {
-				transactionEditController.updateLruCaches({data: data});
+				transactionEditController.updateLruCaches(data);
 				categoryModel.addRecent.should.have.been.calledTwice;
 				categoryModel.addRecent.should.have.been.calledWith(data.subcategory);
 			});
@@ -963,7 +963,7 @@
 			scenarios.forEach(function(scenario) {
 				it("should add the account to the recent list if the type is " + scenario, function() {
 					data.transaction_type = scenario;
-					transactionEditController.updateLruCaches({data: data});
+					transactionEditController.updateLruCaches(data);
 					accountModel.addRecent.should.have.been.calledWith(data.account);
 				});
 			});
@@ -973,37 +973,37 @@
 			scenarios.forEach(function(scenario) {
 				it("should fetch the subtransactions when the type is " + scenario, function() {
 					data.transaction_type = scenario;
-					transactionEditController.updateLruCaches({data: data});
+					transactionEditController.updateLruCaches(data);
 					transactionModel.findSubtransactions.should.have.been.calledWith(data.id);
 				});
 
 				it("should add the subtransaction account to the recent list for Subtranfers", function() {
 					data.transaction_type = scenario;
-					transactionEditController.updateLruCaches({data: data});
+					transactionEditController.updateLruCaches(data);
 					accountModel.addRecent.should.have.been.calledWith("subtransfer account");
 				});
 
 				it("should add the subtransaction category to the recent list for Subtransactions", function() {
 					data.transaction_type = scenario;
-					transactionEditController.updateLruCaches({data: data});
+					transactionEditController.updateLruCaches(data);
 					categoryModel.addRecent.should.have.been.calledWith("subtransaction category");
 				});
 
 				it("should not try to add the subtransaction subcategory to the recent list for Subtransactions if there is no subcategory", function() {
 					data.transaction_type = scenario;
-					transactionEditController.updateLruCaches({data: data});
+					transactionEditController.updateLruCaches(data);
 					categoryModel.addRecent.should.have.been.calledThrice;
 				});
 
 				it("should add the subtransaction subcategory to the recent list for Subtransactions", function() {
 					data.transaction_type = scenario;
-					transactionEditController.updateLruCaches({data: data});
+					transactionEditController.updateLruCaches(data);
 					categoryModel.addRecent.should.have.been.calledWith("subtransaction subcategory");
 				});
 			});
 
 			it("should eventually be fulfilled", function() {
-				transactionEditController.updateLruCaches({data: data}).should.be.fulfilled;
+				transactionEditController.updateLruCaches(data).should.be.fulfilled;
 			});
 		});
 
@@ -1022,13 +1022,13 @@
 			it("should invalidate the $http caches", function() {
 				sinon.spy(transactionEditController, "invalidateCaches");
 				transactionEditController.save();
-				transactionEditController.invalidateCaches.should.have.been.calledWith({data: transaction});
+				transactionEditController.invalidateCaches.should.have.been.calledWith(transaction);
 			});
 
 			it("should update the LRU caches", function() {
 				sinon.spy(transactionEditController, "updateLruCaches");
 				transactionEditController.save();
-				transactionEditController.updateLruCaches.should.have.been.calledWith({data: transaction});
+				transactionEditController.updateLruCaches.should.have.been.calledWith(transaction);
 			});
 
 			it("should close the modal when the transaction save is successful", function() {

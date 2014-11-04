@@ -10,13 +10,28 @@
 			var model = {};
 
 			// Returns the API path
-			model.path = function (id) {
+			model.path = function(id) {
 				return "/transactions" + (id ? "/" + id : "");
 			};
  
 			// Returns the full API path including parent context
-			model.fullPath = function (context, id) {
+			model.fullPath = function(context, id) {
 				return context + model.path(id);
+			};
+
+			// Performs post-processing after parsing from JSON
+			model.parse = function(transaction) {
+				// Convert the transaction date from a string ("YYYY-MM-DD") to a native JS date
+				transaction.transaction_date = moment(transaction.transaction_date).startOf("day").toDate();
+				return transaction;
+			};
+
+			// Performs pre-processing before stringifying from JSON
+			model.stringify = function(transaction) {
+				// To avoid timezone issue, convert the native JS date back to a string ("YYYY-MM-DD") before saving
+				var transactionCopy = angular.copy(transaction);
+				transactionCopy.transaction_date = moment(transactionCopy.transaction_date).format("YYYY-MM-DD");
+				return transactionCopy;
 			};
 
 			// Retrieves a batch of transactions
@@ -28,6 +43,7 @@
 						unreconciled: unreconciledOnly
 					}
 				}).then(function(response) {
+					response.data.transactions = response.data.transactions.map(model.parse);
 					return response.data;
 				});
 			};
@@ -41,6 +57,7 @@
 						direction: direction
 					}
 				}).then(function(response) {
+					response.data.transactions = response.data.transactions.map(model.parse);
 					return response.data;
 				});
 			};
@@ -55,7 +72,7 @@
 			// Retrieves a single transaction
 			model.find = function(id) {
 				return $http.get(model.path(id)).then(function(response) {
-					return response.data;
+					return model.parse(response.data);
 				});
 			};
 
@@ -67,7 +84,9 @@
 				return $http({
 					method: transaction.id ? "PATCH" : "POST",
 					url: model.path(transaction.id),
-					data: transaction
+					data: model.stringify(transaction)
+				}).then(function(response) {
+					return model.parse(response.data);
 				});
 			};
 

@@ -57,7 +57,7 @@
 		});
 
 		it("should make today's date available on the $scope", function() {
-			transactionIndexController.today.should.equal(moment().format("YYYY-MM-DD"));
+			transactionIndexController.today.should.deep.equal(moment().startOf("day").toDate());
 		});
 
 		it("should set an empty array of transactions on the scope", function() {
@@ -147,7 +147,7 @@
 				beforeEach(function() {
 					transaction = {
 						transaction_type: "Basic",
-						transaction_date: moment().format("YYYY-MM-DD"),
+						transaction_date: moment().startOf("day").toDate(),
 						primary_account: undefined,
 						payee: undefined,
 						security: undefined,
@@ -231,16 +231,16 @@
 
 			describe("(transaction date is before the current batch", function() {
 				it("should fetch a new transaction batch starting from the new transaction date", function() {
-					transaction.transaction_date = moment(transactionIndexController.firstTransactionDate).subtract(1, "day").format("YYYY-MM-DD");
+					transaction.transaction_date = moment(transactionIndexController.firstTransactionDate).subtract(1, "day").toDate();
 					transactionIndexController.editTransaction(1);
 					$modal.close(transaction);
-					transactionIndexController.getTransactions.should.have.been.calledWith("next", moment(transaction.transaction_date).subtract(1, "day").format("YYYY-MM-DD"), transaction.id);
+					transactionIndexController.getTransactions.should.have.been.calledWith("next", moment(transaction.transaction_date).subtract(1, "day").toDate(), transaction.id);
 				});
 			});
 
 			describe("(transaction date is after the current batch", function() {
 				beforeEach(function() {
-					transaction.transaction_date = moment(transactionIndexController.lastTransactionDate).add(1, "day").format("YYYY-MM-DD");
+					transaction.transaction_date = moment(transactionIndexController.lastTransactionDate).add(1, "day").toDate();
 					transactionIndexController.editTransaction(1);
 				});
 
@@ -253,7 +253,7 @@
 				it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", function() {
 					transactionIndexController.atEnd = false;
 					$modal.close(transaction);
-					transactionIndexController.getTransactions.should.have.been.calledWith("prev", moment(transaction.transaction_date).add(1, "day").format("YYYY-MM-DD"), transaction.id);
+					transactionIndexController.getTransactions.should.have.been.calledWith("prev", moment(transaction.transaction_date).add(1, "day").toDate(), transaction.id);
 				});
 			});
 
@@ -266,7 +266,7 @@
 
 				it("should resort the transaction list when the modal is closed", function() {
 					transaction.id = 999;
-					transaction.transaction_date = moment().subtract(1, "day").format("YYYY-MM-DD");
+					transaction.transaction_date = moment().startOf("day").subtract(1, "day").toDate();
 					transactionIndexController.editTransaction(1);
 					$modal.close(transaction);
 					transactionIndexController.transactions.pop().should.deep.equal(transaction);
@@ -1303,7 +1303,7 @@
 						transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
 						sinon.stub(transactionIndexController, "focusTransaction").returns(NaN);
 						sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
-						var transactionDate = moment().subtract(1, "day").format("YYYY-MM-DD");
+						var transactionDate = moment().startOf("day").subtract(1, "day").toDate();
 						transactionIndexController.unreconciledOnly = true;
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(false, undefined, transactionDate, toParams.transactionId);
@@ -1312,8 +1312,8 @@
 
 				describe("(transaction date is before the current batch)", function() {
 					it("should fetch a new transaction batch starting from the new transaction date", function() {
-						var fromDate = moment().subtract(2, "days").format("YYYY-MM-DD");
-						transactionIndexController.firstTransactionDate = moment().format("YYYY-MM-DD");
+						var fromDate = moment().startOf("day").subtract(2, "days").toDate();
+						transactionIndexController.firstTransactionDate = moment().startOf("day").toDate();
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.getTransactions.should.have.been.calledWith("next", fromDate);
 					});
@@ -1321,16 +1321,16 @@
 
 				describe("(transaction date is after the current batch)", function() {
 					it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", function() {
-						var fromDate = moment().format("YYYY-MM-DD");
-						transactionIndexController.lastTransactionDate = moment().subtract(2, "days").format("YYYY-MM-DD");
+						var fromDate = moment().startOf("day").toDate();
+						transactionIndexController.lastTransactionDate = moment().startOf("day").subtract(2, "days").toDate();
 						transactionIndexController.atEnd = false;
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.getTransactions.should.have.been.calledWith("prev", fromDate);
 					});
 
 					it("should fetch a new transaction batch for the current transaction date if we're already at the end", function() {
-						var fromDate = moment().subtract(1, "day").format("YYYY-MM-DD");
-						transactionIndexController.lastTransactionDate = moment().subtract(2, "days").format("YYYY-MM-DD");
+						var fromDate = moment().startOf("day").subtract(1, "day").toDate();
+						transactionIndexController.lastTransactionDate = moment().startOf("day").subtract(2, "days").toDate();
 						transactionIndexController.atEnd = true;
 						transactionIndexController.stateChangeSuccessHandler(undefined, toState, toParams, fromState, fromParams);
 						transactionIndexController.getTransactions.should.have.been.calledWith(undefined, fromDate);

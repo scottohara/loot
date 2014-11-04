@@ -12,7 +12,7 @@
 			$scope.contextType = contextModel && contextModel.type();
 
 			// Today's date (for checking if a transaction is in the future)
-			$scope.today = moment().format("YYYY-MM-DD");
+			$scope.today = moment().startOf("day").toDate();
 
 			$scope.editTransaction = function(index) {
 				// Abort if the transaction can't be edited
@@ -35,7 +35,7 @@
 							if (isNaN(index)) {
 								return {
 									transaction_type: "Basic",
-									transaction_date: moment().format("YYYY-MM-DD"),
+									transaction_date: moment().startOf("day").toDate(),
 									primary_account: "account" === $scope.contextType ? $scope.context : undefined,
 									payee: "payee" === $scope.contextType ? $scope.context : undefined,
 									security: "security" === $scope.contextType ? $scope.context : undefined,
@@ -71,10 +71,10 @@
 
 						if (!fromDate.isAfter($scope.firstTransactionDate)) {
 							// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-							$scope.getTransactions("next", fromDate.subtract(1, "days").format("YYYY-MM-DD"), transaction.id);
+							$scope.getTransactions("next", fromDate.subtract(1, "days").toDate(), transaction.id);
 						} else if (!fromDate.isBefore($scope.lastTransactionDate) && !$scope.atEnd) {
 							// Transaction date is later than the latest fetched transaction, refresh from the new date
-							$scope.getTransactions("prev", fromDate.add(1, "days").format("YYYY-MM-DD"), transaction.id);
+							$scope.getTransactions("prev", fromDate.add(1, "days").toDate(), transaction.id);
 						} else {
 							// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
 							if (isNaN(index)) {
@@ -382,7 +382,7 @@
 			var byTransactionDateAndId = function(a, b) {
 				var x, y;
 
-				if (a.transaction_date === b.transaction_date) {
+				if (moment(a.transaction_date).isSame(b.transaction_date)) {
 					x = a.id;
 					y = b.id;
 				} else {
@@ -615,7 +615,7 @@
 								direction = "prev";
 							}
 
-							fromDate = fromDate.format("YYYY-MM-DD");
+							fromDate = fromDate.toDate();
 
 							if ($scope.unreconciledOnly) {
 								// If we're not already showing reconciled transactions, toggle the setting

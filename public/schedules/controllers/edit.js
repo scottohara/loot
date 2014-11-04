@@ -10,7 +10,7 @@
 			// Make the passed schedule available on the scope
 			$scope.transaction = angular.extend({
 				transaction_type: "Basic",
-				next_due_date: moment().format("YYYY-MM-DD")
+				next_due_date: moment().startOf("day").toDate()
 			}, schedule);
 
 			if (schedule) {
@@ -445,7 +445,7 @@
 
 			// Calculates the next due date
 			$scope.calculateNextDue = function() {
-				$scope.schedule.next_due_date = moment($scope.schedule.next_due_date).add($scope.scheduleFrequencies[$scope.schedule.frequency]).format("YYYY-MM-DD");
+				$scope.schedule.next_due_date = moment($scope.schedule.next_due_date).add($scope.scheduleFrequencies[$scope.schedule.frequency]).toDate();
 
 				if ($scope.schedule.overdue_count > 0) {
 					$scope.schedule.overdue_count--;
@@ -506,11 +506,8 @@
 				}
 
 				scheduleModel.save($scope.schedule).then(function(schedule) {
-					// Set the skipped property on the schedule
-					schedule.skipped = !!skipped;
-
 					// Close the modal
-					$modalInstance.close(schedule);
+					$modalInstance.close({data: schedule, skipped: !!skipped});
 				}, function(error) {
 					$scope.errorMessage = error.data;
 				});

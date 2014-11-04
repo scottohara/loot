@@ -12,7 +12,7 @@
 		provider.schedule = {
 			id: 1,
 			transaction_type: "Transfer",
-			next_due_date: moment().add(3, "days").format("YYYY-MM-DD"),
+			next_due_date: moment().startOf("day").add(3, "days").toDate(),
 			subtransactions: [{}],
 			autoFlag: false,
 			flag: null
@@ -30,15 +30,15 @@
 
 		// Mock schedules object
 		provider.schedules = [
-			{id: 1, next_due_date: moment().subtract(9, "days").format("YYYY-MM-DD")},
-			{id: 2, next_due_date: moment().subtract(8, "days").format("YYYY-MM-DD")},
-			{id: 3, next_due_date: moment().subtract(7, "days").format("YYYY-MM-DD")},
-			{id: 4, next_due_date: moment().subtract(6, "days").format("YYYY-MM-DD")},
-			{id: 5, next_due_date: moment().subtract(5, "days").format("YYYY-MM-DD")},
-			{id: 6, next_due_date: moment().subtract(4, "days").format("YYYY-MM-DD")},
-			{id: 7, next_due_date: moment().subtract(3, "days").format("YYYY-MM-DD")},
-			{id: 8, next_due_date: moment().subtract(2, "days").format("YYYY-MM-DD")},
-			{id: 9, next_due_date: moment().subtract(1, "day").format("YYYY-MM-DD"), }
+			{id: 1, next_due_date: moment().startOf("day").subtract(9, "days").toDate()},
+			{id: 2, next_due_date: moment().startOf("day").subtract(8, "days").toDate()},
+			{id: 3, next_due_date: moment().startOf("day").subtract(7, "days").toDate()},
+			{id: 4, next_due_date: moment().startOf("day").subtract(6, "days").toDate()},
+			{id: 5, next_due_date: moment().startOf("day").subtract(5, "days").toDate()},
+			{id: 6, next_due_date: moment().startOf("day").subtract(4, "days").toDate()},
+			{id: 7, next_due_date: moment().startOf("day").subtract(3, "days").toDate()},
+			{id: 8, next_due_date: moment().startOf("day").subtract(2, "days").toDate()},
+			{id: 9, next_due_date: moment().startOf("day").subtract(1, "day").toDate()}
 		];
 
 		provider.$get = function() {
@@ -57,7 +57,7 @@
 		// Options for the stub promises
 		success = {
 			args: {id: 1},
-			response: {data: scheduleMockProvider.$get()}
+			response: scheduleMockProvider.$get()
 		};
 		
 		error = {

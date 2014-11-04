@@ -106,7 +106,7 @@
 			};
 
 			// Today's date (for checking if a schedule is overdue
-			$scope.today = moment().format("YYYY-MM-DD");
+			$scope.today = moment().startOf("day").toDate();
 
 			// Finds a specific schedule and focusses that row in the table
 			$scope.focusSchedule = function(scheduleIdToFocus) {
@@ -133,7 +133,7 @@
 			var byNextDueDateAndId = function(a, b) {
 				var x, y;
 
-				if (a.next_due_date === b.next_due_date) {
+				if (moment(a.next_due_date).isSame(b.next_due_date)) {
 					x = a.id;
 					y = b.id;
 				} else {

@@ -14,10 +14,25 @@
 				return "/schedules" + (id ? "/" + id : "");
 			};
 
+			// Performs post-processing after parsing from JSON
+			model.parse = function(schedule) {
+				// Convert the next due date from a string ("YYYY-MM-DD") to a native JS date
+				schedule.next_due_date = moment(schedule.next_due_date).startOf("day").toDate();
+				return schedule;
+			};
+
+			// Performs pre-processing before stringifying from JSON
+			model.stringify = function(schedule) {
+				// To avoid timezone issue, convert the native JS date back to a string ("YYYY-MM-DD") before saving
+				var scheduleCopy = angular.copy(schedule);
+				scheduleCopy.next_due_date = moment(scheduleCopy.next_due_date).format("YYYY-MM-DD");
+				return scheduleCopy;
+			};
+
 			// Retrieves all schedules
 			model.all = function() {
 				return $http.get(model.path()).then(function(response) {
-					return response.data;
+					return response.data.map(model.parse);
 				});
 			};
 
@@ -39,7 +54,9 @@
 				return $http({
 					method: schedule.id ? "PATCH" : "POST",
 					url: model.path(schedule.id),
-					data: schedule
+					data: model.stringify(schedule)
+				}).then(function(response) {
+					return model.parse(response.data);
 				});
 			};
 
