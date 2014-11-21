@@ -211,7 +211,7 @@
 							});
 
 							it("should resolve the parent context", function() {
-								accountModel.find.should.have.been.calledWith(1);
+								accountModel.find.should.have.been.calledWith("1");
 								resolvedContext.should.deep.equal(account);
 							});
 
@@ -404,7 +404,7 @@
 							});
 
 							it("should resolve the parent context", function() {
-								payeeModel.find.should.have.been.calledWith(1);
+								payeeModel.find.should.have.been.calledWith("1");
 								resolvedContext.should.eventually.deep.equal(payee);
 							});
 
@@ -537,7 +537,7 @@
 							});
 
 							it("should resolve the parent context", function() {
-								categoryModel.find.should.have.been.calledWith(1);
+								categoryModel.find.should.have.been.calledWith("1");
 								resolvedContext.should.eventually.deep.equal(category);
 							});
 
@@ -670,7 +670,7 @@
 							});
 
 							it("should resolve the parent context", function() {
-								securityModel.find.should.have.been.calledWith(1);
+								securityModel.find.should.have.been.calledWith("1");
 								resolvedContext.should.eventually.deep.equal(security);
 							});
 
