@@ -413,8 +413,8 @@
 				});
 
 				var scenarios = [
-					{id: "TransferTo", type: "Transfer", direction: "outflow"},
-					{id: "TransferFrom", type: "Transfer", direction: "inflow"},
+					{id: "TransferTo", type: "Subtransfer", direction: "outflow"},
+					{id: "TransferFrom", type: "Subtransfer", direction: "inflow"},
 					{id: "anything else", type: "Sub", direction: "the category direction"},
 				];
 

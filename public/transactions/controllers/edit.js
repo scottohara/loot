@@ -185,12 +185,12 @@
 					} else {
 						switch (transaction.category.id) {
 							case "TransferTo":
-								type = "Transfer";
+								type = "Subtransfer";
 								direction = "outflow";
 								break;
 
 							case "TransferFrom":
-								type = "Transfer";
+								type = "Subtransfer";
 								direction = "inflow";
 								break;
 
