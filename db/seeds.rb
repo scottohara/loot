@@ -584,7 +584,7 @@ def create_loanrepayment_transaction(trx)
 				'transaction_type' => subtrx[:type].eql?('subtransaction') ? "Sub" : "Subtransfer",
 				'category' => !!category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
 				'subcategory' => !!category && category.parent.present? && {'id' => category.id} || nil,
-				'direction' => 'inflow',
+				'direction' => 'outflow',
 				'account' => {'id' => subaccount},
 				'status' => substatus,
 			}
