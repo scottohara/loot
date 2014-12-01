@@ -205,7 +205,7 @@ module Transactable
 		# b) the closing balance as at the closing_date (when going backwards)
 		# c) the closing balance as at the passed date (when going forwards)
 		if opts[:direction].eql? :prev
-			at_end ? self.opening_balance : self.closing_balance(opts.merge({:as_at => closing_date}))
+			at_end ? self.opening_balance : self.closing_balance(opts.merge({:as_at => closing_date.to_s}))
 		else
 			self.closing_balance opts
 		end
