@@ -1,5 +1,5 @@
 class SecurityTransaction < Transaction
-	has_one :header, :class_name => 'SecurityTransactionHeader', :foreign_key => 'transaction_id', :dependent => :destroy
+	has_one :header, :class_name => 'SecurityTransactionHeader', :foreign_key => 'transaction_id', :dependent => :destroy, :autosave => true
 
 	def method_missing(method, *args, &block)
 		if method.to_s =~ /^validate_(.+)_(presence|absence)$/

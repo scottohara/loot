@@ -57,6 +57,8 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 
 			context "scheduled" do
 				it "should create a transaction from a JSON representation" do
+					json['next_due_date'] = Date.today.to_s
+					json['frequency'] = "Monthly"
 					expect(security).to_not receive(:update_price!)
 				end
 			end
@@ -117,6 +119,8 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 
 			context "scheduled" do
 				it "should update a transaction from a JSON representation" do
+					json['next_due_date'] = Date.today.to_s
+					json['frequency'] = "Monthly"
 					expect(security).to_not receive(:update_price!)
 				end
 			end
