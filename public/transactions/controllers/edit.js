@@ -126,10 +126,11 @@
 
 			// Merges the details of a previous transaction into the current one
 			$scope.useLastTransaction = function(transaction) {
-				// Strip the id, transaction date and primary account
+				// Strip the id, transaction date, primary account & status
 				delete transaction.id;
 				delete transaction.transaction_date;
 				delete transaction.primary_account;
+				delete transaction.status;
 
 				// Merge the last transaction details into the transaction on the scope
 				$scope.transaction = angular.extend($scope.transaction, transaction);
