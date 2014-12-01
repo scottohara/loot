@@ -56,8 +56,17 @@ RSpec.configure do |config|
 	# FactoryGirl configuration
 	config.include FactoryGirl::Syntax::Methods
 
-	# Lint all factories (except TransactionAccount)
-	config.before(:suite) { FactoryGirl.lint FactoryGirl.factories.reject {|factory| factory.name.eql? :transaction_account} }
+	# Lint all factories
+	config.before :suite do
+		# Do *transaction_header factories first, cleaning the database between each to avoid duplicate primary key errors
+		%w(payee_transaction_header security_transaction_header transaction_header).each do |factory|
+			FactoryGirl.lint [FactoryGirl.factory_by_name(factory)]
+			DatabaseCleaner.clean_with :truncation
+		end
+
+		# Do the rest (except TransactionAccount)
+		FactoryGirl.lint FactoryGirl.factories.reject {|factory| %i(transaction_header payee_transaction_header security_transaction_header transaction_account).include? factory.name}
+	end
 
 	# DatabaseCleaner configuration
 	config.before :suite do
