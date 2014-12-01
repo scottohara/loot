@@ -407,7 +407,6 @@
 				return q.promise;
 			};
 
-
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;

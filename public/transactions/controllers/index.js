@@ -58,6 +58,11 @@
 						}
 					}
 				}).result.then(function(transaction) {
+					// Purge the context from the cache so that it is refetched on next use (to get the updated closing balance)
+					if (contextModel) {
+						contextModel.flush($scope.context.id);
+					}
+
 					// If the context has changed, remove the transaction from the array
 					if ($scope.contextChanged(transaction)) {
 						$scope.transactions.splice(index, 1);
@@ -92,10 +97,8 @@
 							// Refocus the transaction
 							$scope.focusTransaction(transaction.id);
 
-							// Refetch the context (to get the updated closing balance)
-							contextModel.find($scope.context.id).then(function(context) {
-								$scope.context = context;
-							});
+							// Update the context's closing balance
+							context.closing_balance = Number(context.closing_balance) + (Number(transaction.amount) * ("inflow" === transaction.direction ? 1 : -1));
 						}
 					}
 				}).finally(function() {
