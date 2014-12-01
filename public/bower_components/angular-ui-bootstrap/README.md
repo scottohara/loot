@@ -26,6 +26,10 @@ Project files are also available through your favourite package manager:
 * **Bower**: `bower install angular-bootstrap`
 * **NuGet**: https://nuget.org/packages/Angular.UI.Bootstrap/
 
+## FAQ
+
+https://github.com/angular-ui/bootstrap/wiki/FAQ
+
 ## Supported browsers
 
 Directives from this repository are automatically tested with the following browsers:
@@ -137,8 +141,8 @@ html2js: {
     base: '.',
     module: 'ui-templates',
     rename: function (modulePath) {
-      var moduleName = modulePath.replace('app/views/partials/ui-bootstrap-tpls/', '').replace('.html', '');
-      return 'template' + '/' + moduleName + '.html';
+      var moduleName = modulePath.replace('app/views/partials/ui-bootstrap-tpls/', '');
+      return 'template/' + moduleName;
     }
   },
   main: {
