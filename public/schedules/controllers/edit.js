@@ -315,8 +315,8 @@
 			};
 
 			// Watch the subtransactions array and recalculate the total allocated
-			$scope.$watch("transaction.subtransactions", function() {
-				if ($scope.transaction.subtransactions) {
+			$scope.$watch("transaction.subtransactions", function(newValue, oldValue) {
+				if (newValue !== oldValue && $scope.transaction.subtransactions) {
 					$scope.totalAllocated = $scope.transaction.subtransactions.reduce(function(total, subtransaction) {
 						return total + (Number(subtransaction.amount * (subtransaction.direction === $scope.transaction.direction ? 1 : -1)) || 0);
 					}, 0);

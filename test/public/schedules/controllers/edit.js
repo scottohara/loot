@@ -573,19 +573,28 @@
 		});
 
 		describe("$watch subtransations", function() {
-			var memo;
+			var memo,
+					subtransactions;
 
 			beforeEach(function() {
 				memo = "memo";
-				scheduleEditController.transaction.direction = "outflow";
-				scheduleEditController.transaction.memo = memo;
-				scheduleEditController.transaction.subtransactions = [
+				subtransactions = [
 					{amount: 10, direction: "outflow", memo: "memo 1"},
 					{amount: 5, direction: "inflow", memo: "memo 2"},
 					{}
 				];
+
+				scheduleEditController.transaction.direction = "outflow";
+				scheduleEditController.transaction.memo = memo;
+				scheduleEditController.transaction.subtransactions = [{},{}];
+				scheduleEditController.$digest();
 			});
 
+			it("should do nothing if the watched value hasn't changed", function() {
+				scheduleEditController.$digest();
+				(undefined === scheduleEditController.totalAllocated).should.be.true;
+			});
+				
 			it("should do nothing if there are no subtransactions", function() {
 				scheduleEditController.transaction.subtransactions = undefined;
 				scheduleEditController.$digest();
@@ -593,17 +602,20 @@
 			});
 
 			it("should calculate the total and make it available on the scope", function() {
+				scheduleEditController.transaction.subtransactions = subtransactions;
 				scheduleEditController.$digest();
 				scheduleEditController.totalAllocated.should.equal(5);
 			});
 
 			it("should not set the main transaction memo when editing an existing transaction", function() {
 				scheduleEditController.transaction.id = 1;
+				scheduleEditController.transaction.subtransactions = subtransactions;
 				scheduleEditController.$digest();
 				scheduleEditController.transaction.memo.should.equal(memo);
 			});
 
 			it("should join the sub transaction memos and set the main transaction memo when adding a new transaction", function() {
+				scheduleEditController.transaction.subtransactions = subtransactions;
 				scheduleEditController.$digest();
 				scheduleEditController.transaction.memo.should.equal("memo 1; memo 2");
 			});
