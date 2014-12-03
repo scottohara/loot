@@ -1,4 +1,5 @@
 class TransferTransaction < PayeeCashTransaction
+	validate :validate_account_uniqueness
 	has_one :source_transaction_account, -> { where :direction => 'outflow' }, :class_name => 'TransactionAccount', :foreign_key => 'transaction_id', :dependent => :destroy
 	has_one :source_account, :class_name => 'Account', :through => :source_transaction_account, :source => :account
 	has_one :destination_transaction_account, -> { where :direction => 'inflow' }, :class_name => 'TransactionAccount', :foreign_key => 'transaction_id', :dependent => :destroy
@@ -26,6 +27,10 @@ class TransferTransaction < PayeeCashTransaction
 			s.update_from_json(json)
 			s.as_json :direction => json['direction']
 		end
+	end
+
+	def validate_account_uniqueness
+		errors[:base] << "Source and destination account can't be the same" if (source_transaction_account || destination_transaction_account) && source_transaction_account.account.eql?(destination_transaction_account.account)
 	end
 
 	def update_from_json(json)

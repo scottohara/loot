@@ -175,6 +175,7 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			let(:valid_amount) { 25 }
 		end
 	end
+
 	describe "#as_json" do
 		subject { create(:security_investment_transaction, status: "Reconciled") }
 

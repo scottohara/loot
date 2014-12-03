@@ -90,6 +90,34 @@ RSpec.describe TransferTransaction, :type => :model do
 		end
 	end
 
+	describe "#validate_account_uniqueness" do
+		subject { TransferTransaction.new }
+		let(:source_account) { create :account }
+		let(:error_message) { "Source and destination account can't be the same" }
+
+		before :each do |example|
+			subject.build_source_transaction_account(:direction => "outflow").account = source_account
+			subject.build_destination_transaction_account(:direction => "inflow").account = destination_account
+			subject.validate_account_uniqueness
+		end
+
+		context "when the source and destination accounts are the same" do
+			let(:destination_account) { source_account }
+
+			it "should be an error" do
+				expect(subject.errors[:base]).to include(error_message)
+			end
+		end
+
+		context "when the source and destination accounts are not the same" do
+			let(:destination_account) { create :account }
+
+			it "should not be an error" do
+				expect(subject.errors[:base]).to_not include(error_message)
+			end
+		end
+	end
+
 	describe "#as_json" do
 		subject { create(:transfer_transaction, status: "Reconciled") }
 

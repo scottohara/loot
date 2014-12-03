@@ -58,6 +58,8 @@ RSpec.configure do |config|
 
 	# Lint all factories
 	config.before :suite do
+		DatabaseCleaner.clean_with :truncation
+
 		# Do *transaction_header factories first, cleaning the database between each to avoid duplicate primary key errors
 		%w(payee_transaction_header security_transaction_header transaction_header).each do |factory|
 			FactoryGirl.lint [FactoryGirl.factory_by_name(factory)]
