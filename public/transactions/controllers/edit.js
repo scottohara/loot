@@ -9,11 +9,7 @@
 		function($scope, $modalInstance, $q, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
 			// Make the passed transaction available on the scope
 			$scope.transaction = transaction;
-
 			$scope.mode = (transaction.id ? "Edit" : "Add");
-
-			// Give the transaction date field initial focus
-			$("#transactionDate").focus();
 
 			// Prefetch the payees list so that the cache is populated
 			payeeModel.all();

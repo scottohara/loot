@@ -13,9 +13,6 @@
 
 			$scope.mode = (security ? "Edit" : "Add");
 
-			// Give the name field initial focus
-			$("#name").focus();
-
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;

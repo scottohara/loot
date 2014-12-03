@@ -9,11 +9,7 @@
 		function($scope, $modalInstance, filterFilter, limitToFilter, categoryModel, category) {
 			// Make the passed category available on the scope
 			$scope.category = angular.extend({}, category);
-
 			$scope.mode = (category ? "Edit" : "Add");
-
-			// Give the name field initial focus
-			$("#name").focus();
 
 			// List of parent categories for the typeahead
 			$scope.parentCategories = function(filter, limit) {

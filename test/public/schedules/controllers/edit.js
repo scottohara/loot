@@ -39,7 +39,6 @@
 			schedule = _schedule_;
 			currentElement = undefined;
 			mockJQueryInstance = {
-				focus: sinon.stub(),
 				get: function() {
 					return currentElement;
 				},
@@ -48,8 +47,6 @@
 
 			realJQueryInstance = window.$;
 			window.$ = sinon.stub();
-			window.$.withArgs("#transactionDate").returns(mockJQueryInstance);
-			window.$.withArgs("#nextDueDate").returns(mockJQueryInstance);
 			window.$.withArgs("#amount").returns(mockJQueryInstance);
 
 			scheduleEditController = controllerTest("scheduleEditController");
@@ -106,10 +103,6 @@
 			it("should set the transaction date to the next due date", function() {
 				scheduleEditController.transaction.transaction_date.should.equal(schedule.next_due_date);
 			});
-
-			it("should focus the transaction date field", function() {
-				mockJQueryInstance.focus.should.have.been.called;
-			});
 		});
 
 		describe("when a schedule is not provided", function() {
@@ -135,10 +128,6 @@
 
 			it("should make alias the transaction as schedule on the $scope", function() {
 				scheduleEditController.schedule.should.equal(scheduleEditController.transaction);
-			});
-
-			it("should focus the next due date field", function() {
-				mockJQueryInstance.focus.should.have.been.called;
 			});
 		});
 

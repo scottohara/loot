@@ -34,9 +34,6 @@
 
 				// Default the transaction date to the next due date
 				$scope.transaction.transaction_date = $scope.schedule.next_due_date;
-
-				// Give the transaction date field initial focus
-				$("#transactionDate").focus();
 			} else {
 				// When no schedule is passed in, we start out in "Add Transaction" mode
 				//
@@ -49,9 +46,6 @@
 
 				// Both $scope.schedule and $scope.transaction point to the same object
 				$scope.schedule = $scope.transaction;
-
-				// Give the next due date field initial focus
-				$("#nextDueDate").focus();
 			}
 
 			// Prefetch the payees list so that the cache is populated

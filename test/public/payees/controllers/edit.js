@@ -11,9 +11,7 @@
 		var controllerTest,
 				$modalInstance,
 				payeeModel,
-				payee,
-				mockJQueryInstance,
-				realJQueryInstance;
+				payee;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "payees", function(mockDependenciesProvider) {
@@ -26,20 +24,8 @@
 			$modalInstance = _$modalInstance_;
 			payeeModel = _payeeModel_;
 			payee = _payee_;
-			mockJQueryInstance = {
-				focus: sinon.stub()
-			};
-
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs("#name").returns(mockJQueryInstance);
-
 			payeeEditController = controllerTest("payeeEditController");
 		}));
-
-		afterEach(function() {
-			window.$ = realJQueryInstance;
-		});
 
 		describe("when a payee is provided", function() {
 			it("should make the passed payee available on the $scope", function() {
@@ -64,10 +50,6 @@
 			it("should set the mode to Add", function() {
 				payeeEditController.mode.should.equal("Add");
 			});
-		});
-
-		it("should focus the name field", function() {
-			mockJQueryInstance.focus.should.have.been.called;
 		});
 
 		describe("save", function() {

@@ -11,9 +11,7 @@
 		var controllerTest,
 				$modalInstance,
 				securityModel,
-				security,
-				mockJQueryInstance,
-				realJQueryInstance;
+				security;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "securities", function(mockDependenciesProvider) {
@@ -26,20 +24,8 @@
 			$modalInstance = _$modalInstance_;
 			securityModel = _securityModel_;
 			security = _security_;
-			mockJQueryInstance = {
-				focus: sinon.stub()
-			};
-
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs("#name").returns(mockJQueryInstance);
-
 			securityEditController = controllerTest("securityEditController");
 		}));
-
-		afterEach(function() {
-			window.$ = realJQueryInstance;
-		});
 
 		describe("when a security is provided", function() {
 			it("should make the passed security available on the $scope", function() {
@@ -64,10 +50,6 @@
 			it("should set the mode to Add", function() {
 				securityEditController.mode.should.equal("Add");
 			});
-		});
-
-		it("should focus the name field", function() {
-			mockJQueryInstance.focus.should.have.been.called;
 		});
 
 		describe("save", function() {

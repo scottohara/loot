@@ -9,9 +9,7 @@
 
 		// Dependencies
 		var $modalInstance,
-				authenticationModel,
-				mockJQueryInstance,
-				realJQueryInstance;
+				authenticationModel;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "authentication", function(mockDependenciesProvider) {
@@ -22,28 +20,12 @@
 		beforeEach(inject(function(controllerTest, _$modalInstance_, _authenticationModel_) {
 			$modalInstance = _$modalInstance_;
 			authenticationModel = _authenticationModel_;
-			mockJQueryInstance = {
-				focus: sinon.stub()
-			};
-
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs("#userName").returns(mockJQueryInstance);
-
 			authenticationEditController = controllerTest("authenticationEditController");
 		}));
-
-		afterEach(function() {
-			window.$ = realJQueryInstance;
-		});
 
 		it("should set an empty authentication object on the $scope", function() {
 			authenticationEditController.authentication.should.be.an.Object;
 			authenticationEditController.authentication.should.be.empty;
-		});
-
-		it("should focus the user name field", function() {
-			mockJQueryInstance.focus.should.have.been.called;
 		});
 
 		describe("login", function() {

@@ -5,7 +5,7 @@
 	<div class="modal-body">
 		<div class="form-group has-feedback" ng-class="{'has-error': transactionForm.balance.$invalid}">
 			<label for="balance">Closing Balance</label>
-			<input name="balance" class="form-control" ng-class="{'negative': account.closingBalance < 0}" ng-model="account.closingBalance" placeholder="Amount" required og-input-currency>
+			<input name="balance" class="form-control" ng-class="{'negative': account.closingBalance < 0}" ng-model="account.closingBalance" placeholder="Amount" required og-input-currency autofocus>
 			<span ng-show="transactionForm.balance.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>

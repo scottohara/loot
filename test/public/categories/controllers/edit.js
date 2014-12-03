@@ -11,9 +11,7 @@
 		var controllerTest,
 				$modalInstance,
 				categoryModel,
-				category,
-				mockJQueryInstance,
-				realJQueryInstance;
+				category;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "categories", function(mockDependenciesProvider) {
@@ -26,20 +24,8 @@
 			$modalInstance = _$modalInstance_;
 			categoryModel = _categoryModel_;
 			category = _category_;
-			mockJQueryInstance = {
-				focus: sinon.stub()
-			};
-
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs("#name").returns(mockJQueryInstance);
-
 			categoryEditController = controllerTest("categoryEditController");
 		}));
-
-		afterEach(function() {
-			window.$ = realJQueryInstance;
-		});
 
 		describe("when a category is provided", function() {
 			it("should make the passed category available on the $scope", function() {
@@ -64,10 +50,6 @@
 			it("should set the mode to Add", function() {
 				categoryEditController.mode.should.equal("Add");
 			});
-		});
-
-		it("should focus the name field", function() {
-			mockJQueryInstance.focus.should.have.been.called;
 		});
 
 		describe("parentCategories", function() {

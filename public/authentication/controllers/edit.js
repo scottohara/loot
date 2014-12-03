@@ -9,9 +9,6 @@
 		function($scope, $modalInstance, authenticationModel) {
 			$scope.authentication = {};
 
-			// Give the login field initial focus
-			$("#userName").focus();
-
 			// Login and close the modal
 			$scope.login = function() {
 				$scope.errorMessage = null;

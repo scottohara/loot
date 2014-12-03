@@ -37,7 +37,6 @@
 			transaction = _transaction_;
 			currentElement = undefined;
 			mockJQueryInstance = {
-				focus: sinon.stub(),
 				get: function() {
 					return currentElement;
 				},
@@ -46,7 +45,6 @@
 
 			realJQueryInstance = window.$;
 			window.$ = sinon.stub();
-			window.$.withArgs("#transactionDate").returns(mockJQueryInstance);
 			window.$.withArgs("#amount").returns(mockJQueryInstance);
 
 			transactionEditController = controllerTest("transactionEditController");
@@ -79,10 +77,6 @@
 			it("should set the mode to Add", function() {
 				transactionEditController.mode.should.equal("Add");
 			});
-		});
-
-		it("should focus the transaction date field", function() {
-			mockJQueryInstance.focus.should.have.been.called;
 		});
 
 		it("should prefetch the payees list to populate the cache", function() {
