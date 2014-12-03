@@ -17,7 +17,8 @@
 				transactionModel,
 				transaction,
 				mockJQueryInstance,
-				realJQueryInstance;
+				realJQueryInstance,
+				currentElement;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "transactions", function(mockDependenciesProvider) {
@@ -34,13 +35,19 @@
 			accountModel = _accountModel_;
 			transactionModel = _transactionModel_;
 			transaction = _transaction_;
+			currentElement = undefined;
 			mockJQueryInstance = {
-				focus: sinon.stub()
+				focus: sinon.stub(),
+				get: function() {
+					return currentElement;
+				},
+				triggerHandler: sinon.stub()
 			};
 
 			realJQueryInstance = window.$;
 			window.$ = sinon.stub();
 			window.$.withArgs("#transactionDate").returns(mockJQueryInstance);
+			window.$.withArgs("#amount").returns(mockJQueryInstance);
 
 			transactionEditController = controllerTest("transactionEditController");
 		}));
@@ -353,11 +360,10 @@
 					payee: "original payee",
 					category: "original category"
 				};
-
-				transactionEditController.useLastTransaction(transaction);
 			});
 
 			it("should strip the transaction of it's id, date, primary account & status", function() {
+				transactionEditController.useLastTransaction(transaction);
 				(undefined === transaction.id).should.be.true;
 				(undefined === transaction.transaction_date).should.be.true;
 				(undefined === transaction.primary_account).should.be.true;
@@ -366,7 +372,19 @@
 
 			it("should merge the transaction details into $scope.transaction", function() {
 				transaction.category = "original category";
+				transactionEditController.useLastTransaction(transaction);
 				transactionEditController.transaction.should.deep.equal(transaction);
+			});
+
+			it("should retrigger the amount focus handler if focussed", function() {
+				currentElement = document.activeElement;
+				transactionEditController.useLastTransaction(transaction);
+				mockJQueryInstance.triggerHandler.should.have.been.calledWith("focus");
+			});
+
+			it("should not retrigger the amount focus handler if not focussed", function() {
+				transactionEditController.useLastTransaction(transaction);
+				mockJQueryInstance.triggerHandler.should.not.have.been.called;
 			});
 		});
 

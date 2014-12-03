@@ -134,6 +134,12 @@
 
 				// Merge the last transaction details into the transaction on the scope
 				$scope.transaction = angular.extend($scope.transaction, transaction);
+
+				// If the amount field already focus, re-trigger the focus event handler to format/select the new value
+				var amount = $("#amount");
+				if (amount.get(0) === document.activeElement) {
+					amount.triggerHandler("focus");
+				}
 			};
 
 			// Handler for category changes

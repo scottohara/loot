@@ -43,7 +43,7 @@
 		<!-- Transaction Amount -->
 		<div ng-if="transaction.primary_account.account_type != 'investment' || transaction.category.id == 'DividendTo'" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.amount.$invalid}">
 			<label for="amount">Amount</label>
-			<input name="amount" class="form-control" ng-class="{'negative': transaction.amount < -1}" ng-model="transaction.amount" placeholder="Transaction Amount" required og-input-currency>
+			<input id="amount" name="amount" class="form-control" ng-class="{'negative': transaction.amount < -1}" ng-model="transaction.amount" placeholder="Transaction Amount" required og-input-currency>
 			<span ng-show="scheduleForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Category -->

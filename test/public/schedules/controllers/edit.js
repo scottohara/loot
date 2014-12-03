@@ -18,7 +18,8 @@
 				scheduleModel,
 				schedule,
 				mockJQueryInstance,
-				realJQueryInstance;
+				realJQueryInstance,
+				currentElement;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "schedules", function(mockDependenciesProvider) {
@@ -36,14 +37,20 @@
 			transactionModel = _transactionModel_;
 			scheduleModel = _scheduleModel_;
 			schedule = _schedule_;
+			currentElement = undefined;
 			mockJQueryInstance = {
-				focus: sinon.stub()
+				focus: sinon.stub(),
+				get: function() {
+					return currentElement;
+				},
+				triggerHandler: sinon.stub()
 			};
 
 			realJQueryInstance = window.$;
 			window.$ = sinon.stub();
 			window.$.withArgs("#transactionDate").returns(mockJQueryInstance);
 			window.$.withArgs("#nextDueDate").returns(mockJQueryInstance);
+			window.$.withArgs("#amount").returns(mockJQueryInstance);
 
 			scheduleEditController = controllerTest("scheduleEditController");
 		}));
@@ -403,7 +410,8 @@
 					frequency: "frequency",
 					primary_account: "primary account",
 					payee: "payee",
-					amount: 100
+					amount: 100,
+					status: "Reconciled"
 				};
 
 				// The current transaction to merge into
@@ -411,21 +419,33 @@
 					payee: "original payee",
 					category: "original category"
 				};
-
-				scheduleEditController.useLastTransaction(transaction);
 			});
 
-			it("should strip the transaction of it's id, transaction date, next due date, frequency & primary account", function() {
+			it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account & status", function() {
+				scheduleEditController.useLastTransaction(transaction);
 				(undefined === transaction.id).should.be.true;
 				(undefined === transaction.transaction_date).should.be.true;
 				(undefined === transaction.next_due_date).should.be.true;
 				(undefined === transaction.frequency).should.be.true;
 				(undefined === transaction.primary_account).should.be.true;
+				(undefined === transaction.status).should.be.true;
 			});
 
 			it("should merge the transaction details into $scope.transaction", function() {
 				transaction.category = "original category";
+				scheduleEditController.useLastTransaction(transaction);
 				scheduleEditController.transaction.should.deep.equal(transaction);
+			});
+
+			it("should retrigger the amount focus handler if focussed", function() {
+				currentElement = document.activeElement;
+				scheduleEditController.useLastTransaction(transaction);
+				mockJQueryInstance.triggerHandler.should.have.been.calledWith("focus");
+			});
+
+			it("should not retrigger the amount focus handler if not focussed", function() {
+				scheduleEditController.useLastTransaction(transaction);
+				mockJQueryInstance.triggerHandler.should.not.have.been.called;
 			});
 		});
 

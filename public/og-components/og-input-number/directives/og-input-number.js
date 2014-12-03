@@ -26,10 +26,10 @@
 
 					// Update view when tabbing in/out of the field
 					iElement.on("focus", function() {
-						iElement.val(numberFilter(formattedToRaw(iElement.val())));
 						$timeout(function() {
+							iElement.val(numberFilter(formattedToRaw(iElement.val())));
 							$(iElement).select();
-						}, 50);
+						}, 0);
 					});
 					iElement.on("blur", function() {
 						iElement.val(numberFilter(formattedToRaw(iElement.val())));

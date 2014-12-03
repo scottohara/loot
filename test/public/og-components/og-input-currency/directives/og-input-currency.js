@@ -100,8 +100,11 @@
 				window.$.withArgs(ogInputCurrency.element).returns(mockJQueryInstance);
 
 				expected = "-1,234.56";
-				ogInputCurrency.element.val("-$1,234.56");
+				ogInputCurrency.scope.model = -1234.56;
+				ogInputCurrency.scope.$digest();
+				ogInputCurrency.element.val().should.equal("-$1,234.56");
 				ogInputCurrency.element.triggerHandler("focus");
+				$timeout.flush();
 			});
 
 			it("should strip any formatting", function() {
@@ -109,12 +112,11 @@
 			});
 
 			it("should select the input value", function() {
-				$timeout.flush();
 				mockJQueryInstance.select.should.have.been.called;
-				$timeout.verifyNoPendingTasks();
 			});
 
 			afterEach(function() {
+				$timeout.verifyNoPendingTasks();
 				window.$ = realJQueryInstance;
 			});
 		});

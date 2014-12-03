@@ -165,15 +165,22 @@
 
 			// Merges the details of a previous transaction into the current one
 			$scope.useLastTransaction = function(transaction) {
-				// Strip the id, primary account, next due date, transaction date and frequency
+				// Strip the id, primary account, next due date, transaction date, frequency and status
 				delete transaction.id;
 				delete transaction.primary_account;
 				delete transaction.next_due_date;
 				delete transaction.transaction_date;
 				delete transaction.frequency;
+				delete transaction.status;
 
 				// Merge the last transaction details into the transaction on the scope
 				$scope.transaction = angular.extend($scope.transaction, transaction);
+
+				// If the amount field already focus, re-trigger the focus event handler to format/select the new value
+				var amount = $("#amount");
+				if (amount.get(0) === document.activeElement) {
+					amount.triggerHandler("focus");
+				}
 			};
 
 			// Handler for category changes
