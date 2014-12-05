@@ -128,48 +128,14 @@
 
 		describe("save", function() {
 			beforeEach(function() {
+				transactionModel.invalidateCaches = sinon.stub();
 				$httpBackend.whenPOST(/transactions$/).respond(200);
 				$httpBackend.whenPATCH(/transactions\/123$/).respond(200);
 			});
 
-			it("should flush the payee cache when the transaction payee is new", function() {
-				transactionModel.save({payee: ""});
-				payeeModel.flush.should.have.been.called;
-			});
-
-			it("should not flush the payee cache when the transaction payee is existing", function() {
-				transactionModel.save({payee: {}});
-				payeeModel.flush.should.not.have.been.called;
-			});
-
-			it("should flush the category cache when the transaction category is new", function() {
-				transactionModel.save({category: ""});
-				categoryModel.flush.should.have.been.called;
-			});
-
-			it("should not flush the category cache when the transaction category is existing", function() {
-				transactionModel.save({category: {}});
-				categoryModel.flush.should.not.have.been.called;
-			});
-
-			it("should flush the category cache when the transaction subcategory is new", function() {
-				transactionModel.save({subcategory: ""});
-				categoryModel.flush.should.have.been.called;
-			});
-
-			it("should not flush the category cache when the transaction subcategory is existing", function() {
-				transactionModel.save({subcategory: {}});
-				categoryModel.flush.should.not.have.been.called;
-			});
-
-			it("should flush the security cache when the transaction security is new", function() {
-				transactionModel.save({security: ""});
-				securityModel.flush.should.have.been.called;
-			});
-
-			it("should not flush the security cache when the transaction security is existing", function() {
-				transactionModel.save({security: {}});
-				securityModel.flush.should.not.have.been.called;
+			it("should invalidate the associated $http caches", function() {
+				transactionModel.save({});
+				transactionModel.invalidateCaches.should.have.been.called;
 			});
 
 			it("should dispatch a POST request to /transactions when an id is not provided", function() {
@@ -188,10 +154,84 @@
 		});
 
 		describe("destroy", function() {
+			beforeEach(function() {
+				transactionModel.invalidateCaches = sinon.stub();
+				$httpBackend.whenDELETE(/transactions\/123$/).respond(200);
+			});
+
+			it("should invalidate the associated $http caches", function() {
+				transactionModel.destroy({id: 123});
+				transactionModel.invalidateCaches.should.have.been.called;
+				$httpBackend.flush();
+			});
+
 			it("should dispatch a DELETE request to /transactions/{id}", function() {
-				$httpBackend.expectDELETE(/transactions\/123$/).respond(200);
+				$httpBackend.expectDELETE(/transactions\/123$/);
 				transactionModel.destroy({id: 123});
 				$httpBackend.flush();
+			});
+		});
+
+		describe("invalidateCaches", function() {
+			var transaction;
+
+			beforeEach(function() {
+				transaction = {
+					payee: "payee",
+					category: "category",
+					subcategory: "subcategory",
+					security: "security"
+				};
+				transactionModel.invalidateCache = sinon.stub();
+				transactionModel.invalidateCaches(transaction);
+			});
+
+			it("should invalidate the payee from the payee cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(payeeModel, "payee");
+			});
+
+			it("should invalidate the category from the category cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(categoryModel, "category");
+			});
+
+			it("should invalidate the subcategory from the category cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(categoryModel, "subcategory");
+			});
+
+			it("should invalidate the security from the security cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(securityModel, "security");
+			});
+		});
+
+		describe("invalidateCache", function() {
+			it("should do nothing if the item is an empty string", function() {
+				transactionModel.invalidateCache(payeeModel, "");
+				payeeModel.flush.should.not.have.been.called;
+			});
+
+			it("should flush the $http cache if the item is a non-empty string", function() {
+				transactionModel.invalidateCache(payeeModel, "test");
+				payeeModel.flush.should.have.been.calledWith(undefined);
+			});
+
+			it("should do nothing if the item is undefined", function() {
+				transactionModel.invalidateCache(payeeModel, undefined);
+				payeeModel.flush.should.not.have.been.called;
+			});
+
+			it("should do nothing if the item is null", function() {
+				transactionModel.invalidateCache(payeeModel, null);
+				payeeModel.flush.should.not.have.been.called;
+			});
+
+			it("should do nothing if the item has no id", function() {
+				transactionModel.invalidateCache(payeeModel, {});
+				payeeModel.flush.should.not.have.been.called;
+			});
+
+			it("should remove the item from the $http cache when the item has an id", function() {
+				transactionModel.invalidateCache(payeeModel, {id: 123});
+				payeeModel.flush.should.have.been.calledWith(123);
 			});
 		});
 

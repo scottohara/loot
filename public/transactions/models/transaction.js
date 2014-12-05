@@ -61,18 +61,8 @@
 
 			// Saves a transaction
 			model.save = function(transaction) {
-				// If the payee, category, subcategory or security are new; flush the $http cache
-				if (typeof transaction.payee === "string") {
-					payeeModel.flush();
-				}
-
-				if (typeof transaction.category === "string" || typeof transaction.subcategory === "string") {
-					categoryModel.flush();
-				}
-
-				if (typeof transaction.security === "string") {
-					securityModel.flush();
-				}
+				// Invalidate the payee, category, subcategory and/or security $http caches
+				model.invalidateCaches(transaction);
 
 				return $http({
 					method: transaction.id ? "PATCH" : "POST",
@@ -83,7 +73,29 @@
 
 			// Deletes a transaction
 			model.destroy = function(transaction) {
+				// Invalidate the payee, category, subcategory and/or security $http caches
+				model.invalidateCaches(transaction);
+
 				return $http.delete(model.path(transaction.id));
+			};
+
+			// Helper function to handle all $http cache invalidations
+			model.invalidateCaches = function(transaction) {
+				model.invalidateCache(payeeModel, transaction.payee);
+				model.invalidateCache(categoryModel, transaction.category);
+				model.invalidateCache(categoryModel, transaction.subcategory);
+				model.invalidateCache(securityModel, transaction.security);
+			};
+
+			// Helper function to handle a single $http cache invalidation
+			model.invalidateCache = function(itemModel, item) {
+				if (typeof item === "string" && "" !== item) {
+					// Item is new; flush the corresponding $http cache
+					itemModel.flush();
+				} else if (item && item.id) {
+					// Item is existing; remove single item from the corresponding $http cache
+					itemModel.flush(item.id);
+				}
 			};
 
 			// Updates the status of a transaction
