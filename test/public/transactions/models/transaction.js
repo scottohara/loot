@@ -10,22 +10,24 @@
 		// Dependencies
 		var $httpBackend,
 				$http,
+				accountModel,
 				payeeModel,
 				categoryModel,
 				securityModel;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "transactions", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["payeeModel", "categoryModel", "securityModel"]);
+			mockDependenciesProvider.load(["accountModel", "payeeModel", "categoryModel", "securityModel"]);
 		}));
 
 		// Inject the object under test and it's remaining dependencies
-		beforeEach(inject(function(_transactionModel_, _$httpBackend_, _$http_, _payeeModel_, _categoryModel_, _securityModel_) {
+		beforeEach(inject(function(_transactionModel_, _$httpBackend_, _$http_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_) {
 			transactionModel = _transactionModel_;
 
 			$httpBackend = _$httpBackend_;
 			$http = _$http_;
 
+			accountModel = _accountModel_;
 			payeeModel = _payeeModel_;
 			categoryModel = _categoryModel_;
 			securityModel = _securityModel_;
@@ -177,13 +179,26 @@
 
 			beforeEach(function() {
 				transaction = {
+					primary_account: "primary_account",
 					payee: "payee",
 					category: "category",
 					subcategory: "subcategory",
-					security: "security"
+					account: "account",
+					security: "security",
+					subtransactions: [
+						{
+							category: "subtransaction category",
+							subcategory: "subtransaction subcategory",
+							account: "subtransfer account"
+						}
+					]
 				};
 				transactionModel.invalidateCache = sinon.stub();
 				transactionModel.invalidateCaches(transaction);
+			});
+
+			it("should invalidate the primary account from the account cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(accountModel, "primary_account");
 			});
 
 			it("should invalidate the payee from the payee cache", function() {
@@ -198,8 +213,24 @@
 				transactionModel.invalidateCache.should.have.been.calledWith(categoryModel, "subcategory");
 			});
 
+			it("should invalidate the account from the account cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(accountModel, "account");
+			});
+
 			it("should invalidate the security from the security cache", function() {
 				transactionModel.invalidateCache.should.have.been.calledWith(securityModel, "security");
+			});
+
+			it("should invalidate any subtransaction categories from the category cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(categoryModel, "subtransaction category");
+			});
+
+			it("should invalidate any subtransaction subcategories from the category cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(categoryModel, "subtransaction subcategory");
+			});
+
+			it("should invalidate any subtransfer accounts from the account cache", function() {
+				transactionModel.invalidateCache.should.have.been.calledWith(accountModel, "subtransfer account");
 			});
 		});
 

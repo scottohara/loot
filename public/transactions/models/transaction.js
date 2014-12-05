@@ -5,8 +5,8 @@
 	var mod = angular.module("transactions");
 
 	// Declare the Transaction model
-	mod.factory("transactionModel", ["$http", "payeeModel", "categoryModel", "securityModel",
-		function($http, payeeModel, categoryModel, securityModel) {
+	mod.factory("transactionModel", ["$http", "accountModel", "payeeModel", "categoryModel", "securityModel",
+		function($http, accountModel, payeeModel, categoryModel, securityModel) {
 			var model = {};
 
 			// Returns the API path
@@ -81,10 +81,19 @@
 
 			// Helper function to handle all $http cache invalidations
 			model.invalidateCaches = function(transaction) {
+				model.invalidateCache(accountModel, transaction.primary_account);
 				model.invalidateCache(payeeModel, transaction.payee);
 				model.invalidateCache(categoryModel, transaction.category);
 				model.invalidateCache(categoryModel, transaction.subcategory);
+				model.invalidateCache(accountModel, transaction.account);
 				model.invalidateCache(securityModel, transaction.security);
+
+				// Subtransactions
+				angular.forEach(transaction.subtransactions, function(subtransaction) {
+					model.invalidateCache(categoryModel, subtransaction.category);
+					model.invalidateCache(categoryModel, subtransaction.subcategory);
+					model.invalidateCache(accountModel, subtransaction.account);
+				});
 			};
 
 			// Helper function to handle a single $http cache invalidation
