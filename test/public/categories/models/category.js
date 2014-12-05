@@ -223,7 +223,12 @@
 		});
 
 		describe("flush", function() {
-			it("should flush the category cache", function() {
+			it("should remove the specified category from the category cache when an id is provided", function() {
+				categoryModel.flush(1);
+				$cache.remove.should.have.been.calledWith("/categories/1");
+			});
+
+			it("should flush the category cache when an id is not provided", function() {
 				categoryModel.flush();
 				$cache.removeAll.should.have.been.called;
 			});

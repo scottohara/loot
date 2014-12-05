@@ -83,8 +83,12 @@
 			};
 
 			// Flush the cache
-			model.flush = function() {
-				cache.removeAll();
+			model.flush = function(id) {
+				if (id) {
+					cache.remove(model.path(id));
+				} else {
+					cache.removeAll();
+				}
 			};
 
 			// Put an item into the LRU cache

@@ -241,7 +241,12 @@
 		});
 
 		describe("flush", function() {
-			it("should flush the security cache", function() {
+			it("should remove the specified security from the security cache when an id is provided", function() {
+				securityModel.flush(1);
+				$cache.remove.should.have.been.calledWith("/securities/1");
+			});
+
+			it("should flush the security cache when an id is not provided", function() {
 				securityModel.flush();
 				$cache.removeAll.should.have.been.called;
 			});

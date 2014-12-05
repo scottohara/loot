@@ -210,7 +210,12 @@
 		});
 
 		describe("flush", function() {
-			it("should flush the account cache", function() {
+			it("should remove the specified account from the account cache when an id is provided", function() {
+				accountModel.flush(1);
+				$cache.remove.should.have.been.calledWith("/accounts/1");
+			});
+
+			it("should flush the account cache when an id is not provided", function() {
 				accountModel.flush();
 				$cache.removeAll.should.have.been.called;
 			});

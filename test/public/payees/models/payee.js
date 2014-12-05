@@ -196,7 +196,12 @@
 		});
 
 		describe("flush", function() {
-			it("should flush the payee cache", function() {
+			it("should remove the specified payee from the payee cache when an id is provided", function() {
+				payeeModel.flush(1);
+				$cache.remove.should.have.been.calledWith("/payees/1");
+			});
+
+			it("should flush the payee cache when an id is not provided", function() {
 				payeeModel.flush();
 				$cache.removeAll.should.have.been.called;
 			});
