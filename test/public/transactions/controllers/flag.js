@@ -35,11 +35,17 @@
 			transactionFlagController.flag.memo.should.deep.equal(transaction.flag);
 		});
 
+		it("should set the memo $scope property to null when transaction's flag memo is '(no memo)'", function() {
+			transaction.flag = "(no memo)";
+			transactionFlagController = controllerTest("transactionFlagController");
+			(null === transactionFlagController.flag.memo).should.be.true;
+		});
+
 		it("should set the flagged $scope property on the scope when the transaction has a flag", function() {
 			transactionFlagController.flagged.should.be.true;
 		});
 
-		it("should set the flagged $scope property on the scope when the transaction doesn't have a flag", function() {
+		it("should clear the flagged $scope property on the scope when the transaction doesn't have a flag", function() {
 			transaction.flag = undefined;
 			transactionFlagController = controllerTest("transactionFlagController");
 			transactionFlagController.flagged.should.be.false;
@@ -53,6 +59,13 @@
 			});
 
 			it("should flag the transaction", function() {
+				transactionFlagController.save();
+				transactionModel.flag.should.have.been.calledWith(transaction);
+			});
+
+			it("should set the flag memo to '(no memo)' if the memo is blank", function() {
+				transactionFlagController.flag.memo = null;
+				transaction.flag = "(no memo)";
 				transactionFlagController.save();
 				transactionModel.flag.should.have.been.calledWith(transaction);
 			});

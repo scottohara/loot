@@ -12,14 +12,14 @@
 
 			// Make the transaction's flag memo available on the scope
 			$scope.flag = {
-				memo: transaction.flag
+				memo: "(no memo)" === transaction.flag ? null : transaction.flag
 			};
 			$scope.flagged = !!transaction.flag;
 
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;
-				$scope.transaction.flag = $scope.flag.memo;
+				$scope.transaction.flag = $scope.flag.memo && $scope.flag.memo || "(no memo)";
 				transactionModel.flag($scope.transaction).then(function() {
 					$modalInstance.close($scope.transaction);
 				}, function(error) {
