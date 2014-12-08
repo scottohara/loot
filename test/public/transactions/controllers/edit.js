@@ -346,7 +346,8 @@
 					primary_account: "primary account",
 					payee: "payee",
 					amount: 100,
-					status: "Reconciled"
+					status: "Reconciled",
+					flag: "flag"
 				};
 
 				// The current transaction to merge into
@@ -356,12 +357,13 @@
 				};
 			});
 
-			it("should strip the transaction of it's id, date, primary account & status", function() {
+			it("should strip the transaction of it's id, date, primary account, status & flag", function() {
 				transactionEditController.useLastTransaction(transaction);
 				(undefined === transaction.id).should.be.true;
 				(undefined === transaction.transaction_date).should.be.true;
 				(undefined === transaction.primary_account).should.be.true;
 				(undefined === transaction.status).should.be.true;
+				(undefined === transaction.flag).should.be.true;
 			});
 
 			it("should merge the transaction details into $scope.transaction", function() {
