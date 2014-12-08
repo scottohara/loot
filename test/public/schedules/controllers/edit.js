@@ -601,19 +601,17 @@
 		});
 
 		describe("$watch subtransations", function() {
-			var memo,
-					subtransactions;
+			var subtransactions;
 
 			beforeEach(function() {
-				memo = "memo";
 				subtransactions = [
-					{amount: 10, direction: "outflow", memo: "memo 1"},
-					{amount: 5, direction: "inflow", memo: "memo 2"},
+					{amount: 10, direction: "outflow"},
+					{amount: 5, direction: "inflow"},
 					{}
 				];
+				sinon.stub(scheduleEditController, "memoFromSubtransactions");
 
 				scheduleEditController.transaction.direction = "outflow";
-				scheduleEditController.transaction.memo = memo;
 				scheduleEditController.transaction.subtransactions = [{},{}];
 				scheduleEditController.$digest();
 			});
@@ -639,12 +637,31 @@
 				scheduleEditController.transaction.id = 1;
 				scheduleEditController.transaction.subtransactions = subtransactions;
 				scheduleEditController.$digest();
-				scheduleEditController.transaction.memo.should.equal(memo);
+				scheduleEditController.memoFromSubtransactions.should.not.have.been.called;
+			});
+
+			it("should set the main transaction memo when adding a new transaction", function() {
+				scheduleEditController.transaction.subtransactions = subtransactions;
+				scheduleEditController.$digest();
+				scheduleEditController.memoFromSubtransactions.should.have.been.called;
+			});
+		});
+
+		describe("memoFromSubtransactions", function() {
+			var memo;
+
+			beforeEach(function() {
+				memo = "memo";
+				scheduleEditController.transaction.memo = memo;
+				scheduleEditController.transaction.subtransactions = [
+					{memo: "memo 1"},
+					{memo: "memo 2"},
+					{}
+				];
 			});
 
 			it("should join the sub transaction memos and set the main transaction memo when adding a new transaction", function() {
-				scheduleEditController.transaction.subtransactions = subtransactions;
-				scheduleEditController.$digest();
+				scheduleEditController.memoFromSubtransactions();
 				scheduleEditController.transaction.memo.should.equal("memo 1; memo 2");
 			});
 		});

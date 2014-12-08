@@ -344,12 +344,17 @@
 
 					// If we're adding a new transaction, join the subtransaction memos and update the parent memo
 					if (!$scope.transaction.id) {
-						$scope.transaction.memo = $scope.transaction.subtransactions.reduce(function(memo, subtransaction) {
-							return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
-						}, "");
+						$scope.memoFromSubtransactions();
 					}
 				}
 			}, true);
+
+			// Joins the subtransaction memos and updates the parent memo
+			$scope.memoFromSubtransactions = function() {
+				$scope.transaction.memo = $scope.transaction.subtransactions.reduce(function(memo, subtransaction) {
+					return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
+				}, "");
+			};
 
 			// List of primary accounts for the typeahead
 			$scope.primaryAccounts = function(filter, limit) {

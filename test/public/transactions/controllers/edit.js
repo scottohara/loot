@@ -531,17 +531,14 @@
 		});
 
 		describe("$watch subtransations", function() {
-			var memo;
-
 			beforeEach(function() {
-				memo = "memo";
 				transactionEditController.transaction.direction = "outflow";
-				transactionEditController.transaction.memo = memo;
 				transactionEditController.transaction.subtransactions = [
-					{amount: 10, direction: "outflow", memo: "memo 1"},
-					{amount: 5, direction: "inflow", memo: "memo 2"},
+					{amount: 10, direction: "outflow"},
+					{amount: 5, direction: "inflow"},
 					{}
 				];
+				sinon.stub(transactionEditController, "memoFromSubtransactions");
 			});
 
 			it("should do nothing if there are no subtransactions", function() {
@@ -557,12 +554,31 @@
 
 			it("should not set the main transaction memo when editing an existing transaction", function() {
 				transactionEditController.$digest();
-				transactionEditController.transaction.memo.should.equal(memo);
+				transactionEditController.memoFromSubtransactions.should.not.have.been.called;
 			});
 
-			it("should join the sub transaction memos and set the main transaction memo when adding a new transaction", function() {
+			it("should set the main transaction memos when adding a new transaction", function() {
 				transactionEditController.transaction.id = undefined;
 				transactionEditController.$digest();
+				transactionEditController.memoFromSubtransactions.should.have.been.called;
+			});
+		});
+
+		describe("memoFromSubtransactions", function() {
+			var memo;
+
+			beforeEach(function() {
+				memo = "memo";
+				transactionEditController.transaction.memo = memo;
+				transactionEditController.transaction.subtransactions = [
+					{memo: "memo 1"},
+					{memo: "memo 2"},
+					{}
+				];
+			});
+
+			it("should join the sub transaction memos and set the main transaction memo", function() {
+				transactionEditController.memoFromSubtransactions();
 				transactionEditController.transaction.memo.should.equal("memo 1; memo 2");
 			});
 		});

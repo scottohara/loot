@@ -168,9 +168,12 @@
 			</table>
 		</div>
 		<!-- Memo -->
-		<div class="form-group">
+		<div class="form-group has-feedback has-action">
 			<label for="memo">Memo</label>
 			<input name="memo" class="form-control" ng-model="transaction.memo" placeholder="Memo">
+			<span ng-show="['SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(transaction.category.id) != -1" class="form-control-feedback">
+				<i class="action glyphicon glyphicon-refresh" tooltip="Use splits" ng-click="memoFromSubtransactions()"></i>
+			</span>
 		</div>
 		<div ng-if="mode != 'Enter Transaction'" class="form-group">
 			<!-- Estimate -->
