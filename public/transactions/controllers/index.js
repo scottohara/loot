@@ -37,8 +37,7 @@
 									payee: "payee" === $scope.contextType ? $scope.context : undefined,
 									security: "security" === $scope.contextType ? $scope.context : undefined,
 									category: "category" === $scope.contextType ? ($scope.context.parent ? $scope.context.parent : $scope.context) : undefined,
-									subcategory: "category" === $scope.contextType && $scope.context.parent ? $scope.context : undefined,
-									subtransactions: [{},{},{},{}]
+									subcategory: "category" === $scope.contextType && $scope.context.parent ? $scope.context : undefined
 								};
 							}
 

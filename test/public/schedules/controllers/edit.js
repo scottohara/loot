@@ -81,12 +81,6 @@
 				scheduleEditController.transaction.next_due_date.should.equal(moment().format("YYYY-MM-DD"));
 			});
 
-			it("should create four empty subtransactions if none are specified", function() {
-				delete schedule.subtransactions;
-				scheduleEditController = controllerTest("scheduleEditController");
-				scheduleEditController.transaction.subtransactions.should.deep.equal([{},{},{},{}]);
-			});
-			
 			it("should set the mode to Enter Transaction", function() {
 				scheduleEditController.mode.should.equal("Enter Transaction");
 			});
@@ -111,8 +105,7 @@
 			beforeEach(function() {
 				transaction = {
 					transaction_type: "Basic",
-					next_due_date: moment().format("YYYY-MM-DD"),
-					subtransactions: [{},{},{},{}]
+					next_due_date: moment().format("YYYY-MM-DD")
 				};
 
 				scheduleEditController = controllerTest("scheduleEditController", {schedule: undefined});
@@ -449,14 +442,18 @@
 				var scenarios = [
 					{id: "TransferTo", type: "Transfer", direction: "outflow"},
 					{id: "TransferFrom", type: "Transfer", direction: "inflow"},
-					{id: "SplitTo", type: "Split", direction: "outflow"},
-					{id: "SplitFrom", type: "Split", direction: "inflow"},
-					{id: "Payslip", type: "Payslip", direction: "inflow"},
-					{id: "LoanRepayment", type: "LoanRepayment", direction: "outflow"},
+					{id: "SplitTo", type: "Split", direction: "outflow", subtransactions: true},
+					{id: "SplitFrom", type: "Split", direction: "inflow", subtransactions: true},
+					{id: "Payslip", type: "Payslip", direction: "inflow", subtransactions: true},
+					{id: "LoanRepayment", type: "LoanRepayment", direction: "outflow", subtransactions: true},
 					{id: "anything else", type: "Basic", direction: "the category direction"},
 				];
 
 				scenarios.forEach(function(scenario) {
+					var subtransactions,
+							memo = "test memo",
+							amount = 123;
+
 					it("should set the transaction type to " + scenario.type + " and the direction to " + scenario.direction + " if the category is " + scenario.id, function() {
 						scheduleEditController.transaction.category.id = scenario.id;
 						scheduleEditController.categorySelected();
@@ -468,6 +465,26 @@
 							scheduleEditController.transaction.direction.should.equal(scenario.direction);
 						}
 					});
+
+					if (scenario.subtransactions) {
+						it("should not create any stub subtransactions for a " + scenario.id + " if some already exist", function() {
+							subtransactions = "existing subtransactions";
+							scheduleEditController.transaction.category.id = scenario.id;
+							scheduleEditController.transaction.subtransactions = subtransactions;
+							scheduleEditController.categorySelected();
+							scheduleEditController.transaction.subtransactions.should.equal(subtransactions);
+						});
+
+						it("should create four stub subtransactions for a " + scenario.id + " if none exist", function() {
+							subtransactions = [{memo: memo, amount: amount}, {}, {}, {}];
+							scheduleEditController.transaction.category.id = scenario.id;
+							scheduleEditController.transaction.subtransactions = undefined;
+							scheduleEditController.transaction.memo = memo;
+							scheduleEditController.transaction.amount = amount;
+							scheduleEditController.categorySelected();
+							scheduleEditController.transaction.subtransactions.should.deep.equal(subtransactions);
+						});
+					}
 				});
 
 				it("should set the transaction type to Basic if the selected category is not an existing category", function() {

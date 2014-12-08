@@ -10,8 +10,7 @@
 			// Make the passed schedule available on the scope
 			$scope.transaction = angular.extend({
 				transaction_type: "Basic",
-				next_due_date: moment().format("YYYY-MM-DD"),
-				subtransactions: [{},{},{},{}]
+				next_due_date: moment().format("YYYY-MM-DD")
 			}, schedule);
 
 			if (schedule) {
@@ -223,6 +222,26 @@
 							default:
 								type = "Basic";
 								direction = transaction.category.direction;
+								break;
+						}
+
+						// If we have switched to a Split, Payslip or Loan Repayment and there are currently no subtransactions,
+						// create some stubs, copying the current transaction details into the first entry
+						switch (type) {
+							case "Split":
+							case "Payslip":
+							case "LoanRepayment":
+								if (!transaction.subtransactions) {
+									transaction.subtransactions = [
+										{
+											memo: transaction.memo,
+											amount: transaction.amount
+										},
+										{},
+										{},
+										{}
+									];
+								}
 								break;
 						}
 					} else {

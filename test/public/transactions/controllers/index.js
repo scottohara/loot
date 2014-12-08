@@ -138,8 +138,7 @@
 						payee: undefined,
 						security: undefined,
 						category: undefined,
-						subcategory: undefined,
-						subtransactions: [{},{},{},{}]
+						subcategory: undefined
 					};
 				});
 
