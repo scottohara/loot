@@ -58,18 +58,13 @@
 						}
 					}
 				}).result.then(function(transaction) {
-					// Purge the context from the cache so that it is refetched on next use (to get the updated closing balance)
-					if (contextModel) {
-						contextModel.flush($scope.context.id);
-					}
-
 					// If the context has changed, remove the transaction from the array
 					if ($scope.contextChanged(transaction)) {
-						$scope.transactions.splice(index, 1);
-						if ($state.includes("**.transaction")) {
-							$state.go("^");
-						}
+						$scope.removeTransaction(index);
 					} else {
+						// Update the closing balance
+						$scope.updateClosingBalance($scope.transactions[index], transaction);
+
 						var	fromDate = moment(transaction.transaction_date);
 
 						if (!fromDate.isAfter($scope.firstTransactionDate)) {
@@ -83,6 +78,7 @@
 							if (isNaN(index)) {
 								// Add new transaction to the end of the array
 								$scope.transactions.push(transaction);
+
 							} else {
 								// Update the existing transaction in the array
 								$scope.transactions[index] = transaction;
@@ -96,9 +92,6 @@
 
 							// Refocus the transaction
 							$scope.focusTransaction(transaction.id);
-
-							// Update the context's closing balance
-							context.closing_balance = Number(context.closing_balance) + (Number(transaction.amount) * ("inflow" === transaction.direction ? 1 : -1));
 						}
 					}
 				}).finally(function() {
@@ -156,14 +149,39 @@
 						}
 					}
 				}).result.then(function() {
-					$scope.transactions.splice(index, 1);
-					if ($state.includes("**.transaction")) {
-						$state.go("^");
-					}
+					// Remove the transaction from the list
+					$scope.removeTransaction(index);
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
 				});
+			};
+
+			// Removes a transaction from the list
+			$scope.removeTransaction = function(index) {
+				// Update the context's closing balance
+				$scope.updateClosingBalance($scope.transactions[index]);
+
+				// Splice the transaction from the array
+				$scope.transactions.splice(index, 1);
+
+				// If the transaction was focused, transition to the parent state
+				if ($state.includes("**.transaction")) {
+					$state.go("^");
+				}
+			};
+
+			// Updates the context's closing balance after adding, editing or deleting a transaction
+			$scope.updateClosingBalance = function(originalTransaction, newTransaction) {
+				// If there was an original transaction, exclude it's amount from the closing balance
+				if (originalTransaction) {
+					$scope.context.closing_balance = Number($scope.context.closing_balance) - (Number(originalTransaction.amount) * ("inflow" === originalTransaction.direction ? 1 : -1));
+				}
+
+				// If there is a new transaction, include it's amount in the closing balance
+				if (newTransaction) {
+					$scope.context.closing_balance = Number($scope.context.closing_balance) + (Number(newTransaction.amount) * ("inflow" === newTransaction.direction ? 1 : -1));
+				}
 			};
 
 			// Returns true if the action is allowed for the transaction

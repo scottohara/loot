@@ -8,7 +8,7 @@
 	mod.controller("transactionEditController", ["$scope", "$modalInstance", "$q", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction",
 		function($scope, $modalInstance, $q, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
 			// Make the passed transaction available on the scope
-			$scope.transaction = transaction;
+			$scope.transaction = angular.extend({}, transaction);
 			$scope.mode = (transaction.id ? "Edit" : "Add");
 
 			// Prefetch the payees list so that the cache is populated
@@ -339,6 +339,72 @@
 				}
 			};
 
+			// Helper function to invalidate the $http caches after saving a transaction
+			$scope.invalidateCaches = function(savedTransaction) {
+				// Create a deferred so that we return a promise
+				var q = $q.defer(),
+						resolve = true,
+						originalValue,
+						savedValue,
+						models = {
+							"primary_account": accountModel,
+							"payee": payeeModel,
+							"category": categoryModel,
+							"subcategory": categoryModel,
+							"account": accountModel,
+							"security": securityModel
+						};
+
+				// Compare each facet of the saved transaction with the original values
+				// For any that have changed, invalidate the original from the $http cache
+				angular.forEach(Object.keys(models), function(key) {
+					originalValue = transaction[key] && transaction[key].id || undefined;
+					savedValue = savedTransaction.data[key] && savedTransaction.data[key].id || undefined;
+
+					if (originalValue && originalValue !== savedValue) {
+						models[key].flush(originalValue);
+					}
+				});
+
+				// For subtransactions, we can't be sure if the values have changed or not (as the ordering may have changed)
+				// so just invalidate any categories or accounts
+				switch (transaction.transaction_type) {
+					case "Split":
+					case "LoanRepayment":
+					case "Payslip":
+						// Delay resolving the promise
+						resolve = false;
+
+						transactionModel.findSubtransactions(transaction.id).then(function(subtransactions) {
+							angular.forEach(subtransactions, function(subtransaction) {
+								if (subtransaction.category && subtransaction.category.id) {
+									categoryModel.flush(subtransaction.category.id);
+								}
+
+								if (subtransaction.subcategory && subtransaction.subcategory.id) {
+									categoryModel.flush(subtransaction.subcategory.id);
+								}
+
+								if (subtransaction.account && subtransaction.account.id) {
+									accountModel.flush(subtransaction.account.id);
+								}
+							});
+
+							// Resolve the promise
+							q.resolve(savedTransaction);
+						});
+						break;
+				}
+
+				// Resolve the promise (unless explicitly delayed)
+				if (resolve) {
+					q.resolve(savedTransaction);
+				}
+
+				// Return the promise
+				return q.promise;
+			};
+
 			// Helper function to update the LRU caches after saving a transaction
 			$scope.updateLruCaches = function(transaction) {
 				// Create a deferred so that we return a promise
@@ -410,7 +476,7 @@
 			// Save and close the modal
 			$scope.save = function() {
 				$scope.errorMessage = null;
-				transactionModel.save($scope.transaction).then($scope.updateLruCaches).then(function(transaction) {
+				transactionModel.save($scope.transaction).then($scope.invalidateCaches).then($scope.updateLruCaches).then(function(transaction) {
 					// Close the modal
 					$modalInstance.close(transaction.data);
 				}).catch(function(error) {

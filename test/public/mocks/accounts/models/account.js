@@ -91,7 +91,8 @@
 			accounts: accountsWithBalancesMockProvider.$get(),
 			reconcile: $q.promisify(),
 			isUnreconciledOnly: sinon.stub().returns(true),
-			unreconciledOnly: sinon.stub()
+			unreconciledOnly: sinon.stub(),
+			flush: sinon.stub()
 		};
 
 		provider.$get = function() {

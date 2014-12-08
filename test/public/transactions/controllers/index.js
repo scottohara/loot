@@ -75,6 +75,7 @@
 
 			beforeEach(function() {
 				contextChangedStub = sinon.stub(transactionIndexController, "contextChanged");
+				sinon.stub(transactionIndexController, "updateClosingBalance");
 				sinon.stub(transactionIndexController, "getTransactions");
 				sinon.stub(transactionIndexController, "updateRunningBalances");
 				sinon.stub(transactionIndexController, "focusTransaction");
@@ -112,6 +113,14 @@
 					});
 				});
 				
+				it("should update the closing balance when the modal is closed", function() {
+					var originalTransaction = angular.copy(transaction);
+					transaction.memo = "edited transaction";
+					transactionIndexController.editTransaction(1);
+					$modal.close(transaction);
+					transactionIndexController.updateClosingBalance.should.have.been.calledWith(originalTransaction, transaction);
+				});
+
 				it("should update the transaction in the list of transactions when the modal is closed", function() {
 					transaction.memo = "edited transaction";
 					transactionIndexController.editTransaction(1);
@@ -174,6 +183,12 @@
 					
 				});
 
+				it("should update the closing balance when the modal is closed", function() {
+					transactionIndexController.editTransaction();
+					$modal.close(transaction);
+					transactionIndexController.updateClosingBalance.should.have.been.calledWith(undefined, transaction);
+				});
+
 				it("should add the new transaction to the list of transactions when the modal is closed", function() {
 					transaction.payee = context;
 					transactionIndexController.editTransaction();
@@ -191,23 +206,13 @@
 			describe("(on context changed)", function() {
 				beforeEach(function() {
 					contextChangedStub.returns(true);
+					sinon.stub(transactionIndexController, "removeTransaction");
 					transactionIndexController.editTransaction(1);
 				});
 
 				it("should remove the transaction from the list of transactions", function() {
 					$modal.close(transaction);
-					transactionIndexController.transactions.should.not.include(transaction);
-				});
-
-				it("should transition to the parent state if the transaction was focussed", function() {
-					$state.currentState("**.transaction");
-					$modal.close(transaction);
-					$state.go.should.have.been.calledWith("^");
-				});
-
-				it("should not transition to the parent state if the transaction was not focussed", function() {
-					$modal.close(transaction);
-					$state.go.should.not.have.been.calledWith("^");
+					transactionIndexController.removeTransaction.should.have.been.calledWith(1);
 				});
 			});
 
@@ -264,14 +269,6 @@
 					transactionIndexController.editTransaction();
 					$modal.close(transaction);
 					transactionIndexController.focusTransaction.should.have.been.calledWith(transaction.id);
-				});
-
-				it("should refetch the context to the get updated closing balance when the modal is closed", function() {
-					transactionIndexController.context.name = undefined;
-					transactionIndexController.editTransaction();
-					$modal.close(transaction);
-					contextModel.find.should.have.been.calledWith(context.id);
-					transactionIndexController.context.name.should.not.be.undefined;
 				});
 			});
 
@@ -351,6 +348,7 @@
 
 			beforeEach(function() {
 				transaction = angular.copy(transactionIndexController.transactions[1]);
+				sinon.stub(transactionIndexController, "removeTransaction");
 			});
 
 			it("should do nothing if the transaction can't be deleted", function() {
@@ -374,14 +372,7 @@
 			it("should remove the transaction from the transactions list when the modal is closed", function() {
 				transactionIndexController.deleteTransaction(1);
 				$modal.close(transaction);
-				transactionIndexController.transactions.should.not.include(transaction);
-			});
-
-			it("should transition to the parent state if the transaction was focussed", function() {
-				$state.currentState("**.transaction");
-				transactionIndexController.deleteTransaction(1);
-				$modal.close(transaction);
-				$state.go.should.have.been.calledWith("^");
+				transactionIndexController.removeTransaction.should.have.been.calledWith(1);
 			});
 
 			it("should enable navigation on the table when the modal is closed", function() {
@@ -394,6 +385,89 @@
 				transactionIndexController.deleteTransaction(1);
 				$modal.dismiss();
 				transactionIndexController.navigationDisabled.should.be.false;
+			});
+		});
+
+		describe("removeTransaction", function() {
+			var transaction;
+
+			beforeEach(function() {
+				transaction = angular.copy(transactionIndexController.transactions[1]);
+				sinon.stub(transactionIndexController, "updateClosingBalance");
+			});
+
+			it("should update the closing balance if the transaction was not focussed", function() {
+				transactionIndexController.removeTransaction(1);
+				transactionIndexController.updateClosingBalance.should.have.been.calledWith(transaction);
+			});
+
+			it("should remove the transaction from the transactions list", function() {
+				transactionIndexController.removeTransaction(1);
+				transactionIndexController.transactions.should.not.include(transaction);
+			});
+
+			it("should transition to the parent state if the transaction was focussed", function() {
+				$state.currentState("**.transaction");
+				transactionIndexController.removeTransaction(1);
+				$state.go.should.have.been.calledWith("^");
+			});
+		});
+
+		describe("updateClosingBalance", function() {
+			var transaction,
+					expected;
+
+			beforeEach(function() {
+				transaction = {
+					amount: 1
+				};
+				transactionIndexController.context.closing_balance = 0;
+			});
+
+			describe("(original transaction)", function() {
+				it("should do nothing if undefined", function() {
+					transaction = undefined;
+					expected = 0;
+				});
+
+				it("should reduce the closing balance by the transaction amount when the direction is inflow", function() {
+					transaction.direction = "inflow";
+					expected = -1;
+				});
+
+				it("should increase the closing balance by the transaction amount when the direction is outflow", function() {
+					transaction.direction = "outflow";
+					expected = 1;
+				});
+
+				afterEach(function() {
+					transactionIndexController.updateClosingBalance(transaction);
+				});
+			});
+			
+			describe("(new transaction)", function() {
+				it("should do nothing if undefined", function() {
+					transaction = undefined;
+					expected = 0;
+				});
+
+				it("should increase the closing balance by the transaction amount when the direction is inflow", function() {
+					transaction.direction = "inflow";
+					expected = 1;
+				});
+
+				it("should reduce the closing balance by the transaction amount when the direction is outflow", function() {
+					transaction.direction = "outflow";
+					expected = -1;
+				});
+
+				afterEach(function() {
+					transactionIndexController.updateClosingBalance(undefined, transaction);
+				});
+			});
+
+			afterEach(function() {
+				transactionIndexController.context.closing_balance.should.equal(expected);
 			});
 		});
 
