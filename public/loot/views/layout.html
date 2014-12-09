@@ -86,5 +86,5 @@
 <div ng-if="!isAuthenticated()" class="alert alert-danger">You are not logged in. Click the Login button above to proceed.</div>
 <div class="quickscroll bottom hidden-xs" tooltip="Bottom" tooltip-placement="left"><a ng-click="scrollTo('bottom')"><i class="glyphicon glyphicon-hand-down"></i></a></div>
 <div class="quickscroll top hidden-xs" tooltip="Top" tooltip-placement="left"><a ng-click="scrollTo('top')"><i class="glyphicon glyphicon-hand-up"></i></a></div>
-<ui-view autoscroll="false"></ui-view>
+<ui-view ng-if="isAuthenticated()" autoscroll="false"></ui-view>
 <a id="bottom"></a>
