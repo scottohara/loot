@@ -18,7 +18,8 @@
 				accountModel,
 				contextModel,
 				context,
-				transactionBatch;
+				transactionBatch,
+				parentScope;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "transactions", function(mockDependenciesProvider) {
@@ -38,7 +39,8 @@
 			contextModel = _contextModel_;
 			context = _context_;
 			transactionBatch = _transactionBatch_;
-			transactionIndexController = controllerTest("transactionIndexController");
+			parentScope = {scrollTo: sinon.stub()};
+			transactionIndexController = controllerTest("transactionIndexController", undefined, parentScope);
 		}));
 
 		it("should make the passed context available on the $scope", function() {
@@ -50,12 +52,12 @@
 		});
 
 		it("should not set a context type when a context model was not specified", function() {
-			transactionIndexController = controllerTest("transactionIndexController", {contextModel: undefined});
+			transactionIndexController = controllerTest("transactionIndexController", {contextModel: undefined}, parentScope);
 			(undefined === transactionIndexController.contextType).should.be.true;
 		});
 
 		it("should set an empty array of transactions on the scope", function() {
-			transactionIndexController = controllerTest("transactionIndexController", {transactionBatch: {transactions: {length: 0}}});
+			transactionIndexController = controllerTest("transactionIndexController", {transactionBatch: {transactions: {length: 0}}}, parentScope);
 			transactionIndexController.transactions.should.be.an.Array;
 			transactionIndexController.transactions.should.be.empty;
 		});
@@ -602,7 +604,7 @@
 
 			describe("(reconciling)", function() {
 				beforeEach(function() {
-					transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
+					transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
 					transactionIndexController.reconciling = true;
 					sinon.stub(transactionIndexController, "toggleCleared");
 				});
@@ -775,7 +777,7 @@
 			});
 
 			it("should update the reconciled totals when reconciling", function() {
-				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
+				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
 				sinon.stub(transactionIndexController, "updateReconciledTotals");
 				transactionIndexController.reconciling = true;
 				transactionIndexController.processTransactions(transactionBatch);
@@ -820,7 +822,7 @@
 
 		describe("(account context)", function() {
 			beforeEach(function() {
-				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
+				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
 			});
 
 			it("should set a flag on the scope to enable reconciling", function() {
@@ -1213,7 +1215,7 @@
 			});
 		});
 
-		describe("swithSubcategory", function() {
+		describe("switchSubcategory", function() {
 			it("should switch to the subcategory of the transaction", function() {
 				var event = "test event",
 						transaction = {subcategory: {id: 1}};
@@ -1276,7 +1278,7 @@
 
 				describe("(showing unreconciled only)", function() {
 					it("should toggle to show all transactions", function() {
-						transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel});
+						transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
 						sinon.stub(transactionIndexController, "focusTransaction").returns(NaN);
 						sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
 						var transactionDate = moment().subtract(1, "day").format("YYYY-MM-DD");
@@ -1319,6 +1321,10 @@
 			sinon.stub(transactionIndexController, "stateChangeSuccessHandler");
 			transactionIndexController.$emit("$stateChangeSuccess");
 			transactionIndexController.stateChangeSuccessHandler.should.have.been.called;
+		});
+
+		it("should scroll to the bottom when the controller loads", function() {
+			transactionIndexController.scrollTo.should.have.been.calledWith("bottom");
 		});
 	});
 })();

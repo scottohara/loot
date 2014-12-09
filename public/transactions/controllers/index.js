@@ -625,6 +625,9 @@
 			$scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
 				$scope.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams);
 			});
+
+			// Auto scroll to the bottom (scrollTo defined in layoutController)
+			$scope.scrollTo("bottom");
 		}
 	]);
 })();

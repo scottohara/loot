@@ -114,12 +114,19 @@
 	mod.factory("controllerTest", ["$rootScope", "$controller",
 		function($rootScope, $controller) {
 			// Loads the controller and returns a scope object
-			return function(controller, locals) {
+			return function(controller, locals, parentScope) {
 				locals = locals || {};
 
 				// Create a new scope
 				locals.$scope = $rootScope.$new();
 
+				// If a parent scope was passed, set the parent's properties on the scope
+				if (parentScope) {
+					angular.forEach(Object.keys(parentScope), function(property) {
+						locals.$scope[property] = parentScope[property];
+					});
+				}
+				
 				// Load the controller
 				$controller(controller, locals);
 

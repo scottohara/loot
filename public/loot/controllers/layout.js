@@ -5,8 +5,8 @@
 	var mod = angular.module("loot");
 
 	// Declare the Layout controller
-	mod.controller("layoutController", ["$scope", "$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel",
-		function($scope, $state, $modal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel) {
+	mod.controller("layoutController", ["$scope", "$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel",
+		function($scope, $state, $modal, $uiViewScroll, authenticationModel, accountModel, payeeModel, categoryModel, securityModel) {
 			// Make the authenication status available on the scope
 			$scope.isAuthenticated = authenticationModel.isAuthenticated;
 
@@ -55,6 +55,11 @@
 
 			$scope.recentlyAccessedSecurities = function() {
 				return securityModel.recent;
+			};
+
+			// Scrolling
+			$scope.scrollTo = function(anchor) {
+				$uiViewScroll($("#" + anchor));
 			};
 		}
 	]);

@@ -10,28 +10,40 @@
 		// Dependencies
 		var $state,
 				$modal,
+				$uiViewScroll,
 				authenticationModel,
 				accountModel,
 				payeeModel,
 				categoryModel,
-				securityModel;
+				securityModel,
+				mockJQueryInstance,
+				realJQueryInstance;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "loot", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel"]);
+			mockDependenciesProvider.load(["$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel"]);
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(controllerTest, _$state_, _$modal_, _authenticationModel_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_) {
+		beforeEach(inject(function(controllerTest, _$state_, _$modal_, _$uiViewScroll_, _authenticationModel_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_) {
 			$state = _$state_;
 			$modal = _$modal_;
+			$uiViewScroll = _$uiViewScroll_;
 			authenticationModel = _authenticationModel_;
 			accountModel = _accountModel_;
 			payeeModel = _payeeModel_;
 			categoryModel = _categoryModel_;
 			securityModel = _securityModel_;
 			layoutController = controllerTest("layoutController");
+			mockJQueryInstance = {};
+			realJQueryInstance = window.$;
+			window.$ = sinon.stub();
+			window.$.withArgs("#test").returns(mockJQueryInstance);
 		}));
+
+		afterEach(function() {
+			window.$ = realJQueryInstance;
+		});
 
 		it("should make the authentication status available on the $scope", function() {
 			layoutController.isAuthenticated.should.equal(authenticationModel.isAuthenticated);
@@ -110,6 +122,13 @@
 		describe("recentlyAccessedSecurities", function() {
 			it("should return the list of recent securities", function() {
 				layoutController.recentlyAccessedSecurities().should.equal("recent securities list");
+			});
+		});
+
+		describe("scrollTo", function() {
+			it("should scroll to the specified anchor", function() {
+				layoutController.scrollTo("test");
+				$uiViewScroll.should.have.been.calledWith(mockJQueryInstance);
 			});
 		});
 	});
