@@ -877,7 +877,7 @@
 			});
 
 			it("should save the schedule", function() {
-				scheduleEditController.save.should.have.been.called;
+				scheduleEditController.save.should.have.been.calledWith(true);
 			});
 		});
 
@@ -895,7 +895,12 @@
 
 			it("should close the modal when the schedule save is successful", function() {
 				scheduleEditController.save();
-				$modalInstance.close.should.have.been.calledWith(schedule);
+				$modalInstance.close.should.have.been.calledWith({data: schedule, skipped: false});
+			});
+
+			it("should mark the schedule as skipped when the skipped parameter is true", function() {
+				scheduleEditController.save(true);
+				$modalInstance.close.should.have.been.calledWith({data: schedule, skipped: true});
 			});
 
 			it("should display an error message when the schedule save is unsuccessful", function() {

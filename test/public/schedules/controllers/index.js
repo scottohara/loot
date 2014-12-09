@@ -76,7 +76,7 @@
 				it("should update the schedule in the list of schedules when the modal is closed", function() {
 					schedule.memo = "edited schedule";
 					scheduleIndexController.editSchedule(1);
-					$modal.close(schedule);
+					$modal.close({data: schedule});
 					scheduleIndexController.schedules.should.include(schedule);
 				});
 			});
@@ -93,7 +93,7 @@
 				});
 
 				it("should add the new schedule to the list of schedules when the modal is closed", function() {
-					$modal.close(schedule);
+					$modal.close({data: schedule});
 					scheduleIndexController.schedules.pop().should.deep.equal(schedule);
 				});
 			});
@@ -102,14 +102,22 @@
 				schedule.id = 999;
 				schedule.next_due_date = moment().subtract(1, "day").format("YYYY-MM-DD");
 				scheduleIndexController.editSchedule(1);
-				$modal.close(schedule);
+				$modal.close({data: schedule});
 				scheduleIndexController.schedules.pop().should.deep.equal(schedule);
 			});
 
-			it("should focus the schedule when the modal is closed", function() {
-				scheduleIndexController.editSchedule();
-				$modal.close(schedule);
+			it("should focus the schedule when the modal is closed if the schedule was edited", function() {
+				schedule.next_due_date = moment().subtract(1, "day").format("YYYY-MM-DD");
+				scheduleIndexController.editSchedule(1);
+				$modal.close({data: schedule});
 				scheduleIndexController.focusSchedule.should.have.been.calledWith(schedule.id);
+			});
+
+			it("should focus the schedule now at the original index when the modal is closed if the schedule was entered or skipped", function() {
+				schedule.next_due_date = moment().subtract(1, "day").format("YYYY-MM-DD");
+				scheduleIndexController.editSchedule(1);
+				$modal.close({data: schedule, skipped: true});
+				scheduleIndexController.focusSchedule.should.have.been.calledWith(scheduleIndexController.schedules[1].id);
 			});
 
 			it("should not change the schedules list when the modal is dismissed", function() {
@@ -121,7 +129,7 @@
 
 			it("should enable navigation on the table when the modal is closed", function() {
 				scheduleIndexController.editSchedule();
-				$modal.close(schedule);
+				$modal.close({data: schedule});
 				scheduleIndexController.navigationDisabled.should.be.false;
 			});
 

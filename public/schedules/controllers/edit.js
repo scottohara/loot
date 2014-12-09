@@ -456,14 +456,18 @@
 				$scope.calculateNextDue();
 
 				// Update the schedule
-				$scope.save();
+				$scope.save(true);
 			};
 
 			// Save and close the modal
-			$scope.save = function() {
+			$scope.save = function(skipped) {
 				$scope.errorMessage = null;
 				scheduleModel.save($scope.schedule).then(function(schedule) {
-					$modalInstance.close(schedule.data);
+					// Set the skipped property on the schedule
+					schedule.skipped = !!skipped;
+
+					// Close the modal
+					$modalInstance.close(schedule);
 				}, function(error) {
 					$scope.errorMessage = error.data;
 				});

@@ -45,17 +45,18 @@
 				}).result.then(function(schedule) {
 					if (isNaN(index)) {
 						// Add new schedule to the end of the array
-						$scope.schedules.push(schedule);
+						$scope.schedules.push(schedule.data);
 					} else {
 						// Update the existing schedule in the array
-						$scope.schedules[index] = schedule;
+						$scope.schedules[index] = schedule.data;
 					}
 
 					// Resort the array
 					$scope.schedules.sort(byNextDueDateAndId);
 
-					// Refocus the schedule
-					$scope.focusSchedule(schedule.id);
+					// If we entered or skipped a transaction, refocus the schedule now at the original index,
+					// otherwise refocus the schedule that was edited
+					$scope.focusSchedule(schedule.skipped ? $scope.schedules[index].id : schedule.data.id);
 				}).finally(function() {
 					// Enable navigation on the table
 					$scope.navigationDisabled = false;
