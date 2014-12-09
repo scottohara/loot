@@ -622,6 +622,21 @@
 			});
 		});
 
+		describe("primaryAccountSelected", function() {
+			it("should do nothing when the transfer account is null", function() {
+				transactionEditController.transaction.account = null;
+				transactionEditController.primaryAccountSelected();
+				(null === transactionEditController.transaction.account).should.be.true;
+			});
+
+			it("should clear the transfer account when the primary account matches", function() {
+				transactionEditController.transaction.account = {id: 1};
+				transactionEditController.transaction.primary_account = {id: 1};
+				transactionEditController.primaryAccountSelected();
+				(null === transactionEditController.transaction.account).should.be.true;
+			});
+		});
+
 		describe("addSubtransaction", function() {
 			it("should add an empty object to the subtransactions array", function() {
 				transactionEditController.transaction.subtransactions = [];

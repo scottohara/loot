@@ -331,6 +331,14 @@
 				});
 			};
 
+			// Handler for primary account changes
+			$scope.primaryAccountSelected = function() {
+				if ($scope.transaction.account && $scope.transaction.primary_account.id === $scope.transaction.account.id) {
+					// Primary account and transfer account can't be the same, so clear the transfer account
+					$scope.transaction.account = null;
+				}
+			};
+
 			// Add a new subtransaction
 			$scope.addSubtransaction = function() {
 				$scope.transaction.subtransactions.push({});

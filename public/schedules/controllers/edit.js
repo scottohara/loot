@@ -333,6 +333,11 @@
 					$scope.transaction.subcategory = null;
 				}
 				$scope.account_type = $scope.transaction.primary_account.account_type;
+
+				if ($scope.transaction.account && $scope.transaction.primary_account.id === $scope.transaction.account.id) {
+					// Primary account and transfer account can't be the same, so clear the transfer account
+					$scope.transaction.account = null;
+				}
 			};
 
 			// Watch the subtransactions array and recalculate the total allocated

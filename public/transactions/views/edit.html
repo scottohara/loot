@@ -16,7 +16,7 @@
 		<!-- Primary Account -->
 		<div class="form-group has-feedback" ng-class="{'has-error': transactionForm.primaryAccount.$invalid}">
 			<label for="primaryAccount">Account</label>
-			<input name="primaryAccount" class="form-control" ng-model="transaction.primary_account" typeahead="account as account.name for account in accounts($viewValue, 10)" typeahead-editable="false" placeholder="Account" required>
+			<input name="primaryAccount" class="form-control" ng-model="transaction.primary_account" typeahead="account as account.name for account in accounts($viewValue, 10)" ng-blur="primaryAccountSelected()" typeahead-editable="false" placeholder="Account" required>
 			<span ng-show="transactionForm.primaryAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Payee -->

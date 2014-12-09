@@ -584,7 +584,7 @@
 
 			beforeEach(function() {
 				account_type = "new account type";
-				scheduleEditController.transaction.primary_account = {account_type: account_type};
+				scheduleEditController.transaction.primary_account = {id: 1, account_type: account_type};
 			});
 
 			it("should clear the category and subcategory if the account type no longer matches the primary account type", function() {
@@ -597,6 +597,12 @@
 			it("should set the account type to the primary account type", function() {
 				scheduleEditController.primaryAccountSelected();
 				scheduleEditController.account_type.should.equal("new account type");
+			});
+
+			it("should clear the transfer account when the primary account matches", function() {
+				scheduleEditController.transaction.account = {id: 1};
+				scheduleEditController.primaryAccountSelected();
+				(null === scheduleEditController.transaction.account).should.be.true;
 			});
 		});
 
