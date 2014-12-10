@@ -6,13 +6,13 @@
 		<!-- User Name -->
 		<div class="form-group has-feedback" ng-class="{'has-error': loginForm.userName.$invalid}">
 			<label for="userName">Login</label>
-			<input id="userName" name="userName" class="form-control" ng-model="authentication.userName" placeholder="Login" required autofocus>
+			<input id="userName" name="userName" class="form-control" ng-model="authentication.userName" placeholder="Login" required autofocus og-input-autoselect>
 			<span ng-show="loginForm.userName.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Password -->
 		<div class="form-group has-feedback" ng-class="{'has-error': loginForm.password.$invalid}">
 			<label for="password">Password</label>
-			<input name="password" type="password" class="form-control" ng-model="authentication.password" placeholder="Password" required>
+			<input name="password" type="password" class="form-control" ng-model="authentication.password" placeholder="Password" required og-input-autoselect>
 			<span ng-show="loginForm.password.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
