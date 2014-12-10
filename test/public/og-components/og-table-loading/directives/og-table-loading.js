@@ -11,7 +11,7 @@
 		beforeEach(module("lootMocks", "ogComponents"));
 
 		// Load the template
-		beforeEach(module("og-components/og-table-loading/views/loading.html"));
+		beforeEach(module("og-components/og-table-loading/views/loading.html", "og-components/og-loading-spinner/views/loading.html"));
 
 		// Configure & compile the object under test
 		beforeEach(inject(function(directiveTest) {

@@ -284,6 +284,12 @@
 				payeeModel.findLastTransaction.should.not.have.been.called;
 			});
 
+			it("should show a loading indicator", function() {
+				scheduleEditController.transaction.payee.id = -1;
+				scheduleEditController.payeeSelected();
+				scheduleEditController.loadingLastTransaction.should.be.true;
+			});
+
 			it("should fetch the last transaction for the selected payee", function() {
 				scheduleEditController.payeeSelected();
 				payeeModel.findLastTransaction.should.have.been.calledWith(payee.id, primary_account.account_type);
@@ -297,6 +303,11 @@
 			it("should default the transaction details from the last transaction", function() {
 				scheduleEditController.payeeSelected();
 				scheduleEditController.useLastTransaction.should.have.been.called;
+			});
+
+			it("should hide the loading indicator", function() {
+				scheduleEditController.payeeSelected();
+				scheduleEditController.loadingLastTransaction.should.be.false;
 			});
 		});
 
@@ -327,6 +338,12 @@
 				securityModel.findLastTransaction.should.not.have.been.called;
 			});
 
+			it("should show a loading indicator", function() {
+				scheduleEditController.transaction.security.id = -1;
+				scheduleEditController.securitySelected();
+				scheduleEditController.loadingLastTransaction.should.be.true;
+			});
+
 			it("should fetch the last transaction for the selected security", function() {
 				scheduleEditController.securitySelected();
 				securityModel.findLastTransaction.should.have.been.calledWith(security.id, primary_account.account_type);
@@ -340,6 +357,11 @@
 			it("should default the transaction details from the last transaction", function() {
 				scheduleEditController.securitySelected();
 				scheduleEditController.useLastTransaction.should.have.been.called;
+			});
+
+			it("should hide the loading indicator", function() {
+				scheduleEditController.securitySelected();
+				scheduleEditController.loadingLastTransaction.should.be.false;
 			});
 		});
 

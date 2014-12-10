@@ -84,8 +84,14 @@
 			$scope.payeeSelected = function() {
 				// If we're adding a new transaction and an existing payee is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.payee === "object") {
+					// Show the loading indicator
+					$scope.loadingLastTransaction = true;
+
 					// Get the previous transaction for the payee
-					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction);
+					payeeModel.findLastTransaction($scope.transaction.payee.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction).then(function() {
+						// Hide the loading indicator
+						$scope.loadingLastTransaction = false;
+					});
 				}
 			};
 
@@ -93,8 +99,14 @@
 			$scope.securitySelected = function() {
 				// If we're adding a new transaction and an existing security is selected
 				if (!$scope.transaction.id && typeof $scope.transaction.security === "object") {
+					// Show the loading indicator
+					$scope.loadingLastTransaction = true;
+
 					// Get the previous transaction for the security
-					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction);
+					securityModel.findLastTransaction($scope.transaction.security.id, $scope.transaction.primary_account.account_type).then($scope.getSubtransactions).then($scope.useLastTransaction).then(function() {
+						// Hide the loading indicator
+						$scope.loadingLastTransaction = false;
+					});
 				}
 			};
 

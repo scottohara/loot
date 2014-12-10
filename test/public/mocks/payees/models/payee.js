@@ -75,6 +75,8 @@
 			},
 			findLastTransaction: $q.promisify({
 				response: {}
+			}, {
+				args: -1
 			}),
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
