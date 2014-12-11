@@ -8,15 +8,11 @@
 		var ogInputCurrency,
 				expected;
 
-		// Dependencies
-		var $timeout;
-
 		// Load the modules
 		beforeEach(module("lootMocks", "ogComponents"));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_$timeout_, directiveTest) {
-			$timeout = _$timeout_;
+		beforeEach(inject(function(directiveTest) {
 			ogInputCurrency = directiveTest;
 			ogInputCurrency.configure("og-input-currency", "input");
 			ogInputCurrency.compile();
@@ -87,37 +83,13 @@
 		});
 
 		describe("on focus", function() {
-			var mockJQueryInstance,
-					realJQueryInstance;
-
-			beforeEach(function() {
-				mockJQueryInstance = {
-					select: sinon.stub()
-				};
-
-				realJQueryInstance = window.$;
-				window.$ = sinon.stub();
-				window.$.withArgs(ogInputCurrency.element).returns(mockJQueryInstance);
-
+			it("should strip any formatting", function() {
 				expected = "-1,234.56";
 				ogInputCurrency.scope.model = -1234.56;
 				ogInputCurrency.scope.$digest();
 				ogInputCurrency.element.val().should.equal("-$1,234.56");
 				ogInputCurrency.element.triggerHandler("focus");
-				$timeout.flush();
-			});
-
-			it("should strip any formatting", function() {
 				ogInputCurrency.element.val().should.equal(expected);
-			});
-
-			it("should select the input value", function() {
-				mockJQueryInstance.select.should.have.been.called;
-			});
-
-			afterEach(function() {
-				$timeout.verifyNoPendingTasks();
-				window.$ = realJQueryInstance;
 			});
 		});
 

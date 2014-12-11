@@ -5,8 +5,8 @@
 	var mod = angular.module("transactions");
 
 	// Declare the Transaction Edit controller
-	mod.controller("transactionEditController", ["$scope", "$modalInstance", "$q", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction",
-		function($scope, $modalInstance, $q, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
+	mod.controller("transactionEditController", ["$scope", "$modalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction",
+		function($scope, $modalInstance, $q, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
 			// Make the passed transaction available on the scope
 			$scope.transaction = angular.extend({}, transaction);
 			$scope.mode = (transaction.id ? "Edit" : "Add");
@@ -144,10 +144,12 @@
 				// Merge the last transaction details into the transaction on the scope
 				$scope.transaction = angular.extend($scope.transaction, transaction);
 
-				// If the amount field already focus, re-trigger the focus event handler to format/select the new value
+				// If the amount field already has focus, re-trigger the focus event handler to format/select the new value
 				var amount = $("#amount");
 				if (amount.get(0) === document.activeElement) {
-					amount.triggerHandler("focus");
+					$timeout(function() {
+						amount.triggerHandler("focus");
+					}, 0);
 				}
 			};
 

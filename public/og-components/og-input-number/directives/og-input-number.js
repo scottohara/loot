@@ -5,8 +5,8 @@
 	var mod = angular.module("ogComponents");
 
 	// Declare the ogInputNumber directive
-	mod.directive("ogInputNumber", ["numberFilter", "$timeout",
-		function(numberFilter, $timeout) {
+	mod.directive("ogInputNumber", ["numberFilter",
+		function(numberFilter) {
 			return {
 				restrict: "A",
 				require: "ngModel",
@@ -26,10 +26,7 @@
 
 					// Update view when tabbing in/out of the field
 					iElement.on("focus", function() {
-						$timeout(function() {
-							iElement.val(numberFilter(formattedToRaw(iElement.val())));
-							$(iElement).select();
-						}, 0);
+						iElement.val(numberFilter(formattedToRaw(iElement.val())));
 					});
 					iElement.on("blur", function() {
 						iElement.val(numberFilter(formattedToRaw(iElement.val())));

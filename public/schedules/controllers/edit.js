@@ -5,8 +5,8 @@
 	var mod = angular.module("schedules");
 
 	// Declare the Schedule Edit controller
-	mod.controller("scheduleEditController", ["$scope", "$modalInstance", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule",
-		function($scope, $modalInstance, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
+	mod.controller("scheduleEditController", ["$scope", "$modalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule",
+		function($scope, $modalInstance, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
 			// Make the passed schedule available on the scope
 			$scope.transaction = angular.extend({
 				transaction_type: "Basic",
@@ -182,10 +182,12 @@
 				// Merge the last transaction details into the transaction on the scope
 				$scope.transaction = angular.extend($scope.transaction, transaction);
 
-				// If the amount field already focus, re-trigger the focus event handler to format/select the new value
+				// If the amount field already has focus, re-trigger the focus event handler to format/select the new value
 				var amount = $("#amount");
 				if (amount.get(0) === document.activeElement) {
-					amount.triggerHandler("focus");
+					$timeout(function() {
+						amount.triggerHandler("focus");
+					}, 0);
 				}
 			};
 

@@ -5,8 +5,8 @@
 	var mod = angular.module("ogComponents");
 
 	// Declare the ogInputCurrency directive
-	mod.directive("ogInputCurrency", ["currencyFilter", "numberFilter", "$timeout",
-		function(currencyFilter, numberFilter, $timeout) {
+	mod.directive("ogInputCurrency", ["currencyFilter", "numberFilter",
+		function(currencyFilter, numberFilter) {
 			return {
 				restrict: "A",
 				require: "ngModel",
@@ -40,10 +40,7 @@
 
 					// Update view when tabbing in/out of the field
 					iElement.on("focus", function() {
-						$timeout(function() {
-							iElement.val(numberFilter(formattedToRaw(iElement.val()), decimalPlaces));
-							$(iElement).select();
-						}, 0);
+						iElement.val(numberFilter(formattedToRaw(iElement.val()), decimalPlaces));
 					});
 					iElement.on("blur", function() {
 						iElement.val(rawToFormatted(formattedToRaw(iElement.val())));

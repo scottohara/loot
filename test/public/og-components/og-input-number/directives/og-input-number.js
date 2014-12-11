@@ -8,15 +8,11 @@
 		var ogInputNumber,
 				expected;
 
-		// Dependencies
-		var $timeout;
-
 		// Load the modules
 		beforeEach(module("lootMocks", "ogComponents"));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_$timeout_, directiveTest) {
-			$timeout = _$timeout_;
+		beforeEach(inject(function(directiveTest) {
 			ogInputNumber = directiveTest;
 			ogInputNumber.configure("og-input-number", "input");
 			ogInputNumber.compile();
@@ -76,35 +72,11 @@
 		});
 
 		describe("on focus", function() {
-			var mockJQueryInstance,
-					realJQueryInstance;
-
-			beforeEach(function() {
-				mockJQueryInstance = {
-					select: sinon.stub()
-				};
-
-				realJQueryInstance = window.$;
-				window.$ = sinon.stub();
-				window.$.withArgs(ogInputNumber.element).returns(mockJQueryInstance);
-
+			it("should strip any formatting", function() {
 				expected = "-1,234.5";
 				ogInputNumber.element.val("-1,234.5");
 				ogInputNumber.element.triggerHandler("focus");
-			});
-
-			it("should strip any formatting", function() {
 				ogInputNumber.element.val().should.equal(expected);
-			});
-
-			it("should select the input value", function() {
-				$timeout.flush();
-				mockJQueryInstance.select.should.have.been.called;
-				$timeout.verifyNoPendingTasks();
-			});
-
-			afterEach(function() {
-				window.$ = realJQueryInstance;
 			});
 		});
 

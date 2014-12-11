@@ -10,6 +10,7 @@
 		// Dependencies
 		var controllerTest,
 				$modalInstance,
+				$timeout,
 				payeeModel,
 				securityModel,
 				categoryModel,
@@ -26,9 +27,10 @@
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$modalInstance_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _transaction_) {
+		beforeEach(inject(function(_controllerTest_, _$modalInstance_, _$timeout_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _transaction_) {
 			controllerTest = _controllerTest_;
 			$modalInstance = _$modalInstance_;
+			$timeout = _$timeout_;
 			payeeModel = _payeeModel_;
 			securityModel = _securityModel_;
 			categoryModel = _categoryModel_;
@@ -397,12 +399,17 @@
 			it("should retrigger the amount focus handler if focussed", function() {
 				currentElement = document.activeElement;
 				transactionEditController.useLastTransaction(transaction);
+				$timeout.flush();
 				mockJQueryInstance.triggerHandler.should.have.been.calledWith("focus");
 			});
 
 			it("should not retrigger the amount focus handler if not focussed", function() {
 				transactionEditController.useLastTransaction(transaction);
 				mockJQueryInstance.triggerHandler.should.not.have.been.called;
+			});
+
+			afterEach(function() {
+				$timeout.verifyNoPendingTasks();
 			});
 		});
 
