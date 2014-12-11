@@ -118,8 +118,8 @@
 
 			// Handler for payee changes
 			$scope.payeeSelected = function() {
-				// If we're adding a new transaction and an existing payee is selected
-				if (!$scope.transaction.id && typeof $scope.transaction.payee === "object") {
+				// If we're adding a new schedule and an existing payee is selected
+				if (!$scope.transaction.id && typeof $scope.transaction.payee === "object" && $scope.mode !== "Enter Transaction") {
 					// Show the loading indicator
 					$scope.loadingLastTransaction = true;
 
@@ -133,8 +133,8 @@
 
 			// Handler for security changes
 			$scope.securitySelected = function() {
-				// If we're adding a new transaction and an existing security is selected
-				if (!$scope.transaction.id && typeof $scope.transaction.security === "object") {
+				// If we're adding a new schedule and an existing security is selected
+				if (!$scope.transaction.id && typeof $scope.transaction.security === "object" && $scope.mode !== "Enter Transaction") {
 					// Show the loading indicator
 					$scope.loadingLastTransaction = true;
 

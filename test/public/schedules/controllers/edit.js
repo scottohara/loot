@@ -259,7 +259,7 @@
 			});
 		});
 		
-		describe("payeeSeleted", function() {
+		describe("payeeSelected", function() {
 			var payee,
 					primary_account;
 
@@ -267,13 +267,14 @@
 				scheduleEditController.transaction.id = undefined;
 				payee = {id: 1};
 				primary_account = {account_type: "account type"};
+				scheduleEditController.mode = "Add Schedule";
 				scheduleEditController.transaction.payee = payee;
 				scheduleEditController.transaction.primary_account = primary_account;
 				sinon.stub(scheduleEditController, "getSubtransactions");
 				sinon.stub(scheduleEditController, "useLastTransaction");
 			});
 
-			it("should do nothing when editing an existing transaction", function() {
+			it("should do nothing when editing an existing schedule", function() {
 				scheduleEditController.transaction.id = 1;
 				scheduleEditController.transaction.payee = {};
 				scheduleEditController.payeeSelected();
@@ -282,6 +283,12 @@
 
 			it("should do nothing when the selected payee is not an existing payee", function() {
 				scheduleEditController.transaction.payee = "payee";
+				scheduleEditController.payeeSelected();
+				payeeModel.findLastTransaction.should.not.have.been.called;
+			});
+
+			it("should do nothing when entering a transaction from a schedule", function() {
+				scheduleEditController.mode = "Enter Transaction";
 				scheduleEditController.payeeSelected();
 				payeeModel.findLastTransaction.should.not.have.been.called;
 			});
@@ -321,6 +328,7 @@
 				scheduleEditController.transaction.id = undefined;
 				security = {id: 1};
 				primary_account = {account_type: "account type"};
+				scheduleEditController.mode = "Add Schedule";
 				scheduleEditController.transaction.security = security;
 				scheduleEditController.transaction.primary_account = primary_account;
 				sinon.stub(scheduleEditController, "getSubtransactions");
@@ -336,6 +344,12 @@
 
 			it("should do nothing when the selected security is not an existing security", function() {
 				scheduleEditController.transaction.security = "security";
+				scheduleEditController.securitySelected();
+				securityModel.findLastTransaction.should.not.have.been.called;
+			});
+
+			it("should do nothing when entering a transaction from a schedule", function() {
+				scheduleEditController.mode = "Enter Transaction";
 				scheduleEditController.securitySelected();
 				securityModel.findLastTransaction.should.not.have.been.called;
 			});
