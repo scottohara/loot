@@ -184,6 +184,7 @@ RSpec.shared_examples Categorisable do
 
 				expect(result[:id]).to eq trx['category_id'].to_s
 				expect(result[:name]).to eq trx['category_name']
+				expect(result[:parent_id]).to eq trx['parent_category_id']
 			end
 		end
 	end

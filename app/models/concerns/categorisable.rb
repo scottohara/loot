@@ -59,7 +59,8 @@ module Categorisable
 		def basic_subcategory(trx)
 			{
 				:id => trx['category_id'].to_s,
-				:name => trx['category_name']
+				:name => trx['category_name'],
+				:parent_id => trx['parent_category_id'].to_s
 			} if trx['parent_category_id'].present?
 		end
 
