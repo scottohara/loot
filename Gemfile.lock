@@ -36,11 +36,16 @@ GEM
     diff-lcs (1.2.5)
     docile (1.1.5)
     erubis (2.7.0)
+    excon (0.42.1)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.5.0)
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
+    git (1.2.8)
+    heroku-api (0.3.21)
+      excon (~> 0.38)
+      multi_json (~> 1.8)
     hike (1.2.3)
     i18n (0.6.11)
     json (1.8.1)
@@ -133,6 +138,8 @@ DEPENDENCIES
   active_model_serializers
   database_cleaner
   factory_girl_rails
+  git
+  heroku-api
   pg
   pry-nav
   pry-rails

@@ -23,8 +23,12 @@ group :development, :test do
 	gem 'simplecov'
 end
 
-# Use pry instead of IRB
 group :development do
+	# Use pry instead of IRB
 	gem 'pry-rails'
 	gem 'pry-nav'
+
+	# For deployment to Heroku
+	gem 'heroku-api'
+	gem 'git'
 end
