@@ -11,6 +11,9 @@
 			$scope.context = context;
 			$scope.contextType = contextModel && contextModel.type();
 
+			// For search mode, set a query property on the root scope so that the search box is repopulated
+			$scope.$root.query = !contextModel ? context : undefined;
+
 			$scope.editTransaction = function(index) {
 				// Abort if the transaction can't be edited
 				if (!isNaN(index) && !$scope.isAllowed("edit", $scope.transactions[index])) {

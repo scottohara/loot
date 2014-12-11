@@ -56,6 +56,16 @@
 			(undefined === transactionIndexController.contextType).should.be.true;
 		});
 
+		it("should not set a query property on the root scope when not in search mode", function() {
+			(undefined === transactionIndexController.$root.query).should.be.true;
+		});
+
+		it("should make the search query context available on the root scope in search mode", function() {
+			context = "search";
+			transactionIndexController = controllerTest("transactionIndexController", {context: context, contextModel: undefined}, parentScope);
+			transactionIndexController.$root.query.should.equal(context);
+		});
+
 		it("should set an empty array of transactions on the scope", function() {
 			transactionIndexController = controllerTest("transactionIndexController", {transactionBatch: {transactions: {length: 0}}}, parentScope);
 			transactionIndexController.transactions.should.be.an.Array;
