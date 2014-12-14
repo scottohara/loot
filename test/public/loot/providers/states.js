@@ -659,6 +659,18 @@
 					resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
 				});
 
+				it("should set the query property on the root scope on enter", function() {
+					$rootScope.query.should.equal(query);
+				});
+
+				it("should clear the query property on the root scope on exit", function() {
+					$httpBackend.expectGET("accounts/views/index.html").respond(200);
+					$state.go("root.accounts");
+					$rootScope.$digest();
+					$httpBackend.flush();
+					(undefined === $rootScope.query).should.be.true;
+				});
+
 				describe("transaction state", function() {
 					beforeEach(function() {
 						stateName += ".transaction";

@@ -31,7 +31,7 @@
 			// Search
 			$scope.search = function() {
 				$state.go("root.transactions", {
-					query: $scope.query
+					query: $scope.$root.query
 				});
 			};
 

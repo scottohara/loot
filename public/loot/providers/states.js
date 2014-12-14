@@ -181,7 +181,17 @@
 							}
 						]
 					},
-					views: transactionViews
+					views: transactionViews,
+					onEnter: ["$rootScope", "$stateParams",
+						function($rootScope, $stateParams) {
+							$rootScope.query = $stateParams.query;
+						}
+					],
+					onExit: ["$rootScope",
+						function($rootScope) {
+							$rootScope.query = undefined;
+						}
+					]
 				})
 				.state("root.transactions.transaction", transactionState());
 

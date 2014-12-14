@@ -87,7 +87,7 @@
 
 		describe("search", function() {
 			it("should transition to the transaction search state passing the query", function() {
-				layoutController.query = "search query";
+				layoutController.$root.query = "search query";
 				layoutController.search();
 				$state.go.should.have.been.calledWith("root.transactions", {query: "search query"});
 			});
