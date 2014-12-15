@@ -170,14 +170,16 @@
 
 			// Merges the details of a previous transaction into the current one
 			$scope.useLastTransaction = function(transaction) {
-				// Strip the id, primary account, next due date, transaction date, frequency, status and flag
+				// Strip the id, primary account, next due date, transaction date, frequency and status
 				delete transaction.id;
 				delete transaction.primary_account;
 				delete transaction.next_due_date;
 				delete transaction.transaction_date;
 				delete transaction.frequency;
 				delete transaction.status;
-				delete transaction.flag;
+
+				// Retain the schedule's flag (if any), don't overwrite with the previous transaction's flag
+				transaction.flag = $scope.transaction.flag;
 
 				// Merge the last transaction details into the transaction on the scope
 				$scope.transaction = angular.extend($scope.transaction, transaction);

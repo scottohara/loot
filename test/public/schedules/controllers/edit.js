@@ -442,7 +442,7 @@
 				};
 			});
 
-			it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & flag", function() {
+			it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account & status", function() {
 				scheduleEditController.useLastTransaction(transaction);
 				(undefined === transaction.id).should.be.true;
 				(undefined === transaction.transaction_date).should.be.true;
@@ -450,7 +450,19 @@
 				(undefined === transaction.frequency).should.be.true;
 				(undefined === transaction.primary_account).should.be.true;
 				(undefined === transaction.status).should.be.true;
-				(undefined === transaction.flag).should.be.true;
+			});
+
+			it("should preserve the schedule's flag", function() {
+				var flag = "schedule flag";
+				scheduleEditController.transaction.flag = flag;
+				scheduleEditController.useLastTransaction(transaction);
+				scheduleEditController.transaction.flag.should.equal(flag);
+			});
+
+			it("should ignore the previous transaction's flag", function() {
+				scheduleEditController.transaction.flag = undefined;
+				scheduleEditController.useLastTransaction(transaction);
+				(undefined === scheduleEditController.transaction.flag).should.be.true;
 			});
 
 			it("should merge the transaction details into $scope.transaction", function() {
