@@ -13,6 +13,7 @@
 		<tr class="transaction" ng-repeat="schedule in schedules" ng-class="{'text-danger': schedule.next_due_date < today}">
 			<td>
 				{{schedule.next_due_date | date:'dd/MM/yyyy'}}
+				<i ng-if="schedule.auto_enter" class="glyphicon glyphicon-pushpin pull-right" tooltip="Auto entered on due date"></i>
 				<div ng-if="schedule.overdue_count > 1">
 					<small><em>({{schedule.overdue_count}} occurences overdue)</em></small>
 				</div>
