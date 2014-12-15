@@ -56,6 +56,10 @@
 			(undefined === transactionIndexController.contextType).should.be.true;
 		});
 
+		it("should make today's date available on the $scope", function() {
+			transactionIndexController.today.should.equal(moment().format("YYYY-MM-DD"));
+		});
+
 		it("should set an empty array of transactions on the scope", function() {
 			transactionIndexController = controllerTest("transactionIndexController", {transactionBatch: {transactions: {length: 0}}}, parentScope);
 			transactionIndexController.transactions.should.be.an.Array;

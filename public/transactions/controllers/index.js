@@ -11,6 +11,9 @@
 			$scope.context = context;
 			$scope.contextType = contextModel && contextModel.type();
 
+			// Today's date (for checking if a transaction is in the future)
+			$scope.today = moment().format("YYYY-MM-DD");
+
 			$scope.editTransaction = function(index) {
 				// Abort if the transaction can't be edited
 				if (!isNaN(index) && !$scope.isAllowed("edit", $scope.transactions[index])) {

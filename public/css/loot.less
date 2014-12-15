@@ -50,6 +50,10 @@ table.accounts {
 		background-color: rgba(0, 255, 0, 0.1);
 	}
 
+	tr:not(.future) + tr.future {
+		border-top: 2px solid @state-warning-text;
+	}
+
 	td, th {
 		overflow-x: hidden;
 
