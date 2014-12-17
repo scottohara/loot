@@ -5,8 +5,7 @@ Description
 Loot is a web-based personal finance management application.
 It's main goal is to reproduce the core functionality of Microsoft Money 2008, for the web.
 
-Rails on the backend (JSON-based API)
-Angular.js + Bootstrap on the frontend
+Rails on the backend (JSON API); Angular.js + Bootstrap on the frontend
 
 Getting Started
 ===============
@@ -19,7 +18,7 @@ Getting Started
 7. Initialise the database (`rake db:setup`, or if you have no data to import `rake db:create && rake db:migrate`)
 8. Configure environment variables for the username and password to login as (`export LOOT_USERNAME=user && export LOOT_PASSWORD=pass`)
 9. Start the server (`unicorn`)
-10. Browse to http://localhost:8080/index.html and login using the credentials configured at step #5
+10. Browse to http://localhost:8080/index.html and login using the credentials configured at step #8
 
 Exporting MS Money data
 =======================
