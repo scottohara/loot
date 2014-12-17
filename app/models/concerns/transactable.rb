@@ -4,7 +4,7 @@ module Transactable
 	include Categorisable
 
 	# Maximum number of transactions to return
-	NUM_RESULTS = 300
+	NUM_RESULTS = 150
 
 	LEDGER_QUERY_OPTS = {
 		:prev => {
