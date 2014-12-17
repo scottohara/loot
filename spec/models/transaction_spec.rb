@@ -3,6 +3,14 @@ require 'models/concerns/transactable'
 require 'models/concerns/categorisable'
 
 RSpec.describe Transaction, :type => :model do
+	matcher :match_json do |expected|
+		match do |actual|
+			actual.id.eql? expected[:id] and \
+			actual.memo.eql? expected['memo'] and \
+			(expected['flag'].nil? ? actual.flag : actual.flag.memo).eql? expected['flag']
+		end
+	end
+
 	it_behaves_like Categorisable
 
 	it_behaves_like Transactable do
@@ -60,11 +68,74 @@ RSpec.describe Transaction, :type => :model do
 		end
 	end
 
+	describe "::create_from_json" do
+		let(:json) { {
+			:id => 1,
+			"memo" => "Test json"
+		} }
+		let(:flag) { "test flag" }
+
+		context "unflagged" do
+			it "should create a transaction from a JSON representation" do; end
+		end
+
+		context "flagged" do
+			it "should create a transaction from a JSON representation" do
+				json["flag"] = flag
+			end
+		end
+
+		after :each do
+			expect(Transaction.create_from_json(json)).to match_json json
+		end
+	end
+
 	describe "#as_subclass" do
 		subject { create(:transaction) }
 
 		it "should become an instance matching the transaction type" do
 			expect(subject.as_subclass.class).to be BasicTransaction
+		end
+	end
+
+	describe "#update_from_json" do
+		let(:json) { {
+			:id => subject.id,
+			"memo" => "Test json"
+		} }
+		let(:flag) { "test flag" }
+
+		context "when initially unflagged" do
+			subject { create :transaction }
+
+			context "and the update does not include a flag" do
+				it "should update a transaction from a JSON representation and remain unflagged" do; end
+			end
+
+			context "and the update includes a flag" do
+				it "should update a transaction from a JSON representation and set the flag" do
+					json["flag"] = flag
+				end
+			end
+		end
+
+		context "when initially flagged" do
+			subject { create :transaction, :flagged }
+
+			context "and the update does not include a flag" do
+				it "should update a transaction from a JSON representation and clear the flag" do; end
+			end
+
+			context "and the update includes a flag" do
+				it "should update a transaction from a JSON representation and remain flagged" do
+					json["flag"] = flag
+					expect(subject.flag).not_to receive(:destroy)
+				end
+			end
+		end
+
+		after :each do
+			expect(subject.update_from_json(json)).to match_json json
 		end
 	end
 

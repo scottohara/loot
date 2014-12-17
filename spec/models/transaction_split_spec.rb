@@ -24,41 +24,6 @@ RSpec.describe TransactionSplit, :type => :model do
 		end
 	end
 
-	describe "#build_trx" do
-		let(:parent) { create :split_transaction }
-		subject { parent.transaction_splits.build }
-
-		it "should raise an error if the transaction type is not set" do
-			expect { subject.build_trx }.to raise_error "Transaction type must be set first"
-		end
-
-		let(:attributes) { {:amount => 1, :memo => "Test transaction", :transaction_type => transaction_type} }
-		let(:trx) { subject.build_trx attributes }
-
-		context "for a subtransaction", :valid => true do
-			let(:transaction_type) { "Sub" }
-
-			it "should build a subtransaction" do; end
-		end
-
-		context "for a subtransfer" do
-			let(:transaction_type) { "Subtransfer" }
-
-			it "should raise an error if the parent transaction header is not set" do
-				parent.header = nil
-				expect { trx }.to raise_error "Parent transaction header must be set first"
-			end
-
-			it "should build a subtransfer", :valid => true do
-				expect(trx.header).to have_attributes :transaction_date => parent.header.transaction_date, :payee => parent.header.payee
-			end
-		end
-
-		after :each, :valid do
-			expect(trx).to have_attributes attributes
-		end
-	end
-
 	describe "#destroy_transaction" do
 		let(:parent) { create :split_transaction, subtransactions: 1 }
 		subject { parent.transaction_splits.first }

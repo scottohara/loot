@@ -7,6 +7,7 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 			actual.id.eql? expected[:id] and \
 			actual.memo.eql? expected['memo'] and \
 			actual.transaction_account.direction.eql? expected['direction'] and \
+			actual.transaction_account.status.eql? expected['status'] and \
 			actual.account.eql? account
 		end
 	end
@@ -18,7 +19,8 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => account.id
-			}
+			},
+			"status" => "Cleared"
 		} }
 
 		before :each do

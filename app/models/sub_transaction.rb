@@ -3,6 +3,20 @@ class SubTransaction < CashTransaction
 	has_one :parent, :class_name => 'SplitTransaction', :through => :transaction_split
 	has_one :transaction_category, :foreign_key => 'transaction_id', :dependent => :destroy
 	has_one :category, :through => :transaction_category
+	after_initialize do |t|
+		t.transaction_type = 'Sub'
+	end
+
+	class << self
+		def create_from_json(json)
+			category = Category.find_or_new(json['category'])
+			category = Category.find_or_new(json['subcategory'], category) unless json['subcategory'].nil? || json['subcategory']['id'].nil?
+
+			s = super
+			s.build_transaction_category.category = category
+			s
+		end
+	end
 
 	def as_json(options={})
 		super.merge self.parent.header.as_json.merge({

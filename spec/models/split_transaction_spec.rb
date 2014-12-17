@@ -11,6 +11,7 @@ RSpec.describe SplitTransaction, :type => :model do
 			actual.amount.eql? expected['amount'] and \
 			actual.memo.eql? expected['memo'] and \
 			actual.transaction_account.direction.eql? expected['direction'] and \
+			actual.transaction_account.status.eql? expected['status'] and \
 			actual.account.eql? account and \
 			actual.transaction_splits.size.eql? expected['subtransactions'].size
 		end
@@ -26,6 +27,7 @@ RSpec.describe SplitTransaction, :type => :model do
 				"id" => account.id
 			},
 			"direction" => "outflow",
+			"status" => "Cleared",
 			"subtransactions" => []
 		} }
 
@@ -104,6 +106,8 @@ RSpec.describe SplitTransaction, :type => :model do
 			expect(subtransaction.category).to eq subcategory
 
 			expect(subject.subtransfers.size).to eq 1
+			expect(subtransfer.header.transaction_date).to eq subject.header.transaction_date
+			expect(subtransfer.header.payee).to eq subject.header.payee
 			expect(subtransfer.amount).to eq children.last["amount"]
 			expect(subtransfer.memo).to eq children.last["memo"]
 			expect(subtransfer.transaction_type).to eq children.last["transaction_type"]

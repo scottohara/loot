@@ -8,7 +8,10 @@ RSpec.describe TransferTransaction, :type => :model do
 			actual[:amount].eql? expected['amount'] and \
 			actual[:memo].eql? expected['memo'] and \
 			actual[:primary_account][:id].eql? source_account.id and \
-			actual[:account][:id].eql? destination_account.id
+			actual[:primary_account][:status].eql? source_account.status and \
+			actual[:status].eql? expected['status'] and \
+			actual[:account][:id].eql? destination_account.id and \
+			actual[:related_status].eql? expected['related_status']
 		end
 	end
 
@@ -24,7 +27,9 @@ RSpec.describe TransferTransaction, :type => :model do
 			},
 			"account" => {
 				"id" => account.id
-			}
+			},
+			"status" => "Cleared",
+			"related_status" => "Reconciled"
 		} }
 
 		before :each do

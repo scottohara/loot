@@ -8,6 +8,7 @@ RSpec.describe BasicTransaction, :type => :model do
 			actual.amount.eql? expected['amount'] and \
 			actual.memo.eql? expected['memo'] and \
 			actual.transaction_account.direction.eql? category.direction and \
+			actual.transaction_account.status.eql? expected['status'] and \
 			actual.account.eql? account and \
 			actual.category.eql? category
 		end
@@ -26,7 +27,8 @@ RSpec.describe BasicTransaction, :type => :model do
 			},
 			"category" => {
 				"id" => category.id
-			}
+			},
+			"status" => "Cleared"
 		} }
 
 		before :each do

@@ -12,11 +12,10 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		def create_from_json(json)
 			cash_direction = json['direction'].eql?('inflow') && 'outflow' || 'inflow'
 
-			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
+			s = super
+			s.amount = json['amount']
 			s.transaction_accounts.build(:direction => json['direction'], :status => json['status']).account = Account.find(json['primary_account']['id'])
 			s.transaction_accounts.build(:direction => cash_direction, :status => json['related_status']).account = Account.find(json['account']['id'])
-			s.build_header.update_from_json json
-			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
 			s.save!
 			s.header.security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 			s
@@ -36,13 +35,12 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	def update_from_json(json)
 		cash_direction = json['direction'].eql?('inflow') && 'outflow' || 'inflow'
 
+		super
 		self.amount = json['amount']
-		self.memo = json['memo']
 		self.investment_account.direction = json['direction']
 		self.investment_account.account = Account.find(json['primary_account']['id'])
 		self.cash_account.direction = cash_direction
 		self.cash_account.account = Account.find(json['account']['id'])
-		self.header.update_from_json json
 		self.save!
 		self.header.security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 	end

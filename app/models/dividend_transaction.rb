@@ -9,11 +9,10 @@ class DividendTransaction < SecurityTransaction
 
 	class << self
 		def create_from_json(json)
-			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
+			s = super
+			s.amount = json['amount']
 			s.transaction_accounts.build(:direction => 'outflow', :status => json['status']).account = Account.find(json['primary_account']['id'])
 			s.transaction_accounts.build(:direction => 'inflow', :status => json['related_status']).account = Account.find(json['account']['id'])
-			s.build_header.update_from_json json
-			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
 			s.save!
 			s
 		end
@@ -26,11 +25,10 @@ class DividendTransaction < SecurityTransaction
 	end
 
 	def update_from_json(json)
+		super
 		self.amount = json['amount']
-		self.memo = json['memo']
 		self.investment_account.account = Account.find(json['primary_account']['id'])
 		self.cash_account.account = Account.find(json['account']['id'])
-		self.header.update_from_json json
 		self.save!
 	end
 

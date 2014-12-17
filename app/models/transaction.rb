@@ -49,10 +49,34 @@ class Transaction < ActiveRecord::Base
 		def account_type
 			nil
 		end
+
+		def create_from_json(json)
+			# id included for the case where we destroy & recreate on transaction type change 
+			s = self.new(:id => json[:id], :memo => json['memo'])
+			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
+			s
+		end
 	end
 
 	def as_subclass
 		self.becomes self.class.class_for(self.transaction_type)
+	end
+
+	def update_from_json(json)
+		self.memo = json['memo']
+		unless json['flag'].nil?
+			if self.flag.nil?
+				self.build_flag(:memo => json['flag'])
+			else
+				self.flag.memo = json['flag']
+			end
+		else
+			unless self.flag.nil?
+				self.flag.destroy
+				self.flag = nil
+			end
+		end
+		self
 	end
 
 	def as_json(options={})

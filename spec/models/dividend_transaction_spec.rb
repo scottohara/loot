@@ -8,8 +8,10 @@ RSpec.describe DividendTransaction, :type => :model do
 			actual.amount.eql? expected['amount'] and \
 			actual.memo.eql? expected['memo'] and \
 			actual.investment_account.direction.eql? "outflow" and \
+			actual.investment_account.status.eql? expected['status'] and \
 			actual.investment_account.account.eql? investment_account and \
 			actual.cash_account.direction.eql? "inflow" and \
+			actual.cash_account.status.eql? expected['related_status'] and \
 			actual.cash_account.account.eql? cash_account
 		end
 	end
@@ -26,7 +28,9 @@ RSpec.describe DividendTransaction, :type => :model do
 			},
 			"account" => {
 				"id" => cash_account.id
-			}
+			},
+			"status" => "Cleared",
+			"related_status" => "Reconciled"
 		} }
 
 		before :each do

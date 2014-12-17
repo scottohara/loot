@@ -12,10 +12,8 @@ class SplitTransaction < PayeeCashTransaction
 
 	class << self
 		def create_from_json(json)
-			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
+			s = super
 			s.build_transaction_account(:direction => json['direction'], :status => json['status']).account = Account.find(json['primary_account']['id'])
-			s.build_header.update_from_json json
-			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
 			s.create_children(json['subtransactions'])
 			s.save!
 			s
@@ -33,26 +31,18 @@ class SplitTransaction < PayeeCashTransaction
 			# Keys could be symbols or strings
 			child = child.with_indifferent_access
 
-			t = self.transaction_splits.build.build_trx(:amount => child['amount'], :memo => child['memo'], :transaction_type => child['transaction_type'])
-			t.build_flag(:memo => child['flag']) if !!child['flag']
+			# Copy the transaction date and payee from the parent
+			child['transaction_date'] = self.header.transaction_date
+			child['payee'] = {:id => self.header.payee.id}
 
-			if child['transaction_type'].eql? 'Sub'
-				category = Category.find_or_new(child['category'])
-				category = Category.find_or_new(child['subcategory'], category) unless child['subcategory'].nil? || child['subcategory']['id'].nil?
-				t.build_transaction_category.category = category
-			else
-				direction = child['direction'].eql?('inflow') && 'outflow' || 'inflow' 
-				t.build_transaction_account(:direction => direction, :status => child['status']).account = Account.find(child['account']['id'])
-			end
+			self.transaction_splits.build.trx = Transaction.class_for(child['transaction_type']).create_from_json(child)
 		end
 	end
 
 	def update_from_json(json)
-		self.amount = json['amount']
-		self.memo = json['memo']
+		super
 		self.transaction_account.direction = json['direction']
 		self.account = Account.find(json['primary_account']['id'])
-		self.header.update_from_json json
 		self.subtransactions.each &:destroy
 		self.subtransfers.each &:destroy
 		self.create_children(json['subtransactions'])

@@ -12,12 +12,9 @@ class BasicTransaction < PayeeCashTransaction
 			category = Category.find_or_new json['category']
 			category = Category.find_or_new(json['subcategory'], category) unless json['subcategory'].nil?
 
-			# id included for the case where we destroy & recreate on transaction type change 
-			s = self.new(:id => json[:id], :amount => json['amount'], :memo => json['memo'])
+			s = super
 			s.build_transaction_account(:direction => category.direction, :status => json['status']).account = Account.find(json['primary_account']['id'])
-			s.build_header.update_from_json json
 			s.build_transaction_category.category = category
-			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
 			s.save!
 			s
 		end
@@ -33,9 +30,7 @@ class BasicTransaction < PayeeCashTransaction
 		category = Category.find_or_new json['category']
 		category = Category.find_or_new(json['subcategory'], category) unless json['subcategory'].nil?
 
-		self.amount = json['amount']
-		self.memo = json['memo']
-		self.header.update_from_json json
+		super
 		self.transaction_account.direction = category.direction
 		self.account = Account.find(json['primary_account']['id'])
 		self.category = category

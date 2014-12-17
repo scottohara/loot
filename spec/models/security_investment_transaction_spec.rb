@@ -8,8 +8,10 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			actual.amount.eql? expected['amount'] and \
 			actual.memo.eql? expected['memo'] and \
 			actual.investment_account.direction.eql? expected['direction'] and \
+			actual.investment_account.status.eql? expected['status'] and \
 			actual.investment_account.account.eql? investment_account and \
 			actual.cash_account.direction.eql? (expected['direction'].eql?('inflow') && 'outflow' || 'inflow') and \
+			actual.cash_account.status.eql? expected['related_status'] and \
 			actual.cash_account.account.eql? cash_account
 		end
 	end
@@ -30,7 +32,9 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			},
 			"price" => 2,
 			"quantity" => 10,
-			"commission" => 5
+			"commission" => 5,
+			"status" => "Cleared",
+			"related_status" => "Reconciled"
 		} }
 
 		before :each do

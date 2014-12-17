@@ -9,10 +9,8 @@ class SecurityHoldingTransaction < SecurityTransaction
 
 	class << self
 		def create_from_json(json)
-			s = self.new(:id => json[:id], :memo => json['memo'])
+			s = super
 			s.build_transaction_account(:direction => json['direction'], :status => json['status']).account = Account.find(json['primary_account']['id'])
-			s.build_header.update_from_json json
-			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
 			s.save!
 			s
 		end
@@ -25,8 +23,7 @@ class SecurityHoldingTransaction < SecurityTransaction
 	end
 
 	def update_from_json(json)
-		self.memo = json['memo']
-		self.header.update_from_json json
+		super
 		self.transaction_account.direction = json['direction']
 		self.account = Account.find(json['primary_account']['id'])
 		self.save!
