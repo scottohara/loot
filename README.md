@@ -1,4 +1,6 @@
 [![devDependency Status](https://david-dm.org/scottohara/loot/dev-status.svg)](https://david-dm.org/scottohara/loot#info=devDependencies)
+[![Build Status](https://travis-ci.org/scottohara/loot.svg)](https://travis-ci.org/scottohara/loot)
+[![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)
 
 Description
 ===========
