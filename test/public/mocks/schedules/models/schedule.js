@@ -13,7 +13,9 @@
 			id: 1,
 			transaction_type: "Transfer",
 			next_due_date: moment().add(3, "days").format("YYYY-MM-DD"),
-			subtransactions: [{}]
+			subtransactions: [{}],
+			autoFlag: false,
+			flag: null
 		};
 
 		provider.$get = function() {

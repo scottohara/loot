@@ -188,6 +188,15 @@
 					<input type="checkbox" ng-model="schedule.auto_enter"> Automatically enter this transaction on the due date
 				</label>
 			</div>
+			<!-- Default flag -->
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" ng-model="schedule.autoFlag"> Automatically flag this transaction when entered
+				</label>
+			</div>
+			<div class="form-group">
+				<input ng-if="schedule.autoFlag" name="flag" class="form-control" ng-model="schedule.flag" placeholder="Flag" og-input-autoselect>
+			</div>
 		</div>
 	</div>
 	<div class="modal-footer" ng-switch="mode">

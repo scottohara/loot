@@ -47,6 +47,12 @@
 				$scope.schedule = $scope.transaction;
 			}
 
+			// Set the auto-flag property based on the presence/absence of a flag
+			$scope.schedule.autoFlag = !!$scope.schedule.flag;
+			if ("(no memo)" === $scope.schedule.flag) {
+				$scope.schedule.flag = null;
+			}
+
 			// Prefetch the payees list so that the cache is populated
 			payeeModel.all();
 
@@ -483,6 +489,14 @@
 			// Save and close the modal
 			$scope.save = function(skipped) {
 				$scope.errorMessage = null;
+
+				// Ensure the flag is appropriately set or cleared
+				if ($scope.schedule.autoFlag) {
+					$scope.schedule.flag = $scope.schedule.flag || "(no memo)";
+				} else {
+					$scope.schedule.flag = null;
+				}
+
 				scheduleModel.save($scope.schedule).then(function(schedule) {
 					// Set the skipped property on the schedule
 					schedule.skipped = !!skipped;

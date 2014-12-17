@@ -107,7 +107,8 @@
 			beforeEach(function() {
 				transaction = {
 					transaction_type: "Basic",
-					next_due_date: moment().format("YYYY-MM-DD")
+					next_due_date: moment().format("YYYY-MM-DD"),
+					autoFlag: false
 				};
 
 				scheduleEditController = controllerTest("scheduleEditController", {schedule: undefined});
@@ -124,6 +125,22 @@
 			it("should make alias the transaction as schedule on the $scope", function() {
 				scheduleEditController.schedule.should.equal(scheduleEditController.transaction);
 			});
+		});
+
+		it("should set the auto-flag property when a flag is present", function() {
+			schedule.flag = "Test flag";
+			scheduleEditController = controllerTest("scheduleEditController");
+			scheduleEditController.schedule.autoFlag.should.be.true;
+		});
+
+		it("should not set the auto-flag property when a flag is absent", function() {
+			scheduleEditController.schedule.autoFlag.should.be.false;
+		});
+
+		it("should set the flag memo to null when the flag memo is '(no memo)'", function() {
+			schedule.flag = "(no memo)";
+			scheduleEditController = controllerTest("scheduleEditController");
+			(null === scheduleEditController.schedule.flag).should.be.true;
 		});
 
 		it("should prefetch the payees list to populate the cache", function() {
@@ -947,6 +964,18 @@
 				scheduleEditController.errorMessage = "error message";
 				scheduleEditController.save();
 				(null === scheduleEditController.errorMessage).should.be.true;
+			});
+
+			it("should set the flag memo to '(no memo)' if the auto-flag property is set and the memo is blank", function() {
+				scheduleEditController.schedule.autoFlag = true;
+				scheduleEditController.save();
+				scheduleEditController.schedule.flag.should.equal("(no memo)");
+			});
+
+			it("should set the flag to null if the auto-flag property is not set", function() {
+				scheduleEditController.schedule.flag = "Test flag";
+				scheduleEditController.save();
+				(null === scheduleEditController.schedule.flag).should.be.true;
 			});
 
 			it("should save the schedule", function() {
