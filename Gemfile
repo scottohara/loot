@@ -7,8 +7,10 @@ gem 'rails', '4.1.6'
 # Postgres
 gem 'pg'
 
-# Use unicorn as the app server
-gem 'unicorn'
+group :development, :production do
+	# Use unicorn as the app server
+	gem 'unicorn'
+end
 
 # 12 factor gem for Heroku
 gem 'rails_12factor', :group => :production

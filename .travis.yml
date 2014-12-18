@@ -2,3 +2,15 @@ language: ruby
 
 rvm:
   - 2.1.0
+
+# Don't include production only gems, such as unicorn (already present by default in Travis)
+bundler_args: --without production
+
+# Cache gems
+cache: bundler
+
+# Required to use new Travis container-based infrastructure
+sudo: false
+
+# Setup the database
+before_script: bundle exec rake db:create db:migrate
