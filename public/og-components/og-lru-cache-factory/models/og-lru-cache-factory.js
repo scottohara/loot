@@ -24,14 +24,14 @@
 						newHead;
 
 				// Only update if the item is not already the current head
-				if (item.id !== this.head) {
+				if (String(item.id) !== String(this.head)) {
 					// Check if the item already exists
 					if (this.items.hasOwnProperty(item.id)) {
 						// New head is the existing item
 						newHead = this.items[item.id];
 						
 						// Unlink the existing item from the list
-						if (item.id !== this.tail) {
+						if (String(item.id) !== String(this.tail)) {
 							this.items[newHead.older].newer = newHead.newer;
 						} else {
 							this.tail = newHead.newer;
