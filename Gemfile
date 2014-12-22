@@ -34,3 +34,6 @@ group :development do
 	gem 'heroku-api'
 	gem 'git'
 end
+
+# Code Climate test coverage
+gem 'codeclimate-test-reporter', :group => :test, :require => nil
