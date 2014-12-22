@@ -54,10 +54,7 @@
 
 			// Updates all pending transactions for an account to cleared
 			model.reconcile = function(id) {
-				return $http({
-					method: "PATCH",
-					url: model.path(id) + "/reconcile"
-				});
+				return $http.put(model.path(id) + "/reconcile");
 			};
 
 			// Get the unreconciled only setting for an account from local storage

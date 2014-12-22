@@ -185,8 +185,8 @@
 		describe("reconcile", function() {
 			var expectedUrl = /accounts\/123\/reconcile/;
 
-			it("should dispatch a PATCH request to /account/{id}/reconcile", function() {
-				$httpBackend.expect("PATCH", expectedUrl).respond(200);
+			it("should dispatch a PUT request to /account/{id}/reconcile", function() {
+				$httpBackend.expect("PUT", expectedUrl).respond(200);
 				accountModel.reconcile(123);
 				$httpBackend.flush();
 			});
