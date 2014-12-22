@@ -31,7 +31,8 @@ class SplitTransaction < PayeeCashTransaction
 			# Keys could be symbols or strings
 			child = child.with_indifferent_access
 
-			# Copy the transaction date and payee from the parent
+			# Clear the id and copy the transaction date and payee from the parent
+			child['id'] = nil
 			child['transaction_date'] = self.header.transaction_date
 			child['payee'] = {:id => self.header.payee.id}
 

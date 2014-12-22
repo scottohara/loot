@@ -69,6 +69,7 @@ RSpec.describe SplitTransaction, :type => :model do
 		# Examples include keys that are both symbols and strings
 		let(:children) { [
 			{
+				:id => "child 1",
 				:amount => 1,
 				:memo => "Test subtransaction",
 				:transaction_type => "Sub",
@@ -81,6 +82,7 @@ RSpec.describe SplitTransaction, :type => :model do
 				}
 			},
 			{
+				"id" => "child 2",
 				"amount" => 1,
 				"memo" => "Test subtransfer",
 				"transaction_type" => "Subtransfer",
@@ -99,6 +101,7 @@ RSpec.describe SplitTransaction, :type => :model do
 			subtransfer = subject.subtransfers.first
 
 			expect(subject.subtransactions.size).to eq 1
+			expect(subtransaction.id).to_not eq children.first[:id]
 			expect(subtransaction.amount).to eq children.first[:amount]
 			expect(subtransaction.memo).to eq children.first[:memo]
 			expect(subtransaction.transaction_type).to eq children.first[:transaction_type]
@@ -106,6 +109,7 @@ RSpec.describe SplitTransaction, :type => :model do
 			expect(subtransaction.category).to eq subcategory
 
 			expect(subject.subtransfers.size).to eq 1
+			expect(subtransfer.id).to_not eq children.last["id"]
 			expect(subtransfer.header.transaction_date).to eq subject.header.transaction_date
 			expect(subtransfer.header.payee).to eq subject.header.payee
 			expect(subtransfer.amount).to eq children.last["amount"]
