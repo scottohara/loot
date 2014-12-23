@@ -415,7 +415,12 @@
 						// Remove the closing balance from local storage
 						$window.localStorage.removeItem("lootClosingBalance-" + $scope.context.id);
 
+						// Exit reconcile mode
 						$scope.reconciling = false;
+
+						// Refresh the transaction list
+						$scope.transactions = [];
+						$scope.getTransactions("prev");
 					});
 				};
 

@@ -884,6 +884,7 @@
 					contextId = 1;
 					transactionIndexController.context.id = contextId;
 					transactionIndexController.reconciling = true;
+					sinon.stub(transactionIndexController, "getTransactions");
 					transactionIndexController.save();
 				});
 
@@ -897,6 +898,15 @@
 
 				it("should exit reconcile mode", function() {
 					transactionIndexController.reconciling.should.be.false;
+				});
+
+				it("should clear the list of transactions", function() {
+					transactionIndexController.transactions.should.be.an.Array;
+					transactionIndexController.transactions.should.be.empty;
+				});
+
+				it("should refresh the list of transactions", function() {
+					transactionIndexController.getTransactions.should.have.been.calledWith("prev");
 				});
 			});
 
