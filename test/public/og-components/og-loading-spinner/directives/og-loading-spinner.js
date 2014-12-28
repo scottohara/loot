@@ -18,7 +18,7 @@
 			ogLoadingSpinner = directiveTest;
 			ogLoadingSpinner.configure("og-loading-spinner");
 			ogLoadingSpinner.scope.model = "test message";
-			ogLoadingSpinner.compile({"og-loading-spinner": "model"}, true);
+			ogLoadingSpinner.compile({"og-loading-spinner": "model"});
 		}));
 
 		it("should show the specified message", function() {

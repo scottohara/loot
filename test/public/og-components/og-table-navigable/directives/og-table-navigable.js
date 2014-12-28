@@ -329,28 +329,25 @@
 					ogTableNavigable.scope.model[key.handler].should.have.been.calledWith(1);
 					event.preventDefault.should.have.been.called;
 				});
-
 			});
 		});
 
-		describe("on click", function() {
-			it("should attach a click handler to the element", function() {
-				sinon.stub(ogTableNavigable.element.isolateScope(), "clickHandler");
-				ogTableNavigable.element.triggerHandler("click");
-				ogTableNavigable.element.isolateScope().clickHandler.should.have.been.called;
-			});
+		it("should attach a click handler to the element", function() {
+			sinon.stub(ogTableNavigable.element.isolateScope(), "clickHandler");
+			ogTableNavigable.element.triggerHandler("click");
+			ogTableNavigable.element.isolateScope().clickHandler.should.have.been.called;
+		});
 
-			it("should attach a double-click handler to the element", function() {
-				sinon.stub(ogTableNavigable.element.isolateScope(), "doubleClickHandler");
-				ogTableNavigable.element.triggerHandler("dblclick");
-				ogTableNavigable.element.isolateScope().doubleClickHandler.should.have.been.called;
-			});
+		it("should attach a double-click handler to the element", function() {
+			sinon.stub(ogTableNavigable.element.isolateScope(), "doubleClickHandler");
+			ogTableNavigable.element.triggerHandler("dblclick");
+			ogTableNavigable.element.isolateScope().doubleClickHandler.should.have.been.called;
+		});
 
-			it("should attach a keydown handler to the document", function() {
-				sinon.stub(ogTableNavigable.element.isolateScope(), "keyHandler");
-				$(document).triggerHandler("keydown");
-				ogTableNavigable.element.isolateScope().keyHandler.should.have.been.called;
-			});
+		it("should attach a keydown handler to the document", function() {
+			sinon.stub(ogTableNavigable.element.isolateScope(), "keyHandler");
+			$(document).triggerHandler("keydown");
+			ogTableNavigable.element.isolateScope().keyHandler.should.have.been.called;
 		});
 
 		describe("on destroy", function() {

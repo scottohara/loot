@@ -128,10 +128,37 @@
 				}
 				
 				// Load the controller
-				$controller(controller, locals);
+				var instance = $controller(controller, locals);
+
+				// If the returned controller instance is not empty, add it to the scope using the controller's name
+				if (instance && !locals.$scope.hasOwnProperty(controller)) {
+					locals.$scope[controller] = instance;
+				}
 
 				return locals.$scope;
 			};
 		}
 	]);
+
+	describe("controllerTest", function() {
+		// The object under test
+		var mockController;
+
+		// Load the modules
+		beforeEach(module("lootMocks", function($controllerProvider) {
+			$controllerProvider.register("mockController", function() {
+				this.newProperty = "new property";
+			});
+		}));
+
+		// Inject the object under test
+		beforeEach(inject(function(controllerTest) {
+			mockController = controllerTest("mockController", undefined, {mockController: "existing property"});
+		}));
+
+		it("should not add the returned controller instance to the scope if the property already exists", function() {
+			mockController.mockController.should.equal("existing property");
+		});
+	});
+
 })();

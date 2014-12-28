@@ -9,15 +9,12 @@
 		function(numberFilter) {
 			return {
 				restrict: "A",
+				priority: 1,
 				require: "ngModel",
+				controller: "ogInputNumberController",
 				link: function(scope, iElement, iAttrs, ngModel) {
-					// Converts formatted value to raw value
-					var formattedToRaw = function(value) {
-						return Number(value.replace(/[^0-9\-\.]/g, "")) || 0;
-					};
-
 					// View to model
-					ngModel.$parsers.unshift(formattedToRaw);
+					ngModel.$parsers.unshift(scope.formattedToRaw);
 
 					// Model to view
 					ngModel.$formatters.unshift(function(value) {
@@ -26,10 +23,10 @@
 
 					// Update view when tabbing in/out of the field
 					iElement.on("focus", function() {
-						iElement.val(numberFilter(formattedToRaw(iElement.val())));
+						iElement.val(numberFilter(scope.formattedToRaw(iElement.val())));
 					});
 					iElement.on("blur", function() {
-						iElement.val(numberFilter(formattedToRaw(iElement.val())));
+						iElement.val(numberFilter(scope.formattedToRaw(iElement.val())));
 					});
 				}
 			};

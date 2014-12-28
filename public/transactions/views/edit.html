@@ -40,7 +40,7 @@
 		<!-- Transaction Amount -->
 		<div ng-if="transaction.primary_account.account_type != 'investment' || transaction.category.id == 'DividendTo'" class="form-group has-feedback" ng-class="{'has-error': transactionForm.amount.$invalid}">
 			<label for="amount">Amount</label>
-			<input id="amount" name="amount" class="form-control" ng-class="{'negative': transaction.amount < 0}" ng-model="transaction.amount" placeholder="Transaction Amount" required og-input-currency og-input-autoselect>
+			<input id="amount" name="amount" class="form-control" ng-class="{'negative': transaction.amount < 0}" ng-model="transaction.amount" placeholder="Transaction Amount" required og-input-currency og-input-autoselect og-input-calculator>
 			<span ng-show="transactionForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Category -->
@@ -64,19 +64,19 @@
 		<!-- Quantity -->
 		<div ng-if="transaction.primary_account.account_type == 'investment' && ['TransferTo', 'TransferFrom', 'AddShares', 'RemoveShares', 'Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.quantity.$invalid}">
 			<label for="quantity">Quantity</label>
-			<input name="quantity" class="form-control" ng-class="{'negative': transaction.quantity < 0}" ng-model="transaction.quantity" ng-change="updateInvestmentDetails()" placeholder="Quantity" required og-input-number og-input-autoselect>
+			<input name="quantity" class="form-control" ng-class="{'negative': transaction.quantity < 0}" ng-model="transaction.quantity" ng-change="updateInvestmentDetails()" placeholder="Quantity" required og-input-number og-input-autoselect og-input-calculator>
 			<span ng-show="transactionForm.quantity.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Price -->
 		<div ng-if="transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.price.$invalid}">
 			<label for="price">Price</label>
-			<input name="price" class="form-control" ng-class="{'negative': transaction.price < 0}" ng-model="transaction.price" ng-change="updateInvestmentDetails()" placeholder="Price" required og-input-currency="3" og-input-autoselect>
+			<input name="price" class="form-control" ng-class="{'negative': transaction.price < 0}" ng-model="transaction.price" ng-change="updateInvestmentDetails()" placeholder="Price" required og-input-currency="3" og-input-autoselect og-input-calculator>
 			<span ng-show="transactionForm.price.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Commission -->
 		<div ng-if="transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.commission.$invalid}">
 			<label for="commission">Commission</label>
-			<input name="commission" class="form-control" ng-class="{'negative': transaction.commission < 0}" ng-model="transaction.commission" ng-change="updateInvestmentDetails()" placeholder="Commission" required og-input-currency og-input-autoselect>
+			<input name="commission" class="form-control" ng-class="{'negative': transaction.commission < 0}" ng-model="transaction.commission" ng-change="updateInvestmentDetails()" placeholder="Commission" required og-input-currency og-input-autoselect og-input-calculator>
 			<span ng-show="transactionForm.commission.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Investment Amount -->
@@ -134,7 +134,7 @@
 							<ng-form name="amountForm">
 								<div class="form-inline">
 									<div class="form-group has-feedback has-action" ng-class="{'has-error': amountForm.amount.$invalid}">
-										<input name="amount" class="form-control text-right" ng-class="{'negative': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}" ng-model="subtransaction.amount" placeholder="Amount" required og-input-currency og-input-autoselect>
+										<input name="amount" class="form-control text-right" ng-class="{'negative': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}" ng-model="subtransaction.amount" placeholder="Amount" required og-input-currency og-input-autoselect og-input-calculator="right">
 										<span ng-show="amountForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 										<span ng-show="!amountForm.amount.$invalid && transaction.amount - totalAllocated !== 0" class="form-control-feedback"><i class="action glyphicon glyphicon-plus-sign" tooltip="Add unallocated amount here" ng-click="addUnallocatedAmount($index)"></i></span>
 									</div>
