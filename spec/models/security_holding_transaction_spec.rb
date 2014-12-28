@@ -8,7 +8,9 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 			actual.memo.eql? expected['memo'] and \
 			actual.transaction_account.direction.eql? expected['direction'] and \
 			actual.transaction_account.status.eql? expected['status'] and \
-			actual.account.eql? account
+			actual.account.eql? account and \
+			actual.header.price.nil? and \
+			actual.header.commission.nil?
 		end
 	end
 
@@ -20,13 +22,17 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 			"primary_account" => {
 				"id" => account.id
 			},
-			"status" => "Cleared"
+			"status" => "Cleared",
+			"price" => 1,
+			"commission" => 2
 		} }
 
 		before :each do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json)
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("quantity")
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("price")
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("commission")
 		end
 
 		context "add shares" do

@@ -14,6 +14,10 @@ class SecurityTransferTransaction < SecurityTransaction
 			source, destination, source_status, destination_status = Account.find(json['primary_account']['id']), Account.find(json['account']['id']), json['status'], json['related_status']
 			source, destination, source_status, destination_status = destination, source, destination_status, source_status if json['direction'].eql? 'inflow'
 
+			# Make sure price and commission are nil
+			json['price'] = nil
+			json['commission'] = nil
+
 			s = super
 			s.build_source_transaction_account(:direction => 'outflow', :status => source_status).account = source
 			s.build_destination_transaction_account(:direction => 'inflow', :status => destination_status).account = destination

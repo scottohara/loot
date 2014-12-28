@@ -9,6 +9,10 @@ class SecurityHoldingTransaction < SecurityTransaction
 
 	class << self
 		def create_from_json(json)
+			# Make sure price and commission are nil
+			json['price'] = nil
+			json['commission'] = nil
+
 			s = super
 			s.build_transaction_account(:direction => json['direction'], :status => json['status']).account = Account.find(json['primary_account']['id'])
 			s.save!

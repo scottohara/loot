@@ -9,6 +9,11 @@ class DividendTransaction < SecurityTransaction
 
 	class << self
 		def create_from_json(json)
+			# Make sure quantity, price and commission are nil
+			json['quantity'] = nil
+			json['price'] = nil
+			json['commission'] = nil
+
 			s = super
 			s.amount = json['amount']
 			s.transaction_accounts.build(:direction => 'outflow', :status => json['status']).account = Account.find(json['primary_account']['id'])

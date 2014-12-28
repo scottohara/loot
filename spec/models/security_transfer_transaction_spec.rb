@@ -9,7 +9,9 @@ RSpec.describe SecurityTransferTransaction, :type => :model do
 			actual[:primary_account][:id].eql? source_account.id and \
 			actual[:status].eql? expected['status'] and \
 			actual[:account][:id].eql? destination_account.id and \
-			actual[:related_status].eql? expected['related_status']
+			actual[:related_status].eql? expected['related_status'] and \
+			actual[:price].nil? and \
+			actual[:commission].nil?
 		end
 	end
 
@@ -26,7 +28,9 @@ RSpec.describe SecurityTransferTransaction, :type => :model do
 				"id" => account.id
 			},
 			"status" => "Cleared",
-			"related_status" => "Reconciled"
+			"related_status" => "Reconciled",
+			"price" => 1,
+			"commission" => 2
 		} }
 
 		before :each do
@@ -34,6 +38,8 @@ RSpec.describe SecurityTransferTransaction, :type => :model do
 			expect(Account).to receive(:find).with(json['account']['id']).and_return account
 			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("quantity")
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("price")
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("commission")
 		end
 
 		context "outflow" do

@@ -12,7 +12,10 @@ RSpec.describe DividendTransaction, :type => :model do
 			actual.investment_account.account.eql? investment_account and \
 			actual.cash_account.direction.eql? "inflow" and \
 			actual.cash_account.status.eql? expected['related_status'] and \
-			actual.cash_account.account.eql? cash_account
+			actual.cash_account.account.eql? cash_account and \
+			actual.header.quantity.nil? and \
+			actual.header.price.nil? and \
+			actual.header.commission.nil?
 		end
 	end
 
@@ -30,13 +33,19 @@ RSpec.describe DividendTransaction, :type => :model do
 				"id" => cash_account.id
 			},
 			"status" => "Cleared",
-			"related_status" => "Reconciled"
+			"related_status" => "Reconciled",
+			"quantity" => 1,
+			"price" => 2,
+			"commission" => 3
 		} }
 
 		before :each do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
 			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("quantity")
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("price")
+			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("commission")
 		end
 
 		it "should create a transaction from a JSON representation" do
