@@ -682,6 +682,27 @@
 			});
 		});
 
+		describe("addUnallocatedAmount", function() {
+			beforeEach(function() {
+				transactionEditController.transaction.amount = 100;
+				transactionEditController.totalAllocated = 80;
+				transactionEditController.transaction.subtransactions = [
+					{amount: 80},
+					{amount: undefined}
+				];
+			});
+
+			it("should increase an existing subtransaction amount by the unallocated amount", function() {
+				transactionEditController.addUnallocatedAmount(0);
+				transactionEditController.transaction.subtransactions[0].amount.should.equal(100);
+			});
+
+			it("should set a blank subtransacion amount to the unallocated amount", function() {
+				transactionEditController.addUnallocatedAmount(1);
+				transactionEditController.transaction.subtransactions[1].amount.should.equal(20);
+			});
+		});
+
 		describe("updateInvestmentDetails", function() {
 			var amount,
 					memo;

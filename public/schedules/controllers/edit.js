@@ -435,6 +435,11 @@
 				$scope.transaction.subtransactions.splice(index, 1);
 			};
 
+			// Adds any unallocated amount to the specified subtransaction
+			$scope.addUnallocatedAmount = function(index) {
+				$scope.transaction.subtransactions[index].amount = (Number($scope.transaction.subtransactions[index].amount) || 0) + ($scope.transaction.amount - $scope.totalAllocated);
+			};
+
 			// Calculates the next due date
 			$scope.calculateNextDue = function() {
 				$scope.schedule.next_due_date = moment($scope.schedule.next_due_date).add($scope.scheduleFrequencies[$scope.schedule.frequency]).format("YYYY-MM-DD");

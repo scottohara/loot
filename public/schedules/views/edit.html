@@ -136,9 +136,10 @@
 							<!-- Amount -->
 							<ng-form name="amountForm">
 								<div class="form-inline">
-									<div class="form-group has-feedback" ng-class="{'has-error': amountForm.amount.$invalid}">
+									<div class="form-group has-feedback has-action" ng-class="{'has-error': amountForm.amount.$invalid}">
 										<input name="amount" class="form-control text-right" ng-class="{'negative': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}" ng-model="subtransaction.amount" placeholder="Amount" required og-input-currency og-input-autoselect>
 										<span ng-show="amountForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+										<span ng-show="!amountForm.amount.$invalid && transaction.amount - totalAllocated !== 0" class="form-control-feedback"><i class="action glyphicon glyphicon-plus-sign" tooltip="Add unallocated amount here" ng-click="addUnallocatedAmount($index)"></i></span>
 									</div>
 								</div>
 							</ng-form>

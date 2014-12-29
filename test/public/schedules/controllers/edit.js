@@ -566,7 +566,7 @@
 				});
 			});
 
-			describe.only("(subtransaction)", function() {
+			describe("(subtransaction)", function() {
 				beforeEach(function() {
 					scheduleEditController.transaction.subtransactions = [
 						{category: {direction: "inflow"}}
@@ -818,6 +818,27 @@
 				scheduleEditController.transaction.subtransactions = [1, 2, 3];
 				scheduleEditController.deleteSubtransaction(1);
 				scheduleEditController.transaction.subtransactions.should.deep.equal([1, 3]);
+			});
+		});
+
+		describe("addUnallocatedAmount", function() {
+			beforeEach(function() {
+				scheduleEditController.transaction.amount = 100;
+				scheduleEditController.totalAllocated = 80;
+				scheduleEditController.transaction.subtransactions = [
+					{amount: 80},
+					{amount: undefined}
+				];
+			});
+
+			it("should increase an existing subtransaction amount by the unallocated amount", function() {
+				scheduleEditController.addUnallocatedAmount(0);
+				scheduleEditController.transaction.subtransactions[0].amount.should.equal(100);
+			});
+
+			it("should set a blank subtransacion amount to the unallocated amount", function() {
+				scheduleEditController.addUnallocatedAmount(1);
+				scheduleEditController.transaction.subtransactions[1].amount.should.equal(20);
 			});
 		});
 

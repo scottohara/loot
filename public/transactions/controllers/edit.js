@@ -363,6 +363,11 @@
 				$scope.transaction.subtransactions.splice(index, 1);
 			};
 
+			// Adds any unallocated amount to the specified subtransaction
+			$scope.addUnallocatedAmount = function(index) {
+				$scope.transaction.subtransactions[index].amount = (Number($scope.transaction.subtransactions[index].amount) || 0) + ($scope.transaction.amount - $scope.totalAllocated);
+			};
+
 			// Updates the transaction amount and memo when the quantity, price or commission change
 			$scope.updateInvestmentDetails = function() {
 				if ("SecurityInvestment" === $scope.transaction.transaction_type) {
