@@ -31,10 +31,15 @@ class SplitTransaction < PayeeCashTransaction
 			# Keys could be symbols or strings
 			child = child.with_indifferent_access
 
-			# Clear the id and copy the transaction date and payee from the parent
+			# Clear the id and copy the header details from the parent
 			child['id'] = nil
 			child['transaction_date'] = self.header.transaction_date
 			child['payee'] = {:id => self.header.payee.id}
+
+			unless self.header.schedule.nil?
+				child['next_due_date'] = self.header.schedule.next_due_date
+				child['frequency'] = self.header.schedule.frequency
+			end
 
 			self.transaction_splits.build.trx = Transaction.class_for(child['transaction_type']).create_from_json(child)
 		end

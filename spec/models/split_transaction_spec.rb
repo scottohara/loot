@@ -62,7 +62,6 @@ RSpec.describe SplitTransaction, :type => :model do
 	end
 
 	describe "#create_children" do
-		subject { create :split_transaction }
 		let(:subcategory) { create :subcategory }
 		let(:account) { create :account }
 
@@ -93,7 +92,7 @@ RSpec.describe SplitTransaction, :type => :model do
 			}
 		] }
 
-		it "should build child transactions of the appropriate types" do
+		before :each do
 			subject.create_children children
 			subject.save!
 
@@ -110,13 +109,31 @@ RSpec.describe SplitTransaction, :type => :model do
 
 			expect(subject.subtransfers.size).to eq 1
 			expect(subtransfer.id).to_not eq children.last["id"]
-			expect(subtransfer.header.transaction_date).to eq subject.header.transaction_date
 			expect(subtransfer.header.payee).to eq subject.header.payee
 			expect(subtransfer.amount).to eq children.last["amount"]
 			expect(subtransfer.memo).to eq children.last["memo"]
 			expect(subtransfer.transaction_type).to eq children.last["transaction_type"]
 			expect(subtransfer.transaction_account.direction).to eq "inflow"
 			expect(subtransfer.account).to eq account
+		end
+
+		context "unscheduled" do
+			subject { create :split_transaction }
+
+			it "should build child transactions of the appropriate types" do
+				expect(subject.subtransfers.first.header.transaction_date).to eq subject.header.transaction_date
+				expect(subject.subtransfers.first.header.schedule).to be_nil
+			end
+		end
+
+		context "scheduled" do
+			subject { create :split_transaction, :scheduled }
+
+			it "should build child transactions of the appropriate types" do
+				expect(subject.subtransfers.first.header.transaction_date).to be_nil
+				expect(subject.subtransfers.first.header.schedule.next_due_date).to eq subject.header.schedule.next_due_date
+				expect(subject.subtransfers.first.header.schedule.frequency).to eq subject.header.schedule.frequency
+			end
 		end
 	end
 

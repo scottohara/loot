@@ -566,7 +566,7 @@
 				});
 			});
 
-			describe("(subtransaction)", function() {
+			describe.only("(subtransaction)", function() {
 				beforeEach(function() {
 					scheduleEditController.transaction.subtransactions = [
 						{category: {direction: "inflow"}}
@@ -574,8 +574,8 @@
 				});
 
 				var scenarios = [
-					{id: "TransferTo", type: "Transfer", direction: "outflow"},
-					{id: "TransferFrom", type: "Transfer", direction: "inflow"},
+					{id: "TransferTo", type: "Subtransfer", direction: "outflow"},
+					{id: "TransferFrom", type: "Subtransfer", direction: "inflow"},
 					{id: "anything else", type: "Sub", direction: "the category direction"},
 				];
 
