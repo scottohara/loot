@@ -139,6 +139,7 @@
 				delete transaction.transaction_date;
 				delete transaction.primary_account;
 				delete transaction.status;
+				delete transaction.related_status;
 				delete transaction.flag;
 
 				// Merge the last transaction details into the transaction on the scope

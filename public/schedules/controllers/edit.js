@@ -183,6 +183,7 @@
 				delete transaction.transaction_date;
 				delete transaction.frequency;
 				delete transaction.status;
+				delete transaction.related_status;
 
 				// Retain the schedule's flag (if any), don't overwrite with the previous transaction's flag
 				transaction.flag = $scope.transaction.flag;
