@@ -1,9 +1,9 @@
-[![devDependency Status](https://david-dm.org/scottohara/loot/dev-status.svg)](https://david-dm.org/scottohara/loot#info=devDependencies)
 [![Build Status](https://travis-ci.org/scottohara/loot.svg)](https://travis-ci.org/scottohara/loot)
 [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)
 [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)
 [![Dependency Status](https://www.versioneye.com/user/projects/549d100c6b1b81d9a4000925/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d100c6b1b81d9a4000925)
 [![Dependency Status](https://www.versioneye.com/user/projects/549d10246b1b81d16a000982/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d10246b1b81d16a000982)
+[![Dependency Status](https://www.versioneye.com/user/projects/549d12836b1b81202d0005dc/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d12836b1b81202d0005dc)
 
 Description
 ===========
