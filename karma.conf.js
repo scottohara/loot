@@ -59,10 +59,10 @@ module.exports = function(config) {
 			"public/!(bower_components)/**/views/*.html",
 
 			// Test files
-			"test/public/mocks/!(loot)/*.js",
-			"test/public/mocks/!(loot)/**/*.js",
-			"test/public/mocks/loot/*.js",
-			"test/public/**/*.js"
+			"spec/public/mocks/!(loot)/*.js",
+			"spec/public/mocks/!(loot)/**/*.js",
+			"spec/public/mocks/loot/*.js",
+			"spec/public/**/*.js"
 		],
 
 		// list of files to exclude

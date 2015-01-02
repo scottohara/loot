@@ -10,9 +10,7 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "public/bower_components",
-    "test",
-    "tests"
+    "public/bower_components"
   ],
   "dependencies": {
     "bootstrap": "~3.2",
