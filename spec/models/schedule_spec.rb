@@ -156,13 +156,17 @@ RSpec.describe Schedule, :type => :model do
 		end
 
 		it "should handle all types of frequencies and set the next due date to a future date" do
+			weekly = create :basic_transaction, :scheduled, frequency: "Weekly", next_due_date: Date.today.advance({:weeks => -1})
 			fortnightly = create :basic_transaction, :scheduled, frequency: "Fortnightly", next_due_date: Date.today.advance({:weeks => -2})
 			monthly = create :basic_transaction, :scheduled, frequency: "Monthly", next_due_date: Date.today.advance({:months => -1})
+			bimonthly = create :basic_transaction, :scheduled, frequency: "Bimonthly", next_due_date: Date.today.advance({:months => -2})
 			quarterly = create :basic_transaction, :scheduled, frequency: "Quarterly", next_due_date: Date.today.advance({:months => -3})
 			yearly = create :basic_transaction, :scheduled, frequency: "Yearly", next_due_date: Date.today.advance({:years => -1})
 
+			expect(BasicTransaction).to be_created_from weekly.as_json, weekly.account.id, weekly.header.schedule.next_due_date
 			expect(BasicTransaction).to be_created_from fortnightly.as_json, fortnightly.account.id, fortnightly.header.schedule.next_due_date
 			expect(BasicTransaction).to be_created_from monthly.as_json, monthly.account.id, monthly.header.schedule.next_due_date
+			expect(BasicTransaction).to be_created_from bimonthly.as_json, bimonthly.account.id, bimonthly.header.schedule.next_due_date
 			expect(BasicTransaction).to be_created_from quarterly.as_json, quarterly.account.id, quarterly.header.schedule.next_due_date
 			expect(BasicTransaction).to be_created_from yearly.as_json, yearly.account.id, yearly.header.schedule.next_due_date
 

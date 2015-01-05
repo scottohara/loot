@@ -846,8 +846,10 @@
 
 		describe("calculateNextDue", function() {
 			var scenarios = [
+				{frequency: "Weekly", period: "weeks", amount: 1},
 				{frequency: "Fortnightly", period: "weeks", amount: 2},
 				{frequency: "Monthly", period: "month", amount: 1},
+				{frequency: "Bimonthly", period: "month", amount: 2},
 				{frequency: "Quarterly", period: "months", amount: 3},
 				{frequency: "Yearly", period: "year", amount: 1}
 			];

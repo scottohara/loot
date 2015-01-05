@@ -147,8 +147,10 @@ class Schedule < ActiveRecord::Base
 
 					# Update the schedule's next due date
 					schedule.next_due_date = schedule.next_due_date.advance(case schedule.frequency
+						when 'Weekly' then {:weeks => 1}
 						when 'Fortnightly' then {:weeks => 2}
 						when 'Monthly' then {:months => 1}
+						when 'Bimonthly' then {:months => 2}
 						when 'Quarterly' then {:months => 3}
 						when 'Yearly' then {:years => 1}
 					end)

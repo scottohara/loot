@@ -415,8 +415,10 @@
 
 			// List of schedule frequencies
 			$scope.scheduleFrequencies = {
+				Weekly: { weeks: 1 },
 				Fortnightly: { weeks: 2 },
 				Monthly: { months: 1 },
+				Bimonthly: { months: 2 },
 				Quarterly: { months: 3 },
 				Yearly: { years: 1 }
 			};

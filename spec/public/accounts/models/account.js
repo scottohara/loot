@@ -49,7 +49,7 @@
 			$httpBackend.verifyNoOutstandingRequest();
 		});
 
-		it ("should fetch the list of recent accounts from localStorage", function() {
+		it("should fetch the list of recent accounts from localStorage", function() {
 			$window.localStorage.getItem.should.have.been.calledWith("lootRecentAccounts");
 		});
 
