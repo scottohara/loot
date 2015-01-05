@@ -37,7 +37,7 @@ module.exports = function(config) {
 				watched: false
 			},
 			{
-				pattern: "public/bower_components/less/dist/less-1.7.5.min.js",
+				pattern: "public/bower_components/less/dist/less.min.js",
 				watched: false
 			},
 			{
