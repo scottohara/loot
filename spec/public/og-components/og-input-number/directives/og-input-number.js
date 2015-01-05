@@ -74,7 +74,7 @@
 		describe("on focus", function() {
 			it("should strip any formatting", function() {
 				expected = "-1,234.5";
-				ogInputNumber.element.val("-1,234.5");
+				ogInputNumber.element.val("-1a,234.5");
 				ogInputNumber.element.triggerHandler("focus");
 				ogInputNumber.element.val().should.equal(expected);
 			});
@@ -85,6 +85,25 @@
 				ogInputNumber.element.val("-1234.5");
 				ogInputNumber.element.triggerHandler("blur");
 				ogInputNumber.element.val().should.equal("-1,234.5");
+			});
+		});
+
+		describe("on destroy", function() {
+			beforeEach(function() {
+				ogInputNumber.element.triggerHandler("$destroy");
+			});
+
+			it("should remove the focus handler from the element", function() {
+				expected = "-1a,234.5";
+				ogInputNumber.element.val("-1a,234.5");
+				ogInputNumber.element.triggerHandler("focus");
+				ogInputNumber.element.val().should.equal(expected);
+			});
+
+			it("should remove the blur handler from the element", function() {
+				ogInputNumber.element.val("-1234.5");
+				ogInputNumber.element.triggerHandler("blur");
+				ogInputNumber.element.val().should.equal("-1234.5");
 			});
 		});
 	});

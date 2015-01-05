@@ -21,12 +21,18 @@
 						return numberFilter(!!(value) && Number(value) || 0);
 					});
 
+					var formattedToRaw = function() {
+						iElement.val(numberFilter(scope.formattedToRaw(iElement.val())));
+					};
+
 					// Update view when tabbing in/out of the field
-					iElement.on("focus", function() {
-						iElement.val(numberFilter(scope.formattedToRaw(iElement.val())));
-					});
-					iElement.on("blur", function() {
-						iElement.val(numberFilter(scope.formattedToRaw(iElement.val())));
+					iElement.on("focus", formattedToRaw);
+					iElement.on("blur", formattedToRaw);
+
+					// When the element is destroyed, remove all event handlers
+					iElement.on("$destroy", function() {
+						iElement.off("focus", formattedToRaw);
+						iElement.off("blur", formattedToRaw);
 					});
 				}
 			};

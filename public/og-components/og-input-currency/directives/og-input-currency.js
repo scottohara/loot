@@ -25,12 +25,22 @@
 					// Model to view
 					ngModel.$formatters.unshift(scope.rawToFormatted);
 
-					// Update view when tabbing in/out of the field
-					iElement.on("focus", function() {
+					var formattedToRaw = function() {
 						iElement.val(numberFilter(scope.formattedToRaw(iElement.val()), scope.decimalPlaces));
-					});
-					iElement.on("blur", function() {
+					};
+
+					var rawToFormatted = function() {
 						iElement.val(scope.rawToFormatted(scope.formattedToRaw(iElement.val())));
+					};
+
+					// Update view when tabbing in/out of the field
+					iElement.on("focus", formattedToRaw);
+					iElement.on("blur", rawToFormatted);
+
+					// When the element is destroyed, remove all event handlers
+					iElement.on("$destroy", function() {
+						iElement.off("focus", formattedToRaw);
+						iElement.off("blur", rawToFormatted);
 					});
 				}
 			};

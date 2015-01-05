@@ -100,5 +100,26 @@
 				ogInputCurrency.element.val().should.equal("-$1,234.56");
 			});
 		});
+
+		describe("on destroy", function() {
+			beforeEach(function() {
+				ogInputCurrency.element.triggerHandler("$destroy");
+			});
+
+			it("should remove the focus handler from the element", function() {
+				expected = "-$1,234.56";
+				ogInputCurrency.scope.model = "-1234.56";
+				ogInputCurrency.scope.$digest();
+				ogInputCurrency.element.val().should.equal("-$1,234.56");
+				ogInputCurrency.element.triggerHandler("focus");
+				ogInputCurrency.element.val().should.equal(expected);
+			});
+
+			it("should remove the blur handler from the element", function() {
+				ogInputCurrency.element.val("-1234.56");
+				ogInputCurrency.element.triggerHandler("blur");
+				ogInputCurrency.element.val().should.equal("-1234.56");
+			});
+		});
 	});
 })();
