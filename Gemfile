@@ -2,7 +2,7 @@ ruby "2.2.0"
 
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.6'
+gem 'rails', '4.2.0'
 
 # Postgres
 gem 'pg'
@@ -17,6 +17,9 @@ gem 'rails_12factor', :group => :production
 
 # For JSON serialisation
 gem 'active_model_serializers'
+
+# For controller respond_to
+gem 'responders'
 
 group :development, :test do
 	gem 'rspec-rails'
