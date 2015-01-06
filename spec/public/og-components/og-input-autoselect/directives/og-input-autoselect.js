@@ -46,10 +46,12 @@
 		describe("on destroy", function() {
 			beforeEach(function() {
 				ogInputAutoselect.element.triggerHandler("$destroy");
+				ogInputAutoselect.scope.$digest();
 			});
 
 			it("should remove the focus handler from the element", function() {
 				ogInputAutoselect.element.triggerHandler("focus");
+				$timeout.flush();
 				mockJQueryInstance.select.should.not.have.been.called;
 			});
 		});

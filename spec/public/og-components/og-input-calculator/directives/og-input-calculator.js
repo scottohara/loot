@@ -71,7 +71,7 @@
 			it("should use no formatting if the element includes neither og-input-currency or og-input-number directives", function() {
 				ogInputCalculator.compile(undefined);
 				ogInputCalculator.scope.$digest();
-				(undefined === ogInputCalculator.scope.ogInput).should.be.true;
+				(null === ogInputCalculator.scope.ogInput).should.be.true;
 			});
 		});
 
@@ -148,7 +148,7 @@
 
 			it("shoud set the current view value on the scope", function() {
 				ogInputCalculator.scope.calculate();
-				ogInputCalculator.scope.current.should.equal(1);
+				ogInputCalculator.scope.current.should.equal("1");
 			});
 
 			describe("(stack is undefined)", function() {

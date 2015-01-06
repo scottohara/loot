@@ -16,6 +16,7 @@
 			ogInputNumber = directiveTest;
 			ogInputNumber.configure("og-input-number", "input");
 			ogInputNumber.compile();
+			ogInputNumber.scope.$digest();
 		}));
 
 		describe("on model change", function() {

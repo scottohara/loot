@@ -16,6 +16,7 @@
 			ogInputCurrency = directiveTest;
 			ogInputCurrency.configure("og-input-currency", "input");
 			ogInputCurrency.compile();
+			ogInputCurrency.scope.$digest();
 		}));
 
 		describe("on model change", function() {
