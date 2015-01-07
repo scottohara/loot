@@ -29,4 +29,4 @@ script:
   - npm test -- --browsers Firefox      # Frontend specs
 
 # Pipe the JS coverage data to Code Climate
-after_script: codeclimate < ./coverage/frontent/lcov.info
+after_script: codeclimate < ./coverage/frontend/lcov.info
