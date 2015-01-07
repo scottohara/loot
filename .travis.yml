@@ -19,8 +19,8 @@ before_script: bundle exec rake db:create db:migrate
 
 # Run the test suites
 script:
-  - bundle exec rake                          # Backend specs
-  - npm test -- --browsers PhantomJS,Firefox  # Frontend specs
+  - bundle exec rake                            # Backend specs
+  - npm test -- "--browsers PhantomJS,Firefox"  # Frontend specs
 
 # Pipe the JS coverage data to Code Climate
 after_script: codeclimate < ./coverage/frontent/lcov.info
