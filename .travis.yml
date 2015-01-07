@@ -9,21 +9,24 @@ sudo: false
 # Code Climate token for coverage reporting
 env: CODECLIMATE_REPO_TOKEN=26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
-# Default npm version on Travis is (currently) 1.4.x; we need 2.x (for passing args to npm test)
-before_install: npm install -g npm@latest
+
+before_install:
+  - npm install -g npm@latest           # Default npm version on Travis is (currently) 1.4.x; we need 2.x (for passing args to npm test)
+  - export DISPLAY=:99.0                # Display number for xvfb (for headless browser testing)
+  - sh -e /etc/init.d/xvfb start        # Start xvfb (for headless browser testing)
 
 install:
   - bundle install --without production # Install ruby gems, excluding produciton only gems such as unicorn (already present by default in Travis)
   - npm install                         # Install npm dependencies
-  - npm install karma-phantomjs-launcher karma-firefox-launcher codeclimate-test-reporter
+  - npm install karma-firefox-launcher codeclimate-test-reporter
 
 # Setup the database
 before_script: bundle exec rake db:create db:migrate
 
 # Run the test suites
 script:
-  - bundle exec rake                          # Backend specs
-  - npm test -- --browsers PhantomJS,Firefox  # Frontend specs
+  - bundle exec rake                    # Backend specs
+  - npm test -- --browsers Firefox      # Frontend specs
 
 # Pipe the JS coverage data to Code Climate
 after_script: codeclimate < ./coverage/frontent/lcov.info
