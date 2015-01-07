@@ -70,6 +70,14 @@
 			transactionIndexController.openingBalance = transactionBatch.openingBalance;
 		});
 
+		it("should ensure the transaction is focussed when the transaction id state param is present", function() {
+			$state.params.transactionId = "1";
+			transactionIndexController = controllerTest("transactionIndexController", {$state: $state}, parentScope);
+			transactionIndexController.tableActions.focusRow = sinon.stub();
+			$timeout.flush();
+			transactionIndexController.tableActions.focusRow.should.have.been.calledWith(0);
+		});
+
 		it("should set the previous/next loading indicators to false", function() {
 			transactionIndexController.loading.prev.should.be.false;
 			transactionIndexController.loading.next.should.be.false;

@@ -15,7 +15,8 @@
 			},
 			reload: sinon.stub(),
 			go: sinon.stub(),
-			includes: sinon.stub().returns(false)
+			includes: sinon.stub().returns(false),
+			params: {}
 		};
 
 		provider.$get = function() {

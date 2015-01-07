@@ -592,7 +592,7 @@
 			};
 
 			// Process the initial batch of transactions to display
-			$scope.processTransactions(transactionBatch);
+			$scope.processTransactions(transactionBatch, undefined, Number($state.params.transactionId));
 
 			// Listen for state change events, and when the transactionId or id parameters change, ensure the row is focussed
 			$scope.stateChangeSuccessHandler = function(event, toState, toParams, fromState, fromParams) {
