@@ -16,16 +16,17 @@
 				payeeModel,
 				categoryModel,
 				securityModel,
+				authenticated,
 				mockJQueryInstance,
 				realJQueryInstance;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "loot", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel"]);
+			mockDependenciesProvider.load(["$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"]);
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(controllerTest, _$state_, _$modal_, _$uiViewScroll_, _authenticationModel_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_) {
+		beforeEach(inject(function(controllerTest, _$state_, _$modal_, _$uiViewScroll_, _authenticationModel_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_, _authenticated_) {
 			$state = _$state_;
 			$modal = _$modal_;
 			$uiViewScroll = _$uiViewScroll_;
@@ -34,6 +35,7 @@
 			payeeModel = _payeeModel_;
 			categoryModel = _categoryModel_;
 			securityModel = _securityModel_;
+			authenticated = _authenticated_;
 			layoutController = controllerTest("layoutController");
 			mockJQueryInstance = {};
 			realJQueryInstance = window.$;
@@ -46,7 +48,7 @@
 		});
 
 		it("should make the authentication status available on the $scope", function() {
-			layoutController.isAuthenticated.should.equal(authenticationModel.isAuthenticated);
+			layoutController.authenticated.should.equal(authenticated);
 		});
 
 		describe("login", function() {

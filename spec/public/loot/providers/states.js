@@ -11,7 +11,9 @@
 				$httpBackend,
 				$modal,
 				authenticationModel,
+				authenticated,
 				accountModel,
+				accountsWithBalances,
 				account,
 				scheduleModel,
 				schedules,
@@ -31,18 +33,20 @@
 
 		// Load the modules
 		beforeEach(module("states", "lootMocks", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$modal", "authenticationModel", "accountModel", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"]);
+			mockDependenciesProvider.load(["$modal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"]);
 		}));
 
 		// Inject the object under test and it's dependencies
-		beforeEach(inject(function(_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$modal_, _authenticationModel_, _accountModel_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_) {
+		beforeEach(inject(function(_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$modal_, _authenticationModel_, _authenticated_, _accountModel_, _accountsWithBalances_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_) {
 			$rootScope = _$rootScope_;
 			$state = _$state_;
 			$injector = _$injector_;
 			$httpBackend = _$httpBackend_;
 			$modal = _$modal_;
 			authenticationModel = _authenticationModel_;
+			authenticated = _authenticated_;
 			accountModel = _accountModel_;
+			accountsWithBalances = _accountsWithBalances_;
 			account = _account_;
 			scheduleModel = _scheduleModel_;
 			schedules = _schedules_;
@@ -61,6 +65,8 @@
 		}));
 
 		describe("root state", function() {
+			var resolvedAuthenticated;
+
 			beforeEach(function() {
 				stateName = "root";
 				stateConfig = $state.get(stateName);
@@ -75,24 +81,31 @@
 			});
 
 			it("should resolve the authentication status of a logged in user", function() {
-				$injector.invoke(stateConfig.resolve.authenticated);
+				resolvedAuthenticated = $injector.invoke(stateConfig.resolve.authenticated);
 				authenticationModel.isAuthenticated.should.have.been.called;
+				resolvedAuthenticated.should.be.true;
 			});
 
 			describe("(non-logged in user)", function() {
 				beforeEach(function() {
 					authenticationModel.isAuthenticated.returns(false);
-					$injector.invoke(stateConfig.resolve.authenticated);
+					resolvedAuthenticated = $injector.invoke(stateConfig.resolve.authenticated);
+					authenticationModel.isAuthenticated.should.have.been.called;
 				});
 
-				it("should resolve the authentication status of a non-logged in user and show the login modal", function() {
-					authenticationModel.isAuthenticated.should.have.been.called;
+				it("should show the login modal", function() {
 					$modal.open.should.have.been.called;
+				});
+
+				it("should resolve the authentication status of a logged in user when the login modal is closed", function() {
+					authenticationModel.isAuthenticated.returns(true);
+					$modal.close();
+					resolvedAuthenticated.should.eventually.be.true;
 				});
 
 				it("should resolve the authentication status of a non-logged in user when the login modal is dismissed", function() {
 					$modal.dismiss();
-					$modal.catchCallback.should.have.been.called;
+					resolvedAuthenticated.should.eventually.be.false;
 				});
 			});
 		});
@@ -112,90 +125,116 @@
 				$state.href(stateName).should.equal("#/accounts");
 			});
 
-			it("should succesfully transition", function() {
+			it("should not transition if the user is unauthenticated", function() {
+				$state.get(stateName).resolve.authenticated = function() { return false; };
 				$state.go(stateName);
 				$rootScope.$digest();
-				$httpBackend.flush();
-				$state.current.name.should.equal(stateName);
+				$state.current.name.should.not.equal(stateName);
 			});
 
-			describe("account state", function() {
+			describe("(on transition)", function() {
+				var resolvedAccounts;
+
 				beforeEach(function() {
-					stateName += ".account";
-				});
-
-				it("should resolve to a URL", function() {
-					$state.href(stateName, {id: 1}).should.equal("#/accounts/1");
-				});
-
-				it("should successfully transition", function() {
 					$state.go(stateName);
 					$rootScope.$digest();
 					$httpBackend.flush();
+					resolvedAccounts = $injector.invoke($state.current.resolve.accounts);
+				});
+				
+				it("should successfully transition", function() {
 					$state.current.name.should.equal(stateName);
 				});
 
-				describe("account transactions state", function() {
-					beforeEach(function() {
-						stateName += ".transactions";
-						stateConfig = $state.get(stateName);
-						$httpBackend.expectGET("transactions/views/index.html").respond(200);
-					});
+				it("should resolve the accounts", function() {
+					accountModel.allWithBalances.should.have.been.called;
+					resolvedAccounts.should.eventually.deep.equal(accountsWithBalances);
+				});
 
-					it("should have a title", function() {
-						stateConfig.data.title.should.equal("Account Transactions");
+				describe("account state", function() {
+					beforeEach(function() {
+						stateName += ".account";
 					});
 
 					it("should resolve to a URL", function() {
-						$state.href(stateName, {id: 1}).should.equal("#/accounts/1/transactions");
+						$state.href(stateName, {id: 1}).should.equal("#/accounts/1");
 					});
 
-					describe("(on transition)", function() {
-						var resolvedContextModel,
-								resolvedContext,
-								resolvedTransactionBatch;
+					it("should successfully transition", function() {
+						$state.go(stateName);
+						$rootScope.$digest();
+						$state.current.name.should.equal(stateName);
+					});
 
+					describe("account transactions state", function() {
 						beforeEach(function() {
+							stateName += ".transactions";
+							stateConfig = $state.get(stateName);
+							$httpBackend.expectGET("transactions/views/index.html").respond(200);
+						});
+
+						it("should have a title", function() {
+							stateConfig.data.title.should.equal("Account Transactions");
+						});
+
+						it("should resolve to a URL", function() {
+							$state.href(stateName, {id: 1}).should.equal("#/accounts/1/transactions");
+						});
+
+						it("should not transition if the user is unauthenticated", function() {
+							$state.get(stateName).resolve.authenticated = function() { return false; };
 							$state.go(stateName, {id: 1});
 							$rootScope.$digest();
-							$httpBackend.flush();
-							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
-							resolvedContext = $injector.invoke($state.current.resolve.context, undefined, {contextModel: resolvedContextModel});
-							resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, undefined, {contextModel: resolvedContextModel, context: resolvedContext});
+							$state.current.name.should.not.equal(stateName);
 						});
 
-						it("should successfully transition", function() {
-							$state.current.name.should.equal(stateName);
-						});
+						describe("(on transition)", function() {
+							var resolvedContextModel,
+									resolvedContext,
+									resolvedTransactionBatch;
 
-						it("should resolve the parent context's model", function() {
-							resolvedContextModel.should.equal(accountModel);
-						});
-
-						it("should resolve the parent context", function() {
-							accountModel.find.should.have.been.calledWith(1);
-							resolvedContext.should.deep.equal(account);
-						});
-
-						it("should resolve the transaction batch", function() {
-							resolvedContextModel.isUnreconciledOnly.should.have.been.calledWith(resolvedContext.id);
-							transactionModel.all.should.have.been.calledWith("/accounts/1", null, "prev", true);
-							resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
-						});
-
-						describe("account transaction state", function() {
 							beforeEach(function() {
-								stateName += ".transaction";
-							});
-
-							it("should resolve to a URL", function() {
-								$state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/accounts/1/transactions/2");
+								$state.go(stateName, {id: 1});
+								$rootScope.$digest();
+								$httpBackend.flush();
+								resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
+								resolvedContext = $injector.invoke($state.current.resolve.context, undefined, {contextModel: resolvedContextModel});
+								resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, undefined, {contextModel: resolvedContextModel, context: resolvedContext});
 							});
 
 							it("should successfully transition", function() {
-								$state.go(stateName);
-								$rootScope.$digest();
 								$state.current.name.should.equal(stateName);
+							});
+
+							it("should resolve the parent context's model", function() {
+								resolvedContextModel.should.equal(accountModel);
+							});
+
+							it("should resolve the parent context", function() {
+								accountModel.find.should.have.been.calledWith(1);
+								resolvedContext.should.deep.equal(account);
+							});
+
+							it("should resolve the transaction batch", function() {
+								resolvedContextModel.isUnreconciledOnly.should.have.been.calledWith(resolvedContext.id);
+								transactionModel.all.should.have.been.calledWith("/accounts/1", null, "prev", true);
+								resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
+							});
+
+							describe("account transaction state", function() {
+								beforeEach(function() {
+									stateName += ".transaction";
+								});
+
+								it("should resolve to a URL", function() {
+									$state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/accounts/1/transactions/2");
+								});
+
+								it("should successfully transition", function() {
+									$state.go(stateName);
+									$rootScope.$digest();
+									$state.current.name.should.equal(stateName);
+								});
 							});
 						});
 					});
@@ -216,6 +255,13 @@
 
 			it("should resolve to a URL", function() {
 				$state.href(stateName).should.equal("#/schedules");
+			});
+
+			it("should not transition if the user is unauthenticated", function() {
+				$state.get(stateName).resolve.authenticated = function() { return false; };
+				$state.go(stateName);
+				$rootScope.$digest();
+				$state.current.name.should.not.equal(stateName);
 			});
 
 			describe("(on transition)", function() {
@@ -270,6 +316,13 @@
 				$state.href(stateName).should.equal("#/payees");
 			});
 
+			it("should not transition if the user is unauthenticated", function() {
+				$state.get(stateName).resolve.authenticated = function() { return false; };
+				$state.go(stateName);
+				$rootScope.$digest();
+				$state.current.name.should.not.equal(stateName);
+			});
+
 			describe("(on transition)", function() {
 				var resolvedPayees;
 
@@ -317,6 +370,13 @@
 
 						it("should resolve to a URL", function() {
 							$state.href(stateName, {id: 1}).should.equal("#/payees/1/transactions");
+						});
+
+						it("should not transition if the user is unauthenticated", function() {
+							$state.get(stateName).resolve.authenticated = function() { return false; };
+							$state.go(stateName, {id: 1});
+							$rootScope.$digest();
+							$state.current.name.should.not.equal(stateName);
 						});
 
 						describe("(on transition)", function() {
@@ -389,6 +449,13 @@
 				$state.href(stateName).should.equal("#/categories");
 			});
 
+			it("should not transition if the user is unauthenticated", function() {
+				$state.get(stateName).resolve.authenticated = function() { return false; };
+				$state.go(stateName);
+				$rootScope.$digest();
+				$state.current.name.should.not.equal(stateName);
+			});
+
 			describe("(on transition)", function() {
 				var resolvedCategories;
 
@@ -436,6 +503,13 @@
 
 						it("should resolve to a URL", function() {
 							$state.href(stateName, {id: 1}).should.equal("#/categories/1/transactions");
+						});
+
+						it("should not transition if the user is unauthenticated", function() {
+							$state.get(stateName).resolve.authenticated = function() { return false; };
+							$state.go(stateName, {id: 1});
+							$rootScope.$digest();
+							$state.current.name.should.not.equal(stateName);
 						});
 
 						describe("(on transition)", function() {
@@ -508,6 +582,13 @@
 				$state.href(stateName).should.equal("#/securities");
 			});
 
+			it("should not transition if the user is unauthenticated", function() {
+				$state.get(stateName).resolve.authenticated = function() { return false; };
+				$state.go(stateName);
+				$rootScope.$digest();
+				$state.current.name.should.not.equal(stateName);
+			});
+
 			describe("(on transition)", function() {
 				var resolvedSecurities;
 
@@ -555,6 +636,13 @@
 
 						it("should resolve to a URL", function() {
 							$state.href(stateName, {id: 1}).should.equal("#/securities/1/transactions");
+						});
+
+						it("should not transition if the user is unauthenticated", function() {
+							$state.get(stateName).resolve.authenticated = function() { return false; };
+							$state.go(stateName, {id: 1});
+							$rootScope.$digest();
+							$state.current.name.should.not.equal(stateName);
 						});
 
 						describe("(on transition)", function() {
@@ -628,6 +716,13 @@
 
 			it("should resolve to a URL", function() {
 				$state.href(stateName, {query: query}).should.equal("#/transactions?query=" + query);
+			});
+
+			it("should not transition if the user is unauthenticated", function() {
+				$state.get(stateName).resolve.authenticated = function() { return false; };
+				$state.go(stateName, {query: query});
+				$rootScope.$digest();
+				$state.current.name.should.not.equal(stateName);
 			});
 
 			describe("(on transition)", function() {

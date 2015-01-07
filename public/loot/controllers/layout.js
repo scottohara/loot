@@ -5,10 +5,10 @@
 	var mod = angular.module("loot");
 
 	// Declare the Layout controller
-	mod.controller("layoutController", ["$scope", "$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel",
-		function($scope, $state, $modal, $uiViewScroll, authenticationModel, accountModel, payeeModel, categoryModel, securityModel) {
-			// Make the authenication status available on the scope
-			$scope.isAuthenticated = authenticationModel.isAuthenticated;
+	mod.controller("layoutController", ["$scope", "$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated",
+		function($scope, $state, $modal, $uiViewScroll, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, authenticated) {
+			// Make the authentication status available on the scope
+			$scope.authenticated = authenticated;
 
 			// Login
 			$scope.login = function() {

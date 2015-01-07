@@ -8,25 +8,21 @@
 		var accountIndexController;
 
 		// Dependencies
-		var accountModel;
+		var accountsWithBalances;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "accounts", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["accountModel"]);
+			mockDependenciesProvider.load(["accountsWithBalances"]);
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(controllerTest, _accountModel_) {
-			accountModel = _accountModel_;
-			accountIndexController = controllerTest("accountIndexController");
+		beforeEach(inject(function(controllerTest, _accountsWithBalances_) {
+			accountsWithBalances = _accountsWithBalances_;
+			accountIndexController = controllerTest("accountIndexController", {"accounts": accountsWithBalances});
 		}));
 
-		it("should fetch the list of accounts with balances", function() {
-			accountModel.allWithBalances.should.have.been.called;
-		});
-
 		it("should make the account list available on the $scope", function() {
-			accountIndexController.accounts.should.equal(accountModel.accounts);
+			accountIndexController.accounts.should.equal(accountsWithBalances);
 		});
 
 		it("should calculate the net worth by summing the account type totals", function() {

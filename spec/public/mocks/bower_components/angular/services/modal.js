@@ -6,7 +6,8 @@
 
 	// Declare the $modalMock provider
 	mod.provider("$modalMock", function() {
-		var provider = this;
+		var provider = this,
+				callbackResult;
 
 		// Mock $modal object
 		provider.$modal = {
@@ -26,36 +27,37 @@
 						then: function(callback) {
 							// Store the callback
 							provider.$modal.closeCallback = callback;
-
-							// Return an object that is promise-like
-							return {
-								finally: function(callback) {
-									provider.$modal.finallyCallback = callback;
-								}
-							};
+							return this;
 						},
 						catch: function(callback) {
-							// Store the callback and spy on it
 							provider.$modal.catchCallback = callback;
-							sinon.spy(provider.$modal, "catchCallback");
+							return this;
+						},
+						finally: function(callback) {
+							provider.$modal.finallyCallback = callback;
+							return this;
 						}
 					}
 				};
 			},
 			close: function(value) {
-				provider.$modal.closeCallback(value);
+				callbackResult = provider.$modal.closeCallback(value);
 				if (provider.$modal.finallyCallback) {
-					provider.$modal.finallyCallback();
+					callbackResult = provider.$modal.finallyCallback(callbackResult);
 				}
+
+				return callbackResult;
 			},
 			dismiss: function() {
 				if (provider.$modal.catchCallback) {
-					provider.$modal.catchCallback();
+					callbackResult = provider.$modal.catchCallback();
 				}
 
 				if (provider.$modal.finallyCallback) {
-					provider.$modal.finallyCallback();
+					callbackResult = provider.$modal.finallyCallback(callbackResult);
 				}
+
+				return callbackResult;
 			}
 		};
 

@@ -15,7 +15,7 @@
 						promiseValue,
 						callbackResult;
 
-				var updateValueAndReturn= function(callbackResult, promise) {
+				var updateValueAndReturn = function(callbackResult, promise) {
 					// If the callback yielded a promise, we'll simply return that
 					if (callbackResult && callbackResult.then && angular.isFunction(callbackResult.then)) {
 						return callbackResult;

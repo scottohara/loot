@@ -27,20 +27,26 @@
 								title: parentContext.charAt(0).toUpperCase() + parentContext.substring(1) + " Transactions"
 							},
 							resolve: {
-								contextModel: [parentContext + "Model",
-									function(contextModel) {
-										return contextModel;
+								contextModel: ["authenticated", parentContext + "Model",
+									function(authenticated, contextModel) {
+										if (authenticated) {
+											return contextModel;
+										}
 									}
 								],
-								context: ["$stateParams", "contextModel",
-									function($stateParams, contextModel) {
-										return contextModel.find($stateParams.id);
+								context: ["authenticated", "$stateParams", "contextModel",
+									function(authenticated, $stateParams, contextModel) {
+										if (authenticated) {
+											return contextModel.find($stateParams.id);
+										}
 									}
 								],
-								transactionBatch: ["transactionModel", "contextModel", "context",
-									function(transactionModel, contextModel, context) {
-										var unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
-										return transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
+								transactionBatch: ["authenticated", "transactionModel", "contextModel", "context",
+									function(authenticated, transactionModel, contextModel, context) {
+										if (authenticated) {
+											var unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
+											return transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
+										}
 									}
 								]
 							},
@@ -64,17 +70,24 @@
 					resolve: {
 						authenticated: ["$modal", "authenticationModel",
 							function($modal, authenticationModel) {
+								// Check if the user is authenticated
 								if (!authenticationModel.isAuthenticated()) {
+									// Not authenticated, show the login modal
 									return $modal.open({
 										templateUrl: "authentication/views/edit.html",
 										controller: "authenticationEditController",
 										backdrop: "static",
 										size: "sm"
-									}).result.catch(function() {
-										// If the login modal is dismissed, catch here so
-										// that the promise resolves and the state transition
-										// completes (to show the login alert message)
+									}).result.then(function() {
+										// Return the authentication status
+										return authenticationModel.isAuthenticated();
+									}).catch(function() {
+										// Login modal dismissed
+										return false;
 									});
+								} else {
+									// User is authenticated
+									return true;
 								}
 							}
 						]
@@ -86,6 +99,15 @@
 					controller: "accountIndexController",
 					data: {
 						title: "Accounts"
+					},
+					resolve: {
+						accounts: ["authenticated", "accountModel",
+							function(authenticated, accountModel) {
+								if (authenticated) {
+									return accountModel.allWithBalances();
+								}
+							}
+						]
 					}
 				})
 				.state("root.accounts.account", basicState())
@@ -99,9 +121,11 @@
 						title: "Schedules"
 					},
 					resolve: {
-						schedules: ["scheduleModel",
-							function(scheduleModel) {
-								return scheduleModel.all();
+						schedules: ["authenticated", "scheduleModel",
+							function(authenticated, scheduleModel) {
+								if (authenticated) {
+									return scheduleModel.all();
+								}
 							}
 						]
 					}
@@ -115,9 +139,11 @@
 						title: "Payees"
 					},
 					resolve: {
-						payees: ["payeeModel",
-							function(payeeModel) {
-								return payeeModel.all();
+						payees: ["authenticated", "payeeModel",
+							function(authenticated, payeeModel) {
+								if (authenticated) {
+									return payeeModel.all();
+								}
 							}
 						]
 					}
@@ -133,9 +159,11 @@
 						title: "Categories"
 					},
 					resolve: {
-						categories: ["categoryModel",
-							function(categoryModel) {
-								return categoryModel.allWithChildren();
+						categories: ["authenticated", "categoryModel",
+							function(authenticated, categoryModel) {
+								if (authenticated) {
+									return categoryModel.allWithChildren();
+								}
 							}
 						]
 					}
@@ -151,9 +179,11 @@
 						title: "Securities"
 					},
 					resolve: {
-						securities: ["securityModel",
-							function(securityModel) {
-								return securityModel.allWithBalances();
+						securities: ["authenticated", "securityModel",
+							function(authenticated, securityModel) {
+								if (authenticated) {
+									return securityModel.allWithBalances();
+								}
 							}
 						]
 					}
@@ -175,9 +205,11 @@
 								return $stateParams.query;
 							}
 						],
-						transactionBatch: ["transactionModel", "context",
-							function(transactionModel, context) {
-								return transactionModel.query(context, null, "prev");
+						transactionBatch: ["authenticated", "transactionModel", "context",
+							function(authenticated, transactionModel, context) {
+								if (authenticated) {
+									return transactionModel.query(context, null, "prev");
+								}
 							}
 						]
 					},
