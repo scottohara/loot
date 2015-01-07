@@ -32,6 +32,9 @@
 
 		delete config.coverageReporter;
 
+		// Don't exit at the end
+		config.singleRun = false;
+
 		karma.start(config, function(exitCode) {
 			process.exit(exitCode);
 		});
