@@ -1,7 +1,5 @@
 language: ruby
 
-rvm: 2.1.0
-
 # Don't include production only gems, such as unicorn (already present by default in Travis)
 bundler_args: --without production
 
@@ -14,5 +12,18 @@ sudo: false
 # Code Climate token for coverage reporting
 env: CODECLIMATE_REPO_TOKEN=26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
+install:
+  - bundle install  # Install ruby gems
+  - npm install     # Install npm dependencies
+  - npm install karma-phantomjs-launcher karma-firefox-launcher codeclimate-test-reporter
+
 # Setup the database
 before_script: bundle exec rake db:create db:migrate
+
+# Run the test suites
+script:
+  - bundle exec rake                        # Backend specs
+  - npm test --browsers PhantomJS,Firefox   # Frontend specs
+
+# Pipe the JS coverage data to Code Climate
+after_script: codeclimate < ./coverage/frontent/lcov.info
