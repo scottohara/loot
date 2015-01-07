@@ -9,6 +9,9 @@ sudo: false
 # Code Climate token for coverage reporting
 env: CODECLIMATE_REPO_TOKEN=26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
+# Default npm version on Travis is (currently) 1.4.x; we need 2.x (for passing args to npm test)
+before_install: npm install -g npm@latest
+
 install:
   - bundle install --without production # Install ruby gems, excluding produciton only gems such as unicorn (already present by default in Travis)
   - npm install                         # Install npm dependencies
