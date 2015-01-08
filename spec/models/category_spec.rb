@@ -67,7 +67,7 @@ RSpec.describe Category, :type => :model do
 	end
 
 	describe "#as_json" do
-		let(:json) { subject.as_json }
+		let(:json) { subject.as_json({}) }
 
 		context "category" do
 			subject { create(:category, name: "Test Category", children: 1, transactions: 1) }
@@ -84,7 +84,7 @@ RSpec.describe Category, :type => :model do
 			let(:parent_json) { {:id => subject.parent.id, :name => subject.parent.name, :direction => subject.parent.direction} }
 
 			before :each do
-				expect(CategorySerializer).to receive(:new).with(subject).and_call_original
+				expect(CategorySerializer).to receive(:new).with(subject, {}).and_call_original
 				expect(CategorySerializer).to receive(:new).with(subject.parent, :only => [:id, :name, :direction]).and_return(parent_json)
 			end
 

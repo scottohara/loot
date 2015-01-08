@@ -165,6 +165,6 @@ class Account < ActiveRecord::Base
 
 	def as_json(options={})
 		# Defer to serializer
-		AccountSerializer.new(self).as_json options
+		AccountSerializer.new(self, options).as_json
 	end
 end

@@ -120,6 +120,6 @@ class Security < ActiveRecord::Base
 
 	def as_json(options={})
 		# Defer to serializer
-		SecuritySerializer.new(self).as_json options
+		SecuritySerializer.new(self, options).as_json
 	end
 end

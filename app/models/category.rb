@@ -41,7 +41,6 @@ class Category < ActiveRecord::Base
 
 	def as_json(options={:only => [:id, :name, :direction]})
 		# Defer to serializer
-		CategorySerializer.new(self).as_json options
+		CategorySerializer.new(self, options).as_json
 	end
-
 end
