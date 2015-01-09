@@ -7,8 +7,9 @@ cache: bundler
 sudo: false
 
 # Code Climate token for coverage reporting
-env: CODECLIMATE_REPO_TOKEN=26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
-
+addons:
+  code_climate:
+    repo_token: 26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
 before_install:
   - npm install -g npm@latest           # Default npm version on Travis is (currently) 1.4.x; we need 2.x (for passing args to npm test)
@@ -29,4 +30,4 @@ script:
   - npm test -- --browsers Firefox      # Frontend specs
 
 # Pipe the JS coverage data to Code Climate
-after_script: codeclimate < ./coverage/frontend/lcov.info
+after_script: cat ./coverage/frontend/lcov.info | codeclimate
