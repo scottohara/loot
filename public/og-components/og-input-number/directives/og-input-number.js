@@ -14,7 +14,7 @@
 				controller: "ogInputNumberController",
 				link: function(scope, iElement, iAttrs, ngModel) {
 					// View to model
-					ngModel.$parsers.unshift(scope.formattedToRaw);
+					ngModel.$parsers.push(scope.formattedToRaw);
 
 					// Model to view
 					ngModel.$formatters.unshift(function(value) {

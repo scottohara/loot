@@ -20,7 +20,7 @@
 					scope.setDecimalPlaces(scope.precision);
 
 					// View to model
-					ngModel.$parsers.unshift(scope.formattedToRaw);
+					ngModel.$parsers.push(scope.formattedToRaw);
 
 					// Model to view
 					ngModel.$formatters.unshift(scope.rawToFormatted);

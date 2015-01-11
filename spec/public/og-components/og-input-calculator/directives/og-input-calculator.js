@@ -141,20 +141,15 @@
 		});
 
 		describe("calculate", function() {
-			beforeEach(function() {
-				ogInputCalculator.scope.model = 1;
-				ogInputCalculator.scope.$digest();
-			});
-
-			it("shoud set the current view value on the scope", function() {
-				ogInputCalculator.scope.calculate();
+			it("should set the passed value on the scope", function() {
+				ogInputCalculator.scope.calculate("1");
 				ogInputCalculator.scope.current.should.equal("1");
 			});
 
 			describe("(stack is undefined)", function() {
 				it("should set the result to zero", function() {
 					ogInputCalculator.scope.stack = undefined;
-					ogInputCalculator.scope.calculate();
+					ogInputCalculator.scope.calculate("1");
 					ogInputCalculator.scope.result.should.equal(0);
 				});
 			});
@@ -162,7 +157,7 @@
 			describe("(stack is empty)", function() {
 				it("should set the result to zero", function() {
 					ogInputCalculator.scope.stack = [];
-					ogInputCalculator.scope.calculate();
+					ogInputCalculator.scope.calculate("1");
 					ogInputCalculator.scope.result.should.equal(0);
 				});
 			});
@@ -170,7 +165,7 @@
 			describe("(stack contains a single entry)", function() {
 				it("should set the result to zero", function() {
 					ogInputCalculator.scope.stack = [1];
-					ogInputCalculator.scope.calculate();
+					ogInputCalculator.scope.calculate("1");
 					ogInputCalculator.scope.result.should.equal(0);
 				});
 			});
@@ -184,7 +179,7 @@
 						{operator: "*", operand: 2},
 						{operator: "/"}
 					];
-					ogInputCalculator.scope.calculate();
+					ogInputCalculator.scope.calculate("1");
 				});
 
 				it("should calculate the result", function() {
@@ -197,15 +192,97 @@
 			});
 		});
 
-		describe("on input change", function() {
+		describe("inputChanged", function() {
 			beforeEach(function() {
+				sinon.stub(ogInputCalculator.scope, "push");
 				sinon.stub(ogInputCalculator.scope, "calculate");
 			});
+				
+			describe("(value contains an operator)", function() {
+				var scenarios = [
+					{
+						input: "1+",
+						operand: 1,
+						operator: "+",
+						residual: ""
+					},
+					{
+						input: "1-",
+						operand: 1,
+						operator: "-",
+						residual: ""
+					},
+					{
+						input: "1*",
+						operand: 1,
+						operator: "*",
+						residual: ""
+					},
+					{
+						input: "1/",
+						operand: 1,
+						operator: "/",
+						residual: ""
+					},
+					{
+						input: "1+2",
+						operand: 1,
+						operator: "+",
+						residual: "2"
+					},
+					{
+						input: "-1+",
+						operand: -1,
+						operator: "+",
+						residual: ""
+					},
+					{
+						input: "-1-2",
+						operand: -1,
+						operator: "-",
+						residual: "2"
+					},
+					{
+						input: "abc-1+abc2abc",
+						operand: -1,
+						operator: "+",
+						residual: "abc2abc"
+					},
+					{
+						input: "1+2+3",
+						operand: 1,
+						operator: "+",
+						residual: "2+3"
+					}
+				];
 
-			it("should recalculate the result", function() {
-				ogInputCalculator.scope.ngModel.$setViewValue("1");
-				ogInputCalculator.scope.$digest();
-				ogInputCalculator.scope.calculate.should.have.been.called;
+				scenarios.forEach(function(scenario) {
+					it("should push the operand " + scenario.operand + " and operator '" + scenario.operator + "' onto the stack when the input is '" + scenario.input + "'", function() {
+						ogInputCalculator.scope.inputChanged(scenario.input);
+						ogInputCalculator.scope.push.should.have.been.calledWith(scenario.operand, scenario.operator);
+					});
+
+					it("should set the view value to '" + scenario.residual + "' when then input is '" + scenario.input + "'", function() {
+						ogInputCalculator.scope.inputChanged(scenario.input);
+						ogInputCalculator.element.val().should.equal(scenario.residual);
+					});
+				});
+			});
+
+			describe("(value doesn't contain an operator)", function() {
+				beforeEach(function() {
+					ogInputCalculator.scope.inputChanged("1");
+				});
+				
+				it("should recalculate the result", function() {
+					ogInputCalculator.scope.calculate.should.have.been.calledWith("1");
+				});
+			});
+
+			it("should return the current result", function() {
+				ogInputCalculator.scope.inputChanged("1+2");
+				ogInputCalculator.scope.result = 3;
+				ogInputCalculator.scope.inputChanged().should.equal("3");
 			});
 		});
 
@@ -224,7 +301,6 @@
 
 			it("should update the input value and view value", function() {
 				ogInputCalculator.element.val().should.equal("1");
-				ogInputCalculator.scope.ngModel.$viewValue.should.equal("1");
 			});
 
 			it("should close the calculator", function() {
@@ -298,17 +374,6 @@
 		});
 
 		describe("keyhandler", function() {
-			var TEST_OPERATOR_KEYS = [
-				{code: 106, name: "multiply (numpad)", operator: "*"},
-				{code: 107, name: "add (numpad)", operator: "+"},
-				{code: 109, name: "subtract (numpad)", operator: "-"},
-				{code: 111, name: "divide (numpad)", operator: "/"},
-				{code: 189, name: "subtract", operator: "-"},
-				{code: 191, name: "divide", operator: "/"},
-				{code: 56, shift: true, name: "multiply (SHIFT+8)", operator: "*"},
-				{code: 187, shift: true, name: "add (SHIFT+Equals)", operator: "+"},
-			];
-
 			var TEST_ACTION_KEYS = [
 				{code: 13, name: "Enter", handler: "update"},
 				{code: 27, name: "Esc", handler: "cancel"},
@@ -326,7 +391,6 @@
 					preventDefault: sinon.stub(),
 					stopPropagation: sinon.stub()
 				};
-				sinon.stub(ogInputCalculator.scope, "push");
 				ogInputCalculator.scope.model = 1;
 				ogInputCalculator.scope.$digest();
 				ogInputCalculator.element.val().should.equal("1");
@@ -338,26 +402,6 @@
 				realJQueryInstance = window.$;
 				window.$ = sinon.stub();
 				window.$.withArgs(ogInputCalculator.element).returns(mockJQueryInstance);
-			});
-
-			it("should do nothing when the input is empty", function() {
-				ogInputCalculator.scope.model = null;
-				ogInputCalculator.scope.$digest();
-				ogInputCalculator.scope.keyHandler(event);
-				ogInputCalculator.scope.push.should.not.have.been.called;
-				event.preventDefault.should.not.have.been.called;
-			});
-
-			TEST_OPERATOR_KEYS.forEach(function(key) {
-				it("should push a '" + key.operator + "' operation on the stack when the " + key.name + " key is pressed", function() {
-					event.keyCode = key.code;
-					event.shiftKey = key.shift;
-					ogInputCalculator.scope.keyHandler(event);
-					ogInputCalculator.scope.push.should.have.been.calledWith(1, key.operator);
-					ogInputCalculator.element.val().should.be.empty;
-					ogInputCalculator.scope.ngModel.$viewValue.should.be.empty;
-					event.preventDefault.should.have.been.called;
-				});
 			});
 
 			TEST_ACTION_KEYS.forEach(function(key) {
