@@ -16,7 +16,7 @@
 					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-list-alt"></i> Accounts <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.accounts">Account List</a>
+							<a ui-sref="root.accounts" ui-sref-opts="{reload: true}">Account List</a>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent accounts</li>
@@ -26,13 +26,13 @@
 					</ul>
 				</li>
 				<li ui-sref-active="active">
-					<a ui-sref="root.schedules"><i class="glyphicon glyphicon-calendar"></i> Schedules</a>
+					<a ui-sref="root.schedules" ui-sref-opts="{reload: true}"><i class="glyphicon glyphicon-calendar"></i> Schedules</a>
 				</li>
 				<li class="dropdown" ui-sref-active="active">
 					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> Payees <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.payees">Payee List</a>
+							<a ui-sref="root.payees" ui-sref-opts="{reload: true}">Payee List</a>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent payees</li>
@@ -45,7 +45,7 @@
 					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-tags"></i> Categories <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.categories">Category List</a>
+							<a ui-sref="root.categories" ui-sref-opts="{reload: true}">Category List</a>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent categories</li>
@@ -58,7 +58,7 @@
 					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-globe"></i> Securities <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.securities">Security List</a>
+							<a ui-sref="root.securities" ui-sref-opts="{reload: true}">Security List</a>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent securities</li>
