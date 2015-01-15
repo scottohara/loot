@@ -3,9 +3,9 @@
 
 	/*jshint expr: true */
 
-	describe("transactionReconcileController", function() {
+	describe("accountReconcileController", function() {
 		// The object under test
-		var transactionReconcileController;
+		var accountReconcileController;
 
 		// Dependencies
 		var $modalInstance,
@@ -13,7 +13,7 @@
 				account;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "transactions", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "accounts", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modalInstance", "$window", "account"]);
 		}));
 
@@ -22,29 +22,29 @@
 			$modalInstance = _$modalInstance_;
 			$window = _$window_;
 			account = _account_;
-			transactionReconcileController = controllerTest("transactionReconcileController");
+			accountReconcileController = controllerTest("accountReconcileController");
 		}));
 
 		it("should fetch the closing balance from localStorage and make it available on the $scope", function() {
 			$window.localStorage.getItem.should.have.been.calledWith("lootClosingBalance-1");
-			transactionReconcileController.account.closingBalance.should.equal(1000);
+			accountReconcileController.account.closingBalance.should.equal(1000);
 		});
 
 		describe("start", function() {
 			it("should save the closing balance to localStorage", function() {
-				transactionReconcileController.start();
+				accountReconcileController.start();
 				$window.localStorage.setItem.should.have.been.calledWith("lootClosingBalance-1", 1000);
 			});
 
 			it("should close the modal when the transaction delete is successful", function() {
-				transactionReconcileController.start();
+				accountReconcileController.start();
 				$modalInstance.close.should.have.been.calledWith(1000);
 			});
 		});
 
 		describe("cancel", function() {
 			it("should dismiss the modal", function() {
-				transactionReconcileController.cancel();
+				accountReconcileController.cancel();
 				$modalInstance.dismiss.should.have.been.called;
 			});
 		});

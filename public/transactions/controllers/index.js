@@ -433,8 +433,8 @@
 				$scope.reconcile = function() {
 					// Show the modal
 					$modal.open({
-						templateUrl: "transactions/views/reconcile.html",
-						controller: "transactionReconcileController",
+						templateUrl: "accounts/views/reconcile.html",
+						controller: "accountReconcileController",
 						backdrop: "static",
 						size: "sm",
 						resolve: {
