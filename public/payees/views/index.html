@@ -7,7 +7,7 @@
 	<tbody>
 		<tr ng-repeat="payee in payees">
 			<td class="has-action">
-				{{payee.name}}
+				{{::payee.name}}
 				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit payee" ng-click="editPayee($index)"></i>
 			</td>
 		</tr>

@@ -1,6 +1,6 @@
-<h3>{{context.name}}</h3>
+<h3>{{::context.name}}</h3>
 <table id="transactions" class="table table-striped table-bordered table-hover table-condensed" og-table-navigable="tableActions">
-	<thead id="transactions-header" ng-switch="context.account_type">
+	<thead id="transactions-header" ng-switch="::context.account_type">
 		<!-- Investment account column headings -->
 		<tr ng-switch-when="investment">
 			<th class="transaction-date">Date</th>
@@ -53,62 +53,62 @@
 		<tr og-table-loading="loading['prev']" colspan="5"></tr>
 	</thead>
 	<tbody ng-class="{'reconciling': reconciling}">
-		<tr class="transaction" ng-repeat="transaction in transactions" ng-switch="context.account_type" ng-class="{'cleared': transaction.status == 'Cleared', 'future': transaction.transaction_date > today}">
+		<tr class="transaction" ng-repeat="transaction in transactions" ng-switch="::context.account_type" ng-class="{'cleared': transaction.status == 'Cleared', 'future': transaction.transaction_date > today}">
 			<!-- Transaction date -->
 			<td class="has-action">
-				{{transaction.transaction_date | date:'dd/MM/yyyy'}}
+				{{::transaction.transaction_date | date:'dd/MM/yyyy'}}
 				<i class="action glyphicon glyphicon-flag text-danger pull-right flag" ng-class="{'active': transaction.flag}" tooltip="{{transaction.flag || 'Flag transaction...'}}" ng-click="flag($index)"></i>
 			</td>
 			<!-- Details table -->
 			<td class="details">
 				<table class="table-condensed">
 					<!-- Primary Account -->
-					<tr ng-if="contextType != 'account'">
+					<tr ng-if="::contextType != 'account'">
 						<td colspan="2" class="has-action">
-							{{transaction.primary_account.name}}
-							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.primary_account.name}}" ng-click="switchPrimaryAccount($event, transaction)"></i>
+							{{::transaction.primary_account.name}}
+							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.primary_account.name}}" ng-click="switchPrimaryAccount($event, transaction)"></i>
 						</td>
 					</tr>
 					<!-- Payee / Security -->
-					<tr ng-if="contextType != 'payee' && contextType != 'security'">
+					<tr ng-if="::contextType != 'payee' && contextType != 'security'">
 						<td colspan="2" class="has-action">
 							<!-- Transaction status -->
-							<small ng-if="reconcilable" ng-switch="reconciling" class="transaction-status pull-right">
+							<small ng-if="::reconcilable" ng-switch="reconciling" class="transaction-status pull-right">
 								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="'Cleared'" ng-false-value="''" ng-change="toggleCleared(transaction)">
-								<span ng-switch-default transaction-status="{'account': context, 'transaction': transaction}"></span>
+								<span ng-switch-default transaction-status="::{'account': context, 'transaction': transaction}"></span>
 							</small>
 							<!-- Payee -->
-							<span ng-if="transaction.payee.id">
-								{{transaction.payee.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.payee.name}}" ng-click="switchPayee($event, transaction)"></i>
+							<span ng-if="::transaction.payee.id">
+								{{::transaction.payee.name}}
+								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.payee.name}}" ng-click="switchPayee($event, transaction)"></i>
 							</span>
 							<!-- Security -->
-							<span ng-if="transaction.security.id">
-								{{transaction.security.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.security.name}}" ng-click="switchSecurity($event, transaction)"></i>
+							<span ng-if="::transaction.security.id">
+								{{::transaction.security.name}}
+								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.security.name}}" ng-click="switchSecurity($event, transaction)"></i>
 							</span>
 						</td>
 					</tr>
 					<!-- Category / Subcategory / Transfer or Other Account -->
 					<tr>
 						<!-- Category -->
-						<td class="category has-action" ng-if="contextType != 'category' || (contextType == 'category' && context.parent)">
-							{{transaction.category.name}}
-							<i ng-if="['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.category.name}}" ng-click="switchCategory($event, transaction)"></i>
+						<td class="category has-action" ng-if="::contextType != 'category' || (contextType == 'category' && context.parent)">
+							{{::transaction.category.name}}
+							<i ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.category.name}}" ng-click="switchCategory($event, transaction)"></i>
 						</td>
 						<!-- Subcategory / Transfer or Other Account -->
-						<td class="category has-action" ng-if="contextType != 'category' || (contextType == 'category' && !context.parent)">
-							<span ng-if="['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1">
-								{{transaction.subcategory.name}}
-								<i ng-if="transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.subcategory.name}}" ng-click="switchSubcategory($event, transaction)"></i>
+						<td class="category has-action" ng-if="::contextType != 'category' || (contextType == 'category' && !context.parent)">
+							<span ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1">
+								{{::transaction.subcategory.name}}
+								<i ng-if="::transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.subcategory.name}}" ng-click="switchSubcategory($event, transaction)"></i>
 							</span>
 							<!-- Transfer / Other Account -->
-							<span ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1">
-								{{transaction.account.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{transaction.account.name}}" ng-click="switchAccount($event, transaction)"></i>
+							<span ng-if="::['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1">
+								{{::transaction.account.name}}
+								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.account.name}}" ng-click="switchAccount($event, transaction)"></i>
 							</span>
 							<!-- Toggle subtransactions -->
-							<span ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">
+							<span ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">
 								<button ng-click="toggleSubtransactions($event, transaction)" class="btn btn-xs btn-default toggle-subtransactions">
 									<i class="glyphicon" ng-class="{'glyphicon-chevron-down': !transaction.showSubtransactions, 'glyphicon-chevron-up': transaction.showSubtransactions}"></i>
 								</button>
@@ -116,7 +116,7 @@
 						</td>
 					</tr>
 					<!-- Subtransactions -->
-					<tr ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1" ng-show="transaction.showSubtransactions">
+					<tr ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1" ng-show="transaction.showSubtransactions">
 						<td colspan="2">
 							<table class="table-condensed">
 								<thead>
@@ -130,11 +130,11 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="subtransaction in transaction.subtransactions">
-										<td>{{subtransaction.category.name}}</td>
-										<td ng-if="subtransaction.transaction_type == 'Sub'">{{subtransaction.subcategory.name}}</td>
-										<td ng-if="subtransaction.transaction_type == 'Subtransfer'">{{subtransaction.account.name}}</td>
-										<td>{{subtransaction.memo}}</td>
-										<td class="amount" ng-class="{'text-danger': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}">{{subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1) | currency}}</td>
+										<td>{{::subtransaction.category.name}}</td>
+										<td ng-if="::subtransaction.transaction_type == 'Sub'">{{::subtransaction.subcategory.name}}</td>
+										<td ng-if="::subtransaction.transaction_type == 'Subtransfer'">{{::subtransaction.account.name}}</td>
+										<td>{{::subtransaction.memo}}</td>
+										<td class="amount" ng-class="::{'text-danger': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}">{{::subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1) | currency}}</td>
 									</tr>
 								</tbody>
 							</table>
@@ -143,41 +143,41 @@
 					<tr>
 						<!-- Memo -->
 						<td class="memo" colspan="2">
-							<span>{{transaction.memo}}</span>
-							<span ng-if="(!transaction.memo) && transaction.transaction_type == 'SecurityInvestment'">{{transaction.quantity | number}} @ ${{transaction.price | number:3}} <span ng-if="transaction.commission">(less {{transaction.commission | currency}} commission)</span></span>
+							<span>{{::transaction.memo}}</span>
+							<span ng-if="::(!transaction.memo) && transaction.transaction_type == 'SecurityInvestment'">{{::transaction.quantity | number}} @ ${{::transaction.price | number:3}} <span ng-if="::transaction.commission">(less {{::transaction.commission | currency}} commission)</span></span>
 						</td>
 					</tr>
 				</table>
 			</td>
 			<!-- Debit amount / Quantity -->
 			<td class="amount details">
-				<span ng-switch-default ng-if="transaction.direction == 'outflow'" ng-class="{'text-danger': transaction.amount < 0}">{{transaction.amount | currency}}</span>
+				<span ng-switch-default ng-if="::transaction.direction == 'outflow'" ng-class="::{'text-danger': transaction.amount < 0}">{{::transaction.amount | currency}}</span>
 				<table class="table-condensed" ng-switch-when="investment">
 					<tr>
-						<td>{{transaction.quantity | number}}</td>
+						<td>{{::transaction.quantity | number}}</td>
 					</tr>
-					<tr ng-if="transaction.transaction_type == 'SecurityInvestment'">
+					<tr ng-if="::transaction.transaction_type == 'SecurityInvestment'">
 						<td><em>Commission:</em></td>
 					</tr>
 				</table>
 			</td>
 			<!-- Credit Amount / Price / Commission -->
 			<td class="amount details">
-				<span ng-switch-default ng-if="transaction.direction == 'inflow'" ng-class="{'text-danger': transaction.amount < 0}">{{transaction.amount | currency}}</span>
-				<table class="table-condensed" ng-switch-when="investment" ng-if="transaction.transaction_type == 'SecurityInvestment'">
+				<span ng-switch-default ng-if="::transaction.direction == 'inflow'" ng-class="::{'text-danger': transaction.amount < 0}">{{::transaction.amount | currency}}</span>
+				<table class="table-condensed" ng-switch-when="investment" ng-if="::transaction.transaction_type == 'SecurityInvestment'">
 					<tr>
-						<td>${{transaction.price | number}}</td>
+						<td>${{::transaction.price | number}}</td>
 					</tr>
 					<tr>
-						<td>{{transaction.commission | currency}}</td>
+						<td>{{::transaction.commission | currency}}</td>
 					</tr>
 				</table>
 			</td>
 			<!-- Balance / Investment Amount -->
 			<td class="amount">
 				<span ng-switch-default ng-class="{'text-danger': transaction.balance < 0}">{{transaction.balance | currency}}</span>
-				<span ng-switch-when="investment" ng-if="transaction.transaction_type == 'SecurityInvestment'">{{transaction.quantity * transaction.price - transaction.commission | currency}}</span>
-				<span ng-switch-when="investment" ng-if="transaction.transaction_type == 'Dividend'">{{transaction.amount | currency}}</span>
+				<span ng-switch-when="investment" ng-if="::transaction.transaction_type == 'SecurityInvestment'">{{::transaction.quantity * transaction.price - transaction.commission | currency}}</span>
+				<span ng-switch-when="investment" ng-if="::transaction.transaction_type == 'Dividend'">{{::transaction.amount | currency}}</span>
 			</td>
 		</tr>
 	</tbody>

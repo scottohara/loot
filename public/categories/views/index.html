@@ -8,10 +8,10 @@
 	<tbody>
 		<tr ng-repeat="category in categories">
 			<td class="direction">
-				<i class="glyphicon" ng-class="{'glyphicon-plus-sign': category.direction == 'inflow', 'text-success': category.direction == 'inflow', 'glyphicon-minus-sign': category.direction == 'outflow', 'text-danger': category.direction == 'outflow'}"></i>
+				<i class="glyphicon" ng-class="::{'glyphicon-plus-sign': category.direction == 'inflow', 'text-success': category.direction == 'inflow', 'glyphicon-minus-sign': category.direction == 'outflow', 'text-danger': category.direction == 'outflow'}"></i>
 			</td>
-			<td class="has-action" ng-class="{'subcategory': category.parent}">
-				{{category.name}}
+			<td class="has-action" ng-class="::{'subcategory': category.parent}">
+				{{::category.name}}
 				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit category" ng-click="editCategory($index)"></i>
 			</td>
 		</tr>

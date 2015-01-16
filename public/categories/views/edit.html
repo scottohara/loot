@@ -1,6 +1,6 @@
 <form role="form" name="categoryForm">
 	<div class="modal-header">
-		<h4>{{mode}} Category</h4>
+		<h4>{{::mode}} Category</h4>
 	</div>
 	<div class="modal-body">
 		<!-- Name -->
@@ -10,7 +10,7 @@
 			<span ng-show="categoryForm.name.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Parent -->
-		<div ng-if="!category.num_children" class="form-group has-feedback" ng-class="{'has-error': categoryForm.parent.$invalid}">
+		<div ng-if="::!category.num_children" class="form-group has-feedback" ng-class="{'has-error': categoryForm.parent.$invalid}">
 			<label for="parent">Parent</label>
 			<input name="parent" class="form-control" ng-model="category.parent" typeahead="parentCategory as parentCategory.name for parentCategory in parentCategories($viewValue, 10)" typeahead-editable="false" placeholder="Parent" og-input-autoselect>
 			<span ng-show="categoryForm.parent.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>

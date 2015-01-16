@@ -10,32 +10,32 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="transaction" ng-repeat="schedule in schedules" ng-class="{'text-danger': schedule.next_due_date < today}">
+		<tr class="transaction" ng-repeat="schedule in schedules" ng-class="::{'text-danger': schedule.next_due_date < today}">
 			<td>
-				{{schedule.next_due_date | date:'dd/MM/yyyy'}}
-				<i ng-if="schedule.auto_enter" class="glyphicon glyphicon-pushpin pull-right" tooltip="Auto entered on due date"></i>
-				<div ng-if="schedule.overdue_count > 1">
-					<small><em>({{schedule.overdue_count}} occurences overdue)</em></small>
+				{{::schedule.next_due_date | date:'dd/MM/yyyy'}}
+				<i ng-if="::schedule.auto_enter" class="glyphicon glyphicon-pushpin pull-right" tooltip="Auto entered on due date"></i>
+				<div ng-if="::schedule.overdue_count > 1">
+					<small><em>({{::schedule.overdue_count}} occurences overdue)</em></small>
 				</div>
 			</td>
-			<td>{{schedule.primary_account.name}}</td>
+			<td>{{::schedule.primary_account.name}}</td>
 			<td class="details">
 				<table class="table-condensed">
 					<tr>
-						<td ng-if="schedule.payee.id" colspan="2">{{schedule.payee.name}}</td>
-						<td ng-if="schedule.security.id" colspan="2">{{schedule.security.name}}</td>
+						<td ng-if="::schedule.payee.id" colspan="2">{{::schedule.payee.name}}</td>
+						<td ng-if="::schedule.security.id" colspan="2">{{::schedule.security.name}}</td>
 					</tr>
 					<tr>
-						<td class="category">{{schedule.category.name}}</td>
-						<td ng-if="schedule.transaction_type == 'Basic'" class="category">{{schedule.subcategory.name}}</td>
-						<td ng-if="['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(schedule.transaction_type) != -1" class="category">{{schedule.account.name}}</td>
-						<td ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(schedule.transaction_type) != -1">
+						<td class="category">{{::schedule.category.name}}</td>
+						<td ng-if="::schedule.transaction_type == 'Basic'" class="category">{{::schedule.subcategory.name}}</td>
+						<td ng-if="::['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(schedule.transaction_type) != -1" class="category">{{::schedule.account.name}}</td>
+						<td ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(schedule.transaction_type) != -1">
 							<button ng-click="toggleSubtransactions($event, schedule)" class="btn btn-xs btn-default toggle-subtransactions">
-								<i class="glyphicon" ng-class="{'glyphicon-chevron-down': !schedule.showSubtransactions, 'glyphicon-chevron-up': schedule.showSubtransactions}"></i>
+								<i class="glyphicon" ng-class="::{'glyphicon-chevron-down': !schedule.showSubtransactions, 'glyphicon-chevron-up': schedule.showSubtransactions}"></i>
 							</button>
 						</td>
 					</tr>
-					<tr ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(schedule.transaction_type) != -1" ng-show="schedule.showSubtransactions">
+					<tr ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(schedule.transaction_type) != -1" ng-show="schedule.showSubtransactions">
 						<td colspan="2">
 							<table class="table-condensed">
 								<thead>
@@ -49,11 +49,11 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="subtransaction in schedule.subtransactions">
-										<td>{{subtransaction.category.name}}</td>
-										<td ng-if="subtransaction.transaction_type == 'Sub'">{{subtransaction.subcategory.name}}</td>
-										<td ng-if="subtransaction.transaction_type == 'Subtransfer'">{{subtransaction.account.name}}</td>
-										<td>{{subtransaction.memo}}</td>
-										<td class="amount" ng-class="{'text-danger': (subtransaction.amount * (subtransaction.direction == schedule.direction ? 1 : -1)) < 0}">{{subtransaction.amount * (subtransaction.direction == schedule.direction ? 1 : -1) | currency}}</td>
+										<td>{{::subtransaction.category.name}}</td>
+										<td ng-if="::subtransaction.transaction_type == 'Sub'">{{::subtransaction.subcategory.name}}</td>
+										<td ng-if="::subtransaction.transaction_type == 'Subtransfer'">{{::subtransaction.account.name}}</td>
+										<td>{{::subtransaction.memo}}</td>
+										<td class="amount" ng-class="::{'text-danger': (subtransaction.amount * (subtransaction.direction == schedule.direction ? 1 : -1)) < 0}">{{::subtransaction.amount * (subtransaction.direction == schedule.direction ? 1 : -1) | currency}}</td>
 									</tr>
 								</tbody>
 							</table>
@@ -61,18 +61,18 @@
 					</tr>
 					<tr>
 						<td class="memo" colspan="2">
-							<span>{{schedule.memo}}</span>
-							<span ng-if="(!schedule.memo) && schedule.transaction_type == 'SecurityInvestment'">{{schedule.quantity | number}} @ ${{schedule.price | number:3}} <span ng-if="schedule.commission">(less {{schedule.commission | currency}} commission)</span></span>
+							<span>{{::schedule.memo}}</span>
+							<span ng-if="::(!schedule.memo) && schedule.transaction_type == 'SecurityInvestment'">{{::schedule.quantity | number}} @ ${{schedule.price | number:3}} <span ng-if="::schedule.commission">(less {{::schedule.commission | currency}} commission)</span></span>
 						</td>
 					</tr>
 				</table>
 			</td>
-			<td>{{schedule.frequency}}</td>
+			<td>{{::schedule.frequency}}</td>
 			<td class="amount details">
-				<span ng-if="schedule.direction == 'outflow'" ng-class="{'text-danger': schedule.amount < 0}">{{schedule.amount | currency | estimate:schedule.estimate}}</span>
+				<span ng-if="::schedule.direction == 'outflow'" ng-class="::{'text-danger': schedule.amount < 0}">{{::schedule.amount | currency | estimate:schedule.estimate}}</span>
 			</td>
 			<td class="amount details">
-				<span ng-if="schedule.direction == 'inflow'" ng-class="{'text-danger': schedule.amount < 0}">{{schedule.amount | currency | estimate:schedule.estimate}}</span>
+				<span ng-if="::schedule.direction == 'inflow'" ng-class="::{'text-danger': schedule.amount < 0}">{{::schedule.amount | currency | estimate:schedule.estimate}}</span>
 			</td>
 		</tr>
 	</tbody>

@@ -1,11 +1,11 @@
 <form role="form" name="transactionForm">
 	<div class="modal-header">
-		<h4>{{mode}} Transaction</h4>
+		<h4>{{::mode}} Transaction</h4>
 	</div>
 	<div class="modal-body">
-		<div ng-if="transaction.status == 'Reconciled' || transaction.related_status == 'Reconciled'" class="alert alert-danger">
+		<div ng-if="::transaction.status == 'Reconciled' || transaction.related_status == 'Reconciled'" class="alert alert-danger">
 			<strong>Warning!</strong>
-			This transaction has been <span ng-if="transaction.status != 'Reconciled'">partially </span>reconciled
+			This transaction has been <span ng-if="::transaction.status != 'Reconciled'">partially </span>reconciled
 		</div>
 		<!-- Transaction Date -->
 		<div class="form-group has-feedback" ng-class="{'has-error': transactionForm.transactionDate.$invalid}">

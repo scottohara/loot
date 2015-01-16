@@ -1,11 +1,11 @@
 <form role="form" name="alertForm">
 	<div class="modal-header">
-		<h4>{{alert.header}}</h4>
+		<h4>{{::alert.header}}</h4>
 	</div>
 	<div class="modal-body">
-		<p>{{alert.message}}</p>
+		<p>{{::alert.message}}</p>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-{{alert.closeButtonStyle}}" type="submit" ng-click="close()">Close</button>
+		<button class="btn btn-{{::alert.closeButtonStyle}}" type="submit" ng-click="close()">Close</button>
 	</div>
 </form>
