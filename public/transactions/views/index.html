@@ -74,7 +74,7 @@
 						<td colspan="2" class="has-action">
 							<!-- Transaction status -->
 							<small ng-if="reconcilable" ng-switch="reconciling" class="transaction-status pull-right">
-								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="Cleared" ng-false-value="" ng-change="toggleCleared(transaction)">
+								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="'Cleared'" ng-false-value="''" ng-change="toggleCleared(transaction)">
 								<span ng-switch-default transaction-status="{'account': context, 'transaction': transaction}"></span>
 							</small>
 							<!-- Payee -->
