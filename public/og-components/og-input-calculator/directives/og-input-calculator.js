@@ -52,10 +52,11 @@
 
 					// Perform the calculation
 					scope.calculate = function(value) {
-						scope.result = 0;
+						// Default the result to the current view value
+						scope.result = Number(scope.ogInput.formattedToRaw(value));
 
 						// Make the current view value available on the scope
-						scope.current = scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(value));
+						scope.current = scope.ogInput.rawToFormatted(String(scope.result));
 
 						if (scope.stack && scope.stack.length > 1) {
 							scope.result = scope.stack.reduce(function(memo, operation, index) {

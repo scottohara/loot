@@ -147,26 +147,26 @@
 			});
 
 			describe("(stack is undefined)", function() {
-				it("should set the result to zero", function() {
+				it("should set the result to the input value", function() {
 					ogInputCalculator.scope.stack = undefined;
 					ogInputCalculator.scope.calculate("1");
-					ogInputCalculator.scope.result.should.equal(0);
+					ogInputCalculator.scope.result.should.equal(1);
 				});
 			});
 
 			describe("(stack is empty)", function() {
-				it("should set the result to zero", function() {
+				it("should set the result to the input value", function() {
 					ogInputCalculator.scope.stack = [];
 					ogInputCalculator.scope.calculate("1");
-					ogInputCalculator.scope.result.should.equal(0);
+					ogInputCalculator.scope.result.should.equal(1);
 				});
 			});
 
 			describe("(stack contains a single entry)", function() {
-				it("should set the result to zero", function() {
+				it("should set the result to the input value", function() {
 					ogInputCalculator.scope.stack = [1];
 					ogInputCalculator.scope.calculate("1");
-					ogInputCalculator.scope.result.should.equal(0);
+					ogInputCalculator.scope.result.should.equal(1);
 				});
 			});
 
