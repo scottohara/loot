@@ -46,8 +46,16 @@ table.accounts {
 }
 
 #transactions, #transactions-header {
-	& > tbody.reconciling > tr.cleared > td {
-		background-color: rgba(0, 255, 0, 0.1);
+	// Background colours when reconciling
+	& > tbody.reconciling > tr.cleared {
+		
+		&.warning > td {
+			background-color: rgba(128, 255, 0, 0.1);
+		}
+
+		& > td {
+			background-color: rgba(0, 255, 0, 0.1);
+		}
 	}
 
 	tr:not(.future) + tr.future {
