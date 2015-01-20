@@ -26,9 +26,13 @@ FactoryGirl.define do
 		end
 
 		trait :scheduled do
-			after :build do |trx|
+			transient do
+				next_due_date { Date.today.advance({months: -1}) }
+			end
+
+			after :build do |trx, evaluator|
 				trx.header.transaction_date = nil
-				trx.header.schedule = build :schedule
+				trx.header.schedule = build :schedule, next_due_date: evaluator.next_due_date
 			end
 		end
 

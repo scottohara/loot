@@ -21,7 +21,7 @@ FactoryGirl.define do
 
 		after :build do |category, evaluator|
 			create_list :basic_transaction, evaluator.transactions, category: category
-			create_list :category, evaluator.children, parent: category
+			create_list :category, evaluator.children, parent: category, direction: category.direction
 		end
 
 		trait :outflow do

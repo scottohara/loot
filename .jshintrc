@@ -109,6 +109,14 @@
 
 			// Gulp
 			"require"     : false,
-			"process"     : false
+			"process"     : false,
+
+			// Protractor
+			"protractor"	: false,
+			"browser"			: false,
+			"element"			: false,
+			"by"					: false,
+			"webdriver"		: false,
+			"global"			: false
 		}
 }
