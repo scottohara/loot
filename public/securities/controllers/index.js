@@ -12,7 +12,7 @@
 
 			// Calculate the total value
 			$scope.totalValue = securities.reduce(function(totalValue, security) {
-				return totalValue + Number(Number(security.current_value).toFixed(2));
+				return totalValue + Number(Number(security.closing_balance).toFixed(2));
 			}, 0);
 
 			$scope.editSecurity = function(index) {
@@ -157,12 +157,17 @@
 			var byHoldingAndName = function(a, b) {
 				var x, y;
 
-				if ((a.current_holding > 0) === (b.current_holding > 0)) {
-					x = a.name;
-					y = b.name;
+				if (a.unused === b.unused) {
+					if ((a.current_holding > 0) === (b.current_holding > 0)) {
+						x = a.name;
+						y = b.name;
+					} else {
+						x = (a.current_holding <= 0);
+						y = (b.current_holding <= 0);
+					}
 				} else {
-					x = (a.current_holding <= 0);
-					y = (b.current_holding <= 0);
+					x = a.unused;
+					y = b.unused;
 				}
 
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));

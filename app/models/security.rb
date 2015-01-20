@@ -9,6 +9,17 @@ class Security < ActiveRecord::Base
 							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 		end
 
+		def for_current_holding
+			select([	"transaction_accounts.direction",
+								"SUM(transaction_headers.quantity) AS total_quantity"])
+			.joins([		"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
+					 			"JOIN accounts ON accounts.id = transaction_accounts.account_id"])
+			.where(		"accounts.account_type = 'investment'")
+			.where(		:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
+			.where(		"transaction_headers.transaction_date IS NOT NULL")
+			.group(		"transaction_accounts.direction")
+		end
+
 		def for_closing_balance(opts)
 			joins([	"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
 					 		"JOIN accounts ON accounts.id = transaction_accounts.account_id"])
@@ -29,7 +40,7 @@ class Security < ActiveRecord::Base
 									securities.name,
 									securities.code,
 									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),3) AS current_holding,
-									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(p.price),2) AS current_value
+									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(p.price),2) AS closing_balance
 				FROM			securities
 				JOIN			transaction_headers ON transaction_headers.security_id = securities.id
 				JOIN			transaction_accounts ON transaction_accounts.transaction_id = transaction_headers.transaction_id
@@ -59,7 +70,8 @@ class Security < ActiveRecord::Base
 					:name => security['name'],
 					:code => security['code'],
 					:current_holding => security['current_holding'],
-					:current_value => security['current_value']
+					:closing_balance => security['closing_balance'],
+					:unused => false
 				}
 			end
 
@@ -75,7 +87,7 @@ class Security < ActiveRecord::Base
 					:name => security['name'],
 					:code => security['code'],
 					:current_holding => 0,
-					:current_value => 0,
+					:closing_balance => 0,
 					:unused => true
 				}
 			end

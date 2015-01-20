@@ -180,9 +180,9 @@
 
 			it("should return a filtered & limited list of securities", function() {
 				securities.should.eventually.deep.equal([
-					{id: 1, name: "aa", current_value: 1.006, current_holding: 1},
-					{id: 4, name: "ba", current_value: 4, current_holding: 1},
-					{id: 5, name: "ab", current_value: 5, current_holding: 1}
+					{id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false},
+					{id: 4, name: "ba", closing_balance: 4, current_holding: 1, unused: false},
+					{id: 5, name: "ab", closing_balance: 5, current_holding: 1, unused: false}
 				]);
 			});
 		});

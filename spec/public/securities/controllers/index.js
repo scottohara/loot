@@ -94,7 +94,7 @@
 			});
 
 			it("should resort the securities list when the modal is closed", function() {
-				var securityWithNoHoldingAndHighestName = angular.copy(securityIndexController.securities[7]);
+				var securityWithNoHoldingAndHighestName = angular.copy(securityIndexController.securities[6]);
 				securityIndexController.editSecurity();
 				$modal.close(security);
 				securityIndexController.securities.pop().should.deep.equal(securityWithNoHoldingAndHighestName);

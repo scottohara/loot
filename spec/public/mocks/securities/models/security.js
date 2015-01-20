@@ -9,7 +9,7 @@
 		var provider = this;
 
 		// Mock security object
-		provider.security = {id: 1, name: "aa", current_value: 1.006, current_holding: 1};
+		provider.security = {id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false};
 
 		provider.$get = function() {
 			// Return the mock security object
@@ -23,15 +23,15 @@
 
 		// Mock securities object
 		provider.securities = [
-			{id: 1, name: "aa", current_value: 1.006, current_holding: 1},
-			{id: 2, name: "bb", current_value: 2, current_holding: 1},
-			{id: 3, name: "cc", current_value: 3, current_holding: 1, num_transactions: 2},
-			{id: 4, name: "ba", current_value: 4, current_holding: 1},
-			{id: 5, name: "ab", current_value: 5, current_holding: 1},
-			{id: 6, name: "bc", current_value: 6, current_holding: 0},
-			{id: 7, name: "ca", current_value: 7, current_holding: 0},
-			{id: 8, name: "cb", current_value: 8, current_holding: 0},
-			{id: 9, name: "ac", current_value: 9, current_holding: 0}
+			{id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false},
+			{id: 2, name: "bb", closing_balance: 2, current_holding: 1, unused: false},
+			{id: 3, name: "cc", closing_balance: 3, current_holding: 1, num_transactions: 2, unused: false},
+			{id: 4, name: "ba", closing_balance: 4, current_holding: 1, unused: false},
+			{id: 5, name: "ab", closing_balance: 5, current_holding: 1, unused: false},
+			{id: 6, name: "bc", closing_balance: 6, current_holding: 0, unused: false},
+			{id: 7, name: "ca", closing_balance: 7, current_holding: 0, unused: true},
+			{id: 8, name: "cb", closing_balance: 8, current_holding: 0, unused: false},
+			{id: 9, name: "ac", closing_balance: 9, current_holding: 0, unused: true}
 		];
 
 		provider.$get = function() {

@@ -43,21 +43,23 @@ RSpec.describe Security, :type => :model do
 				:name => security.name,
 				:code => security.code,
 				:current_holding => "10.000",
-				:current_value => "10.00"
+				:closing_balance => "10.00",
+				:unused => false
 			},
 			{
 				:id => security_with_prices.id,
 				:name => security_with_prices.name,
 				:code => security_with_prices.code,
 				:current_holding => "20.000",
-				:current_value => "40.00"
+				:closing_balance => "40.00",
+				:unused => false
 			},
 			{
 				:id => unused_security.id,
 				:name => unused_security.name,
 				:code => unused_security.code,
 				:current_holding => 0,
-				:current_value => 0,
+				:closing_balance => 0,
 				:unused => true
 			},
 			{
@@ -65,7 +67,7 @@ RSpec.describe Security, :type => :model do
 				:name => unused_security_scheduled.name,
 				:code => unused_security_scheduled.code,
 				:current_holding => 0,
-				:current_value => 0,
+				:closing_balance => 0,
 				:unused => true
 			}
 		] }
@@ -195,8 +197,10 @@ RSpec.describe Security, :type => :model do
 			expect(json).to include(:id => subject.id)
 			expect(json).to include(:name => "Test Security")
 			expect(json).to include(:code => "TEST")
+			expect(json).to include(:current_holding => 10)
 			expect(json).to include(:closing_balance => subject.closing_balance)
 			expect(json).to include(:num_transactions => 1)
+			expect(json).to include(:unused => false)
 		end
 	end
 end

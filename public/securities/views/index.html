@@ -16,7 +16,7 @@
 			</td>
 			<td>{{::security.code}}</td>
 			<td class="amount" ng-class="::{'text-danger': security.current_holding < 0}">{{::security.current_holding | number:3}}</td>
-			<td class="amount" ng-class="::{'text-danger': security.current_value < 0}">{{::security.current_value | currency}}</td>
+			<td class="amount" ng-class="::{'text-danger': security.closing_balance < 0}">{{::security.closing_balance | currency}}</td>
 		</tr>
 	<tbody>
 	<tfoot>
