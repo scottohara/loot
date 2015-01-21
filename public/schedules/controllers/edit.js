@@ -59,14 +59,14 @@
 			// List of payees for the typeahead
 			$scope.payees = function(filter, limit) {
 				return payeeModel.all().then(function(payees) {
-					return limitToFilter(filterFilter(payees, filter), limit);
+					return limitToFilter(filterFilter(payees, {name: filter}), limit);
 				});
 			};
 
 			// List of securities for the typeahead
 			$scope.securities = function(filter, limit) {
 				return securityModel.all().then(function(securities) {
-					return limitToFilter(filterFilter(securities, filter), limit);
+					return limitToFilter(filterFilter(securities, {name: filter}), limit);
 				});
 			};
 
@@ -98,7 +98,7 @@
 						].concat(categories);
 					}
 
-					return limitToFilter(filterFilter(categories, filter), limit);
+					return limitToFilter(filterFilter(categories, {name: filter}), limit);
 				});
 			};
 
@@ -114,7 +114,7 @@
 					{ id: "TransferFrom", name: "Transfer From" }
 				];
 
-				return limitToFilter(filterFilter(categories, filter), limit);
+				return limitToFilter(filterFilter(categories, {name: filter}), limit);
 			};
 
 			// Returns true if the passed value is typeof string (and is not empty)
@@ -387,7 +387,7 @@
 			// List of primary accounts for the typeahead
 			$scope.primaryAccounts = function(filter, limit) {
 				return accountModel.all().then(function(accounts) {
-					return limitToFilter(filterFilter(accounts, filter), limit);
+					return limitToFilter(filterFilter(accounts, {name: filter}), limit);
 				});
 			};
 

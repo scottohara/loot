@@ -14,7 +14,7 @@
 			// List of parent categories for the typeahead
 			$scope.parentCategories = function(filter, limit) {
 				return categoryModel.all().then(function(categories) {
-					return limitToFilter(filterFilter(categories, filter), limit);
+					return limitToFilter(filterFilter(categories, {name: filter}), limit);
 				});
 			};
 
