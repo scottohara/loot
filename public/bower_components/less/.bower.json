@@ -1,6 +1,6 @@
 {
   "name": "less",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "main": "dist/less.js",
   "ignore": [
     "**/.*",
@@ -23,11 +23,11 @@
     ".npmignore"
   ],
   "homepage": "https://github.com/less/less",
-  "_release": "2.2.0",
+  "_release": "2.3.0",
   "_resolution": {
     "type": "version",
-    "tag": "v2.2.0",
-    "commit": "b593ab83ddf892133832dcdb1a99b4068bc5e109"
+    "tag": "v2.3.0",
+    "commit": "2579b63064d6ab7833411d72c1398ec2931e12c6"
   },
   "_source": "https://github.com/less/less.git",
   "_target": "^2.1",
