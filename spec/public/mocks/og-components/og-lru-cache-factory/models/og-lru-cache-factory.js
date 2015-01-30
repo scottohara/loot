@@ -11,6 +11,7 @@
 		provider.ogLruCache = {
 			list: sinon.stub().returns("recent list"),
 			put: sinon.stub().returns("updated list"),
+			remove: sinon.stub().returns("updated list"),
 			dump: sinon.stub().returns({})
 		};
 

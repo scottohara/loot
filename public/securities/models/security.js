@@ -79,7 +79,9 @@
 				// Flush the $http cache
 				model.flush();
 
-				return $http.delete(model.path(security.id));
+				return $http.delete(model.path(security.id)).then(function() {
+					model.removeRecent(security.id);
+				});
 			};
 
 			// Flush the cache
@@ -95,6 +97,15 @@
 			model.addRecent = function(security) {
 				// Put the item into the LRU cache
 				model.recent = lruCache.put(security);
+
+				// Update local storage with the new list
+				$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
+			};
+
+			// Remove an item from the LRU cache
+			model.removeRecent = function(id) {
+				// Remove the item from the LRU cache
+				model.recent = lruCache.remove(id);
 
 				// Update local storage with the new list
 				$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));

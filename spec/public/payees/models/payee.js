@@ -182,6 +182,7 @@
 		describe("destroy", function() {
 			beforeEach(function() {
 				payeeModel.flush = sinon.stub();
+				payeeModel.removeRecent = sinon.stub();
 				$httpBackend.expectDELETE(/payees\/123$/).respond(200);
 				payeeModel.destroy({id: 123});
 				$httpBackend.flush();
@@ -192,6 +193,10 @@
 			});
 
 			it("should dispatch a DELETE request to /payees/{id}", function() {
+			});
+
+			it("should remove the payee from the recent list", function() {
+				payeeModel.removeRecent.should.have.been.calledWith(123);
 			});
 		});
 
@@ -214,6 +219,21 @@
 
 			it("should add the payee to the recent list", function() {
 				ogLruCache.put.should.have.been.calledWith("payee");
+				payeeModel.recent.should.equal("updated list");
+			});
+
+			it("should save the updated recent list", function() {
+				$window.localStorage.setItem.should.have.been.calledWith("lootRecentPayees", "{}");
+			});
+		});
+
+		describe("removeRecent", function() {
+			beforeEach(function() {
+				payeeModel.removeRecent("payee");
+			});
+
+			it("should remove the payee from the recent list", function() {
+				ogLruCache.remove.should.have.been.calledWith("payee");
 				payeeModel.recent.should.equal("updated list");
 			});
 

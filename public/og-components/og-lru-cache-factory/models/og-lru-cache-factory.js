@@ -75,6 +75,38 @@
 				return this.list();
 			};
 
+			// Remove an item from the cache
+			LruCache.prototype.remove = function(id) {
+				// Check if the item is in the cache
+				if (this.items.hasOwnProperty(id)) {
+					if (String(id) === String(this.head)) {
+						// Item to remove is the current head. If there's an older item, make it the new head
+						this.head = this.items[this.head].older;
+						if (this.head) {
+							this.items[this.head].newer = null;
+						} else {
+							// Must have been the only item in the cache, so clear the tail as well
+							this.tail = null;
+						}
+					} else if (String(id) === String(this.tail)) {
+						// Item to remove is the current tail. Make the next newer item the new tail
+						this.tail = this.items[this.tail].newer;
+						this.items[this.tail].older = null;
+					} else {
+						// Item to remove is somewhere in the middle.  Link the newer and older items.
+						var itemToRemove = this.items[id];
+						this.items[itemToRemove.newer].older = itemToRemove.older;
+						this.items[itemToRemove.older].newer = itemToRemove.newer;
+					}
+
+					// Remove the item from the cache
+					delete this.items[id];
+				}
+
+				// Return the list of cached items in order (MRU)
+				return this.list();
+			};
+
 			// Check if the cache has exceeded it's capacity and trim as necessary
 			LruCache.prototype.checkCapacity = function() {
 				while (Object.keys(this.items).length > this.capacity) {

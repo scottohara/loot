@@ -209,6 +209,7 @@
 		describe("destroy", function() {
 			beforeEach(function() {
 				categoryModel.flush = sinon.stub();
+				categoryModel.removeRecent = sinon.stub();
 				$httpBackend.expectDELETE(/categories\/123$/).respond(200);
 				categoryModel.destroy({id: 123});
 				$httpBackend.flush();
@@ -219,6 +220,10 @@
 			});
 
 			it("should dispatch a DELETE request to /categories/{id}", function() {
+			});
+
+			it("should remove the category from the recent list", function() {
+				categoryModel.removeRecent.should.have.been.calledWith(123);
 			});
 		});
 
@@ -241,6 +246,21 @@
 
 			it("should add the category to the recent list", function() {
 				ogLruCache.put.should.have.been.calledWith("category");
+				categoryModel.recent.should.equal("updated list");
+			});
+
+			it("should save the updated recent list", function() {
+				$window.localStorage.setItem.should.have.been.calledWith("lootRecentCategories", "{}");
+			});
+		});
+
+		describe("removeRecent", function() {
+			beforeEach(function() {
+				categoryModel.removeRecent("category");
+			});
+
+			it("should remove the category from the recent list", function() {
+				ogLruCache.remove.should.have.been.calledWith("category");
 				categoryModel.recent.should.equal("updated list");
 			});
 

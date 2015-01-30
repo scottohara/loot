@@ -181,6 +181,54 @@
 					});
 				});
 
+				describe("remove", function() {
+					it("should leave the list unchanged if the item does not exist", function() {
+						ogLruCache.remove("non existant id").should.deep.equal(list);
+					});
+
+					describe("existing item", function() {
+						var id;
+
+						it("should set the list head and tail to null if it is the only item in the list", function() {
+							id = 1;
+							ogLruCache.items = {
+								1: {id: id, name: "item " + id}
+							};
+							ogLruCache.head = id;
+							ogLruCache.tail = id;
+
+							ogLruCache.remove(id);
+							(!!ogLruCache.head).should.be.false;
+							(!!ogLruCache.tail).should.be.false;
+						});
+
+						it("should remove an item from the head of the list", function() {
+							id = 10;
+							ogLruCache.remove(id);
+							ogLruCache.head.should.equal(9);
+							(ogLruCache.items[ogLruCache.head].newer === null).should.be.true;
+						});
+
+						it("should remove an item from the tail of the list", function() {
+							id = 1;
+							ogLruCache.remove(id);
+							ogLruCache.tail.should.equal(2);
+							(ogLruCache.items[ogLruCache.tail].older === null).should.be.true;
+						});
+							
+						it("should remove an item from the middle of the list", function() {
+							id = 5;
+							ogLruCache.remove(id);
+							ogLruCache.items[6].older.should.equal(4);
+							ogLruCache.items[4].newer.should.equal(6);
+						});
+						
+						afterEach(function() {
+							ogLruCache.items.hasOwnProperty(id).should.be.false;
+						});
+					});
+				});
+
 				describe("checkCapacity", function() {
 					it("should remove all items from the list that exceed the capacity", function() {
 						ogLruCache.capacity = 3;

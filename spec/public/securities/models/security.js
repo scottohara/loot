@@ -227,6 +227,7 @@
 		describe("destroy", function() {
 			beforeEach(function() {
 				securityModel.flush = sinon.stub();
+				securityModel.removeRecent = sinon.stub();
 				$httpBackend.expectDELETE(/securities\/123$/).respond(200);
 				securityModel.destroy({id: 123});
 				$httpBackend.flush();
@@ -237,6 +238,10 @@
 			});
 
 			it("should dispatch a DELETE request to /securities/{id}", function() {
+			});
+
+			it("should remove the securty from the recent list", function() {
+				securityModel.removeRecent.should.have.been.calledWith(123);
 			});
 		});
 
@@ -259,6 +264,21 @@
 
 			it("should add the security to the recent list", function() {
 				ogLruCache.put.should.have.been.calledWith("security");
+				securityModel.recent.should.equal("updated list");
+			});
+
+			it("should save the updated recent list", function() {
+				$window.localStorage.setItem.should.have.been.calledWith("lootRecentSecurities", "{}");
+			});
+		});
+
+		describe("removeRecent", function() {
+			beforeEach(function() {
+				securityModel.removeRecent("security");
+			});
+
+			it("should remove the security from the recent list", function() {
+				ogLruCache.remove.should.have.been.calledWith("security");
 				securityModel.recent.should.equal("updated list");
 			});
 
