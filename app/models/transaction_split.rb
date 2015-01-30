@@ -1,7 +1,7 @@
 class TransactionSplit < ActiveRecord::Base
 	validate :validate_transaction_type_inclusion
-	belongs_to :trx, :foreign_key => 'transaction_id', :class_name => 'Transaction'
-	belongs_to :parent, :class_name => 'SplitTransaction', :foreign_key => 'parent_id', :inverse_of => :transaction_splits
+	belongs_to :trx, foreign_key: 'transaction_id', class_name: 'Transaction'
+	belongs_to :parent, class_name: 'SplitTransaction', foreign_key: 'parent_id', inverse_of: :transaction_splits
 	before_destroy :destroy_transaction
 	
 	def validate_transaction_type_inclusion

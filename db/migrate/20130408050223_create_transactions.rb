@@ -3,7 +3,7 @@ class CreateTransactions < ActiveRecord::Migration
     create_table :transactions do |t|
       t.decimal :amount
       t.text :memo
-      t.string :transaction_type, :null => false
+      t.string :transaction_type, null: false
 
       t.timestamps
     end

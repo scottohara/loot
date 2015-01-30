@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'models/concerns/transactable'
 
-RSpec.describe Security, :type => :model do
+RSpec.describe Security, type: :model do
 	before :each do
 		FactoryGirl.reload
 	end
@@ -9,7 +9,7 @@ RSpec.describe Security, :type => :model do
 	it_behaves_like Transactable do
 		let(:context_factory) { :security }
 		let(:ledger_json_key) { :security }
-		let(:expected_closing_balances) { {:with_date => 1, :without_date => 0 } }
+		let(:expected_closing_balances) { {with_date: 1, without_date: 0 } }
 	end
 
 	describe "::find_or_new" do
@@ -39,36 +39,36 @@ RSpec.describe Security, :type => :model do
 
 		let(:json) { [
 			{
-				:id => security.id,
-				:name => security.name,
-				:code => security.code,
-				:current_holding => "10.000",
-				:closing_balance => "10.00",
-				:unused => false
+				id: security.id,
+				name: security.name,
+				code: security.code,
+				current_holding: "10.000",
+				closing_balance: "10.00",
+				unused: false
 			},
 			{
-				:id => security_with_prices.id,
-				:name => security_with_prices.name,
-				:code => security_with_prices.code,
-				:current_holding => "20.000",
-				:closing_balance => "40.00",
-				:unused => false
+				id: security_with_prices.id,
+				name: security_with_prices.name,
+				code: security_with_prices.code,
+				current_holding: "20.000",
+				closing_balance: "40.00",
+				unused: false
 			},
 			{
-				:id => unused_security.id,
-				:name => unused_security.name,
-				:code => unused_security.code,
-				:current_holding => 0,
-				:closing_balance => 0,
-				:unused => true
+				id: unused_security.id,
+				name: unused_security.name,
+				code: unused_security.code,
+				current_holding: 0,
+				closing_balance: 0,
+				unused: true
 			},
 			{
-				:id => unused_security_scheduled.id,
-				:name => unused_security_scheduled.name,
-				:code => unused_security_scheduled.code,
-				:current_holding => 0,
-				:closing_balance => 0,
-				:unused => true
+				id: unused_security_scheduled.id,
+				name: unused_security_scheduled.name,
+				code: unused_security_scheduled.code,
+				current_holding: 0,
+				closing_balance: 0,
+				unused: true
 			}
 		] }
 
@@ -98,7 +98,7 @@ RSpec.describe Security, :type => :model do
 		context "when a date is passed" do
 			let(:as_at) { Date.parse "2014-01-01" }
 
-			context "and prices exist before or on that date", :earlier_prices => true do
+			context "and prices exist before or on that date", earlier_prices: true do
 				it "should return the latest price as at the passed date" do
 					expect(subject.price as_at).to eq 1
 				end
@@ -114,7 +114,7 @@ RSpec.describe Security, :type => :model do
 		context "when a date is not passed" do
 			let(:as_at) { Date.today }
 
-			context "and prices exist before or on the current date", :earlier_prices => true do
+			context "and prices exist before or on the current date", earlier_prices: true do
 				it "should return the latest price as at the current date" do
 					expect(subject.price).to eq 1
 				end
@@ -138,7 +138,7 @@ RSpec.describe Security, :type => :model do
 		end
 
 		context "when a price already exists for the date" do
-			let!(:existing_price) { subject.prices.where(:as_at_date => as_at).first }
+			let!(:existing_price) { subject.prices.where(as_at_date: as_at).first }
 			let(:new_price) { 200 }
 			let!(:first_transaction) { create :security_holding_transaction, security: subject, transaction_date: as_at }
 			let!(:second_transaction) { create :security_holding_transaction, security: subject, transaction_date: as_at }
@@ -194,13 +194,13 @@ RSpec.describe Security, :type => :model do
 		let(:json) { subject.as_json }
 
 		it "should return a JSON representation" do
-			expect(json).to include(:id => subject.id)
-			expect(json).to include(:name => "Test Security")
-			expect(json).to include(:code => "TEST")
-			expect(json).to include(:current_holding => 10)
-			expect(json).to include(:closing_balance => subject.closing_balance)
-			expect(json).to include(:num_transactions => 1)
-			expect(json).to include(:unused => false)
+			expect(json).to include(id: subject.id)
+			expect(json).to include(name: "Test Security")
+			expect(json).to include(code: "TEST")
+			expect(json).to include(current_holding: 10)
+			expect(json).to include(closing_balance: subject.closing_balance)
+			expect(json).to include(num_transactions: 1)
+			expect(json).to include(unused: false)
 		end
 	end
 end

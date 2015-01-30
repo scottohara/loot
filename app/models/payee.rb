@@ -1,7 +1,7 @@
 class Payee < ActiveRecord::Base
-	validates :name, :presence => true
+	validates :name, presence: true
 	has_many :payee_transaction_headers
-	has_many :transactions, :through => :payee_transaction_headers, :source => :trx do
+	has_many :transactions, through: :payee_transaction_headers, source: :trx do
 		def for_ledger(opts)
 			joins([	"LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
@@ -23,7 +23,7 @@ class Payee < ActiveRecord::Base
 
 	class << self
 		def find_or_new(payee)
-			payee['id'].present? ? self.find(payee['id']) : self.new(:name => payee)
+			payee['id'].present? ? self.find(payee['id']) : self.new(name: payee)
 		end
 	end
 

@@ -1,6 +1,6 @@
 class TransactionHeader < ActiveRecord::Base
-	belongs_to :trx, :foreign_key => 'transaction_id', :class_name => 'Transaction'
-	belongs_to :schedule, :dependent => :destroy, :autosave => true
+	belongs_to :trx, foreign_key: 'transaction_id', class_name: 'Transaction'
+	belongs_to :schedule, dependent: :destroy, autosave: true
 	self.primary_key = "transaction_id"
 
 	def validate_transaction_date_or_schedule_presence
@@ -16,7 +16,7 @@ class TransactionHeader < ActiveRecord::Base
 
 		if json['transaction_date'].nil?
 			schedule = self.schedule || self.build_schedule
-			schedule.assign_attributes :next_due_date => json['next_due_date'], :frequency => json['frequency'], :estimate => !!json['estimate'], :auto_enter => !!json['auto_enter']
+			schedule.assign_attributes next_due_date: json['next_due_date'], frequency: json['frequency'], estimate: !!json['estimate'], auto_enter: !!json['auto_enter']
 		else
 			self.schedule.destroy unless self.schedule.nil?
 		end
@@ -26,7 +26,7 @@ class TransactionHeader < ActiveRecord::Base
 
 	def as_json(options={})
 		(self.schedule.present? && self.schedule.as_json || {}).merge({
-			:transaction_date => self.transaction_date
+			transaction_date: self.transaction_date
 		})
 	end
 end

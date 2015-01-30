@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CashTransaction, :type => :model do
+RSpec.describe CashTransaction, type: :model do
 	matcher :match_json do |expected|
 		match do |actual|
 			actual.amount.eql? expected['amount']
@@ -18,7 +18,7 @@ RSpec.describe CashTransaction, :type => :model do
 	end
 
 	describe "#update_from_json" do
-		subject { CashTransaction.new(:amount => 1) }
+		subject { CashTransaction.new(amount: 1) }
 		let(:json) { {
 			"amount" => 2
 		} }
@@ -33,7 +33,7 @@ RSpec.describe CashTransaction, :type => :model do
 		let(:json) { subject.as_json }
 
 		it "should return a JSON representation" do
-			expect(json).to include(:amount => 1)
+			expect(json).to include(amount: 1)
 		end
 	end
 end

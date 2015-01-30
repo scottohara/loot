@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SecurityInvestmentTransaction, :type => :model do
+RSpec.describe SecurityInvestmentTransaction, type: :model do
 	matcher :match_json do |expected, investment_account, cash_account|
 		match do |actual|
 			actual.transaction_type.eql? "SecurityInvestment" and \
@@ -21,7 +21,7 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 		let(:investment_account) { create :investment_account }
 		let(:cash_account) { create :bank_account }
 		let(:json) { {
-			:id => 1,
+			id: 1,
 			"amount" => amount,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -68,11 +68,11 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			end
 		end
 
-		context "outflow", :create_from_json => true, :direction => "outflow" do
+		context "outflow", create_from_json: true, direction: "outflow" do
 			let(:amount) { 15 }
 		end
 
-		context "inflow", :create_from_json => true, :direction => "inflow" do
+		context "inflow", create_from_json: true, direction: "inflow" do
 			let(:amount) { 25 }
 		end
 
@@ -87,7 +87,7 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 		let(:cash_account) { create :bank_account }
 		let(:transaction) { create :security_investment_transaction }
 		let(:json) { {
-			:id => transaction.id,
+			id: transaction.id,
 			"amount" => amount,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -130,11 +130,11 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			end
 		end
 
-		context "outflow", :update_from_json => true, :direction => "outflow" do
+		context "outflow", update_from_json: true, direction: "outflow" do
 			let(:amount) { 15 }
 		end
 
-		context "inflow", :update_from_json => true, :direction => "inflow" do
+		context "inflow", update_from_json: true, direction: "inflow" do
 			let(:amount) { 25 }
 		end
 
@@ -147,8 +147,8 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 		subject { SecurityInvestmentTransaction.new }
 
 		before :each do |example|
-			subject.build_header :price => 2, :quantity => 10, :commission => 5
-			subject.transaction_accounts.build(:direction => example.metadata[:direction]).account = create :investment_account
+			subject.build_header price: 2, quantity: 10, commission: 5
+			subject.transaction_accounts.build(direction: example.metadata[:direction]).account = create :investment_account
 		end
 
 		shared_examples "validate amount", :validate_amount do
@@ -169,12 +169,12 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			end
 		end
 
-		context "outflow", :validate_amount => true, :direction => "outflow" do
+		context "outflow", validate_amount: true, direction: "outflow" do
 			let(:error_message) { "Amount must equal price times quantity less commission" }
 			let(:valid_amount) { 15 }
 		end
 		
-		context "inflow", :validate_amount => true, :direction => "inflow" do
+		context "inflow", validate_amount: true, direction: "inflow" do
 			let(:error_message) { "Amount must equal price times quantity plus commission" }
 			let(:valid_amount) { 25 }
 		end
@@ -192,33 +192,33 @@ RSpec.describe SecurityInvestmentTransaction, :type => :model do
 			let(:json) { subject.as_json }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:primary_account => "investment account json")
-				expect(json).to include(:category => {:id => "Buy", :name => "Buy"})
-				expect(json).to include(:account => "cash account json")
-				expect(json).to include(:direction => "inflow")
-				expect(json).to include(:status => "Reconciled")
-				expect(json).to include(:related_status => nil)
+				expect(json).to include(primary_account: "investment account json")
+				expect(json).to include(category: {id: "Buy", name: "Buy"})
+				expect(json).to include(account: "cash account json")
+				expect(json).to include(direction: "inflow")
+				expect(json).to include(status: "Reconciled")
+				expect(json).to include(related_status: nil)
 			end
 		end
 
 		context "for cash account" do
-			let(:json) { subject.as_json({:primary_account => subject.cash_account.account_id}) }
+			let(:json) { subject.as_json({primary_account: subject.cash_account.account_id}) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:primary_account => "cash account json")
-				expect(json).to include(:category => {:id => "TransferTo", :name => "Transfer To"})
-				expect(json).to include(:account => "investment account json")
-				expect(json).to include(:direction => "outflow")
-				expect(json).to include(:status => nil)
-				expect(json).to include(:related_status => "Reconciled")
+				expect(json).to include(primary_account: "cash account json")
+				expect(json).to include(category: {id: "TransferTo", name: "Transfer To"})
+				expect(json).to include(account: "investment account json")
+				expect(json).to include(direction: "outflow")
+				expect(json).to include(status: nil)
+				expect(json).to include(related_status: "Reconciled")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:amount => 2)
-			expect(json).to include(:quantity => 1)
-			expect(json).to include(:price => 1)
-			expect(json).to include(:commission => 1)
+			expect(json).to include(amount: 2)
+			expect(json).to include(quantity: 1)
+			expect(json).to include(price: 1)
+			expect(json).to include(commission: 1)
 		end
 	end
 

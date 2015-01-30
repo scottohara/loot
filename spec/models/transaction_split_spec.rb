@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TransactionSplit, :type => :model do
+RSpec.describe TransactionSplit, type: :model do
 	describe "#validate_transaction_type_inclusion" do
 		subject { TransactionSplit.new }
 		let(:error_message) { "Transaction type #{subject.trx.transaction_type} is not valid in a split transaction" }

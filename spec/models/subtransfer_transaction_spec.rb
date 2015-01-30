@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SubtransferTransaction, :type => :model do
+RSpec.describe SubtransferTransaction, type: :model do
 	matcher :match_json do |expected, direction, account|
 		match do |actual|
 			actual.transaction_type.eql? "Subtransfer" and \
@@ -61,30 +61,30 @@ RSpec.describe SubtransferTransaction, :type => :model do
 
 		context "outflow" do
 			subject { create(:subtransfer_to_transaction, status: "Reconciled") }
-			let(:json) { subject.as_json({:direction => "outflow"}) }
+			let(:json) { subject.as_json({direction: "outflow"}) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => {:id => "TransferTo", :name => "Transfer To"})
-				expect(json).to include(:direction => "outflow")
+				expect(json).to include(category: {id: "TransferTo", name: "Transfer To"})
+				expect(json).to include(direction: "outflow")
 			end
 		end
 
 		context "inflow" do
 			subject { create(:subtransfer_from_transaction, status: "Reconciled") }
-			let(:json) { subject.as_json({:direction => "inflow"}) }
+			let(:json) { subject.as_json({direction: "inflow"}) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => {:id => "TransferFrom", :name => "Transfer From"})
-				expect(json).to include(:direction => "inflow")
+				expect(json).to include(category: {id: "TransferFrom", name: "Transfer From"})
+				expect(json).to include(direction: "inflow")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:primary_account => "account json")
-			expect(json).to include(:account => "parent account json")
-			expect(json).to include(:status => "Reconciled")
-			expect(json).to include(:related_status => nil)
-			expect(json).to include(:parent_id => subject.parent.id)
+			expect(json).to include(primary_account: "account json")
+			expect(json).to include(account: "parent account json")
+			expect(json).to include(status: "Reconciled")
+			expect(json).to include(related_status: nil)
+			expect(json).to include(parent_id: subject.parent.id)
 		end
 	end
 end

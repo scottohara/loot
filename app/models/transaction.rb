@@ -1,6 +1,6 @@
 class Transaction < ActiveRecord::Base
-	validates :transaction_type, :presence => true, :inclusion => {:in => %w(Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend)}
-	has_one :flag, :class_name => 'TransactionFlag', :foreign_key => 'transaction_id', :dependent => :destroy, :autosave => true
+	validates :transaction_type, presence: true, inclusion: {in: %w(Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend)}
+	has_one :flag, class_name: 'TransactionFlag', foreign_key: 'transaction_id', dependent: :destroy, autosave: true
 
 	include Categorisable
 		
@@ -52,8 +52,8 @@ class Transaction < ActiveRecord::Base
 
 		def create_from_json(json)
 			# id included for the case where we destroy & recreate on transaction type change 
-			s = self.new(:id => json[:id], :memo => json['memo'])
-			s.build_flag(:memo => json['flag']) unless json['flag'].nil?
+			s = self.new(id: json[:id], memo: json['memo'])
+			s.build_flag(memo: json['flag']) unless json['flag'].nil?
 			s
 		end
 	end
@@ -66,7 +66,7 @@ class Transaction < ActiveRecord::Base
 		self.memo = json['memo']
 		unless json['flag'].nil?
 			if self.flag.nil?
-				self.build_flag(:memo => json['flag'])
+				self.build_flag(memo: json['flag'])
 			else
 				self.flag.memo = json['flag']
 			end
@@ -81,10 +81,10 @@ class Transaction < ActiveRecord::Base
 
 	def as_json(options={})
 		{
-			:id => self.id,
-			:transaction_type => self.transaction_type,
-			:memo => self.memo,
-			:flag => self.flag.present? && self.flag.memo || nil
+			id: self.id,
+			transaction_type: self.transaction_type,
+			memo: self.memo,
+			flag: self.flag.present? && self.flag.memo || nil
 		}
 	end
 end

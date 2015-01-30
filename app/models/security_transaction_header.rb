@@ -1,5 +1,5 @@
 class SecurityTransactionHeader < TransactionHeader
-	validates :payee_id, :absence => true
+	validates :payee_id, absence: true
 	belongs_to :security
 
 	def update_from_json(json)
@@ -13,7 +13,7 @@ class SecurityTransactionHeader < TransactionHeader
 
 	def as_json(options={})
 		super.merge({
-			:security => self.security.as_json
+			security: self.security.as_json
 		})
 	end
 end

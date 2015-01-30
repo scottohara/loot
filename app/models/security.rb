@@ -1,8 +1,8 @@
 class Security < ActiveRecord::Base
-	validates :name, :presence => true
-	has_many :prices, :class_name => 'SecurityPrice', :dependent => :destroy
+	validates :name, presence: true
+	has_many :prices, class_name: 'SecurityPrice', dependent: :destroy
 	has_many :security_transaction_headers
-	has_many :transactions, :through => :security_transaction_headers, :source => :trx do
+	has_many :transactions, through: :security_transaction_headers, source: :trx do
 		def for_ledger(opts)
 			joins([	"LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
@@ -15,7 +15,7 @@ class Security < ActiveRecord::Base
 			.joins([		"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",
 					 			"JOIN accounts ON accounts.id = transaction_accounts.account_id"])
 			.where(		"accounts.account_type = 'investment'")
-			.where(		:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
+			.where(		transaction_type: %w(SecurityInvestment SecurityTransfer SecurityHolding))
 			.where(		"transaction_headers.transaction_date IS NOT NULL")
 			.group(		"transaction_accounts.direction")
 		end
@@ -31,7 +31,7 @@ class Security < ActiveRecord::Base
 
 	class << self
 		def find_or_new(security)
-			security['id'].present? ? self.find(security['id']) : self.new(:name => security)
+			security['id'].present? ? self.find(security['id']) : self.new(name: security)
 		end
 
 		def list
@@ -66,12 +66,12 @@ class Security < ActiveRecord::Base
 			# Remap to the desired output format
 			security_list = securities.map do |security|
 				{
-					:id => security['id'].to_i,
-					:name => security['name'],
-					:code => security['code'],
-					:current_holding => security['current_holding'],
-					:closing_balance => security['closing_balance'],
-					:unused => false
+					id: security['id'].to_i,
+					name: security['name'],
+					code: security['code'],
+					current_holding: security['current_holding'],
+					closing_balance: security['closing_balance'],
+					unused: false
 				}
 			end
 
@@ -83,12 +83,12 @@ class Security < ActiveRecord::Base
 
 			security_list + unused_securities.map do |security|
 				{
-					:id => security['id'].to_i,
-					:name => security['name'],
-					:code => security['code'],
-					:current_holding => 0,
-					:closing_balance => 0,
-					:unused => true
+					id: security['id'].to_i,
+					name: security['name'],
+					code: security['code'],
+					current_holding: 0,
+					closing_balance: 0,
+					unused: true
 				}
 			end
 		end
@@ -98,7 +98,7 @@ class Security < ActiveRecord::Base
 		latest = self.prices
 			.select("price")
 			.where("as_at_date <= '#{as_at}'")
-			.order(:as_at_date => :desc)
+			.order(as_at_date: :desc)
 			.limit(1)
 			.first
 
@@ -107,14 +107,14 @@ class Security < ActiveRecord::Base
 
 	def update_price!(price, as_at_date, transaction_id)
 		# Check if a price already exists for the transaction date
-		security_price = self.prices.where(:as_at_date => as_at_date).first
+		security_price = self.prices.where(as_at_date: as_at_date).first
 
 		if security_price.present?
 			# Update the existing price if the transaction_id is highest of all for this security/date (best guess at this being the 'most recent' price)
-			security_price.update_column(:price, price) unless self.security_transaction_headers.where(:transaction_date => as_at_date).where("transaction_id > ?", transaction_id).exists?
+			security_price.update_column(:price, price) unless self.security_transaction_headers.where(transaction_date: as_at_date).where("transaction_id > ?", transaction_id).exists?
 		else
 			# No existing price for this date, so create one
-			self.prices.create(:price => price, :as_at_date => as_at_date)
+			self.prices.create(price: price, as_at_date: as_at_date)
 		end
 	end
 

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SecurityTransferTransaction, :type => :model do
+RSpec.describe SecurityTransferTransaction, type: :model do
 	matcher :match_json do |expected, source_account, destination_account|
 		match do |actual|
 			actual[:transaction_type].eql? "SecurityTransfer" and \
@@ -19,7 +19,7 @@ RSpec.describe SecurityTransferTransaction, :type => :model do
 		let(:primary_account) { create :investment_account }
 		let(:account) { create :investment_account }
 		let(:json) { {
-			:id => 1,
+			id: 1,
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => primary_account.id
@@ -64,7 +64,7 @@ RSpec.describe SecurityTransferTransaction, :type => :model do
 		let(:account) { create :investment_account }
 		let(:transaction) { create :security_transfer_transaction }
 		let(:json) { {
-			:id => transaction.id,
+			id: transaction.id,
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => primary_account.id
@@ -104,8 +104,8 @@ RSpec.describe SecurityTransferTransaction, :type => :model do
 		let(:error_message) { "Source and destination account can't be the same" }
 
 		before :each do |example|
-			subject.build_source_transaction_account(:direction => "outflow").account = source_account
-			subject.build_destination_transaction_account(:direction => "inflow").account = destination_account
+			subject.build_source_transaction_account(direction: "outflow").account = source_account
+			subject.build_destination_transaction_account(direction: "inflow").account = destination_account
 			subject.validate_account_uniqueness
 		end
 
@@ -135,33 +135,33 @@ RSpec.describe SecurityTransferTransaction, :type => :model do
 		end
 
 		context "outflow" do
-			let(:json) { subject.as_json({:direction => "outflow"}) }
+			let(:json) { subject.as_json({direction: "outflow"}) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:primary_account => "source account json")
-				expect(json).to include(:category => {:id => "TransferTo", :name => "Transfer To"})
-				expect(json).to include(:account => "destination account json")
-				expect(json).to include(:direction => "outflow")
-				expect(json).to include(:status => "Reconciled")
-				expect(json).to include(:related_status => nil)
+				expect(json).to include(primary_account: "source account json")
+				expect(json).to include(category: {id: "TransferTo", name: "Transfer To"})
+				expect(json).to include(account: "destination account json")
+				expect(json).to include(direction: "outflow")
+				expect(json).to include(status: "Reconciled")
+				expect(json).to include(related_status: nil)
 			end
 		end
 
 		context "inflow" do
-			let(:json) { subject.as_json({:direction => "inflow"}) }
+			let(:json) { subject.as_json({direction: "inflow"}) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:primary_account => "destination account json")
-				expect(json).to include(:category => {:id => "TransferFrom", :name => "Transfer From"})
-				expect(json).to include(:account => "source account json")
-				expect(json).to include(:direction => "inflow")
-				expect(json).to include(:status => nil)
-				expect(json).to include(:related_status => "Reconciled")
+				expect(json).to include(primary_account: "destination account json")
+				expect(json).to include(category: {id: "TransferFrom", name: "Transfer From"})
+				expect(json).to include(account: "source account json")
+				expect(json).to include(direction: "inflow")
+				expect(json).to include(status: nil)
+				expect(json).to include(related_status: "Reconciled")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:quantity => 10)
+			expect(json).to include(quantity: 10)
 		end
 	end
 end

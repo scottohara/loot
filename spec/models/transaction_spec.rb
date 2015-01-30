@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'models/concerns/transactable'
 require 'models/concerns/categorisable'
 
-RSpec.describe Transaction, :type => :model do
+RSpec.describe Transaction, type: :model do
 	matcher :match_json do |expected|
 		match do |actual|
 			actual.id.eql? expected[:id] and \
@@ -17,7 +17,7 @@ RSpec.describe Transaction, :type => :model do
 		let(:as_class_method) { true }
 		let(:context_factory) { :bank_account }
 		let(:ledger_json_key) { :memo }
-		let(:expected_closing_balances) { {:with_date => -1, :without_date => 1 } }
+		let(:expected_closing_balances) { {with_date: -1, without_date: 1 } }
 	end
 
 	describe "::class_for" do
@@ -70,7 +70,7 @@ RSpec.describe Transaction, :type => :model do
 
 	describe "::create_from_json" do
 		let(:json) { {
-			:id => 1,
+			id: 1,
 			"memo" => "Test json"
 		} }
 		let(:flag) { "test flag" }
@@ -100,7 +100,7 @@ RSpec.describe Transaction, :type => :model do
 
 	describe "#update_from_json" do
 		let(:json) { {
-			:id => subject.id,
+			id: subject.id,
 			"memo" => "Test json"
 		} }
 		let(:flag) { "test flag" }
@@ -146,7 +146,7 @@ RSpec.describe Transaction, :type => :model do
 			subject { create(:basic_transaction) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:flag => nil)
+				expect(json).to include(flag: nil)
 			end
 		end
 
@@ -154,14 +154,14 @@ RSpec.describe Transaction, :type => :model do
 			subject { create(:basic_transaction, :flagged) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:flag => "Transaction flag")
+				expect(json).to include(flag: "Transaction flag")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:id => subject.id)
-			expect(json).to include(:transaction_type => "Basic")
-			expect(json).to include(:memo => "Basic transaction")
+			expect(json).to include(id: subject.id)
+			expect(json).to include(transaction_type: "Basic")
+			expect(json).to include(memo: "Basic transaction")
 		end
 	end
 end

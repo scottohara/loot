@@ -1,5 +1,5 @@
 class CashTransaction < Transaction
-	validates :amount, :presence => true
+	validates :amount, presence: true
 
 	class << self
 		def create_from_json(json)
@@ -17,7 +17,7 @@ class CashTransaction < Transaction
 
 	def as_json(options={})
 		super.merge({
-			:amount => self.amount
+			amount: self.amount
 		})
 	end
 end

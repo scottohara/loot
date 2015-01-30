@@ -1,5 +1,5 @@
 class PayeeCashTransaction < CashTransaction
-	has_one :header, :class_name => 'PayeeTransactionHeader', :foreign_key => 'transaction_id', :dependent => :destroy, :autosave => true
+	has_one :header, class_name: 'PayeeTransactionHeader', foreign_key: 'transaction_id', dependent: :destroy, autosave: true
 
 	class << self
 		def create_from_json(json)

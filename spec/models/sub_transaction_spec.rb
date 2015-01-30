@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SubTransaction, :type => :model do
+RSpec.describe SubTransaction, type: :model do
 	matcher :match_json do |expected, category|
 		match do |actual|
 			actual.transaction_type.eql? "Sub" and \
@@ -12,7 +12,7 @@ RSpec.describe SubTransaction, :type => :model do
 
 	describe "::create_from_json" do
 		let(:category) { create :category }
-		let(:subcategory) { create :subcategory, :parent => category }
+		let(:subcategory) { create :subcategory, parent: category }
 		let(:json) { {
 			"amount" => 1,
 			"memo" => "Test json",
@@ -60,8 +60,8 @@ RSpec.describe SubTransaction, :type => :model do
 			end
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => "category json")
-				expect(json).to include(:subcategory => nil)
+				expect(json).to include(category: "category json")
+				expect(json).to include(subcategory: nil)
 			end
 		end
 
@@ -74,15 +74,15 @@ RSpec.describe SubTransaction, :type => :model do
 			end
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => "category json")
-				expect(json).to include(:subcategory => "subcategory json")
+				expect(json).to include(category: "category json")
+				expect(json).to include(subcategory: "subcategory json")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:primary_account => "parent account json")
-			expect(json).to include(:direction => "outflow")
-			expect(json).to include(:parent_id => subject.parent.id)
+			expect(json).to include(primary_account: "parent account json")
+			expect(json).to include(direction: "outflow")
+			expect(json).to include(parent_id: subject.parent.id)
 		end
 	end
 end

@@ -1,30 +1,30 @@
 class SchedulesController < ApplicationController
 	respond_to :json
-	before_action :clean, :only => [:create, :update]
+	before_action :clean, only: [:create, :update]
 
 	def index
 		respond_with Schedule.ledger
 	end
 
 	def create
-		render :json => create_schedule
+		render json: create_schedule
 	end
 
 	def update
 		schedule = Transaction.find params[:id]
 		if schedule.transaction_type.eql? params['transaction_type']
 			# Type hasn't changed, so just update
-			render :json => Transaction.class_for(params['transaction_type']).update_from_json(@schedule)
+			render json: Transaction.class_for(params['transaction_type']).update_from_json(@schedule)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			schedule.as_subclass.destroy
-			render :json => create_schedule
+			render json: create_schedule
 		end
 	end
 
 	def destroy
 		Transaction.find(params[:id]).as_subclass.destroy
-		head :status => :ok
+		head status: :ok
 	end
 
 	def clean

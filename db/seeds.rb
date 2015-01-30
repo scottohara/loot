@@ -55,8 +55,8 @@ def load_accounts
 
 	related_accounts = {}
 
-	CSV.foreach csv_file_path('ACCT'), :headers => true do |row|
-		a = Account.create(:name => row['szFull'], :account_type => @tmp_account_types[row['at']], :opening_balance => (!!row['amtOpen'] && row['amtOpen'].to_f)|| 0, :status => (row['fClosed'].eql?('false') && 'open') || 'closed').id
+	CSV.foreach csv_file_path('ACCT'), headers: true do |row|
+		a = Account.create(name: row['szFull'], account_type: @tmp_account_types[row['at']], opening_balance: (!!row['amtOpen'] && row['amtOpen'].to_f)|| 0, status: (row['fClosed'].eql?('false') && 'open') || 'closed').id
 		@tmp_accounts[row['hacct']] = a
 		related_accounts[a] = row['hacctRel'] unless row['hacctRel'].nil?
 		progress "Loaded", $., "account" if $. % 10 == 0
@@ -80,8 +80,8 @@ def load_payees
 	Payee.destroy_all
 	puts "done"
 
-	CSV.foreach csv_file_path('PAY'), :headers => true do |row|
-		@tmp_payees[row['hpay']] = Payee.create(:name => row['szFull']).id
+	CSV.foreach csv_file_path('PAY'), headers: true do |row|
+		@tmp_payees[row['hpay']] = Payee.create(name: row['szFull']).id
 		progress "Loaded", $., "payee" if $. % 10 == 0
 	end
 	progress "Loaded", $., "payee"
@@ -94,8 +94,8 @@ def load_categories
 	Category.destroy_all
 	puts "done"
 
-	CSV.foreach csv_file_path('CAT'), :headers => true do |row|
-		@tmp_categories[row['hcat']] = { :type => row['hct'], :name => row['szFull'], :level => row['nLevel'], :parent => row['hcatParent'] }
+	CSV.foreach csv_file_path('CAT'), headers: true do |row|
+		@tmp_categories[row['hcat']] = { type: row['hct'], name: row['szFull'], level: row['nLevel'], parent: row['hcatParent'] }
 	end
 
 	# Select the top level INCOME/EXPENSE items
@@ -141,14 +141,14 @@ end
 
 def create_category(id, name, direction)
 	# Create the new category
-	c = Category.new(:name => name, :direction => direction)
+	c = Category.new(name: name, direction: direction)
 
 	# Get the list of categories that have this parent
 	subcats = subcategories id
 
 	# Create the subcategories
 	subcats.sort_by {|k,v| v[:name]}.each do |catid, category|
-		c.children.build(:name => category[:name], :direction => direction)
+		c.children.build(name: category[:name], direction: direction)
 	end
 
 	# Save the category (and it's children)
@@ -167,8 +167,8 @@ def load_securities
 	Security.destroy_all
 	puts "done"
 
-	CSV.foreach csv_file_path('SEC'), :headers => true do |row|
-		@tmp_securities[row['hsec']] = { :id => Security.create(:name => row['szFull'], :code => row['szSymbol']).id, :prices => [] }
+	CSV.foreach csv_file_path('SEC'), headers: true do |row|
+		@tmp_securities[row['hsec']] = { id: Security.create(name: row['szFull'], code: row['szSymbol']).id, prices: [] }
 		progress "Loaded", $., "security" if $. % 10 == 0
 	end
 	progress "Loaded", $., "security"
@@ -181,8 +181,8 @@ def load_security_prices
 	SecurityPrice.delete_all
 	puts "done"
 
-	CSV.foreach csv_file_path('SP'), :headers => true do |row|
-		@tmp_securities[row['hsec']][:prices] << { :price => row['dPrice'].to_f, :as_at_date => row['dt'] }
+	CSV.foreach csv_file_path('SP'), headers: true do |row|
+		@tmp_securities[row['hsec']][:prices] << { price: row['dPrice'].to_f, as_at_date: row['dt'] }
 		progress "Prepared", $., "security price" if $. % 10 == 0
 	end
 	progress "Prepared", $., "security price"
@@ -193,7 +193,7 @@ def load_security_prices
 		s = Security.find(sec[:id])
 		last_price = nil
 		sec[:prices].sort_by {|price| Date.parse price[:as_at_date]}.each do |price|
-			s.prices.build(:price => price[:price], :as_at_date => price[:as_at_date]) unless price[:price].eql? last_price
+			s.prices.build(price: price[:price], as_at_date: price[:as_at_date]) unless price[:price].eql? last_price
 			last_price = price[:price]
 			loaded += 1
 			progress "Loaded", loaded, "security price" if loaded % 10 == 0
@@ -225,7 +225,7 @@ def load_transactions
 	TransactionFlag.delete_all
 	puts "done"
 
-	CSV.foreach csv_file_path('TRN_SPLIT'), :headers => true do |row|
+	CSV.foreach csv_file_path('TRN_SPLIT'), headers: true do |row|
 		@tmp_splits[row['htrnParent']] = [] unless @tmp_splits.has_key? row['htrnParent']
 		@tmp_splits[row['htrnParent']] << row['htrn']
 		@tmp_subtransactions << row['htrn']
@@ -234,25 +234,25 @@ def load_transactions
 	progress "Prepared", $., "split"
 	puts
 
-	CSV.foreach csv_file_path('TRN_XFER'), :headers => true do |row|
+	CSV.foreach csv_file_path('TRN_XFER'), headers: true do |row|
 		@tmp_transfers[row['htrnLink']] = row['htrnFrom']
 		progress "Prepared", $., "transfer" if $. % 10 == 0
 	end
 	progress "Prepared", $., "transfer"
 	puts
 
-	CSV.foreach csv_file_path('TRN_INV'), :headers => true do |row|
+	CSV.foreach csv_file_path('TRN_INV'), headers: true do |row|
 		@tmp_investments[row['htrn']] = {
-			:price => row['dPrice'].to_f,
-			:qty => row['qty'].to_f,
-			:commission => row['amtCmn'].to_f
+			price: row['dPrice'].to_f,
+			qty: row['qty'].to_f,
+			commission: row['amtCmn'].to_f
 		}
 		progress "Prepared", $., "investment" if $. % 10 == 0
 	end
 	progress "Prepared", $., "investment"
 	puts
 
-	CSV.foreach csv_file_path('LOT'), :headers => true do |row|
+	CSV.foreach csv_file_path('LOT'), headers: true do |row|
 		@tmp_buys[row['htrnBuy']] = '' unless row['htrnBuy'].nil?
 		@tmp_sells[row['htrnSell']] = '' unless row['htrnSell'].nil?
 		progress "Prepared", $., "investment lot" if $. % 10 == 0
@@ -260,26 +260,26 @@ def load_transactions
 	progress "Prepared", $., "investment lot"
 	puts
 
-	CSV.foreach csv_file_path('XBAG'), :headers => true do |row|
+	CSV.foreach csv_file_path('XBAG'), headers: true do |row|
 		@tmp_flags[row['lHobj']] = row['szMemo'] if row['bt'].eql?('0')
 		progress "Prepared", $., "flag" if $. % 10 == 0
 	end
 	progress "Prepared", $., "flag"
 	puts
 
-	CSV.foreach csv_file_path('TRN'), {:headers => true, :encoding => 'ISO-8859-1:UTF-8'} do |row|
+	CSV.foreach csv_file_path('TRN'), {headers: true, encoding: 'ISO-8859-1:UTF-8'} do |row|
 		@tmp_transactions[row['htrn']] = {
-			:id => row['htrn'],
-			:account => @tmp_accounts[row['hacct']],
-			:transaction_date => row['dt'],
-			:amount => row['amt'].to_f.abs,
-			:orig_amount => row['amt'],
-			:memo => row['mMemo'],
-			:payee => @tmp_payees[row['lHpay']],
-			:security => @tmp_securities[row['hsec']],
-			:category => ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]),
-			:grftt => row['grftt'],
-			:status => case row['cs']
+			id: row['htrn'],
+			account: @tmp_accounts[row['hacct']],
+			transaction_date: row['dt'],
+			amount: row['amt'].to_f.abs,
+			orig_amount: row['amt'],
+			memo: row['mMemo'],
+			payee: @tmp_payees[row['lHpay']],
+			security: @tmp_securities[row['hsec']],
+			category: ((!row['hcat'].nil?) && @tmp_categories[row['hcat']][:id]),
+			grftt: row['grftt'],
+			status: case row['cs']
 				when '1' then 'Cleared'
 				when '2' then 'Reconciled'
 			end
@@ -374,16 +374,16 @@ def load_bills
 	Schedule.destroy_all
 	puts "done"
 
-	CSV.foreach csv_file_path('BILL'), :headers => true do |row|
-		@tmp_head_bills[row['hbillHead']] = {:next_unpaid_instance => row['iinstNextUnpaid'].to_i} if row['hbill'].to_i.eql?(row['hbillHead'].to_i) && row['cInstMax'].to_i.eql?(-1)
+	CSV.foreach csv_file_path('BILL'), headers: true do |row|
+		@tmp_head_bills[row['hbillHead']] = {next_unpaid_instance: row['iinstNextUnpaid'].to_i} if row['hbill'].to_i.eql?(row['hbillHead'].to_i) && row['cInstMax'].to_i.eql?(-1)
 
 		@tmp_bills[row['hbillHead']] = {
-			:instance => row['iinst'].to_i,
-			:last_date => row['dt'],
-			:estimate => !!row['cEstInst'].to_i.eql?(0),
-			:auto => !!!row['cDaysAutoEnter'].to_i.eql?(-1),
-			:transaction => row['lHtrn'],
-			:frequency => case row['frq'].to_i
+			instance: row['iinst'].to_i,
+			last_date: row['dt'],
+			estimate: !!row['cEstInst'].to_i.eql?(0),
+			auto: !!!row['cDaysAutoEnter'].to_i.eql?(-1),
+			transaction: row['lHtrn'],
+			frequency: case row['frq'].to_i
 				when 2 then 'Fortnightly'
 				when 3 then 'Monthly'
 				when 4 then 'Quarterly'

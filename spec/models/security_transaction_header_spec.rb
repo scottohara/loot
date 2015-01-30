@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SecurityTransactionHeader, :type => :model do
+RSpec.describe SecurityTransactionHeader, type: :model do
 	matcher :match_json do |expected, security|
 		match do |actual|
 			actual.quantity.eql? expected['quantity'] and \
@@ -40,7 +40,7 @@ RSpec.describe SecurityTransactionHeader, :type => :model do
 		end
 
 		it "should return a JSON representation" do
-			expect(json).to include(:security => "security json")
+			expect(json).to include(security: "security json")
 		end
 	end
 end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe SchedulesController, :type => :controller do
-	describe "GET index", :request => true, :json => true do
+RSpec.describe SchedulesController, type: :controller do
+	describe "GET index", request: true, json: true do
 		let(:json) { "schedule ledger" }
 
 		it "should return the schedule ledger" do
@@ -10,17 +10,17 @@ RSpec.describe SchedulesController, :type => :controller do
 		end
 	end
 
-	describe "POST create", :request => true, :json => true do
+	describe "POST create", request: true, json: true do
 		let(:json) { "created schedule" }
 
 		it "should create a new schedule of the specified type and return the details" do
 			expect(controller).to receive(:clean).and_call_original
 			expect(controller).to receive(:create_schedule).and_return json
-			post :create, :primary_account => {:id => 1}
+			post :create, primary_account: {id: 1}
 		end
 	end
 
-	describe "PATCH update", :request => true, :json => true do
+	describe "PATCH update", request: true, json: true do
 		let(:schedule) { create :basic_transaction, :scheduled }
 		let(:json) { "updated schedule" }
 
@@ -52,23 +52,23 @@ RSpec.describe SchedulesController, :type => :controller do
 		end
 	end
 
-	describe "DELETE destroy", :request => true do
+	describe "DELETE destroy", request: true do
 		let(:schedule) { create :basic_transaction, :scheduled }
 
 		it "should delete an existing schedule" do
 			expect(Transaction).to receive(:find).with("1").and_return schedule
 			expect(schedule).to receive(:as_subclass).and_return schedule
 			expect(schedule).to receive(:destroy)
-			delete :destroy, :id => "1"
+			delete :destroy, id: "1"
 		end
 	end
 
 	describe "#clean" do
 		it "should remove any empty or nil values from the passed parameters, clear the transaction date and copy the account id" do
 			controller.params = {
-				:a => "a",
-				:b => "",
-				:c => nil,
+				a: "a",
+				b: "",
+				c: nil,
 				"transaction_date" => Date.today.to_s,
 				"primary_account" => {"id" => 1}
 			}

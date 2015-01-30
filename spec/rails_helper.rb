@@ -48,7 +48,7 @@ RSpec.configure do |config|
   # You can disable this behaviour by removing the line below, and instead
   # explicitly tag your specs with their type, e.g.:
   #
-  #     RSpec.describe UsersController, :type => :controller do
+  #     RSpec.describe UsersController, type: :controller do
   #       # ...
   #     end
   #
@@ -87,7 +87,7 @@ RSpec.configure do |config|
 end
 
 # Shared context for JSON controllers
-RSpec.shared_context "JSON controller", :type => :controller do
+RSpec.shared_context "JSON controller", type: :controller do
 	before :each, :request do
 		expect(controller).to receive(:authenticate_user)
 		request.env['HTTP_ACCEPT'] = 'application/json'

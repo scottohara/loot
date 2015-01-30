@@ -22,16 +22,16 @@ RSpec.shared_examples Transactable do
 					# If none of the actual transactions match, add the mismatch
 					@diffs += diffs if actual_trxes.none? do |actual_trx|
 						# Convert the expected transaction to JSON and compact
-						expected_json = compact(trx.as_subclass.as_json({:direction => actual_trx[:direction], :primary_account => actual_trx[:primary_account][:id]}))
+						expected_json = compact(trx.as_subclass.as_json({direction: actual_trx[:direction], primary_account: actual_trx[:primary_account][:id]}))
 
 						# Compact (a copy of) the actual transaction
 						actual_json = compact(actual_trx.deep_dup)
 
 						diffs << {
-							:id => trx.id,
-							:type => trx.transaction_type,
-							:expected => expected_json.delete_if {|key,value| actual_json[key].eql? value },
-							:actual => actual_json.slice(*expected_json.keys)
+							id: trx.id,
+							type: trx.transaction_type,
+							expected: expected_json.delete_if {|key,value| actual_json[key].eql? value },
+							actual: actual_json.slice(*expected_json.keys)
 						} unless expected_json.hash.eql? actual_json.hash
 
 						expected_json.hash.eql? actual_json.hash
@@ -58,12 +58,12 @@ RSpec.shared_examples Transactable do
 			def compact(transaction)
 				expected_keys = [:id, :transaction_type, :transaction_date, :parent_id, :amount, :quantity, :commission, :price, :direction, :status, :related_status, :memo, :flag]
 				nested_keys = {
-					:primary_account => [:id, :name, :account_type],
-					:payee => [:id, :name],
-					:security => [:id, :name],
-					:category => [:id, :name],
-					:subcategory => [:id, :name],
-					:account => [:id, :name]
+					primary_account: [:id, :name, :account_type],
+					payee: [:id, :name],
+					security: [:id, :name],
+					category: [:id, :name],
+					subcategory: [:id, :name],
+					account: [:id, :name]
 				}
 
 				# Remove any keys that we don't care about
@@ -106,8 +106,8 @@ RSpec.shared_examples Transactable do
 			context = create(context_factory, :with_all_transaction_types, scheduled: 1)
 			subject = defined?(as_class_method) && described_class || context
 
-			_, transactions, _ = subject.ledger({:query => "Transaction"})
-			expected_transactions = subject.transactions.for_ledger({:query => "Transaction"}).where("transaction_headers.transaction_date IS NOT NULL")
+			_, transactions, _ = subject.ledger({query: "Transaction"})
+			expected_transactions = subject.transactions.for_ledger({query: "Transaction"}).where("transaction_headers.transaction_date IS NOT NULL")
 
 			expect(transactions).to match_ledger_transactions expected_transactions
 		end
@@ -123,13 +123,13 @@ RSpec.shared_examples Transactable do
 			end
 			subject = defined?(as_class_method) && described_class || context
 
-			_, transactions, _ = subject.ledger({:query => "Transaction"})
+			_, transactions, _ = subject.ledger({query: "Transaction"})
 
 			expect(transactions.uniq{|t| t[:id]}.size).to eq 2
 			expect(transactions).to all_belong_to(context, ledger_json_key)
 		end
 		
-		context "when fetching backwards", :spec_type => :range do
+		context "when fetching backwards", spec_type: :range do
 			let(:direction) { :prev }
 
 			context "when the date is near the start of the range" do
@@ -151,7 +151,7 @@ RSpec.shared_examples Transactable do
 			end
 		end
 
-		context "when fetching forwards", :spec_type => :range do
+		context "when fetching forwards", spec_type: :range do
 			let(:direction) { :next }
 
 			context "when the date is not near the end of the range" do
@@ -173,7 +173,7 @@ RSpec.shared_examples Transactable do
 			end
 		end
 
-		after :each, :spec_type => :range do
+		after :each, spec_type: :range do
 			FactoryGirl.reload
 
 			# Create the context with 15 basic transactions
@@ -184,7 +184,7 @@ RSpec.shared_examples Transactable do
 			stub_const("Transactable::NUM_RESULTS", 9)
 
 			# Get the ledger
-			_, transactions, at_end = subject.ledger({:as_at => (Date.parse("2014-01-01") + @as_at).to_s, :direction => direction, :query => "Transaction"})
+			_, transactions, at_end = subject.ledger({as_at: (Date.parse("2014-01-01") + @as_at).to_s, direction: direction, query: "Transaction"})
 
 			expect(transactions.uniq{|t| t[:id]}.size).to eq range.size
 			expect(transactions.first[:transaction_date]).to eq (Date.parse("2014-01-01") + range.first)
@@ -206,12 +206,12 @@ RSpec.shared_examples Transactable do
 		end
 
 		it "should return the closing balance as the passed date" do
-			expect(subject.closing_balance({:as_at => "2014-01-01", :query => "Transaction"})).to eq expected_closing_balances[:with_date]
+			expect(subject.closing_balance({as_at: "2014-01-01", query: "Transaction"})).to eq expected_closing_balances[:with_date]
 		end
 
 		context "when a date is not passed" do
 			it "should return the closing balance as at today" do
-				expect(subject.closing_balance({:query => "Transaction"})).to eq expected_closing_balances[:without_date]
+				expect(subject.closing_balance({query: "Transaction"})).to eq expected_closing_balances[:without_date]
 			end
 		end
 	end
@@ -229,9 +229,9 @@ RSpec.shared_examples Transactable do
 
 		it "should set default values for invalid options" do
 			opts = subject.ledger_options({
-				:as_at => "invalid",
-				:direction => "invalid",
-				:unreconciled => "invalid"
+				as_at: "invalid",
+				direction: "invalid",
+				unreconciled: "invalid"
 			})
 
 			expect(opts[:as_at]).to eq "2400-12-31"
@@ -241,9 +241,9 @@ RSpec.shared_examples Transactable do
 
 		it "should retain any valid options provided" do
 			opts = subject.ledger_options({
-				:as_at => "2014-01-01",
-				:direction => "next",
-				:unreconciled => "true"
+				as_at: "2014-01-01",
+				direction: "next",
+				unreconciled: "true"
 			})
 
 			expect(opts[:as_at]).to eq "2014-01-01"
@@ -287,7 +287,7 @@ RSpec.shared_examples Transactable do
 		subject { defined?(as_class_method) && described_class || described_class.new }
 
 		context "when fetching backwards" do
-			let(:opts) { {:direction => :prev} }
+			let(:opts) { {direction: :prev} }
 
 			context "when at end" do
 				it "should return the context's opening balance" do
@@ -307,7 +307,7 @@ RSpec.shared_examples Transactable do
 		end
 
 		context "when fetching forwards" do
-			let(:opts) { {:direction => :next, :as_at => "2014-01-02"} }
+			let(:opts) { {direction: :next, as_at: "2014-01-02"} }
 
 			it "should return the context's closing balance at the passed date" do
 				expect(subject).to receive(:closing_balance) { "2014-01-02" }

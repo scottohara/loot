@@ -1,5 +1,5 @@
 class SecurityTransaction < Transaction
-	has_one :header, :class_name => 'SecurityTransactionHeader', :foreign_key => 'transaction_id', :dependent => :destroy, :autosave => true
+	has_one :header, class_name: 'SecurityTransactionHeader', foreign_key: 'transaction_id', dependent: :destroy, autosave: true
 
 	class << self
 		def create_from_json(json)

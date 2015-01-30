@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe AccountsController, :type => :controller do
-	describe "GET index", :request => true, :json => true do
+RSpec.describe AccountsController, type: :controller do
+	describe "GET index", request: true, json: true do
 		context "for account list" do
 			let(:json) { "account list with balances" }
 
 			before :each do
 				expect(Account).to receive(:list).and_return json
-				get :index, :include_balances => true
+				get :index, include_balances: true
 			end
 
 			it "should return the account list including balances" do
@@ -29,22 +29,22 @@ RSpec.describe AccountsController, :type => :controller do
 		end
 	end
 
-	describe "GET show", :request => true, :json => true do
+	describe "GET show", request: true, json: true do
 		let(:json) { "account details" }
 
 		it "should return the details of the specified account" do
 			expect(Account).to receive(:find).with("1").and_return json
-			get :show, :id => "1"
+			get :show, id: "1"
 		end
 	end
 
-	describe "PUT reconcile", :request => true do
+	describe "PUT reconcile", request: true do
 		let(:account) { Account.new }
 
 		it "should return the details of the specified account" do
 			expect(Account).to receive(:find).with("1").and_return account
 			expect(account).to receive(:reconcile)
-			put :reconcile, :id => "1"
+			put :reconcile, id: "1"
 		end
 	end
 end

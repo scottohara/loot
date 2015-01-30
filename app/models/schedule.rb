@@ -1,6 +1,6 @@
 class Schedule < ActiveRecord::Base
-	validates :next_due_date, :frequency, :presence => true
-	validates :estimate, :auto_enter, :inclusion => {:in => [true,false]}
+	validates :next_due_date, :frequency, presence: true
+	validates :estimate, :auto_enter, inclusion: {in: [true,false]}
 	has_one :transaction_header
 
 	include Categorisable
@@ -63,45 +63,45 @@ class Schedule < ActiveRecord::Base
 			# Remap to the desired output format
 			schedules.map do |trx|
 				{
-					:id => trx['id'],
-					:transaction_type => trx['transaction_type'],
-					:primary_account => {
-						:id => trx['account_id'],
-						:name => trx['account_name'],
-						:account_type => trx['account_type']
+					id: trx['id'],
+					transaction_type: trx['transaction_type'],
+					primary_account: {
+						id: trx['account_id'],
+						name: trx['account_name'],
+						account_type: trx['account_type']
 					},
-					:next_due_date => trx['next_due_date'],
-					:frequency => trx['frequency'],
-					:estimate => trx['estimate'],
-					:auto_enter => trx['auto_enter'],
-					:payee => {
-						:id => trx['payee_id'],
-						:name => trx['payee_name']
+					next_due_date: trx['next_due_date'],
+					frequency: trx['frequency'],
+					estimate: trx['estimate'],
+					auto_enter: trx['auto_enter'],
+					payee: {
+						id: trx['payee_id'],
+						name: trx['payee_name']
 					},
-					:security => {
-						:id => trx['security_id'],
-						:name => trx['security_name']
+					security: {
+						id: trx['security_id'],
+						name: trx['security_name']
 					},
-					:category => self.transaction_category(trx, trx['account_type']),
-					:subcategory => self.basic_subcategory(trx),
-					:account => {
-						:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
-						:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
+					category: self.transaction_category(trx, trx['account_type']),
+					subcategory: self.basic_subcategory(trx),
+					account: {
+						id: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
+						name: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
 					},
-					:amount => trx['amount'],
-					:quantity => trx['quantity'],
-					:commission => trx['commission'],
-					:price => trx['price'],
-					:direction => trx['direction'],
-					:memo => trx['memo'],
-					:overdue_count => self.periods_since(trx['frequency'], trx['next_due_date'])
+					amount: trx['amount'],
+					quantity: trx['quantity'],
+					commission: trx['commission'],
+					price: trx['price'],
+					direction: trx['direction'],
+					memo: trx['memo'],
+					overdue_count: self.periods_since(trx['frequency'], trx['next_due_date'])
 				}
 			end
 		end
 
 		def auto_enter_overdue
 			overdue = self
-				.where(:auto_enter => true)
+				.where(auto_enter: true)
 				.where('next_due_date < ?', Date.today.to_s)
 
 			overdue.each do |schedule|
@@ -112,13 +112,13 @@ class Schedule < ActiveRecord::Base
 				transaction_class = Transaction.class_for header.trx.transaction_type
 
 				# Find the transaction
-				transaction = transaction_class.includes(:header => [:schedule]).find header.trx.id
+				transaction = transaction_class.includes(header: [:schedule]).find header.trx.id
 
 				# Clear the schedule info
 				transaction.header.schedule = nil
 
 				# Get the JSON representation of the scheduled transaction
-				transaction_json = transaction.as_json :direction => 'outflow'
+				transaction_json = transaction.as_json direction: 'outflow'
 
 				# Find the appropriate account to use
 				transaction_json[:account_id] = case transaction.transaction_type
@@ -147,12 +147,12 @@ class Schedule < ActiveRecord::Base
 
 					# Update the schedule's next due date
 					schedule.next_due_date = schedule.next_due_date.advance(case schedule.frequency
-						when 'Weekly' then {:weeks => 1}
-						when 'Fortnightly' then {:weeks => 2}
-						when 'Monthly' then {:months => 1}
-						when 'Bimonthly' then {:months => 2}
-						when 'Quarterly' then {:months => 3}
-						when 'Yearly' then {:years => 1}
+						when 'Weekly' then {weeks: 1}
+						when 'Fortnightly' then {weeks: 2}
+						when 'Monthly' then {months: 1}
+						when 'Bimonthly' then {months: 2}
+						when 'Quarterly' then {months: 3}
+						when 'Yearly' then {years: 1}
 					end)
 				end
 
@@ -164,11 +164,11 @@ class Schedule < ActiveRecord::Base
 
 	def as_json(options={})
 		{
-			:next_due_date => self.next_due_date,
-			:frequency => self.frequency,
-			:estimate => self.estimate,
-			:auto_enter => self.auto_enter,
-			:overdue_count => self.class.periods_since(self.frequency, self.next_due_date)
+			next_due_date: self.next_due_date,
+			frequency: self.frequency,
+			estimate: self.estimate,
+			auto_enter: self.auto_enter,
+			overdue_count: self.class.periods_since(self.frequency, self.next_due_date)
 		}
 	end
 end

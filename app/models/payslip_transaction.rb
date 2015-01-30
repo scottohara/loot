@@ -5,9 +5,9 @@ class PayslipTransaction < SplitTransaction
 
 	def as_json(options={})
 		super.merge({
-			:category => {
-				:id => self.transaction_type,
-				:name => self.transaction_type
+			category: {
+				id: self.transaction_type,
+				name: self.transaction_type
 			}
 		})
 	end

@@ -1,9 +1,9 @@
 class CreateTransactionHeaders < ActiveRecord::Migration
   def change
-    create_table :transaction_headers, :primary_key => :transaction_id do |t|
-			t.references :payee, :index => true
-			t.references :security, :index => true
-			t.references :schedule, :null => true
+    create_table :transaction_headers, primary_key: :transaction_id do |t|
+			t.references :payee, index: true
+			t.references :security, index: true
+			t.references :schedule, null: true
 			t.date :transaction_date
 			t.decimal :quantity
 			t.decimal :price

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SecurityHoldingTransaction, :type => :model do
+RSpec.describe SecurityHoldingTransaction, type: :model do
 	matcher :match_json do |expected, account|
 		match do |actual|
 			actual.transaction_type.eql? "SecurityHolding" and \
@@ -17,7 +17,7 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 	describe "::create_from_json" do
 		let(:account) { create :investment_account }
 		let(:json) { {
-			:id => 1,
+			id: 1,
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => account.id
@@ -56,7 +56,7 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 		let(:account) { create :investment_account }
 		let(:transaction) { create :security_holding_transaction }
 		let(:json) { {
-			:id => transaction.id,
+			id: transaction.id,
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => account.id
@@ -97,8 +97,8 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 			subject { create(:security_add_transaction, status: "Reconciled") }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => {:id => "AddShares", :name => "Add Shares"})
-				expect(json).to include(:direction => "inflow")
+				expect(json).to include(category: {id: "AddShares", name: "Add Shares"})
+				expect(json).to include(direction: "inflow")
 			end
 		end
 
@@ -106,15 +106,15 @@ RSpec.describe SecurityHoldingTransaction, :type => :model do
 			subject { create(:security_remove_transaction, status: "Reconciled") }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => {:id => "RemoveShares", :name => "Remove Shares"})
-				expect(json).to include(:direction => "outflow")
+				expect(json).to include(category: {id: "RemoveShares", name: "Remove Shares"})
+				expect(json).to include(direction: "outflow")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:primary_account => "account json")
-			expect(json).to include(:status => "Reconciled")
-			expect(json).to include(:quantity => 10)
+			expect(json).to include(primary_account: "account json")
+			expect(json).to include(status: "Reconciled")
+			expect(json).to include(quantity: 10)
 		end
 	end
 end

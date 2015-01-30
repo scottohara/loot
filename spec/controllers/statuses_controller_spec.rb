@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe StatusesController, :type => :controller do
+RSpec.describe StatusesController, type: :controller do
 	before :each do
-		expect(TransactionAccount).to receive_message_chain(:where, :where, :update_all).with(:status => status)
+		expect(TransactionAccount).to receive_message_chain(:where, :where, :update_all).with(status: status)
 	end
 
-	describe "PATCH update", :request => true do
+	describe "PATCH update", request: true do
 		before :each do
-			patch :update, :account_id => "1", :transaction_id => "1", (status || request_status) => true
+			patch :update, account_id: "1", transaction_id: "1", (status || request_status) => true
 		end
 
 		context "Cleared" do
@@ -31,11 +31,11 @@ RSpec.describe StatusesController, :type => :controller do
 		end
 	end
 
-	describe "DELETE destroy", :request => true do
+	describe "DELETE destroy", request: true do
 		let(:status) { nil }
 
 		it "should clear the existing status" do
-			delete :destroy, :account_id => "1", :transaction_id => "1"
+			delete :destroy, account_id: "1", transaction_id: "1"
 		end
 	end
 end

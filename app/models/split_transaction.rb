@@ -1,9 +1,9 @@
 class SplitTransaction < PayeeCashTransaction
-	has_one :transaction_account, :foreign_key => 'transaction_id', :autosave => true, :dependent => :destroy
-	has_one :account, :through => :transaction_account
-	has_many :transaction_splits, :foreign_key => 'parent_id', :inverse_of => :parent, :dependent => :destroy
-	has_many :subtransactions, -> { where :transaction_type => 'Sub' }, :class_name => 'SubTransaction', :through => :transaction_splits, :source => :trx
-	has_many :subtransfers, -> { where :transaction_type =>'Subtransfer' }, :class_name => 'SubtransferTransaction', :through => :transaction_splits, :source => :trx
+	has_one :transaction_account, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
+	has_one :account, through: :transaction_account
+	has_many :transaction_splits, foreign_key: 'parent_id', inverse_of: :parent, dependent: :destroy
+	has_many :subtransactions, -> { where transaction_type: 'Sub' }, class_name: 'SubTransaction', through: :transaction_splits, source: :trx
+	has_many :subtransfers, -> { where transaction_type: 'Subtransfer' }, class_name: 'SubtransferTransaction', through: :transaction_splits, source: :trx
 	after_initialize do |t|
 		t.transaction_type = 'Split'
 	end
@@ -13,7 +13,7 @@ class SplitTransaction < PayeeCashTransaction
 	class << self
 		def create_from_json(json)
 			s = super
-			s.build_transaction_account(:direction => json['direction'], :status => json['status']).account = Account.find(json['primary_account']['id'])
+			s.build_transaction_account(direction: json['direction'], status: json['status']).account = Account.find(json['primary_account']['id'])
 			s.create_children(json['subtransactions'])
 			s.save!
 			s
@@ -34,7 +34,7 @@ class SplitTransaction < PayeeCashTransaction
 			# Clear the id and copy the header details from the parent
 			child['id'] = nil
 			child['transaction_date'] = self.header.transaction_date
-			child['payee'] = {:id => self.header.payee.id}
+			child['payee'] = {id: self.header.payee.id}
 
 			unless self.header.schedule.nil?
 				child['next_due_date'] = self.header.schedule.next_due_date
@@ -57,13 +57,13 @@ class SplitTransaction < PayeeCashTransaction
 
 	def as_json(options={})
 		super.merge({
-			:primary_account => self.account.as_json,
-			:category => {
-				:id => self.transaction_account.direction.eql?('inflow') && 'SplitFrom' || 'SplitTo',
-				:name => self.transaction_account.direction.eql?('inflow') && 'Split From' || 'Split To'
+			primary_account: self.account.as_json,
+			category: {
+				id: self.transaction_account.direction.eql?('inflow') && 'SplitFrom' || 'SplitTo',
+				name: self.transaction_account.direction.eql?('inflow') && 'Split From' || 'Split To'
 			},
-			:direction => self.transaction_account.direction,
-			:status => self.transaction_account.status
+			direction: self.transaction_account.direction,
+			status: self.transaction_account.status
 		})
 	end
 
@@ -98,18 +98,18 @@ class SplitTransaction < PayeeCashTransaction
 		# Remap to the desired output format
 		transactions.map do |trx|
 			{
-				:id => trx['id'],
-				:transaction_type => trx['transaction_type'],
-				:category => self.class.transaction_category(trx),
-				:subcategory => self.class.basic_subcategory(trx),
-				:account => {
-					:id => trx['account_id'],
-					:name => trx['account_name']
+				id: trx['id'],
+				transaction_type: trx['transaction_type'],
+				category: self.class.transaction_category(trx),
+				subcategory: self.class.basic_subcategory(trx),
+				account: {
+					id: trx['account_id'],
+					name: trx['account_name']
 				},
-				:amount => trx['amount'],
-				:direction => (trx['transaction_type'].eql?('Subtransfer') && (trx['parent_transaction_type'].eql?('Payslip') && 'outflow' || trx['direction']) || trx['category_direction']),
-				:memo => trx['memo'],
-				:flag => trx['flag']
+				amount: trx['amount'],
+				direction: (trx['transaction_type'].eql?('Subtransfer') && (trx['parent_transaction_type'].eql?('Payslip') && 'outflow' || trx['direction']) || trx['category_direction']),
+				memo: trx['memo'],
+				flag: trx['flag']
 			}
 		end
 	end

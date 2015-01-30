@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe SecuritiesController, :type => :controller do
-	describe "GET index", :request => true, :json => true do
+RSpec.describe SecuritiesController, type: :controller do
+	describe "GET index", request: true, json: true do
 		context "for security list" do
 			let(:json) { "security list with balances" }
 
 			before :each do
 				expect(Security).to receive(:list).and_return json
-				get :index, :include_balances => true
+				get :index, include_balances: true
 			end
 
 			it "should return the security list including balances" do
@@ -29,17 +29,17 @@ RSpec.describe SecuritiesController, :type => :controller do
 		end
 	end
 
-	describe "GET show", :request => true, :json => true do
+	describe "GET show", request: true, json: true do
 		let(:json) { "security details" }
 
 		it "should return the details of the specified security" do
 			expect(Security).to receive(:find).with("1").and_return json
-			get :show, :id => "1"
+			get :show, id: "1"
 		end
 	end
 
-	describe "POST create", :request => true, :json => true do
-		let(:request_body) { {:name => "New security", :code => "ABC"} }
+	describe "POST create", request: true, json: true do
+		let(:request_body) { {name: "New security", code: "ABC"} }
 		let(:json) { "created security" }
 
 		it "should create a new security and return the details" do
@@ -48,9 +48,9 @@ RSpec.describe SecuritiesController, :type => :controller do
 		end
 	end
 
-	describe "PATCH update", :request => true, :json => true do
+	describe "PATCH update", request: true, json: true do
 		let(:security) { double "security" }
-		let(:request_body) { {:name => "Updated security", :code => "ABC"} }
+		let(:request_body) { {name: "Updated security", code: "ABC"} }
 		let(:raw_json) { "updated security" }
 		let(:json) { JSON.dump raw_json }
 
@@ -58,17 +58,17 @@ RSpec.describe SecuritiesController, :type => :controller do
 			expect(Security).to receive(:find).with("1").and_return security
 			expect(security).to receive(:update_attributes!).with(request_body)
 			expect(security).to receive(:as_json).and_return raw_json
-			patch :update, request_body.merge(:id => "1")
+			patch :update, request_body.merge(id: "1")
 		end
 	end
 
-	describe "DELETE destroy", :request => true do
+	describe "DELETE destroy", request: true do
 		let(:security) { Security.new }
 
 		it "should delete an existing security" do
 			expect(Security).to receive(:find).with("1").and_return security
 			expect(security).to receive(:destroy)
-			delete :destroy, :id => "1"
+			delete :destroy, id: "1"
 		end
 	end
 end

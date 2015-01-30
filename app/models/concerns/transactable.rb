@@ -7,13 +7,13 @@ module Transactable
 	NUM_RESULTS = 150
 
 	LEDGER_QUERY_OPTS = {
-		:prev => {
-			:operator => '<',
-			:order => 'DESC'
+		prev: {
+			operator: '<',
+			order: 'DESC'
 		},
-		:next => {
-			:operator => '>',
-			:order => 'ASC'
+		next: {
+			operator: '>',
+			order: 'ASC'
 		}
 	}
 
@@ -55,7 +55,7 @@ module Transactable
 				.select([	"transaction_headers.security_id",
 									"transaction_accounts.direction",
 									"SUM(transaction_headers.quantity) AS total_quantity"])
-				.where(		:transaction_type => %w(SecurityInvestment SecurityTransfer SecurityHolding))
+				.where(		transaction_type: %w(SecurityInvestment SecurityTransfer SecurityHolding))
 				.where(		"transaction_headers.transaction_date <= ?", as_at)
 				.where(		"transaction_headers.transaction_date IS NOT NULL")
 				.group(		"transaction_headers.security_id",
@@ -82,7 +82,7 @@ module Transactable
 				.select([	"categories.direction",
 									"SUM(transactions.amount) AS total_amount"])
 				.joins(		"JOIN categories ON transaction_categories.category_id = categories.id")
-				.where(		:transaction_type => %w(Basic Sub))
+				.where(		transaction_type: %w(Basic Sub))
 				.where(		"transaction_headers.transaction_date <= ?", as_at)
 				.where(		"transaction_headers.transaction_date IS NOT NULL")
 				.group(		"categories.direction")
@@ -93,7 +93,7 @@ module Transactable
 									"SUM(transactions.amount) AS total_amount"])
 				.joins([	"JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
 									"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id"])
-				.where(		:transaction_type => 'Subtransfer')
+				.where(		transaction_type: 'Subtransfer')
 				.where(		"transaction_headers.transaction_date <= ?", as_at)
 				.where(		"transaction_headers.transaction_date IS NOT NULL")
 				.where(		"parent_transactions.transaction_type = 'Split' or parent_transactions.transaction_type = 'LoanRepayment' or parent_transactions.transaction_type = 'Payslip'")
@@ -101,18 +101,18 @@ module Transactable
 
 			# Get the total other inflows
 			total_inflows = self.transactions.for_closing_balance(opts)
-				.where(		:transaction_type => %w(Split Payslip Transfer Dividend SecurityInvestment))
+				.where(		transaction_type: %w(Split Payslip Transfer Dividend SecurityInvestment))
 				.where(		"transaction_headers.transaction_date <= ?", as_at)
 				.where(		"transaction_headers.transaction_date IS NOT NULL")
-				.where(		:transaction_accounts => {:direction => 'inflow'})
+				.where(		transaction_accounts: {direction: 'inflow'})
 				.sum(			"amount")
 
 			# Get the total other outflows
 			total_outflows = self.transactions.for_closing_balance(opts)
-				.where(		:transaction_type => %w(Split LoanRepayment Transfer SecurityInvestment))
+				.where(		transaction_type: %w(Split LoanRepayment Transfer SecurityInvestment))
 				.where(		"transaction_headers.transaction_date <= ?", as_at)
 				.where(		"transaction_headers.transaction_date IS NOT NULL")
-				.where(		:transaction_accounts => {:direction => 'outflow'})
+				.where(		transaction_accounts: {direction: 'outflow'})
 				.sum(			"amount")
 
 			totals.each do |t|
@@ -205,7 +205,7 @@ module Transactable
 		# b) the closing balance as at the closing_date (when going backwards)
 		# c) the closing balance as at the passed date (when going forwards)
 		if opts[:direction].eql? :prev
-			at_end ? self.opening_balance : self.closing_balance(opts.merge({:as_at => closing_date.to_s}))
+			at_end ? self.opening_balance : self.closing_balance(opts.merge({as_at: closing_date.to_s}))
 		else
 			self.closing_balance opts
 		end
@@ -221,38 +221,38 @@ module Transactable
 
 	def to_ledger_json(trx)
 		{
-			:id => trx['id'],
-			:transaction_type => trx['transaction_type'],
-			:transaction_date => trx['transaction_date'],
-			:primary_account => {
-				:id => trx['primary_account_id'] || trx['split_account_id'],
-				:name => trx['primary_account_name'] || trx['split_account_name'],
-				:account_type => trx['primary_account_type'] || trx['split_account_type']
+			id: trx['id'],
+			transaction_type: trx['transaction_type'],
+			transaction_date: trx['transaction_date'],
+			primary_account: {
+				id: trx['primary_account_id'] || trx['split_account_id'],
+				name: trx['primary_account_name'] || trx['split_account_name'],
+				account_type: trx['primary_account_type'] || trx['split_account_type']
 			},
-			:payee => {
-				:id => trx['payee_id'],
-				:name => trx['payee_name']
+			payee: {
+				id: trx['payee_id'],
+				name: trx['payee_name']
 			},
-			:security => {
-				:id => trx['security_id'],
-				:name => trx['security_name']
+			security: {
+				id: trx['security_id'],
+				name: trx['security_name']
 			},
-			:category => (self.is_a?(Class) && self || self.class).transaction_category(trx, self.account_type),
-			:subcategory => (self.is_a?(Class) && self || self.class).basic_subcategory(trx),
-			:account => {
-				:id => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
-				:name => (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
+			category: (self.is_a?(Class) && self || self.class).transaction_category(trx, self.account_type),
+			subcategory: (self.is_a?(Class) && self || self.class).basic_subcategory(trx),
+			account: {
+				id: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
+				name: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
 			},
-			:parent_id => trx['split_parent_id'],
-			:amount => trx['amount'],
-			:quantity => trx['quantity'],
-			:commission => trx['commission'],
-			:price => trx['price'],
-			:direction => trx['direction'] || trx['split_parent_direction'],
-			:status => trx['status'],
-			:related_status => (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status'] || trx['transfer_status']),
-			:memo => trx['memo'],
-			:flag => trx['flag']
+			parent_id: trx['split_parent_id'],
+			amount: trx['amount'],
+			quantity: trx['quantity'],
+			commission: trx['commission'],
+			price: trx['price'],
+			direction: trx['direction'] || trx['split_parent_direction'],
+			status: trx['status'],
+			related_status: (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status'] || trx['transfer_status']),
+			memo: trx['memo'],
+			flag: trx['flag']
 		}
 	end
 end

@@ -1,12 +1,12 @@
 require 'rails_helper'
 require 'models/concerns/transactable'
 
-RSpec.describe Account, :type => :model do
+RSpec.describe Account, type: :model do
 	context "non-investment account" do
 		it_behaves_like Transactable do
 			let(:context_factory) { :bank_account }
 			let(:ledger_json_key) { :primary_account }
-			let(:expected_closing_balances) { {:with_date => 999, :without_date => 999 } }
+			let(:expected_closing_balances) { {with_date: 999, without_date: 999 } }
 		end
 	end
 
@@ -14,7 +14,7 @@ RSpec.describe Account, :type => :model do
 		it_behaves_like Transactable do
 			let(:context_factory) { :investment_account }
 			let(:ledger_json_key) { :primary_account }
-			let(:expected_closing_balances) { {:with_date => 999, :without_date => 999 } }
+			let(:expected_closing_balances) { {with_date: 999, without_date: 999 } }
 		end
 	end
 
@@ -33,35 +33,35 @@ RSpec.describe Account, :type => :model do
 
 		let(:json) { {
 			"Bank accounts" => {
-				:accounts => [
+				accounts: [
 					{
-						:id => bank_account.id,
-						:name => bank_account.name,
-						:status => bank_account.status,
-						:closing_balance => bank_account.closing_balance.to_f,
-						:related_account_id => bank_account.related_account_id
+						id: bank_account.id,
+						name: bank_account.name,
+						status: bank_account.status,
+						closing_balance: bank_account.closing_balance.to_f,
+						related_account_id: bank_account.related_account_id
 					},
 					{
-						:id => another_bank_account.id,
-						:name => another_bank_account.name,
-						:status => another_bank_account.status,
-						:closing_balance => another_bank_account.closing_balance.to_f,
-						:related_account_id => another_bank_account.related_account_id
+						id: another_bank_account.id,
+						name: another_bank_account.name,
+						status: another_bank_account.status,
+						closing_balance: another_bank_account.closing_balance.to_f,
+						related_account_id: another_bank_account.related_account_id
 					}
 				],
-				:total => bank_account.closing_balance.to_f + another_bank_account.closing_balance.to_f
+				total: bank_account.closing_balance.to_f + another_bank_account.closing_balance.to_f
 			},
 			"Investment accounts" => {
-				:accounts => [
+				accounts: [
 					{
-						:id => investment_account.id,
-						:name => investment_account.name,
-						:status => investment_account.status,
-						:closing_balance => investment_account.closing_balance.to_f,
-						:related_account_id => investment_account.related_account_id
+						id: investment_account.id,
+						name: investment_account.name,
+						status: investment_account.status,
+						closing_balance: investment_account.closing_balance.to_f,
+						related_account_id: investment_account.related_account_id
 					}
 				],
-				:total => investment_account.closing_balance.to_f
+				total: investment_account.closing_balance.to_f
 			}
 		}}
 
@@ -99,7 +99,7 @@ RSpec.describe Account, :type => :model do
 			subject { create(:account, transactions: 2, reconciled: 1) }
 
 			it "should include only unreconciled transactions" do
-				_, transactions, _ = subject.ledger({:unreconciled => 'true'})
+				_, transactions, _ = subject.ledger({unreconciled: 'true'})
 
 				expect(transactions.size).to eq 2
 				expect(transactions).to all_be_unreconciled
@@ -111,13 +111,13 @@ RSpec.describe Account, :type => :model do
 		subject { create :account, transactions: 2, reconciled: 1 }
 
 		it "should mark all cleared transactions as reconciled" do
-			trx = subject.transaction_accounts.where(:status => nil).first
-			trx.update_attributes(:status => "Cleared")
+			trx = subject.transaction_accounts.where(status: nil).first
+			trx.update_attributes(status: "Cleared")
 
 			subject.reconcile
 
-			expect(subject.transaction_accounts.where(:status => 'Cleared').size).to eq 0
-			expect(subject.transaction_accounts.where(:status => 'Reconciled').size).to eq 2
+			expect(subject.transaction_accounts.where(status: 'Cleared').size).to eq 0
+			expect(subject.transaction_accounts.where(status: 'Reconciled').size).to eq 2
 		end
 	end
 
@@ -126,13 +126,13 @@ RSpec.describe Account, :type => :model do
 		let(:json) { subject.as_json }
 
 		it "should return a JSON representation" do
-			expect(json).to include(:id => subject.id)
-			expect(json).to include(:name => "Test Account")
-			expect(json).to include(:account_type => "bank")
-			expect(json).to include(:opening_balance => 1000)
-			expect(json).to include(:status => "open")
-			expect(json).to include(:closing_balance => subject.closing_balance)
-			expect(json).to include(:num_transactions => 1)
+			expect(json).to include(id: subject.id)
+			expect(json).to include(name: "Test Account")
+			expect(json).to include(account_type: "bank")
+			expect(json).to include(opening_balance: 1000)
+			expect(json).to include(status: "open")
+			expect(json).to include(closing_balance: subject.closing_balance)
+			expect(json).to include(num_transactions: 1)
 		end
 	end
 end

@@ -5,7 +5,7 @@ class AccountsController < ApplicationController
 		if params.has_key? :include_balances
 			respond_with Account.list
 		else
-			respond_with Account.all.order(:account_type, :name), :except => [:closing_balance, :num_transactions]
+			respond_with Account.all.order(:account_type, :name), except: [:closing_balance, :num_transactions]
 		end
 	end
 
@@ -15,6 +15,6 @@ class AccountsController < ApplicationController
 
 	def reconcile
 		Account.find(params[:id]).reconcile
-		head :status => :ok
+		head status: :ok
 	end
 end

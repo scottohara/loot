@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ApplicationController, :type => :controller do
+RSpec.describe ApplicationController, type: :controller do
 	controller do
 		def index
 			case params["context"]
@@ -8,7 +8,7 @@ RSpec.describe ApplicationController, :type => :controller do
 				when "record invalid" then raise ActiveRecord::RecordInvalid, FactoryGirl.create(:category, name: nil, direction: "invalid")
 				when "record not found" then raise ActiveRecord::RecordNotFound, params["context"]
 				when "routing error" then params[:unmatched_route] = params["context"]; routing_error
-				else render :nothing => true
+				else render nothing: true
 			end
 		end
 	end
@@ -24,7 +24,7 @@ RSpec.describe ApplicationController, :type => :controller do
 	end
 
 	before :each do |example|
-		get :index, :context => example.metadata[:example_group][:description]
+		get :index, context: example.metadata[:example_group][:description]
 	end
 
 	describe "unauthenticated user" do
@@ -54,35 +54,35 @@ RSpec.describe ApplicationController, :type => :controller do
 		end
 	end
 
-	context "authenticated user", :authenticated => true do
+	context "authenticated user", authenticated: true do
 		let(:user_name) { valid_user_name }
 		let(:password) { valid_password }
 
 		it "should response with no message and a 200 OK status" do; end
 	end
 
-	context "internal error", :request => true, :json => true do
+	context "internal error", request: true, json: true do
 		let(:expected_status) { :internal_server_error }
 		let(:json) { "internal error" }
 
 		it "should respond with a JSON error message and a 500 Internal Server Error status" do; end
 	end
 
-	context "record invalid", :request => true, :json => true do
+	context "record invalid", request: true, json: true do
 		let(:expected_status) { :unprocessable_entity }
 		let(:json) { "Name can't be blank, Direction is not included in the list" }
 
 		it "should respond with a JSON error message and a 422 Unprocessable Entity status" do; end
 	end
 
-	context "record not found", :request => true, :json => true do
+	context "record not found", request: true, json: true do
 		let(:expected_status) { :not_found }
 		let(:json) { "record not found" }
 
 		it "should respond with a JSON error message and a 404 Not Found status" do; end
 	end
 
-	context "routing error", :request => true, :json => true do
+	context "routing error", request: true, json: true do
 		let(:expected_status) { :not_found }
 		let(:json) { "Path routing error is not valid" }
 

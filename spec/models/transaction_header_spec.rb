@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TransactionHeader, :type => :model do
+RSpec.describe TransactionHeader, type: :model do
 	describe "#validate_transaction_date_or_schedule_presence" do
 		subject { TransactionHeader.new }
 		let(:error_message) { "Either transaction date or schedule can't be blank" }
@@ -106,7 +106,7 @@ RSpec.describe TransactionHeader, :type => :model do
 			end
 
 			after :each do
-				expect(schedule).to receive(:assign_attributes).with(:next_due_date => json['next_due_date'], :frequency => json['frequency'], :estimate => !!json['estimate'], :auto_enter => !!json['auto_enter'])
+				expect(schedule).to receive(:assign_attributes).with(next_due_date: json['next_due_date'], frequency: json['frequency'], estimate: !!json['estimate'], auto_enter: !!json['auto_enter'])
 			end
 		end
 
@@ -128,16 +128,16 @@ RSpec.describe TransactionHeader, :type => :model do
 			subject { create(:transaction_header, :scheduled) }
 
 			before :each do
-				expect(subject.schedule).to receive(:as_json).and_return(:schedule => "schedule json")
+				expect(subject.schedule).to receive(:as_json).and_return(schedule: "schedule json")
 			end
 
 			it "should return a JSON representation" do
-				expect(json).to include(:schedule => "schedule json")
+				expect(json).to include(schedule: "schedule json")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:transaction_date => subject.transaction_date)
+			expect(json).to include(transaction_date: subject.transaction_date)
 		end
 	end
 end

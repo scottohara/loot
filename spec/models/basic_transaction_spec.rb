@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe BasicTransaction, :type => :model do
+RSpec.describe BasicTransaction, type: :model do
 	matcher :match_json do |expected, account, category|
 		match do |actual|
 			actual.transaction_type.eql? "Basic" and \
@@ -17,9 +17,9 @@ RSpec.describe BasicTransaction, :type => :model do
 	describe "::create_from_json" do
 		let(:account) { create :bank_account }
 		let(:category) { create :category }
-		let(:subcategory) { create :subcategory, :parent => category }
+		let(:subcategory) { create :subcategory, parent: category }
 		let(:json) { {
-			:id => 1,
+			id: 1,
 			"amount" => 1,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -57,10 +57,10 @@ RSpec.describe BasicTransaction, :type => :model do
 	describe "::update_from_json" do
 		let(:account) { create :bank_account }
 		let(:category) { create :category }
-		let(:subcategory) { create :subcategory, :parent => category }
+		let(:subcategory) { create :subcategory, parent: category }
 		let(:transaction) { create :basic_transaction }
 		let(:json) { {
-			:id => transaction.id,
+			id: transaction.id,
 			"amount" => 1,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -110,8 +110,8 @@ RSpec.describe BasicTransaction, :type => :model do
 			end
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => "category json")
-				expect(json).to include(:subcategory => nil)
+				expect(json).to include(category: "category json")
+				expect(json).to include(subcategory: nil)
 			end
 		end
 
@@ -124,15 +124,15 @@ RSpec.describe BasicTransaction, :type => :model do
 			end
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => "category json")
-				expect(json).to include(:subcategory => "subcategory json")
+				expect(json).to include(category: "category json")
+				expect(json).to include(subcategory: "subcategory json")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:primary_account => "account json")
-			expect(json).to include(:direction => "outflow")
-			expect(json).to include(:status => "Reconciled")
+			expect(json).to include(primary_account: "account json")
+			expect(json).to include(direction: "outflow")
+			expect(json).to include(status: "Reconciled")
 		end
 	end
 end

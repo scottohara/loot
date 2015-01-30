@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'models/concerns/categorisable'
 
-RSpec.describe SplitTransaction, :type => :model do
+RSpec.describe SplitTransaction, type: :model do
 	it_behaves_like Categorisable
 
 	matcher :match_json do |expected, account|
@@ -20,7 +20,7 @@ RSpec.describe SplitTransaction, :type => :model do
 	describe "::create_from_json" do
 		let(:account) { create :bank_account }
 		let(:json) { {
-			:id => 1,
+			id: 1,
 			"amount" => 1,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -43,7 +43,7 @@ RSpec.describe SplitTransaction, :type => :model do
 		let(:account) { create :bank_account }
 		let(:transaction) { create :split_transaction, subtransactions: 1, subtransfers: 1 }
 		let(:json) { {
-			:id => transaction.id,
+			id: transaction.id,
 			"amount" => 1,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -68,16 +68,16 @@ RSpec.describe SplitTransaction, :type => :model do
 		# Examples include keys that are both symbols and strings
 		let(:children) { [
 			{
-				:id => "child 1",
-				:amount => 1,
-				:memo => "Test subtransaction",
-				:transaction_type => "Sub",
-				:flag => "Test flag",
-				:category => {
-					:id => subcategory.parent.id
+				id: "child 1",
+				amount: 1,
+				memo: "Test subtransaction",
+				transaction_type: "Sub",
+				flag: "Test flag",
+				category: {
+					id: subcategory.parent.id
 				},
-				:subcategory => {
-					:id => subcategory.id
+				subcategory: {
+					id: subcategory.id
 				}
 			},
 			{
@@ -148,8 +148,8 @@ RSpec.describe SplitTransaction, :type => :model do
 			subject { create(:split_to_transaction, status: "Reconciled") }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => {:id => "SplitTo", :name => "Split To"})
-				expect(json).to include(:direction => "outflow")
+				expect(json).to include(category: {id: "SplitTo", name: "Split To"})
+				expect(json).to include(direction: "outflow")
 			end
 		end
 
@@ -157,14 +157,14 @@ RSpec.describe SplitTransaction, :type => :model do
 			subject { create(:split_from_transaction, status: "Reconciled") }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:category => {:id => "SplitFrom", :name => "Split From"})
-				expect(json).to include(:direction => "inflow")
+				expect(json).to include(category: {id: "SplitFrom", name: "Split From"})
+				expect(json).to include(direction: "inflow")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:primary_account => "account json")
-			expect(json).to include(:status => "Reconciled")
+			expect(json).to include(primary_account: "account json")
+			expect(json).to include(status: "Reconciled")
 		end
 	end
 

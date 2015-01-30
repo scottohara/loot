@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe PayeeCashTransaction, :type => :model do
+RSpec.describe PayeeCashTransaction, type: :model do
 	describe "::create_from_json" do
 		let(:json) { {} }
 
@@ -33,11 +33,11 @@ RSpec.describe PayeeCashTransaction, :type => :model do
 		let(:json) { subject.as_json }
 
 		before :each do
-			expect(subject.header).to receive(:as_json).and_return(:header => "header json")
+			expect(subject.header).to receive(:as_json).and_return(header: "header json")
 		end
 
 		it "should return a JSON representation" do
-			expect(json).to include(:header => "header json")
+			expect(json).to include(header: "header json")
 		end
 	end
 end

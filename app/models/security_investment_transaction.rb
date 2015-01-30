@@ -1,9 +1,9 @@
 class SecurityInvestmentTransaction < SecurityTransaction
-	validates :amount, :presence => true
+	validates :amount, presence: true
 	validate :validate_quantity_presence, :validate_price_presence, :validate_commission_presence
 	validate :validate_amount_matches_investment_details
-	has_many :transaction_accounts, :foreign_key => 'transaction_id', :autosave => true, :dependent => :destroy
-	has_many :accounts, :through => :transaction_accounts
+	has_many :transaction_accounts, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
+	has_many :accounts, through: :transaction_accounts
 	after_initialize do |t|
 		t.transaction_type = 'SecurityInvestment'
 	end
@@ -14,8 +14,8 @@ class SecurityInvestmentTransaction < SecurityTransaction
 
 			s = super
 			s.amount = json['amount']
-			s.transaction_accounts.build(:direction => json['direction'], :status => json['status']).account = Account.find(json['primary_account']['id'])
-			s.transaction_accounts.build(:direction => cash_direction, :status => json['related_status']).account = Account.find(json['account']['id'])
+			s.transaction_accounts.build(direction: json['direction'], status: json['status']).account = Account.find(json['primary_account']['id'])
+			s.transaction_accounts.build(direction: cash_direction, status: json['related_status']).account = Account.find(json['account']['id'])
 			s.save!
 			s.header.security.update_price!(json['price'], json['transaction_date'], json[:id]) unless json['transaction_date'].nil?
 			s
@@ -50,16 +50,16 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		primary_account, other_account = other_account, primary_account if options[:primary_account].eql? other_account.account_id
 
 		super.merge({
-			:primary_account => primary_account.account.as_json,
-			:category => self.class.transaction_category({'transaction_type' => self.transaction_type, 'direction' => primary_account.direction}, primary_account.account.account_type),
-			:account => other_account.account.as_json,
-			:amount => self.amount,
-			:direction => primary_account.direction,
-			:status => primary_account.status,
-			:related_status => other_account.status,
-			:quantity => self.header.quantity,
-			:price => self.header.price,
-			:commission => self.header.commission
+			primary_account: primary_account.account.as_json,
+			category: self.class.transaction_category({'transaction_type' => self.transaction_type, 'direction' => primary_account.direction}, primary_account.account.account_type),
+			account: other_account.account.as_json,
+			amount: self.amount,
+			direction: primary_account.direction,
+			status: primary_account.status,
+			related_status: other_account.status,
+			quantity: self.header.quantity,
+			price: self.header.price,
+			commission: self.header.commission
 		})
 	end
 

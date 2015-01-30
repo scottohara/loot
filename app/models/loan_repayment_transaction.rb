@@ -5,9 +5,9 @@ class LoanRepaymentTransaction < SplitTransaction
 
 	def as_json(options={})
 		super.merge({
-			:category => {
-				:id => self.transaction_type,
-				:name => "Loan Repayment"
+			category: {
+				id: self.transaction_type,
+				name: "Loan Repayment"
 			}
 		})
 	end

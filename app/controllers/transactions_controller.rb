@@ -1,44 +1,44 @@
 class TransactionsController < ApplicationController
 	respond_to :json
-	before_action :clean, :only => [:create, :update]
-	before_action :context, :only => [:index, :last]
+	before_action :clean, only: [:create, :update]
+	before_action :context, only: [:index, :last]
 
 	def index
 		opening_balance, transactions, at_end = @context.ledger params
-		render :json => {
-			:openingBalance => opening_balance.to_f,
-			:transactions => transactions,
-			:atEnd => at_end
+		render json: {
+			openingBalance: opening_balance.to_f,
+			transactions: transactions,
+			atEnd: at_end
 		}
 	end
 
 	def show
-		render :json => Transaction.find(params[:id]).as_subclass
+		render json: Transaction.find(params[:id]).as_subclass
 	end
 
 	def create
-		render :json => create_transaction
+		render json: create_transaction
 	end
 
 	def update
 		transaction = Transaction.find params[:id]
 		if transaction.transaction_type.eql? params['transaction_type']
 			# Type hasn't changed, so just update
-			render :json => Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
+			render json: Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			transaction.as_subclass.destroy
-			render :json => create_transaction
+			render json: create_transaction
 		end
 	end
 
 	def destroy
 		Transaction.find(params[:id]).as_subclass.destroy
-		head :status => :ok
+		head status: :ok
 	end
 
 	def last
-		render :json => @context.transactions.where(:transaction_type => Transaction.types_for(params[:account_type])).last.as_subclass
+		render json: @context.transactions.where(transaction_type: Transaction.types_for(params[:account_type])).last.as_subclass
 	end
 
 	def clean

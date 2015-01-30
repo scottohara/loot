@@ -16,7 +16,7 @@ namespace :deploy do
 			end
 
 			# Get a reference to the git repo
-			git = Git.open Rails.root, :log => logger
+			git = Git.open Rails.root, log: logger
 
 			# Get a reference to the named remote
 			git_remote = git.remote remote

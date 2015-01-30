@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DividendTransaction, :type => :model do
+RSpec.describe DividendTransaction, type: :model do
 	matcher :match_json do |expected, investment_account, cash_account|
 		match do |actual|
 			actual.transaction_type.eql? "Dividend" and \
@@ -23,7 +23,7 @@ RSpec.describe DividendTransaction, :type => :model do
 		let(:investment_account) { create :investment_account }
 		let(:cash_account) { create :bank_account }
 		let(:json) { {
-			:id => 1,
+			id: 1,
 			"amount" => 1,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -58,7 +58,7 @@ RSpec.describe DividendTransaction, :type => :model do
 		let(:cash_account) { create :bank_account }
 		let(:transaction) { create :dividend_transaction }
 		let(:json) { {
-			:id => transaction.id,
+			id: transaction.id,
 			"amount" => 1,
 			"memo" => "Test json",
 			"primary_account" => {
@@ -93,27 +93,27 @@ RSpec.describe DividendTransaction, :type => :model do
 			let(:json) { subject.as_json }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:primary_account => "investment account json")
-				expect(json).to include(:category => {:id => "DividendTo", :name => "Dividend To"})
-				expect(json).to include(:account => "cash account json")
-				expect(json).to include(:direction => "outflow")
+				expect(json).to include(primary_account: "investment account json")
+				expect(json).to include(category: {id: "DividendTo", name: "Dividend To"})
+				expect(json).to include(account: "cash account json")
+				expect(json).to include(direction: "outflow")
 			end
 		end
 
 		context "for cash account" do
-			let(:json) { subject.as_json({:primary_account => subject.cash_account.account_id}) }
+			let(:json) { subject.as_json({primary_account: subject.cash_account.account_id}) }
 
 			it "should return a JSON representation" do
-				expect(json).to include(:primary_account => "cash account json")
-				expect(json).to include(:category => {:id => "DividendFrom", :name => "Dividend From"})
-				expect(json).to include(:account => "investment account json")
-				expect(json).to include(:direction => "inflow")
+				expect(json).to include(primary_account: "cash account json")
+				expect(json).to include(category: {id: "DividendFrom", name: "Dividend From"})
+				expect(json).to include(account: "investment account json")
+				expect(json).to include(direction: "inflow")
 			end
 		end
 
 		after :each do
-			expect(json).to include(:amount => 1)
-			expect(json).to include(:status => "Reconciled")
+			expect(json).to include(amount: 1)
+			expect(json).to include(status: "Reconciled")
 		end
 	end
 

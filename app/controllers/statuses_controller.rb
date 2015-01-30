@@ -11,10 +11,10 @@ class StatusesController < ApplicationController
 
 	def update_status(status = nil)
 		TransactionAccount
-			.where(:account_id => params[:account_id])
-			.where(:transaction_id => params[:transaction_id])
-			.update_all(:status => status)
+			.where(account_id: params[:account_id])
+			.where(transaction_id: params[:transaction_id])
+			.update_all(status: status)
 
-		head :status => :ok
+		head status: :ok
 	end
 end

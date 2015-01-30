@@ -1,9 +1,9 @@
 class Account < ActiveRecord::Base
-	validates :name, :opening_balance, :presence => true
-	validates :account_type, :presence => true, :inclusion => {:in => %w(bank credit cash asset liability investment loan)}
-	validates :status, :inclusion => {:in => %w(open closed)}
+	validates :name, :opening_balance, presence: true
+	validates :account_type, presence: true, inclusion: {in: %w(bank credit cash asset liability investment loan)}
+	validates :status, inclusion: {in: %w(open closed)}
 	has_many :transaction_accounts
-	has_many :transactions, :through => :transaction_accounts, :source => :trx do
+	has_many :transactions, through: :transaction_accounts, source: :trx do
 		def for_ledger(opts)
 			joins([	"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id",
 							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
 							"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
 		end
 	end
-	belongs_to :related_account, :class_name => 'Account', :foreign_key => 'related_account_id'
+	belongs_to :related_account, class_name: 'Account', foreign_key: 'related_account_id'
 
 	include Transactable
 
@@ -142,14 +142,14 @@ class Account < ActiveRecord::Base
 
 			account_list.values.sort_by {|a| a['account_type']}.group_by {|a| "#{a['account_type'].capitalize} account".pluralize}.each_with_object({}) do |(type,accounts),hash|
 				hash[type] = {
-					:accounts => accounts.sort_by {|a| a['name']}.map {|a| {
-						:id => a['id'].to_i,
-						:name => a['name'],
-						:status => a['status'],
-						:closing_balance => a['closing_balance'].to_f,
-						:related_account_id => a['related_account_id'] && a['related_account_id'].to_i
+					accounts: accounts.sort_by {|a| a['name']}.map {|a| {
+						id: a['id'].to_i,
+						name: a['name'],
+						status: a['status'],
+						closing_balance: a['closing_balance'].to_f,
+						related_account_id: a['related_account_id'] && a['related_account_id'].to_i
 					}},
-					:total => accounts.map {|a| a['closing_balance'].to_f}.reduce(:+)
+					total: accounts.map {|a| a['closing_balance'].to_f}.reduce(:+)
 				}
 			end
 
@@ -159,8 +159,8 @@ class Account < ActiveRecord::Base
 	def reconcile
 		# Mark all cleared transactions for the account as reconciled
 		self.transaction_accounts
-			.where(:status => 'Cleared')
-			.update_all(:status => 'Reconciled')
+			.where(status: 'Cleared')
+			.update_all(status: 'Reconciled')
 	end
 
 	def as_json(options={})

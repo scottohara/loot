@@ -2,7 +2,7 @@ RSpec.shared_examples Categorisable do
 	describe "::transaction_category" do
 		subject { described_class }
 		let(:trx) { {} }
-		let(:account) { {:type => "cash"} }
+		let(:account) { {type: "cash"} }
 		let(:expected) { {} }
 
 		context "basic types" do

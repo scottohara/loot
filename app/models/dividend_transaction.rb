@@ -1,8 +1,8 @@
 class DividendTransaction < SecurityTransaction
-	validates :amount, :presence => true
+	validates :amount, presence: true
 	validate :validate_quantity_absence, :validate_price_absence, :validate_commission_absence
-	has_many :transaction_accounts, :foreign_key => 'transaction_id', :autosave => true, :dependent => :destroy
-	has_many :accounts, :through => :transaction_accounts
+	has_many :transaction_accounts, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
+	has_many :accounts, through: :transaction_accounts
 	after_initialize do |t|
 		t.transaction_type = 'Dividend'
 	end
@@ -16,8 +16,8 @@ class DividendTransaction < SecurityTransaction
 
 			s = super
 			s.amount = json['amount']
-			s.transaction_accounts.build(:direction => 'outflow', :status => json['status']).account = Account.find(json['primary_account']['id'])
-			s.transaction_accounts.build(:direction => 'inflow', :status => json['related_status']).account = Account.find(json['account']['id'])
+			s.transaction_accounts.build(direction: 'outflow', status: json['status']).account = Account.find(json['primary_account']['id'])
+			s.transaction_accounts.build(direction: 'inflow', status: json['related_status']).account = Account.find(json['account']['id'])
 			s.save!
 			s
 		end
@@ -42,13 +42,13 @@ class DividendTransaction < SecurityTransaction
 		primary_account, other_account = other_account, primary_account if options[:primary_account].eql? other_account.account_id
 
 		super.merge({
-			:primary_account => primary_account.account.as_json,
-			:category => self.class.transaction_category({'transaction_type' => self.transaction_type, 'direction' => primary_account.direction}),
-			:account => other_account.account.as_json,
-			:amount => self.amount,
-			:direction => primary_account.direction,
-			:status => primary_account.status,
-			:related_status => other_account.status
+			primary_account: primary_account.account.as_json,
+			category: self.class.transaction_category({'transaction_type' => self.transaction_type, 'direction' => primary_account.direction}),
+			account: other_account.account.as_json,
+			amount: self.amount,
+			direction: primary_account.direction,
+			status: primary_account.status,
+			related_status: other_account.status
 		})
 	end
 

@@ -13,7 +13,7 @@ group :development, :production do
 end
 
 # 12 factor gem for Heroku
-gem 'rails_12factor', :group => :production
+gem 'rails_12factor', group: :production
 
 # For JSON serialisation
 gem 'active_model_serializers'
@@ -39,4 +39,4 @@ group :development do
 end
 
 # Code Climate test coverage
-gem 'codeclimate-test-reporter', :group => :test, :require => nil
+gem 'codeclimate-test-reporter', group: :test, require: nil
