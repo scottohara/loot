@@ -1,4 +1,4 @@
-Loot::Application.routes.draw do
+Rails.application.routes.draw do
 	# Root
   root to: 'accounts#index'
 
