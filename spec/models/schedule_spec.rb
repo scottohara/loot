@@ -51,7 +51,7 @@ RSpec.describe Schedule, type: :model do
 		end
 
 		def compact(transaction)
-			expected_keys = [:id, :transaction_type, :next_due_date, :frequency, :estimate, :auto_enter, :amount, :quantity, :commission, :price, :direction, :memo, :overdue_count]
+			expected_keys = [:id, :transaction_type, :next_due_date, :frequency, :estimate, :auto_enter, :amount, :quantity, :commission, :price, :direction, :memo, :flag, :overdue_count]
 			nested_keys = {
 				primary_account: [:id, :name, :account_type],
 				payee: [:id, :name],
@@ -84,7 +84,7 @@ RSpec.describe Schedule, type: :model do
 
 	describe "::ledger" do
 		let!(:scheduled_transactions) { [
-			create(:basic_expense_transaction, :scheduled),
+			create(:basic_expense_transaction, :scheduled, :flagged),
 			create(:basic_income_transaction, :scheduled),
 			create(:transfer_transaction, :scheduled),
 			create(:split_to_transaction, :scheduled, subtransactions: 1, subtransfers: 1),
