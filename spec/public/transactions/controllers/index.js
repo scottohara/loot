@@ -315,7 +315,7 @@
 			describe("(search mode)", function() {
 				beforeEach(function() {
 					transactionIndexController.contextType = undefined;
-					transactionIndexController.context = "search";
+					transactionIndexController.context = "Search";
 				});
 
 				it("should return true when the transaction memo no longer contains the search query", function() {
@@ -427,60 +427,68 @@
 		});
 
 		describe("updateClosingBalance", function() {
-			var transaction,
-					expected;
-
-			beforeEach(function() {
-				transaction = {
-					amount: 1
-				};
-				transactionIndexController.context.closing_balance = 0;
+			it("should do nothing if the context doesn't have a closing balance property", function() {
+				transactionIndexController.context = "search";
+				transactionIndexController.updateClosingBalance({amount: 1});
+				transactionIndexController.should.not.have.a.property("closing_balance");
 			});
 
-			describe("(original transaction)", function() {
-				it("should do nothing if undefined", function() {
-					transaction = undefined;
-					expected = 0;
+			describe("(context has a closing balance property)", function() {
+				var transaction,
+						expected;
+
+				beforeEach(function() {
+					transaction = {
+						amount: 1
+					};
+					transactionIndexController.context.closing_balance = 0;
 				});
 
-				it("should reduce the closing balance by the transaction amount when the direction is inflow", function() {
-					transaction.direction = "inflow";
-					expected = -1;
-				});
+				describe("(original transaction)", function() {
+					it("should do nothing if undefined", function() {
+						transaction = undefined;
+						expected = 0;
+					});
 
-				it("should increase the closing balance by the transaction amount when the direction is outflow", function() {
-					transaction.direction = "outflow";
-					expected = 1;
+					it("should reduce the closing balance by the transaction amount when the direction is inflow", function() {
+						transaction.direction = "inflow";
+						expected = -1;
+					});
+
+					it("should increase the closing balance by the transaction amount when the direction is outflow", function() {
+						transaction.direction = "outflow";
+						expected = 1;
+					});
+
+					afterEach(function() {
+						transactionIndexController.updateClosingBalance(transaction);
+					});
+				});
+				
+				describe("(new transaction)", function() {
+					it("should do nothing if undefined", function() {
+						transaction = undefined;
+						expected = 0;
+					});
+
+					it("should increase the closing balance by the transaction amount when the direction is inflow", function() {
+						transaction.direction = "inflow";
+						expected = 1;
+					});
+
+					it("should reduce the closing balance by the transaction amount when the direction is outflow", function() {
+						transaction.direction = "outflow";
+						expected = -1;
+					});
+
+					afterEach(function() {
+						transactionIndexController.updateClosingBalance(undefined, transaction);
+					});
 				});
 
 				afterEach(function() {
-					transactionIndexController.updateClosingBalance(transaction);
+					transactionIndexController.context.closing_balance.should.equal(expected);
 				});
-			});
-			
-			describe("(new transaction)", function() {
-				it("should do nothing if undefined", function() {
-					transaction = undefined;
-					expected = 0;
-				});
-
-				it("should increase the closing balance by the transaction amount when the direction is inflow", function() {
-					transaction.direction = "inflow";
-					expected = 1;
-				});
-
-				it("should reduce the closing balance by the transaction amount when the direction is outflow", function() {
-					transaction.direction = "outflow";
-					expected = -1;
-				});
-
-				afterEach(function() {
-					transactionIndexController.updateClosingBalance(undefined, transaction);
-				});
-			});
-
-			afterEach(function() {
-				transactionIndexController.context.closing_balance.should.equal(expected);
 			});
 		});
 

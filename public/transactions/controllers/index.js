@@ -125,7 +125,7 @@
 
 					default:
 						// Search mode - check if the transaction memo still matches the search query
-						return transaction.memo.indexOf($scope.context) === -1;
+						return transaction.memo.toLowerCase().indexOf($scope.context.toLowerCase()) === -1;
 				}
 
 				return currentContext.id !== $scope.context.id;
@@ -175,14 +175,17 @@
 
 			// Updates the context's closing balance after adding, editing or deleting a transaction
 			$scope.updateClosingBalance = function(originalTransaction, newTransaction) {
-				// If there was an original transaction, exclude it's amount from the closing balance
-				if (originalTransaction) {
-					$scope.context.closing_balance = Number($scope.context.closing_balance) - (Number(originalTransaction.amount) * ("inflow" === originalTransaction.direction ? 1 : -1));
-				}
+				// Only proceed if the context has a closing balance (ie. not in search mode)
+				if ($scope.context.hasOwnProperty("closing_balance")) {
+					// If there was an original transaction, exclude it's amount from the closing balance
+					if (originalTransaction) {
+						$scope.context.closing_balance = Number($scope.context.closing_balance) - (Number(originalTransaction.amount) * ("inflow" === originalTransaction.direction ? 1 : -1));
+					}
 
-				// If there is a new transaction, include it's amount in the closing balance
-				if (newTransaction) {
-					$scope.context.closing_balance = Number($scope.context.closing_balance) + (Number(newTransaction.amount) * ("inflow" === newTransaction.direction ? 1 : -1));
+					// If there is a new transaction, include it's amount in the closing balance
+					if (newTransaction) {
+						$scope.context.closing_balance = Number($scope.context.closing_balance) + (Number(newTransaction.amount) * ("inflow" === newTransaction.direction ? 1 : -1));
+					}
 				}
 			};
 
