@@ -5,14 +5,14 @@
 	var mod = angular.module("payees");
 
 	// Declare the Payee Index controller
-	mod.controller("payeeIndexController", ["$scope", "$modal", "$timeout", "$state", "payeeModel", "payees",
-		function($scope, $modal, $timeout, $state, payeeModel, payees) {
+	mod.controller("payeeIndexController", ["$scope", "$modal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees",
+		function($scope, $modal, $timeout, $state, payeeModel, ogTableNavigableService, payees) {
 			// Store the payees on the scope
 			$scope.payees = payees;
 
 			$scope.editPayee = function(index) {
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -53,7 +53,7 @@
 					$scope.focusPayee(payee.id);
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
@@ -61,7 +61,7 @@
 				// Check if the payee can be deleted
 				payeeModel.find($scope.payees[index].id).then(function(payee) {
 					// Disable navigation on the table
-					$scope.navigationDisabled = true;
+					ogTableNavigableService.enabled = false;
 
 					var modalOptions = {
 						backdrop: "static"
@@ -101,16 +101,13 @@
 						$state.go("root.payees");
 					}).finally(function() {
 						// Enable navigation on the table
-						$scope.navigationDisabled = false;
+						ogTableNavigableService.enabled = true;
 					});
 				});
 			};
 
 			// Action handlers for navigable table
 			$scope.tableActions = {
-				navigationEnabled: function() {
-					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
-				},
 				selectAction: function() {
 					$state.go(".transactions");
 				},

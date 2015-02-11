@@ -5,8 +5,8 @@
 	var mod = angular.module("securities");
 
 	// Declare the Security Index controller
-	mod.controller("securityIndexController", ["$scope", "$modal", "$timeout", "$state", "securityModel", "securities",
-		function($scope, $modal, $timeout, $state, securityModel, securities) {
+	mod.controller("securityIndexController", ["$scope", "$modal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities",
+		function($scope, $modal, $timeout, $state, securityModel, ogTableNavigableService, securities) {
 			// Store the securities on the scope
 			$scope.securities = securities;
 
@@ -17,7 +17,7 @@
 
 			$scope.editSecurity = function(index) {
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -58,7 +58,7 @@
 					$scope.focusSecurity(security.id);
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
@@ -66,7 +66,7 @@
 				// Check if the security can be deleted
 				securityModel.find($scope.securities[index].id).then(function(security) {
 					// Disable navigation on the table
-					$scope.navigationDisabled = true;
+					ogTableNavigableService.enabled = false;
 
 					var modalOptions = {
 						backdrop: "static"
@@ -106,16 +106,13 @@
 						$state.go("root.securities");
 					}).finally(function() {
 						// Enable navigation on the table
-						$scope.navigationDisabled = false;
+						ogTableNavigableService.enabled = true;
 					});
 				});
 			};
 
 			// Action handlers for navigable table
 			$scope.tableActions = {
-				navigationEnabled: function() {
-					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
-				},
 				selectAction: function() {
 					$state.go(".transactions");
 				},

@@ -5,8 +5,8 @@
 	var mod = angular.module("categories");
 
 	// Declare the Category Index controller
-	mod.controller("categoryIndexController", ["$scope", "$modal", "$timeout", "$state", "categoryModel", "categories",
-		function($scope, $modal, $timeout, $state, categoryModel, categories) {
+	mod.controller("categoryIndexController", ["$scope", "$modal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories",
+		function($scope, $modal, $timeout, $state, categoryModel, ogTableNavigableService, categories) {
 			// Flatten the categories and subcategories and store on the scope
 			$scope.categories = angular.copy(categories).reduce(function(flattened, category) {
 				var children = category.children;
@@ -16,7 +16,7 @@
 
 			$scope.editCategory = function(index) {
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -89,7 +89,7 @@
 					$scope.focusCategory(category.id);
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
@@ -97,7 +97,7 @@
 				// Check if the category can be deleted
 				categoryModel.find($scope.categories[index].id).then(function(category) {
 					// Disable navigation on the table
-					$scope.navigationDisabled = true;
+					ogTableNavigableService.enabled = false;
 
 					var modalOptions = {
 						backdrop: "static"
@@ -151,16 +151,13 @@
 						$state.go("root.categories");
 					}).finally(function() {
 						// Enable navigation on the table
-						$scope.navigationDisabled = false;
+						ogTableNavigableService.enabled = true;
 					});
 				});
 			};
 
 			// Action handlers for navigable table
 			$scope.tableActions = {
-				navigationEnabled: function() {
-					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
-				},
 				selectAction: function() {
 					$state.go(".transactions");
 				},

@@ -5,14 +5,14 @@
 	var mod = angular.module("schedules");
 
 	// Declare the Schedule Index controller
-	mod.controller("scheduleIndexController", ["$scope", "$modal", "$timeout", "$state", "scheduleModel", "transactionModel", "schedules",
-		function($scope, $modal, $timeout, $state, scheduleModel, transactionModel, schedules) {
+	mod.controller("scheduleIndexController", ["$scope", "$modal", "$timeout", "$state", "scheduleModel", "transactionModel", "ogTableNavigableService", "schedules",
+		function($scope, $modal, $timeout, $state, scheduleModel, transactionModel, ogTableNavigableService, schedules) {
 			// Store the schedules on the scope
 			$scope.schedules = schedules;
 
 			$scope.editSchedule = function(index) {
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -59,13 +59,13 @@
 					$scope.focusSchedule(schedule.skipped ? $scope.schedules[index].id : schedule.data.id);
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
 			$scope.deleteSchedule = function(index) {
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -82,15 +82,12 @@
 					$state.go("root.schedules");
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
 			// Action handlers for navigable table
 			$scope.tableActions = {
-				navigationEnabled: function() {
-					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
-				},
 				selectAction: $scope.editSchedule,
 				editAction: $scope.editSchedule,
 				insertAction: function() {

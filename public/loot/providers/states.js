@@ -64,6 +64,7 @@
 					abstract: true,
 					templateUrl: "loot/views/layout.html",
 					controller: "layoutController",
+					controllerAs: "vm",
 					data: {
 						title: "Welcome"
 					},
@@ -214,14 +215,14 @@
 						]
 					},
 					views: transactionViews,
-					onEnter: ["$rootScope", "$stateParams",
-						function($rootScope, $stateParams) {
-							$rootScope.query = $stateParams.query;
+					onEnter: ["$stateParams", "queryService",
+						function($stateParams, queryService) {
+							queryService.setQuery($stateParams.query);
 						}
 					],
-					onExit: ["$rootScope",
-						function($rootScope) {
-							$rootScope.query = undefined;
+					onExit: ["queryService",
+						function(queryService) {
+							queryService.clearQuery();
 						}
 					]
 				})

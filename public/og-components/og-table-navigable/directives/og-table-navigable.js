@@ -5,8 +5,8 @@
 	var mod = angular.module("ogComponents");
 
 	// Declare the ogTableNavigable directive
-	mod.directive("ogTableNavigable", [
-		function() {
+	mod.directive("ogTableNavigable", ["ogTableNavigableService",
+		function(ogTableNavigableService) {
 			return {
 				restrict: "A",
 				scope: {
@@ -110,7 +110,7 @@
 
 					// Declare a click handler to focus a row by clicking it
 					scope.clickHandler = function(event) {
-						if (scope.handlers.navigationEnabled()) {
+						if (ogTableNavigableService.enabled) {
 							// The event target could be any element in the table (including nested tables), so we need the closest row
 							var clickedRow = closestRow(event.target);
 							if (clickedRow.length > 0) {
@@ -122,7 +122,7 @@
 
 					// Declare a double-click handler to perform an action on a row
 					scope.doubleClickHandler = function(event) {
-						if (scope.handlers.navigationEnabled()) {
+						if (ogTableNavigableService.enabled) {
 							// If a select action wasn't specified for the directive, do nothing
 							if (!scope.handlers.selectAction) {
 								return;
@@ -180,7 +180,7 @@
 
 					// Declare key handler to focus a row with the arrow keys
 					scope.keyHandler = function(event) {
-						if (scope.handlers.navigationEnabled()) {
+						if (ogTableNavigableService.enabled) {
 							// Check if the key pressed was a movement key
 							if (MOVEMENT_KEYS.hasOwnProperty(event.keyCode)) {
 								// Jump the specified number of rows for the key

@@ -5,13 +5,16 @@
 	var mod = angular.module("loot");
 
 	// Declare the Layout controller
-	mod.controller("layoutController", ["$scope", "$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated",
-		function($scope, $state, $modal, $uiViewScroll, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, authenticated) {
+	mod.controller("layoutController", ["$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "queryService", "authenticated",
+		function($state, $modal, $uiViewScroll, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, queryService, authenticated) {
 			// Make the authentication status available on the scope
-			$scope.authenticated = authenticated;
+			this.authenticated = authenticated;
+
+			// Make the query available on the scope
+			this.query = queryService.getQuery();
 
 			// Login
-			$scope.login = function() {
+			this.login = function() {
 				$modal.open({
 					templateUrl: "authentication/views/edit.html",
 					controller: "authenticationEditController",
@@ -23,42 +26,44 @@
 			};
 
 			// Logout
-			$scope.logout = function() {
+			this.logout = function() {
 				authenticationModel.logout();
 				$state.reload();
 			};
 
 			// Search
-			$scope.search = function() {
+			this.search = function() {
+				queryService.setQuery(this.query);
+
 				$state.go("root.transactions", {
-					query: $scope.$root.query
+					query: this.query
 				});
 			};
 
-			// Globally disable/enable any table key-bindings
-			$scope.toggleNavigationGloballyDisabled = function(state) {
-				$scope.navigationGloballyDisabled = state;
+			// Disable/enable any table key-bindings
+			this.toggleTableNavigationEnabled = function(state) {
+				ogTableNavigableService.enabled = state;
 			};
 
 			// Recently accessed lists
-			$scope.recentlyAccessedAccounts = function() {
+			this.recentlyAccessedAccounts = function() {
 				return accountModel.recent;
 			};
 
-			$scope.recentlyAccessedPayees = function() {
+			this.recentlyAccessedPayees = function() {
 				return payeeModel.recent;
 			};
 
-			$scope.recentlyAccessedCategories = function() {
+			this.recentlyAccessedCategories = function() {
 				return categoryModel.recent;
 			};
 
-			$scope.recentlyAccessedSecurities = function() {
+			this.recentlyAccessedSecurities = function() {
 				return securityModel.recent;
 			};
 
 			// Scrolling
-			$scope.scrollTo = function(anchor) {
+			this.scrollTo = function(anchor) {
 				$uiViewScroll($("#" + anchor));
 			};
 		}

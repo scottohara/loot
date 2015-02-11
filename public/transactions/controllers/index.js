@@ -5,8 +5,8 @@
 	var mod = angular.module("transactions");
 
 	// Declare the Transaction Index controller
-	mod.controller("transactionIndexController", ["$scope", "$modal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch",
-		function($scope, $modal, $timeout, $window, $state, transactionModel, accountModel, contextModel, context, transactionBatch) {
+	mod.controller("transactionIndexController", ["$scope", "$modal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "contextModel", "context", "transactionBatch",
+		function($scope, $modal, $timeout, $window, $state, transactionModel, accountModel, ogTableNavigableService, contextModel, context, transactionBatch) {
 			// Store the context we're working with in the scope
 			$scope.context = context;
 			$scope.contextType = contextModel && contextModel.type();
@@ -21,7 +21,7 @@
 				}
 
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -98,7 +98,7 @@
 					}
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
@@ -138,7 +138,7 @@
 				}
 
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -155,7 +155,7 @@
 					$scope.removeTransaction(index);
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
@@ -221,7 +221,7 @@
 
 			$scope.promptToSwitchAccounts = function(message, transaction) {
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -245,15 +245,12 @@
 					}
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
 			// Action handlers for navigable table
 			$scope.tableActions = {
-				navigationEnabled: function() {
-					return !($scope.navigationDisabled || $scope.navigationGloballyDisabled);
-				},
 				selectAction: function(index) {
 					if (!$scope.reconciling) {
 						// When not reconciling, select action is to edit the transaction
@@ -512,7 +509,7 @@
 			// Opens the flag transaction dialog
 			$scope.flag = function(index) {
 				// Disable navigation on the table
-				$scope.navigationDisabled = true;
+				ogTableNavigableService.enabled = false;
 
 				// Show the modal
 				$modal.open({
@@ -530,7 +527,7 @@
 					$scope.transactions[index] = transaction;
 				}).finally(function() {
 					// Enable navigation on the table
-					$scope.navigationDisabled = false;
+					ogTableNavigableService.enabled = true;
 				});
 			};
 
@@ -553,9 +550,6 @@
 			};
 
 			$scope.switchToAccount = function($event, id, transaction) {
-				// Disable navigation on the table
-				$scope.navigationDisabled = true;
-				
 				// If the transaction is reconciled, make sure the account we're switching to shows reconciled transactions
 				if ("Reconciled" === transaction.status) {
 					accountModel.unreconciledOnly(id, false);
@@ -638,7 +632,7 @@
 			});
 
 			// Auto scroll to the bottom (scrollTo defined in layoutController)
-			$scope.scrollTo("bottom");
+			//$scope.scrollTo("bottom");
 		}
 	]);
 })();
