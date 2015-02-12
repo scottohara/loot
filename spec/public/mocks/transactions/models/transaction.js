@@ -9,6 +9,11 @@
 		.provider("transactionModelMock", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["transactionMockProvider", "transactionBatchMockProvider", "$qMockProvider"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider(transactionMockProvider, transactionBatchMockProvider, $qMockProvider) {

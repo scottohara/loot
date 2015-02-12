@@ -9,6 +9,11 @@
 		.provider("securityModelMock", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["securityMockProvider", "securitiesMockProvider", "$qMockProvider"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider(securityMockProvider, securitiesMockProvider, $qMockProvider) {

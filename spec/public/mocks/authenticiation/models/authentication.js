@@ -9,6 +9,11 @@
 		.provider("authenticationModelMock", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["$qMockProvider"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider($qMockProvider) {

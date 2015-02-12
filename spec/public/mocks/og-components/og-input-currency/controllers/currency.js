@@ -15,16 +15,18 @@
 		var provider = this;
 
 		// Mock input currency controller object
-		provider.ogInputCurrencyController = function($scope) {
-			$scope.setDecimalPlaces = sinon.stub();
-			$scope.formattedToRaw = sinon.stub().returnsArg(0);
-			$scope.rawToFormatted = sinon.stub().returnsArg(0);
+		provider.ogInputCurrencyController = ["$scope",
+			function($scope) {
+				$scope.setDecimalPlaces = sinon.stub();
+				$scope.formattedToRaw = sinon.stub().returnsArg(0);
+				$scope.rawToFormatted = sinon.stub().returnsArg(0);
 
-			this.type = "ogInputCurrencyController";
-			this.setDecimalPlaces = $scope.setDecimalPlaces;
-			this.formattedToRaw = $scope.formattedToRaw;
-			this.rawToFormatted = $scope.rawToFormatted;
-		};
+				this.type = "ogInputCurrencyController";
+				this.setDecimalPlaces = $scope.setDecimalPlaces;
+				this.formattedToRaw = $scope.formattedToRaw;
+				this.rawToFormatted = $scope.rawToFormatted;
+			}
+		];
 
 		provider.$get = function() {
 			// Return the mock input currency controller object

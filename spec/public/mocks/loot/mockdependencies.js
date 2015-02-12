@@ -9,6 +9,11 @@
 		.provider("mockDependencies", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["$provide", "$injector"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider($provide, $injector) {

@@ -59,6 +59,7 @@ module.exports = function(config) {
 			"public/!(bower_components)/**/views/*.html",
 
 			// Test files
+			"spec/public/config.js",													// Config
 			"spec/public/mocks/!(loot)/*.js",									// Mock modules
 			"spec/public/mocks/!(loot)/**/providers/*.js",		// Mock base providers (eg. resolves)
 			"spec/public/mocks/!(loot)/**/*.js",							// Mocks

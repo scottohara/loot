@@ -9,6 +9,11 @@
 		.provider("scheduleModelMock", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["scheduleMockProvider", "schedulesMockProvider", "$qMockProvider"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider(scheduleMockProvider, schedulesMockProvider, $qMockProvider) {

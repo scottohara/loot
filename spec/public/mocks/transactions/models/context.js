@@ -9,6 +9,11 @@
 		.provider("contextModelMock", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["payeeModelMockProvider"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider(payeeModelMockProvider) {

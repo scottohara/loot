@@ -9,6 +9,11 @@
 		.provider("categoryModelMock", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["categoryMockProvider", "categoriesMockProvider", "$qMockProvider"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider(categoryMockProvider, categoriesMockProvider, $qMockProvider) {

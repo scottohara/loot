@@ -9,6 +9,11 @@
 		.provider("payeeModelMock", Provider);
 
 	/**
+	 * Dependencies
+	 */
+	Provider.$inject = ["payeeMockProvider", "payeesMockProvider", "$qMockProvider"];
+
+	/**
 	 * Implementation
 	 */
 	function Provider(payeeMockProvider, payeesMockProvider, $qMockProvider) {
@@ -26,6 +31,7 @@
 		error = {
 			args: {id: -1}
 		};
+
 		// Mock payeeModel object
 		provider.payeeModel = {
 			recent: "recent payees list",
