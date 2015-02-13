@@ -1,47 +1,64 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("transactions");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("transactions")
+		.controller("TransactionFlagController", Controller);
 
-	// Declare the Transaction Flag controller
-	mod.controller("transactionFlagController", ["$scope", "$modalInstance", "transactionModel", "transaction",
-		function($scope, $modalInstance, transactionModel, transaction) {
-			// Make the passed transaction available on the scope
-			$scope.transaction = transaction;
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "transactionModel", "transaction"];
 
-			// Make the transaction's flag memo available on the scope
-			$scope.flag = {
-				memo: "(no memo)" === transaction.flag ? null : transaction.flag
-			};
-			$scope.flagged = !!transaction.flag;
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, transactionModel, transaction) {
+		var vm = this;
 
-			// Save and close the modal
-			$scope.save = function() {
-				$scope.errorMessage = null;
-				$scope.transaction.flag = $scope.flag.memo && $scope.flag.memo || "(no memo)";
-				transactionModel.flag($scope.transaction).then(function() {
-					$modalInstance.close($scope.transaction);
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+		/**
+		 * Interface
+		 */
+		vm.transaction = transaction;
+		vm.flag = "(no memo)" === transaction.flag ? null : transaction.flag;
+		vm.flagged = !!transaction.flag;
+		vm.save = save;
+		vm.deleteFlag = deleteFlag;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
 
-			// Delete and close the modal
-			$scope.delete = function() {
-				$scope.errorMessage = null;
-				transactionModel.unflag($scope.transaction.id).then(function() {
-					$scope.transaction.flag = null;
-					$modalInstance.close($scope.transaction);
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+		/**
+		 * Implementation
+		 */
 
-			// Dismiss the modal without deleting
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		// Save and close the modal
+		function save() {
+			vm.errorMessage = null;
+			vm.transaction.flag = vm.flag && vm.flag || "(no memo)";
+			transactionModel.flag(vm.transaction).then(function() {
+				$modalInstance.close(vm.transaction);
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Delete and close the modal
+		function deleteFlag() {
+			vm.errorMessage = null;
+			transactionModel.unflag(vm.transaction.id).then(function() {
+				vm.transaction.flag = null;
+				$modalInstance.close(vm.transaction);
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
+		}
+
+		// Dismiss the modal without deleting
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

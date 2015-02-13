@@ -1,29 +1,49 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("categories");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("categories")
+		.controller("CategoryDeleteController", Controller);
 
-	// Declare the Category Delete controller
-	mod.controller("categoryDeleteController", ["$scope", "$modalInstance", "categoryModel", "category",
-		function($scope, $modalInstance, categoryModel, category) {
-			// Make the passed category available on the scope
-			$scope.category = category;
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "categoryModel", "category"];
 
-			// Delete and close the modal
-			$scope.delete = function() {
-				$scope.errorMessage = null;
-				categoryModel.destroy($scope.category).then(function() {
-					$modalInstance.close();
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, categoryModel, category) {
+		var vm = this;
 
-			// Dismiss the modal without deleting
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		/**
+		 * Interface
+		 */
+		vm.category = category;
+		vm.deleteCategory = deleteCategory;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
+
+		/**
+		 * Implementation
+		 */
+
+		// Delete and close the modal
+		function deleteCategory() {
+			vm.errorMessage = null;
+			categoryModel.destroy(vm.category).then(function() {
+				$modalInstance.close();
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Dismiss the modal without deleting
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

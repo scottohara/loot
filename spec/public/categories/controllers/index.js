@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("categoryIndexController", function() {
+	describe("CategoryIndexController", function() {
 		// The object under test
 		var categoryIndexController;
 
@@ -13,6 +13,7 @@
 				$modal,
 				$state,
 				categoryModel,
+				ogTableNavigableService,
 				categories;
 
 		// Load the modules
@@ -21,17 +22,18 @@
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$timeout_, _$modal_, _$state_, _categoryModel_, _categories_) {
+		beforeEach(inject(function(_controllerTest_, _$timeout_, _$modal_, _$state_, _categoryModel_, _ogTableNavigableService_, _categories_) {
 			controllerTest = _controllerTest_;
 			$timeout = _$timeout_;
 			$modal = _$modal_;
 			$state = _$state_;
 			categoryModel = _categoryModel_;
+			ogTableNavigableService = _ogTableNavigableService_;
 			categories = _categories_;
-			categoryIndexController = controllerTest("categoryIndexController");
+			categoryIndexController = controllerTest("CategoryIndexController");
 		}));
 
-		it("should flatten the passed categories & subcategories and make them available on the $scope", function() {
+		it("should flatten the passed categories & subcategories and make them available to the view", function() {
 			var firstParent = angular.copy(categories[0]),
 					firstChild = firstParent.children[0];
 
@@ -56,7 +58,7 @@
 
 			it("should disable navigation on the table", function() {
 				categoryIndexController.editCategory();
-				categoryIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			describe("(edit existing)", function() {
@@ -203,13 +205,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				categoryIndexController.editCategory();
 				$modal.close(category);
-				categoryIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				categoryIndexController.editCategory();
 				$modal.dismiss();
-				categoryIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -227,7 +229,7 @@
 
 			it("should disable navigation on the table", function() {
 				categoryIndexController.deleteCategory(3);
-				categoryIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			it("should show an alert if the category has transactions", function() {
@@ -284,29 +286,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				categoryIndexController.deleteCategory(3);
 				$modal.close(category);
-				categoryIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				categoryIndexController.deleteCategory(3);
 				$modal.dismiss();
-				categoryIndexController.navigationDisabled.should.be.false;
-			});
-		});
-
-		describe("tableActions.navigationEnabled", function() {
-			it("should return false when navigation is disabled locally", function() {
-				categoryIndexController.navigationDisabled = true;
-				categoryIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return false when navigation is disabled globally", function() {
-				categoryIndexController.navigationGloballyDisabled = true;
-				categoryIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return true when navigation is not disabled locally or globally", function() {
-				categoryIndexController.tableActions.navigationEnabled().should.be.true;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -412,7 +398,7 @@
 
 		it("should attach a state change success handler", function() {
 			sinon.stub(categoryIndexController, "stateChangeSuccessHandler");
-			categoryIndexController.$emit("$stateChangeSuccess");
+			categoryIndexController.$scope.$emit("$stateChangeSuccess");
 			categoryIndexController.stateChangeSuccessHandler.should.have.been.called;
 		});
 	});

@@ -1,32 +1,50 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("securities");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("securities")
+		.controller("SecurityEditController", Controller);
 
-	// Declare the Security Edit controller
-	mod.controller("securityEditController", ["$scope", "$modalInstance", "securityModel", "security",
-		function($scope, $modalInstance, securityModel, security) {
-			// Make the passed security available on the scope
-			$scope.security = angular.extend({
-			}, security);
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "securityModel", "security"];
 
-			$scope.mode = (security ? "Edit" : "Add");
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, securityModel, security) {
+		var vm = this;
 
-			// Save and close the modal
-			$scope.save = function() {
-				$scope.errorMessage = null;
-				securityModel.save($scope.security).then(function(security) {
-					$modalInstance.close(security.data);
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+		/**
+		 * Interface
+		 */
+		vm.security = angular.extend({}, security);
+		vm.mode = security ? "Edit" : "Add";
+		vm.save = save;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
 
-			// Dismiss the modal without saving
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		/**
+		 * Implementation
+		 */
+
+		// Save and close the modal
+		function save() {
+			vm.errorMessage = null;
+			securityModel.save(vm.security).then(function(security) {
+				$modalInstance.close(security.data);
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Dismiss the modal without saving
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

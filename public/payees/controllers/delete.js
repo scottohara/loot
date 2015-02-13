@@ -1,29 +1,49 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("payees");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("payees")
+		.controller("PayeeDeleteController", Controller);
 
-	// Declare the Payee Delete controller
-	mod.controller("payeeDeleteController", ["$scope", "$modalInstance", "payeeModel", "payee",
-		function($scope, $modalInstance, payeeModel, payee) {
-			// Make the passed payee available on the scope
-			$scope.payee = payee;
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "payeeModel", "payee"];
 
-			// Delete and close the modal
-			$scope.delete = function() {
-				$scope.errorMessage = null;
-				payeeModel.destroy($scope.payee).then(function() {
-					$modalInstance.close();
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, payeeModel, payee) {
+		var vm = this;
 
-			// Dismiss the modal without deleting
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		/**
+		 * Interface
+		 */
+		vm.payee = payee;
+		vm.deletePayee = deletePayee;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
+
+		/**
+		 * Implementation
+		 */
+
+		// Delete and close the modal
+		function deletePayee() {
+			vm.errorMessage = null;
+			payeeModel.destroy(vm.payee).then(function() {
+				$modalInstance.close();
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Dismiss the modal without deleting
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

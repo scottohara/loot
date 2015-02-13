@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("transactionFlagController", function() {
+	describe("TransactionFlagController", function() {
 		// The object under test
 		var transactionFlagController;
 
@@ -24,30 +24,30 @@
 			$modalInstance = _$modalInstance_;
 			transactionModel = _transactionModel_;
 			transaction = _transaction_;
-			transactionFlagController = controllerTest("transactionFlagController");
+			transactionFlagController = controllerTest("TransactionFlagController");
 		}));
 
-		it("should make the passed transaction available on the $scope", function() {
+		it("should make the passed transaction available to the view", function() {
 			transactionFlagController.transaction.should.deep.equal(transaction);
 		});
 
-		it("should make the passed transaction's flag memo available on the $scope", function() {
-			transactionFlagController.flag.memo.should.deep.equal(transaction.flag);
+		it("should make the passed transaction's flag memo available to the view", function() {
+			transactionFlagController.flag.should.deep.equal(transaction.flag);
 		});
 
-		it("should set the memo $scope property to null when transaction's flag memo is '(no memo)'", function() {
+		it("should set the flag to null when transaction's flag memo is '(no memo)'", function() {
 			transaction.flag = "(no memo)";
-			transactionFlagController = controllerTest("transactionFlagController");
-			(null === transactionFlagController.flag.memo).should.be.true;
+			transactionFlagController = controllerTest("TransactionFlagController");
+			(null === transactionFlagController.flag).should.be.true;
 		});
 
-		it("should set the flagged $scope property on the scope when the transaction has a flag", function() {
+		it("should set the flagged property when the transaction has a flag", function() {
 			transactionFlagController.flagged.should.be.true;
 		});
 
-		it("should clear the flagged $scope property on the scope when the transaction doesn't have a flag", function() {
+		it("should clear the flagged property when the transaction doesn't have a flag", function() {
 			transaction.flag = undefined;
-			transactionFlagController = controllerTest("transactionFlagController");
+			transactionFlagController = controllerTest("TransactionFlagController");
 			transactionFlagController.flagged.should.be.false;
 		});
 
@@ -64,7 +64,7 @@
 			});
 
 			it("should set the flag memo to '(no memo)' if the memo is blank", function() {
-				transactionFlagController.flag.memo = null;
+				transactionFlagController.flag = null;
 				transaction.flag = "(no memo)";
 				transactionFlagController.save();
 				transactionModel.flag.should.have.been.calledWith(transaction);
@@ -82,31 +82,31 @@
 			});
 		});
 
-		describe("delete", function() {
+		describe("deleteFlag", function() {
 			it("should reset any previous error messages", function() {
 				transactionFlagController.errorMessage = "error message";
-				transactionFlagController.delete();
+				transactionFlagController.deleteFlag();
 				(null === transactionFlagController.errorMessage).should.be.true;
 			});
 
 			it("should unflag the transaction", function() {
-				transactionFlagController.delete();
+				transactionFlagController.deleteFlag();
 				transactionModel.unflag.should.have.been.calledWith(transaction.id);
 			});
 
 			it("should clear transaction's flag", function() {
-				transactionFlagController.delete();
+				transactionFlagController.deleteFlag();
 				(!!transactionFlagController.transaction.flag).should.be.false;
 			});
 
 			it("should close the modal when the flag delete is successful", function() {
-				transactionFlagController.delete();
+				transactionFlagController.deleteFlag();
 				$modalInstance.close.should.have.been.calledWith(transaction);
 			});
 
 			it("should display an error message when the flag delete is unsuccessful", function() {
 				transactionFlagController.transaction.id = -1;
-				transactionFlagController.delete();
+				transactionFlagController.deleteFlag();
 				transactionFlagController.errorMessage.should.equal("unsuccessful");
 			});
 		});

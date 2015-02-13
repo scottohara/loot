@@ -1,29 +1,49 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("schedules");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("schedules")
+		.controller("ScheduleDeleteController", Controller);
 
-	// Declare the Schedule Delete controller
-	mod.controller("scheduleDeleteController", ["$scope", "$modalInstance", "scheduleModel", "schedule",
-		function($scope, $modalInstance, scheduleModel, schedule) {
-			// Make the passed schedule available on the scope
-			$scope.schedule = schedule;
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "scheduleModel", "schedule"];
 
-			// Delete and close the modal
-			$scope.delete = function() {
-				$scope.errorMessage = null;
-				scheduleModel.destroy($scope.schedule).then(function() {
-					$modalInstance.close();
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, scheduleModel, schedule) {
+		var vm = this;
 
-			// Dismiss the modal without deleting
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		/**
+		 * Interface
+		 */
+		vm.schedule = schedule;
+		vm.deleteSchedule = deleteSchedule;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
+
+		/**
+		 * Implementation
+		 */
+
+		// Delete and close the modal
+		function deleteSchedule() {
+			vm.errorMessage = null;
+			scheduleModel.destroy(vm.schedule).then(function() {
+				$modalInstance.close();
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Dismiss the modal without deleting
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

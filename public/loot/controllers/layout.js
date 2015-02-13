@@ -1,71 +1,89 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("loot");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("loot")
+		.controller("LayoutController", Controller);
 
-	// Declare the Layout controller
-	mod.controller("layoutController", ["$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "queryService", "authenticated",
-		function($state, $modal, $uiViewScroll, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, queryService, authenticated) {
-			// Make the authentication status available on the scope
-			this.authenticated = authenticated;
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
 
-			// Make the query available on the scope
-			this.query = queryService.getQuery();
+	/**
+	 * Implementation
+	 */
+	function Controller($state, $modal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
+		var vm = this;
 
-			// Login
-			this.login = function() {
-				$modal.open({
-					templateUrl: "authentication/views/edit.html",
-					controller: "authenticationEditController",
-					backdrop: "static",
-					size: "sm"
-				}).result.then(function() {
-					$state.reload();
-				});
-			};
+		/**
+		 * Interface
+		 */
+		vm.authenticated = authenticated;
+		vm.queryService = queryService;
+		vm.login = login;
+		vm.logout = logout;
+		vm.search = search;
+		vm.toggleTableNavigationEnabled = toggleTableNavigationEnabled;
+		vm.recentlyAccessedAccounts = recentlyAccessedAccounts;
+		vm.recentlyAccessedPayees = recentlyAccessedPayees;
+		vm.recentlyAccessedCategories = recentlyAccessedCategories;
+		vm.recentlyAccessedSecurities = recentlyAccessedSecurities;
+		vm.scrollTo = ogViewScrollService.scrollTo;
 
-			// Logout
-			this.logout = function() {
-				authenticationModel.logout();
+		/**
+		 * Implementation
+		 */
+	
+		// Login
+		function login() {
+			$modal.open({
+				templateUrl: "authentication/views/edit.html",
+				controller: "AuthenticationEditController",
+				controllerAs: "vm",
+				backdrop: "static",
+				size: "sm"
+			}).result.then(function() {
 				$state.reload();
-			};
-
-			// Search
-			this.search = function() {
-				queryService.setQuery(this.query);
-
-				$state.go("root.transactions", {
-					query: this.query
-				});
-			};
-
-			// Disable/enable any table key-bindings
-			this.toggleTableNavigationEnabled = function(state) {
-				ogTableNavigableService.enabled = state;
-			};
-
-			// Recently accessed lists
-			this.recentlyAccessedAccounts = function() {
-				return accountModel.recent;
-			};
-
-			this.recentlyAccessedPayees = function() {
-				return payeeModel.recent;
-			};
-
-			this.recentlyAccessedCategories = function() {
-				return categoryModel.recent;
-			};
-
-			this.recentlyAccessedSecurities = function() {
-				return securityModel.recent;
-			};
-
-			// Scrolling
-			this.scrollTo = function(anchor) {
-				$uiViewScroll($("#" + anchor));
-			};
+			});
 		}
-	]);
+
+		// Logout
+		function logout() {
+			authenticationModel.logout();
+			$state.reload();
+		}
+
+		// Search
+		function search() {
+			$state.go("root.transactions", {
+				query: vm.queryService.query
+			});
+		}
+
+		// Disable/enable any table key-bindings
+		function toggleTableNavigationEnabled(state) {
+			ogTableNavigableService.enabled = state;
+		}
+
+		// Recently accessed lists
+		function recentlyAccessedAccounts() {
+			return accountModel.recent;
+		}
+
+		function recentlyAccessedPayees() {
+			return payeeModel.recent;
+		}
+
+		function recentlyAccessedCategories() {
+			return categoryModel.recent;
+		}
+
+		function recentlyAccessedSecurities() {
+			return securityModel.recent;
+		}
+	}
 })();

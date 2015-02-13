@@ -3,52 +3,46 @@
 
 	/*jshint expr: true */
 
-	describe("layoutController", function() {
+	describe("LayoutController", function() {
 		// The object under test
 		var layoutController;
 
 		// Dependencies
 		var $state,
 				$modal,
-				$uiViewScroll,
 				authenticationModel,
 				accountModel,
 				payeeModel,
 				categoryModel,
 				securityModel,
-				authenticated,
-				mockJQueryInstance,
-				realJQueryInstance;
+				ogTableNavigableService,
+				authenticated;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "loot", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$state", "$modal", "$uiViewScroll", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"]);
+			mockDependenciesProvider.load(["$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"]);
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(controllerTest, _$state_, _$modal_, _$uiViewScroll_, _authenticationModel_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_, _authenticated_) {
+		beforeEach(inject(function(controllerTest, _$state_, _$modal_, _authenticationModel_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_, _ogTableNavigableService_, _authenticated_) {
 			$state = _$state_;
 			$modal = _$modal_;
-			$uiViewScroll = _$uiViewScroll_;
 			authenticationModel = _authenticationModel_;
 			accountModel = _accountModel_;
 			payeeModel = _payeeModel_;
 			categoryModel = _categoryModel_;
 			securityModel = _securityModel_;
+			ogTableNavigableService = _ogTableNavigableService_;
 			authenticated = _authenticated_;
-			layoutController = controllerTest("layoutController");
-			mockJQueryInstance = {};
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs("#test").returns(mockJQueryInstance);
+			layoutController = controllerTest("LayoutController");
 		}));
 
-		afterEach(function() {
-			window.$ = realJQueryInstance;
+		it("should make the authentication status available to the view", function() {
+			layoutController.authenticated.should.equal(authenticated);
 		});
 
-		it("should make the authentication status available on the $scope", function() {
-			layoutController.authenticated.should.equal(authenticated);
+		it("should make the scrollTo function available to the view", function() {
+			layoutController.scrollTo.should.be.a.function;
 		});
 
 		describe("login", function() {
@@ -56,9 +50,9 @@
 				layoutController.login();
 			});
 
-			it("should shown the login modal", function() {
+			it("should show the login modal", function() {
 				$modal.open.should.have.been.calledWith(sinon.match({
-					controller: "authenticationEditController"
+					controller: "AuthenticationEditController"
 				}));
 			});
 
@@ -89,17 +83,17 @@
 
 		describe("search", function() {
 			it("should transition to the transaction search state passing the query", function() {
-				layoutController.$root.query = "search query";
+				layoutController.queryService.query = "search query";
 				layoutController.search();
 				$state.go.should.have.been.calledWith("root.transactions", {query: "search query"});
 			});
 		});
 
-		describe("toggleNavigationGloballyDisabled", function() {
-			it("should toggle the navigationGloballyDisabled flag", function() {
-				layoutController.navigationGloballyDisabled = false;
-				layoutController.toggleNavigationGloballyDisabled(true);
-				layoutController.navigationGloballyDisabled.should.be.true;
+		describe("toggleTableNavigationEnabled", function() {
+			it("should toggle the table navigable enabled flag", function() {
+				ogTableNavigableService.enabled = true;
+				layoutController.toggleTableNavigationEnabled(false);
+				ogTableNavigableService.enabled.should.be.false;
 			});
 		});
 
@@ -124,13 +118,6 @@
 		describe("recentlyAccessedSecurities", function() {
 			it("should return the list of recent securities", function() {
 				layoutController.recentlyAccessedSecurities().should.equal("recent securities list");
-			});
-		});
-
-		describe("scrollTo", function() {
-			it("should scroll to the specified anchor", function() {
-				layoutController.scrollTo("test");
-				$uiViewScroll.should.have.been.calledWith(mockJQueryInstance);
 			});
 		});
 	});

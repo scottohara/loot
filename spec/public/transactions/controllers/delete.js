@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("transactionDeleteController", function() {
+	describe("TransactionDeleteController", function() {
 		// The object under test
 		var transactionDeleteController;
 
@@ -22,33 +22,33 @@
 			$modalInstance = _$modalInstance_;
 			transactionModel = _transactionModel_;
 			transaction = _transaction_;
-			transactionDeleteController = controllerTest("transactionDeleteController");
+			transactionDeleteController = controllerTest("TransactionDeleteController");
 		}));
 
-		it("should make the passed transaction available on the $scope", function() {
+		it("should make the passed transaction available to the view", function() {
 			transactionDeleteController.transaction.should.deep.equal(transaction);
 		});
 
-		describe("delete", function() {
+		describe("deleteTransaction", function() {
 			it("should reset any previous error messages", function() {
 				transactionDeleteController.errorMessage = "error message";
-				transactionDeleteController.delete();
+				transactionDeleteController.deleteTransaction();
 				(null === transactionDeleteController.errorMessage).should.be.true;
 			});
 
 			it("should delete the transaction", function() {
-				transactionDeleteController.delete();
+				transactionDeleteController.deleteTransaction();
 				transactionModel.destroy.should.have.been.calledWith(transaction);
 			});
 
 			it("should close the modal when the transaction delete is successful", function() {
-				transactionDeleteController.delete();
+				transactionDeleteController.deleteTransaction();
 				$modalInstance.close.should.have.been.called;
 			});
 
 			it("should display an error message when the transaction delete is unsuccessful", function() {
 				transactionDeleteController.transaction.id = -1;
-				transactionDeleteController.delete();
+				transactionDeleteController.deleteTransaction();
 				transactionDeleteController.errorMessage.should.equal("unsuccessful");
 			});
 		});

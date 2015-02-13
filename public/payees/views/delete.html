@@ -5,12 +5,12 @@
 	<div class="modal-body">
 		<dl class="dl-horizontal">
 			<dt>Name</dt>
-			<dd>{{::payee.name}}</dd>
+			<dd>{{::vm.payee.name}}</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">
-		<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
-		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-		<button class="btn btn-danger" type="submit" ng-click="delete()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
+		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+		<button class="btn btn-danger" type="submit" ng-click="vm.deletePayee()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
 	</div>
 </form>

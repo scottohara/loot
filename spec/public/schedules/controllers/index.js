@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("scheduleIndexController", function() {
+	describe("ScheduleIndexController", function() {
 		// The object under test
 		var scheduleIndexController;
 
@@ -14,6 +14,7 @@
 				$state,
 				scheduleModel,
 				transactionModel,
+				ogTableNavigableService,
 				schedules;
 
 		// Load the modules
@@ -22,22 +23,23 @@
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$modal_, _$timeout_, _$state_, _scheduleModel_, _transactionModel_, _schedules_) {
+		beforeEach(inject(function(_controllerTest_, _$modal_, _$timeout_, _$state_, _scheduleModel_, _transactionModel_, _ogTableNavigableService_, _schedules_) {
 			controllerTest = _controllerTest_;
 			$modal = _$modal_;
 			$timeout = _$timeout_;
 			$state = _$state_;
 			scheduleModel = _scheduleModel_;
 			transactionModel = _transactionModel_;
+			ogTableNavigableService = _ogTableNavigableService_;
 			schedules = _schedules_;
-			scheduleIndexController = controllerTest("scheduleIndexController");
+			scheduleIndexController = controllerTest("ScheduleIndexController");
 		}));
 
-		it("should make the passed schedules available on the $scope", function() {
+		it("should make the passed schedules available to the view", function() {
 			scheduleIndexController.schedules.should.deep.equal(schedules);
 		});
 
-		it("should make today's date available on the $scope", function() {
+		it("should make today's date available to the view", function() {
 			scheduleIndexController.today.should.deep.equal(moment().startOf("day").toDate());
 		});
 
@@ -51,7 +53,7 @@
 
 			it("should disable navigation on the table", function() {
 				scheduleIndexController.editSchedule();
-				scheduleIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			describe("(edit existing)", function() {
@@ -130,13 +132,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				scheduleIndexController.editSchedule();
 				$modal.close({data: schedule});
-				scheduleIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				scheduleIndexController.editSchedule();
 				$modal.dismiss();
-				scheduleIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -149,7 +151,7 @@
 
 			it("should disable navigation on the table", function() {
 				scheduleIndexController.deleteSchedule(1);
-				scheduleIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			it("should open the delete schedule modal with a schedule", function() {
@@ -173,29 +175,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				scheduleIndexController.deleteSchedule(1);
 				$modal.close(schedule);
-				scheduleIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				scheduleIndexController.deleteSchedule(1);
 				$modal.dismiss();
-				scheduleIndexController.navigationDisabled.should.be.false;
-			});
-		});
-
-		describe("tableActions.navigationEnabled", function() {
-			it("should return false when navigation is disabled locally", function() {
-				scheduleIndexController.navigationDisabled = true;
-				scheduleIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return false when navigation is disabled globally", function() {
-				scheduleIndexController.navigationGloballyDisabled = true;
-				scheduleIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return true when navigation is not disabled locally or globally", function() {
-				scheduleIndexController.tableActions.navigationEnabled().should.be.true;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -373,7 +359,7 @@
 
 		it("should attach a state change success handler", function() {
 			sinon.stub(scheduleIndexController, "stateChangeSuccessHandler");
-			scheduleIndexController.$emit("$stateChangeSuccess");
+			scheduleIndexController.$scope.$emit("$stateChangeSuccess");
 			scheduleIndexController.stateChangeSuccessHandler.should.have.been.called;
 		});
 	});

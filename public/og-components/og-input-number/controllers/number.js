@@ -1,22 +1,42 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponents");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponents")
+		.controller("OgInputNumberController", Controller);
 
-	// Declare the ogInputNumber controller
-	mod.controller("ogInputNumberController", ["$scope",
-		function($scope) {
-			// Converts formatted value to raw value
-			$scope.formattedToRaw = function(value) {
-				return Number(value.replace(/[^0-9\-\.]/g, "")) || 0;
-			};
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = [];
 
-			// Expose the formatting functions to other directives
-			this.formattedToRaw = $scope.formattedToRaw;
-			this.rawToFormatted = function(value) {
-				return value;
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller() {
+		var vm = this;
+
+		/**
+		 * Interface
+		 */
+		vm.formattedToRaw = formattedToRaw;
+		vm.rawToFormatted = rawToFormatted;
+
+		/**
+		 * Implementation
+		 */
+
+		// Converts formatted value to raw value
+		function formattedToRaw(value) {
+			return Number(value.replace(/[^0-9\-\.]/g, "")) || 0;
 		}
-	]);
+
+		// Converts raw value to formatted value
+		function rawToFormatted(value) {
+			return value;
+		}
+	}
 })();

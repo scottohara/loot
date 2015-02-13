@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("categoryDeleteController", function() {
+	describe("CategoryDeleteController", function() {
 		// The object under test
 		var categoryDeleteController;
 
@@ -22,33 +22,33 @@
 			$modalInstance = _$modalInstance_;
 			categoryModel = _categoryModel_;
 			category = _category_;
-			categoryDeleteController = controllerTest("categoryDeleteController");
+			categoryDeleteController = controllerTest("CategoryDeleteController");
 		}));
 
-		it("should make the passed category available on the $scope", function() {
+		it("should make the passed category available to the view", function() {
 			categoryDeleteController.category.should.deep.equal(category);
 		});
 
-		describe("delete", function() {
+		describe("deleteCategory", function() {
 			it("should reset any previous error messages", function() {
 				categoryDeleteController.errorMessage = "error message";
-				categoryDeleteController.delete();
+				categoryDeleteController.deleteCategory();
 				(null === categoryDeleteController.errorMessage).should.be.true;
 			});
 
 			it("should delete the category", function() {
-				categoryDeleteController.delete();
+				categoryDeleteController.deleteCategory();
 				categoryModel.destroy.should.have.been.calledWith(category);
 			});
 
 			it("should close the modal when the category delete is successful", function() {
-				categoryDeleteController.delete();
+				categoryDeleteController.deleteCategory();
 				$modalInstance.close.should.have.been.called;
 			});
 
 			it("should display an error message when the category delete is unsuccessful", function() {
 				categoryDeleteController.category.id = -1;
-				categoryDeleteController.delete();
+				categoryDeleteController.deleteCategory();
 				categoryDeleteController.errorMessage.should.equal("unsuccessful");
 			});
 		});

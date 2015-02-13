@@ -28,6 +28,7 @@
 				security,
 				transactionModel,
 				transactionBatch,
+				queryService,
 				stateName,
 				stateConfig;
 
@@ -37,7 +38,7 @@
 		}));
 
 		// Inject the object under test and it's dependencies
-		beforeEach(inject(function(_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$modal_, _authenticationModel_, _authenticated_, _accountModel_, _accountsWithBalances_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_) {
+		beforeEach(inject(function(_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$modal_, _authenticationModel_, _authenticated_, _accountModel_, _accountsWithBalances_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_, _queryService_) {
 			$rootScope = _$rootScope_;
 			$state = _$state_;
 			$injector = _$injector_;
@@ -61,6 +62,7 @@
 			security = _security_;
 			transactionModel = _transactionModel_;
 			transactionBatch = _transactionBatch_;
+			queryService = _queryService_;
 			$httpBackend.expectGET("loot/views/layout.html").respond(200);
 		}));
 
@@ -754,16 +756,16 @@
 					resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
 				});
 
-				it("should set the query property on the root scope on enter", function() {
-					$rootScope.query.should.equal(query);
+				it("should set the query property on the query service on enter", function() {
+					queryService.query.should.equal(query);
 				});
 
-				it("should clear the query property on the root scope on exit", function() {
+				it("should clear the query property on the query service on exit", function() {
 					$httpBackend.expectGET("accounts/views/index.html").respond(200);
 					$state.go("root.accounts");
 					$rootScope.$digest();
 					$httpBackend.flush();
-					(undefined === $rootScope.query).should.be.true;
+					(undefined === queryService.query).should.be.true;
 				});
 
 				describe("transaction state", function() {

@@ -1,32 +1,48 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("accounts");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("accounts")
+		.controller("AccountReconcileController", Controller);
 
-	// Declare the Account Reconcile controller
-	mod.controller("accountReconcileController", ["$scope", "$modalInstance", "$window", "account",
-		function($scope, $modalInstance, $window, account) {
-			var LOCAL_STORAGE_KEY = "lootClosingBalance-" + account.id;
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "$window", "account"];
 
-			// Get the closing balance from local storage (if exists)
-			$scope.account = {
-				closingBalance: Number($window.localStorage.getItem(LOCAL_STORAGE_KEY))
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, $window, account) {
+		var vm = this;
+		var LOCAL_STORAGE_KEY = "lootClosingBalance-" + account.id;
 
-			// Save and close the modal
-			$scope.start = function() {
-				// Store the closing balance in local storage
-				$window.localStorage.setItem(LOCAL_STORAGE_KEY, $scope.account.closingBalance);
+		/**
+		 * Interface
+		 */
+		vm.closingBalance = Number($window.localStorage.getItem(LOCAL_STORAGE_KEY));
+		vm.start = start;
+		vm.cancel = cancel;
 
-				// Close the modal and return the balance
-				$modalInstance.close($scope.account.closingBalance);
-			};
+		/**
+		 * Implementation
+		 */
 
-			// Dismiss the modal without saving
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		// Save and close the modal
+		function start() {
+			// Store the closing balance in local storage
+			$window.localStorage.setItem(LOCAL_STORAGE_KEY, vm.closingBalance);
+
+			// Close the modal and return the balance
+			$modalInstance.close(vm.closingBalance);
 		}
-	]);
+
+		// Dismiss the modal without saving
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

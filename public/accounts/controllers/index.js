@@ -1,16 +1,35 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("accounts");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("accounts")
+		.controller("AccountIndexController", Controller);
 
-	// Declare the Account Index controller
-	mod.controller("accountIndexController", ["$scope", "accounts",
-		function($scope, accounts) {
-			$scope.accounts = accounts;
-			$scope.netWorth = Object.keys(accounts).reduce(function(netWorth, accountType) {
-				return netWorth + accounts[accountType].total;
-			}, 0);
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["accounts"];
+
+	/**
+	 * Implementation
+	 */
+	function Controller(accounts) {
+		var vm = this;
+
+		/**
+		 * Interface
+		 */
+		vm.accounts = accounts;
+		vm.netWorth = Object.keys(accounts).reduce(netWorth, 0);
+
+		/**
+		 * Implementation
+		 */
+		function netWorth(memo, accountType) {
+			return memo + accounts[accountType].total;
 		}
-	]);
+	}
 })();

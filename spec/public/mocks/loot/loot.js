@@ -114,51 +114,20 @@
 	mod.factory("controllerTest", ["$rootScope", "$controller",
 		function($rootScope, $controller) {
 			// Loads the controller and returns a scope object
-			return function(controller, locals, parentScope) {
+			return function(controller, locals) {
 				locals = locals || {};
 
 				// Create a new scope
 				locals.$scope = $rootScope.$new();
 
-				// If a parent scope was passed, set the parent's properties on the scope
-				if (parentScope) {
-					angular.forEach(Object.keys(parentScope), function(property) {
-						locals.$scope[property] = parentScope[property];
-					});
-				}
-				
 				// Load the controller
 				var instance = $controller(controller, locals);
 
-				// If the returned controller instance is not empty, add it to the scope using the controller's name
-				if (instance && !locals.$scope.hasOwnProperty(controller)) {
-					locals.$scope[controller] = instance;
-				}
+				// Attach the scope to the returned instance as $scope
+				instance.$scope = locals.$scope;
 
-				return locals.$scope;
+				return instance;
 			};
 		}
 	]);
-
-	describe("controllerTest", function() {
-		// The object under test
-		var mockController;
-
-		// Load the modules
-		beforeEach(module("lootMocks", function($controllerProvider) {
-			$controllerProvider.register("mockController", function() {
-				this.newProperty = "new property";
-			});
-		}));
-
-		// Inject the object under test
-		beforeEach(inject(function(controllerTest) {
-			mockController = controllerTest("mockController", undefined, {mockController: "existing property"});
-		}));
-
-		it("should not add the returned controller instance to the scope if the property already exists", function() {
-			mockController.mockController.should.equal("existing property");
-		});
-	});
-
 })();

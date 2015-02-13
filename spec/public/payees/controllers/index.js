@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("payeeIndexController", function() {
+	describe("PayeeIndexController", function() {
 		// The object under test
 		var payeeIndexController;
 
@@ -13,6 +13,7 @@
 				$modal,
 				$state,
 				payeeModel,
+				ogTableNavigableService,
 				payees;
 
 		// Load the modules
@@ -21,17 +22,18 @@
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$timeout_, _$modal_, _$state_, _payeeModel_, _payees_) {
+		beforeEach(inject(function(_controllerTest_, _$timeout_, _$modal_, _$state_, _payeeModel_, _ogTableNavigableService_, _payees_) {
 			controllerTest = _controllerTest_;
 			$timeout = _$timeout_;
 			$modal = _$modal_;
 			$state = _$state_;
 			payeeModel = _payeeModel_;
+			ogTableNavigableService = _ogTableNavigableService_;
 			payees = _payees_;
-			payeeIndexController = controllerTest("payeeIndexController");
+			payeeIndexController = controllerTest("PayeeIndexController");
 		}));
 
-		it("should make the passed payees available on the $scope", function() {
+		it("should make the passed payees available to the view", function() {
 			payeeIndexController.payees.should.deep.equal(payees);
 		});
 			
@@ -45,7 +47,7 @@
 
 			it("should disable navigation on the table", function() {
 				payeeIndexController.editPayee();
-				payeeIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			describe("(edit existing)", function() {
@@ -112,13 +114,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				payeeIndexController.editPayee();
 				$modal.close(payee);
-				payeeIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				payeeIndexController.editPayee();
 				$modal.dismiss();
-				payeeIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -136,7 +138,7 @@
 
 			it("should disable navigation on the table", function() {
 				payeeIndexController.deletePayee(1);
-				payeeIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			it("should show an alert if the payee has transactions", function() {
@@ -166,29 +168,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				payeeIndexController.deletePayee(1);
 				$modal.close(payee);
-				payeeIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				payeeIndexController.deletePayee(1);
 				$modal.dismiss();
-				payeeIndexController.navigationDisabled.should.be.false;
-			});
-		});
-
-		describe("tableActions.navigationEnabled", function() {
-			it("should return false when navigation is disabled locally", function() {
-				payeeIndexController.navigationDisabled = true;
-				payeeIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return false when navigation is disabled globally", function() {
-				payeeIndexController.navigationGloballyDisabled = true;
-				payeeIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return true when navigation is not disabled locally or globally", function() {
-				payeeIndexController.tableActions.navigationEnabled().should.be.true;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -294,7 +280,7 @@
 
 		it("should attach a state change success handler", function() {
 			sinon.stub(payeeIndexController, "stateChangeSuccessHandler");
-			payeeIndexController.$emit("$stateChangeSuccess");
+			payeeIndexController.$scope.$emit("$stateChangeSuccess");
 			payeeIndexController.stateChangeSuccessHandler.should.have.been.called;
 		});
 	});

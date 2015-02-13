@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("ogModalConfirmController", function() {
+	describe("OgModalConfirmController", function() {
 		// The object under test
 		var ogModalConfirmController;
 
@@ -22,7 +22,7 @@
 			controllerTest = _controllerTest_;
 			$modalInstance = _$modalInstance_;
 			confirm = _confirm_;
-			ogModalConfirmController = controllerTest("ogModalConfirmController");
+			ogModalConfirmController = controllerTest("OgModalConfirmController");
 		}));
 
 		it("should make the passed confirmation details available on the $scope", function() {
@@ -34,7 +34,7 @@
 		it("should override the default button styles with the specified styles", function() {
 			confirm.noButtonStyle = "overridden no";
 			confirm.yesButtonStyle = "overridden yes";
-			ogModalConfirmController = controllerTest("ogModalConfirmController");
+			ogModalConfirmController = controllerTest("OgModalConfirmController");
 			ogModalConfirmController.confirm.noButtonStyle.should.equal(confirm.noButtonStyle);
 			ogModalConfirmController.confirm.yesButtonStyle.should.equal(confirm.yesButtonStyle);
 		});

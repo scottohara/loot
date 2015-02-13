@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("categoryEditController", function() {
+	describe("CategoryEditController", function() {
 		// The object under test
 		var categoryEditController;
 
@@ -24,11 +24,11 @@
 			$modalInstance = _$modalInstance_;
 			categoryModel = _categoryModel_;
 			category = _category_;
-			categoryEditController = controllerTest("categoryEditController");
+			categoryEditController = controllerTest("CategoryEditController");
 		}));
 
 		describe("when a category is provided", function() {
-			it("should make the passed category available on the $scope", function() {
+			it("should make the passed category available to the view", function() {
 				categoryEditController.category.should.deep.equal(category);
 			});
 			
@@ -39,10 +39,10 @@
 
 		describe("when a category is not provided", function() {
 			beforeEach(function() {
-				categoryEditController = controllerTest("categoryEditController", {category: undefined});
+				categoryEditController = controllerTest("CategoryEditController", {category: undefined});
 			});
 
-			it("should set an empty category object on the $scope", function() {
+			it("should make an empty category object available to the view", function() {
 				categoryEditController.category.should.be.an.Object;
 				categoryEditController.category.should.be.empty;
 			});

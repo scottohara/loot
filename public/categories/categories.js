@@ -2,5 +2,5 @@
 	"use strict";
 
 	// Declare the categories module and it's dependencies
-	angular.module("categories", []);
+	angular.module("categories", ["ogComponents"]);
 })();

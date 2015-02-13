@@ -3,34 +3,34 @@
 		<h4>Delete Transaction?</h4>
 	</div>
 	<div class="modal-body">
-		<div ng-if="::transaction.status == 'Reconciled' || transaction.related_status == 'Reconciled'" class="alert alert-danger">
+		<div ng-if="::vm.transaction.status == 'Reconciled' || vm.transaction.related_status == 'Reconciled'" class="alert alert-danger">
 			<strong>Warning!</strong>
-			This transaction has been <span ng-if="::transaction.status != 'Reconciled'">partially </span>reconciled
+			This transaction has been <span ng-if="::vm.transaction.status != 'Reconciled'">partially </span>reconciled
 		</div>
 		<dl class="dl-horizontal">
 			<dt>Date</dt>
-			<dd>{{::transaction.transaction_date | date:'dd/MM/yyyy'}}</dd>
-			<dt ng-if="::transaction.primary_account.name">Account</dt>
-			<dd ng-if="::transaction.primary_account.name">{{::transaction.primary_account.name}}</dd>
-			<dt ng-if="::transaction.payee.name">Payee</dt>
-			<dd ng-if="::transaction.payee.name">{{::transaction.payee.name}}</dd>
-			<dt ng-if="::transaction.security.name">Security</dt>
-			<dd ng-if="::transaction.security.name">{{::transaction.security.name}}</dd>
-			<dt ng-if="::transaction.category.name">Category</dt>
-			<dd ng-if="::transaction.category.name">
-				{{::transaction.category.name}}
-				<span ng-if="::transaction.subcategory.name"> : {{::transaction.subcategory.name}}</span>
-				<span ng-if="::transaction.account.name"> : {{::transaction.account.name}}</span>
+			<dd>{{::vm.transaction.transaction_date | date:'dd/MM/yyyy'}}</dd>
+			<dt ng-if="::vm.transaction.primary_account.name">Account</dt>
+			<dd ng-if="::vm.transaction.primary_account.name">{{::vm.transaction.primary_account.name}}</dd>
+			<dt ng-if="::vm.transaction.payee.name">Payee</dt>
+			<dd ng-if="::vm.transaction.payee.name">{{::vm.transaction.payee.name}}</dd>
+			<dt ng-if="::vm.transaction.security.name">Security</dt>
+			<dd ng-if="::vm.transaction.security.name">{{::vm.transaction.security.name}}</dd>
+			<dt ng-if="::vm.transaction.category.name">Category</dt>
+			<dd ng-if="::vm.transaction.category.name">
+				{{::vm.transaction.category.name}}
+				<span ng-if="::vm.transaction.subcategory.name"> : {{::vm.transaction.subcategory.name}}</span>
+				<span ng-if="::vm.transaction.account.name"> : {{::vm.transaction.account.name}}</span>
 			</dd>
-			<dt ng-if="::transaction.amount">Amount</dt>
-			<dd ng-if="::transaction.amount">{{::transaction.amount | currency}}</dd>
-			<dt ng-if="::transaction.quantity">Quantity</dt>
-			<dd ng-if="::transaction.quantity">{{::transaction.quantity | number}}</dd>
+			<dt ng-if="::vm.transaction.amount">Amount</dt>
+			<dd ng-if="::vm.transaction.amount">{{::vm.transaction.amount | currency}}</dd>
+			<dt ng-if="::vm.transaction.quantity">Quantity</dt>
+			<dd ng-if="::vm.transaction.quantity">{{::vm.transaction.quantity | number}}</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">
-			<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
-			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-			<button class="btn btn-danger" type="submit" ng-click="delete()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
+			<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
+			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+			<button class="btn btn-danger" type="submit" ng-click="vm.deleteTransaction()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
 	</div>
 </form>

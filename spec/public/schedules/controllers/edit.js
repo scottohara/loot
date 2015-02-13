@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("scheduleEditController", function() {
+	describe("ScheduleEditController", function() {
 		// The object under test
 		var scheduleEditController;
 
@@ -51,7 +51,7 @@
 			window.$ = sinon.stub();
 			window.$.withArgs("#amount").returns(mockJQueryInstance);
 
-			scheduleEditController = controllerTest("scheduleEditController");
+			scheduleEditController = controllerTest("ScheduleEditController");
 		}));
 
 		afterEach(function() {
@@ -67,19 +67,19 @@
 				schedule.transaction_date = schedule.next_due_date;
 			});
 
-			it("should make the passed schedule available on the $scope", function() {
+			it("should make the passed schedule available to the view", function() {
 				scheduleEditController.transaction.should.deep.equal(schedule);
 			});
 
 			it("should default the transaction type to Basic if not specified", function() {
 				delete schedule.transaction_type;
-				scheduleEditController = controllerTest("scheduleEditController");
+				scheduleEditController = controllerTest("ScheduleEditController");
 				scheduleEditController.transaction.transaction_type.should.equal("Basic");
 			});
 
 			it("should default the next due date to the current day if not specified", function() {
 				delete schedule.next_due_date;
-				scheduleEditController = controllerTest("scheduleEditController");
+				scheduleEditController = controllerTest("ScheduleEditController");
 				scheduleEditController.transaction.next_due_date.should.deep.equal(moment().startOf("day").toDate());
 			});
 
@@ -87,7 +87,7 @@
 				scheduleEditController.mode.should.equal("Enter Transaction");
 			});
 
-			it("should make a copy of the transaction as schedule on the $scope", function() {
+			it("should make a copy of the transaction as schedule available to the view", function() {
 				scheduleEditController.schedule.id.should.not.be.null;
 				scheduleEditController.schedule.should.deep.equal(originalSchedule);
 			});
@@ -111,10 +111,10 @@
 					autoFlag: false
 				};
 
-				scheduleEditController = controllerTest("scheduleEditController", {schedule: undefined});
+				scheduleEditController = controllerTest("ScheduleEditController", {schedule: undefined});
 			});
 
-			it("should set an empty transaction object on the $scope", function() {
+			it("should make an empty transaction object available to the view", function() {
 				scheduleEditController.transaction.should.deep.equal(transaction);
 			});
 
@@ -122,14 +122,14 @@
 				scheduleEditController.mode.should.equal("Add Schedule");
 			});
 
-			it("should make alias the transaction as schedule on the $scope", function() {
+			it("should make an alias of the transaction as schedule available to the view", function() {
 				scheduleEditController.schedule.should.equal(scheduleEditController.transaction);
 			});
 		});
 
 		it("should set the auto-flag property when a flag is present", function() {
 			schedule.flag = "Test flag";
-			scheduleEditController = controllerTest("scheduleEditController");
+			scheduleEditController = controllerTest("ScheduleEditController");
 			scheduleEditController.schedule.autoFlag.should.be.true;
 		});
 
@@ -139,7 +139,7 @@
 
 		it("should set the flag memo to null when the flag memo is '(no memo)'", function() {
 			schedule.flag = "(no memo)";
-			scheduleEditController = controllerTest("scheduleEditController");
+			scheduleEditController = controllerTest("ScheduleEditController");
 			(null === scheduleEditController.schedule.flag).should.be.true;
 		});
 
@@ -484,7 +484,7 @@
 				(undefined === scheduleEditController.transaction.flag).should.be.true;
 			});
 
-			it("should merge the transaction details into $scope.transaction", function() {
+			it("should merge the transaction details into vm.transaction", function() {
 				transaction.category = "original category";
 				scheduleEditController.useLastTransaction(transaction);
 				scheduleEditController.transaction.should.deep.equal(transaction);
@@ -693,36 +693,36 @@
 
 				scheduleEditController.transaction.direction = "outflow";
 				scheduleEditController.transaction.subtransactions = [{},{}];
-				scheduleEditController.$digest();
+				scheduleEditController.$scope.$digest();
 			});
 
 			it("should do nothing if the watched value hasn't changed", function() {
-				scheduleEditController.$digest();
+				scheduleEditController.$scope.$digest();
 				(undefined === scheduleEditController.totalAllocated).should.be.true;
 			});
 				
 			it("should do nothing if there are no subtransactions", function() {
 				scheduleEditController.transaction.subtransactions = undefined;
-				scheduleEditController.$digest();
+				scheduleEditController.$scope.$digest();
 				(undefined === scheduleEditController.totalAllocated).should.be.true;
 			});
 
-			it("should calculate the total and make it available on the scope", function() {
+			it("should calculate the total and make it available to the view", function() {
 				scheduleEditController.transaction.subtransactions = subtransactions;
-				scheduleEditController.$digest();
+				scheduleEditController.$scope.$digest();
 				scheduleEditController.totalAllocated.should.equal(5);
 			});
 
 			it("should not set the main transaction memo when editing an existing transaction", function() {
 				scheduleEditController.transaction.id = 1;
 				scheduleEditController.transaction.subtransactions = subtransactions;
-				scheduleEditController.$digest();
+				scheduleEditController.$scope.$digest();
 				scheduleEditController.memoFromSubtransactions.should.not.have.been.called;
 			});
 
 			it("should set the main transaction memo when adding a new transaction", function() {
 				scheduleEditController.transaction.subtransactions = subtransactions;
-				scheduleEditController.$digest();
+				scheduleEditController.$scope.$digest();
 				scheduleEditController.memoFromSubtransactions.should.have.been.called;
 			});
 		});

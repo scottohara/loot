@@ -1,28 +1,44 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponents");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponents")
+		.controller("OgModalConfirmController", Controller);
 
-	// Declare the Confirm controller
-	mod.controller("ogModalConfirmController", ["$scope", "$modalInstance", "confirm",
-		function($scope, $modalInstance, confirm) {
-			// Make the passed confirmation details available on the scope
-			$scope.confirm = angular.extend({
-				noButtonStyle: "default",
-				yesButtonStyle: "primary"
-			}, confirm);
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "confirm"];
 
-			// Yes response
-			$scope.yes = function() {
-				// Close the modal and return true
-				$modalInstance.close(true);
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, confirm) {
+		var vm = this;
 
-			// No response
-			$scope.no = function() {
-				$modalInstance.dismiss();
-			};
+		/**
+		 * Interface
+		 */
+		vm.confirm = angular.extend({noButtonStyle: "default", yesButtonStyle: "primary"}, confirm);
+		vm.yes = yes;
+		vm.no = no;
+
+		/**
+		 * Implementation
+		 */
+
+		// Yes response
+		function yes() {
+			// Close the modal and return true
+			$modalInstance.close(true);
 		}
-	]);
+
+		// No response
+		function no() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

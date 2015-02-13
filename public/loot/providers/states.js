@@ -3,7 +3,14 @@
 
 	// Reopen the module
 	var mod = angular.module("states", [
-		"ui.router"
+		"ui.router",
+		"authentication",
+		"accounts",
+		"categories",
+		"payees",
+		"schedules",
+		"securities",
+		"transactions"
 	]);
 
 	// Declare the lootStates provider
@@ -17,7 +24,8 @@
 					transactionViews = {
 						"@root": {
 							templateUrl: "transactions/views/index.html",
-							controller: "transactionIndexController"
+							controller: "TransactionIndexController",
+							controllerAs: "vm"
 						}
 					},
 					transactionsState = function(parentContext) {
@@ -63,7 +71,7 @@
 				.state("root", {
 					abstract: true,
 					templateUrl: "loot/views/layout.html",
-					controller: "layoutController",
+					controller: "LayoutController",
 					controllerAs: "vm",
 					data: {
 						title: "Welcome"
@@ -76,7 +84,8 @@
 									// Not authenticated, show the login modal
 									return $modal.open({
 										templateUrl: "authentication/views/edit.html",
-										controller: "authenticationEditController",
+										controller: "AuthenticationEditController",
+										controllerAs: "vm",
 										backdrop: "static",
 										size: "sm"
 									}).result.then(function() {
@@ -97,7 +106,8 @@
 				.state("root.accounts", {
 					url: "/accounts",
 					templateUrl: "accounts/views/index.html",
-					controller: "accountIndexController",
+					controller: "AccountIndexController",
+					controllerAs: "vm",
 					data: {
 						title: "Accounts"
 					},
@@ -117,7 +127,8 @@
 				.state("root.schedules", {
 					url: "/schedules",
 					templateUrl: "schedules/views/index.html",
-					controller: "scheduleIndexController",
+					controller: "ScheduleIndexController",
+					controllerAs: "vm",
 					data: {
 						title: "Schedules"
 					},
@@ -135,7 +146,8 @@
 				.state("root.payees", {
 					url: "/payees",
 					templateUrl: "payees/views/index.html",
-					controller: "payeeIndexController",
+					controller: "PayeeIndexController",
+					controllerAs: "vm",
 					data: {
 						title: "Payees"
 					},
@@ -155,7 +167,8 @@
 				.state("root.categories", {
 					url: "/categories",
 					templateUrl: "categories/views/index.html",
-					controller: "categoryIndexController",
+					controller: "CategoryIndexController",
+					controllerAs: "vm",
 					data: {
 						title: "Categories"
 					},
@@ -175,7 +188,8 @@
 				.state("root.securities", {
 					url: "/securities",
 					templateUrl: "securities/views/index.html",
-					controller: "securityIndexController",
+					controller: "SecurityIndexController",
+					controllerAs: "vm",
 					data: {
 						title: "Securities"
 					},
@@ -217,12 +231,12 @@
 					views: transactionViews,
 					onEnter: ["$stateParams", "queryService",
 						function($stateParams, queryService) {
-							queryService.setQuery($stateParams.query);
+							queryService.query = $stateParams.query;
 						}
 					],
 					onExit: ["queryService",
 						function(queryService) {
-							queryService.clearQuery();
+							queryService.query = undefined;
 						}
 					]
 				})

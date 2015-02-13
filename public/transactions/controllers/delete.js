@@ -1,29 +1,49 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("transactions");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("transactions")
+		.controller("TransactionDeleteController", Controller);
 
-	// Declare the Transaction Delete controller
-	mod.controller("transactionDeleteController", ["$scope", "$modalInstance", "transactionModel", "transaction",
-		function($scope, $modalInstance, transactionModel, transaction) {
-			// Make the passed transaction available on the scope
-			$scope.transaction = transaction;
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "transactionModel", "transaction"];
 
-			// Delete and close the modal
-			$scope.delete = function() {
-				$scope.errorMessage = null;
-				transactionModel.destroy($scope.transaction).then(function() {
-					$modalInstance.close();
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, transactionModel, transaction) {
+		var vm = this;
 
-			// Dismiss the modal without deleting
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		/**
+		 * Interface
+		 */
+		vm.transaction = transaction;
+		vm.deleteTransaction = deleteTransaction;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
+
+		/**
+		 * Implementation
+		 */
+
+		// Delete and close the modal
+		function deleteTransaction() {
+			vm.errorMessage = null;
+			transactionModel.destroy(vm.transaction).then(function() {
+				$modalInstance.close();
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Dismiss the modal without deleting
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

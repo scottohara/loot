@@ -5,24 +5,24 @@
 	<div class="modal-body">
 		<dl class="dl-horizontal">
 			<dt>Date</dt>
-			<dd>{{::schedule.next_due_date | date:'dd/MM/yyyy'}}</dd>
-			<dt ng-if="::schedule.frequency">Frequency</dt>
-			<dd ng-if="::schedule.frequency">{{::schedule.frequency}}</dd>
-			<dt ng-if="::schedule.primary_account.name">Account</dt>
-			<dd ng-if="::schedule.primary_account.name">{{::schedule.primary_account.name}}</dd>
-			<dt ng-if="::schedule.payee.name">Payee</dt>
-			<dd ng-if="::schedule.payee.name">{{::schedule.payee.name}}</dd>
-			<dt ng-if="::schedule.security.name">Security</dt>
-			<dd ng-if="::schedule.security.name">{{::schedule.security.name}}</dd>
-			<dt ng-if="::schedule.amount">Amount</dt>
-			<dd ng-if="::schedule.amount">{{::schedule.amount | currency}}</dd>
-			<dt ng-if="::schedule.quantity">Quantity</dt>
-			<dd ng-if="::schedule.quantity">{{::schedule.quantity | number}}</dd>
+			<dd>{{::vm.schedule.next_due_date | date:'dd/MM/yyyy'}}</dd>
+			<dt ng-if="::vm.schedule.frequency">Frequency</dt>
+			<dd ng-if="::vm.schedule.frequency">{{::vm.schedule.frequency}}</dd>
+			<dt ng-if="::vm.schedule.primary_account.name">Account</dt>
+			<dd ng-if="::vm.schedule.primary_account.name">{{::vm.schedule.primary_account.name}}</dd>
+			<dt ng-if="::vm.schedule.payee.name">Payee</dt>
+			<dd ng-if="::vm.schedule.payee.name">{{::vm.schedule.payee.name}}</dd>
+			<dt ng-if="::vm.schedule.security.name">Security</dt>
+			<dd ng-if="::vm.schedule.security.name">{{::vm.schedule.security.name}}</dd>
+			<dt ng-if="::vm.schedule.amount">Amount</dt>
+			<dd ng-if="::vm.schedule.amount">{{::vm.schedule.amount | currency}}</dd>
+			<dt ng-if="::vm.schedule.quantity">Quantity</dt>
+			<dd ng-if="::vm.schedule.quantity">{{::vm.schedule.quantity | number}}</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">
-			<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
-			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-			<button class="btn btn-danger" type="submit" ng-click="delete()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
+			<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
+			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+			<button class="btn btn-danger" type="submit" ng-click="vm.deleteSchedule()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
 	</div>
 </form>

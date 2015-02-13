@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("transactionIndexController", function() {
+	describe("TransactionIndexController", function() {
 		// The object under test
 		var transactionIndexController;
 
@@ -16,10 +16,11 @@
 				$q,
 				transactionModel,
 				accountModel,
+				ogTableNavigableService,
+				ogViewScrollService,
 				contextModel,
 				context,
-				transactionBatch,
-				parentScope;
+				transactionBatch;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "transactions", function(mockDependenciesProvider) {
@@ -27,7 +28,7 @@
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$modal_, _$timeout_, _$window_, _$state_, _$q_, _transactionModel_, _accountModel_, _contextModel_, _context_, _transactionBatch_) {
+		beforeEach(inject(function(_controllerTest_, _$modal_, _$timeout_, _$window_, _$state_, _$q_, _transactionModel_, _accountModel_, _ogTableNavigableService_, _ogViewScrollService_, _contextModel_, _context_, _transactionBatch_) {
 			controllerTest = _controllerTest_;
 			$modal = _$modal_;
 			$timeout = _$timeout_;
@@ -36,32 +37,34 @@
 			$q = _$q_;
 			transactionModel = _transactionModel_;
 			accountModel = _accountModel_;
+			ogTableNavigableService = _ogTableNavigableService_;
+			ogViewScrollService = _ogViewScrollService_;
 			contextModel = _contextModel_;
 			context = _context_;
 			transactionBatch = _transactionBatch_;
-			parentScope = {scrollTo: sinon.stub()};
-			transactionIndexController = controllerTest("transactionIndexController", undefined, parentScope);
+			sinon.stub(ogViewScrollService, "scrollTo");
+			transactionIndexController = controllerTest("TransactionIndexController", undefined);
 		}));
 
-		it("should make the passed context available on the $scope", function() {
+		it("should make the passed context available to the view", function() {
 			transactionIndexController.context.should.deep.equal(context);
 		});
 
-		it("should make the passed context type available on the scope", function() {
+		it("should make the passed context type available to the view", function() {
 			transactionIndexController.contextType.should.equal(contextModel.type());
 		});
 
 		it("should not set a context type when a context model was not specified", function() {
-			transactionIndexController = controllerTest("transactionIndexController", {contextModel: undefined}, parentScope);
+			transactionIndexController = controllerTest("TransactionIndexController", {contextModel: undefined});
 			(undefined === transactionIndexController.contextType).should.be.true;
 		});
 
-		it("should make today's date available on the $scope", function() {
+		it("should make today's date available to the view", function() {
 			transactionIndexController.today.should.deep.equal(moment().startOf("day").toDate());
 		});
 
-		it("should set an empty array of transactions on the scope", function() {
-			transactionIndexController = controllerTest("transactionIndexController", {transactionBatch: {transactions: {length: 0}}}, parentScope);
+		it("should set an empty array of transactions to the view", function() {
+			transactionIndexController = controllerTest("TransactionIndexController", {transactionBatch: {transactions: {length: 0}}});
 			transactionIndexController.transactions.should.be.an.Array;
 			transactionIndexController.transactions.should.be.empty;
 		});
@@ -72,7 +75,7 @@
 
 		it("should ensure the transaction is focussed when the transaction id state param is present", function() {
 			$state.params.transactionId = "1";
-			transactionIndexController = controllerTest("transactionIndexController", {$state: $state}, parentScope);
+			transactionIndexController = controllerTest("TransactionIndexController", {$state: $state});
 			transactionIndexController.tableActions.focusRow = sinon.stub();
 			$timeout.flush();
 			transactionIndexController.tableActions.focusRow.should.have.been.calledWith(0);
@@ -98,14 +101,14 @@
 
 			it("should disable navigation on the table", function() {
 				transactionIndexController.editTransaction();
-				transactionIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			describe("(edit existing)", function() {
 				it("should do nothing if the transaction can't be edited", function() {
 					sinon.stub(transactionIndexController, "isAllowed").returns(false);
 					transactionIndexController.editTransaction(1);
-					(!!transactionIndexController.navigationDisabled).should.be.false;
+					(!!ogTableNavigableService.enabled).should.be.true;
 					$modal.open.should.not.have.been.called;
 				});
 
@@ -295,13 +298,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				transactionIndexController.editTransaction();
 				$modal.close(transaction);
-				transactionIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				transactionIndexController.editTransaction();
 				$modal.dismiss();
-				transactionIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -367,13 +370,13 @@
 			it("should do nothing if the transaction can't be deleted", function() {
 				sinon.stub(transactionIndexController, "isAllowed").returns(false);
 				transactionIndexController.deleteTransaction(1);
-				(!!transactionIndexController.navigationDisabled).should.be.false;
+				(!!ogTableNavigableService.enabled).should.be.true;
 				$modal.open.should.not.have.been.called;
 			});
 
 			it("should disable navigation on the table", function() {
 				transactionIndexController.deleteTransaction(1);
-				transactionIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			it("should open the delete transaction modal with a transaction", function() {
@@ -391,13 +394,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				transactionIndexController.deleteTransaction(1);
 				$modal.close(transaction);
-				transactionIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				transactionIndexController.deleteTransaction(1);
 				$modal.dismiss();
-				transactionIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -567,7 +570,7 @@
 			});
 
 			it("should disable navigation on the table", function() {
-				transactionIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			it("should prompt the user to switch to the other account", function() {
@@ -588,28 +591,12 @@
 
 			it("should enable navigation on the table when the modal is closed", function() {
 				$modal.close();
-				transactionIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dismissed", function() {
 				$modal.dismiss();
-				transactionIndexController.navigationDisabled.should.be.false;
-			});
-		});
-
-		describe("tableActions.navigationEnabled", function() {
-			it("should return false when navigation is disabled locally", function() {
-				transactionIndexController.navigationDisabled = true;
-				transactionIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return false when navigation is disabled globally", function() {
-				transactionIndexController.navigationGloballyDisabled = true;
-				transactionIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return true when navigation is not disabled locally or globally", function() {
-				transactionIndexController.tableActions.navigationEnabled().should.be.true;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -624,7 +611,7 @@
 
 			describe("(reconciling)", function() {
 				beforeEach(function() {
-					transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
+					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel});
 					transactionIndexController.reconciling = true;
 					sinon.stub(transactionIndexController, "toggleCleared");
 				});
@@ -753,34 +740,34 @@
 				(undefined === transactionIndexController.openingBalance).should.be.true;
 			});
 
-			it("should make the opening balance of the batch available on the scope", function() {
+			it("should make the opening balance of the batch available to the view", function() {
 				transactionIndexController.processTransactions(transactionBatch);
 				transactionIndexController.openingBalance = transactionBatch.openingBalance;
 			});
 
-			it("should make the transactions available on the scope", function() {
+			it("should make the transactions available to the view", function() {
 				transactionIndexController.processTransactions(transactionBatch);
 				transactionIndexController.transactions = transactionBatch.transactions;
 			});
 
-			it("should set a flag on the scope if we've reached the end", function() {
+			it("should set a flag if we've reached the end", function() {
 				transactionIndexController.processTransactions(transactionBatch, "from date");
 				transactionIndexController.atEnd.should.be.true;
 			});
 
-			it("should set a flag on the scope if a from date was not specified", function() {
+			it("should set a flag if a from date was not specified", function() {
 				transactionBatch.atEnd = false;
 				transactionIndexController.processTransactions(transactionBatch);
 				transactionIndexController.atEnd.should.be.true;
 			});
 
-			it("should make the first transaction date available on the scope", function() {
+			it("should make the first transaction date available to the view", function() {
 				var firstTransactionDate = transactionBatch.transactions[0].transaction_date;
 				transactionIndexController.processTransactions(transactionBatch);
 				transactionIndexController.firstTransactionDate.should.equal(firstTransactionDate);
 			});
 
-			it("should make the last transaction date available on the scope", function() {
+			it("should make the last transaction date available to the view", function() {
 				var lastTransactionDate = transactionBatch.transactions[transactionBatch.transactions.length - 1].transaction_date;
 				transactionIndexController.processTransactions(transactionBatch);
 				transactionIndexController.lastTransactionDate.should.equal(lastTransactionDate);
@@ -797,7 +784,7 @@
 			});
 
 			it("should update the reconciled totals when reconciling", function() {
-				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
+				transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel});
 				sinon.stub(transactionIndexController, "updateReconciledTotals");
 				transactionIndexController.reconciling = true;
 				transactionIndexController.processTransactions(transactionBatch);
@@ -842,10 +829,10 @@
 
 		describe("(account context)", function() {
 			beforeEach(function() {
-				transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
+				transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel});
 			});
 
-			it("should set a flag on the scope to enable reconciling", function() {
+			it("should set a flag to enable reconciling", function() {
 				transactionIndexController.reconcilable.should.be.true;
 			});
 
@@ -871,7 +858,7 @@
 					accountModel.unreconciledOnly.should.have.been.calledWith(transactionIndexController.context.id, true);
 				});
 
-				it("should set a flag on the scope to indicate that we're showing unreconciled transactions only", function() {
+				it("should set a flag to indicate that we're showing unreconciled transactions only", function() {
 					transactionIndexController.toggleUnreconciledOnly(true);
 					transactionIndexController.unreconciledOnly.should.be.true;
 				});
@@ -946,7 +933,7 @@
 					$modal.resolves.account.should.deep.equal(transactionIndexController.context);
 				});
 
-				it("should make the closing balance available on the scope when the modal is closed", function() {
+				it("should make the closing balance available to the view when the modal is closed", function() {
 					var closingBalance = 100;
 					$modal.close(closingBalance);
 					transactionIndexController.closingBalance.should.equal(closingBalance);
@@ -1087,7 +1074,7 @@
 			});
 
 			it("should disable navigation on the table", function() {
-				transactionIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			it("should show the flag modal for the transaction", function() {
@@ -1103,12 +1090,12 @@
 
 			it("should enable navigation on the table when the modal is closed", function() {
 				$modal.close(transaction);
-				transactionIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dismissed", function() {
 				$modal.dismiss();
-				transactionIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -1165,11 +1152,6 @@
 				sinon.stub(transactionIndexController, "switchTo");
 				id = "test id";
 				transaction = {};
-			});
-
-			it("should disable navigation on the table", function() {
-				transactionIndexController.switchToAccount(undefined, id, transaction);
-				transactionIndexController.navigationDisabled.should.be.true;
 			});
 
 			it("should not toggle the unreconciled only setting for the account if the transaction is not reconciled", function() {
@@ -1308,7 +1290,7 @@
 
 				describe("(showing unreconciled only)", function() {
 					it("should toggle to show all transactions", function() {
-						transactionIndexController = controllerTest("transactionIndexController", {contextModel: accountModel}, parentScope);
+						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel});
 						sinon.stub(transactionIndexController, "focusTransaction").returns(NaN);
 						sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
 						var transactionDate = moment().startOf("day").subtract(1, "day").toDate();
@@ -1349,12 +1331,12 @@
 
 		it("should attach a state change success handler", function() {
 			sinon.stub(transactionIndexController, "stateChangeSuccessHandler");
-			transactionIndexController.$emit("$stateChangeSuccess");
+			transactionIndexController.$scope.$emit("$stateChangeSuccess");
 			transactionIndexController.stateChangeSuccessHandler.should.have.been.called;
 		});
 
 		it("should scroll to the bottom when the controller loads", function() {
-			transactionIndexController.scrollTo.should.have.been.calledWith("bottom");
+			ogViewScrollService.scrollTo.should.have.been.calledWith("bottom");
 		});
 	});
 })();

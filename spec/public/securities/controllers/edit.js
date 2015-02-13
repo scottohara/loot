@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("securityEditController", function() {
+	describe("SecurityEditController", function() {
 		// The object under test
 		var securityEditController;
 
@@ -24,11 +24,11 @@
 			$modalInstance = _$modalInstance_;
 			securityModel = _securityModel_;
 			security = _security_;
-			securityEditController = controllerTest("securityEditController");
+			securityEditController = controllerTest("SecurityEditController");
 		}));
 
 		describe("when a security is provided", function() {
-			it("should make the passed security available on the $scope", function() {
+			it("should make the passed security available to the view", function() {
 				securityEditController.security.should.deep.equal(security);
 			});
 			
@@ -39,10 +39,10 @@
 
 		describe("when a security is not provided", function() {
 			beforeEach(function() {
-				securityEditController = controllerTest("securityEditController", {security: undefined});
+				securityEditController = controllerTest("SecurityEditController", {security: undefined});
 			});
 
-			it("should set an empty security object on the $scope", function() {
+			it("should make an empty security object available to the view", function() {
 				securityEditController.security.should.be.an.Object;
 				securityEditController.security.should.be.empty;
 			});

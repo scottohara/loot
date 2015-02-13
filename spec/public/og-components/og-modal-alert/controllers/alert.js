@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("ogModalAlertController", function() {
+	describe("OgModalAlertController", function() {
 		// The object under test
 		var ogModalAlertController;
 
@@ -22,17 +22,17 @@
 			controllerTest = _controllerTest_;
 			$modalInstance = _$modalInstance_;
 			alert = _alert_;
-			ogModalAlertController = controllerTest("ogModalAlertController");
+			ogModalAlertController = controllerTest("OgModalAlertController");
 		}));
 
-		it("should make the passed alert available on the $scope", function() {
+		it("should make the passed alert available to the view", function() {
 			ogModalAlertController.alert.message.should.equal(alert.message);
 			ogModalAlertController.alert.closeButtonStyle.should.equal("primary");
 		});
 
 		it("should override the default button style with a specified style", function() {
 			alert.closeButtonStyle = "overridden";
-			ogModalAlertController = controllerTest("ogModalAlertController");
+			ogModalAlertController = controllerTest("OgModalAlertController");
 			ogModalAlertController.alert.closeButtonStyle.should.equal(alert.closeButtonStyle);
 		});
 

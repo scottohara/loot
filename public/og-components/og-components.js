@@ -3,6 +3,7 @@
 
 	// Declare the ogComponents module and it's dependencies
 	angular.module("ogComponents", [
-		"ui.bootstrap"
+		"ui.bootstrap",
+		"ui.router"
 	]);
 })();

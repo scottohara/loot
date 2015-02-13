@@ -1,45 +1,66 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("categories");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("categories")
+		.controller("CategoryEditController", Controller);
 
-	// Declare the Category Edit controller
-	mod.controller("categoryEditController", ["$scope", "$modalInstance", "filterFilter", "limitToFilter", "categoryModel", "category",
-		function($scope, $modalInstance, filterFilter, limitToFilter, categoryModel, category) {
-			// Make the passed category available on the scope
-			$scope.category = angular.extend({}, category);
-			$scope.mode = (category ? "Edit" : "Add");
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "categoryModel", "category"];
 
-			// List of parent categories for the typeahead
-			$scope.parentCategories = function(filter, limit) {
-				return categoryModel.all().then(function(categories) {
-					return limitToFilter(filterFilter(categories, {name: filter}), limit);
-				});
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, filterFilter, limitToFilter, categoryModel, category) {
+		var vm = this;
 
-			// Save and close the modal
-			$scope.save = function() {
-				// Copy the parent details
-				if ($scope.category.parent) {
-					$scope.category.direction = $scope.category.parent.direction;
-					$scope.category.parent_id = $scope.category.parent.id;
-				} else {
-					$scope.category.parent_id = null;
-				}
+		/**
+		 * Interface
+		 */
+		vm.category = angular.extend({}, category);
+		vm.mode = category ? "Edit" : "Add";
+		vm.parentCategories = parentCategories;
+		vm.save = save;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
 
-				$scope.errorMessage = null;
-				categoryModel.save($scope.category).then(function(category) {
-					$modalInstance.close(category.data);
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+		/**
+		 * Implementation
+		 */
 
-			// Dismiss the modal without saving
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		// List of parent categories for the typeahead
+		function parentCategories(filter, limit) {
+			return categoryModel.all().then(function(categories) {
+				return limitToFilter(filterFilter(categories, {name: filter}), limit);
+			});
 		}
-	]);
+
+		// Save and close the modal
+		function save() {
+			// Copy the parent details
+			if (vm.category.parent) {
+				vm.category.direction = vm.category.parent.direction;
+				vm.category.parent_id = vm.category.parent.id;
+			} else {
+				vm.category.parent_id = null;
+			}
+
+			vm.errorMessage = null;
+			categoryModel.save(vm.category).then(function(category) {
+				$modalInstance.close(category.data);
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
+		}
+
+		// Dismiss the modal without saving
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

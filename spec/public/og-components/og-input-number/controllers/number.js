@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("ogInputNumberController", function() {
+	describe("OgInputNumberController", function() {
 		// The object under test
 		var ogInputNumberController;
 
@@ -16,7 +16,7 @@
 		// Configure & compile the object under test
 		beforeEach(inject(function(_controllerTest_) {
 			controllerTest = _controllerTest_;
-			ogInputNumberController = controllerTest("ogInputNumberController");
+			ogInputNumberController = controllerTest("OgInputNumberController");
 		}));
 
 		describe("formattedToRaw", function() {
@@ -33,14 +33,10 @@
 			});
 		});
 
-		it("should expose the formattedToRaw function on the controller instance", function() {
-			ogInputNumberController.formattedToRaw.should.deep.equal(ogInputNumberController.ogInputNumberController.formattedToRaw);
-		});
-
 		describe("rawToFormatted", function() {
 			it("should return the passed value unchanged", function() {
 				var value = "test value";
-				ogInputNumberController.ogInputNumberController.rawToFormatted(value).should.equal(value);
+				ogInputNumberController.rawToFormatted(value).should.equal(value);
 			});
 		});
 	});

@@ -1,4 +1,4 @@
-<table class="accounts table table-striped table-bordered table-hover" ng-repeat="(type, accountType) in ::accounts">
+<table class="accounts table table-striped table-bordered table-hover" ng-repeat="(type, accountType) in ::vm.accounts">
 	<thead>
 		<tr>
 			<th colspan="2">{{::type}}</th>
@@ -22,7 +22,7 @@
 <table class="accounts table table-bordered">
 	<thead>
 		<tr>
-			<th colspan="2" class="amount" ng-class="::{'text-danger': netWorth < 0}">Total: {{::netWorth | currency}}</th>
+			<th colspan="2" class="amount" ng-class="::{'text-danger': vm.netWorth < 0}">Total: {{::vm.netWorth | currency}}</th>
 		</tr>
 	</thead>
 </table>

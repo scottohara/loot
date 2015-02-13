@@ -11,10 +11,12 @@
 				restrict: "A",
 				priority: 1,
 				require: "ngModel",
-				controller: "ogInputNumberController",
+				controller: "OgInputNumberController",
+				controllerAs: "vm",
+				bindToController: true,
 				link: function(scope, iElement, iAttrs, ngModel) {
 					// View to model
-					ngModel.$parsers.push(scope.formattedToRaw);
+					ngModel.$parsers.push(scope.vm.formattedToRaw);
 
 					// Model to view
 					ngModel.$formatters.unshift(function(value) {
@@ -22,7 +24,7 @@
 					});
 
 					var formattedToRaw = function() {
-						iElement.val(numberFilter(scope.formattedToRaw(iElement.val())));
+						iElement.val(numberFilter(scope.vm.formattedToRaw(iElement.val())));
 					};
 
 					// Update view when tabbing in/out of the field

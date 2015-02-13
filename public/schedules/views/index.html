@@ -1,4 +1,4 @@
-<table id="transactions" class="table table-striped table-bordered table-hover table-condensed" og-table-navigable="tableActions">
+<table id="transactions" class="table table-striped table-bordered table-hover table-condensed" og-table-navigable="vm.tableActions">
 	<thead id="transactions-header">
 		<tr>
 			<th class="transaction-date">Date</th>
@@ -10,7 +10,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="transaction" ng-repeat="schedule in schedules" ng-class="::{'text-danger': schedule.next_due_date < today}">
+		<tr class="transaction" ng-repeat="schedule in vm.schedules" ng-class="::{'text-danger': schedule.next_due_date < vm.today}">
 			<td>
 				{{::schedule.next_due_date | date:'dd/MM/yyyy'}}
 				<i ng-if="::schedule.auto_enter" class="glyphicon glyphicon-pushpin pull-right" tooltip="Auto entered on due date"></i>
@@ -30,7 +30,7 @@
 						<td ng-if="::schedule.transaction_type == 'Basic'" class="category">{{::schedule.subcategory.name}}</td>
 						<td ng-if="::['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(schedule.transaction_type) != -1" class="category">{{::schedule.account.name}}</td>
 						<td ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(schedule.transaction_type) != -1">
-							<button ng-click="toggleSubtransactions($event, schedule)" class="btn btn-xs btn-default toggle-subtransactions">
+							<button ng-click="vm.toggleSubtransactions($event, schedule)" class="btn btn-xs btn-default toggle-subtransactions">
 								<i class="glyphicon" ng-class="::{'glyphicon-chevron-down': !schedule.showSubtransactions, 'glyphicon-chevron-up': schedule.showSubtransactions}"></i>
 							</button>
 						</td>

@@ -5,12 +5,12 @@
 	<div class="modal-body">
 		<div class="form-group has-feedback" ng-class="{'has-error': reconcileForm.balance.$invalid}">
 			<label for="balance">Closing Balance</label>
-			<input name="balance" class="form-control" ng-class="{'negative': account.closingBalance < 0}" ng-model="account.closingBalance" placeholder="Amount" required og-input-currency autofocus og-input-autoselect>
+			<input name="balance" class="form-control" ng-class="{'negative': vm.closingBalance < 0}" ng-model="vm.closingBalance" placeholder="Amount" required og-input-currency autofocus og-input-autoselect>
 			<span ng-show="reconcileForm.balance.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
 	<div class="modal-footer">
-			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-			<button class="btn btn-primary" type="submit" ng-click="start()"><i class="glyphicon glyphicon-check"></i> Start</button>
+			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+			<button class="btn btn-primary" type="submit" ng-disabled="reconcileForm.$invalid" ng-click="vm.start()"><i class="glyphicon glyphicon-check"></i> Start</button>
 	</div>
 </form>

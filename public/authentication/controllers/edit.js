@@ -1,28 +1,50 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("authentication");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("authentication")
+		.controller("AuthenticationEditController", Controller);
 
-	// Declare the Authentication Edit controller
-	mod.controller("authenticationEditController", ["$scope", "$modalInstance", "authenticationModel",
-		function($scope, $modalInstance, authenticationModel) {
-			$scope.authentication = {};
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "authenticationModel"];
 
-			// Login and close the modal
-			$scope.login = function() {
-				$scope.errorMessage = null;
-				authenticationModel.login($scope.authentication.userName, $scope.authentication.password).then(function() {
-					$modalInstance.close();
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, authenticationModel) {
+		var vm = this;
 
-			// Dismiss the modal without logging in
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		/**
+		 * Interface
+		 */
+		vm.userName = null;
+		vm.password = null;
+		vm.login = login;
+		vm.cancel = cancel;
+		vm.errorMessage = null;
+
+		/**
+		 * Implementation
+		 */
+
+		// Login and close the modal
+		function login() {
+			vm.errorMessage = null;
+			authenticationModel.login(vm.userName, vm.password).then(function() {
+				$modalInstance.close();
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Dismiss the modal without logging in
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

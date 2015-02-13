@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("payeeEditController", function() {
+	describe("PayeeEditController", function() {
 		// The object under test
 		var payeeEditController;
 
@@ -24,11 +24,11 @@
 			$modalInstance = _$modalInstance_;
 			payeeModel = _payeeModel_;
 			payee = _payee_;
-			payeeEditController = controllerTest("payeeEditController");
+			payeeEditController = controllerTest("PayeeEditController");
 		}));
 
 		describe("when a payee is provided", function() {
-			it("should make the passed payee available on the $scope", function() {
+			it("should make the passed payee available to the view", function() {
 				payeeEditController.payee.should.deep.equal(payee);
 			});
 			
@@ -39,10 +39,10 @@
 
 		describe("when a payee is not provided", function() {
 			beforeEach(function() {
-				payeeEditController = controllerTest("payeeEditController", {payee: undefined});
+				payeeEditController = controllerTest("PayeeEditController", {payee: undefined});
 			});
 
-			it("should set an empty payee object on the $scope", function() {
+			it("should make an empty payee object available to the view", function() {
 				payeeEditController.payee.should.be.an.Object;
 				payeeEditController.payee.should.be.empty;
 			});

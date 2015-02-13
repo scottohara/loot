@@ -1,12 +1,12 @@
 <form role="form" name="confirmForm">
 	<div class="modal-header">
-		<h4>{{::confirm.header}}</h4>
+		<h4>{{::vm.confirm.header}}</h4>
 	</div>
 	<div class="modal-body">
-		<p>{{::confirm.message}}</p>
+		<p>{{::vm.confirm.message}}</p>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-{{::confirm.noButtonStyle}}" type="button" ng-click="no()">No</button>
-		<button class="btn btn-{{::confirm.yesButtonStyle}}" type="submit" ng-click="yes()" autofocus>Yes</button>
+		<button class="btn btn-{{::vm.confirm.noButtonStyle}}" type="button" ng-click="vm.no()">No</button>
+		<button class="btn btn-{{::vm.confirm.yesButtonStyle}}" type="submit" ng-click="vm.yes()" autofocus>Yes</button>
 	</div>
 </form>

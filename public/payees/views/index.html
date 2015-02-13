@@ -1,14 +1,14 @@
-<table id="payees" class="table table-striped table-bordered table-hover" og-table-navigable="tableActions">
+<table id="payees" class="table table-striped table-bordered table-hover" og-table-navigable="vm.tableActions">
 	<thead>
 		<tr>
 			<th>Payee</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="payee in payees">
+		<tr ng-repeat="payee in vm.payees">
 			<td class="has-action">
 				{{::payee.name}}
-				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit payee" ng-click="editPayee($index)"></i>
+				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit payee" ng-click="vm.editPayee($index)"></i>
 			</td>
 		</tr>
 	<tbody>

@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("ogInputCurrencyController", function() {
+	describe("OgInputCurrencyController", function() {
 		// The object under test
 		var ogInputCurrencyController;
 
@@ -16,7 +16,7 @@
 		// Configure & compile the object under test
 		beforeEach(inject(function(_controllerTest_) {
 			controllerTest = _controllerTest_;
-			ogInputCurrencyController = controllerTest("ogInputCurrencyController");
+			ogInputCurrencyController = controllerTest("OgInputCurrencyController");
 		}));
 
 		it("should default to 2 decimal places", function() {
@@ -84,14 +84,6 @@
 				ogInputCurrencyController.decimalPlaces = 3;
 				ogInputCurrencyController.rawToFormatted(100000).should.equal("$100,000.000");
 			});
-		});
-
-		it("should expose the formattedToRaw function on the controller instance", function() {
-			ogInputCurrencyController.formattedToRaw.should.deep.equal(ogInputCurrencyController.ogInputCurrencyController.formattedToRaw);
-		});
-
-		it("should expose the rawToFormatted function on the controller instance", function() {
-			ogInputCurrencyController.rawToFormatted.should.deep.equal(ogInputCurrencyController.ogInputCurrencyController.rawToFormatted);
 		});
 	});
 })();

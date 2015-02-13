@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("authenticationEditController", function() {
+	describe("AuthenticationEditController", function() {
 		// The object under test
 		var authenticationEditController;
 
@@ -20,18 +20,18 @@
 		beforeEach(inject(function(controllerTest, _$modalInstance_, _authenticationModel_) {
 			$modalInstance = _$modalInstance_;
 			authenticationModel = _authenticationModel_;
-			authenticationEditController = controllerTest("authenticationEditController");
+			authenticationEditController = controllerTest("AuthenticationEditController");
 		}));
 
-		it("should set an empty authentication object on the $scope", function() {
-			authenticationEditController.authentication.should.be.an.Object;
-			authenticationEditController.authentication.should.be.empty;
+		it("should set null authentication credentials to the view", function() {
+			(null === authenticationEditController.userName).should.be.true;
+			(null === authenticationEditController.password).should.be.true;
 		});
 
 		describe("login", function() {
 			beforeEach(function() {
-				authenticationEditController.authentication.userName = "gooduser";
-				authenticationEditController.authentication.password = "goodpassword";
+				authenticationEditController.userName = "gooduser";
+				authenticationEditController.password = "goodpassword";
 			});
 
 			it("should reset any previous error messages", function() {
@@ -51,8 +51,8 @@
 			});
 
 			it("should display an error message when login unsuccessful", function() {
-				authenticationEditController.authentication.userName = "baduser";
-				authenticationEditController.authentication.password = "badpassword";
+				authenticationEditController.userName = "baduser";
+				authenticationEditController.password = "badpassword";
 				authenticationEditController.login();
 				authenticationEditController.errorMessage.should.equal("unsuccessful");
 			});

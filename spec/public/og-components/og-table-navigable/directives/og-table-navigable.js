@@ -7,16 +7,19 @@
 		// The object under test
 		var ogTableNavigable;
 
+		// Dependencies
+		var ogTableNavigableService;
+
 		// Load the modules
 		beforeEach(module("lootMocks", "ogComponents"));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(directiveTest) {
+		beforeEach(inject(function(directiveTest, _ogTableNavigableService_) {
+			ogTableNavigableService = _ogTableNavigableService_;
 			ogTableNavigable = directiveTest;
 			ogTableNavigable.configure("og-table-navigable", "table", "<tbody><tr ng-repeat=\"row in rows\"><td></td></tr></tbody>");
 			ogTableNavigable.scope.rows = [{},{}];
 			ogTableNavigable.scope.model = {
-				navigationEnabled: function() { return true; },
 				selectAction: sinon.stub(),
 				cancelAction: sinon.stub(),
 				insertAction: sinon.stub(),
@@ -186,7 +189,7 @@
 			});
 
 			it("should do nothing when navigation is disabled", function() {
-				ogTableNavigable.scope.model.navigationEnabled = function() { return false; };
+				ogTableNavigableService.enabled = false;
 				ogTableNavigable.element.isolateScope().clickHandler();
 				ogTableNavigable.element.isolateScope().focusRow.should.not.have.been.called;
 			});
@@ -206,7 +209,7 @@
 
 		describe("doubleClickHandler", function() {
 			it("should do nothing when navigation is disabled", function() {
-				ogTableNavigable.scope.model.navigationEnabled = function() { return false; };
+				ogTableNavigableService.enabled = false;
 				ogTableNavigable.element.isolateScope().doubleClickHandler();
 				ogTableNavigable.scope.model.selectAction.should.not.have.been.called;
 			});
@@ -295,7 +298,7 @@
 			});
 
 			it("should do nothing when navigation is disabled", function() {
-				ogTableNavigable.scope.model.navigationEnabled = function() { return false; };
+				ogTableNavigableService.enabled = false;
 				ogTableNavigable.element.isolateScope().keyHandler(event);
 				ogTableNavigable.scope.model.selectAction.should.not.have.been.called;
 			});

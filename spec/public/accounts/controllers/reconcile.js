@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("accountReconcileController", function() {
+	describe("AccountReconcileController", function() {
 		// The object under test
 		var accountReconcileController;
 
@@ -22,12 +22,12 @@
 			$modalInstance = _$modalInstance_;
 			$window = _$window_;
 			account = _account_;
-			accountReconcileController = controllerTest("accountReconcileController");
+			accountReconcileController = controllerTest("AccountReconcileController");
 		}));
 
-		it("should fetch the closing balance from localStorage and make it available on the $scope", function() {
+		it("should fetch the closing balance from localStorage and make it available to the view", function() {
 			$window.localStorage.getItem.should.have.been.calledWith("lootClosingBalance-1");
-			accountReconcileController.account.closingBalance.should.equal(1000);
+			accountReconcileController.closingBalance.should.equal(1000);
 		});
 
 		describe("start", function() {

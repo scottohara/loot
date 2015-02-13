@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("securityIndexController", function() {
+	describe("SecurityIndexController", function() {
 		// The object under test
 		var securityIndexController;
 
@@ -13,6 +13,7 @@
 				$modal,
 				$state,
 				securityModel,
+				ogTableNavigableService,
 				securities;
 
 		// Load the modules
@@ -21,17 +22,18 @@
 		}));
 
 		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$timeout_, _$modal_, _$state_, _securityModel_, _securities_) {
+		beforeEach(inject(function(_controllerTest_, _$timeout_, _$modal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) {
 			controllerTest = _controllerTest_;
 			$timeout = _$timeout_;
 			$modal = _$modal_;
 			$state = _$state_;
 			securityModel = _securityModel_;
+			ogTableNavigableService = _ogTableNavigableService_;
 			securities = _securities_;
-			securityIndexController = controllerTest("securityIndexController");
+			securityIndexController = controllerTest("SecurityIndexController");
 		}));
 
-		it("should make the passed securities available on the $scope", function() {
+		it("should make the passed securities available to the view", function() {
 			securityIndexController.securities.should.deep.equal(securities);
 		});
 			
@@ -49,7 +51,7 @@
 
 			it("should disable navigation on the table", function() {
 				securityIndexController.editSecurity();
-				securityIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			describe("(edit existing)", function() {
@@ -116,13 +118,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				securityIndexController.editSecurity();
 				$modal.close(security);
-				securityIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				securityIndexController.editSecurity();
 				$modal.dismiss();
-				securityIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -140,7 +142,7 @@
 
 			it("should disable navigation on the table", function() {
 				securityIndexController.deleteSecurity(1);
-				securityIndexController.navigationDisabled.should.be.true;
+				ogTableNavigableService.enabled.should.be.false;
 			});
 
 			it("should show an alert if the security has transactions", function() {
@@ -170,29 +172,13 @@
 			it("should enable navigation on the table when the modal is closed", function() {
 				securityIndexController.deleteSecurity(1);
 				$modal.close(security);
-				securityIndexController.navigationDisabled.should.be.false;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 
 			it("should enable navigation on the table when the modal is dimissed", function() {
 				securityIndexController.deleteSecurity(1);
 				$modal.dismiss();
-				securityIndexController.navigationDisabled.should.be.false;
-			});
-		});
-
-		describe("tableActions.navigationEnabled", function() {
-			it("should return false when navigation is disabled locally", function() {
-				securityIndexController.navigationDisabled = true;
-				securityIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return false when navigation is disabled globally", function() {
-				securityIndexController.navigationGloballyDisabled = true;
-				securityIndexController.tableActions.navigationEnabled().should.be.false;
-			});
-
-			it("should return true when navigation is not disabled locally or globally", function() {
-				securityIndexController.tableActions.navigationEnabled().should.be.true;
+				ogTableNavigableService.enabled.should.be.true;
 			});
 		});
 
@@ -298,7 +284,7 @@
 
 		it("should attach a state change success handler", function() {
 			sinon.stub(securityIndexController, "stateChangeSuccessHandler");
-			securityIndexController.$emit("$stateChangeSuccess");
+			securityIndexController.$scope.$emit("$stateChangeSuccess");
 			securityIndexController.stateChangeSuccessHandler.should.have.been.called;
 		});
 	});

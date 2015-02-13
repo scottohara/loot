@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("accountIndexController", function() {
+	describe("AccountIndexController", function() {
 		// The object under test
 		var accountIndexController;
 
@@ -18,10 +18,10 @@
 		// Configure & compile the object under test
 		beforeEach(inject(function(controllerTest, _accountsWithBalances_) {
 			accountsWithBalances = _accountsWithBalances_;
-			accountIndexController = controllerTest("accountIndexController", {"accounts": accountsWithBalances});
+			accountIndexController = controllerTest("AccountIndexController", {"accounts": accountsWithBalances});
 		}));
 
-		it("should make the account list available on the $scope", function() {
+		it("should make the account list available to the view", function() {
 			accountIndexController.accounts.should.equal(accountsWithBalances);
 		});
 

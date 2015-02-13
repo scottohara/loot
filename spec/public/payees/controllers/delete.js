@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("payeeDeleteController", function() {
+	describe("PayeeDeleteController", function() {
 		// The object under test
 		var payeeDeleteController;
 
@@ -22,33 +22,33 @@
 			$modalInstance = _$modalInstance_;
 			payeeModel = _payeeModel_;
 			payee = _payee_;
-			payeeDeleteController = controllerTest("payeeDeleteController");
+			payeeDeleteController = controllerTest("PayeeDeleteController");
 		}));
 
-		it("should make the passed payee available on the $scope", function() {
+		it("should make the passed payee available to the view", function() {
 			payeeDeleteController.payee.should.deep.equal(payee);
 		});
 
-		describe("delete", function() {
+		describe("deletePayee", function() {
 			it("should reset any previous error messages", function() {
 				payeeDeleteController.errorMessage = "error message";
-				payeeDeleteController.delete();
+				payeeDeleteController.deletePayee();
 				(null === payeeDeleteController.errorMessage).should.be.true;
 			});
 
 			it("should delete the payee", function() {
-				payeeDeleteController.delete();
+				payeeDeleteController.deletePayee();
 				payeeModel.destroy.should.have.been.calledWith(payee);
 			});
 
 			it("should close the modal when the payee delete is successful", function() {
-				payeeDeleteController.delete();
+				payeeDeleteController.deletePayee();
 				$modalInstance.close.should.have.been.called;
 			});
 
 			it("should display an error message when the payee delete is unsuccessful", function() {
 				payeeDeleteController.payee.id = -1;
-				payeeDeleteController.delete();
+				payeeDeleteController.deletePayee();
 				payeeDeleteController.errorMessage.should.equal("unsuccessful");
 			});
 		});

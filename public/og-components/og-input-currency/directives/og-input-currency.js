@@ -14,23 +14,25 @@
 				scope: {
 					precision: "@ogInputCurrency"
 				},
-				controller: "ogInputCurrencyController",
+				controller: "OgInputCurrencyController",
+				controllerAs: "vm",
+				bindToController: true,
 				link: function(scope, iElement, iAttrs, ngModel) {
 					// Set the decimal places
-					scope.setDecimalPlaces(scope.precision);
+					scope.vm.setDecimalPlaces(scope.vm.precision);
 
 					// View to model
-					ngModel.$parsers.push(scope.formattedToRaw);
+					ngModel.$parsers.push(scope.vm.formattedToRaw);
 
 					// Model to view
-					ngModel.$formatters.unshift(scope.rawToFormatted);
+					ngModel.$formatters.unshift(scope.vm.rawToFormatted);
 
 					var formattedToRaw = function() {
-						iElement.val(numberFilter(scope.formattedToRaw(iElement.val()), scope.decimalPlaces));
+						iElement.val(numberFilter(scope.vm.formattedToRaw(iElement.val()), scope.vm.decimalPlaces));
 					};
 
 					var rawToFormatted = function() {
-						iElement.val(scope.rawToFormatted(scope.formattedToRaw(iElement.val())));
+						iElement.val(scope.vm.rawToFormatted(scope.vm.formattedToRaw(iElement.val())));
 					};
 
 					// Update view when tabbing in/out of the field

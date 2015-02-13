@@ -1,32 +1,52 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("payees");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("payees")
+		.controller("PayeeEditController", Controller);
+
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "payeeModel", "payee"];
+
+	/**
+	 * Implementation
+	 */
 
 	// Declare the Payee Edit controller
-	mod.controller("payeeEditController", ["$scope", "$modalInstance", "payeeModel", "payee",
-		function($scope, $modalInstance, payeeModel, payee) {
-			// Make the passed payee available on the scope
-			$scope.payee = angular.extend({
-			}, payee);
+	function Controller($modalInstance, payeeModel, payee) {
+		var vm = this;
 
-			$scope.mode = (payee ? "Edit" : "Add");
+		/**
+		 * Interface
+		 */
+		vm.payee = angular.extend({}, payee);
+		vm.mode = payee ? "Edit" : "Add";
+		vm.save = save;
+		vm.cancel = cancel;
+		vm.errorMessgae = null;
 
-			// Save and close the modal
-			$scope.save = function() {
-				$scope.errorMessage = null;
-				payeeModel.save($scope.payee).then(function(payee) {
-					$modalInstance.close(payee.data);
-				}, function(error) {
-					$scope.errorMessage = error.data;
-				});
-			};
+		/**
+		 * Implementation
+		 */
 
-			// Dismiss the modal without saving
-			$scope.cancel = function() {
-				$modalInstance.dismiss();
-			};
+		// Save and close the modal
+		function save() {
+			vm.errorMessage = null;
+			payeeModel.save(vm.payee).then(function(payee) {
+				$modalInstance.close(payee.data);
+			}, function(error) {
+				vm.errorMessage = error.data;
+			});
 		}
-	]);
+
+		// Dismiss the modal without saving
+		function cancel() {
+			$modalInstance.dismiss();
+		}
+	}
 })();

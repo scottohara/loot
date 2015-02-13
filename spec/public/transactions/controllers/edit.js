@@ -3,7 +3,7 @@
 
 	/*jshint expr: true */
 
-	describe("transactionEditController", function() {
+	describe("TransactionEditController", function() {
 		// The object under test
 		var transactionEditController;
 
@@ -49,7 +49,7 @@
 			window.$ = sinon.stub();
 			window.$.withArgs("#amount").returns(mockJQueryInstance);
 
-			transactionEditController = controllerTest("transactionEditController");
+			transactionEditController = controllerTest("TransactionEditController");
 		}));
 
 		afterEach(function() {
@@ -57,7 +57,7 @@
 		});
 
 		describe("when a transaction is provided", function() {
-			it("should make the passed transaction available on the $scope", function() {
+			it("should make the passed transaction available to the view", function() {
 				transactionEditController.transaction.should.deep.equal(transaction);
 			});
 			
@@ -68,10 +68,10 @@
 
 		describe("when a transaction is not provided", function() {
 			beforeEach(function() {
-				transactionEditController = controllerTest("transactionEditController", {transaction: {}});
+				transactionEditController = controllerTest("TransactionEditController", {transaction: {}});
 			});
 
-			it("should make the passed transaction available on the $scope", function() {
+			it("should make the passed transaction available to the view", function() {
 				transactionEditController.transaction.should.be.an.Object;
 				transactionEditController.transaction.should.be.empty;
 			});
@@ -392,7 +392,7 @@
 				(undefined === transaction.flag).should.be.true;
 			});
 
-			it("should merge the transaction details into $scope.transaction", function() {
+			it("should merge the transaction details into vm.transaction", function() {
 				transaction.category = "original category";
 				transactionEditController.useLastTransaction(transaction);
 				transactionEditController.transaction.should.deep.equal(transaction);
@@ -574,23 +574,23 @@
 
 			it("should do nothing if there are no subtransactions", function() {
 				transactionEditController.transaction.subtransactions = undefined;
-				transactionEditController.$digest();
+				transactionEditController.$scope.$digest();
 				(undefined === transactionEditController.totalAllocated).should.be.true;
 			});
 
-			it("should calculate the total and make it available on the scope", function() {
-				transactionEditController.$digest();
+			it("should calculate the total and make it available to the view", function() {
+				transactionEditController.$scope.$digest();
 				transactionEditController.totalAllocated.should.equal(5);
 			});
 
 			it("should not set the main transaction memo when editing an existing transaction", function() {
-				transactionEditController.$digest();
+				transactionEditController.$scope.$digest();
 				transactionEditController.memoFromSubtransactions.should.not.have.been.called;
 			});
 
 			it("should set the main transaction memos when adding a new transaction", function() {
 				transactionEditController.transaction.id = undefined;
-				transactionEditController.$digest();
+				transactionEditController.$scope.$digest();
 				transactionEditController.memoFromSubtransactions.should.have.been.called;
 			});
 		});
@@ -794,11 +794,11 @@
 					}
 				});
 
-				transactionEditController = controllerTest("transactionEditController", {transaction: original});
+				transactionEditController = controllerTest("TransactionEditController", {transaction: original});
 			});
 					
 			it("should do nothing if the original values are undefined", function() {
-				transactionEditController = controllerTest("transactionEditController", {transaction: {}});
+				transactionEditController = controllerTest("TransactionEditController", {transaction: {}});
 				transactionEditController.invalidateCaches(saved);
 				accountModel.flush.should.not.have.been.called;
 				payeeModel.flush.should.not.have.been.called;
@@ -855,7 +855,7 @@
 			scenarios.forEach(function(scenario) {
 				it("should fetch the subtransactions when the type is " + scenario, function() {
 					original.transaction_type = scenario;
-					transactionEditController = controllerTest("transactionEditController", {transaction: original});
+					transactionEditController = controllerTest("TransactionEditController", {transaction: original});
 					transactionEditController.invalidateCaches(saved);
 					transactionModel.findSubtransactions.should.have.been.calledWith(original.id);
 				});
@@ -863,7 +863,7 @@
 				it("should do nothing if subtransaction values are undefined", function() {
 					original.transaction_type = scenario;
 					subtransaction = undefined;
-					transactionEditController = controllerTest("transactionEditController", {transaction: original});
+					transactionEditController = controllerTest("TransactionEditController", {transaction: original});
 					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.not.have.been.called;
 					accountModel.flush.should.not.have.been.called;
@@ -874,7 +874,7 @@
 					subtransaction.category.id = undefined;
 					subtransaction.subcategory.id = undefined;
 					subtransaction.account.id = undefined;
-					transactionEditController = controllerTest("transactionEditController", {transaction: original});
+					transactionEditController = controllerTest("TransactionEditController", {transaction: original});
 					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.not.have.been.called;
 					accountModel.flush.should.not.have.been.called;
@@ -882,21 +882,21 @@
 
 				it("should invalidate the subtransaction category if defined", function() {
 					original.transaction_type = scenario;
-					transactionEditController = controllerTest("transactionEditController", {transaction: original});
+					transactionEditController = controllerTest("TransactionEditController", {transaction: original});
 					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.have.been.calledWith(subtransaction.category.id);
 				});
 
 				it("should invalidate the subtransaction subcategory if defined", function() {
 					original.transaction_type = scenario;
-					transactionEditController = controllerTest("transactionEditController", {transaction: original});
+					transactionEditController = controllerTest("TransactionEditController", {transaction: original});
 					transactionEditController.invalidateCaches(saved);
 					categoryModel.flush.should.have.been.calledWith(subtransaction.subcategory.id);
 				});
 
 				it("should invalidate the subtransfer account if defined", function() {
 					original.transaction_type = scenario;
-					transactionEditController = controllerTest("transactionEditController", {transaction: original});
+					transactionEditController = controllerTest("TransactionEditController", {transaction: original});
 					transactionEditController.invalidateCaches(saved);
 					accountModel.flush.should.have.been.calledWith(subtransaction.account.id);
 				});

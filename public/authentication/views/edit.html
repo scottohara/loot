@@ -6,19 +6,19 @@
 		<!-- User Name -->
 		<div class="form-group has-feedback" ng-class="{'has-error': loginForm.userName.$invalid}">
 			<label for="userName">Login</label>
-			<input id="userName" name="userName" class="form-control" ng-model="authentication.userName" placeholder="Login" required autofocus og-input-autoselect>
+			<input id="userName" name="userName" class="form-control" ng-model="vm.userName" placeholder="Login" required autofocus og-input-autoselect>
 			<span ng-show="loginForm.userName.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Password -->
 		<div class="form-group has-feedback" ng-class="{'has-error': loginForm.password.$invalid}">
 			<label for="password">Password</label>
-			<input name="password" type="password" class="form-control" ng-model="authentication.password" placeholder="Password" required og-input-autoselect>
+			<input name="password" type="password" class="form-control" ng-model="vm.password" placeholder="Password" required og-input-autoselect>
 			<span ng-show="loginForm.password.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
 	<div class="modal-footer">
-		<span ng-if="errorMessage" class="text-danger">{{errorMessage}}</span>
-		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-		<button class="btn btn-primary" type="submit" ng-disabled="loginForm.$invalid" ng-click="login()"><i class="glyphicon glyphicon-log-in"></i> Login</button>
+		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+		<button class="btn btn-primary" type="submit" ng-disabled="loginForm.$invalid" ng-click="vm.login()"><i class="glyphicon glyphicon-log-in"></i> Login</button>
 	</div>
 </form>

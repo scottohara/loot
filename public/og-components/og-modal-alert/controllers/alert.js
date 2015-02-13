@@ -1,21 +1,37 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponents");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponents")
+		.controller("OgModalAlertController", Controller);
 
-	// Declare the Alert controller
-	mod.controller("ogModalAlertController", ["$scope", "$modalInstance", "alert",
-		function($scope, $modalInstance, alert) {
-			// Make the passed alert details available on the scope
-			$scope.alert = angular.extend({
-				closeButtonStyle: "primary"
-			}, alert);
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$modalInstance", "alert"];
 
-			// Close the modal
-			$scope.close = function() {
-				$modalInstance.dismiss();
-			};
+	/**
+	 * Implementation
+	 */
+	function Controller($modalInstance, alert) {
+		var vm = this;
+
+		/**
+		 * Interface
+		 */
+		vm.alert = angular.extend({closeButtonStyle: "primary"}, alert);
+		vm.close = closeModal;
+
+		/**
+		 * Implementation
+		 */
+
+		// Close the modal
+		function closeModal() {
+			$modalInstance.dismiss();
 		}
-	]);
+	}
 })();
