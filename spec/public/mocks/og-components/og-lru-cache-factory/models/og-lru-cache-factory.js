@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponentsMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponentsMocks")
+		.provider("ogLruCacheFactoryMock", Provider);
 
-	// Declare the ogLruCacheFactoryMock provider
-	mod.provider("ogLruCacheFactoryMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 		// Mock LruCache object
 		provider.ogLruCache = {
@@ -22,5 +28,5 @@
 				return provider.ogLruCache;
 			};
 		};
-	});
+	}
 })();

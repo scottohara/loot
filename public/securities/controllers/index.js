@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("securities")
+		.module("lootSecurities")
 		.controller("SecurityIndexController", Controller);
 
 	/**

@@ -1,6 +1,12 @@
 (function() {
 	"use strict";
 
-	// Declare the categories module and it's dependencies
-	angular.module("categories", ["ogComponents"]);
+	/**
+	 * Registration
+	 */
+	angular.module("lootCategories", [
+		"ui.bootstrap",
+		"ui.router",
+		"ogComponents"
+	]);
 })();

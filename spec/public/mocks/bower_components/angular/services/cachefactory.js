@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogAngularMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogAngularMocks")
+		.provider("$cacheFactoryMock", Provider);
 
-	// Declare the $cacheFactoryMock provider
-	mod.provider("$cacheFactoryMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock $cache object
@@ -43,5 +49,5 @@
 		provider.$get = function() {
 			return provider.$cacheFactory;
 		};
-	});
+	}
 })();

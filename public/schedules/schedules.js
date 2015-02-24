@@ -1,6 +1,17 @@
 (function() {
 	"use strict";
 
-	// Declare the schedules module and it's dependencies
-	angular.module("schedules", ["ogComponents", "payees", "categories", "accounts"]);
+	/**
+	 * Registration
+	 */
+	angular.module("lootSchedules", [
+		"ui.bootstrap",
+		"ui.router",
+		"ogComponents",
+		"lootAccounts",
+		"lootCategories",
+		"lootPayees",
+		"lootSecurities",
+		"lootTransactions"
+	]);
 })();

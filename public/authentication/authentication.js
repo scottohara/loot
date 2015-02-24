@@ -1,6 +1,10 @@
 (function() {
 	"use strict";
 
-	// Declare the authentication module and it's dependencies
-	angular.module("authentication", []);
+	/**
+	 * Registration
+	 */
+	angular.module("lootAuthentication", [
+		"ui.bootstrap"
+	]);
 })();

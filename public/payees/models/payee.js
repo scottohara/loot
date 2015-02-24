@@ -1,112 +1,121 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("payees");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("lootPayees")
+		.factory("payeeModel", Factory);
 
-	// Declare the Payee model
-	mod.factory("payeeModel", ["$http", "$cacheFactory", "$window", "ogLruCacheFactory",
-		function($http, $cacheFactory, $window, ogLruCacheFactory) {
-			var	model = {},
-					cache = $cacheFactory("payees"),
-					LRU_LOCAL_STORAGE_KEY = "lootRecentPayees",
-					LRU_CAPACITY = 10,
-					lruCache;
+	/**
+	 * Dependencies
+	 */
+	Factory.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
 
-			// Create an LRU cache and populate with the recent payee list from local storage
-			lruCache = ogLruCacheFactory(LRU_CAPACITY, JSON.parse($window.localStorage.getItem(LRU_LOCAL_STORAGE_KEY)) || {});
-			model.recent = lruCache.list();
-			
-			// Returns the model type
-			model.type = function() {
-				return "payee";
-			};
+	/**
+	 * Implementation
+	 */
+	function Factory($http, $cacheFactory, $window, ogLruCacheFactory) {
+		var	model = {},
+				cache = $cacheFactory("payees"),
+				LRU_LOCAL_STORAGE_KEY = "lootRecentPayees",
+				LRU_CAPACITY = 10,
+				lruCache;
 
-			// Returns the API path
-			model.path = function(id) {
-				return "/payees" + (id ? "/" + id : "");
-			};
+		// Create an LRU cache and populate with the recent payee list from local storage
+		lruCache = ogLruCacheFactory(LRU_CAPACITY, JSON.parse($window.localStorage.getItem(LRU_LOCAL_STORAGE_KEY)) || {});
+		model.recent = lruCache.list();
+		
+		// Returns the model type
+		model.type = function() {
+			return "payee";
+		};
 
-			// Retrieves the list of payees
-			model.all = function() {
-				return $http.get(model.path(), {
-					cache: cache
-				}).then(function(response) {
-					return response.data;
-				});
-			};
+		// Returns the API path
+		model.path = function(id) {
+			return "/payees" + (id ? "/" + id : "");
+		};
 
-			// Retrieves the most recent transaction for a payee
-			model.findLastTransaction = function(payeeId, accountType) {
-				return $http.get(model.path(payeeId) + "/transactions/last", {
-					params: {
-						account_type: accountType
-					}
-				}).then(function(response) {
-					return response.data;
-				});
-			};
+		// Retrieves the list of payees
+		model.all = function() {
+			return $http.get(model.path(), {
+				cache: cache
+			}).then(function(response) {
+				return response.data;
+			});
+		};
 
-			// Retrieves a single payee
-			model.find = function(id) {
-				return $http.get(model.path(id), {
-					cache: cache
-				}).then(function(response) {
-					model.addRecent(response.data);
-					return response.data;
-				});
-			};
-
-			// Saves a payee
-			model.save = function(payee) {
-				// Flush the $http cache
-				model.flush();
-
-				return $http({
-					method: payee.id ? "PATCH" : "POST",
-					url: model.path(payee.id),
-					data: payee
-				});
-			};
-
-			// Deletes a payee
-			model.destroy = function(payee) {
-				// Flush the $http cache
-				model.flush();
-
-				return $http.delete(model.path(payee.id)).then(function() {
-					model.removeRecent(payee.id);
-				});
-			};
-
-			// Flush the cache
-			model.flush = function(id) {
-				if (id) {
-					cache.remove(model.path(id));
-				} else {
-					cache.removeAll();
+		// Retrieves the most recent transaction for a payee
+		model.findLastTransaction = function(payeeId, accountType) {
+			return $http.get(model.path(payeeId) + "/transactions/last", {
+				params: {
+					account_type: accountType
 				}
-			};
+			}).then(function(response) {
+				return response.data;
+			});
+		};
 
-			// Put an item into the LRU cache
-			model.addRecent = function(payee) {
-				// Put the item into the LRU cache
-				model.recent = lruCache.put(payee);
+		// Retrieves a single payee
+		model.find = function(id) {
+			return $http.get(model.path(id), {
+				cache: cache
+			}).then(function(response) {
+				model.addRecent(response.data);
+				return response.data;
+			});
+		};
 
-				// Update local storage with the new list
-				$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
-			};
+		// Saves a payee
+		model.save = function(payee) {
+			// Flush the $http cache
+			model.flush();
 
-			// Remove an item from the LRU cache
-			model.removeRecent = function(id) {
-				// Remove the item from the LRU cache
-				model.recent = lruCache.remove(id);
+			return $http({
+				method: payee.id ? "PATCH" : "POST",
+				url: model.path(payee.id),
+				data: payee
+			});
+		};
 
-				// Update local storage with the new list
-				$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
-			};
+		// Deletes a payee
+		model.destroy = function(payee) {
+			// Flush the $http cache
+			model.flush();
 
-			return model;
-		}
-	]);
+			return $http.delete(model.path(payee.id)).then(function() {
+				model.removeRecent(payee.id);
+			});
+		};
+
+		// Flush the cache
+		model.flush = function(id) {
+			if (id) {
+				cache.remove(model.path(id));
+			} else {
+				cache.removeAll();
+			}
+		};
+
+		// Put an item into the LRU cache
+		model.addRecent = function(payee) {
+			// Put the item into the LRU cache
+			model.recent = lruCache.put(payee);
+
+			// Update local storage with the new list
+			$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
+		};
+
+		// Remove an item from the LRU cache
+		model.removeRecent = function(id) {
+			// Remove the item from the LRU cache
+			model.recent = lruCache.remove(id);
+
+			// Update local storage with the new list
+			$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
+		};
+
+		return model;
+	}
 })();

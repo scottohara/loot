@@ -1,51 +1,60 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponents");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponents")
+		.directive("ogInputCurrency", Directive);
 
-	// Declare the ogInputCurrency directive
-	mod.directive("ogInputCurrency", ["numberFilter",
-		function(numberFilter) {
-			return {
-				restrict: "A",
-				priority: 1,
-				require: "ngModel",
-				scope: {
-					precision: "@ogInputCurrency"
-				},
-				controller: "OgInputCurrencyController",
-				controllerAs: "vm",
-				bindToController: true,
-				link: function(scope, iElement, iAttrs, ngModel) {
-					// Set the decimal places
-					scope.vm.setDecimalPlaces(scope.vm.precision);
+	/**
+	 * Dependencies
+	 */
+	Directive.$inject = ["numberFilter"];
 
-					// View to model
-					ngModel.$parsers.push(scope.vm.formattedToRaw);
+	/**
+	 * Implementation
+	 */
+	function Directive(numberFilter) {
+		return {
+			restrict: "A",
+			priority: 1,
+			require: "ngModel",
+			scope: {
+				precision: "@ogInputCurrency"
+			},
+			controller: "OgInputCurrencyController",
+			controllerAs: "vm",
+			bindToController: true,
+			link: function(scope, iElement, iAttrs, ngModel) {
+				// Set the decimal places
+				scope.vm.setDecimalPlaces(scope.vm.precision);
 
-					// Model to view
-					ngModel.$formatters.unshift(scope.vm.rawToFormatted);
+				// View to model
+				ngModel.$parsers.push(scope.vm.formattedToRaw);
 
-					var formattedToRaw = function() {
-						iElement.val(numberFilter(scope.vm.formattedToRaw(iElement.val()), scope.vm.decimalPlaces));
-					};
+				// Model to view
+				ngModel.$formatters.unshift(scope.vm.rawToFormatted);
 
-					var rawToFormatted = function() {
-						iElement.val(scope.vm.rawToFormatted(scope.vm.formattedToRaw(iElement.val())));
-					};
+				var formattedToRaw = function() {
+					iElement.val(numberFilter(scope.vm.formattedToRaw(iElement.val()), scope.vm.decimalPlaces));
+				};
 
-					// Update view when tabbing in/out of the field
-					iElement.on("focus", formattedToRaw);
-					iElement.on("blur", rawToFormatted);
+				var rawToFormatted = function() {
+					iElement.val(scope.vm.rawToFormatted(scope.vm.formattedToRaw(iElement.val())));
+				};
 
-					// When the element is destroyed, remove all event handlers
-					iElement.on("$destroy", function() {
-						iElement.off("focus", formattedToRaw);
-						iElement.off("blur", rawToFormatted);
-					});
-				}
-			};
-		}
-	]);
+				// Update view when tabbing in/out of the field
+				iElement.on("focus", formattedToRaw);
+				iElement.on("blur", rawToFormatted);
+
+				// When the element is destroyed, remove all event handlers
+				iElement.on("$destroy", function() {
+					iElement.off("focus", formattedToRaw);
+					iElement.off("blur", rawToFormatted);
+				});
+			}
+		};
+	}
 })();

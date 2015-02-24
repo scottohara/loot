@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogAngularMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogAngularMocks")
+		.provider("$qMock", Provider);
 
-	// Declare the $qMock provider
-	mod.provider("$qMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock $q object
@@ -88,5 +94,5 @@
 			// Return the mock $q object
 			return provider.$q;
 		};
-	});
+	}
 })();

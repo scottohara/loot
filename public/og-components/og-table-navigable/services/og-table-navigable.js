@@ -1,14 +1,23 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponents");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponents")
+		.service("ogTableNavigableService", Service);
 
-	// Declare the Table Navigable service
-	mod.service("ogTableNavigableService", [
-		function() {
-			// Enables/disables keyboard navigation on all navigable tables
-			this.enabled = true;
-		}
-	]);
+	/**
+	 * Dependencies
+	 */
+	Service.$inject = [];
+
+	/**
+	 * Implementation
+	 */
+	function Service() {
+		// Enables/disables keyboard navigation on all navigable tables
+		this.enabled = true;
+	}
 })();

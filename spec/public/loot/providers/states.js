@@ -33,7 +33,7 @@
 				stateConfig;
 
 		// Load the modules
-		beforeEach(module("states", "lootMocks", function(mockDependenciesProvider) {
+		beforeEach(module("lootStates", "lootMocks", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"]);
 		}));
 

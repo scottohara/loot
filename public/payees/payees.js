@@ -1,6 +1,12 @@
 (function() {
 	"use strict";
 
-	// Declare the payees module and it's dependencies
-	angular.module("payees", ["ogComponents"]);
+	/**
+	 * Registration
+	 */
+	angular.module("lootPayees", [
+		"ui.bootstrap",
+		"ui.router",
+		"ogComponents"
+	]);
 })();

@@ -16,7 +16,7 @@
 			sinon.stub($urlRouterProvider, "otherwise");
 		}));
 
-		beforeEach(module("lootMocks", "loot", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootApp", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$state"]);
 		}));
 

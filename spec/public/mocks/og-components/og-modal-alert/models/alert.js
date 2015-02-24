@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponentsMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponentsMocks")
+		.provider("alertMock", Provider);
 
-	// Declare the alertMock provider
-	mod.provider("alertMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock alert object
@@ -15,5 +21,5 @@
 			// Return the mock alert object
 			return provider.alert;
 		};
-	});
+	}
 })();

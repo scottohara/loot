@@ -17,7 +17,7 @@
 				payees;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "payees", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootPayees", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modal", "$state", "payeeModel", "payees"]);
 		}));
 

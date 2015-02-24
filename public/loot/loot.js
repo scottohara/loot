@@ -1,19 +1,21 @@
 (function () {
 	"use strict";
 
-	// Declare the loot module and it's dependencies
-	var mod = angular.module("loot", [
-		"ui.router",
+	/**
+	 * Registration
+	 */
+	var mod = angular.module("lootApp", [
 		"ui.bootstrap",
+		"ui.router",
 		"ogComponents",
-		"authentication",
-		"accounts",
-		"categories",
-		"payees",
-		"schedules",
-		"securities",
-		"states",
-		"transactions"
+		"lootAccounts",
+		"lootAuthentication",
+		"lootCategories",
+		"lootPayees",
+		"lootSchedules",
+		"lootSecurities",
+		"lootStates",
+		"lootTransactions"
 	]);
 
 	// Define the States and URL routing

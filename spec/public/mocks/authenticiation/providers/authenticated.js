@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("authenticationMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("lootAuthenticationMocks")
+		.provider("authenticatedMock", Provider);
 
-	// Declare the authenticatedMock provider
-	mod.provider("authenticatedMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock authenticated status object
@@ -15,5 +21,5 @@
 			// Return the mock authenticated status object
 			return provider.authenticated;
 		};
-	});
+	}
 })();

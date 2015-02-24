@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("transactions")
+		.module("lootTransactions")
 		.controller("TransactionEditController", Controller);
 
 	/**

@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("authentication")
+		.module("lootAuthentication")
 		.controller("AuthenticationEditController", Controller);
 
 	/**

@@ -1,43 +1,52 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponents");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponents")
+		.directive("ogInputNumber", Directive);
 
-	// Declare the ogInputNumber directive
-	mod.directive("ogInputNumber", ["numberFilter",
-		function(numberFilter) {
-			return {
-				restrict: "A",
-				priority: 1,
-				require: "ngModel",
-				controller: "OgInputNumberController",
-				controllerAs: "vm",
-				bindToController: true,
-				link: function(scope, iElement, iAttrs, ngModel) {
-					// View to model
-					ngModel.$parsers.push(scope.vm.formattedToRaw);
+	/**
+	 * Dependencies
+	 */
+	Directive.$inject = ["numberFilter"];
 
-					// Model to view
-					ngModel.$formatters.unshift(function(value) {
-						return numberFilter(!!(value) && Number(value) || 0);
-					});
+	/**
+	 * Implementation
+	 */
+	function Directive(numberFilter) {
+		return {
+			restrict: "A",
+			priority: 1,
+			require: "ngModel",
+			controller: "OgInputNumberController",
+			controllerAs: "vm",
+			bindToController: true,
+			link: function(scope, iElement, iAttrs, ngModel) {
+				// View to model
+				ngModel.$parsers.push(scope.vm.formattedToRaw);
 
-					var formattedToRaw = function() {
-						iElement.val(numberFilter(scope.vm.formattedToRaw(iElement.val())));
-					};
+				// Model to view
+				ngModel.$formatters.unshift(function(value) {
+					return numberFilter(!!(value) && Number(value) || 0);
+				});
 
-					// Update view when tabbing in/out of the field
-					iElement.on("focus", formattedToRaw);
-					iElement.on("blur", formattedToRaw);
+				var formattedToRaw = function() {
+					iElement.val(numberFilter(scope.vm.formattedToRaw(iElement.val())));
+				};
 
-					// When the element is destroyed, remove all event handlers
-					iElement.on("$destroy", function() {
-						iElement.off("focus", formattedToRaw);
-						iElement.off("blur", formattedToRaw);
-					});
-				}
-			};
-		}
-	]);
+				// Update view when tabbing in/out of the field
+				iElement.on("focus", formattedToRaw);
+				iElement.on("blur", formattedToRaw);
+
+				// When the element is destroyed, remove all event handlers
+				iElement.on("$destroy", function() {
+					iElement.off("focus", formattedToRaw);
+					iElement.off("blur", formattedToRaw);
+				});
+			}
+		};
+	}
 })();

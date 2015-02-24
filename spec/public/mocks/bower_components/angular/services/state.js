@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogAngularMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogAngularMocks")
+		.provider("$stateMock", Provider);
 
-	// Declare the $stateMock provider
-	mod.provider("$stateMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock $state object
@@ -22,5 +28,5 @@
 		provider.$get = function() {
 			return provider.$state;
 		};
-	});
+	}
 })();

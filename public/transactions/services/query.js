@@ -1,13 +1,22 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("transactions");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("lootTransactions")
+		.service("queryService", Service);
 
-	// Declare the query service
-	mod.service("queryService", [
-		function() {
-			this.query = undefined;
-		}
-	]);
+	/**
+	 * Dependencies
+	 */
+	Service.$inject = [];
+
+	/**
+	 * Implementation
+	 */
+	function Service() {
+		this.query = undefined;
+	}
 })();

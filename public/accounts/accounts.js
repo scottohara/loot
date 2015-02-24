@@ -1,8 +1,11 @@
 (function() {
 	"use strict";
 
-	// Declare the accounts module and it's dependencies
-	angular.module("accounts", [
+	/**
+	 * Registration
+	 */
+	angular.module("lootAccounts", [
+		"ui.bootstrap",
 		"ogComponents"
 	]);
 })();

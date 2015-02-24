@@ -1,7 +1,9 @@
 (function() {
 	"use strict";
 
-	// Declare the ogComponents module and it's dependencies
+	/**
+	 * Registration
+	 */
 	angular.module("ogComponents", [
 		"ui.bootstrap",
 		"ui.router"

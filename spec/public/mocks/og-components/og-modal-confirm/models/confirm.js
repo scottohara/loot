@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponentsMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponentsMocks")
+		.provider("confirmMock", Provider);
 
-	// Declare the confirmMock provider
-	mod.provider("confirmMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock confirm object
@@ -15,5 +21,5 @@
 			// Return the mock confirm object
 			return provider.confirm;
 		};
-	});
+	}
 })();

@@ -23,7 +23,7 @@
 				transactionBatch;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "transactions", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootTransactions", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modal", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch"]);
 		}));
 

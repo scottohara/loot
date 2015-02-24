@@ -1,6 +1,8 @@
 (function() {
 	"use strict";
 
-	// Declare the ogComponentsMocks module and it's dependencies
+	/**
+	 * Registration
+	 */
 	angular.module("ogComponentsMocks", []);
 })();

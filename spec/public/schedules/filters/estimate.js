@@ -8,7 +8,7 @@
 		var estimateFilter;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "schedules"));
+		beforeEach(module("lootMocks", "lootSchedules"));
 
 		// Inject the object under test
 		beforeEach(inject(function(_estimateFilter_) {

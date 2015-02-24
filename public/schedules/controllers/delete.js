@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("schedules")
+		.module("lootSchedules")
 		.controller("ScheduleDeleteController", Controller);
 
 	/**

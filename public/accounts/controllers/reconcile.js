@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("accounts")
+		.module("lootAccounts")
 		.controller("AccountReconcileController", Controller);
 
 	/**

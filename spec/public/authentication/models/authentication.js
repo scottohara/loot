@@ -15,7 +15,7 @@
 				$window;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "authentication", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootAuthentication", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$cacheFactory", "$window"]);
 		}));
 

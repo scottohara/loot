@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogAngularMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogAngularMocks")
+		.provider("$modalInstanceMock", Provider);
 
-	// Declare the $modalInstanceMock provider
-	mod.provider("$modalInstanceMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock $modalInstance object
@@ -17,5 +23,5 @@
 		provider.$get = function() {
 			return provider.$modalInstance;
 		};
-	});
+	}
 })();

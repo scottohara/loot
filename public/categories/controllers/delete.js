@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("categories")
+		.module("lootCategories")
 		.controller("CategoryDeleteController", Controller);
 
 	/**

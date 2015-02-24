@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("transactions")
+		.module("lootTransactions")
 		.controller("TransactionFlagController", Controller);
 
 	/**

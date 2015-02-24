@@ -23,7 +23,7 @@
 				currentElement;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "schedules", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootSchedules", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"]);
 		}));
 

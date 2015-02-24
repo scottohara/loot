@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("payees")
+		.module("lootPayees")
 		.controller("PayeeIndexController", Controller);
 
 	/**

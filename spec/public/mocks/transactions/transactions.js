@@ -1,6 +1,8 @@
 (function() {
 	"use strict";
 
-	// Declare the transactionsMocks module and it's dependencies
-	angular.module("transactionsMocks", []);
+	/**
+	 * Registration
+	 */
+	angular.module("lootTransactionsMocks", []);
 })();

@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponentsMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponentsMocks")
+		.provider("ogInputNumberControllerMock", Provider);
 
-	// Declare the ogInputNumberControllerMock provider
-	mod.provider("ogInputNumberControllerMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock input number controller object
@@ -19,5 +25,5 @@
 			// Return the mock input number controller object
 			return provider.ogInputNumberController;
 		};
-	});
+	}
 })();

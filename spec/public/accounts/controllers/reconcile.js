@@ -13,7 +13,7 @@
 				account;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "accounts", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootAccounts", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modalInstance", "$window", "account"]);
 		}));
 

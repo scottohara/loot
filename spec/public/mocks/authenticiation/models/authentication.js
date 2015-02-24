@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("authenticationMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("lootAuthenticationMocks")
+		.provider("authenticationModelMock", Provider);
 
-	// Declare the authenticationModelMock provider
-	mod.provider("authenticationModelMock", function($qMockProvider) {
+	/**
+	 * Implementation
+	 */
+	function Provider($qMockProvider) {
 		var provider = this,
 				$q = $qMockProvider.$get();
 
@@ -20,5 +26,5 @@
 			// Return the mock authenticationModel object
 			return provider.authenticationModel;
 		};
-	});
+	}
 })();

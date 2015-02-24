@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponentsMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponentsMocks")
+		.provider("ogInputCurrencyControllerMock", Provider);
 
-	// Declare the ogInputCurrencyControllerMock provider
-	mod.provider("ogInputCurrencyControllerMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock input currency controller object
@@ -24,5 +30,5 @@
 			// Return the mock input currency controller object
 			return provider.ogInputCurrencyController;
 		};
-	});
+	}
 })();

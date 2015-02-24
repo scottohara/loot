@@ -19,7 +19,7 @@
 				authenticated;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "loot", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootApp", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"]);
 		}));
 

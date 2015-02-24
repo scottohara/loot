@@ -17,7 +17,7 @@
 				categories;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "categories", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootCategories", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modal", "$state", "categoryModel", "categories"]);
 		}));
 

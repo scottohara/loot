@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogAngularMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogAngularMocks")
+		.provider("$windowMock", Provider);
 
-	// Declare the $windowMock provider
-	mod.provider("$windowMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 		// Mock $window object
 		provider.$window = {
@@ -29,5 +35,5 @@
 			// Return the mock $window object
 			return provider.$window;
 		};
-	});
+	}
 })();

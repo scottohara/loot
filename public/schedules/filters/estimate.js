@@ -1,15 +1,24 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("schedules");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("lootSchedules")
+		.filter("estimate", Filter);
 
-	// Declare the Estimate filter
-	mod.filter("estimate", [
-		function() {
-			return function(value, isEstimate) {
-				return (isEstimate ? "~" : "") + value;
-			};
-		}
-	]);
+	/**
+	 * Dependencies
+	 */
+	Filter.$inject = [];
+
+	/**
+	 * Implementation
+	 */
+	function Filter() {
+		return function(value, isEstimate) {
+			return (isEstimate ? "~" : "") + value;
+		};
+	}
 })();

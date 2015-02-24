@@ -14,7 +14,7 @@
 				security;
 
 		// Load the modules
-		beforeEach(module("lootMocks", "securities", function(mockDependenciesProvider) {
+		beforeEach(module("lootMocks", "lootSecurities", function(mockDependenciesProvider) {
 			mockDependenciesProvider.load(["$modalInstance", "securityModel", "security"]);
 		}));
 

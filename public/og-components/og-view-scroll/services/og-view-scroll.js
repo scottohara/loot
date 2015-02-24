@@ -1,15 +1,24 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogComponents");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogComponents")
+		.service("ogViewScrollService", Service);
 
-	// Declare the ogViewScroll service
-	mod.service("ogViewScrollService", ["$uiViewScroll",
-		function($uiViewScroll) {
-			this.scrollTo = function(anchor) {
-				$uiViewScroll($("#" + anchor));
-			};
-		}
-	]);
+	/**
+	 * Dependencies
+	 */
+	Service.$inject = ["$uiViewScroll"];
+
+	/**
+	 * Implementation
+	 */
+	function Service($uiViewScroll) {
+		this.scrollTo = function(anchor) {
+			$uiViewScroll($("#" + anchor));
+		};
+	}
 })();

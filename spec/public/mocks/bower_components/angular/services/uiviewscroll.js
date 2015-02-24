@@ -1,11 +1,17 @@
 (function() {
 	"use strict";
 
-	// Reopen the module
-	var mod = angular.module("ogAngularMocks");
+	/**
+	 * Registration
+	 */
+	angular
+		.module("ogAngularMocks")
+		.provider("$uiViewScrollMock", Provider);
 
-	// Declare the $uiViewScrollMock provider
-	mod.provider("$uiViewScrollMock", function() {
+	/**
+	 * Implementation
+	 */
+	function Provider() {
 		var provider = this;
 
 		// Mock $uiViewScroll object
@@ -14,5 +20,5 @@
 		provider.$get = function() {
 			return provider.$uiViewScroll;
 		};
-	});
+	}
 })();

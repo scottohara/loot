@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular
-		.module("loot")
+		.module("lootApp")
 		.controller("LayoutController", Controller);
 
 	/**

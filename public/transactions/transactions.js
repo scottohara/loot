@@ -1,6 +1,16 @@
 (function() {
 	"use strict";
 
-	// Declare the transactions module and it's dependencies
-	angular.module("transactions", ["ogComponents", "payees", "categories", "accounts"]);
+	/**
+	 * Registration
+	 */
+	angular.module("lootTransactions", [
+		"ui.bootstrap",
+		"ui.router",
+		"ogComponents",
+		"lootAccounts",
+		"lootCategories",
+		"lootPayees",
+		"lootSecurities"
+	]);
 })();
