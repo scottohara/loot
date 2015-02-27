@@ -15,7 +15,7 @@ Rails on the backend (JSON API); Angular.js + Bootstrap on the frontend
 Getting Started
 ===============
 1. Clone the repository (`git clone git://github.com/scottohara/loot.git`) and switch to it (`cd loot`)
-2. Install the server-side dependencies (`bundle install`)
+2. Install the server-side dependencies (`bundle install --path vendor/bundle`) (--path ensures that gems are installed locally in the project)
 3. Install the client-side dev dependencies (`npm install`) (Note: you should have `./node_modules/.bin` in your shell path; so that locally installed packages are preferred over globally installed ones)
 4. Install the client-side dependencies (`bower install`)
 5. (Optional) Configure database.yml (uses postgres by default)
