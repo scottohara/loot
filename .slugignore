@@ -1,12 +1,12 @@
-.bowerrc
 .gitignore
 .jshintignore
 .jshintrc
 .rspec
 .travis.yml
-bower.json
 gulpfile.js
 karma.conf.js
+karma-bdd.conf.js
+karma-src.conf.js
 LICENCE
 package.json
 README.md

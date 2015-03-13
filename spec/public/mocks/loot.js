@@ -5,7 +5,7 @@
 	 * Registration
 	 */
 	angular.module("lootMocks", [
-		"ogBowerComponentsMocks",
+		"ogNodeModulesMocks",
 		"ogComponentsMocks",
 		"lootAccountsMocks",
 		"lootAuthenticationMocks",

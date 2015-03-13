@@ -17,23 +17,46 @@ module.exports = function(config) {
 				watched: false
 			},
 			
-			// Vendor script to include (but not watch)
+			// Vendor scripts to include (but not watch)
 			{
-				pattern: "public/vendor*.js",
+				pattern: "node_modules/jquery/dist/jquery.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/bootstrap/dist/js/bootstrap.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular/angular.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular-ui-router/release/angular-ui-router.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular-bootstrap/dist/ui-bootstrap.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/moment/moment.js",
 				watched: false
 			},
 			{
 				pattern: "node_modules/angular-mocks/angular-mocks.js",
 				watched: false
 			},
-			{
-				pattern: "public/*.js.map",
-				included: false
-			},
 
 			// Source files
-			"public/app*.js",
-			"public/**/views/*.html",
+			"src/!(loot)/*.js",
+			"src/!(loot)/**/*.js",
+			"src/loot/loot.js",
+			"src/loot/**/*.js",
+			"src/**/views/*.html",
 
 			// Test files
 			"spec/public/mocks/!(loot)/*.js",									// Mock modules
@@ -51,29 +74,17 @@ module.exports = function(config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			"**/public/**/views/*.html": ["ng-html2js"],
-			"**/public/app*.js": ["sourcemap", "coverage"],
-			"**/public/vendor*.js": ["sourcemap"]
+			"**/src/**/views/*.html": ["ng-html2js"]
 		},
 
 		ngHtml2JsPreprocessor: {
-			stripPrefix: "public/"
+			stripPrefix: "src/"
 		},
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ["mocha", "coverage"],
-
-		coverageReporter: {
-			reporters: [
-				{type: "text"},
-				{type: "text-summary"},
-				{type: "html", dir: "coverage"},
-				{type: "lcovonly", dir: "coverage"},
-			],
-			subdir: "frontend"
-		},
+		reporters: ["mocha"],
 
 		// web server port
 		port: 9876,
@@ -86,7 +97,7 @@ module.exports = function(config) {
 		logLevel: "INFO",
 
 		// enable / disable watching file and executing tests whenever any file changes
-		autoWatch: false,
+		autoWatch: true,
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
@@ -94,6 +105,6 @@ module.exports = function(config) {
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
-		singleRun: true
+		singleRun: false
 	});
 };

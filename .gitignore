@@ -7,9 +7,6 @@
 # Ignore bundler config
 /.bundle
 
-# Ignore the default SQLite database.
-/db/*.sqlite3
-
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
@@ -20,6 +17,9 @@ npm-debug.log
 
 # Ignore node_modules
 /node_modules
+
+# Ignore public
+/public
 
 # Ignore vendored gems
 /vendor/bundle

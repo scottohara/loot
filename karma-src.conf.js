@@ -17,23 +17,46 @@ module.exports = function(config) {
 				watched: false
 			},
 			
-			// Vendor script to include (but not watch)
+			// Vendor scripts to include (but not watch)
 			{
-				pattern: "public/vendor*.js",
+				pattern: "node_modules/jquery/dist/jquery.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/bootstrap/dist/js/bootstrap.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular/angular.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular-ui-router/release/angular-ui-router.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular-bootstrap/dist/ui-bootstrap.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/moment/moment.js",
 				watched: false
 			},
 			{
 				pattern: "node_modules/angular-mocks/angular-mocks.js",
 				watched: false
 			},
-			{
-				pattern: "public/*.js.map",
-				included: false
-			},
 
 			// Source files
-			"public/app*.js",
-			"public/**/views/*.html",
+			"src/!(loot)/*.js",
+			"src/!(loot)/**/*.js",
+			"src/loot/loot.js",
+			"src/loot/**/*.js",
+			"src/**/views/*.html",
 
 			// Test files
 			"spec/public/mocks/!(loot)/*.js",									// Mock modules
@@ -51,13 +74,13 @@ module.exports = function(config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			"**/public/**/views/*.html": ["ng-html2js"],
-			"**/public/app*.js": ["sourcemap", "coverage"],
-			"**/public/vendor*.js": ["sourcemap"]
+			"**/src/**/views/*.html": ["ng-html2js"],
+			"**/src/**/*.js": ["coverage"],
+			"**/spec/public/**/*.js": ["coverage"]
 		},
 
 		ngHtml2JsPreprocessor: {
-			stripPrefix: "public/"
+			stripPrefix: "src/"
 		},
 
 		// test results reporter to use

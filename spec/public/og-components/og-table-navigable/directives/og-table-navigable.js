@@ -137,7 +137,10 @@
 		});
 
 		describe("jumpToRow", function() {
-			var targetRow;
+			var targetRow,
+					matchTargetRow = sinon.match(function(value) {
+						return value[0] === targetRow[0];
+					});
 
 			beforeEach(function() {
 				sinon.stub(ogTableNavigable.element.isolateScope(), "focusRow");
@@ -165,21 +168,21 @@
 				ogTableNavigable.element.isolateScope().focussedRow = 0;
 				ogTableNavigable.element.isolateScope().jumpToRow(-10);
 				targetRow = $(ogTableNavigable.element).children("tbody").children("tr").first();
-				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(targetRow);
+				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(matchTargetRow);
 			});
 
 			it("should focus the last row if the currently focussed row + offset is greater than the number of rows", function() {
 				ogTableNavigable.element.isolateScope().focussedRow = 1;
 				ogTableNavigable.element.isolateScope().jumpToRow(10);
 				targetRow = $(ogTableNavigable.element).children("tbody").children("tr").last();
-				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(targetRow);
+				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(matchTargetRow);
 			});
 
 			it("should focus the currently focussed row + offset if within the bounds of the table", function() {
 				ogTableNavigable.element.isolateScope().focussedRow = 1;
 				ogTableNavigable.element.isolateScope().jumpToRow(-1);
 				targetRow = $(ogTableNavigable.element).children("tbody").children("tr").first();
-				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(targetRow);
+				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(matchTargetRow);
 			});
 		});
 
@@ -238,7 +241,10 @@
 		});
 
 		describe("handlers.focusRow", function() {
-			var lastRow;
+			var lastRow,
+					matchLastRow = sinon.match(function(value) {
+						return value[0] === lastRow[0];
+					});
 
 			beforeEach(function() {
 				sinon.stub(ogTableNavigable.element.isolateScope(), "focusRow");
@@ -255,7 +261,7 @@
 
 			it("should focus the target row if not already focussed", function() {
 				ogTableNavigable.element.isolateScope().handlers.focusRow(1);
-				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(lastRow);
+				ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(matchLastRow);
 				ogTableNavigable.element.isolateScope().highlightRow.should.not.have.been.called;
 			});
 
@@ -263,7 +269,7 @@
 				ogTableNavigable.element.isolateScope().focussedRow = 1;
 				ogTableNavigable.element.isolateScope().handlers.focusRow(1);
 				ogTableNavigable.element.isolateScope().focusRow.should.not.have.been.called;
-				ogTableNavigable.element.isolateScope().highlightRow.should.have.been.calledWith(lastRow);
+				ogTableNavigable.element.isolateScope().highlightRow.should.have.been.calledWith(matchLastRow);
 			});
 		});
 

@@ -12,7 +12,6 @@
 				mockJQueryInstance,
 				realJQueryInstance;
 
-
 		// Load the modules
 		beforeEach(module("lootMocks", "ogComponents"));
 
@@ -29,7 +28,9 @@
 
 			realJQueryInstance = window.$;
 			window.$ = sinon.stub();
-			window.$.withArgs(ogInputAutoselect.element).returns(mockJQueryInstance);
+			window.$.withArgs(sinon.match(function(value) {
+				return value[0] === ogInputAutoselect.element[0];
+			})).returns(mockJQueryInstance);
 		}));
 
 		describe("on focus", function() {

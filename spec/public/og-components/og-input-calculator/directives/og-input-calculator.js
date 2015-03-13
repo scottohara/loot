@@ -87,7 +87,9 @@
 
 					realAngularElement = angular.element;
 					angular.element = sinon.stub();
-					angular.element.withArgs(ogInputCalculator.element).returns(mockAngularElement);
+					angular.element.withArgs(sinon.match(function(value) {
+						return value[0] === ogInputCalculator.element[0];
+					})).returns(mockAngularElement);
 
 					ogInputCalculator.scope.push(1, "+");
 					$timeout.flush();
@@ -352,7 +354,9 @@
 
 				realAngularElement = angular.element;
 				angular.element = sinon.stub();
-				angular.element.withArgs(ogInputCalculator.element).returns(mockAngularElement);
+				angular.element.withArgs(sinon.match(function(value) {
+					return value[0] === ogInputCalculator.element[0];
+				})).returns(mockAngularElement);
 
 				ogInputCalculator.scope.close();
 				$timeout.flush();
@@ -401,7 +405,9 @@
 
 				realJQueryInstance = window.$;
 				window.$ = sinon.stub();
-				window.$.withArgs(ogInputCalculator.element).returns(mockJQueryInstance);
+				window.$.withArgs(sinon.match(function(value) {
+					return value[0] === ogInputCalculator.element[0];
+				})).returns(mockJQueryInstance);
 			});
 
 			TEST_ACTION_KEYS.forEach(function(key) {

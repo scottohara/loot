@@ -1,0 +1,213 @@
+@import "../node_modules/bootstrap/less/variables.less";
+@import "../node_modules/bootstrap/less/mixins.less";
+
+html, body {
+	-webkit-user-select: none;
+}
+
+.transaction-status {
+	&.unreconciled {
+		.text-emphasis-variant(@text-muted);
+	}
+
+	&.reconciled {
+		.text-emphasis-variant(@state-success-text);
+	}
+
+	&.cleared {
+		.text-emphasis-variant(@state-warning-text);
+	}
+}
+
+table.accounts {
+	tr.closed-account {
+		color: @text-muted;
+
+		a {
+			color: inherit;
+		}
+	}
+
+	td, th {
+		&.amount {
+			width: 25%;
+			text-align: right;
+		}
+	}
+}
+
+#securities {
+	td, th {
+		&.amount {
+			width: 15%;
+			text-align: right;
+		}
+	}
+}
+
+#transactions, #transactions-header {
+	// Background colours when reconciling
+	& > tbody.reconciling > tr.cleared {
+		
+		&.warning > td {
+			background-color: rgba(128, 255, 0, 0.1);
+		}
+
+		& > td {
+			background-color: rgba(0, 255, 0, 0.1);
+		}
+	}
+
+	tr:not(.future) + tr.future {
+		border-top: 2px solid @state-warning-text;
+	}
+
+	td, th {
+		overflow-x: hidden;
+
+		&.has-dropdown {
+			overflow-x: visible;
+		}
+
+		&.transaction-date {
+			width: 10%;
+		}
+		
+		&.account {
+			width: 10%;
+		}
+		
+		&.details {
+			width: 58%;
+
+			table {
+				width: 100%;
+				background-color: transparent;
+
+				tr:last-child td {
+					border-bottom: 0;
+				}
+
+				td:first-child {
+					border-left: 0
+				}
+				
+				td {
+					border-width: 0 0 1px 1px;
+					border-style: solid;
+					border-color: #ddd;
+
+					&.category {
+						width: 50%;
+					}
+
+					&.memo {
+						height: 20px;
+					}
+
+					small.transaction-status {
+						padding-left: 5px;
+					}
+
+					button {
+						width: 100%;
+						background-color: transparent;
+					}
+				}
+			}
+		}
+
+		&.amount {
+			width: 10%;
+			text-align: right;
+		}
+
+	}
+}
+
+.modal-lg {
+	width: 1200px;
+}
+
+.modal-body {
+	max-height: 600px;
+	overflow-y: scroll;
+
+	input.negative {
+		.text-emphasis-variant(@state-danger-text) !important;
+	}
+
+	table {
+		.form-inline {
+			.form-group {
+				width: 100%;
+
+				input {
+					width: inherit;
+				}
+			}
+		}
+
+		tfoot td.text-right {
+			padding-right: 50px;
+		}
+	}
+}
+
+.has-action {
+	i.action {
+		opacity: 0;
+		transition: all ease 0.6s;
+		color: @text-muted;
+		
+		&.active {
+			opacity: 1;
+			.transaction-status;
+
+			&.flag {
+				.text-emphasis-variant(@state-danger-text);
+			}
+		}
+	}
+
+	&:hover i.action {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	em {
+		padding-right: 10px;
+	}
+}
+strong {
+	.transaction-status;
+}
+
+table#categories {
+	td, th {
+		font-weight: bold;
+
+		&.direction {
+			width: 5%;
+			text-align: center;
+		}
+		
+		&.subcategory {
+			font-weight: normal;
+			padding-left: 40px;
+		}
+	}
+}
+
+.quickscroll {
+	position: fixed;
+	right: 1%;
+
+	&.top { 
+		bottom: 10px;
+	}
+
+	&.bottom {
+		top: 10px;
+	}
+}

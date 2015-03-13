@@ -22,7 +22,7 @@
 		// Configures the name of the directive and the element tag (and optionally, any contents)
 		helper.configure = function(directive, tagName, content) {
 			helper.directive = directive;
-			helper.tagName = tagName;
+			helper.tagName = tagName || "div";
 			helper.content = content || "";
 
 			switch (tagName) {
