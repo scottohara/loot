@@ -2,7 +2,6 @@
 [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)
 [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)
 [![Dependency Status](https://www.versioneye.com/user/projects/549d100c6b1b81d9a4000925/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d100c6b1b81d9a4000925)
-[![Dependency Status](https://www.versioneye.com/user/projects/549d10246b1b81d16a000982/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d10246b1b81d16a000982)
 [![Dependency Status](https://www.versioneye.com/user/projects/549d12836b1b81202d0005dc/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d12836b1b81202d0005dc)
 
 Description
@@ -45,18 +44,19 @@ Run `gulp build`, which:
 1. Concatenates `/src/**/*.js` => `app.js`, minifies it, fingerprints it, and writes it to `/public/app-{hash}.js` along with source maps
 2. Concatenates 3rd-party vendor scripts => `vendor.js`, minifies it, fingerprints it, and writes it to `/public/vendor-{hash}.js` along with source maps
 3. Compiles all `/src/**/*.less` files, concatenates to `app.css`, minifies it, fingerprints it, and writes it to `/public/app-{hash}.css` along with source maps
-4. Concatenates 3rd-party vendor `*.css` => 'vendor.css`, minifies it, fingerprints it, and writes it to `/public/vendor-{hash}.css` along with source maps
+4. Concatenates 3rd-party vendor `*.css` => `vendor.css`, minifies it, fingerprints it, and writes it to `/public/vendor-{hash}.css` along with source maps
 5. Copies any static assets (eg. fonts) to `/public`
 6. Injects the fingerprinted file names into `index.html`
 
 Running Tests
 =============
 Frontend specs are implemented using [mocha](http://visionmedia.github.io/mocha/)+[chai](http://chaijs.com/)+[sinon](http://sinonjs.org/).
+
 Three gulp tasks are available to run the test suite:
 
 1. `gulp bdd` (or simply `gulp`, as `bdd` is the default task) watches for any file changes and runs the full test suite
 2. `gulp src` does the same, but includes [instanbul](http://gotwarlost.github.io/istanbul/) code coverage reporting. Summary coverage reports are written to stdout, and detailed HTML reports are available in `/loot/coverage/index.html`
-3. `gulp test` does the same as `gulp src`, except it runs the test and coverage analysis against the built files in `/public` instead of against the original files
+3. `gulp test` does the same as `gulp src`, except it runs the test suite and coverage analysis against the built files in `/public` instead of against the original files
 
 (Note: `gulp src` will be deprecated once instanbul & karma-coverage add proper support for source maps in the HTML reports)
 
@@ -65,4 +65,5 @@ Deployment (Staging/Production)
 If you use use heroku, it's a simple `rake deploy:staging` and `rake deploy:production`. These rake tasks assume that you have heroku remotes named staging and production configured; and you must create an annotated tag before deploying (eg. `git tag -a -m "Version 1.00" v1.00`); which is what will be pushed to heroku.
 
 (Note: You must configure your heroku app to use the multi buildpack, eg. `heroku buildpack:set https://github.com/heroku/heroku-buildpack-multi`)
+
 (Note: Ensure your server is configured to your local timezone. For heroku, this is done by setting the `TZ` config variable, eg. `heroku config:add TZ=Australia/Sydney`)
