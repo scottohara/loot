@@ -5,7 +5,6 @@
 			concat = require("gulp-concat"),
 			del = require("del"),
 			size = require("gulp-size"),
-			karma = require("karma").server,
 			less = require("gulp-less"),
 			minifyCss = require("gulp-minify-css"),
 			path = require("path"),
@@ -173,6 +172,8 @@
 
 	// Run client-side unit tests
 	gulp.task("bdd", function() {
+		var karma = require("karma").server;
+
 		karma.start({configFile: path.resolve("./karma-bdd.conf.js")}, function(exitCode) {
 			process.exit(exitCode);
 		});
@@ -180,6 +181,8 @@
 
 	// Run client-side unit tests & code coverage analysis on original source files
 	gulp.task("src", function() {
+		var karma = require("karma").server;
+
 		karma.start({configFile: path.resolve("./karma-src.conf.js")}, function(exitCode) {
 			process.exit(exitCode);
 		});
@@ -187,6 +190,8 @@
 
 	// Run client-side unit tests & code coverage analysis on built files
 	gulp.task("test", function() {
+		var karma = require("karma").server;
+
 		karma.start({configFile: path.resolve("./karma.conf.js")}, function(exitCode) {
 			process.exit(exitCode);
 		});
