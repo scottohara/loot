@@ -645,7 +645,7 @@
 			it("should insert a transaction", function() {
 				sinon.stub(transactionIndexController, "editTransaction");
 				transactionIndexController.tableActions.insertAction();
-				transactionIndexController.editTransaction.should.have.been.calledWith(undefined);
+				transactionIndexController.editTransaction.should.have.been.calledWithExactly();
 			});
 		});
 

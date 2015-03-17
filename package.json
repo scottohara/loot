@@ -50,7 +50,7 @@
     "karma-sourcemap-loader": "^0.3.4",
     "mocha": "^2.1.0",
     "moment": "^2.9.0",
-    "sinon": "^1.12.2"
+    "sinon": "^1.14.1"
   },
   "scripts": {
     "postinstall": "gulp build",

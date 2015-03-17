@@ -313,7 +313,7 @@
 			it("should insert a category", function() {
 				sinon.stub(categoryIndexController, "editCategory");
 				categoryIndexController.tableActions.insertAction();
-				categoryIndexController.editCategory.should.have.been.calledWith(undefined);
+				categoryIndexController.editCategory.should.have.been.calledWithExactly();
 			});
 		});
 

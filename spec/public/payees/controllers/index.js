@@ -195,7 +195,7 @@
 			it("should insert a payee", function() {
 				sinon.stub(payeeIndexController, "editPayee");
 				payeeIndexController.tableActions.insertAction();
-				payeeIndexController.editPayee.should.have.been.calledWith(undefined);
+				payeeIndexController.editPayee.should.have.been.calledWithExactly();
 			});
 		});
 

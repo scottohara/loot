@@ -199,7 +199,7 @@
 			it("should insert a security", function() {
 				sinon.stub(securityIndexController, "editSecurity");
 				securityIndexController.tableActions.insertAction();
-				securityIndexController.editSecurity.should.have.been.calledWith(undefined);
+				securityIndexController.editSecurity.should.have.been.calledWithExactly();
 			});
 		});
 

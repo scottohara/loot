@@ -305,7 +305,7 @@
 
 			it("should flush the $http cache if the item is a non-empty string", function() {
 				transactionModel.invalidateCache(payeeModel, "test");
-				payeeModel.flush.should.have.been.calledWith(undefined);
+				payeeModel.flush.should.have.been.calledWithExactly();
 			});
 
 			it("should do nothing if the item is undefined", function() {

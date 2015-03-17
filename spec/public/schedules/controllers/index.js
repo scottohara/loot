@@ -201,7 +201,7 @@
 			it("should insert a schedule", function() {
 				sinon.stub(scheduleIndexController, "editSchedule");
 				scheduleIndexController.tableActions.insertAction();
-				scheduleIndexController.editSchedule.should.have.been.calledWith(undefined);
+				scheduleIndexController.editSchedule.should.have.been.calledWithExactly();
 			});
 		});
 
