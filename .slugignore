@@ -3,17 +3,14 @@
 .jshintrc
 .rspec
 .travis.yml
-gulpfile.js
 karma.conf.js
 karma-bdd.conf.js
 karma-src.conf.js
 LICENCE
-package.json
 README.md
 coverage
 doc
 lib
 log
-node_modules
 spec
 tmp
