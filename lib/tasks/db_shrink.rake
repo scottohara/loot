@@ -8,8 +8,11 @@ namespace :db do
 	task :shrink, [:cutoff_date] => :environment  do |t, args|
 		abort "You must provide a :cutoff_date as YYYY-MM-DD (eg. rake db:shrink[2001-12-31])" if args[:cutoff_date].nil?
 
+		# Turn off verbose logging
+		ActiveRecord::Base.logger.level = 1
+
 		# Get the transaction headers
-		transaction_headers = TransactionHeader.includes(:trx).where(transaction_date: Date.new(0)...Date.parse(args[:cutoff_date]))
+		transaction_headers = TransactionHeader.where(transaction_date: Date.new(0)...Date.parse(args[:cutoff_date]))
 
 		# Early exit if no transactions found
 		abort "No transactions earlier than #{args[:cutoff_date]} found" if transaction_headers.size.eql? 0
