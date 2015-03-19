@@ -10,7 +10,7 @@ LICENCE
 README.md
 coverage
 doc
-lib
+lib/tasks/deploy.rake
 log
 spec
 tmp
