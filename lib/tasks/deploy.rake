@@ -9,7 +9,9 @@ namespace :deploy do
 	[:staging, :production].each do |remote|
 		desc "Deploy to #{remote}"
 		task remote do
-			logger = Logger.new(STDOUT)
+			# Flush output immediately, don't buffer
+			$stdout.sync = true
+			logger = Logger.new($stdout)
 			logger.level = Logger::WARN
 			logger.formatter = proc do |severity, datetime, progname, msg|
 				"#{msg}\n"
@@ -37,10 +39,10 @@ namespace :deploy do
 			previous_version = heroku.get_config_vars(app_name).body["APP_VERSION"]
 
 			# Abort if the version being pushed is already deployed
-			raise "#{latest_version} is already deployed to #{remote}. Please create a new tag for the new version." if latest_version.eql? previous_version
+			abort "#{latest_version} is already deployed to #{remote}. Please create a new tag for the new version." if latest_version.eql? previous_version
 			
 			print "Deploy #{latest_version} to #{remote} (#{app_name}), replacing #{previous_version}? (y)es or (n)o [enter = no]: "
-			raise "Deployment aborted" unless STDIN.gets.chomp.downcase.eql? 'y'
+			abort "Deployment aborted" unless STDIN.gets.chomp.downcase.eql? 'y'
 
 			logger.level = Logger::DEBUG
 
