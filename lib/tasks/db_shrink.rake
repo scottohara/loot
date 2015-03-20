@@ -28,6 +28,30 @@ namespace :db do
 			index += 1
 			progress "Deleted", index, "transaction"
 		end
+		puts
+
+		# Remove any categories/payees/securities that no longer have transactions
+		["category", "payee", "security"].each do |entity|
+			table = entity.eql?("category") && "categories" || "headers"
+			where = entity.eql?("category") && "categories.parent_id IS NOT NULL" || ""
+			entities = entity.capitalize.constantize.joins("LEFT OUTER JOIN transaction_#{table} ON transaction_#{table}.#{entity}_id = #{ActiveSupport::Inflector.pluralize(entity)}.id").where(where).group(:id).having("COUNT(transaction_#{table}.transaction_id) = 0")
+
+			unless entities.length.eql? 0
+				print "Purge #{ActionController::Base.helpers.pluralize(entities.length, entity)} that no longer #{ActionController::Base.helpers.pluralize(entities.length, 'has', 'have')} any transactions? (y)es or (n)o [enter = no]: "
+				if STDIN.gets.chomp.downcase.eql? 'y'
+					entities.each_with_index do |e, index|
+						# Destroy the entity
+						e.destroy
+
+						index += 1
+						progress "Deleted", index, entity
+					end
+				else
+					print "Skipped purging #{ActionController::Base.helpers.pluralize(entities.length, entity)}"
+				end
+				puts
+			end
+		end
 
 		puts
 		puts "Shrink done"
