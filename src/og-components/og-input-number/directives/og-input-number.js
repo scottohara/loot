@@ -21,6 +21,7 @@
 			restrict: "A",
 			priority: 1,
 			require: "ngModel",
+			scope: {},
 			controller: "OgInputNumberController",
 			controllerAs: "vm",
 			bindToController: true,

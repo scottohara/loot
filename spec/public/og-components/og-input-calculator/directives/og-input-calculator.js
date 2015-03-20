@@ -62,10 +62,8 @@
 				ogInputCalculator.scope.ogInput.type.should.equal("ogInputNumberController");
 			});
 
-			it("should use currency formatting if the element includes both og-input-currency and og-input-number directives", function() {
-				ogInputCalculator.compile({"og-input-currency": "", "og-input-number": ""});
-				ogInputCalculator.scope.$digest();
-				ogInputCalculator.scope.ogInput.type.should.equal("ogInputCurrencyController");
+			it("should throw an error if the element includes both og-input-currency and og-input-number directives", function() {
+				ogInputCalculator.compile.bind(ogInputCalculator, {"og-input-currency": "", "og-input-number": ""}).should.throw("[$compile:multidir]");
 			});
 
 			it("should use no formatting if the element includes neither og-input-currency or og-input-number directives", function() {
