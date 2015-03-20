@@ -171,7 +171,7 @@
 	});
 
 	// Run client-side unit tests
-	gulp.task("bdd", function() {
+	gulp.task("test:bdd", function() {
 		var karma = require("karma").server;
 
 		karma.start({configFile: path.resolve("./karma-bdd.conf.js")}, function(exitCode) {
@@ -180,7 +180,7 @@
 	});
 
 	// Run client-side unit tests & code coverage analysis on original source files
-	gulp.task("src", function() {
+	gulp.task("test:src", function() {
 		var karma = require("karma").server;
 
 		karma.start({configFile: path.resolve("./karma-src.conf.js")}, function(exitCode) {
@@ -189,7 +189,7 @@
 	});
 
 	// Run client-side unit tests & code coverage analysis on built files
-	gulp.task("test", function() {
+	gulp.task("test:build", function() {
 		var karma = require("karma").server;
 
 		karma.start({configFile: path.resolve("./karma.conf.js")}, function(exitCode) {
@@ -198,5 +198,5 @@
 	});
 
 	// Default task
-	gulp.task("default", ["bdd"]);
+	gulp.task("default", ["test:bdd"]);
 })();

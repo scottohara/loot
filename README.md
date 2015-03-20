@@ -54,11 +54,11 @@ Frontend specs are implemented using [mocha](http://visionmedia.github.io/mocha/
 
 Three gulp tasks are available to run the test suite:
 
-1. `gulp bdd` (or simply `gulp`, as `bdd` is the default task) watches for any file changes and runs the full test suite
-2. `gulp src` does the same, but includes [instanbul](http://gotwarlost.github.io/istanbul/) code coverage reporting. Summary coverage reports are written to stdout, and detailed HTML reports are available in `/loot/coverage/index.html`
-3. `gulp test` does the same as `gulp src`, except it runs the test suite and coverage analysis against the built files in `/public` instead of against the original files
+1. `gulp test:bdd` (or simply `gulp`, as `test:bdd` is the default task) watches for any file changes and runs the full test suite
+2. `gulp test:src` does the same, but includes [instanbul](http://gotwarlost.github.io/istanbul/) code coverage reporting. Summary coverage reports are written to stdout, and detailed HTML reports are available in `/loot/coverage/index.html`
+3. `gulp test:build` does the same as `gulp test:src`, except it runs the test suite and coverage analysis against the built files in `/public` instead of against the original files
 
-(Note: `gulp src` will be deprecated once instanbul & karma-coverage add proper support for source maps in the HTML reports)
+(Note: `gulp test:src` will be deprecated once instanbul & karma-coverage add proper support for source maps in the HTML reports)
 
 Deployment (Staging/Production)
 ===============================
