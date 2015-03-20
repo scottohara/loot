@@ -23,7 +23,7 @@ namespace :db do
 
 		transaction_headers.each_with_index do |header, index|
 			# Destroy the transaction
-			header.trx.as_subclass.destroy unless header.trx.nil? || %w(Subtransfer Sub).include? header.trx.transaction_type 
+			header.trx.as_subclass.destroy unless header.trx.nil? || %w(Subtransfer Sub).include?(header.trx.transaction_type)
 
 			index += 1
 			progress "Deleted", index, "transaction"
