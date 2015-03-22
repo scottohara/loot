@@ -24,6 +24,7 @@
     "bootstrap": "^3.3.4",
     "del": "^1.1.1",
     "gulp": "^3.8.11",
+    "gulp-angular-templatecache": "^1.5.0",
     "gulp-concat": "^2.5.2",
     "gulp-inject": "^1.2.0",
     "gulp-less": "^3.0.1",
@@ -58,8 +59,8 @@
     "postinstall": "gulp build",
     "test": "./node_modules/karma/bin/karma start"
   },
-	"engines": {
-		"node": "^0.12.0",
-		"npm": "^2.5.1"
-	}
+  "engines": {
+    "node": "^0.12.0",
+    "npm": "^2.5.1"
+  }
 }

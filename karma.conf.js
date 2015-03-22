@@ -33,7 +33,7 @@ module.exports = function(config) {
 
 			// Source files
 			"public/app*.js",
-			"public/**/views/*.html",
+			"src/**/views/*.html",
 
 			// Test files
 			"spec/public/mocks/!(loot)/*.js",									// Mock modules
@@ -51,13 +51,13 @@ module.exports = function(config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			"**/public/**/views/*.html": ["ng-html2js"],
+			"**/src/**/views/*.html": ["ng-html2js"],
 			"**/public/app*.js": ["sourcemap", "coverage"],
 			"**/public/vendor*.js": ["sourcemap"]
 		},
 
 		ngHtml2JsPreprocessor: {
-			stripPrefix: "public/"
+			stripPrefix: "src/"
 		},
 
 		// test results reporter to use

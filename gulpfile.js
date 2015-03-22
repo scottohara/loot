@@ -18,20 +18,22 @@
 	 */
 
 	// Build
-	gulp.task("build", ["clean", "build:js", "build:css", "copy:assets"], function() {
+	gulp.task("build", ["clean", "build:js", "build:templates", "build:css", "copy:assets"], function() {
 		var inject = require("gulp-inject"),
 				appAssets = gulp.src(["public/app*.js", "public/app*.css"], {read: false}),
+				templates = gulp.src(["public/templates*.js"], {read: false}),
 				vendorAssets = gulp.src(["public/vendor*.js", "public/vendor*.css"], {read: false});
 
 		return gulp.src("src/index.html")
 			.pipe(inject(appAssets, {ignorePath: "public", name: "app"}))
+			.pipe(inject(templates, {ignorePath: "public", name: "templates"}))
 			.pipe(inject(vendorAssets, {ignorePath: "public", name: "vendor"}))
 			.pipe(gulp.dest("public"))
 			.on("error", util.log);
 	});
 
 	// Clean
-	gulp.task("clean", ["clean:js", "clean:css", "clean:assets"], function(cb) {
+	gulp.task("clean", ["clean:js", "clean:templates", "clean:css", "clean:assets"], function(cb) {
 		del("public/index.html", cb);
 	});
 
@@ -59,6 +61,31 @@
 	// Clean application Javascript
 	gulp.task("clean:app:js", function(cb) {
 		del(["public/app*.js", "public/app*.js.map"], cb);
+	});
+
+	// Build templates
+	gulp.task("build:templates", ["build:app:templates"]);
+
+	// Clean templates
+	gulp.task("clean:templates", ["clean:app:templates"]);
+
+	// Build app templates
+	gulp.task("build:app:templates", ["clean:app:templates"], function() {
+		var templateCache = require("gulp-angular-templatecache");
+
+		return gulp.src(["src/**/*.html", "!src/*.html"])
+			.pipe(size({title: "app templates (original)"}))
+			.pipe(templateCache({module: "lootApp"}))
+			.pipe(rev())
+			.pipe(size({title: "app templates (concatenated)"}))
+			.pipe(size({title: "app templates (gzipped)", gzip: true}))
+			.pipe(gulp.dest("public"))
+			.on("error", util.log);
+	});
+
+	// Clean app templates
+	gulp.task("clean:app:templates", function(cb) {
+		del("public/templates*.js", cb);
 	});
 
 	// Build vendor Javascript
@@ -136,13 +163,13 @@
 
 	// Copy application static assets
 	gulp.task("copy:app:assets", ["clean:app:assets"], function() {
-		return gulp.src(["src/**/*.html", "!src/index.html", "src/favicon.ico", "src/robots.txt"])
+		return gulp.src(["src/*.html", "!src/index.html", "src/favicon.ico", "src/robots.txt"])
 			.pipe(gulp.dest("public"));
 	});
 
 	// Clean application static assets
 	gulp.task("clean:app:assets", function(cb) {
-		del(["public/**/*.html", "!public/index.html", "public/favicon.ico", "public/robots.txt"], cb);
+		del(["public/*.html", "!public/index.html", "public/favicon.ico", "public/robots.txt"], cb);
 	});
 
 	// Copy vendor static assets
