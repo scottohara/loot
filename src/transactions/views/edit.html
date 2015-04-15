@@ -50,7 +50,7 @@
 			<span ng-show="vm.isString(vm.transaction.category) || transactionForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.category), 'glyphicon-remove': transactionForm.category.$invalid}"></span>
 		</div>
 		<!-- Subcategory -->
-		<div ng-if="vm.transaction.primary_account.account_type != 'investment' && ['TransferTo', 'TransferFrom', 'SplitTo', 'SplitFrom'].indexOf(vm.transaction.category.id) == -1" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(vm.transaction.subcategory)}">
+		<div ng-if="vm.transaction.primary_account.account_type != 'investment' && ['TransferTo', 'TransferFrom', 'SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(vm.transaction.category.id) == -1" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(vm.transaction.subcategory)}">
 			<label for="subcategory">Subcategory</label>
 			<input name="subcategory" class="form-control" ng-disabled="!(vm.isString(vm.transaction.category) || vm.transaction.category.id > 0)" ng-model="vm.transaction.subcategory" typeahead="subcategory as subcategory.name for subcategory in vm.categories($viewValue, 10, vm.transaction.category)" placeholder="Subcategory" og-input-autoselect>
 			<span ng-show="vm.isString(vm.transaction.subcategory)" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
