@@ -468,14 +468,22 @@
 		// Updates the transaction amount and memo when the quantity, price or commission change
 		function updateInvestmentDetails() {
 			if ("SecurityInvestment" === vm.transaction.transaction_type) {
-				vm.transaction.amount = (vm.transaction.quantity || 0) * (vm.transaction.price || 0) - (vm.transaction.commission || 0);
+				// Base amount is the quantity multiplied by the price
+				vm.transaction.amount = (vm.transaction.quantity || 0) * (vm.transaction.price || 0);
+
+				// For a purchase, commission is added to the cost; for a sale, commission is subtracted from the proceeds
+				if ("inflow" === vm.transaction.direction) {
+					vm.transaction.amount += (vm.transaction.commission || 0);
+				} else {
+					vm.transaction.amount -= (vm.transaction.commission || 0);
+				}
 			}
 
 			// If we're adding a new buy or sell transaction, update the memo with the details
 			if (!vm.transaction.id && "SecurityInvestment" === vm.transaction.transaction_type) {
 				var	quantity = vm.transaction.quantity > 0 ? vm.transaction.quantity : "",
 						price = vm.transaction.price > 0 ? " @ " + currencyFilter(vm.transaction.price) : "",
-						commission = vm.transaction.commission > 0 ? " (less " + currencyFilter(vm.transaction.commission) + " commission)" : "";
+						commission = vm.transaction.commission > 0 ? " (" + ("inflow" === vm.transaction.direction ? "plus" : "less") + " " + currencyFilter(vm.transaction.commission) + " commission)" : "";
 
 				vm.transaction.memo = quantity + price + commission;
 			}
