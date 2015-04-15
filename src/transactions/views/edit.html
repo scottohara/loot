@@ -176,7 +176,7 @@
 	</div>
 	<div class="modal-footer">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<span ng-if="vm.loadingLastTransaction" class="pull-left text-muted" og-loading-spinner="'Finding last transaction for ' + vm.transaction.payee.name"/>
+		<span ng-if="vm.loadingLastTransaction" class="pull-left text-muted" og-loading-spinner="'Finding last transaction for ' + (vm.transaction.payee.name || vm.transaction.security.name)"/>
 		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
 		<button class="btn btn-primary" type="submit" ng-disabled="transactionForm.$invalid" ng-click="vm.save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
 	</div>
