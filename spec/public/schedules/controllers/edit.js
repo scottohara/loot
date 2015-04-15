@@ -17,10 +17,7 @@
 				accountModel,
 				transactionModel,
 				scheduleModel,
-				schedule,
-				mockJQueryInstance,
-				realJQueryInstance,
-				currentElement;
+				schedule;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "lootSchedules", function(mockDependenciesProvider) {
@@ -39,24 +36,8 @@
 			transactionModel = _transactionModel_;
 			scheduleModel = _scheduleModel_;
 			schedule = _schedule_;
-			currentElement = undefined;
-			mockJQueryInstance = {
-				get: function() {
-					return currentElement;
-				},
-				triggerHandler: sinon.stub()
-			};
-
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs("#amount").returns(mockJQueryInstance);
-
 			scheduleEditController = controllerTest("ScheduleEditController");
 		}));
-
-		afterEach(function() {
-			window.$ = realJQueryInstance;
-		});
 
 		describe("when a schedule is provided", function() {
 			var originalSchedule;
@@ -436,7 +417,10 @@
 		});
 		
 		describe("useLastTransaction", function() {
-			var transaction;
+			var transaction,
+					currentElement,
+					mockAngularElement,
+					realAngularElement;
 
 			beforeEach(function() {
 				// The previous transaction to merge
@@ -458,6 +442,20 @@
 					payee: "original payee",
 					category: "original category"
 				};
+
+				mockAngularElement = {
+					triggerHandler: sinon.stub()
+				};
+
+				currentElement = undefined;
+				realAngularElement = angular.element;
+				sinon.stub(angular, "element", function(selector) {
+					if ("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo" === selector) {
+						return [currentElement];
+					} else {
+						return mockAngularElement;
+					}
+				});
 			});
 
 			it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & related status", function() {
@@ -494,16 +492,17 @@
 				currentElement = document.activeElement;
 				scheduleEditController.useLastTransaction(transaction);
 				$timeout.flush();
-				mockJQueryInstance.triggerHandler.should.have.been.calledWith("focus");
+				mockAngularElement.triggerHandler.should.have.been.calledWith("focus");
 			});
 
 			it("should not retrigger the amount focus handler if not focussed", function() {
 				scheduleEditController.useLastTransaction(transaction);
-				mockJQueryInstance.triggerHandler.should.not.have.been.called;
+				mockAngularElement.triggerHandler.should.not.have.been.called;
 			});
 
 			afterEach(function() {
 				$timeout.verifyNoPendingTasks();
+				angular.element = realAngularElement;
 			});
 		});
 

@@ -188,13 +188,14 @@
 			// Merge the last transaction details into the transaction on the scope
 			vm.transaction = angular.extend(vm.transaction, transaction);
 
-			// If the amount field already has focus, re-trigger the focus event handler to format/select the new value
-			var amount = $("#amount");
-			if (amount.get(0) === document.activeElement) {
-				$timeout(function() {
-					amount.triggerHandler("focus");
-				}, 0);
-			}
+			// Depending on which field has focus, re-trigger the focus event handler to format/select the new value
+			angular.forEach(angular.element("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo"), function(field) {
+				if (field === document.activeElement) {
+					$timeout(function() {
+						angular.element(field).triggerHandler("focus");
+					}, 0);
+				}
+			});
 		}
 
 		// Handler for category changes
@@ -393,7 +394,7 @@
 
 		// Handler for primary account changes
 		function primaryAccountSelected() {
-			if (vm.transaction.account && vm.transaction.primary_account.id === vm.transaction.account.id) {
+			if (vm.transaction.account && vm.transaction.primary_account && vm.transaction.primary_account.id === vm.transaction.account.id) {
 				// Primary account and transfer account can't be the same, so clear the transfer account
 				vm.transaction.account = null;
 			}

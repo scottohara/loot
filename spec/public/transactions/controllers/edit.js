@@ -16,10 +16,7 @@
 				categoryModel,
 				accountModel,
 				transactionModel,
-				transaction,
-				mockJQueryInstance,
-				realJQueryInstance,
-				currentElement;
+				transaction;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "lootTransactions", function(mockDependenciesProvider) {
@@ -37,24 +34,8 @@
 			accountModel = _accountModel_;
 			transactionModel = _transactionModel_;
 			transaction = _transaction_;
-			currentElement = undefined;
-			mockJQueryInstance = {
-				get: function() {
-					return currentElement;
-				},
-				triggerHandler: sinon.stub()
-			};
-
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs("#amount").returns(mockJQueryInstance);
-
 			transactionEditController = controllerTest("TransactionEditController");
 		}));
-
-		afterEach(function() {
-			window.$ = realJQueryInstance;
-		});
 
 		describe("when a transaction is provided", function() {
 			it("should make the passed transaction available to the view", function() {
@@ -360,7 +341,10 @@
 		});
 		
 		describe("useLastTransaction", function() {
-			var transaction;
+			var transaction,
+					currentElement,
+					mockAngularElement,
+					realAngularElement;
 
 			beforeEach(function() {
 				// The previous transaction to merge
@@ -380,6 +364,20 @@
 					payee: "original payee",
 					category: "original category"
 				};
+
+				mockAngularElement = {
+					triggerHandler: sinon.stub()
+				};
+
+				currentElement = undefined;
+				realAngularElement = angular.element;
+				sinon.stub(angular, "element", function(selector) {
+					if ("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo" === selector) {
+						return [currentElement];
+					} else {
+						return mockAngularElement;
+					}
+				});
 			});
 
 			it("should strip the transaction of it's id, date, primary account, status, related status & flag", function() {
@@ -398,20 +396,21 @@
 				transactionEditController.transaction.should.deep.equal(transaction);
 			});
 
-			it("should retrigger the amount focus handler if focussed", function() {
+			it("should retrigger the focus handler of a refocussable field if focussed", function() {
 				currentElement = document.activeElement;
 				transactionEditController.useLastTransaction(transaction);
 				$timeout.flush();
-				mockJQueryInstance.triggerHandler.should.have.been.calledWith("focus");
+				mockAngularElement.triggerHandler.should.have.been.calledWith("focus");
 			});
 
-			it("should not retrigger the amount focus handler if not focussed", function() {
+			it("should not retrigger the amount focus handler of a refocussable field if not focussed", function() {
 				transactionEditController.useLastTransaction(transaction);
-				mockJQueryInstance.triggerHandler.should.not.have.been.called;
+				mockAngularElement.triggerHandler.should.not.have.been.called;
 			});
 
 			afterEach(function() {
 				$timeout.verifyNoPendingTasks();
+				angular.element = realAngularElement;
 			});
 		});
 
