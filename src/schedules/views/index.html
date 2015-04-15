@@ -69,10 +69,10 @@
 			</td>
 			<td>{{::schedule.frequency}}</td>
 			<td class="amount details">
-				<span ng-if="::schedule.direction == 'outflow'" ng-class="::{'text-danger': schedule.amount < 0}">{{::schedule.amount | currency | estimate:schedule.estimate}}</span>
+				<span ng-if="::schedule.direction == 'outflow' && schedule.amount" ng-class="::{'text-danger': schedule.amount < 0}">{{::schedule.amount | currency | estimate:schedule.estimate}}</span>
 			</td>
 			<td class="amount details">
-				<span ng-if="::schedule.direction == 'inflow'" ng-class="::{'text-danger': schedule.amount < 0}">{{::schedule.amount | currency | estimate:schedule.estimate}}</span>
+				<span ng-if="::schedule.direction == 'inflow' && schedule.amount" ng-class="::{'text-danger': schedule.amount < 0}">{{::schedule.amount | currency | estimate:schedule.estimate}}</span>
 			</td>
 		</tr>
 	</tbody>
