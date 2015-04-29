@@ -1,4 +1,6 @@
-require 'factory_girl'
+unless ENV[:RACK_ENV.to_s].eql?("production")
+	require 'factory_girl'
+end
 
 namespace :db do
 	namespace :e2e do
