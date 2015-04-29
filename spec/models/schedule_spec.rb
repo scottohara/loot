@@ -156,11 +156,25 @@ RSpec.describe Schedule, type: :model do
 		end
 
 		it "should handle all types of frequencies and set the next due date to a future date" do
+			def months_ago(months)
+				# Date.advance({months: -x}) will round down (ie. to an earlier date) if the date is invalid (eg. 30-Feb)
+				# To ensure that we only have one overdue transaction, make sure that advancing back yields the original date
+				target_date = Date.today.advance({months: -months})
+				until target_date.advance({months: months}) >= Date.today do
+					target_date = target_date.advance({days: 1})
+				end
+				target_date
+			end
+
+			def next_due_date(months)
+				months_ago(months).advance({months: months})
+			end
+
 			weekly = create :basic_transaction, :scheduled, frequency: "Weekly", next_due_date: Date.today.advance({weeks: -1})
 			fortnightly = create :basic_transaction, :scheduled, frequency: "Fortnightly", next_due_date: Date.today.advance({weeks: -2})
-			monthly = create :basic_transaction, :scheduled, frequency: "Monthly", next_due_date: Date.today.advance({months: -1})
-			bimonthly = create :basic_transaction, :scheduled, frequency: "Bimonthly", next_due_date: Date.today.advance({months: -2})
-			quarterly = create :basic_transaction, :scheduled, frequency: "Quarterly", next_due_date: Date.today.advance({months: -3})
+			monthly = create :basic_transaction, :scheduled, frequency: "Monthly", next_due_date: months_ago(1)
+			bimonthly = create :basic_transaction, :scheduled, frequency: "Bimonthly", next_due_date: months_ago(2)
+			quarterly = create :basic_transaction, :scheduled, frequency: "Quarterly", next_due_date: months_ago(3)
 			yearly = create :basic_transaction, :scheduled, frequency: "Yearly", next_due_date: Date.today.advance({years: -1})
 
 			expect(BasicTransaction).to be_created_from weekly.as_json, weekly.account.id, weekly.header.schedule.next_due_date
@@ -173,8 +187,9 @@ RSpec.describe Schedule, type: :model do
 			Schedule.auto_enter_overdue
 
 			expect(Schedule.find(fortnightly.header.schedule.id).next_due_date).to eq Date.today
-			expect(Schedule.find(monthly.header.schedule.id).next_due_date).to eq Date.today
-			expect(Schedule.find(quarterly.header.schedule.id).next_due_date).to eq Date.today
+			expect(Schedule.find(monthly.header.schedule.id).next_due_date).to eq next_due_date(1)
+			expect(Schedule.find(bimonthly.header.schedule.id).next_due_date).to eq next_due_date(2)
+			expect(Schedule.find(quarterly.header.schedule.id).next_due_date).to eq next_due_date(3)
 			expect(Schedule.find(yearly.header.schedule.id).next_due_date).to eq Date.today
 		end
 
