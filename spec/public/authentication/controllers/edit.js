@@ -55,6 +55,7 @@
 				authenticationEditController.password = "badpassword";
 				authenticationEditController.login();
 				authenticationEditController.errorMessage.should.equal("unsuccessful");
+				authenticationEditController.loginInProgress.should.be.false;
 			});
 		});
 

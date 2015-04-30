@@ -27,6 +27,7 @@
 		vm.login = login;
 		vm.cancel = cancel;
 		vm.errorMessage = null;
+		vm.loginInProgress = false;
 
 		/**
 		 * Implementation
@@ -35,10 +36,12 @@
 		// Login and close the modal
 		function login() {
 			vm.errorMessage = null;
+			vm.loginInProgress = true;
 			authenticationModel.login(vm.userName, vm.password).then(function() {
 				$modalInstance.close();
 			}, function(error) {
 				vm.errorMessage = error.data;
+				vm.loginInProgress = false;
 			});
 		}
 
