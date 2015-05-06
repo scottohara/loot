@@ -24,6 +24,7 @@
 		 * Interface
 		 */
 		vm.closingBalance = Number($window.localStorage.getItem(LOCAL_STORAGE_KEY));
+		vm.expectNegativeBalance = ["credit", "loan"].indexOf(account.account_type) !== -1;
 		vm.start = start;
 		vm.cancel = cancel;
 

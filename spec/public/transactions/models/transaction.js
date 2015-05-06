@@ -10,6 +10,7 @@
 		// Dependencies
 		var $httpBackend,
 				$http,
+				$window,
 				accountModel,
 				payeeModel,
 				categoryModel,
@@ -17,15 +18,16 @@
 
 		// Load the modules
 		beforeEach(module("lootMocks", "lootTransactions", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["accountModel", "payeeModel", "categoryModel", "securityModel"]);
+			mockDependenciesProvider.load(["$window", "accountModel", "payeeModel", "categoryModel", "securityModel"]);
 		}));
 
 		// Inject the object under test and it's remaining dependencies
-		beforeEach(inject(function(_transactionModel_, _$httpBackend_, _$http_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_) {
+		beforeEach(inject(function(_transactionModel_, _$httpBackend_, _$http_, _$window_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_) {
 			transactionModel = _transactionModel_;
 
 			$httpBackend = _$httpBackend_;
 			$http = _$http_;
+			$window = _$window_;
 
 			accountModel = _accountModel_;
 			payeeModel = _payeeModel_;
@@ -363,6 +365,29 @@
 				$httpBackend.expectDELETE(/transactions\/123\/flag/).respond(200);
 				transactionModel.unflag(123);
 				$httpBackend.flush();
+			});
+		});
+
+		describe("allDetailsShown", function() {
+			it("should be true if the show all details setting is not present", function() {
+				transactionModel.allDetailsShown().should.be.true;
+			});
+
+			it("should be true if the show all details setting is not set to false", function() {
+				$window.localStorage.getItem.withArgs("lootShowAllTransactionDetails").returns("true");
+				transactionModel.allDetailsShown().should.be.true;
+			});
+
+			it("should be false if the show all details setting is set to false", function() {
+				$window.localStorage.getItem.withArgs("lootShowAllTransactionDetails").returns("false");
+				transactionModel.allDetailsShown().should.be.false;
+			});
+		});
+
+		describe("showAllDetails", function() {
+			it("should save the show all details setting", function() {
+				transactionModel.showAllDetails(true);
+				$window.localStorage.setItem.should.have.been.calledWith("lootShowAllTransactionDetails", true);
 			});
 		});
 	});

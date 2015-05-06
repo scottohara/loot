@@ -35,6 +35,7 @@
 		vm.unclearedTotal = 0;
 		vm.reconcilable = "account" === vm.contextType;
 		vm.reconciling = false;
+		vm.showAllDetails = transactionModel.allDetailsShown();
 		vm.unreconciledOnly = vm.reconcilable && accountModel.isUnreconciledOnly(vm.context.id);
 		vm.loading = {prev: false, next: false};
 		vm.today = moment().startOf("day").toDate();
@@ -50,6 +51,7 @@
 		vm.processTransactions = processTransactions;
 		vm.updateRunningBalances = updateRunningBalances;
 		vm.focusTransaction = focusTransaction;
+		vm.toggleShowAllDetails = toggleShowAllDetails;
 		vm.toggleUnreconciledOnly = vm.reconcilable ? toggleUnreconciledOnly : undefined;
 		vm.save = vm.reconcilable ? save : undefined;
 		vm.cancel = vm.reconcilable ? cancel : undefined;
@@ -446,13 +448,22 @@
 			return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 		}
 
+		// Toggles the show all details flag
+		function toggleShowAllDetails(showAllDetails) {
+			// Store the setting
+			transactionModel.showAllDetails(showAllDetails);
+			vm.showAllDetails = showAllDetails;
+		}
+
 		// Toggles the unreconciled only flag
 		function toggleUnreconciledOnly(unreconciledOnly, direction, fromDate, transactionIdToFocus) {
-			// Store the setting for the current account
-			accountModel.unreconciledOnly(vm.context.id, unreconciledOnly);
-			vm.unreconciledOnly = unreconciledOnly;
-			vm.transactions = [];
-			vm.getTransactions(direction || "prev", fromDate, transactionIdToFocus);
+			if (!vm.reconciling) {
+				// Store the setting for the current account
+				accountModel.unreconciledOnly(vm.context.id, unreconciledOnly);
+				vm.unreconciledOnly = unreconciledOnly;
+				vm.transactions = [];
+				vm.getTransactions(direction || "prev", fromDate, transactionIdToFocus);
+			}
 		}
 
 		// Updates all cleared transactions to reconciled
@@ -477,28 +488,30 @@
 
 		// Launches the account reconciliation process
 		function reconcile() {
-			// Show the modal
-			$modal.open({
-				templateUrl: "accounts/views/reconcile.html",
-				controller: "AccountReconcileController",
-				controllerAs: "vm",
-				backdrop: "static",
-				size: "sm",
-				resolve: {
-					account: function() {
-						return vm.context;
+			if (!vm.reconciling) {
+				// Show the modal
+				$modal.open({
+					templateUrl: "accounts/views/reconcile.html",
+					controller: "AccountReconcileController",
+					controllerAs: "vm",
+					backdrop: "static",
+					size: "sm",
+					resolve: {
+						account: function() {
+							return vm.context;
+						}
 					}
-				}
-			}).result.then(function(closingBalance) {
-				// Make the closing balance available on the scope
-				vm.closingBalance = closingBalance;
+				}).result.then(function(closingBalance) {
+					// Make the closing balance available on the scope
+					vm.closingBalance = closingBalance;
 
-				// Switch to reconcile mode
-				vm.reconciling = true;
+					// Refresh the list with only unreconciled transactions
+					vm.toggleUnreconciledOnly(true);
 
-				// Refresh the list with only unreconciled transactions
-				vm.toggleUnreconciledOnly(true);
-			});
+					// Switch to reconcile mode
+					vm.reconciling = true;
+				});
+			}
 		}
 
 		// Helper function to calculate the total cleared/uncleared totals

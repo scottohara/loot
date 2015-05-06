@@ -57,7 +57,9 @@
 			destroy: $q.promisify(success, error),
 			updateStatus: $q.promisify(),
 			flag: $q.promisify(success, error),
-			unflag: $q.promisify(1, -1)
+			unflag: $q.promisify(1, -1),
+			allDetailsShown: sinon.stub().returns(true),
+			showAllDetails: sinon.stub()
 		};
 
 		provider.$get = function() {

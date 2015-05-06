@@ -59,6 +59,10 @@
 			(undefined === transactionIndexController.contextType).should.be.true;
 		});
 
+		it("should fetch the show all details setting", function() {
+			transactionModel.allDetailsShown.should.have.been.called;
+		});
+
 		it("should make today's date available to the view", function() {
 			transactionIndexController.today.should.deep.equal(moment().startOf("day").toDate());
 		});
@@ -827,6 +831,19 @@
 			});
 		});
 
+		describe("toggleShowAllDetails", function() {
+			it("should update the show all details setting", function() {
+				transactionIndexController.toggleShowAllDetails(true);
+				transactionModel.showAllDetails.should.have.been.calledWith(true);
+			});
+
+			it("should set a flag to indicate that we're showing all details", function() {
+				transactionIndexController.showAlDetails = false;
+				transactionIndexController.toggleShowAllDetails(true);
+				transactionIndexController.showAllDetails.should.be.true;
+			});
+		});
+
 		describe("(account context)", function() {
 			beforeEach(function() {
 				transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel});
@@ -851,6 +868,12 @@
 					direction = "next";
 					fromDate = "from date";
 					transactionIdToFocus = 1;
+				});
+
+				it("should do nothing if we're currently reconciling", function() {
+					transactionIndexController.reconciling = true;
+					transactionIndexController.toggleUnreconciledOnly(true);
+					accountModel.unreconciledOnly.should.not.have.been.called;
 				});
 
 				it("should update the unreconciled only setting for the current account", function() {
@@ -922,31 +945,39 @@
 			});
 
 			describe("reconcile", function() {
-				beforeEach(function() {
-					sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
-					transactionIndexController.reconciling = false;
+				it("should do nothing if we're currently reconciling", function() {
+					transactionIndexController.reconciling = true;
 					transactionIndexController.reconcile();
+					$modal.open.should.not.have.been.called;
 				});
 
-				it("should prompt the user for the accounts closing balance", function() {
-					$modal.open.should.have.been.called;
-					$modal.resolves.account.should.deep.equal(transactionIndexController.context);
-				});
+				describe("(not already reconciling)", function() {
+					beforeEach(function() {
+						sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
+						transactionIndexController.reconciling = false;
+						transactionIndexController.reconcile();
+					});
 
-				it("should make the closing balance available to the view when the modal is closed", function() {
-					var closingBalance = 100;
-					$modal.close(closingBalance);
-					transactionIndexController.closingBalance.should.equal(closingBalance);
-				});
+					it("should prompt the user for the accounts closing balance", function() {
+						$modal.open.should.have.been.called;
+						$modal.resolves.account.should.deep.equal(transactionIndexController.context);
+					});
 
-				it("should enter reconcile mode when the modal is closed", function() {
-					$modal.close();
-					transactionIndexController.reconciling.should.be.true;
-				});
+					it("should make the closing balance available to the view when the modal is closed", function() {
+						var closingBalance = 100;
+						$modal.close(closingBalance);
+						transactionIndexController.closingBalance.should.equal(closingBalance);
+					});
 
-				it("should refetch the list of unreconciled transactions when the modal is closed", function() {
-					$modal.close();
-					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(true);
+					it("should refetch the list of unreconciled transactions when the modal is closed", function() {
+						$modal.close();
+						transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(true);
+					});
+
+					it("should enter reconcile mode when the modal is closed", function() {
+						$modal.close();
+						transactionIndexController.reconciling.should.be.true;
+					});
 				});
 			});
 

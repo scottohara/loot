@@ -22,21 +22,20 @@
 				<!-- Pagination -->
 				<button class="btn btn-primary" ng-click="vm.getTransactions('prev')">Previous</button>
 				<span>{{vm.firstTransactionDate | date:"dd/MM/yyyy"}} - {{vm.lastTransactionDate | date:"dd/MM/yyyy"}}</span>
-				<!-- Account reconciliation progress -->
-				<span ng-if="vm.reconciling" class="pull-right">
-					<div class="text-right">Target: {{vm.reconcileTarget | currency}}</div>
-					<div class="text-right">Cleared: {{vm.clearedTotal | currency }}</div>
-					<div class="text-right" ng-class="{'text-danger': vm.unclearedTotal != 0, 'text-success': vm.unclearedTotal == 0}">Uncleared: {{vm.unclearedTotal | currency}}</div>
-					<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-					<button class="btn btn-success" type="submit" ng-click="vm.save()" ng-disabled="vm.unclearedTotal != 0"><i class="glyphicon glyphicon-ok"></i> Finished</button>
-				</span>
-				<!-- Account reconciliation tools -->
-				<div ng-if="vm.reconcilable && !vm.reconciling" class="btn-group pull-right" dropdown>
+				<!-- Tools and options -->
+				<div class="btn-group pull-right" dropdown>
 					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
 						<i class="glyphicon glyphicon-cog"></i> <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li>
+							<a ng-click="vm.toggleShowAllDetails(!vm.showAllDetails)" ng-switch="vm.showAllDetails">
+								<i ng-switch-when="true" class="glyphicon glyphicon-ok text-success"></i>
+								<i ng-switch-default class="glyphicon glyphicon-remove text-danger"></i>
+								 Show All Details
+							</a>
+						</li>
+						<li ng-class="{'disabled': !vm.reconcilable || vm.reconciling}">
 							<a ng-click="vm.toggleUnreconciledOnly(!vm.unreconciledOnly)" ng-switch="vm.unreconciledOnly">
 								<i ng-switch-when="true" class="glyphicon glyphicon-ok text-success"></i>
 								<i ng-switch-default class="glyphicon glyphicon-remove text-danger"></i>
@@ -44,7 +43,7 @@
 							</a>
 						</li>
 						<li class="divider"></li>
-						<li><a ng-click="vm.reconcile()"><i class="glyphicon glyphicon-pencil"></i> Reconcile...</a></li>
+						<li ng-class="{'disabled': !vm.reconcilable || vm.reconciling}"><a ng-click="vm.reconcile()"><i class="glyphicon glyphicon-pencil"></i> Reconcile...</a></li>
 					</ul>
 				</div>
 			</td>
@@ -63,7 +62,7 @@
 			<td class="details">
 				<table class="table-condensed">
 					<!-- Primary Account -->
-					<tr ng-if="::vm.contextType != 'account'">
+					<tr ng-if="vm.contextType != 'account' && vm.showAllDetails">
 						<td colspan="2" class="has-action">
 							{{::transaction.primary_account.name}}
 							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.primary_account.name}}" ng-click="vm.switchPrimaryAccount($event, transaction)"></i>
@@ -90,7 +89,7 @@
 						</td>
 					</tr>
 					<!-- Category / Subcategory / Transfer or Other Account -->
-					<tr>
+					<tr ng-if="vm.showAllDetails || vm.contextType == 'payee' || vm.contextType == 'security'">
 						<!-- Category -->
 						<td class="category has-action" ng-if="::vm.contextType != 'category' || (vm.contextType == 'category' && vm.context.parent)">
 							{{::transaction.category.name}}
@@ -116,7 +115,7 @@
 						</td>
 					</tr>
 					<!-- Subtransactions -->
-					<tr ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1" ng-show="transaction.showSubtransactions">
+					<tr ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1 && vm.showAllDetails" ng-show="transaction.showSubtransactions">
 						<td colspan="2">
 							<table class="table-condensed">
 								<thead>
@@ -140,7 +139,7 @@
 							</table>
 						</td>
 					</tr>
-					<tr>
+					<tr ng-if="vm.showAllDetails">
 						<!-- Memo -->
 						<td class="memo" colspan="2">
 							<span>{{::transaction.memo}}</span>
@@ -195,3 +194,12 @@
 		<tr og-table-loading="vm.loading['next']" colspan="5"></tr>
 	</tfoot>
 </table>
+<!-- Account reconciliation progress -->
+<span id="reconciliationProgress" ng-if="vm.reconciling" class="alert alert-warning">
+	<h4>Reconciliation</h4>
+	<div class="text-right">Target: {{vm.reconcileTarget | currency}}</div>
+	<div class="text-right">Cleared: {{vm.clearedTotal | currency }}</div>
+	<div class="text-right" ng-class="{'text-danger': vm.unclearedTotal != 0, 'text-success': vm.unclearedTotal == 0}">Uncleared: {{vm.unclearedTotal | currency}}</div>
+	<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+	<button class="btn btn-success" type="submit" ng-click="vm.save()" ng-disabled="vm.unclearedTotal != 0"><i class="glyphicon glyphicon-ok"></i> Finished</button>
+</span>

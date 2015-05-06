@@ -11,13 +11,14 @@
 	/**
 	 * Dependencies
 	 */
-	Factory.$inject = ["$http", "accountModel", "payeeModel", "categoryModel", "securityModel"];
+	Factory.$inject = ["$http", "$window", "accountModel", "payeeModel", "categoryModel", "securityModel"];
 
 	/**
 	 * Implementation
 	 */
-	function Factory($http, accountModel, payeeModel, categoryModel, securityModel) {
-		var model = {};
+	function Factory($http, $window, accountModel, payeeModel, categoryModel, securityModel) {
+		var model = {},
+				SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY = "lootShowAllTransactionDetails";
 
 		// Returns the API path
 		model.path = function(id) {
@@ -154,6 +155,16 @@
 		// Unflags a transaction
 		model.unflag = function(id) {
 			return $http.delete(model.path(id) + "/flag");
+		};
+
+		// Get the show all details setting from local storage
+		model.allDetailsShown = function() {
+			return $window.localStorage.getItem(SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY) !== "false";
+		};
+
+		// Set the show all details setting in local storage
+		model.showAllDetails = function(showAllDetails) {
+			$window.localStorage.setItem(SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY, showAllDetails);
 		};
 
 		return model;
