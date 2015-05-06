@@ -87,4 +87,7 @@
 <div class="quickscroll bottom hidden-xs" tooltip="Bottom" tooltip-placement="left"><a ng-click="vm.scrollTo('bottom')"><i class="glyphicon glyphicon-hand-down"></i></a></div>
 <div class="quickscroll top hidden-xs" tooltip="Top" tooltip-placement="left"><a ng-click="vm.scrollTo('top')"><i class="glyphicon glyphicon-hand-up"></i></a></div>
 <ui-view ng-if="vm.authenticated" autoscroll="false"></ui-view>
+<div ng-if="vm.loadingState" id="state-loading-spinner">
+	<div og-loading-spinner></div>
+</div>
 <a id="bottom"></a>

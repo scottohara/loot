@@ -838,7 +838,7 @@
 			});
 
 			it("should set a flag to indicate that we're showing all details", function() {
-				transactionIndexController.showAlDetails = false;
+				transactionIndexController.showAllDetails = false;
 				transactionIndexController.toggleShowAllDetails(true);
 				transactionIndexController.showAllDetails.should.be.true;
 			});

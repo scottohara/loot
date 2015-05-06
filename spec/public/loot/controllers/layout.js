@@ -45,6 +45,10 @@
 			layoutController.scrollTo.should.be.a.function;
 		});
 
+		it("should hide the state loading spinner by default", function() {
+			layoutController.loadingState.should.be.false;
+		});
+
 		describe("login", function() {
 			beforeEach(function() {
 				layoutController.login();
@@ -118,6 +122,33 @@
 		describe("recentlyAccessedSecurities", function() {
 			it("should return the list of recent securities", function() {
 				layoutController.recentlyAccessedSecurities().should.equal("recent securities list");
+			});
+		});
+
+		describe("toggleLoadingState", function() {
+			it("should set a flag to indicate whether a state is loading", function() {
+				layoutController.loadingState = false;
+				layoutController.toggleLoadingState(true);
+				layoutController.loadingState.should.be.true;
+			});
+		});
+
+		describe("state change handlers", function() {
+			beforeEach(function() {
+				sinon.stub(layoutController, "toggleLoadingState");
+			});
+			
+			var scenarios = [
+				{event: "$stateChangeStart", loading: true},
+				{event: "$stateChangeSuccess", loading: false},
+				{event: "$stateChangeError", loading: false},
+			];
+
+			scenarios.forEach(function(scenario) {
+				it("should attach a " + scenario.event + " handler", function() {
+					layoutController.$scope.$emit(scenario.event);
+					layoutController.toggleLoadingState.should.have.been.calledWith(scenario.loading);
+				});
 			});
 		});
 	});

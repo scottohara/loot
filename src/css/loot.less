@@ -5,6 +5,34 @@ html, body {
 	-webkit-user-select: none;
 }
 
+#state-loading-spinner {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 25%;
+	height: 25%;
+	margin: auto;
+	border: 1px solid gainsboro;
+	background-color: ghostwhite;
+	border-radius: 4px;
+	box-shadow: 1px 2px 10px -3px grey;
+
+	div {
+		position: fixed;
+		top: -20px;
+		bottom: 0;
+		left: -75px;
+		right: 0;
+		width: 0;
+		height: 0;
+		margin: auto;
+		overflow-x: visible;
+		white-space: nowrap;
+	}
+}
+
 .transaction-status {
 	&.unreconciled {
 		.text-emphasis-variant(@text-muted);
@@ -45,7 +73,7 @@ table.accounts {
 	}
 }
 
-#reconciliationProgress {
+#reconciliation-progress {
 	position: fixed;
 	top: 0;
 	margin: 10px;
