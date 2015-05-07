@@ -7,16 +7,10 @@ module.exports = function(config) {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ["mocha", "chai", "sinon", "sinon-chai"],
+		frameworks: ["mocha", "chai-as-promised", "chai", "sinon", "sinon-chai"],
 
 		// list of files / patterns to load in the browser
 		files: [
-			// TODO - ideally this would be a karma-chai-as-promised package, included in frameworks above
-			{
-				pattern: "node_modules/chai-as-promised/lib/chai-as-promised.js",
-				watched: false
-			},
-			
 			// Vendor scripts to include (but not watch)
 			{
 				pattern: "node_modules/jquery/dist/jquery.js",

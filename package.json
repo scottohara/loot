@@ -44,6 +44,7 @@
     "gulp-jshint": "^1.9.2",
     "karma": "^0.12.31",
     "karma-chai": "^0.1.0",
+    "karma-chai-as-promised": "^0.1.2",
     "karma-chrome-launcher": "^0.1.7",
     "karma-coverage": "^0.2.7",
     "karma-mocha": "^0.1.10",
