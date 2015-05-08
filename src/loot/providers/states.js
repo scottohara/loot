@@ -223,6 +223,16 @@
 					title: "Search Transactions"
 				},
 				resolve: {
+					previousState: ["$state",
+						function($state) {
+							if (!$state.includes("root.transactions")) {
+								return {
+									name: $state.current.name,
+									params: $state.params
+								};
+							}
+						}
+					],
 					contextModel: function() {
 						return null;
 					},
@@ -240,8 +250,9 @@
 					]
 				},
 				views: transactionViews,
-				onEnter: ["$stateParams", "queryService",
-					function($stateParams, queryService) {
+				onEnter: ["$stateParams", "queryService", "previousState",
+					function($stateParams, queryService, previousState) {
+						queryService.previousState = previousState || queryService.previousState;
 						queryService.query = $stateParams.query;
 					}
 				],

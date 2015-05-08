@@ -35,6 +35,7 @@
 		vm.recentlyAccessedSecurities = recentlyAccessedSecurities;
 		vm.scrollTo = ogViewScrollService.scrollTo;
 		vm.toggleLoadingState = toggleLoadingState;
+		vm.checkIfSearchCleared = checkIfSearchCleared;
 
 		/**
 		 * Implementation
@@ -61,9 +62,11 @@
 
 		// Search
 		function search() {
-			$state.go("root.transactions", {
-				query: vm.queryService.query
-			});
+			if ("" !== vm.queryService.query) {
+				$state.go("root.transactions", {
+					query: vm.queryService.query
+				});
+			}
 		}
 
 		// Disable/enable any table key-bindings
@@ -92,6 +95,14 @@
 			vm.loadingState = loading;
 		}
 
+		function checkIfSearchCleared() {
+			// When the search field is cleared, return to the previous state
+			if ("" === vm.queryService.query && vm.queryService.previousState) {
+				$state.go(vm.queryService.previousState.name, vm.queryService.previousState.params);
+				vm.queryService.previousState = undefined;
+			}
+		}
+
 		// Handlers are wrapped in functions to aid with unit testing
 		$scope.$on("$stateChangeStart", function() {
 			vm.toggleLoadingState(true);
@@ -103,6 +114,10 @@
 
 		$scope.$on("$stateChangeError", function() {
 			vm.toggleLoadingState(false);
+		});
+
+		$("#transactionSearch").on("search", function() {
+			vm.checkIfSearchCleared();
 		});
 	}
 })();

@@ -52,7 +52,7 @@
 		<tr og-table-loading="vm.loading['prev']" colspan="5"></tr>
 	</thead>
 	<tbody ng-class="{'reconciling': vm.reconciling}">
-		<tr class="transaction" ng-repeat="transaction in vm.transactions" ng-switch="::vm.context.account_type" ng-class="{'cleared': transaction.status == 'Cleared', 'future': transaction.transaction_date > today}">
+		<tr class="transaction" ng-repeat="transaction in vm.transactions" ng-switch="::vm.context.account_type" ng-class="{'cleared': transaction.status == 'Cleared', 'future': transaction.transaction_date > vm.today}">
 			<!-- Transaction date -->
 			<td class="has-action">
 				{{::transaction.transaction_date | date:'dd/MM/yyyy'}}

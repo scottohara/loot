@@ -728,19 +728,40 @@
 			});
 
 			describe("(on transition)", function() {
-				var resolvedContext,
+				var previousState,
+						resolvedPreviousState,
+						resolvedContext,
 						resolvedTransactionBatch;
 
 				beforeEach(function() {
+					previousState = {
+						current: {
+							name: "previous state"
+						},
+						params: "previous params",
+						includes: sinon.stub().returns(false)
+					},
 					$state.go(stateName, {query: query});
 					$rootScope.$digest();
 					$httpBackend.flush();
+					resolvedPreviousState = $injector.invoke($state.current.resolve.previousState, undefined, {$state: previousState});
 					resolvedContext = $injector.invoke($state.current.resolve.context);
 					resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, undefined, {context: resolvedContext});
+					$injector.invoke($state.current.onEnter, undefined, {previousState: resolvedPreviousState});
 				});
 
 				it("should successfully transition", function() {
 					$state.current.name.should.equal(stateName);
+				});
+
+				it("should resolve the previous state", function() {
+					resolvedPreviousState.should.deep.equal({name: previousState.current.name, params: previousState.params});
+				});
+
+				it("should not resolve the previous state if transitioning from a different query", function() {
+					previousState.includes.withArgs("root.transactions").returns(true);
+					resolvedPreviousState = $injector.invoke($state.current.resolve.previousState, undefined, {$state: previousState});
+					(undefined === resolvedPreviousState).should.be.true;
 				});
 
 				it("should resolve the context model", function() {
@@ -754,6 +775,15 @@
 				it("should resolve the transaction batch", function() {
 					transactionModel.query.should.have.been.calledWith(query, null, "prev");
 					resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
+				});
+
+				it("should set the previous state property on the query service on enter", function() {
+					queryService.previousState.should.deep.equal(resolvedPreviousState);
+				});
+
+				it("should not update the previous state property on the query service on enter if the previous state did not resolve", function() {
+					$injector.invoke($state.current.onEnter, undefined, {previousState: undefined});
+					queryService.previousState.should.deep.equal(resolvedPreviousState);
 				});
 
 				it("should set the query property on the query service on enter", function() {

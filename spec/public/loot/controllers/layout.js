@@ -16,7 +16,9 @@
 				categoryModel,
 				securityModel,
 				ogTableNavigableService,
-				authenticated;
+				authenticated,
+				mockJQueryInstance,
+				realJQueryInstance;
 
 		// Load the modules
 		beforeEach(module("lootMocks", "lootApp", function(mockDependenciesProvider) {
@@ -34,8 +36,24 @@
 			securityModel = _securityModel_;
 			ogTableNavigableService = _ogTableNavigableService_;
 			authenticated = _authenticated_;
+
+			mockJQueryInstance = {
+				events: {},
+				on: function(event, handler) {
+					this.events[event] = handler;
+				}
+			};
+
+			realJQueryInstance = window.$;
+			window.$ = sinon.stub();
+			window.$.withArgs("#transactionSearch").returns(mockJQueryInstance);
+
 			layoutController = controllerTest("LayoutController");
 		}));
+
+		afterEach(function() {
+			window.$ = realJQueryInstance;
+		});
 
 		it("should make the authentication status available to the view", function() {
 			layoutController.authenticated.should.equal(authenticated);
@@ -86,6 +104,12 @@
 		});
 
 		describe("search", function() {
+			it("should do nothing if the search query is empty", function() {
+				layoutController.queryService.query = "";
+				layoutController.search();
+				$state.go.should.not.have.been.called;
+			});
+
 			it("should transition to the transaction search state passing the query", function() {
 				layoutController.queryService.query = "search query";
 				layoutController.search();
@@ -133,6 +157,43 @@
 			});
 		});
 
+		describe("checkIfSearchCleared", function() {
+			it("should do nothing if the search query is not empty", function() {
+				layoutController.queryService.query = "search query";
+				layoutController.queryService.previouState = "previous state";
+				layoutController.checkIfSearchCleared();
+				$state.go.should.not.have.been.called;
+			});
+
+			it("should do nothing if a previous state is not set", function() {
+				layoutController.queryService.query = "";
+				layoutController.queryService.previouState = undefined;
+				layoutController.checkIfSearchCleared();
+				$state.go.should.not.have.been.called;
+			});
+
+			describe("(search field cleared)", function() {
+				var previousStateName,
+						previousStateParams;
+
+				beforeEach(function() {
+					previousStateName = "previous state";
+					previousStateParams = "previous params";
+					layoutController.queryService.query = "";
+					layoutController.queryService.previousState = {name: previousStateName, params: previousStateParams};
+					layoutController.checkIfSearchCleared();
+				});
+
+				it("should transition to the previous state when the search field is cleared", function() {
+					$state.go.should.have.been.calledWith(previousStateName, previousStateParams);
+				});
+
+				it("should clear the stored previous state", function() {
+					(layoutController.queryService.previousState === undefined).should.be.true;
+				});
+			});
+		});
+
 		describe("state change handlers", function() {
 			beforeEach(function() {
 				sinon.stub(layoutController, "toggleLoadingState");
@@ -149,6 +210,17 @@
 					layoutController.$scope.$emit(scenario.event);
 					layoutController.toggleLoadingState.should.have.been.calledWith(scenario.loading);
 				});
+			});
+		});
+
+		describe("on search", function() {
+			beforeEach(function() {
+				sinon.stub(layoutController, "checkIfSearchCleared");
+			});
+
+			it("should check if the search field was cleared", function() {
+				mockJQueryInstance.events.search();
+				layoutController.checkIfSearchCleared.should.have.been.called;
 			});
 		});
 	});
