@@ -1,6 +1,8 @@
 (function() {
 	"use strict";
 
+	/*jshint expr: true */
+
 	function CategoryIndexView() {
 		var view = this,
 				OgTableNavigableView = require("../../og-components/og-table-navigable/views/og-table-navigable.js");
@@ -76,7 +78,7 @@
 		function categories(subcategories) {
 			return view.table.rows.filter(function(row) {
 				return view.isSubcategory(row).then(function(isSubcategory) {
-					return isSubcategory === !!subcategories;
+					return isSubcategory === Boolean(subcategories);
 				});
 			});
 		}

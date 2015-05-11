@@ -446,16 +446,16 @@
 		}
 
 		// Edits the target index row
-		function editRow() {
+		/*function editRow() {
 			targetRow.evaluate("$index").then(function(index) {
 				// Enter an existing transaction
 				transactionIndexView.enterTransaction(index);
 				waitForTransactionEditView("Edit");
 			});
-		}
+		}*/
 
 		// Checks the values in the edit form against the values from an index row
-		function checkEditFormMatchesIndexRow(row) {
+		/*function checkEditFormMatchesIndexRow(row) {
 			transactionIndexView.getRowValues(row).then(function(expected) {
 				// TODO
 				transactionEditView.categoryNameInput.getAttribute("value").should.eventually.equal(expected.categoryName);
@@ -465,6 +465,6 @@
 					transactionEditView.categoryParentInput.getAttribute("value").should.eventually.equal(expected.categoryParent);
 				}
 			});
-		}
+		}*/
 	});
 })();

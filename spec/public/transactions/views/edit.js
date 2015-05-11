@@ -2,8 +2,7 @@
 	"use strict";
 
 	function TransactionEditView() {
-		var view = this,
-				space = protractor.Key.SPACE;
+		var view = this;
 
 		/**
 		 * UI elements

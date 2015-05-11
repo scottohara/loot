@@ -2,8 +2,7 @@
 	"use strict";
 
 	function ScheduleEditView() {
-		var view = this,
-				space = protractor.Key.SPACE;
+		var view = this;
 
 		/**
 		 * UI elements

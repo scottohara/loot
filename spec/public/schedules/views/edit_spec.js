@@ -460,16 +460,16 @@
 		}
 
 		// Edits the target index row
-		function editRow() {
+		/*function editRow() {
 			targetRow.evaluate("$index").then(function(index) {
 				// Enter an existing schedule
 				scheduleIndexView.enterSchedule(index);
 				waitForScheduleEditView("Enter");
 			});
-		}
+		}*/
 
 		// Checks the values in the edit form against the values from an index row
-		function checkEditFormMatchesIndexRow(row) {
+		/*function checkEditFormMatchesIndexRow(row) {
 			scheduleIndexView.getRowValues(row).then(function(expected) {
 				// TODO
 				scheduleEditView.categoryNameInput.getAttribute("value").should.eventually.equal(expected.categoryName);
@@ -479,6 +479,6 @@
 					scheduleEditView.categoryParentInput.getAttribute("value").should.eventually.equal(expected.categoryParent);
 				}
 			});
-		}
+		}*/
 	});
 })();
