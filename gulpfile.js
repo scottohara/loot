@@ -11,14 +11,71 @@
 			rev = require("gulp-rev"),
 			sourceMaps = require("gulp-sourcemaps"),
 			uglify = require("gulp-uglify"),
-			util = require("gulp-util");
+			livereload = require("gulp-livereload"),
+			util = require("gulp-util"),
+			
+			appJsSource = "src/**/*.js",
+			vendorJsSource = [
+				"node_modules/jquery/dist/jquery.min.js",
+				"node_modules/bootstrap/dist/js/bootstrap.min.js",
+				"node_modules/angular/angular.min.js",
+				"node_modules/angular-ui-router/release/angular-ui-router.min.js",
+				"node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
+				"node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.min.js",
+				"node_modules/moment/min/moment.min.js"
+			],
+
+			appTemplatesSource = ["src/**/*.html", "!src/*.html"],
+
+			appCssSource = "src/**/*.less",
+			vendorCssSource = "node_modules/bootstrap/dist/css/bootstrap.min.css",
+
+			appAssetsSource = ["src/*.html", "!src/index.html", "src/favicon.ico", "src/robots.txt"],
+			vendorAssetsSource = "node_modules/bootstrap/fonts/**";
+
+	/**
+	 * Watch
+	 */
+	
+	// Watch
+	gulp.task("watch", function() {
+		livereload.listen();
+		gulp.watch(appJsSource, ["watch:app:js"]);
+		gulp.watch(vendorJsSource, ["watch:vendor:js"]);
+		gulp.watch(appTemplatesSource, ["watch:app:templates"]);
+		gulp.watch(appCssSource, ["watch:app:css"]);
+		gulp.watch(vendorCssSource, ["watch:vendor:css"]);
+		gulp.watch(appAssetsSource, ["copy:app:assets"]);
+		gulp.watch(vendorAssetsSource, ["copy:vendor:assets"]);
+	});
+
+	// Watch application Javascript
+	gulp.task("watch:app:js", ["jshint", "build:app:js"], cleanAndBuildIndex);
+
+	// Watch vendor Javascript
+	gulp.task("watch:vendor:js", ["build:vendor:js"], cleanAndBuildIndex);
+
+	// Watch application templates
+	gulp.task("watch:app:templates", ["build:app:templates"], cleanAndBuildIndex);
+
+	// Watch application CSS
+	gulp.task("watch:app:css", ["build:app:css"], cleanAndBuildIndex);
+
+	// Watch vendor CSS
+	gulp.task("watch:vendor:css", ["build:vendor:css"], cleanAndBuildIndex);
+
+	function cleanAndBuildIndex() {
+		cleanIndex(buildIndex());
+	}
 
 	/**
 	 * Build
 	 */
 
 	// Build
-	gulp.task("build", ["clean", "build:js", "build:templates", "build:css", "copy:assets"], function() {
+	gulp.task("build", ["clean", "build:js", "build:templates", "build:css", "copy:assets"], buildIndex);
+
+	function buildIndex() {
 		var inject = require("gulp-inject"),
 				appAssets = gulp.src(["public/app*.js", "public/app*.css"], {read: false}),
 				templates = gulp.src(["public/templates*.js"], {read: false}),
@@ -29,13 +86,16 @@
 			.pipe(inject(templates, {ignorePath: "public", name: "templates"}))
 			.pipe(inject(vendorAssets, {ignorePath: "public", name: "vendor"}))
 			.pipe(gulp.dest("public"))
+			.pipe(livereload())
 			.on("error", util.log);
-	});
+	}
 
 	// Clean
-	gulp.task("clean", ["clean:js", "clean:templates", "clean:css", "clean:assets"], function(cb) {
+	gulp.task("clean", ["clean:js", "clean:templates", "clean:css", "clean:assets"], cleanIndex);
+
+	function cleanIndex(cb) {
 		del("public/index.html", cb);
-	});
+	}
 
 	// Build Javascript
 	gulp.task("build:js", ["build:app:js", "build:vendor:js"]);
@@ -45,7 +105,7 @@
 
 	// Build application Javascript
 	gulp.task("build:app:js", ["clean:app:js"], function() {
-		return gulp.src("src/**/*.js")
+		return gulp.src(appJsSource)
 			.pipe(sourceMaps.init())
 				.pipe(size({title: "app js (original)"}))
 				.pipe(concat("app.js"))
@@ -73,7 +133,7 @@
 	gulp.task("build:app:templates", ["clean:app:templates"], function() {
 		var templateCache = require("gulp-angular-templatecache");
 
-		return gulp.src(["src/**/*.html", "!src/*.html"])
+		return gulp.src(appTemplatesSource)
 			.pipe(size({title: "app templates (original)"}))
 			.pipe(templateCache({module: "lootApp"}))
 			.pipe(rev())
@@ -90,15 +150,7 @@
 
 	// Build vendor Javascript
 	gulp.task("build:vendor:js", ["clean:vendor:js"], function() {
-		return gulp.src([
-			"node_modules/jquery/dist/jquery.min.js",
-			"node_modules/bootstrap/dist/js/bootstrap.min.js",
-			"node_modules/angular/angular.min.js",
-			"node_modules/angular-ui-router/release/angular-ui-router.min.js",
-			"node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
-			"node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.min.js",
-			"node_modules/moment/min/moment.min.js"
-		])
+		return gulp.src(vendorJsSource)
 			.pipe(sourceMaps.init({loadMaps: true}))
 				.pipe(concat("vendor.js"))
 				.pipe(rev())
@@ -120,7 +172,7 @@
 
 	// Build application CSS
 	gulp.task("build:app:css", ["clean:app:css"], function() {
-		return gulp.src("src/**/*.less")
+		return gulp.src(appCssSource)
 			.pipe(sourceMaps.init())
 				.pipe(less({paths: ["node_modules"]}))
 				.pipe(size({title: "app css (original)"}))
@@ -141,7 +193,7 @@
 
 	// Build vendor CSS
 	gulp.task("build:vendor:css", ["clean:vendor:css"], function() {
-		return gulp.src("node_modules/bootstrap/dist/css/bootstrap.min.css")
+		return gulp.src(vendorCssSource)
 			.pipe(sourceMaps.init())
 				.pipe(concat("vendor.css"))
 				.pipe(rev())
@@ -163,7 +215,7 @@
 
 	// Copy application static assets
 	gulp.task("copy:app:assets", ["clean:app:assets"], function() {
-		return gulp.src(["src/*.html", "!src/index.html", "src/favicon.ico", "src/robots.txt"])
+		return gulp.src(appAssetsSource)
 			.pipe(gulp.dest("public"));
 	});
 
@@ -174,7 +226,7 @@
 
 	// Copy vendor static assets
 	gulp.task("copy:vendor:assets", ["clean:vendor:assets"], function() {
-		return gulp.src("node_modules/bootstrap/fonts/**")
+		return gulp.src(vendorAssetsSource)
 			.pipe(gulp.dest("public/fonts"));
 	});
 
@@ -191,10 +243,9 @@
 	gulp.task("jshint", function() {
 		var jshint = require("gulp-jshint");
 
-		return gulp.src(["src/**/*.js", "spec/public/**/*.js"])
+		return gulp.src([appJsSource, "spec/public/**/*.js"])
 			.pipe(jshint())
-			.pipe(jshint.reporter("default", {verbose: true}))
-			.pipe(jshint.reporter("fail"));
+			.pipe(jshint.reporter("default", {verbose: true}));
 	});
 
 	// Run client-side unit tests
@@ -225,5 +276,5 @@
 	});
 
 	// Default task
-	gulp.task("default", ["test:bdd"]);
+	gulp.task("default", ["watch"]);
 })();

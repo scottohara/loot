@@ -42,6 +42,7 @@
     "chai": "^2.1.0",
     "chai-as-promised": "^4.2.0",
     "gulp-jshint": "^1.9.2",
+    "gulp-livereload": "^3.8.0",
     "karma": "^0.12.31",
     "karma-chai": "^0.1.0",
     "karma-chai-as-promised": "^0.1.2",
