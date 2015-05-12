@@ -1,0 +1,24 @@
+<form role="form" name="accountForm">
+	<div class="modal-header">
+		<h4>Delete Account?</h4>
+	</div>
+	<div class="modal-body">
+		<dl class="dl-horizontal">
+			<dt>Name</dt>
+			<dd>{{::vm.account.name}}</dd>
+			<dt>Type</dt>
+			<dd>{{::vm.account.account_type}}</dd>
+			<dt>Opening Balance</dt>
+			<dd>{{::vm.account.opening_balance | currency}}</dd>
+			<dt>Status</dt>
+			<dd>{{::vm.account.status}}</dd>
+			<dt ng-if="::vm.account.related_account.id">Related Account</dt>
+			<dd ng-if="::vm.account.related_account.id">{{::vm.account.related_account.name}}</dd>
+		</dl>
+	</div>
+	<div class="modal-footer">
+		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+		<button class="btn btn-danger" type="submit" ng-click="vm.deleteAccount()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
+	</div>
+</form>

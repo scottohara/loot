@@ -182,6 +182,53 @@
 			});
 		});
 
+		describe("save", function() {
+			beforeEach(function() {
+				accountModel.flush = sinon.stub();
+				$httpBackend.whenPOST(/accounts$/, {}).respond(200);
+				$httpBackend.whenPATCH(/accounts\/123$/, {id: 123}).respond(200);
+			});
+
+			it("should flush the account cache", function() {
+				accountModel.save({});
+				accountModel.flush.should.have.been.called;
+				$httpBackend.flush();
+			});
+
+			it("should dispatch a POST request to /accounts when an id is not provided", function() {
+				$httpBackend.expectPOST(/accounts$/);
+				accountModel.save({});
+				$httpBackend.flush();
+			});
+
+			it("should dispatch a PATCH request to /accounts/{id} when an id is provided", function() {
+				$httpBackend.expectPATCH(/accounts\/123$/);
+				accountModel.save({id: 123});
+				$httpBackend.flush();
+			});
+		});
+
+		describe("destroy", function() {
+			beforeEach(function() {
+				accountModel.flush = sinon.stub();
+				accountModel.removeRecent = sinon.stub();
+				$httpBackend.expectDELETE(/accounts\/123$/).respond(200);
+				accountModel.destroy({id: 123});
+				$httpBackend.flush();
+			});
+
+			it("should flush the account cache", function() {
+				accountModel.flush.should.have.been.called;
+			});
+
+			it("should dispatch a DELETE request to /accounts/{id}", function() {
+			});
+
+			it("should remove the account from the recent list", function() {
+				accountModel.removeRecent.should.have.been.calledWith(123);
+			});
+		});
+
 		describe("reconcile", function() {
 			var expectedUrl = /accounts\/123\/reconcile/;
 
@@ -228,6 +275,21 @@
 
 			it("should add the account to the recent list", function() {
 				ogLruCache.put.should.have.been.calledWith("account");
+				accountModel.recent.should.equal("updated list");
+			});
+
+			it("should save the updated recent list", function() {
+				$window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", "{}");
+			});
+		});
+
+		describe("removeRecent", function() {
+			beforeEach(function() {
+				accountModel.removeRecent("account");
+			});
+
+			it("should remove the account from the recent list", function() {
+				ogLruCache.remove.should.have.been.calledWith("account");
 				accountModel.recent.should.equal("updated list");
 			});
 

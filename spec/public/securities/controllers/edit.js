@@ -69,7 +69,7 @@
 				$modalInstance.close.should.have.been.calledWith(security);
 			});
 
-			it("should display an error message when login unsuccessful", function() {
+			it("should display an error message when the security save is unsuccessful", function() {
 				securityEditController.security.id = -1;
 				securityEditController.save();
 				securityEditController.errorMessage.should.equal("unsuccessful");

@@ -1,2 +1,3 @@
 web: bundle exec unicorn
 db: postgres -D /usr/local/var/postgres
+watch: gulp watch

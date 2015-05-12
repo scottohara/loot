@@ -69,7 +69,7 @@
 				$modalInstance.close.should.have.been.calledWith(payee);
 			});
 
-			it("should display an error message when login unsuccessful", function() {
+			it("should display an error message when the payee save is unsuccessful", function() {
 				payeeEditController.payee.id = -1;
 				payeeEditController.save();
 				payeeEditController.errorMessage.should.equal("unsuccessful");

@@ -50,6 +50,10 @@ FactoryGirl.define do
 			create_list :basic_transaction, evaluator.reconciled, account: account, status: "Reconciled"
 		end
 
+		trait :asset do
+			account_type "asset"
+		end
+
 		trait :credit do
 			account_type "credit"
 		end
@@ -73,12 +77,21 @@ FactoryGirl.define do
 
 		trait :loan do
 			account_type "loan"
+
+			transient do
+				related_account { nil }
+			end
+
+			after :build do |account, evaluator|
+				account.related_account = evaluator.related_account
+			end
 		end
 
 		trait :closed do
 			status "closed"
 		end
 
+		factory :asset_account, traits: [:asset]
 		factory :credit_account, traits: [:credit]
 		factory :investment_account, traits: [:investment]
 		factory :cash_account, traits: [:cash]

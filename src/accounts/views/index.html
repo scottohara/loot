@@ -1,28 +1,30 @@
-<table class="accounts table table-striped table-bordered table-hover" ng-repeat="(type, accountType) in ::vm.accounts">
+<table class="accounts table table-striped table-bordered table-hover" ng-repeat="(type, accountType) in vm.accounts">
 	<thead>
 		<tr>
 			<th colspan="2">{{::type}}</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="account in ::accountType.accounts" ng-class="::{'closed-account': account.status == 'closed'}">
-			<td>
+		<tr ng-repeat="account in accountType.accounts" ng-class="::{'closed-account': account.status == 'closed'}">
+			<td class="has-action">
 				<a ng-href="#/accounts/{{::account.id}}/transactions">{{::account.name}}</a>
-				<span ng-if="::account.related_account_id">(<a ng-href="#/accounts/{{::account.related_account_id}}/transactions">Cash</a>)</span>
+				<span ng-if="::account.account_type == 'investment' && account.related_account.id">(<a ng-href="#/accounts/{{::account.related_account.id}}/transactions">Cash</a>)</span>
+				<i class="action glyphicon glyphicon-trash pull-right" tooltip="Delete account" ng-click="vm.deleteAccount(type, $index)"></i>
+				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit account" ng-click="vm.editAccount(type, $index)"></i>
 			</td>
 			<td class="amount" ng-class="::{'text-danger': account.closing_balance < 0}">{{::account.closing_balance | currency}}</td>
 		</tr>
 	<tbody>
 	<tfoot>
 		<tr>
-			<th colspan="2" class="amount" ng-class="::{'text-danger': accountType.total < 0}">{{::accountType.total | currency}}</th>
+			<th colspan="2" class="amount" ng-class="{'text-danger': accountType.total < 0}">{{accountType.total | currency}}</th>
 		</tr>
 	</tfoot>
 </table>
 <table class="accounts table table-bordered">
 	<thead>
 		<tr>
-			<th colspan="2" class="amount" ng-class="::{'text-danger': vm.netWorth < 0}">Total: {{::vm.netWorth | currency}}</th>
+			<th colspan="2" class="amount" ng-class="{'text-danger': vm.netWorth < 0}">Total: {{vm.netWorth | currency}}</th>
 		</tr>
 	</thead>
 </table>

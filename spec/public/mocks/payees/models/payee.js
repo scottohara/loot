@@ -26,6 +26,7 @@
 		error = {
 			args: {id: -1}
 		};
+
 		// Mock payeeModel object
 		provider.payeeModel = {
 			recent: "recent payees list",

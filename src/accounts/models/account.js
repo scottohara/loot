@@ -62,6 +62,28 @@
 			});
 		};
 
+		// Saves an account
+		model.save = function(account) {
+			// Flush the $http cache
+			model.flush();
+
+			return $http({
+				method: account.id ? "PATCH" : "POST",
+				url: model.path(account.id),
+				data: account
+			});
+		};
+
+		// Deletes an account
+		model.destroy = function(account) {
+			// Flush the $http cache
+			model.flush();
+
+			return $http.delete(model.path(account.id)).then(function() {
+				model.removeRecent(account.id);
+			});
+		};
+
 		// Updates all pending transactions for an account to cleared
 		model.reconcile = function(id) {
 			return $http.put(model.path(id) + "/reconcile");
@@ -90,6 +112,15 @@
 		model.addRecent = function(account) {
 			// Put the item into the LRU cache
 			model.recent = lruCache.put(account);
+
+			// Update local storage with the new list
+			$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
+		};
+
+		// Remove an item from the LRU cache
+		model.removeRecent = function(id) {
+			// Remove the item from the LRU cache
+			model.recent = lruCache.remove(id);
 
 			// Update local storage with the new list
 			$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));

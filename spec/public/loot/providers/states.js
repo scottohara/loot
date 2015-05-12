@@ -200,7 +200,9 @@
 								$rootScope.$digest();
 								$httpBackend.flush();
 								resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
-								resolvedContext = $injector.invoke($state.current.resolve.context, undefined, {contextModel: resolvedContextModel});
+								$injector.invoke($state.current.resolve.context, undefined, {contextModel: resolvedContextModel}).then(function(context) {
+									resolvedContext = context;
+								});
 								resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, undefined, {contextModel: resolvedContextModel, context: resolvedContext});
 							});
 

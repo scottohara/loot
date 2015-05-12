@@ -758,9 +758,9 @@
 
 			it("should return a filtered & limited list of accounts", function() {
 				accounts.should.eventually.deep.equal([
-					{id: 1, name: "aa"},
-					{id: 4, name: "ba"},
-					{id: 5, name: "ab"}
+					{id: 1, name: "aa", account_type: "bank", opening_balance: 100, status: "open"},
+					{id: 4, name: "ba", account_type: "asset"},
+					{id: 5, name: "ab", account_type: "asset"}
 				]);
 			});
 		});
@@ -777,16 +777,16 @@
 				scheduleEditController.transaction.primary_account = {name: "aa"};
 				accounts = scheduleEditController.accounts("a", 2);
 				accounts.should.eventually.deep.equal([
-					{id: 4, name: "ba"},
-					{id: 5, name: "ab"}
+					{id: 4, name: "ba", account_type: "asset"},
+					{id: 5, name: "ab", account_type: "asset"}
 				]);
 			});
 
 			it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", function() {
 				accounts = scheduleEditController.accounts("b", 2);
 				accounts.should.eventually.deep.equal([
-					{id: 4, name: "ba"},
-					{id: 5, name: "ab"}
+					{id: 4, name: "ba", account_type: "asset"},
+					{id: 5, name: "ab", account_type: "asset"}
 				]);
 			});
 

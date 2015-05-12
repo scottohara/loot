@@ -629,16 +629,16 @@
 				transactionEditController.transaction.primary_account = {name: "aa"};
 				accounts = transactionEditController.accounts("a", 2);
 				accounts.should.eventually.deep.equal([
-					{id: 4, name: "ba"},
-					{id: 5, name: "ab"}
+					{id: 4, name: "ba", account_type: "asset"},
+					{id: 5, name: "ab", account_type: "asset"}
 				]);
 			});
 
 			it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", function() {
 				accounts = transactionEditController.accounts("b", 2);
 				accounts.should.eventually.deep.equal([
-					{id: 4, name: "ba"},
-					{id: 5, name: "ab"}
+					{id: 4, name: "ba", account_type: "asset"},
+					{id: 5, name: "ab", account_type: "asset"}
 				]);
 			});
 

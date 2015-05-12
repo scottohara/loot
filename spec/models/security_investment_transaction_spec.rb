@@ -47,7 +47,7 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("commission")
 		end
 
-		shared_examples "create from json", :create_from_json do
+		shared_examples "create from json", :security_investment_transaction_create_from_json do
 			before :each do |example|
 				json["direction"] = example.metadata[:direction]
 			end
@@ -68,11 +68,11 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 			end
 		end
 
-		context "outflow", create_from_json: true, direction: "outflow" do
+		context "outflow", security_investment_transaction_create_from_json: true, direction: "outflow" do
 			let(:amount) { 15 }
 		end
 
-		context "inflow", create_from_json: true, direction: "inflow" do
+		context "inflow", security_investment_transaction_create_from_json: true, direction: "inflow" do
 			let(:amount) { 25 }
 		end
 
@@ -109,7 +109,7 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 			expect(transaction.header).to receive(:update_from_json).with(json).and_call_original
 		end
 
-		shared_examples "update from json", :update_from_json do
+		shared_examples "update from json", :security_investment_transaction_update_from_json do
 			before :each do |example|
 				json["direction"] = example.metadata[:direction]
 			end
@@ -130,11 +130,11 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 			end
 		end
 
-		context "outflow", update_from_json: true, direction: "outflow" do
+		context "outflow", security_investment_transaction_update_from_json: true, direction: "outflow" do
 			let(:amount) { 15 }
 		end
 
-		context "inflow", update_from_json: true, direction: "inflow" do
+		context "inflow", security_investment_transaction_update_from_json: true, direction: "inflow" do
 			let(:amount) { 25 }
 		end
 

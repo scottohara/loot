@@ -102,7 +102,7 @@
 				$modalInstance.close.should.have.been.calledWith(category);
 			});
 
-			it("should display an error message when login unsuccessful", function() {
+			it("should display an error message when the category save is unsuccessful", function() {
 				categoryEditController.category.id = -1;
 				categoryEditController.save();
 				categoryEditController.errorMessage.should.equal("unsuccessful");
