@@ -207,6 +207,13 @@
 				$httpBackend.flush();
 			});
 
+			it("should save the transaction date", function() {
+				var transactionDate = moment("2000-01-01").toDate();
+				transactionModel.save({transaction_date: transactionDate});
+				$httpBackend.flush();
+				transactionModel.lastTransactionDate().should.deep.equal(transactionDate);
+			});
+
 			it("should parse the transaction", function() {
 				transactionModel.save({});
 				$httpBackend.flush();
@@ -388,6 +395,12 @@
 			it("should save the show all details setting", function() {
 				transactionModel.showAllDetails(true);
 				$window.localStorage.setItem.should.have.been.calledWith("lootShowAllTransactionDetails", true);
+			});
+		});
+
+		describe("lastTransactionDate", function() {
+			it("should return the last used transaction date", function() {
+				transactionModel.lastTransactionDate().should.deep.equal(moment().startOf("day").toDate());
 			});
 		});
 	});

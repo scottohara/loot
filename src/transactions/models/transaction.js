@@ -18,7 +18,8 @@
 	 */
 	function Factory($http, $window, accountModel, payeeModel, categoryModel, securityModel) {
 		var model = {},
-				SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY = "lootShowAllTransactionDetails";
+				SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY = "lootShowAllTransactionDetails",
+				lastTransactionDate = moment().startOf("day").toDate();
 
 		// Returns the API path
 		model.path = function(id) {
@@ -97,6 +98,7 @@
 				url: model.path(transaction.id),
 				data: model.stringify(transaction)
 			}).then(function(response) {
+				lastTransactionDate = transaction.transaction_date;
 				return model.parse(response.data);
 			});
 		};
@@ -165,6 +167,11 @@
 		// Set the show all details setting in local storage
 		model.showAllDetails = function(showAllDetails) {
 			$window.localStorage.setItem(SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY, showAllDetails);
+		};
+
+		// Returns the last used transaction date
+		model.lastTransactionDate = function() {
+			return lastTransactionDate;
 		};
 
 		return model;

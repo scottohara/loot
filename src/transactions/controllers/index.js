@@ -95,7 +95,7 @@
 						if (isNaN(index)) {
 							return {
 								transaction_type: "Basic",
-								transaction_date: moment().startOf("day").toDate(),
+								transaction_date: transactionModel.lastTransactionDate(),
 								primary_account: "account" === vm.contextType ? vm.context : undefined,
 								payee: "payee" === vm.contextType ? vm.context : undefined,
 								security: "security" === vm.contextType ? vm.context : undefined,

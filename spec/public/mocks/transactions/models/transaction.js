@@ -59,7 +59,8 @@
 			flag: $q.promisify(success, error),
 			unflag: $q.promisify(1, -1),
 			allDetailsShown: sinon.stub().returns(true),
-			showAllDetails: sinon.stub()
+			showAllDetails: sinon.stub(),
+			lastTransactionDate: sinon.stub().returns(moment().startOf("day").toDate())
 		};
 
 		provider.$get = function() {

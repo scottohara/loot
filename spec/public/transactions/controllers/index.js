@@ -197,6 +197,7 @@
 
 					afterEach(function() {
 						transactionIndexController.editTransaction();
+						transactionModel.lastTransactionDate.should.have.been.called;
 						$modal.open.should.have.been.called;
 						$modal.resolves.transaction.should.deep.equal(transaction);
 					});
