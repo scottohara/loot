@@ -489,6 +489,9 @@
 		// Launches the account reconciliation process
 		function reconcile() {
 			if (!vm.reconciling) {
+				// Disable navigation on the table
+				ogTableNavigableService.enabled = false;
+
 				// Show the modal
 				$modal.open({
 					templateUrl: "accounts/views/reconcile.html",
@@ -510,6 +513,9 @@
 
 					// Switch to reconcile mode
 					vm.reconciling = true;
+				}).finally(function() {
+					// Enable navigation on the table
+					ogTableNavigableService.enabled = true;
 				});
 			}
 		}

@@ -959,6 +959,10 @@
 						transactionIndexController.reconcile();
 					});
 
+					it("should disable navigation on the table", function() {
+						ogTableNavigableService.enabled.should.be.false;
+					});
+
 					it("should prompt the user for the accounts closing balance", function() {
 						$modal.open.should.have.been.called;
 						$modal.resolves.account.should.deep.equal(transactionIndexController.context);
@@ -978,6 +982,16 @@
 					it("should enter reconcile mode when the modal is closed", function() {
 						$modal.close();
 						transactionIndexController.reconciling.should.be.true;
+					});
+
+					it("should enable navigation on the table when the modal is closed", function() {
+						$modal.close();
+						ogTableNavigableService.enabled.should.be.true;
+					});
+
+					it("should enable navigation on the table when the modal is dismissed", function() {
+						$modal.dismiss();
+						ogTableNavigableService.enabled.should.be.true;
 					});
 				});
 			});
