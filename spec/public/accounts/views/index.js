@@ -7,14 +7,14 @@
 		/**
 		 * UI elements
 		 */
-		view.accountTypeTables = element.all(by.repeater("(type, accountType) in ::vm.accounts"));
+		view.accountTypeTables = element.all(by.repeater("(type, accountType) in vm.accounts"));
 		view.accountTypeTableHeading = accountTypeTableHeading;
 		view.accountTypeAccounts = accountTypeAccounts;
 		view.accountName = accountName;
 		view.cashAccountLink = cashAccountLink;
 		view.accountClosingBalance = accountClosingBalance;
 		view.accountTypeTableTotal = accountTypeTableTotal;
-		view.total = element(by.binding("::vm.netWorth")).getText();
+		view.total = element(by.binding("vm.netWorth")).getText();
 		view.closedAccounts = element.all(by.css("tr.closed-account"));
 		view.negativeBalances = element.all(by.css(".amount.text-danger"));
 
@@ -29,7 +29,7 @@
 		}
 
 		function accountTypeAccounts(table) {
-			return table.all(by.repeater("account in ::accountType.accounts"));
+			return table.all(by.repeater("account in accountType.accounts"));
 		}
 
 		function accountName(row) {
@@ -45,7 +45,7 @@
 		}
 
 		function accountTypeTableTotal(table) {
-			return table.element(by.binding("::accountType.total")).getText();
+			return table.element(by.binding("accountType.total")).getText();
 		}
 
 		// Click on an account link
