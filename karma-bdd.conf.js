@@ -29,11 +29,7 @@ module.exports = function(config) {
 				watched: false
 			},
 			{
-				pattern: "node_modules/angular-bootstrap/dist/ui-bootstrap.js",
-				watched: false
-			},
-			{
-				pattern: "node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.js",
+				pattern: "node_modules/angular-bootstrap-npm/dist/angular-bootstrap.js",
 				watched: false
 			},
 			{

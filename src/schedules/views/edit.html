@@ -6,7 +6,7 @@
 		<!-- Schedule Account -->
 		<div class="form-group has-feedback" ng-class="{'has-error': scheduleForm.primaryAccount.$invalid}">
 			<label for="primaryAccount">Account</label>
-			<input name="primaryAccount" class="form-control" ng-model="vm.transaction.primary_account" typeahead="account as account.name for account in vm.primaryAccounts($viewValue, 10)" ng-blur="vm.primaryAccountSelected()" typeahead-editable="false" placeholder="Account" required og-input-autoselect>
+			<input name="primaryAccount" class="form-control" ng-model="vm.transaction.primary_account" typeahead="account as account.name for account in vm.primaryAccounts($viewValue, 10)" ng-blur="vm.primaryAccountSelected()" typeahead-editable="false" placeholder="Account" required og-input-autoselect autofocus>
 			<span ng-show="scheduleForm.primaryAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Frequency -->
@@ -18,8 +18,8 @@
 		<!-- Transaction/Next Due Date -->
 		<div class="form-group has-feedback" ng-class="{'has-error': scheduleForm.transactionDate.$invalid}" ng-switch="vm.mode">
 			<label for="transactionDate">{{vm.mode == 'Enter Transaction' ? "" : "Next Due "}} Date</label>
-			<input ng-switch-when="Enter Transaction" id="transactionDate" name="transactionDate" class="form-control" type="date" ng-model="vm.transaction.transaction_date" required autofocus>
-			<input ng-switch-default id="transactionDate" name="transactionDate" class="form-control" type="date" ng-model="vm.schedule.next_due_date" required autofocus>
+			<input ng-switch-when="Enter Transaction" id="transactionDate" name="transactionDate" class="form-control" type="date" ng-model="vm.transaction.transaction_date" required>
+			<input ng-switch-default id="transactionDate" name="transactionDate" class="form-control" type="date" ng-model="vm.schedule.next_due_date" required>
 			<span ng-show="scheduleForm.transactionDate.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Payee -->
