@@ -5,7 +5,10 @@ module.exports.config = {
 	// Test suites
 	suites: {
 		authentication: "spec/public/authentication/views/*_spec.js",
-		accounts: "spec/public/accounts/views/*_spec.js",
+		accounts: [
+			"spec/public/accounts/views/index_spec.js",
+			"spec/public/accounts/views/edit_spec.js"
+		],
 		categories: [
 			"spec/public/categories/views/index_spec.js",
 			"spec/public/categories/views/edit_spec.js",
