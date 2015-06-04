@@ -5,7 +5,6 @@
 	 * Registration
 	 */
 	angular.module("ogComponents", [
-		"ui.bootstrap",
-		"ui.router"
+		"ui.bootstrap"
 	]);
 })();

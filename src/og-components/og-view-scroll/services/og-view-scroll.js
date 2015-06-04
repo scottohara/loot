@@ -11,14 +11,14 @@
 	/**
 	 * Dependencies
 	 */
-	Service.$inject = ["$uiViewScroll"];
+	Service.$inject = ["$anchorScroll"];
 
 	/**
 	 * Implementation
 	 */
-	function Service($uiViewScroll) {
+	function Service($anchorScroll) {
 		this.scrollTo = function(anchor) {
-			$uiViewScroll($("#" + anchor));
+			$anchorScroll(anchor);
 		};
 	}
 })();

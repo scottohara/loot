@@ -133,7 +133,7 @@
 						$modal.resolves.transaction.should.eventually.have.a.property("subtransactions");
 					});
 				});
-				
+
 				it("should update the closing balance when the modal is closed", function() {
 					var originalTransaction = angular.copy(transaction);
 					transaction.memo = "edited transaction";
@@ -201,7 +201,7 @@
 						$modal.open.should.have.been.called;
 						$modal.resolves.transaction.should.deep.equal(transaction);
 					});
-					
+
 				});
 
 				it("should update the closing balance when the modal is closed", function() {
@@ -472,7 +472,7 @@
 						transactionIndexController.updateClosingBalance(transaction);
 					});
 				});
-				
+
 				describe("(new transaction)", function() {
 					it("should do nothing if undefined", function() {
 						transaction = undefined;
@@ -1061,7 +1061,7 @@
 				transactionIndexController.toggleSubtransactions(event, transaction);
 				transactionModel.findSubtransactions.should.not.have.been.called;
 			});
-			
+
 			describe("(on shown)", function() {
 				beforeEach(function() {
 					transaction.showSubtransactions = false;
@@ -1104,7 +1104,7 @@
 					transaction.loadingSubtransactions.should.be.false;
 				});
 			});
- 
+
 			it("should prevent the event from bubbling", function() {
 				transactionIndexController.toggleSubtransactions(event, transaction);
 				event.cancelBubble.should.be.true;
@@ -1149,7 +1149,7 @@
 			var transaction,
 					stateParams,
 					$event;
-			
+
 			beforeEach(function() {
 				transaction = {
 					id: "transaction id",
@@ -1382,6 +1382,7 @@
 		});
 
 		it("should scroll to the bottom when the controller loads", function() {
+			$timeout.flush();
 			ogViewScrollService.scrollTo.should.have.been.calledWith("bottom");
 		});
 	});

@@ -604,7 +604,7 @@
 			if ("Sub" === transaction.transaction_type) {
 				transaction.parent_id = null;
 			}
-			
+
 			$state.go("root." + state + ".transactions.transaction", {
 				id: id,
 				transactionId: transaction.parent_id || transaction.id
@@ -662,7 +662,7 @@
 			if (toParams.transactionId && (toParams.transactionId !== fromParams.transactionId || toParams.id !== fromParams.id)) {
 				if (isNaN(vm.focusTransaction(Number(toParams.transactionId)))) {
 					// Transaction was not found in the current set
-					
+
 					// Get the transaction details from the server
 					transactionModel.find(toParams.transactionId).then(function(transaction) {
 						var	fromDate = moment(transaction.transaction_date),
@@ -698,6 +698,8 @@
 		});
 
 		// Auto scroll to the bottom
-		ogViewScrollService.scrollTo("bottom");
+		$timeout(function() {
+			ogViewScrollService.scrollTo("bottom");
+		});
 	}
 })();
