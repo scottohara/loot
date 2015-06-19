@@ -1,126 +1,126 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Factory {
+		constructor($http, $cacheFactory, $window, ogLruCacheFactory) {
+			this.$http = $http;
+			this.$window = $window;
+			this.cache = $cacheFactory("securities");
+
+			// Create an LRU cache and populate with the recent account list from local storage
+			const LRU_CAPACITY = 10;
+
+			this.lruCache = ogLruCacheFactory(LRU_CAPACITY, JSON.parse(this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY)) || {});
+			this.recent = this.lruCache.list();
+		}
+
+		get LRU_LOCAL_STORAGE_KEY() {
+			return "lootRecentSecurities";
+		}
+
+		// Returns the model type
+		get type() {
+			return "security";
+		}
+
+		// Returns the API path
+		path(id) {
+			return `/securities${id ? `/${id}` : ""}`;
+		}
+
+		// Retrieves the list of securities
+		all(includeBalances) {
+			return this.$http.get(`${this.path()}${includeBalances ? "?include_balances" : ""}`, {
+				cache: includeBalances ? false : this.cache
+			}).then(response => response.data);
+		}
+
+		// Retrieves the list of securities, including balances
+		allWithBalances() {
+			return this.all(true);
+		}
+
+		// Retrieves the most recent transaction for a security
+		findLastTransaction(securityId, accountType) {
+			return this.$http.get(`${this.path(securityId)}/transactions/last`, {
+				params: {
+					account_type: accountType
+				}
+			}).then(response => response.data);
+		}
+
+		// Retrieves a single security
+		find(id) {
+			return this.$http.get(this.path(id), {
+				cache: this.cache
+			}).then(response => {
+				this.addRecent(response.data);
+				return response.data;
+			});
+		}
+
+		// Saves a security
+		save(security) {
+			// Flush the $http cache
+			this.flush();
+
+			return this.$http({
+				method: security.id ? "PATCH" : "POST",
+				url: this.path(security.id),
+				data: security
+			});
+		}
+
+		// Deletes a security
+		destroy(security) {
+			// Flush the $http cache
+			this.flush();
+
+			return this.$http.delete(this.path(security.id)).then(() => this.removeRecent(security.id));
+		}
+
+		// Flush the cache
+		flush(id) {
+			if (id) {
+				this.cache.remove(this.path(id));
+			} else {
+				this.cache.removeAll();
+			}
+		}
+
+		// Put an item into the LRU cache
+		addRecent(security) {
+			// Put the item into the LRU cache
+			this.recent = this.lruCache.put(security);
+
+			// Update local storage with the new list
+			this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.dump()));
+		}
+
+		// Remove an item from the LRU cache
+		removeRecent(id) {
+			// Remove the item from the LRU cache
+			this.recent = this.lruCache.remove(id);
+
+			// Update local storage with the new list
+			this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.dump()));
+		}
+
+		static factory($http, $cacheFactory, $window, ogLruCacheFactory) {
+			return new Factory($http, $cacheFactory, $window, ogLruCacheFactory);
+		}
+	}
 
 	/**
 	 * Registration
 	 */
 	angular
 		.module("lootSecurities")
-		.factory("securityModel", Factory);
+		.factory("securityModel", Factory.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
-
-	/**
-	 * Implementation
-	 */
-	function Factory($http, $cacheFactory, $window, ogLruCacheFactory) {
-		var	model = {},
-				cache = $cacheFactory("securities"),
-				LRU_LOCAL_STORAGE_KEY = "lootRecentSecurities",
-				LRU_CAPACITY = 10,
-				lruCache;
-
-		// Create an LRU cache and populate with the recent account list from local storage
-		lruCache = ogLruCacheFactory(LRU_CAPACITY, JSON.parse($window.localStorage.getItem(LRU_LOCAL_STORAGE_KEY)) || {});
-		model.recent = lruCache.list();
-		
-		// Returns the model type
-		model.type = function() {
-			return "security";
-		};
-
-		// Returns the API path
-		model.path = function(id) {
-			return "/securities" + (id ? "/" + id : "");
-		};
-
-		// Retrieves the list of securities
-		model.all = function(includeBalances) {
-			return $http.get(model.path() + (includeBalances ? "?include_balances" : ""), {
-				cache: includeBalances ? false : cache
-			}).then(function(response) {
-				return response.data;
-			});
-		};
-
-		// Retrieves the list of securities, including balances
-		model.allWithBalances = function() {
-			return model.all(true);
-		};
-
-		// Retrieves the most recent transaction for a security
-		model.findLastTransaction = function(securityId, accountType) {
-			return $http.get(model.path(securityId) + "/transactions/last", {
-				params: {
-					account_type: accountType
-				}
-			}).then(function(response) {
-				return response.data;
-			});
-		};
-
-		// Retrieves a single security
-		model.find = function(id) {
-			return $http.get(model.path(id), {
-				cache: cache
-			}).then(function(response) {
-				model.addRecent(response.data);
-				return response.data;
-			});
-		};
-
-		// Saves a security
-		model.save = function(security) {
-			// Flush the $http cache
-			model.flush();
-
-			return $http({
-				method: security.id ? "PATCH" : "POST",
-				url: model.path(security.id),
-				data: security
-			});
-		};
-
-		// Deletes a security
-		model.destroy = function(security) {
-			// Flush the $http cache
-			model.flush();
-
-			return $http.delete(model.path(security.id)).then(function() {
-				model.removeRecent(security.id);
-			});
-		};
-
-		// Flush the cache
-		model.flush = function(id) {
-			if (id) {
-				cache.remove(model.path(id));
-			} else {
-				cache.removeAll();
-			}
-		};
-
-		// Put an item into the LRU cache
-		model.addRecent = function(security) {
-			// Put the item into the LRU cache
-			model.recent = lruCache.put(security);
-
-			// Update local storage with the new list
-			$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
-		};
-
-		// Remove an item from the LRU cache
-		model.removeRecent = function(id) {
-			// Remove the item from the LRU cache
-			model.recent = lruCache.remove(id);
-
-			// Update local storage with the new list
-			$window.localStorage.setItem(LRU_LOCAL_STORAGE_KEY, JSON.stringify(lruCache.dump()));
-		};
-
-		return model;
-	}
-})();
+	Factory.factory.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
+}

@@ -1,5 +1,21 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Service {
+		constructor() {
+			// Enables/disables keyboard navigation on all navigable tables
+			this.isEnabled = true;
+		}
+
+		get enabled() {
+			return this.isEnabled;
+		}
+
+		set enabled(enabled) {
+			this.isEnabled = enabled;
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,12 +28,4 @@
 	 * Dependencies
 	 */
 	Service.$inject = [];
-
-	/**
-	 * Implementation
-	 */
-	function Service() {
-		// Enables/disables keyboard navigation on all navigable tables
-		this.enabled = true;
-	}
-})();
+}

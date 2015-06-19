@@ -1,5 +1,16 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Service {
+		constructor($anchorScroll) {
+			this.$anchorScroll = $anchorScroll;
+		}
+
+		scrollTo(anchor) {
+			this.$anchorScroll(anchor);
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,13 +23,4 @@
 	 * Dependencies
 	 */
 	Service.$inject = ["$anchorScroll"];
-
-	/**
-	 * Implementation
-	 */
-	function Service($anchorScroll) {
-		this.scrollTo = function(anchor) {
-			$anchorScroll(anchor);
-		};
-	}
-})();
+}

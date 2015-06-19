@@ -1,10 +1,6 @@
-(function() {
-	"use strict";
-
-	/**
-	 * Registration
-	 */
-	angular.module("ogComponents", [
-		"ui.bootstrap"
-	]);
-})();
+/**
+ * Registration
+ */
+angular.module("ogComponents", [
+	"ui.bootstrap"
+]);

@@ -1,56 +1,47 @@
-(function() {
-	"use strict";
+describe("ogTableLoading", () => {
+	let ogTableLoading;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "ogComponents"));
 
-	describe("ogTableLoading", function() {
-		// The object under test
-		var ogTableLoading;
+	// Load the template
+	beforeEach(module("og-components/og-table-loading/views/loading.html", "og-components/og-loading-spinner/views/loading.html"));
 
-		// Load the modules
-		beforeEach(module("lootMocks", "ogComponents"));
+	// Configure & compile the object under test
+	beforeEach(inject(directiveTest => {
+		ogTableLoading = directiveTest;
+		ogTableLoading.configure("og-table-loading", "tr");
+		ogTableLoading.scope.model = false;
+		ogTableLoading.compile({"og-table-loading": "model"}, true);
+	}));
 
-		// Load the template
-		beforeEach(module("og-components/og-table-loading/views/loading.html", "og-components/og-loading-spinner/views/loading.html"));
+	it("should be hidden", () => {
+		ogTableLoading.scope.$digest();
+		ogTableLoading.element = ogTableLoading.element.find("tr");
+		ogTableLoading.element.hasClass("ng-hide").should.be.true;
+	});
 
-		// Configure & compile the object under test
-		beforeEach(inject(function(directiveTest) {
-			ogTableLoading = directiveTest;
-			ogTableLoading.configure("og-table-loading", "tr");
-			ogTableLoading.scope.model = false;
-			ogTableLoading.compile({"og-table-loading": "model"}, true);
-		}));
+	describe("isLoading", () => {
+		beforeEach(() => ogTableLoading.scope.model = true);
 
-		it("should be hidden", function() {
+		it("should be visible", () => {
 			ogTableLoading.scope.$digest();
 			ogTableLoading.element = ogTableLoading.element.find("tr");
-			ogTableLoading.element.hasClass("ng-hide").should.be.true;
+			ogTableLoading.element.hasClass("ng-hide").should.be.false;
 		});
 
-		describe("isLoading", function() {
-			beforeEach(function() {
-				ogTableLoading.scope.model = true;
-			});
+		it("should include a TD spanning the specified number of columns", () => {
+			let td;
 
-			it("should be visible", function() {
-				ogTableLoading.scope.$digest();
-				ogTableLoading.element = ogTableLoading.element.find("tr");
-				ogTableLoading.element.hasClass("ng-hide").should.be.false;
-			});
-
-			it("should include a TD spanning the specified number of columns", function() {
-				var td;
-
-				ogTableLoading.compile({
-					"og-table-loading": "model",
-					"colspan": 3
-				}, true);
-				ogTableLoading.scope.$digest();
-				ogTableLoading.element = ogTableLoading.element.find("tr");
-				td = ogTableLoading.element.find("td");
-				td.should.not.be.empty;
-				td.attr("colspan").should.equal("3");
-			});
+			ogTableLoading.compile({
+				"og-table-loading": "model",
+				colspan: 3
+			}, true);
+			ogTableLoading.scope.$digest();
+			ogTableLoading.element = ogTableLoading.element.find("tr");
+			td = ogTableLoading.element.find("td");
+			td.should.not.be.empty;
+			td.attr("colspan").should.equal("3");
 		});
 	});
-})();
+});

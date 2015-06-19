@@ -1,311 +1,279 @@
-(function() {
-	"use strict";
+describe("categoryEditView", () => {
+	let	categoryIndexView,
+			categoryEditView,
+			expected,
+			originalRowCount,
+			targetRow;
 
-	/*jshint expr: true */
+	// Waits for the edit view to appear and checks the heading is correct
+	function waitForCategoryEditView(mode) {
+		browser.wait(protractor.ExpectedConditions.presenceOf(categoryEditView), 3000, "Timeout waiting for view to render");
+		categoryEditView.heading().should.eventually.equal(`${mode} Category`);
+	}
 
-	describe("categoryEditView", function() {
-		var categoryIndexView,
-				categoryEditView,
-				expected,
-				originalRowCount,
-				targetRow;
+	// Cancel & form invalid behaviour
+	function commonBehaviour() {
+		it("should not save changes when the cancel button is clicked", () => {
+			categoryIndexView.getRowValues(targetRow).then(values => {
+				categoryEditView.cancel();
 
-		beforeEach(function() {
-			categoryIndexView = require("./index");
-			categoryEditView = require("./edit");
+				// Row count should not have changed
+				categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
 
-			// Go to the categories index page
-			browser.get("/index.html#/categories");
-			browser.wait(protractor.ExpectedConditions.presenceOf(categoryIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
-
-			categoryIndexView.table.rows.count().then(function(count) {
-				originalRowCount = count;
+				// Category in the target row should not have changed
+				categoryIndexView.checkRowValues(targetRow, values);
 			});
 		});
 
-		describe("adding a category", function() {
-			beforeEach(function() {
-				// Add a new category
-				categoryIndexView.addCategory();
-				waitForCategoryEditView("Add");
+		describe("invalid data", () => {
+			beforeEach(() => {
+				categoryEditView.clearCategoryDetails();
 			});
 
-			describe("parent", function() {
-				describe("expense", function() {
-					beforeEach(function() {
-						targetRow = categoryIndexView.table.lastRow();
-						expected = {categoryName: "ZZZ Test category", direction: "outflow"};
-						categoryEditView.enterCategoryDetails(expected);
-					});
-
-					commonBehaviour();
-
-					it("should insert a new category when the save button is clicked", function() {
-						categoryEditView.save();
-
-						// Row count should have incremented by one
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
-
-						// Category in the target row should be the new category
-						categoryIndexView.checkRowValues(targetRow, expected);
-					});
-				});
-
-				describe("income", function() {
-					beforeEach(function() {
-						targetRow = categoryIndexView.table.firstRow();
-						expected = {categoryName: "AAA Test category", direction: "inflow"};
-						categoryEditView.enterCategoryDetails(expected);
-					});
-
-					commonBehaviour();
-
-					it("should insert a new category when the save button is clicked", function() {
-						categoryEditView.save();
-
-						// Row count should have incremented by one
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
-
-						// Category in the target row should be the new category
-						categoryIndexView.checkRowValues(targetRow, expected);
-					});
-				});
+			it("should not enable the save button", () => {
+				categoryEditView.saveButton.isEnabled().should.eventually.be.false;
 			});
 
-			describe("subcategory", function() {
-				describe("expense", function() {
-					beforeEach(function() {
-						targetRow = categoryIndexView.table.lastRow();
-						expected = {categoryName: "ZZZ Test subcategory", categoryParent: "ZZZ Test categor", direction: "outflow", isSubcategory: true};
-						categoryEditView.enterCategoryDetails(expected);
-					});
-
-					commonBehaviour();
-
-					it("should insert a new category when the save button is clicked", function() {
-						categoryEditView.save();
-
-						// Row count should have incremented by one
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
-
-						// Category in the target row should be the new category
-						categoryIndexView.checkRowValues(targetRow, expected);
-					});
-				});
-
-				describe("income", function() {
-					beforeEach(function() {
-						targetRow = categoryIndexView.table.row(1);
-						expected = {categoryName: "AAA Test subcategory", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
-						categoryEditView.enterCategoryDetails(expected);
-					});
-
-					commonBehaviour();
-
-					it("should insert a new category when the save button is clicked", function() {
-						categoryEditView.save();
-
-						// Row count should have incremented by one
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
-
-						// Category in the target row should be the new category
-						categoryIndexView.checkRowValues(targetRow, expected);
-					});
-				});
-			});
+			// MISSING - category name, parent & direction should show red cross when invalid
+			// MISSING - form group around category name & parent should have 'has-error' class when invalid
+			// MISSING - parent should behave like non-editable typeahead
 		});
 
-		describe("editing a category", function() {
-			describe("parent", function() {
-				describe("expense", function() {
-					beforeEach(function() {
-						categoryIndexView.lastCategory().then(function(row) {
-							targetRow = row;
-						});
-					});
+		// MISSING - error message should display when present
+		// MISSING - category name & parent text should be selected when input gets focus
+	}
 
-					beforeEach(editRow);
+	// Edits the target index row
+	function editRow() {
+		targetRow.evaluate("$index").then(index => {
+			// Edit an existing category
+			categoryIndexView.editCategory(index);
+			waitForCategoryEditView("Edit");
+		});
+	}
 
-					beforeEach(function() {
-						// Check that the edit form is correctly populated
-						checkEditFormMatchesIndexRow(targetRow);
+	// Checks the values in the edit form against the values from an index row
+	function checkEditFormMatchesIndexRow(row) {
+		categoryIndexView.getRowValues(row).then(values => {
+			categoryEditView.categoryNameInput.getAttribute("value").should.eventually.equal(values.categoryName);
+			if (!values.isSubcategory) {
+				categoryEditView.directionRadioButton(values.direction, true).isPresent().should.eventually.be.true;
+			} else {
+				categoryEditView.categoryParentTypeahead.getAttribute("value").should.eventually.equal(values.categoryParent);
+			}
+		});
+	}
 
-						expected = {categoryName: "AA Test category (edited)", direction: "inflow"};
-						categoryEditView.enterCategoryDetails(expected);
-					});
+	beforeEach(() => {
+		categoryIndexView = require("./index");
+		categoryEditView = require("./edit");
 
-					commonBehaviour();
+		// Go to the categories index page
+		browser.get("/index.html#/categories");
+		browser.wait(protractor.ExpectedConditions.presenceOf(categoryIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
-					it("should update an existing category when the save button is clicked", function() {
-						categoryEditView.save();
+		categoryIndexView.table.rows.count().then(count => originalRowCount = count);
+	});
 
-						// Row count should not have changed
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-						// After editing, the row should now be the first category
-						categoryIndexView.firstCategory().then(function(row) {
-							categoryIndexView.checkRowValues(row, expected);
-						});
-					});
-				});
-
-				describe("income", function() {
-					beforeEach(function() {
-						categoryIndexView.firstCategory().then(function(row) {
-							targetRow = row;
-						});
-					});
-
-					beforeEach(editRow);
-
-					beforeEach(function() {
-						// Check that the edit form is correctly populated
-						checkEditFormMatchesIndexRow(targetRow);
-
-						expected = {categoryName: "ZZZ Test category (edited)", direction: "outflow"};
-						categoryEditView.enterCategoryDetails(expected);
-					});
-
-					commonBehaviour();
-
-					it("should update an existing category when the save button is clicked", function() {
-						categoryEditView.save();
-
-						// Row count should not have changed
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-						// After editing, the row should now be the last category
-						categoryIndexView.lastCategory().then(function(row) {
-							categoryIndexView.checkRowValues(row, expected);
-						});
-					});
-				});
-			});
-
-			describe("subcategory", function() {
-				describe("income", function() {
-					beforeEach(function() {
-						categoryIndexView.firstSubcategory().then(function(row) {
-							targetRow = row;
-						});
-					});
-					
-					beforeEach(editRow);
-
-					beforeEach(function() {
-						// Check that the edit form is correctly populated
-						checkEditFormMatchesIndexRow(targetRow);
-
-						expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited", direction: "outflow", isSubcategory: true};
-						categoryEditView.enterCategoryDetails(expected);
-					});
-
-					commonBehaviour();
-
-					it("should update an existing category when the save button is clicked", function() {
-						categoryEditView.save();
-
-						// Row count should not have changed
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-						// After editing, the row should now be the last subcategory
-						categoryIndexView.lastSubcategory().then(function(row) {
-							categoryIndexView.checkRowValues(row, expected);
-						});
-					});
-				});
-
-				describe("expense", function() {
-					beforeEach(function() {
-						categoryIndexView.lastSubcategory().then(function(row) {
-							targetRow = row;
-						});
-					});
-					
-					beforeEach(editRow);
-
-					beforeEach(function() {
-						// Check that the edit form is correctly populated
-						checkEditFormMatchesIndexRow(targetRow);
-
-						expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
-						categoryEditView.enterCategoryDetails(expected);
-					});
-
-					commonBehaviour();
-
-					it("should update an existing category when the save button is clicked", function() {
-						categoryEditView.save();
-
-						// Row count should not have changed
-						categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-						// After editing, the row should now be the first subcategory
-						categoryIndexView.firstSubcategory().then(function(row) {
-							categoryIndexView.checkRowValues(row, expected);
-						});
-					});
-				});
-			});
+	describe("adding a category", () => {
+		beforeEach(() => {
+			// Add a new category
+			categoryIndexView.addCategory();
+			waitForCategoryEditView("Add");
 		});
 
-		// Waits for the edit view to appear and checks the heading is correct
-		function waitForCategoryEditView(mode) {
-			browser.wait(protractor.ExpectedConditions.presenceOf(categoryEditView), 3000, "Timeout waiting for view to render");
-			categoryEditView.heading().should.eventually.equal(mode + " Category");
-		}
+		describe("parent", () => {
+			describe("expense", () => {
+				beforeEach(() => {
+					targetRow = categoryIndexView.table.lastRow();
+					expected = {categoryName: "ZZZ Test category", direction: "outflow"};
+					categoryEditView.enterCategoryDetails(expected);
+				});
 
-		// Cancel & form invalid behaviour
-		function commonBehaviour() {
-			it("should not save changes when the cancel button is clicked", function() {
-				categoryIndexView.getRowValues(targetRow).then(function(expected) {
-					categoryEditView.cancel();
+				commonBehaviour();
 
-					// Row count should not have changed
-					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+				it("should insert a new category when the save button is clicked", () => {
+					categoryEditView.save();
 
-					// Category in the target row should not have changed
+					// Row count should have incremented by one
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+
+					// Category in the target row should be the new category
 					categoryIndexView.checkRowValues(targetRow, expected);
 				});
 			});
 
-			describe("invalid data", function() {
-				beforeEach(function() {
-					categoryEditView.clearCategoryDetails();
+			describe("income", () => {
+				beforeEach(() => {
+					targetRow = categoryIndexView.table.firstRow();
+					expected = {categoryName: "AAA Test category", direction: "inflow"};
+					categoryEditView.enterCategoryDetails(expected);
 				});
 
-				it("should not enable the save button", function() {
-					categoryEditView.saveButton.isEnabled().should.eventually.be.false;
+				commonBehaviour();
+
+				it("should insert a new category when the save button is clicked", () => {
+					categoryEditView.save();
+
+					// Row count should have incremented by one
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+
+					// Category in the target row should be the new category
+					categoryIndexView.checkRowValues(targetRow, expected);
+				});
+			});
+		});
+
+		describe("subcategory", () => {
+			describe("expense", () => {
+				beforeEach(() => {
+					targetRow = categoryIndexView.table.lastRow();
+					expected = {categoryName: "ZZZ Test subcategory", categoryParent: "ZZZ Test categor", direction: "outflow", isSubcategory: true};
+					categoryEditView.enterCategoryDetails(expected);
 				});
 
-				//TODO - category name, parent & direction should show red cross when invalid
-				//TODO - form group around category name & parent should have 'has-error' class when invalid
-				//TODO - parent should behave like non-editable typeahead
+				commonBehaviour();
+
+				it("should insert a new category when the save button is clicked", () => {
+					categoryEditView.save();
+
+					// Row count should have incremented by one
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+
+					// Category in the target row should be the new category
+					categoryIndexView.checkRowValues(targetRow, expected);
+				});
 			});
 
-			//TODO - error message should display when present
-			//TODO - category name & parent text should be selected when input gets focus
-		}
+			describe("income", () => {
+				beforeEach(() => {
+					targetRow = categoryIndexView.table.row(1);
+					expected = {categoryName: "AAA Test subcategory", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
+					categoryEditView.enterCategoryDetails(expected);
+				});
 
-		// Edits the target index row
-		function editRow() {
-			targetRow.evaluate("$index").then(function(index) {
-				// Edit an existing category
-				categoryIndexView.editCategory(index);
-				waitForCategoryEditView("Edit");
-			});
-		}
+				commonBehaviour();
 
-		// Checks the values in the edit form against the values from an index row
-		function checkEditFormMatchesIndexRow(row) {
-			categoryIndexView.getRowValues(row).then(function(expected) {
-				categoryEditView.categoryNameInput.getAttribute("value").should.eventually.equal(expected.categoryName);
-				if (!expected.isSubcategory) {
-					categoryEditView.directionRadioButton(expected.direction, true).isPresent().should.eventually.be.true;
-				} else {
-					categoryEditView.categoryParentTypeahead.getAttribute("value").should.eventually.equal(expected.categoryParent);
-				}
+				it("should insert a new category when the save button is clicked", () => {
+					categoryEditView.save();
+
+					// Row count should have incremented by one
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+
+					// Category in the target row should be the new category
+					categoryIndexView.checkRowValues(targetRow, expected);
+				});
 			});
-		}
+		});
 	});
-})();
+
+	describe("editing a category", () => {
+		describe("parent", () => {
+			describe("expense", () => {
+				beforeEach(() => categoryIndexView.lastCategory().then(row => targetRow = row));
+
+				beforeEach(editRow);
+
+				beforeEach(() => {
+					// Check that the edit form is correctly populated
+					checkEditFormMatchesIndexRow(targetRow);
+
+					expected = {categoryName: "AA Test category (edited)", direction: "inflow"};
+					categoryEditView.enterCategoryDetails(expected);
+				});
+
+				commonBehaviour();
+
+				it("should update an existing category when the save button is clicked", () => {
+					categoryEditView.save();
+
+					// Row count should not have changed
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+
+					// After editing, the row should now be the first category
+					categoryIndexView.firstCategory().then(row => categoryIndexView.checkRowValues(row, expected));
+				});
+			});
+
+			describe("income", () => {
+				beforeEach(() => categoryIndexView.firstCategory().then(row => targetRow = row));
+
+				beforeEach(editRow);
+
+				beforeEach(() => {
+					// Check that the edit form is correctly populated
+					checkEditFormMatchesIndexRow(targetRow);
+
+					expected = {categoryName: "ZZZ Test category (edited)", direction: "outflow"};
+					categoryEditView.enterCategoryDetails(expected);
+				});
+
+				commonBehaviour();
+
+				it("should update an existing category when the save button is clicked", () => {
+					categoryEditView.save();
+
+					// Row count should not have changed
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+
+					// After editing, the row should now be the last category
+					categoryIndexView.lastCategory().then(row => categoryIndexView.checkRowValues(row, expected));
+				});
+			});
+		});
+
+		describe("subcategory", () => {
+			describe("income", () => {
+				beforeEach(() => categoryIndexView.firstSubcategory().then(row => targetRow = row));
+
+				beforeEach(editRow);
+
+				beforeEach(() => {
+					// Check that the edit form is correctly populated
+					checkEditFormMatchesIndexRow(targetRow);
+
+					expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited", direction: "outflow", isSubcategory: true};
+					categoryEditView.enterCategoryDetails(expected);
+				});
+
+				commonBehaviour();
+
+				it("should update an existing category when the save button is clicked", () => {
+					categoryEditView.save();
+
+					// Row count should not have changed
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+
+					// After editing, the row should now be the last subcategory
+					categoryIndexView.lastSubcategory().then(row => categoryIndexView.checkRowValues(row, expected));
+				});
+			});
+
+			describe("expense", () => {
+				beforeEach(() => categoryIndexView.lastSubcategory().then(row => targetRow = row));
+
+				beforeEach(editRow);
+
+				beforeEach(() => {
+					// Check that the edit form is correctly populated
+					checkEditFormMatchesIndexRow(targetRow);
+
+					expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
+					categoryEditView.enterCategoryDetails(expected);
+				});
+
+				commonBehaviour();
+
+				it("should update an existing category when the save button is clicked", () => {
+					categoryEditView.save();
+
+					// Row count should not have changed
+					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+
+					// After editing, the row should now be the first subcategory
+					categoryIndexView.firstSubcategory().then(row => categoryIndexView.checkRowValues(row, expected));
+				});
+			});
+		});
+	});
+});

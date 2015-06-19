@@ -1,8 +1,4 @@
-(function() {
-	"use strict";
-
-	/**
-	 * Registration
-	 */
-	angular.module("ogComponentsMocks", []);
-})();
+/**
+ * Registration
+ */
+angular.module("ogComponentsMocks", []);

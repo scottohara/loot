@@ -1,80 +1,87 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Factory {
+		constructor($window, $http, $cacheFactory) {
+			this.$window = $window;
+			this.$http = $http;
+			this.$cacheFactory = $cacheFactory;
+		}
+
+		get SESSION_STORAGE_KEY() {
+			return "lootAuthenticationKey";
+		}
+
+		// Checks if the API authorisation header is set
+		get isAuthenticated() {
+			// Get the encoded credentials from sessionStorage
+			const authenticationKey = this.$window.sessionStorage.getItem(this.SESSION_STORAGE_KEY);
+
+			if (authenticationKey) {
+				// Set the Authorization header for all http requests
+				this.$http.defaults.headers.common.Authorization = this.authorisation(authenticationKey);
+				return true;
+			}
+
+			// Not authenticated
+			return false;
+		}
+
+		// Validate the user credentials and set the API authorisation header
+		login(username, password) {
+			// Base64 encode the credentials
+			const authenticationKey = this.$window.btoa(`${username}:${password}`);
+
+			// Validate the credentials
+			return this.$http.post("/logins", null, {
+				headers: {
+					Authorization: this.authorisation(authenticationKey)
+				}
+			}).then(() => {
+				// Login successful, store the encoded credentials in sessionStorage
+				this.$window.sessionStorage.setItem(this.SESSION_STORAGE_KEY, authenticationKey);
+
+				// Set the Authorization header for all http requests
+				this.$http.defaults.headers.common.Authorization = this.authorisation(authenticationKey);
+			});
+		}
+
+		// Clear the API authorisation header and stored credentials
+		logout() {
+			// Remove the encoded credentials from sessionStorage
+			this.$window.sessionStorage.removeItem(this.SESSION_STORAGE_KEY);
+
+			// Clear the Authorization header for all http requests
+			this.$http.defaults.headers.common.Authorization = this.authorisation("");
+
+			// Clear all http caches (except the template cache)
+			angular.forEach(this.$cacheFactory.info(), cache => {
+				if ("templates" !== cache.id) {
+					this.$cacheFactory.get(cache.id).removeAll();
+				}
+			});
+		}
+
+		// Helper function to construct basic authorization header value
+		authorisation(authenticationKey) {
+			return `Basic ${authenticationKey}`;
+		}
+
+		static factory($window, $http, $cacheFactory) {
+			return new Factory($window, $http, $cacheFactory);
+		}
+	}
 
 	/**
 	 * Registration
 	 */
 	angular
 		.module("lootAuthentication")
-		.factory("authenticationModel", Factory);
+		.factory("authenticationModel", Factory.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.$inject = ["$window", "$http", "$cacheFactory"];
-
-	/**
-	 * Implementation
-	 */
-	function Factory($window, $http, $cacheFactory) {
-		var model = {},
-				SESSION_STORAGE_KEY = "lootAuthenticationKey";
-
-		// Checks if the API authorisation header is set
-		model.isAuthenticated = function() {
-			// Get the encoded credentials from sessionStorage
-			var authenticationKey = $window.sessionStorage.getItem(SESSION_STORAGE_KEY);
-
-			if (authenticationKey) {
-				// Set the Authorization header for all http requests
-				$http.defaults.headers.common.Authorization = authorisation(authenticationKey);
-				return true;
-			} else {
-				// Not authenticated
-				return false;
-			}
-		};
-
-		// Validate the user credentials and set the API authorisation header
-		model.login = function(username, password) {
-			// Base64 encode the credentials
-			var authenticationKey = $window.btoa(username + ":" + password);
-
-			// Validate the credentials
-			return $http.post("/logins", null, {
-				headers: {
-					"Authorization": authorisation(authenticationKey)
-				}
-			}).then(function() {
-				// Login successful, store the encoded credentials in sessionStorage
-				$window.sessionStorage.setItem(SESSION_STORAGE_KEY, authenticationKey);
-
-				// Set the Authorization header for all http requests
-				$http.defaults.headers.common.Authorization = authorisation(authenticationKey);
-			});
-		};
-
-		// Clear the API authorisation header and stored credentials
-		model.logout = function() {
-			// Remove the encoded credentials from sessionStorage
-			$window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
-
-			// Clear the Authorization header for all http requests
-			$http.defaults.headers.common.Authorization = authorisation("");
-
-			// Clear all http caches (except the template cache)
-			angular.forEach($cacheFactory.info(), function(cache) {
-				if ("templates" !== cache.id) {
-					$cacheFactory.get(cache.id).removeAll();
-				}
-			});
-		};
-
-		// Helper function to construct basic authorization header value
-		var authorisation = function(authenticationKey) {
-			return "Basic " + authenticationKey;
-		};
-
-		return model;
-	}
-})();
+	Factory.factory.$inject = ["$window", "$http", "$cacheFactory"];
+}

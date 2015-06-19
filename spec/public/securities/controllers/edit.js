@@ -1,86 +1,67 @@
-(function() {
-	"use strict";
+describe("SecurityEditController", () => {
+	let	securityEditController,
+			controllerTest,
+			$modalInstance,
+			securityModel,
+			security;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "securityModel", "security"])));
 
-	describe("SecurityEditController", function() {
-		// The object under test
-		var securityEditController;
+	// Configure & compile the object under test
+	beforeEach(inject((_controllerTest_, _$modalInstance_, _securityModel_, _security_) => {
+		controllerTest = _controllerTest_;
+		$modalInstance = _$modalInstance_;
+		securityModel = _securityModel_;
+		security = _security_;
+		securityEditController = controllerTest("SecurityEditController");
+	}));
 
-		// Dependencies
-		var controllerTest,
-				$modalInstance,
-				securityModel,
-				security;
+	describe("when a security is provided", () => {
+		it("should make the passed security available to the view", () => securityEditController.security.should.deep.equal(security));
 
-		// Load the modules
-		beforeEach(module("lootMocks", "lootSecurities", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$modalInstance", "securityModel", "security"]);
-		}));
+		it("should set the mode to Edit", () => securityEditController.mode.should.equal("Edit"));
+	});
 
-		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$modalInstance_, _securityModel_, _security_) {
-			controllerTest = _controllerTest_;
-			$modalInstance = _$modalInstance_;
-			securityModel = _securityModel_;
-			security = _security_;
-			securityEditController = controllerTest("SecurityEditController");
-		}));
+	describe("when a security is not provided", () => {
+		beforeEach(() => securityEditController = controllerTest("SecurityEditController", {security: null}));
 
-		describe("when a security is provided", function() {
-			it("should make the passed security available to the view", function() {
-				securityEditController.security.should.deep.equal(security);
-			});
-			
-			it("should set the mode to Edit", function() {
-				securityEditController.mode.should.equal("Edit");
-			});
+		it("should make an empty security object available to the view", () => {
+			securityEditController.security.should.be.an.Object;
+			securityEditController.security.should.be.empty;
 		});
 
-		describe("when a security is not provided", function() {
-			beforeEach(function() {
-				securityEditController = controllerTest("SecurityEditController", {security: undefined});
-			});
+		it("should set the mode to Add", () => securityEditController.mode.should.equal("Add"));
+	});
 
-			it("should make an empty security object available to the view", function() {
-				securityEditController.security.should.be.an.Object;
-				securityEditController.security.should.be.empty;
-			});
-
-			it("should set the mode to Add", function() {
-				securityEditController.mode.should.equal("Add");
-			});
+	describe("save", () => {
+		it("should reset any previous error messages", () => {
+			securityEditController.errorMessage = "error message";
+			securityEditController.save();
+			(null === securityEditController.errorMessage).should.be.true;
 		});
 
-		describe("save", function() {
-			it("should reset any previous error messages", function() {
-				securityEditController.errorMessage = "error message";
-				securityEditController.save();
-				(null === securityEditController.errorMessage).should.be.true;
-			});
-
-			it("should save the security", function() {
-				securityEditController.save();
-				securityModel.save.should.have.been.calledWith(security);
-			});
-
-			it("should close the modal when the security save is successful", function() {
-				securityEditController.save();
-				$modalInstance.close.should.have.been.calledWith(security);
-			});
-
-			it("should display an error message when the security save is unsuccessful", function() {
-				securityEditController.security.id = -1;
-				securityEditController.save();
-				securityEditController.errorMessage.should.equal("unsuccessful");
-			});
+		it("should save the security", () => {
+			securityEditController.save();
+			securityModel.save.should.have.been.calledWith(security);
 		});
 
-		describe("cancel", function() {
-			it("should dismiss the modal", function() {
-				securityEditController.cancel();
-				$modalInstance.dismiss.should.have.been.called;
-			});
+		it("should close the modal when the security save is successful", () => {
+			securityEditController.save();
+			$modalInstance.close.should.have.been.calledWith(security);
+		});
+
+		it("should display an error message when the security save is unsuccessful", () => {
+			securityEditController.security.id = -1;
+			securityEditController.save();
+			securityEditController.errorMessage.should.equal("unsuccessful");
 		});
 	});
-})();
+
+	describe("cancel", () => {
+		it("should dismiss the modal", () => {
+			securityEditController.cancel();
+			$modalInstance.dismiss.should.have.been.called;
+		});
+	});
+});

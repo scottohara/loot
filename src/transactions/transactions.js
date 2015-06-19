@@ -1,16 +1,12 @@
-(function() {
-	"use strict";
-
-	/**
-	 * Registration
-	 */
-	angular.module("lootTransactions", [
-		"ui.bootstrap",
-		"ui.router",
-		"ogComponents",
-		"lootAccounts",
-		"lootCategories",
-		"lootPayees",
-		"lootSecurities"
-	]);
-})();
+/**
+ * Registration
+ */
+angular.module("lootTransactions", [
+	"ui.bootstrap",
+	"ui.router",
+	"ogComponents",
+	"lootAccounts",
+	"lootCategories",
+	"lootPayees",
+	"lootSecurities"
+]);

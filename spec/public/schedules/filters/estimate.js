@@ -1,26 +1,13 @@
-(function() {
-	"use strict";
+describe("estimate", () => {
+	let estimateFilter;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "lootSchedules"));
 
-	describe("estimate", function() {
-		// The object under test
-		var estimateFilter;
+	// Inject the object under test
+	beforeEach(inject(_estimateFilter_ => estimateFilter = _estimateFilter_));
 
-		// Load the modules
-		beforeEach(module("lootMocks", "lootSchedules"));
+	it("should prefix an estimate with ~", () => estimateFilter(1, true).should.equal("~1"));
 
-		// Inject the object under test
-		beforeEach(inject(function(_estimateFilter_) {
-			estimateFilter = _estimateFilter_;
-		}));
-
-		it("should prefix an estimate with ~", function() {
-			estimateFilter(1, true).should.equal("~1");
-		});
-
-		it("should not prefix a non-estimate", function() {
-			estimateFilter(1, false).should.equal("1");
-		});
-	});
-})();
+	it("should not prefix a non-estimate", () => estimateFilter(1, false).should.equal("1"));
+});

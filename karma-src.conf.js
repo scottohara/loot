@@ -1,7 +1,6 @@
-module.exports = function(config) {
-	"use strict";
-
+module.exports = config => {
 	config.set({
+
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: "",
 
@@ -11,6 +10,7 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
+
 			// Vendor scripts to include (but not watch)
 			{
 				pattern: "node_modules/jquery/dist/jquery.js",
@@ -37,6 +37,10 @@ module.exports = function(config) {
 				watched: false
 			},
 			{
+				pattern: "node_modules/babel-core/browser-polyfill.min.js",
+				watched: false
+			},
+			{
 				pattern: "node_modules/angular-mocks/angular-mocks.js",
 				watched: false
 			},
@@ -48,13 +52,27 @@ module.exports = function(config) {
 			"src/loot/**/*.js",
 			"src/**/views/*.html",
 
-			// Test files
-			"spec/public/mocks/!(loot)/*.js",									// Mock modules
-			"spec/public/mocks/!(loot)/**/providers/*.js",		// Mock base providers (eg. resolves)
-			"spec/public/mocks/!(loot)/**/*.js",							// Mocks
-			"spec/public/mocks/loot.js",											// lootMocks module
-			"spec/public/mocks/loot/*.js",										// lootMocks helpers
-			"spec/public/**/*.js"															// Specs
+			/**
+			 * Test files
+			 */
+
+			// Mock modules
+			"spec/public/mocks/!(loot)/*.js",
+
+			// Mock base providers (eg. resolves)
+			"spec/public/mocks/!(loot)/**/providers/*.js",
+
+			// Mocks
+			"spec/public/mocks/!(loot)/**/*.js",
+
+			// lootMocks module
+			"spec/public/mocks/loot.js",
+
+			// lootMocks helpers
+			"spec/public/mocks/loot/*.js",
+
+			// Specs
+			"spec/public/**/*.js"
 		],
 
 		// list of files to exclude
@@ -66,12 +84,19 @@ module.exports = function(config) {
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			"**/src/**/views/*.html": ["ng-html2js"],
-			"**/src/**/*.js": ["coverage"],
-			"**/spec/public/**/*.js": ["coverage"]
+			"**/src/**/*.js": ["babel", "coverage"],
+			"**/spec/public/**/*.js": ["babel", "coverage"]
 		},
 
 		ngHtml2JsPreprocessor: {
 			stripPrefix: "src/"
+		},
+
+		babelPreprocessor: {
+			options: {
+				auxiliaryCommentBefore: "istanbul ignore next",
+				sourceMap: "inline"
+			}
 		},
 
 		// test results reporter to use
@@ -84,7 +109,7 @@ module.exports = function(config) {
 				{type: "html", dir: "coverage"},
 				{type: "text"},
 				{type: "text-summary"},
-				{type: "lcovonly", dir: "coverage"},
+				{type: "lcovonly", dir: "coverage"}
 			],
 			subdir: "frontend"
 		},

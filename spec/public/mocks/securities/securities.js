@@ -1,8 +1,4 @@
-(function() {
-	"use strict";
-
-	/**
-	 * Registration
-	 */
-	angular.module("lootSecuritiesMocks", []);
-})();
+/**
+ * Registration
+ */
+angular.module("lootSecuritiesMocks", []);

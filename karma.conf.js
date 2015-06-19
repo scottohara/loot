@@ -1,7 +1,6 @@
-module.exports = function(config) {
-	"use strict";
-
+module.exports = config => {
 	config.set({
+
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: "",
 
@@ -11,6 +10,7 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
+
 			// Vendor script to include (but not watch)
 			{
 				pattern: "public/vendor*.js",
@@ -29,13 +29,27 @@ module.exports = function(config) {
 			"public/app*.js",
 			"src/**/views/*.html",
 
-			// Test files
-			"spec/public/mocks/!(loot)/*.js",									// Mock modules
-			"spec/public/mocks/!(loot)/**/providers/*.js",		// Mock base providers (eg. resolves)
-			"spec/public/mocks/!(loot)/**/*.js",							// Mocks
-			"spec/public/mocks/loot.js",											// lootMocks module
-			"spec/public/mocks/loot/*.js",										// lootMocks helpers
-			"spec/public/**/*.js"															// Specs
+			/**
+			 * Test files
+			 */
+
+			// Mock modules
+			"spec/public/mocks/!(loot)/*.js",
+
+			// Mock base providers (eg. resolves)
+			"spec/public/mocks/!(loot)/**/providers/*.js",
+
+			// Mocks
+			"spec/public/mocks/!(loot)/**/*.js",
+
+			// lootMocks module
+			"spec/public/mocks/loot.js",
+
+			// lootMocks helpers
+			"spec/public/mocks/loot/*.js",
+
+			// Specs
+			"spec/public/**/*.js"
 		],
 
 		// list of files to exclude
@@ -48,11 +62,19 @@ module.exports = function(config) {
 		preprocessors: {
 			"**/src/**/views/*.html": ["ng-html2js"],
 			"**/public/app*.js": ["sourcemap", "coverage"],
-			"**/public/vendor*.js": ["sourcemap"]
+			"**/public/vendor*.js": ["sourcemap"],
+			"**/spec/public/**/*.js": ["babel", "coverage"]
 		},
 
 		ngHtml2JsPreprocessor: {
 			stripPrefix: "src/"
+		},
+
+		babelPreprocessor: {
+			options: {
+				auxiliaryCommentBefore: "istanbul ignore next",
+				sourceMap: "inline"
+			}
 		},
 
 		// test results reporter to use
@@ -65,7 +87,7 @@ module.exports = function(config) {
 				{type: "html", dir: "coverage"},
 				{type: "text"},
 				{type: "text-summary"},
-				{type: "lcovonly", dir: "coverage"},
+				{type: "lcovonly", dir: "coverage"}
 			],
 			subdir: "frontend"
 		},

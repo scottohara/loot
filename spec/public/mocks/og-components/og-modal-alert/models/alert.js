@@ -1,5 +1,18 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock alert object
+			this.alert = {message: "alert message"};
+		}
+
+		$get() {
+			// Return the mock alert object
+			return this.alert;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,17 +22,7 @@
 		.provider("alertMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock alert object
-		provider.alert = {message: "alert message"};
-
-		provider.$get = function() {
-			// Return the mock alert object
-			return provider.alert;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

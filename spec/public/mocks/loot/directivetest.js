@@ -1,29 +1,18 @@
-(function () {
-	"use strict";
-
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootMocks")
-		.factory("directiveTest", Factory);
-
-	/**
-	 * Dependencies
-	 */
-	Factory.$inject = ["$rootScope", "$compile"];
-
+{
 	/**
 	 * Implementation
 	 */
-	function Factory($rootScope, $compile) {
-		var helper = {};
+	class Factory {
+		constructor($rootScope, $compile) {
+			this.$rootScope = $rootScope;
+			this.$compile = $compile;
+		}
 
 		// Configures the name of the directive and the element tag (and optionally, any contents)
-		helper.configure = function(directive, tagName, content) {
-			helper.directive = directive;
-			helper.tagName = tagName || "div";
-			helper.content = content || "";
+		configure(directive, tagName, content) {
+			this.directive = directive;
+			this.tagName = tagName || "div";
+			this.content = content || "";
 
 			switch (tagName) {
 				case "tr":
@@ -32,43 +21,60 @@
 				case "thead":
 				case "tbody":
 				case "tfoot":
-					helper.container = "table";
+					this.container = "table";
 					break;
 
 				default:
-					helper.container = "div";
+					this.container = "div";
 			}
 
 			// Create a new scope
-			helper.scope = $rootScope.$new();
-		};
+			this.scope = this.$rootScope.$new();
+		}
 
 		// Compiles the directive and returns an array containing
 		// - the DOM element into which the directive was compiled
 		// - the scope object that it was compiled with
-		helper.compile = function(options, replace) {
-			var directive;
-
-			options = options || {};
+		compile(options = {}, replace) {
+			let directive;
 
 			// Configure the directive with any passed options
-			directive = helper.directive + (options.hasOwnProperty(helper.directive) ? "=\"" + options[helper.directive] + "\"" : "");
-			directive = Object.keys(options).reduce(function(memo, option) {
-				if (option !== helper.directive) {
-					memo += " " + option + "=\"" + options[option] + "\"";
+			directive = `${this.directive}${options.hasOwnProperty(this.directive) ? `="${options[this.directive]}"` : ""}`;
+			directive = Object.keys(options).reduce((memo, option) => {
+				if (option !== this.directive) {
+					return `${memo} ${option}="${options[option]}"`;
 				}
+
 				return memo;
 			}, directive);
 
 			// Compile the directive into the specified element tag using the new scope
-			helper.element = $compile("<" + helper.container + "><" + helper.tagName + " ng-model=\"model\" " + directive + ">" + helper.content + "</" + helper.tagName + "></" + helper.container + ">")(helper.scope);
+			this.element = this.$compile(`<${this.container}>
+																			<${this.tagName} ng-model="model" ${directive}>
+																				${this.content}
+																			</${this.tagName}>
+																		</${this.container}>`)(this.scope);
 
 			// Unless the element is to be replaced, find the element within the compiled directive
 			if (!replace) {
-				helper.element = helper.element.find(helper.tagName);
+				this.element = this.element.find(this.tagName);
 			}
-		};
+		}
 
-		return helper;
+		static factory($rootScope, $compile) {
+			return new Factory($rootScope, $compile);
+		}
 	}
-})();
+
+	/**
+	 * Registration
+	 */
+	angular
+		.module("lootMocks")
+		.factory("directiveTest", Factory.factory);
+
+	/**
+	 * Dependencies
+	 */
+	Factory.factory.$inject = ["$rootScope", "$compile"];
+}

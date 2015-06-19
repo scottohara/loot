@@ -1,5 +1,18 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock confirm object
+			this.confirm = {message: "confirm message"};
+		}
+
+		$get() {
+			// Return the mock confirm object
+			return this.confirm;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,17 +22,7 @@
 		.provider("confirmMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock confirm object
-		provider.confirm = {message: "confirm message"};
-
-		provider.$get = function() {
-			// Return the mock confirm object
-			return provider.confirm;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

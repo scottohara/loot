@@ -1,5 +1,27 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {}
+
+		// Mock input currency controller object
+		ogInputCurrencyController($scope) {
+			$scope.setDecimalPlaces = sinon.stub();
+			$scope.formattedToRaw = sinon.stub().returnsArg(0);
+			$scope.rawToFormatted = sinon.stub().returnsArg(0);
+
+			this.type = "ogInputCurrencyController";
+			this.setDecimalPlaces = $scope.setDecimalPlaces;
+			this.formattedToRaw = $scope.formattedToRaw;
+			this.rawToFormatted = $scope.rawToFormatted;
+		}
+
+		$get() {
+			// Return the mock input currency controller object
+			return this.ogInputCurrencyController;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,26 +31,7 @@
 		.provider("ogInputCurrencyControllerMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock input currency controller object
-		provider.ogInputCurrencyController = function($scope) {
-			$scope.setDecimalPlaces = sinon.stub();
-			$scope.formattedToRaw = sinon.stub().returnsArg(0);
-			$scope.rawToFormatted = sinon.stub().returnsArg(0);
-
-			this.type = "ogInputCurrencyController";
-			this.setDecimalPlaces = $scope.setDecimalPlaces;
-			this.formattedToRaw = $scope.formattedToRaw;
-			this.rawToFormatted = $scope.rawToFormatted;
-		};
-
-		provider.$get = function() {
-			// Return the mock input currency controller object
-			return provider.ogInputCurrencyController;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

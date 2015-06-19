@@ -1,5 +1,26 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, payeeModel, payee) {
+			this.$modalInstance = $modalInstance;
+			this.payeeModel = payeeModel;
+			this.payee = payee;
+			this.errorMessage = null;
+		}
+
+		// Delete and close the modal
+		deletePayee() {
+			this.errorMessage = null;
+			this.payeeModel.destroy(this.payee).then(() => this.$modalInstance.close(), error => this.errorMessage = error.data);
+		}
+
+		// Dismiss the modal without deleting
+		cancel() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,38 +33,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "payeeModel", "payee"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, payeeModel, payee) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.payee = payee;
-		vm.deletePayee = deletePayee;
-		vm.cancel = cancel;
-		vm.errorMessage = null;
-
-		/**
-		 * Implementation
-		 */
-
-		// Delete and close the modal
-		function deletePayee() {
-			vm.errorMessage = null;
-			payeeModel.destroy(vm.payee).then(function() {
-				$modalInstance.close();
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
-		}
-
-		// Dismiss the modal without deleting
-		function cancel() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

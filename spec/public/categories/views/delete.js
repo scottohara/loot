@@ -1,61 +1,45 @@
-(function() {
-	"use strict";
-
-	function CategoryDeleteView() {
-		var view = this;
-
-		/**
-		 * UI elements
-		 */
-		view.form = element(by.css("form[name=categoryForm]"));
-		view.heading = heading;
-		view.subcategoryAlert = element(by.cssContainingText("div.alert", "All subcategories will also be deleted"));
-		view.categoryName = categoryName;
-		view.categoryParent = categoryParent;
-		view.direction = direction;
-		view.errorMessage = element(by.binding("vm.errorMessage"));
-		view.cancelButton = element(by.buttonText("Cancel"));
-		view.deleteButton = element(by.partialButtonText("Delete"));
-
-		/**
-		 * Behaviours
-		 */
-		view.isPresent = isPresent;
-		view.cancel = cancel;
-		view.del = del;
-
-		function heading() {
-			return view.form.element(by.cssContainingText("h4", "Delete Category?")).getText();
+{
+	class CategoryDeleteView {
+		constructor() {
+			this.form = element(by.css("form[name=categoryForm]"));
+			this.subcategoryAlert = element(by.cssContainingText("div.alert", "All subcategories will also be deleted"));
+			this.errorMessage = element(by.binding("vm.errorMessage"));
+			this.cancelButton = element(by.buttonText("Cancel"));
+			this.deleteButton = element(by.partialButtonText("Delete"));
 		}
 
-		function categoryName() {
+		heading() {
+			return this.form.element(by.cssContainingText("h4", "Delete Category?")).getText();
+		}
+
+		categoryName() {
 			return element(by.binding("::vm.category.name")).getText();
 		}
 
-		function categoryParent() {
+		categoryParent() {
 			return element(by.binding("::vm.category.parent.name")).getText();
 		}
 
-		function direction() {
+		direction() {
 			return element(by.binding("::vm.category.direction")).getText();
 		}
 
-		function isPresent() {
+		isPresent() {
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 
-			return view.form.isPresent();
+			return this.form.isPresent();
 		}
 
-		function cancel() {
-			view.cancelButton.click();
+		cancel() {
+			this.cancelButton.click();
 
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 		}
 
-		function del() {
-			view.deleteButton.click();
+		del() {
+			this.deleteButton.click();
 
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
@@ -63,4 +47,4 @@
 	}
 
 	module.exports = new CategoryDeleteView();
-})();
+}

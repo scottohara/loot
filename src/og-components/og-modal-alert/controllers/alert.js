@@ -1,5 +1,18 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, alert) {
+			this.$modalInstance = $modalInstance;
+			this.alert = angular.extend({closeButtonStyle: "primary"}, alert);
+		}
+
+		// Close the modal
+		closeModal() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,26 +25,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "alert"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, alert) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.alert = angular.extend({closeButtonStyle: "primary"}, alert);
-		vm.close = closeModal;
-
-		/**
-		 * Implementation
-		 */
-
-		// Close the modal
-		function closeModal() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

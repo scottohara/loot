@@ -1,0 +1,387 @@
+{
+	ecmaFeatures: {
+		arrowFunctions: true,
+		binaryLiterals: true,
+		blockBindings: true,
+		classes: true,
+		defaultParams: true,
+		destructuring: true,
+		forOf: true,
+		generators: true,
+		modules: true,
+		objectLiteralComputedProperties: true,
+		objectLiteralDuplicateProperties: true,
+		objectLiteralShorthandMethod: true,
+		objectLiteralShorthandProperties: true,
+		octalLiterals: true,
+		regexUFlag: true,
+		regexYFlag: true,
+		restParams: true,
+		spread: true,
+		superInFunctions: true,
+		templateStrings: true,
+		unicodeCodePointEscapes: true,
+		globalReturn: true,
+		jsx: false,																	// Not using (React/JSX)
+		experimentalObjectRestSpread: false					// Not using (experimental)
+	},
+	env: {
+		browser: true,
+		node: true,
+		commonjs: false,
+		worker: false,
+		amd: false,
+		mocha: true,
+		jasmine: false,
+		jest: false,
+		phantomjs: false,
+		protractor: true,
+		qunit: false,
+		jquery: true,
+		prototypejs: false,
+		shelljs: false,
+		meteor: false,
+		mongo: false,
+		applescript: false,
+		serviceworker: false,
+		embertest: false,
+		es6: true
+	},
+	globals: {
+		angular: false,
+		moment: false
+	},
+	parser: "babel-eslint",
+	rules: {
+		// Possible errors
+		comma-dangle: [2, "never"],
+		no-cond-assign: [2, "always"],
+		no-console: 0,															// Not using (due to stateChangeErrorHandler)
+		no-constant-condition: 2,
+		no-control-regex: 2,
+		no-debugger: 2,
+		no-dupe-args: 2,
+		no-dupe-keys: 2,
+		no-duplicate-case: 2,
+		no-empty-character-class: 2,
+		no-empty: 2,
+		no-ex-assign: 2,
+		no-extra-boolean-cast: 2,
+		no-extra-parens: [2, "all"],
+		no-extra-semi: 2,
+		no-func-assign: 2,
+		no-inner-declarations: [2, "both"],
+		no-invalid-regexp: 2,
+		no-irregular-whitespace: 2,
+		no-negated-in-lhs: 2,
+		no-obj-calls: 2,
+		no-regex-spaces: 2,
+		no-sparse-arrays: 2,
+		no-unreachable: 2,
+		use-isnan: 2,
+		valid-jsdoc: 0,															// TODO: Many options to configure JSDoc style
+		valid-typeof: 2,
+		no-unexpected-multiline: 2,
+
+		// Best practices
+		accessor-pairs: [2, {
+			getWithoutSet: true
+		}],
+		block-scoped-var: 2,
+		complexity: 0,															// Not using
+		consistent-return: 2,
+		curly: [2, "all"],
+		default-case: 2,
+		dot-notation: [2, {
+			allowKeywords: true
+		}],
+		dot-location: [2, "property"],
+		eqeqeq: [2, "smart"],
+		guard-for-in: 2,
+		no-alert: 2,
+		no-caller: 2,
+		no-div-regex: 2,
+		no-else-return: 2,
+		no-empty-label: 2,
+		no-eq-null: 2,
+		no-eval: 2,
+		no-extend-native: 2,
+		no-extra-bind: 2,
+		no-fallthrough: 2,
+		no-floating-decimal: 2,
+		no-implicit-coercion: [2, {
+			boolean: true,
+			number: true,
+			string: true
+		}],
+		no-implied-eval: 2,
+		no-invalid-this: 2,
+		no-iterator: 2,
+		no-labels: 2,
+		no-lone-blocks: 2,
+		no-loop-func: 2,
+		no-multi-spaces: [2, {
+			exceptions: {
+				BinaryExpression: true,
+				Property: false,
+				VariableDeclaration: false,
+				ImportDeclaration: false
+			}
+		}],
+		no-multi-str: 2,
+		no-native-reassign: 2,
+		no-new-func: 2,
+		no-new-wrappers: 2,
+		no-new: 2,
+		no-octal-escape: 2,
+		no-octal: 2,
+		no-param-reassign: [2, {
+			props: false
+		}],
+		no-process-env: 2,
+		no-proto: 2,
+		no-redeclare: [2, {
+			builtinGlobals: true
+		}],
+		no-return-assign: [2, "always"],
+		no-script-url: 2,
+		no-self-compare: 2,
+		no-sequences: 2,
+		no-throw-literal: 2,
+		no-unused-expressions: [2, {
+			allowShortCircuit: false,
+			allowTernary: false
+		}],
+		no-useless-call: 2,
+		no-useless-concat: 2,
+		no-void: 2,
+		no-warning-comments: [2, {
+			terms: ["todo"],
+			location: "anywhere"
+		}],
+		no-with: 2,
+		radix: 2,
+		vars-on-top: 2,
+		wrap-iife: [2, "inside"],
+		yoda: [2, "always", {
+			exceptRange: false,
+			onlyEquality: true
+		}],
+
+		// Strict mode
+		strict: [2, "function"],
+
+		// Variables
+		init-declarations: 0,												// Not using
+		no-catch-shadow: 0,													// Not using (IE8 not supported)
+		no-delete-var: 2,
+		no-label-var: 2,
+		no-shadow-restricted-names: 2,
+		no-shadow: [2, {
+			builtinGlobals: false,
+			hoist: "all"
+		}],
+		no-undef-init: 2,
+		no-undef: 2,
+		no-undefined: 2,
+		no-unused-vars: [2, {
+			vars: "all",
+			varsIgnorePattern: "",
+			args: "after-used",
+			argsIgnorePattern: ""
+		}],
+		no-use-before-define: 2,
+
+		// Node.js - all disabled
+		callback-return: 0,
+		global-require: 0,
+		handle-callback-err: 0,
+		no-mixed-requires: 0,
+		no-new-require: 0,
+		no-path-concat: 0,
+		no-process-exit: 0,
+		no-restricted-modules: 0,
+		no-sync: 0,
+
+		// Stylistic issues
+		array-bracket-spacing: [2, "never", {
+			singleValue: false,
+			objectsInArrays: false,
+			arraysInArrays: false
+		}],
+		block-spacing: [2, "never"],
+		brace-style: [2, "1tbs", {
+			allowSingleLine: false
+		}],
+		camelcase: [2, {
+			properties: "never"
+		}],
+		comma-spacing: [2, {
+			before: false,
+			after: true
+		}],
+		comma-style: [2, "last", {
+			exceptions: {
+				ArrayExpression: false,
+				ObjectExpression: false,
+				VariableDeclaration: false
+			}
+		}],
+		computed-property-spacing: [2, "never"],
+		consistent-this: [2, "self"],
+		eol-last: 0,																// Not using
+		func-names: 2,
+		func-style: [2, "declaration"],
+		id-length: [2, {
+			min: 1,
+			max: 35,
+			properties: "always",
+			exceptions: []
+		}],
+		id-match: [0, "^[a-z]+([A-Z][a-z]+)*$", {		// Not using (camelCase identifiers only)
+			properties: false
+		}],
+		indent: [0, "tab", {												// Disabled to to false positive on arrays of objects
+			SwitchCase: 1,
+			VariableDeclarator: {
+				var: 2,
+				let: 2,
+				const: 3
+			}
+		}],
+		jsx-quotes: [2, "prefer-double"],
+		key-spacing: [2, {
+			beforeColon: false,
+			afterColon: true
+		}],
+		lines-around-comment: [2, {
+			beforeBlockComment: true,
+			afterBlockComment: false,
+			beforeLineComment: true,
+			afterLineComment: false,
+			allowBlockStart: true,
+			allowBlockEnd: true
+		}],
+		linebreak-style: [2, "unix"],
+		max-nested-callbacks: [2, 3],
+		new-cap: [2, {
+			newIsCap: true,
+			capIsNew: true,
+			newIsCapExceptions: [],
+			capIsNewExceptions: []
+		}],
+		new-parens: 2,
+		newline-after-var: [2, "always"],
+		no-array-constructor: 2,
+		no-continue: 2,
+		no-inline-comments: 2,
+		no-lonely-if: 2,
+		no-mixed-spaces-and-tabs: 2,
+		no-multiple-empty-lines: [2, {
+			max: 1
+		}],
+		no-nested-ternary: 0,												// Not using (sort helpers)
+		no-new-object: 2,
+		no-restricted-syntax: [2, "WithStatement"],
+		no-spaced-func: 2,
+		no-ternary: 0,															// Not using
+		no-trailing-spaces: [2, {
+			skipBlankLines: false
+		}],
+		no-underscore-dangle: 2,
+		no-unneeded-ternary: 2,
+		object-curly-spacing: [2, "never", {
+			objectsInObjects: false
+		}],
+		one-var: [2, {
+			var: "always",
+			let: "always",
+			const: "always"
+		}],
+		operator-assignment: [2, "always"],
+		operator-linebreak: [2, "after"],
+		padded-blocks: [2, "never"],
+		quote-props: [2, "as-needed", {
+			keywords: false,
+			unnecessary: true,
+			numbers: false
+		}],
+		quotes: [2, "double"],
+		require-jsdoc: 0,														// Not using
+		semi-spacing: [2, {
+			before: false,
+			after: true
+		}],
+		semi: [2, "always"],
+		sort-vars: [0, {														// Not using
+			ignoreCase: false
+		}],
+		space-after-keywords: [2, "always"],
+		space-before-keywords: [0, "always"],				// Disabled waiting for fix in https://github.com/eslint/eslint/issues/3756
+		space-before-blocks: [2, "always"],
+		space-before-function-paren: [2, {
+			anonymous: "never",
+			named: "never"
+		}],
+		space-in-parens: [2, "never", {
+			exceptions: []
+		}],
+		space-infix-ops: [2, {
+			int32Hint: false
+		}],
+		space-return-throw-case: 2,
+		space-unary-ops: [2, {
+			words: true,
+			nonwords: false
+		}],
+		spaced-comment: [2, "always", {
+			line: {
+				exceptions: [],
+				markers: []
+			},
+			block: {
+				exceptions: [],
+				markers: []
+			}
+		}],
+		wrap-regex: 2,
+
+		// ECMAScript 6
+		arrow-parens: [2, "as-needed"],
+		arrow-spacing: [2, {
+			before: true,
+			after: true
+		}],
+		constructor-super: 2,
+		generator-star-spacing: [2, {
+			before: true,
+			after: false
+		}],
+		no-class-assign: 2,
+		no-const-assign: 2,
+		no-dupe-class-members: 2,
+		no-this-before-super: 2,
+		no-var: 2,
+		object-shorthand: [2, "always"],
+		prefer-arrow-callback: 2,
+		prefer-const: 2,
+		prefer-spread: 2,
+		prefer-reflect: [2, {
+			exceptions: []
+		}],
+		prefer-template: 2,
+		require-yield: 2,
+
+		// Legacy
+		max-depth: [0, 2],													// Not using
+		max-len: [0, 80, 2, {												// Not using
+			ignoreComments: false,
+			ignoreUrls: false,
+			ignorePattern: ""
+		}],
+		max-params: [0, 3],													// Not using
+		max-statements: [0, 10],										// Not using
+		no-bitwise: 2,
+		no-plusplus: 0															// Not using
+	}
+}

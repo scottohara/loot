@@ -1,56 +1,45 @@
-(function() {
-	"use strict";
+describe("OgModalConfirmController", () => {
+	let	ogModalConfirmController,
+			controllerTest,
+			$modalInstance,
+			confirm;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "confirm"])));
 
-	describe("OgModalConfirmController", function() {
-		// The object under test
-		var ogModalConfirmController;
+	// Configure & compile the object under test
+	beforeEach(inject((_controllerTest_, _$modalInstance_, _confirm_) => {
+		controllerTest = _controllerTest_;
+		$modalInstance = _$modalInstance_;
+		confirm = _confirm_;
+		ogModalConfirmController = controllerTest("OgModalConfirmController");
+	}));
 
-		// Dependencies
-		var controllerTest,
-				$modalInstance,
-				confirm;
+	it("should make the passed confirmation details available on the $scope", () => {
+		ogModalConfirmController.confirm.message.should.equal(confirm.message);
+		ogModalConfirmController.confirm.noButtonStyle.should.equal("default");
+		ogModalConfirmController.confirm.yesButtonStyle.should.equal("primary");
+	});
 
-		// Load the modules
-		beforeEach(module("lootMocks", "ogComponents", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$modalInstance", "confirm"]);
-		}));
+	it("should override the default button styles with the specified styles", () => {
+		confirm.noButtonStyle = "overridden no";
+		confirm.yesButtonStyle = "overridden yes";
+		ogModalConfirmController = controllerTest("OgModalConfirmController");
+		ogModalConfirmController.confirm.noButtonStyle.should.equal(confirm.noButtonStyle);
+		ogModalConfirmController.confirm.yesButtonStyle.should.equal(confirm.yesButtonStyle);
+	});
 
-		// Configure & compile the object under test
-		beforeEach(inject(function(_controllerTest_, _$modalInstance_, _confirm_) {
-			controllerTest = _controllerTest_;
-			$modalInstance = _$modalInstance_;
-			confirm = _confirm_;
-			ogModalConfirmController = controllerTest("OgModalConfirmController");
-		}));
-
-		it("should make the passed confirmation details available on the $scope", function() {
-			ogModalConfirmController.confirm.message.should.equal(confirm.message);
-			ogModalConfirmController.confirm.noButtonStyle.should.equal("default");
-			ogModalConfirmController.confirm.yesButtonStyle.should.equal("primary");
-		});
-
-		it("should override the default button styles with the specified styles", function() {
-			confirm.noButtonStyle = "overridden no";
-			confirm.yesButtonStyle = "overridden yes";
-			ogModalConfirmController = controllerTest("OgModalConfirmController");
-			ogModalConfirmController.confirm.noButtonStyle.should.equal(confirm.noButtonStyle);
-			ogModalConfirmController.confirm.yesButtonStyle.should.equal(confirm.yesButtonStyle);
-		});
-
-		describe("yes", function() {
-			it("should close the modal and return true", function() {
-				ogModalConfirmController.yes();
-				$modalInstance.close.should.have.been.calledWith(true);
-			});
-		});
-
-		describe("no", function() {
-			it("should dismiss the modal", function() {
-				ogModalConfirmController.no();
-				$modalInstance.dismiss.should.have.been.called;
-			});
+	describe("yes", () => {
+		it("should close the modal and return true", () => {
+			ogModalConfirmController.yes();
+			$modalInstance.close.should.have.been.calledWith(true);
 		});
 	});
-})();
+
+	describe("no", () => {
+		it("should dismiss the modal", () => {
+			ogModalConfirmController.no();
+			$modalInstance.dismiss.should.have.been.called;
+		});
+	});
+});

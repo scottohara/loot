@@ -1,5 +1,24 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, confirm) {
+			this.$modalInstance = $modalInstance;
+			this.confirm = angular.extend({noButtonStyle: "default", yesButtonStyle: "primary"}, confirm);
+		}
+
+		// Yes response
+		yes() {
+			// Close the modal and return true
+			this.$modalInstance.close(true);
+		}
+
+		// No response
+		no() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,33 +31,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "confirm"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, confirm) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.confirm = angular.extend({noButtonStyle: "default", yesButtonStyle: "primary"}, confirm);
-		vm.yes = yes;
-		vm.no = no;
-
-		/**
-		 * Implementation
-		 */
-
-		// Yes response
-		function yes() {
-			// Close the modal and return true
-			$modalInstance.close(true);
-		}
-
-		// No response
-		function no() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

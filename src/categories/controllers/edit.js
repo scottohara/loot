@@ -1,5 +1,42 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, filterFilter, limitToFilter, categoryModel, category) {
+			this.$modalInstance = $modalInstance;
+			this.filterFilter = filterFilter;
+			this.limitToFilter = limitToFilter;
+			this.categoryModel = categoryModel;
+			this.category = angular.extend({}, category);
+			this.mode = category ? "Edit" : "Add";
+			this.errorMessage = null;
+		}
+
+		// List of parent categories for the typeahead
+		parentCategories(filter, limit) {
+			return this.categoryModel.all().then(categories => this.limitToFilter(this.filterFilter(categories, {name: filter}), limit));
+		}
+
+		// Save and close the modal
+		save() {
+			// Copy the parent details
+			if (this.category.parent) {
+				this.category.direction = this.category.parent.direction;
+				this.category.parent_id = this.category.parent.id;
+			} else {
+				this.category.parent_id = null;
+			}
+
+			this.errorMessage = null;
+			this.categoryModel.save(this.category).then(category => this.$modalInstance.close(category.data), error => this.errorMessage = error.data);
+		}
+
+		// Dismiss the modal without saving
+		cancel() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,55 +49,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "categoryModel", "category"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, filterFilter, limitToFilter, categoryModel, category) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.category = angular.extend({}, category);
-		vm.mode = category ? "Edit" : "Add";
-		vm.parentCategories = parentCategories;
-		vm.save = save;
-		vm.cancel = cancel;
-		vm.errorMessage = null;
-
-		/**
-		 * Implementation
-		 */
-
-		// List of parent categories for the typeahead
-		function parentCategories(filter, limit) {
-			return categoryModel.all().then(function(categories) {
-				return limitToFilter(filterFilter(categories, {name: filter}), limit);
-			});
-		}
-
-		// Save and close the modal
-		function save() {
-			// Copy the parent details
-			if (vm.category.parent) {
-				vm.category.direction = vm.category.parent.direction;
-				vm.category.parent_id = vm.category.parent.id;
-			} else {
-				vm.category.parent_id = null;
-			}
-
-			vm.errorMessage = null;
-			categoryModel.save(vm.category).then(function(category) {
-				$modalInstance.close(category.data);
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
-		}
-
-		// Dismiss the modal without saving
-		function cancel() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

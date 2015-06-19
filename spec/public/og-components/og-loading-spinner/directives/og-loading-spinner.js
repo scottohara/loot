@@ -1,35 +1,28 @@
-(function() {
-	"use strict";
+describe("ogLoadingSpinner", () => {
+	let	ogLoadingSpinner;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "ogComponents"));
 
-	describe("ogLoadingSpinner", function() {
-		// The object under test
-		var ogLoadingSpinner;
+	// Load the template
+	beforeEach(module("og-components/og-loading-spinner/views/loading.html"));
 
-		// Load the modules
-		beforeEach(module("lootMocks", "ogComponents"));
+	// Configure & compile the object under test
+	beforeEach(inject(directiveTest => {
+		ogLoadingSpinner = directiveTest;
+		ogLoadingSpinner.configure("og-loading-spinner");
+		ogLoadingSpinner.scope.model = "test message";
+		ogLoadingSpinner.compile({"og-loading-spinner": "model"});
+	}));
 
-		// Load the template
-		beforeEach(module("og-components/og-loading-spinner/views/loading.html"));
-
-		// Configure & compile the object under test
-		beforeEach(inject(function(directiveTest) {
-			ogLoadingSpinner = directiveTest;
-			ogLoadingSpinner.configure("og-loading-spinner");
-			ogLoadingSpinner.scope.model = "test message";
-			ogLoadingSpinner.compile({"og-loading-spinner": "model"});
-		}));
-
-		it("should show the specified message", function() {
-			ogLoadingSpinner.scope.$digest();
-			ogLoadingSpinner.element.text().should.equal(" test message...\n");
-		});
-
-		it("should show the text 'Loading...' when a message was not specified", function() {
-			ogLoadingSpinner.scope.model = undefined;
-			ogLoadingSpinner.scope.$digest();
-			ogLoadingSpinner.element.text().should.equal(" Loading...\n");
-		});
+	it("should show the specified message", () => {
+		ogLoadingSpinner.scope.$digest();
+		ogLoadingSpinner.element.text().should.equal(" test message...\n");
 	});
-})();
+
+	it("should show the text 'Loading...' when a message was not specified", () => {
+		ogLoadingSpinner.scope.model = null;
+		ogLoadingSpinner.scope.$digest();
+		ogLoadingSpinner.element.text().should.equal(" Loading...\n");
+	});
+});

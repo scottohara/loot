@@ -1,4 +1,7 @@
+require("babel-core/register");
+
 module.exports.config = {
+
 	// Connect directly to browsers
 	directConnect: true,
 
@@ -39,11 +42,9 @@ module.exports.config = {
 	getPageTimeout: 10000,
 
 	// Initialise the mocha chai framework
-	onPrepare: function() {
-		"use strict";
-
+	onPrepare() {
 		// Load chai assertions
-		var chai = require("chai");
+		const chai = require("chai");
 
 		// Load chai-as-promised support
 		chai.use(require("chai-as-promised"));
@@ -52,18 +53,21 @@ module.exports.config = {
 		chai.should();
 
 		// Copy the should property from Object to the protractor Promise
-		Object.defineProperty(protractor.promise.Promise.prototype, "should", Object.getOwnPropertyDescriptor(Object.prototype, "should"));
+		Reflect.defineProperty(protractor.promise.Promise.prototype, "should", Reflect.getOwnPropertyDescriptor(Object.prototype, "should"));
 
 		// Make sure the window is wide enough for the large bootstrap modals
 		browser.driver.manage().window().setSize(1280, 1024);
 	},
 
+	/* eslint-disable no-process-env */
 	params: {
 		login: {
 			userName: process.env.LOOT_USERNAME,
 			password: process.env.LOOT_PASSWORD
 		}
 	},
+
+	/* eslint-enable no-process-env */
 
 	// Framework to use
 	framework: "mocha",
@@ -73,5 +77,5 @@ module.exports.config = {
 		ui: "bdd",
 		reporter: "spec",
 		timeout: 30000
-	},
+	}
 };

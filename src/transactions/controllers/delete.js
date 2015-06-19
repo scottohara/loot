@@ -1,5 +1,26 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, transactionModel, transaction) {
+			this.$modalInstance = $modalInstance;
+			this.transactionModel = transactionModel;
+			this.transaction = transaction;
+			this.errorMessage = null;
+		}
+
+		// Delete and close the modal
+		deleteTransaction() {
+			this.errorMessage = null;
+			this.transactionModel.destroy(this.transaction).then(() => this.$modalInstance.close(), error => this.errorMessage = error.data);
+		}
+
+		// Dismiss the modal without deleting
+		cancel() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,38 +33,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "transactionModel", "transaction"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, transactionModel, transaction) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.transaction = transaction;
-		vm.deleteTransaction = deleteTransaction;
-		vm.cancel = cancel;
-		vm.errorMessage = null;
-
-		/**
-		 * Implementation
-		 */
-
-		// Delete and close the modal
-		function deleteTransaction() {
-			vm.errorMessage = null;
-			transactionModel.destroy(vm.transaction).then(function() {
-				$modalInstance.close();
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
-		}
-
-		// Dismiss the modal without deleting
-		function cancel() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

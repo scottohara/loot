@@ -1,5 +1,23 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock transaction object
+			this.transaction = {
+				id: 1,
+				primary_account: {},
+				transaction_date: moment().startOf("day").subtract(1, "day").toDate(),
+				flag: "transaction flag"
+			};
+		}
+
+		$get() {
+			// Return the mock transaction object
+			return this.transaction;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,22 +27,7 @@
 		.provider("transactionMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock transaction object
-		provider.transaction = {
-			id: 1,
-			primary_account: {},
-			transaction_date: moment().startOf("day").subtract(1, "day").toDate(),
-			flag: "transaction flag"
-		};
-
-		provider.$get = function() {
-			// Return the mock transaction object
-			return provider.transaction;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

@@ -1,5 +1,26 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, securityModel, security) {
+			this.$modalInstance = $modalInstance;
+			this.securityModel = securityModel;
+			this.security = security;
+			this.errorMessage = null;
+		}
+
+		// Delete and close the modal
+		deleteSecurity() {
+			this.errorMessage = null;
+			this.securityModel.destroy(this.security).then(() => this.$modalInstance.close(), error => this.errorMessage = error.data);
+		}
+
+		// Dismiss the modal without deleting
+		cancel() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,38 +33,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "securityModel", "security"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, securityModel, security) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.security = security;
-		vm.deleteSecurity = deleteSecurity;
-		vm.cancel = cancel;
-		vm.errorMessage = null;
-
-		/**
-		 * Implementation
-		 */
-
-		// Delete and close the modal
-		function deleteSecurity() {
-			vm.errorMessage = null;
-			securityModel.destroy(vm.security).then(function() {
-				$modalInstance.close();
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
-		}
-
-		// Dismiss the modal without deleting
-		function cancel() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

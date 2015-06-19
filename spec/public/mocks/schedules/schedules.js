@@ -1,8 +1,4 @@
-(function() {
-	"use strict";
-
-	/**
-	 * Registration
-	 */
-	angular.module("lootSchedulesMocks", []);
-})();
+/**
+ * Registration
+ */
+angular.module("lootSchedulesMocks", []);

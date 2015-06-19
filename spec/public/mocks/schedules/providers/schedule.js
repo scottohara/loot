@@ -1,5 +1,25 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock schedule object
+			this.schedule = {
+				id: 1,
+				transaction_type: "Transfer",
+				next_due_date: moment().startOf("day").add(3, "days").toDate(),
+				subtransactions: [{}],
+				autoFlag: false,
+				flag: null
+			};
+		}
+
+		$get() {
+			// Return the mock schedule object
+			return this.schedule;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,24 +29,7 @@
 		.provider("scheduleMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock schedule object
-		provider.schedule = {
-			id: 1,
-			transaction_type: "Transfer",
-			next_due_date: moment().startOf("day").add(3, "days").toDate(),
-			subtransactions: [{}],
-			autoFlag: false,
-			flag: null
-		};
-
-		provider.$get = function() {
-			// Return the mock schedule object
-			return provider.schedule;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

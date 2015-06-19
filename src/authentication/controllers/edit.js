@@ -1,5 +1,36 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, authenticationModel) {
+			this.$modalInstance = $modalInstance;
+			this.authenticationModel = authenticationModel;
+			this.userName = null;
+			this.password = null;
+			this.errorMessage = null;
+			this.loginInProgress = false;
+		}
+
+		/**
+		 * Implementation
+		 */
+
+		// Login and close the modal
+		login() {
+			this.errorMessage = null;
+			this.loginInProgress = true;
+			this.authenticationModel.login(this.userName, this.password).then(() => this.$modalInstance.close(), error => {
+				this.errorMessage = error.data;
+				this.loginInProgress = false;
+			});
+		}
+
+		// Dismiss the modal without logging in
+		cancel() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,42 +43,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "authenticationModel"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, authenticationModel) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.userName = null;
-		vm.password = null;
-		vm.login = login;
-		vm.cancel = cancel;
-		vm.errorMessage = null;
-		vm.loginInProgress = false;
-
-		/**
-		 * Implementation
-		 */
-
-		// Login and close the modal
-		function login() {
-			vm.errorMessage = null;
-			vm.loginInProgress = true;
-			authenticationModel.login(vm.userName, vm.password).then(function() {
-				$modalInstance.close();
-			}, function(error) {
-				vm.errorMessage = error.data;
-				vm.loginInProgress = false;
-			});
-		}
-
-		// Dismiss the modal without logging in
-		function cancel() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

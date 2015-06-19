@@ -1,205 +1,201 @@
-(function() {
-	"use strict";
-
-	function TransactionEditView() {
-		var view = this;
-
-		/**
-		 * UI elements
-		 */
-		view.form = element(by.css("form[name=transactionForm]"));
-		view.heading = heading;
-		view.transactionDateInput = element(by.model("vm.transaction.transaction_date"));
-		view.primaryAccountTypeahead = element(by.model("vm.transaction.primary_account"));
-		view.payeeTypeahead = element(by.model("vm.transaction.payee"));
-		view.securityTypeahead = element(by.model("vm.transaction.security"));
-		view.amountInput = element(by.model("vm.transaction.amount"));
-		view.categoryTypeahead = element(by.model("vm.transaction.category"));
-		view.subcategoryTypeahead = element(by.model("vm.transaction.subcategory"));
-		view.accountTypeahead = element(by.model("vm.transaction.account"));
-		view.addSplitButton = element(by.partialButtonText("Add"));
-		view.splitsTable = element.all(by.repeater("subtransaction in vm.transaction.subtransactions"));
-		view.quantityInput = element(by.model("vm.transaction.quantity"));
-		view.priceInput = element(by.model("vm.transaction.price"));
-		view.commissionInput = element(by.model("vm.transaction.commission"));
-		view.memoInput = element(by.model("vm.transaction.memo"));
-		view.errorMessage = element(by.binding("vm.errorMessage"));
-		view.loadingLastTransactionMessage = element(by.cssContainingText("span.text-muted", "Finding last transaction for"));
-		view.cancelButton = element(by.buttonText("Cancel"));
-		view.saveButton = element(by.partialButtonText("Save"));
-
-		/**
-		 * Behaviours
-		 */
-		view.isPresent = isPresent;
-		view.enterTransactionDetails = enterTransactionDetails;
-		view.enterSplitDetails = enterSplitDetails;
-		view.removeUnusedSplits = removeUnusedSplits;
-		view.clearTransactionDetails = clearTransactionDetails;
-		view.cancel = cancel;
-		view.save = save;
-
-		function heading() {
-			return view.form.element(by.css("h4")).getText();
+{
+	class TransactionEditView {
+		constructor() {
+			this.form = element(by.css("form[name=transactionForm]"));
+			this.transactionDateInput = element(by.model("vm.transaction.transaction_date"));
+			this.primaryAccountTypeahead = element(by.model("vm.transaction.primary_account"));
+			this.payeeTypeahead = element(by.model("vm.transaction.payee"));
+			this.securityTypeahead = element(by.model("vm.transaction.security"));
+			this.amountInput = element(by.model("vm.transaction.amount"));
+			this.categoryTypeahead = element(by.model("vm.transaction.category"));
+			this.subcategoryTypeahead = element(by.model("vm.transaction.subcategory"));
+			this.accountTypeahead = element(by.model("vm.transaction.account"));
+			this.addSplitButton = element(by.partialButtonText("Add"));
+			this.splitsTable = element.all(by.repeater("subtransaction in vm.transaction.subtransactions"));
+			this.quantityInput = element(by.model("vm.transaction.quantity"));
+			this.priceInput = element(by.model("vm.transaction.price"));
+			this.commissionInput = element(by.model("vm.transaction.commission"));
+			this.memoInput = element(by.model("vm.transaction.memo"));
+			this.errorMessage = element(by.binding("vm.errorMessage"));
+			this.loadingLastTransactionMessage = element(by.cssContainingText("span.text-muted", "Finding last transaction for"));
+			this.cancelButton = element(by.buttonText("Cancel"));
+			this.saveButton = element(by.partialButtonText("Save"));
 		}
 
-		function isPresent() {
+		heading() {
+			return this.form.element(by.css("h4")).getText();
+		}
+
+		isPresent() {
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 
-			return view.form.isPresent();
+			return this.form.isPresent();
 		}
 
-		function enterTransactionDetails(details) {
+		enterTransactionDetails(contextType, details) {
+			// Clear the values first
+			this.clearTransactionDetails(contextType);
+
 			// Transaction date
-			view.transactionDateInput.sendKeys(details.transactionDate);
+			this.transactionDateInput.click().sendKeys(details.transactionDate);
 
 			// Primary account
 			if (details.primaryAccountName) {
-				enterTypeaheadValue(view.primaryAccountTypeahead, details.primaryAccountName);
+				this.enterTypeaheadValue(this.primaryAccountTypeahead, details.primaryAccountName);
 			}
 
 			// Payee
 			if (details.payeeName) {
-				enterTypeaheadValue(view.payeeTypeahead, details.payeeName, true);
+				this.enterTypeaheadValue(this.payeeTypeahead, details.payeeName, true);
 			}
 
 			// Security
 			if (details.securityName) {
-				enterTypeaheadValue(view.securityTypeahead, details.securityName, true);
+				this.enterTypeaheadValue(this.securityTypeahead, details.securityName, true);
 			}
 
 			// Category
-			enterTypeaheadValue(view.categoryTypeahead, details.categoryName);
+			this.enterTypeaheadValue(this.categoryTypeahead, details.categoryName);
 
 			// Amount
 			if (!details.quantity) {
-				view.amountInput.sendKeys(details.amount);
+				this.amountInput.clear().click().sendKeys(details.amount);
 			}
 
 			// Subcategory
 			if (details.subcategoryName) {
-				enterTypeaheadValue(view.subcategoryTypeahead, details.subcategoryName, true);
+				this.enterTypeaheadValue(this.subcategoryTypeahead, details.subcategoryName, true);
 			}
-			
+
 			// Account
 			if (details.accountName) {
-				enterTypeaheadValue(view.accountTypeahead, details.accountName);
+				this.enterTypeaheadValue(this.accountTypeahead, details.accountName);
 			}
 
 			// Splits
 			if (details.subtransactions) {
-				for (var i = 0; i < details.subtransactions.length; i++) {
-					view.enterSplitDetails(i, details.subtransactions[i]);
+				for (let i = 0; i < details.subtransactions.length; i++) {
+					this.enterSplitDetails(i, details.subtransactions[i]);
 				}
 
-				view.removeUnusedSplits(details.subtransactions.length - 1);
+				this.removeUnusedSplits(details.subtransactions.length - 1);
 			}
 
 			// Quantity
 			if (details.quantity) {
-				view.quantityInput.sendKeys(details.quantity);
+				this.quantityInput.click().sendKeys(details.quantity);
 			}
 
 			// Price
 			if (details.price) {
-				view.priceInput.sendKeys(details.price);
+				this.priceInput.click().sendKeys(details.price);
 			}
 
 			// Commission
 			if (details.commission) {
-				view.commissionInput.sendKeys(details.commission);
+				this.commissionInput.click().sendKeys(details.commission);
 			}
 
 			// Memo
 			if (details.memo) {
-				view.memoInput.sendKeys(details.memo);
+				this.memoInput.click().sendKeys(details.memo);
 			}
 		}
 
-		function enterSplitDetails(index, details) {
-			var row = view.splitsTable.get(index);
+		enterSplitDetails(index, details) {
+			const row = this.splitsTable.get(index);
 
 			// Add another split row if required
-			view.splitsTable.count().then(function(count) {
-				if (index > (count - 1)) {
-					browser.executeScript(function(row) {
-						row.scrollIntoView();
-					}, row.getWebElement());
+			this.splitsTable.count().then(count => {
+				if (index > count - 1) {
+					browser.executeScript(splitRow => splitRow.scrollIntoView(), row.getWebElement());
 
-					view.addSplitButton.click();
+					this.addSplitButton.click();
 				}
 			});
 
 			// Category
-			enterTypeaheadValue(row.element(by.model("subtransaction.category")), details.categoryName, true);
+			this.enterTypeaheadValue(row.element(by.model("subtransaction.category")), details.categoryName, true);
 
 			// Subcategory
 			if (details.subcategoryName) {
-				enterTypeaheadValue(row.element(by.model("subtransaction.subcategory")), details.subcategoryName, true);
+				this.enterTypeaheadValue(row.element(by.model("subtransaction.subcategory")), details.subcategoryName, true);
 			}
 
 			// Account
 			if (details.accountName) {
-				enterTypeaheadValue(row.element(by.model("subtransaction.account")), details.accountName);
+				this.enterTypeaheadValue(row.element(by.model("subtransaction.account")), details.accountName);
 			}
 
 			// Memo
-			row.element(by.model("subtransaction.memo")).sendKeys(details.memo);
+			row.element(by.model("subtransaction.memo")).clear().click().sendKeys(details.memo);
 
 			// Amount
-			row.element(by.model("subtransaction.amount")).sendKeys(details.rawAmount);
+			row.element(by.model("subtransaction.amount")).clear().click().sendKeys(details.rawAmount);
 		}
 
-		function removeUnusedSplits(lastRowIndex) {
-			view.splitsTable.count().then(function(count) {
-				for (count--; count > lastRowIndex; count--) {
-					view.splitsTable.get(count).element(by.css("button")).click();
+		removeUnusedSplits(lastRowIndex) {
+			this.splitsTable.count().then(count => {
+				for (let splitCount = count - 1; splitCount > lastRowIndex; splitCount--) {
+					this.splitsTable.get(splitCount).element(by.css("button")).click();
 				}
 			});
 		}
 
-		function clearTransactionDetails() {
+		clearTransactionDetails(contextType) {
 			// Primary account
-			view.primaryAccountTypeahead.clear();
+			if ("account" !== contextType) {
+				this.primaryAccountTypeahead.clear();
+			}
 
 			// Transaction date
-			// TODO - can't clear date input (https://github.com/angular/protractor/issues/562)
-			// view.transactionDateInput.clear();
+			// MISSING - can't clear date input (https://github.com/angular/protractor/issues/562)
+			// this.transactionDateInput.clear();
 
 			// Payee
-			view.payeeTypeahead.clear();
+			this.payeeTypeahead.isPresent().then(isPresent => {
+				if (isPresent && "payee" !== contextType) {
+					this.payeeTypeahead.clear();
+				}
+			});
 
 			// Amount
-			view.amountInput.clear();
+			this.amountInput.isPresent().then(isPresent => {
+				if (isPresent) {
+					this.amountInput.clear();
+				}
+			});
 
 			// Category
-			view.categoryTypeahead.clear();
+			if ("category" !== contextType) {
+				this.categoryTypeahead.clear();
+			}
 
 			// Memo
-			view.memoInput.clear();
+			this.memoInput.clear();
 		}
 
-		function cancel() {
-			view.cancelButton.click();
+		cancel() {
+			this.cancelButton.click();
 
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 		}
 
-		function save() {
-			view.saveButton.click();
+		save() {
+			this.saveButton.click();
 
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 		}
 
-		function enterTypeaheadValue(typeahead, value, isEditable) {
+		enterTypeaheadValue(typeahead, value, isEditable) {
 			// If the typeahead is not editable, need to take a character from the start of the string (https://github.com/scottohara/loot/issues/98)
-			value = isEditable ? value : value.substr(1);
+			const enterValue = isEditable ? value : value.substr(1);
 
 			// Enter the value into the typeahead
-			typeahead.sendKeys(value);
+			typeahead.click().sendKeys(enterValue);
 
 			// Wait for the typeahead $http promise to resolve
 			browser.waitForAngular();
@@ -208,9 +204,9 @@
 			typeahead.sendKeys(protractor.Key.TAB);
 
 			// Click the form to force any blur event handlers to run
-			view.form.click();
+			this.form.click();
 		}
 	}
 
 	module.exports = new TransactionEditView();
-})();
+}

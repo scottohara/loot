@@ -1,65 +1,53 @@
-(function() {
-	"use strict";
-
-	function SecurityEditView() {
-		var view = this;
-
-		/**
-		 * UI elements
-		 */
-		view.form = element(by.css("form[name=securityForm]"));
-		view.heading = heading;
-		view.securityNameInput = element(by.model("vm.security.name"));
-		view.securityCodeInput = element(by.model("vm.security.code"));
-		view.errorMessage = element(by.binding("vm.errorMessage"));
-		view.cancelButton = element(by.buttonText("Cancel"));
-		view.saveButton = element(by.partialButtonText("Save"));
-
-		/**
-		 * Behaviours
-		 */
-		view.isPresent = isPresent;
-		view.enterSecurityDetails = enterSecurityDetails;
-		view.clearSecurityDetails = clearSecurityDetails;
-		view.cancel = cancel;
-		view.save = save;
-
-		function heading() {
-			return view.form.element(by.binding("::vm.mode")).getText();
+{
+	class SecurityEditView {
+		constructor() {
+			this.form = element(by.css("form[name=securityForm]"));
+			this.securityNameInput = element(by.model("vm.security.name"));
+			this.securityCodeInput = element(by.model("vm.security.code"));
+			this.errorMessage = element(by.binding("vm.errorMessage"));
+			this.cancelButton = element(by.buttonText("Cancel"));
+			this.saveButton = element(by.partialButtonText("Save"));
 		}
 
-		function isPresent() {
+		heading() {
+			return this.form.element(by.binding("::vm.mode")).getText();
+		}
+
+		isPresent() {
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 
-			return view.form.isPresent();
+			return this.form.isPresent();
 		}
 
-		function enterSecurityDetails(details) {
+		enterSecurityDetails(details) {
+			// Clear the values first
+			this.clearSecurityDetails();
+
 			// Security name
-			view.securityNameInput.sendKeys(details.securityName);
+			this.securityNameInput.click().sendKeys(details.securityName);
 
 			// Security code
-			view.securityCodeInput.sendKeys(details.securityCode);
+			this.securityCodeInput.click().sendKeys(details.securityCode);
 		}
 
-		function clearSecurityDetails() {
+		clearSecurityDetails() {
 			// Security name
-			view.securityNameInput.clear();
+			this.securityNameInput.clear();
 
 			// Security code
-			view.securityCodeInput.clear();
+			this.securityCodeInput.clear();
 		}
 
-		function cancel() {
-			view.cancelButton.click();
+		cancel() {
+			this.cancelButton.click();
 
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 		}
 
-		function save() {
-			view.saveButton.click();
+		save() {
+			this.saveButton.click();
 
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
@@ -67,4 +55,4 @@
 	}
 
 	module.exports = new SecurityEditView();
-})();
+}

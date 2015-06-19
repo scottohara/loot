@@ -1,65 +1,52 @@
-(function() {
-	"use strict";
+describe("ogInputAutoselect", () => {
+	let	ogInputAutoselect,
+			$timeout,
+			mockJQueryInstance,
+			realJQueryInstance;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "ogComponents"));
 
-	describe("ogInputAutoselect", function() {
-		// The object under test
-		var ogInputAutoselect;
+	// Configure & compile the object under test
+	beforeEach(inject((_$timeout_, directiveTest) => {
+		$timeout = _$timeout_;
+		ogInputAutoselect = directiveTest;
+		ogInputAutoselect.configure("og-input-autoselect", "input");
+		ogInputAutoselect.compile();
 
-		// Dependencies
-		var $timeout,
-				mockJQueryInstance,
-				realJQueryInstance;
+		mockJQueryInstance = {
+			select: sinon.stub()
+		};
 
-		// Load the modules
-		beforeEach(module("lootMocks", "ogComponents"));
+		realJQueryInstance = window.$;
+		window.$ = sinon.stub();
+		window.$.withArgs(sinon.match(value => value[0] === ogInputAutoselect.element[0])).returns(mockJQueryInstance);
+	}));
 
-		// Configure & compile the object under test
-		beforeEach(inject(function(_$timeout_, directiveTest) {
-			$timeout = _$timeout_;
-			ogInputAutoselect = directiveTest;
-			ogInputAutoselect.configure("og-input-autoselect", "input");
-			ogInputAutoselect.compile();
-
-			mockJQueryInstance = {
-				select: sinon.stub()
-			};
-
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs(sinon.match(function(value) {
-				return value[0] === ogInputAutoselect.element[0];
-			})).returns(mockJQueryInstance);
-		}));
-
-		describe("on focus", function() {
-			beforeEach(function() {
-				ogInputAutoselect.element.triggerHandler("focus");
-				$timeout.flush();
-			});
-
-			it("should select the input value", function() {
-				mockJQueryInstance.select.should.have.been.called;
-			});
+	describe("on focus", () => {
+		beforeEach(() => {
+			ogInputAutoselect.element.triggerHandler("focus");
+			$timeout.flush();
 		});
 
-		describe("on destroy", function() {
-			beforeEach(function() {
-				ogInputAutoselect.element.triggerHandler("$destroy");
-				ogInputAutoselect.scope.$digest();
-			});
+		it("should select the input value", () => mockJQueryInstance.select.should.have.been.called);
+	});
 
-			it("should remove the focus handler from the element", function() {
-				ogInputAutoselect.element.triggerHandler("focus");
-				$timeout.flush();
-				mockJQueryInstance.select.should.not.have.been.called;
-			});
+	describe("on destroy", () => {
+		beforeEach(() => {
+			ogInputAutoselect.element.triggerHandler("$destroy");
+			ogInputAutoselect.scope.$digest();
 		});
 
-		afterEach(function() {
-			$timeout.verifyNoPendingTasks();
-			window.$ = realJQueryInstance;
+		it("should remove the focus handler from the element", () => {
+			ogInputAutoselect.element.triggerHandler("focus");
+			$timeout.flush();
+			mockJQueryInstance.select.should.not.have.been.called;
 		});
 	});
-})();
+
+	afterEach(() => {
+		$timeout.verifyNoPendingTasks();
+		window.$ = realJQueryInstance;
+	});
+});

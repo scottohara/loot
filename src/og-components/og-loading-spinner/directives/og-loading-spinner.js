@@ -1,31 +1,33 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Directive {
+		constructor() {
+			return {
+				restrict: "A",
+				scope: {
+					message: "=ogLoadingSpinner"
+				},
+				templateUrl: "og-components/og-loading-spinner/views/loading.html",
+				link: scope => scope.loadingMessage = scope.message || "Loading"
+			};
+		}
+
+		static factory() {
+			return new Directive();
+		}
+	}
 
 	/**
 	 * Registration
 	 */
 	angular
 		.module("ogComponents")
-		.directive("ogLoadingSpinner", Directive);
+		.directive("ogLoadingSpinner", Directive.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.$inject = [];
-
-	/**
-	 * Implementation
-	 */
-	function Directive() {
-		return {
-			restrict: "A",
-			scope: {
-				message: "=ogLoadingSpinner"
-			},
-			templateUrl: "og-components/og-loading-spinner/views/loading.html",
-			link: function(scope) {
-				scope.loadingMessage = scope.message || "Loading";
-			}
-		};
-	}
-})();
+	Directive.factory.$inject = [];
+}

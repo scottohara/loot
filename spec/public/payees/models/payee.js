@@ -1,245 +1,210 @@
-(function() {
-	"use strict";
+describe("payeeModel", () => {
+	let	payeeModel,
+			$httpBackend,
+			$http,
+			$cacheFactory,
+			$cache,
+			$window,
+			ogLruCacheFactory,
+			ogLruCache;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
 
-	describe("payeeModel", function() {
-		// The object under test
-		var payeeModel;
+	// Inject any dependencies that need to be configured first
+	beforeEach(inject(_$window_ => {
+		$window = _$window_;
+		$window.localStorage.getItem.withArgs("lootRecentPayees").returns(null);
+	}));
 
-		// Dependencies
-		var $httpBackend,
-				$http,
-				$cacheFactory,
-				$cache,
-				$window,
-				ogLruCacheFactory,
-				ogLruCache;
+	// Inject the object under test and it's remaining dependencies
+	beforeEach(inject((_payeeModel_, _$httpBackend_, _$http_, _$cacheFactory_, _ogLruCacheFactory_) => {
+		payeeModel = _payeeModel_;
 
-		// Load the modules
-		beforeEach(module("lootMocks", "lootPayees", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"]);
-		}));
+		$httpBackend = _$httpBackend_;
+		$http = _$http_;
 
-		// Inject any dependencies that need to be configured first
-		beforeEach(inject(function(_$window_) {
-			$window = _$window_;
-			$window.localStorage.getItem.withArgs("lootRecentPayees").returns(null);
-		}));
+		$cacheFactory = _$cacheFactory_;
+		$cache = $cacheFactory();
 
-		// Inject the object under test and it's remaining dependencies
-		beforeEach(inject(function(_payeeModel_, _$httpBackend_, _$http_, _$cacheFactory_, _ogLruCacheFactory_) {
-			payeeModel = _payeeModel_;
+		ogLruCacheFactory = _ogLruCacheFactory_;
+		ogLruCache = ogLruCacheFactory();
+	}));
 
-			$httpBackend = _$httpBackend_;
-			$http = _$http_;
+	// After each spec, verify that there are no outstanding http expectations or requests
+	afterEach(() => {
+		$httpBackend.verifyNoOutstandingExpectation();
+		$httpBackend.verifyNoOutstandingRequest();
+	});
 
-			$cacheFactory = _$cacheFactory_;
-			$cache = $cacheFactory();
+	it("should fetch the list of recent payees from localStorage", () => $window.localStorage.getItem.should.have.been.calledWith("lootRecentPayees"));
 
-			ogLruCacheFactory = _ogLruCacheFactory_;
-			ogLruCache = ogLruCacheFactory();
-		}));
+	it("should have a list of recent payees", () => {
+		ogLruCache.list.should.have.been.called;
+		payeeModel.recent.should.equal("recent list");
+	});
 
-		// After each spec, verify that there are no outstanding http expectations or requests
-		afterEach(function() {
-			$httpBackend.verifyNoOutstandingExpectation();
-			$httpBackend.verifyNoOutstandingRequest();
-		});
+	describe("type", () => {
+		it("should be 'payee'", () => payeeModel.type.should.equal("payee"));
+	});
 
-		it ("should fetch the list of recent payees from localStorage", function() {
-			$window.localStorage.getItem.should.have.been.calledWith("lootRecentPayees");
-		});
+	describe("path", () => {
+		it("should return the payees collection path when an id is not provided", () => payeeModel.path().should.equal("/payees"));
 
-		it("should have a list of recent payees", function() {
-			ogLruCache.list.should.have.been.called;
-			payeeModel.recent.should.equal("recent list");
-		});
+		it("should return a specific payee path when an id is provided", () => payeeModel.path(123).should.equal("/payees/123"));
+	});
 
-		describe("type", function() {
-			it("should be 'payee'", function() {
-				payeeModel.type().should.equal("payee");
-			});
-		});
-
-		describe("path", function() {
-			it("should return the payees collection path when an id is not provided", function() {
-				payeeModel.path().should.equal("/payees");
-			});
-
-			it("should return a specific payee path when an id is provided", function() {
-				payeeModel.path(123).should.equal("/payees/123");
-			});
-		});
-
-		describe("all", function() {
-			var expectedUrl = /payees$/,
+	describe("all", () => {
+		const expectedUrl = /payees$/,
 					expectedResponse = "payees";
 
-			it("should dispatch a GET request to /payees", function() {
-				$httpBackend.expect("GET", expectedUrl).respond(200);
-				payeeModel.all();
-				$httpBackend.flush();
-			});
-			
-			it("should cache the response in the $http cache", function() {
-				var httpGet = sinon.stub($http, "get").returns({
-					then: function() {}
-				});
-
-				payeeModel.all();
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
-			});
-
-			it("should return a list of all payees", function() {
-				$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-				payeeModel.all().should.eventually.equal(expectedResponse);
-				$httpBackend.flush();
-			});
+		it("should dispatch a GET request to /payees", () => {
+			$httpBackend.expect("GET", expectedUrl).respond(200);
+			payeeModel.all();
+			$httpBackend.flush();
 		});
 
-		describe("findLastTransaction", function() {
-			var expectedResponse = "last transaction",
-					actualResponse;
-
-			beforeEach(function() {
-				$httpBackend.expectGET(/payees\/123\/transactions\/last\?account_type=accountType$/).respond(200, expectedResponse);
-				actualResponse = payeeModel.findLastTransaction(123, "accountType");
-				$httpBackend.flush();
+		it("should cache the response in the $http cache", () => {
+			const httpGet = sinon.stub($http, "get").returns({
+				then() {}
 			});
 
-			it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", function() {
-			});
-
-			it("should return the last transaction for the payee", function() {
-				actualResponse.should.eventually.equal(expectedResponse);
-			});
+			payeeModel.all();
+			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
 		});
 
-		describe("find", function() {
-			var expectedUrl = /payees\/123/,
-					expectedResponse = "payee details";
-
-			beforeEach(function() {
-				payeeModel.addRecent = sinon.stub();
-			});
-
-			it("should dispatch a GET request to /payees/{id}", function() {
-				$httpBackend.expect("GET", expectedUrl).respond(200);
-				payeeModel.find(123);
-				$httpBackend.flush();
-			});
-
-			it("should cache the response in the $http cache", function() {
-				var httpGet = sinon.stub($http, "get").returns({
-					then: function() {}
-				});
-
-				payeeModel.find(123);
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
-			});
-
-			it("should add the payee to the recent list", function() {
-				$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
-				payeeModel.find(123);
-				$httpBackend.flush();
-				payeeModel.addRecent.should.have.been.calledWith(expectedResponse);
-			});
-
-			it("should return the payee", function() {
-				$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
-				payeeModel.find(123).should.eventually.equal(expectedResponse);
-				$httpBackend.flush();
-			});
-		});
-
-		describe("save", function() {
-			beforeEach(function() {
-				payeeModel.flush = sinon.stub();
-				$httpBackend.whenPOST(/payees$/, {}).respond(200);
-				$httpBackend.whenPATCH(/payees\/123$/, {id: 123}).respond(200);
-			});
-
-			it("should flush the payee cache", function() {
-				payeeModel.save({});
-				payeeModel.flush.should.have.been.called;
-				$httpBackend.flush();
-			});
-
-			it("should dispatch a POST request to /payees when an id is not provided", function() {
-				$httpBackend.expectPOST(/payees$/);
-				payeeModel.save({});
-				$httpBackend.flush();
-			});
-
-			it("should dispatch a PATCH request to /payees/{id} when an id is provided", function() {
-				$httpBackend.expectPATCH(/payees\/123$/);
-				payeeModel.save({id: 123});
-				$httpBackend.flush();
-			});
-		});
-
-		describe("destroy", function() {
-			beforeEach(function() {
-				payeeModel.flush = sinon.stub();
-				payeeModel.removeRecent = sinon.stub();
-				$httpBackend.expectDELETE(/payees\/123$/).respond(200);
-				payeeModel.destroy({id: 123});
-				$httpBackend.flush();
-			});
-
-			it("should flush the payee cache", function() {
-				payeeModel.flush.should.have.been.called;
-			});
-
-			it("should dispatch a DELETE request to /payees/{id}", function() {
-			});
-
-			it("should remove the payee from the recent list", function() {
-				payeeModel.removeRecent.should.have.been.calledWith(123);
-			});
-		});
-
-		describe("flush", function() {
-			it("should remove the specified payee from the payee cache when an id is provided", function() {
-				payeeModel.flush(1);
-				$cache.remove.should.have.been.calledWith("/payees/1");
-			});
-
-			it("should flush the payee cache when an id is not provided", function() {
-				payeeModel.flush();
-				$cache.removeAll.should.have.been.called;
-			});
-		});
-
-		describe("addRecent", function() {
-			beforeEach(function() {
-				payeeModel.addRecent("payee");
-			});
-
-			it("should add the payee to the recent list", function() {
-				ogLruCache.put.should.have.been.calledWith("payee");
-				payeeModel.recent.should.equal("updated list");
-			});
-
-			it("should save the updated recent list", function() {
-				$window.localStorage.setItem.should.have.been.calledWith("lootRecentPayees", "{}");
-			});
-		});
-
-		describe("removeRecent", function() {
-			beforeEach(function() {
-				payeeModel.removeRecent("payee");
-			});
-
-			it("should remove the payee from the recent list", function() {
-				ogLruCache.remove.should.have.been.calledWith("payee");
-				payeeModel.recent.should.equal("updated list");
-			});
-
-			it("should save the updated recent list", function() {
-				$window.localStorage.setItem.should.have.been.calledWith("lootRecentPayees", "{}");
-			});
+		it("should return a list of all payees", () => {
+			$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
+			payeeModel.all().should.eventually.equal(expectedResponse);
+			$httpBackend.flush();
 		});
 	});
-})();
+
+	describe("findLastTransaction", () => {
+		const expectedResponse = "last transaction";
+		let actualResponse;
+
+		beforeEach(() => {
+			$httpBackend.expectGET(/payees\/123\/transactions\/last\?account_type=accountType$/).respond(200, expectedResponse);
+			actualResponse = payeeModel.findLastTransaction(123, "accountType");
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", () => {});
+
+		it("should return the last transaction for the payee", () => {
+			actualResponse.should.eventually.equal(expectedResponse);
+		});
+	});
+
+	describe("find", () => {
+		const expectedUrl = /payees\/123/,
+					expectedResponse = "payee details";
+
+		beforeEach(() => payeeModel.addRecent = sinon.stub());
+
+		it("should dispatch a GET request to /payees/{id}", () => {
+			$httpBackend.expect("GET", expectedUrl).respond(200);
+			payeeModel.find(123);
+			$httpBackend.flush();
+		});
+
+		it("should cache the response in the $http cache", () => {
+			const httpGet = sinon.stub($http, "get").returns({
+				then() {}
+			});
+
+			payeeModel.find(123);
+			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+		});
+
+		it("should add the payee to the recent list", () => {
+			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
+			payeeModel.find(123);
+			$httpBackend.flush();
+			payeeModel.addRecent.should.have.been.calledWith(expectedResponse);
+		});
+
+		it("should return the payee", () => {
+			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
+			payeeModel.find(123).should.eventually.equal(expectedResponse);
+			$httpBackend.flush();
+		});
+	});
+
+	describe("save", () => {
+		beforeEach(() => {
+			payeeModel.flush = sinon.stub();
+			$httpBackend.whenPOST(/payees$/, {}).respond(200);
+			$httpBackend.whenPATCH(/payees\/123$/, {id: 123}).respond(200);
+		});
+
+		it("should flush the payee cache", () => {
+			payeeModel.save({});
+			payeeModel.flush.should.have.been.called;
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a POST request to /payees when an id is not provided", () => {
+			$httpBackend.expectPOST(/payees$/);
+			payeeModel.save({});
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a PATCH request to /payees/{id} when an id is provided", () => {
+			$httpBackend.expectPATCH(/payees\/123$/);
+			payeeModel.save({id: 123});
+			$httpBackend.flush();
+		});
+	});
+
+	describe("destroy", () => {
+		beforeEach(() => {
+			payeeModel.flush = sinon.stub();
+			payeeModel.removeRecent = sinon.stub();
+			$httpBackend.expectDELETE(/payees\/123$/).respond(200);
+			payeeModel.destroy({id: 123});
+			$httpBackend.flush();
+		});
+
+		it("should flush the payee cache", () => payeeModel.flush.should.have.been.called);
+
+		it("should dispatch a DELETE request to /payees/{id}", () => {});
+
+		it("should remove the payee from the recent list", () => payeeModel.removeRecent.should.have.been.calledWith(123));
+	});
+
+	describe("flush", () => {
+		it("should remove the specified payee from the payee cache when an id is provided", () => {
+			payeeModel.flush(1);
+			$cache.remove.should.have.been.calledWith("/payees/1");
+		});
+
+		it("should flush the payee cache when an id is not provided", () => {
+			payeeModel.flush();
+			$cache.removeAll.should.have.been.called;
+		});
+	});
+
+	describe("addRecent", () => {
+		beforeEach(() => payeeModel.addRecent("payee"));
+
+		it("should add the payee to the recent list", () => {
+			ogLruCache.put.should.have.been.calledWith("payee");
+			payeeModel.recent.should.equal("updated list");
+		});
+
+		it("should save the updated recent list", () => $window.localStorage.setItem.should.have.been.calledWith("lootRecentPayees", "{}"));
+	});
+
+	describe("removeRecent", () => {
+		beforeEach(() => payeeModel.removeRecent("payee"));
+
+		it("should remove the payee from the recent list", () => {
+			ogLruCache.remove.should.have.been.calledWith("payee");
+			payeeModel.recent.should.equal("updated list");
+		});
+
+		it("should save the updated recent list", () => $window.localStorage.setItem.should.have.been.calledWith("lootRecentPayees", "{}"));
+	});
+});

@@ -1,5 +1,12 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Service {
+		constructor() {
+			this.query = null;
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,11 +19,4 @@
 	 * Dependencies
 	 */
 	Service.$inject = [];
-
-	/**
-	 * Implementation
-	 */
-	function Service() {
-		this.query = undefined;
-	}
-})();
+}

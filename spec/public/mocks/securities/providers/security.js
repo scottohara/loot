@@ -1,5 +1,18 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock security object
+			this.security = {id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false};
+		}
+
+		$get() {
+			// Return the mock security object
+			return this.security;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,17 +22,7 @@
 		.provider("securityMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock security object
-		provider.security = {id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false};
-
-		provider.$get = function() {
-			// Return the mock security object
-			return provider.security;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

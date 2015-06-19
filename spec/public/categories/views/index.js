@@ -1,197 +1,146 @@
-(function() {
-	"use strict";
+{
+	class CategoryIndexView {
+		constructor() {
+			const OgTableNavigableView = require("../../og-components/og-table-navigable/views/og-table-navigable.js"),
+						self = this;
 
-	/*jshint expr: true */
-
-	function CategoryIndexView() {
-		var view = this,
-				OgTableNavigableView = require("../../og-components/og-table-navigable/views/og-table-navigable.js");
-
-		/**
-		 * UI elements
-		 */
-		view.table = new OgTableNavigableView({
-			rows: element.all(by.repeater("category in vm.categories")),
-			actions: {
-				insert: {
-					heading: "Add Category",
-					view: require("./edit")
-				},
-				edit: {
-					heading: "Edit Category",
-					view: require("./edit"),
-					mouseAction: {
-						name: "edit icon is clicked",
-						perform: function(row) {
-							view.editButton(row).click();
+			this.table = new OgTableNavigableView({
+				rows: element.all(by.repeater("category in vm.categories")),
+				actions: {
+					insert: {
+						heading: "Add Category",
+						view: require("./edit")
+					},
+					edit: {
+						heading: "Edit Category",
+						view: require("./edit"),
+						mouseAction: {
+							name: "edit icon is clicked",
+							perform(row) {
+								self.editButton(row).click();
+							}
 						}
+					},
+					del: {
+						heading: "Delete Category?",
+						view: require("./delete")
+					},
+					select: {
+						heading: "Category 1",
+						heading2: " Transactions",
+						view: require("../../transactions/views/index")
 					}
-				},
-				del: {
-					heading: "Delete Category?",
-					view: require("./delete")
-				},
-				select: {
-					heading: "Category 1",
-					heading2: " Transactions",
-					view: require("../../transactions/views/index")
 				}
-			}
-		});
-		view.directionIcon = directionIcon;
-		view.categoryName = categoryName;
-		view.editButton = editButton;
-		view.firstCategory = firstCategory;
-		view.secondCategory = secondCategory;
-		view.lastCategory = lastCategory;
-		view.secondLastCategory = secondLastCategory;
-		view.firstSubcategory = firstSubcategory;
-		view.secondSubcategory = secondSubcategory;
-		view.lastSubcategory = lastSubcategory;
-		view.secondLastSubcategory = secondLastSubcategory;
-
-		/**
-		 * Behaviours
-		 */
-		view.isSubcategory = isSubcategory;
-		view.categoryParent = categoryParent;
-		view.numChildren = numChildren;
-		view.goToCategory = goToCategory;
-		view.addCategory = addCategory;
-		view.editCategory = editCategory;
-		view.deleteCategory = deleteCategory;
-		view.getRowValues = getRowValues;
-		view.checkRowValues = checkRowValues;
-
-		function directionIcon(row, direction) {
-			return row.element(by.css("i.glyphicon-" + ("inflow" === direction ? "plus" : "minus") + "-sign"));
+			});
 		}
 
-		function categoryName(row) {
+		directionIcon(row, direction) {
+			return row.element(by.css(`i.glyphicon-${"inflow" === direction ? "plus" : "minus"}-sign`));
+		}
+
+		categoryName(row) {
 			return row.element(by.binding("::category.name")).getText();
 		}
 
-		function editButton(row) {
+		editButton(row) {
 			return row.element(by.css("i.glyphicon-edit"));
 		}
 
-		function categories(subcategories) {
-			return view.table.rows.filter(function(row) {
-				return view.isSubcategory(row).then(function(isSubcategory) {
-					return isSubcategory === Boolean(subcategories);
-				});
-			});
+		categories(subcategories) {
+			return this.table.rows.filter(row => this.isSubcategory(row).then(isSubcategory => isSubcategory === Boolean(subcategories)));
 		}
 
-		function firstCategory() {
-			return categories().then(function(categories) {
-				return categories[0];
-			});
+		firstCategory() {
+			return this.categories().then(categories => categories[0]);
 		}
 
-		function secondCategory() {
-			return categories().then(function(categories) {
-				return categories[1];
-			});
+		secondCategory() {
+			return this.categories().then(categories => categories[1]);
 		}
 
-		function lastCategory() {
-			return categories().then(function(categories) {
-				return categories[categories.length - 1];
-			});
+		lastCategory() {
+			return this.categories().then(categories => categories[categories.length - 1]);
 		}
 
-		function secondLastCategory() {
-			return categories().then(function(categories) {
-				return categories[categories.length - 2];
-			});
+		secondLastCategory() {
+			return this.categories().then(categories => categories[categories.length - 2]);
 		}
 
-		function firstSubcategory() {
-			return categories(true).then(function(subcategories) {
-				return subcategories[0];
-			});
+		firstSubcategory() {
+			return this.categories(true).then(subcategories => subcategories[0]);
 		}
 
-		function secondSubcategory() {
-			return categories(true).then(function(subcategories) {
-				return subcategories[1];
-			});
+		secondSubcategory() {
+			return this.categories(true).then(subcategories => subcategories[1]);
 		}
 
-		function lastSubcategory() {
-			return categories(true).then(function(subcategories) {
-				return subcategories[subcategories.length - 1];
-			});
+		lastSubcategory() {
+			return this.categories(true).then(subcategories => subcategories[subcategories.length - 1]);
 		}
 
-		function secondLastSubcategory() {
-			return categories(true).then(function(subcategories) {
-				return subcategories[subcategories.length - 2];
-			});
+		secondLastSubcategory() {
+			return this.categories(true).then(subcategories => subcategories[subcategories.length - 2]);
 		}
 
-		function isSubcategory(row) {
+		isSubcategory(row) {
 			return row.element(by.css("td.subcategory")).isPresent();
 		}
 
-		function categoryParent(row) {
+		categoryParent(row) {
 			return row.evaluate("category.parent.name");
 		}
 
-		function numChildren(row) {
+		numChildren(row) {
 			return row.evaluate("category.num_children");
 		}
 
 		// Double click a category
-		function goToCategory() {
-			//TODO
+		goToCategory() {
+			// MISSING
 		}
 
 		// Create a new category
-		function addCategory() {
-			view.table.ctrlN();
+		addCategory() {
+			this.table.ctrlN();
 		}
 
 		// Edit a category
-		function editCategory(index) {
-			view.table.clickRow(index);
-			view.table.ctrlE();
+		editCategory(index) {
+			this.table.clickRow(index);
+			this.table.ctrlE();
 		}
 
 		// Delete a category
-		function deleteCategory(index) {
-			view.table.clickRow(index);
-			view.table.del();
+		deleteCategory(index) {
+			this.table.clickRow(index);
+			this.table.del();
 		}
 
 		// Gets the values from a row
-		function getRowValues(row) {
+		getRowValues(row) {
 			return protractor.promise.all([
-				view.categoryName(row),
-				view.directionIcon(row, "inflow").isPresent(),
-				view.directionIcon(row, "outflow").isPresent(),
-				view.isSubcategory(row),
-				view.categoryParent(row),
-				view.numChildren(row)
-			]).then(function(values) {
-				return {
-					categoryName: values[0],
-					direction: values[1] ? "inflow" : values[2] ? "outflow" : null,
-					isSubcategory: values[3],
-					categoryParent: values[4],
-					numChildren: values[5]
-				};
-			});
+				this.categoryName(row),
+				this.directionIcon(row, "inflow").isPresent(),
+				this.directionIcon(row, "outflow").isPresent(),
+				this.isSubcategory(row),
+				this.categoryParent(row),
+				this.numChildren(row)
+			]).then(values => ({
+				categoryName: values[0],
+				direction: values[1] ? "inflow" : values[2] ? "outflow" : null,
+				isSubcategory: values[3],
+				categoryParent: values[4],
+				numChildren: values[5]
+			}));
 		}
 
 		// Checks the values in a row against an expected set of values
-		function checkRowValues(row, expected) {
-			view.categoryName(row).should.eventually.equal(expected.categoryName);
-			view.directionIcon(row, expected.direction).isPresent().should.eventually.be.true;
-			view.isSubcategory(row).should.eventually.be.equal(!!expected.isSubcategory);
+		checkRowValues(row, expected) {
+			this.categoryName(row).should.eventually.equal(expected.categoryName);
+			this.directionIcon(row, expected.direction).isPresent().should.eventually.be.true;
+			this.isSubcategory(row).should.eventually.be.equal(Boolean(expected.isSubcategory));
 		}
 	}
 
 	module.exports = new CategoryIndexView();
-})();
+}

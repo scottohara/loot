@@ -1,5 +1,27 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, payeeModel, payee) {
+			this.$modalInstance = $modalInstance;
+			this.payeeModel = payeeModel;
+			this.payee = angular.extend({}, payee);
+			this.mode = payee ? "Edit" : "Add";
+			this.errorMessage = null;
+		}
+
+		// Save and close the modal
+		save() {
+			this.errorMessage = null;
+			this.payeeModel.save(this.payee).then(payee => this.$modalInstance.close(payee.data), error => this.errorMessage = error.data);
+		}
+
+		// Dismiss the modal without saving
+		cancel() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,41 +34,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "payeeModel", "payee"];
-
-	/**
-	 * Implementation
-	 */
-
-	// Declare the Payee Edit controller
-	function Controller($modalInstance, payeeModel, payee) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.payee = angular.extend({}, payee);
-		vm.mode = payee ? "Edit" : "Add";
-		vm.save = save;
-		vm.cancel = cancel;
-		vm.errorMessgae = null;
-
-		/**
-		 * Implementation
-		 */
-
-		// Save and close the modal
-		function save() {
-			vm.errorMessage = null;
-			payeeModel.save(vm.payee).then(function(payee) {
-				$modalInstance.close(payee.data);
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
-		}
-
-		// Dismiss the modal without saving
-		function cancel() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

@@ -1,5 +1,98 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($scope, $state, $modal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
+			this.$scope = $scope;
+			this.$state = $state;
+			this.$modal = $modal;
+			this.authenticationModel = authenticationModel;
+			this.accountModel = accountModel;
+			this.payeeModel = payeeModel;
+			this.categoryModel = categoryModel;
+			this.securityModel = securityModel;
+			this.ogTableNavigableService = ogTableNavigableService;
+			this.queryService = queryService;
+			this.authenticated = authenticated;
+			this.isLoadingState = false;
+			this.scrollTo = ogViewScrollService.scrollTo.bind(ogViewScrollService);
+
+			// Handlers are wrapped in functions to aid with unit testing
+			$scope.$on("$stateChangeStart", () => this.loadingState = true);
+			$scope.$on("$stateChangeSuccess", () => this.loadingState = false);
+			$scope.$on("$stateChangeError", () => this.loadingState = false);
+			$("#transactionSearch").on("search", () => this.checkIfSearchCleared());
+		}
+
+		/**
+		 * Implementation
+		 */
+
+		// Login
+		login() {
+			this.$modal.open({
+				templateUrl: "authentication/views/edit.html",
+				controller: "AuthenticationEditController",
+				controllerAs: "vm",
+				backdrop: "static",
+				size: "sm"
+			}).result.then(() => this.$state.reload());
+		}
+
+		// Logout
+		logout() {
+			this.authenticationModel.logout();
+			this.$state.reload();
+		}
+
+		// Search
+		search() {
+			if ("" !== this.queryService.query) {
+				this.$state.go("root.transactions", {
+					query: this.queryService.query
+				});
+			}
+		}
+
+		// Disable/enable any table key-bindings
+		toggleTableNavigationEnabled(state) {
+			this.ogTableNavigableService.enabled = state;
+		}
+
+		// Recently accessed lists
+		get recentlyAccessedAccounts() {
+			return this.accountModel.recent;
+		}
+
+		get recentlyAccessedPayees() {
+			return this.payeeModel.recent;
+		}
+
+		get recentlyAccessedCategories() {
+			return this.categoryModel.recent;
+		}
+
+		get recentlyAccessedSecurities() {
+			return this.securityModel.recent;
+		}
+
+		get loadingState() {
+			return this.isLoadingState;
+		}
+
+		set loadingState(loading) {
+			this.isLoadingState = loading;
+		}
+
+		checkIfSearchCleared() {
+			// When the search field is cleared, return to the previous state
+			if ("" === this.queryService.query && this.queryService.previousState) {
+				this.$state.go(this.queryService.previousState.name, this.queryService.previousState.params);
+				this.queryService.previousState = null;
+			}
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,112 +105,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$scope", "$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($scope, $state, $modal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.authenticated = authenticated;
-		vm.queryService = queryService;
-		vm.loadingState = false;
-		vm.login = login;
-		vm.logout = logout;
-		vm.search = search;
-		vm.toggleTableNavigationEnabled = toggleTableNavigationEnabled;
-		vm.recentlyAccessedAccounts = recentlyAccessedAccounts;
-		vm.recentlyAccessedPayees = recentlyAccessedPayees;
-		vm.recentlyAccessedCategories = recentlyAccessedCategories;
-		vm.recentlyAccessedSecurities = recentlyAccessedSecurities;
-		vm.scrollTo = ogViewScrollService.scrollTo;
-		vm.toggleLoadingState = toggleLoadingState;
-		vm.checkIfSearchCleared = checkIfSearchCleared;
-
-		/**
-		 * Implementation
-		 */
-	
-		// Login
-		function login() {
-			$modal.open({
-				templateUrl: "authentication/views/edit.html",
-				controller: "AuthenticationEditController",
-				controllerAs: "vm",
-				backdrop: "static",
-				size: "sm"
-			}).result.then(function() {
-				$state.reload();
-			});
-		}
-
-		// Logout
-		function logout() {
-			authenticationModel.logout();
-			$state.reload();
-		}
-
-		// Search
-		function search() {
-			if ("" !== vm.queryService.query) {
-				$state.go("root.transactions", {
-					query: vm.queryService.query
-				});
-			}
-		}
-
-		// Disable/enable any table key-bindings
-		function toggleTableNavigationEnabled(state) {
-			ogTableNavigableService.enabled = state;
-		}
-
-		// Recently accessed lists
-		function recentlyAccessedAccounts() {
-			return accountModel.recent;
-		}
-
-		function recentlyAccessedPayees() {
-			return payeeModel.recent;
-		}
-
-		function recentlyAccessedCategories() {
-			return categoryModel.recent;
-		}
-
-		function recentlyAccessedSecurities() {
-			return securityModel.recent;
-		}
-
-		function toggleLoadingState(loading) {
-			vm.loadingState = loading;
-		}
-
-		function checkIfSearchCleared() {
-			// When the search field is cleared, return to the previous state
-			if ("" === vm.queryService.query && vm.queryService.previousState) {
-				$state.go(vm.queryService.previousState.name, vm.queryService.previousState.params);
-				vm.queryService.previousState = undefined;
-			}
-		}
-
-		// Handlers are wrapped in functions to aid with unit testing
-		$scope.$on("$stateChangeStart", function() {
-			vm.toggleLoadingState(true);
-		});
-
-		$scope.$on("$stateChangeSuccess", function() {
-			vm.toggleLoadingState(false);
-		});
-
-		$scope.$on("$stateChangeError", function() {
-			vm.toggleLoadingState(false);
-		});
-
-		$("#transactionSearch").on("search", function() {
-			vm.checkIfSearchCleared();
-		});
-	}
-})();
+}

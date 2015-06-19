@@ -1,5 +1,24 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor($qMockProvider) {
+			const $q = $qMockProvider.$get();
+
+			// Mock authenticationModel object
+			this.authenticationModel = {
+				login: $q.promisify("gooduser", "baduser"),
+				logout: sinon.stub(),
+				isAuthenticated: true
+			};
+		}
+
+		$get() {
+			// Return the mock authenticationModel object
+			return this.authenticationModel;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,22 +28,7 @@
 		.provider("authenticationModelMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider($qMockProvider) {
-		var provider = this,
-				$q = $qMockProvider.$get();
-
-		// Mock authenticationModel object
-		provider.authenticationModel = {
-			login: $q.promisify("gooduser", "baduser"),
-			logout: sinon.stub(),
-			isAuthenticated: sinon.stub().returns(true)
-		};
-
-		provider.$get = function() {
-			// Return the mock authenticationModel object
-			return provider.authenticationModel;
-		};
-	}
-})();
+	Provider.$inject = ["$qMockProvider"];
+}

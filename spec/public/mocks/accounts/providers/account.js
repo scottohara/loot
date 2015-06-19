@@ -1,5 +1,18 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock account object
+			this.account = {id: 1, name: "aa", account_type: "bank", opening_balance: 100, status: "open"};
+		}
+
+		$get() {
+			// Return the mock account object
+			return this.account;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,17 +22,7 @@
 		.provider("accountMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock account object
-		provider.account = {id: 1, name: "aa", account_type: "bank", opening_balance: 100, status: "open"};
-
-		provider.$get = function() {
-			// Return the mock account object
-			return provider.account;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

@@ -1,301 +1,269 @@
-(function() {
-	"use strict";
+describe("accountModel", () => {
+	let	accountModel,
+			$httpBackend,
+			$http,
+			$cacheFactory,
+			$cache,
+			$window,
+			ogLruCacheFactory,
+			ogLruCache;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
 
-	describe("accountModel", function() {
-		// The object under test
-		var accountModel;
+	// Inject any dependencies that need to be configured first
+	beforeEach(inject(_$window_ => {
+		$window = _$window_;
+		$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(null);
+		$window.localStorage.getItem.withArgs("lootUnreconciledOnly-123").returns("true");
+		$window.localStorage.getItem.withArgs("lootUnreconciledOnly-456").returns("false");
+	}));
 
-		// Dependencies
-		var $httpBackend,
-				$http,
-				$cacheFactory,
-				$cache,
-				$window,
-				ogLruCacheFactory,
-				ogLruCache;
+	// Inject the object under test and it's remaining dependencies
+	beforeEach(inject((_accountModel_, _$httpBackend_, _$http_, _$cacheFactory_, _ogLruCacheFactory_) => {
+		accountModel = _accountModel_;
 
-		// Load the modules
-		beforeEach(module("lootMocks", "lootAccounts", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"]);
-		}));
+		$httpBackend = _$httpBackend_;
+		$http = _$http_;
 
-		// Inject any dependencies that need to be configured first
-		beforeEach(inject(function(_$window_) {
-			$window = _$window_;
-			$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(null);
-			$window.localStorage.getItem.withArgs("lootUnreconciledOnly-123").returns("true");
-			$window.localStorage.getItem.withArgs("lootUnreconciledOnly-456").returns("false");
-		}));
+		$cacheFactory = _$cacheFactory_;
+		$cache = $cacheFactory();
 
-		// Inject the object under test and it's remaining dependencies
-		beforeEach(inject(function(_accountModel_, _$httpBackend_, _$http_, _$cacheFactory_, _ogLruCacheFactory_) {
-			accountModel = _accountModel_;
+		ogLruCacheFactory = _ogLruCacheFactory_;
+		ogLruCache = ogLruCacheFactory();
+	}));
 
-			$httpBackend = _$httpBackend_;
-			$http = _$http_;
+	// After each spec, verify that there are no outstanding http expectations or requests
+	afterEach(() => {
+		$httpBackend.verifyNoOutstandingExpectation();
+		$httpBackend.verifyNoOutstandingRequest();
+	});
 
-			$cacheFactory = _$cacheFactory_;
-			$cache = $cacheFactory();
+	it("should fetch the list of recent accounts from localStorage", () => $window.localStorage.getItem.should.have.been.calledWith("lootRecentAccounts"));
 
-			ogLruCacheFactory = _ogLruCacheFactory_;
-			ogLruCache = ogLruCacheFactory();
-		}));
+	it("should have a list of recent accounts", () => {
+		ogLruCache.list.should.have.been.called;
+		accountModel.recent.should.equal("recent list");
+	});
 
-		// After each spec, verify that there are no outstanding http expectations or requests
-		afterEach(function() {
-			$httpBackend.verifyNoOutstandingExpectation();
-			$httpBackend.verifyNoOutstandingRequest();
+	describe("UNRECONCILED_ONLY_LOCAL_STORAGE_KEY", () => {
+		it("should be 'lootUnreconciledOnly-'", () => accountModel.UNRECONCILED_ONLY_LOCAL_STORAGE_KEY.should.equal("lootUnreconciledOnly-"));
+	});
+
+	describe("LRU_LOCAL_STORAGE_KEY", () => {
+		it("should be 'lootRecentAccounts'", () => accountModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentAccounts"));
+	});
+
+	describe("type", () => {
+		it("should be 'account'", () => accountModel.type.should.equal("account"));
+	});
+
+	describe("path", () => {
+		it("should return the accounts collection path when an id is not provided", () => accountModel.path().should.equal("/accounts"));
+
+		it("should return a specific account path when an id is provided", () => accountModel.path(123).should.equal("/accounts/123"));
+	});
+
+	describe("all", () => {
+		let expectedUrl = /accounts$/,
+				expectedResponse = "accounts without balances";
+
+		it("should dispatch a GET request to /accounts", () => {
+			$httpBackend.expect("GET", expectedUrl).respond(200);
+			accountModel.all();
+			$httpBackend.flush();
 		});
 
-		it("should fetch the list of recent accounts from localStorage", function() {
-			$window.localStorage.getItem.should.have.been.calledWith("lootRecentAccounts");
-		});
-
-		it("should have a list of recent accounts", function() {
-			ogLruCache.list.should.have.been.called;
-			accountModel.recent.should.equal("recent list");
-		});
-
-		describe("type", function() {
-			it("should be 'account'", function() {
-				accountModel.type().should.equal("account");
+		it("should cache the response in the $http cache", () => {
+			const httpGet = sinon.stub($http, "get").returns({
+				then() {}
 			});
+
+			accountModel.all();
+			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
 		});
 
-		describe("path", function() {
-			it("should return the accounts collection path when an id is not provided", function() {
-				accountModel.path().should.equal("/accounts");
-			});
-
-			it("should return a specific account path when an id is provided", function() {
-				accountModel.path(123).should.equal("/accounts/123");
-			});
+		it("should return a list of all accounts without their balances", () => {
+			$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
+			accountModel.all().should.eventually.equal(expectedResponse);
+			$httpBackend.flush();
 		});
 
-		describe("all", function() {
-			var expectedUrl = /accounts$/,
-					expectedResponse = "accounts without balances";
+		describe("(include balances)", () => {
+			beforeEach(() => {
+				expectedUrl = /accounts\?include_balances/;
+				expectedResponse = "accounts with balances";
+			});
 
-			it("should dispatch a GET request to /accounts", function() {
+			it("should dispatch a GET request to /accounts?include_balances", () => {
 				$httpBackend.expect("GET", expectedUrl).respond(200);
-				accountModel.all();
+				accountModel.all(true);
 				$httpBackend.flush();
 			});
-			
-			it("should cache the response in the $http cache", function() {
-				var httpGet = sinon.stub($http, "get").returns({
-					then: function() {}
+
+			it("should not cache the response in the $http cache", () => {
+				const httpGet = sinon.stub($http, "get").returns({
+					then() {}
 				});
 
-				accountModel.all();
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+				accountModel.all(true);
+				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.false;
 			});
 
-			it("should return a list of all accounts without their balances", function() {
+			it("should return a list of all accounts including their balances", () => {
 				$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-				accountModel.all().should.eventually.equal(expectedResponse);
+				accountModel.all(true).should.eventually.equal(expectedResponse);
 				$httpBackend.flush();
-			});
-
-			describe("(include balances)", function() {
-				beforeEach(function() {
-					expectedUrl = /accounts\?include_balances/;
-					expectedResponse = "accounts with balances";
-				});
-
-				it("should dispatch a GET request to /accounts?include_balances", function() {
-					$httpBackend.expect("GET", expectedUrl).respond(200);
-					accountModel.all(true);
-					$httpBackend.flush();
-				});
-				
-				it("should not cache the response in the $http cache", function() {
-					var httpGet = sinon.stub($http, "get").returns({
-						then: function() {}
-					});
-
-					accountModel.all(true);
-					httpGet.firstCall.args[1].should.have.a.property("cache").that.is.false;
-				});
-
-				it("should return a list of all accounts including their balances", function() {
-					$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-					accountModel.all(true).should.eventually.equal(expectedResponse);
-					$httpBackend.flush();
-				});
-			});
-		});
-
-		describe("allWithBalances", function() {
-			var expected = "accounts with balances";
-
-			beforeEach(function() {
-				accountModel.all = sinon.stub().returns(expected);
-			});
-
-			it("should call accountModel.all(true)", function() {
-				accountModel.allWithBalances();
-				accountModel.all.should.have.been.calledWith(true);
-			});
-
-			it("should return a list of all accounts including their balances", function() {
-				accountModel.allWithBalances().should.equal(expected);
-			});
-		});
-
-		describe("find", function() {
-			var expectedUrl = /accounts\/123/,
-					expectedResponse = "account details";
-
-			beforeEach(function() {
-				accountModel.addRecent = sinon.stub();
-			});
-
-			it("should dispatch a GET request to /accounts/{id}", function() {
-				$httpBackend.expect("GET", expectedUrl).respond(200);
-				accountModel.find(123);
-				$httpBackend.flush();
-			});
-
-			it("should cache the response in the $http cache", function() {
-				var httpGet = sinon.stub($http, "get").returns({
-					then: function() {}
-				});
-
-				accountModel.find(123);
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
-			});
-
-			it("should add the account to the recent list", function() {
-				$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
-				accountModel.find(123);
-				$httpBackend.flush();
-				accountModel.addRecent.should.have.been.calledWith(expectedResponse);
-			});
-
-			it("should return the account", function() {
-				$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
-				accountModel.find(123).should.eventually.equal(expectedResponse);
-				$httpBackend.flush();
-			});
-		});
-
-		describe("save", function() {
-			beforeEach(function() {
-				accountModel.flush = sinon.stub();
-				$httpBackend.whenPOST(/accounts$/, {}).respond(200);
-				$httpBackend.whenPATCH(/accounts\/123$/, {id: 123}).respond(200);
-			});
-
-			it("should flush the account cache", function() {
-				accountModel.save({});
-				accountModel.flush.should.have.been.called;
-				$httpBackend.flush();
-			});
-
-			it("should dispatch a POST request to /accounts when an id is not provided", function() {
-				$httpBackend.expectPOST(/accounts$/);
-				accountModel.save({});
-				$httpBackend.flush();
-			});
-
-			it("should dispatch a PATCH request to /accounts/{id} when an id is provided", function() {
-				$httpBackend.expectPATCH(/accounts\/123$/);
-				accountModel.save({id: 123});
-				$httpBackend.flush();
-			});
-		});
-
-		describe("destroy", function() {
-			beforeEach(function() {
-				accountModel.flush = sinon.stub();
-				accountModel.removeRecent = sinon.stub();
-				$httpBackend.expectDELETE(/accounts\/123$/).respond(200);
-				accountModel.destroy({id: 123});
-				$httpBackend.flush();
-			});
-
-			it("should flush the account cache", function() {
-				accountModel.flush.should.have.been.called;
-			});
-
-			it("should dispatch a DELETE request to /accounts/{id}", function() {
-			});
-
-			it("should remove the account from the recent list", function() {
-				accountModel.removeRecent.should.have.been.calledWith(123);
-			});
-		});
-
-		describe("reconcile", function() {
-			var expectedUrl = /accounts\/123\/reconcile/;
-
-			it("should dispatch a PUT request to /account/{id}/reconcile", function() {
-				$httpBackend.expect("PUT", expectedUrl).respond(200);
-				accountModel.reconcile(123);
-				$httpBackend.flush();
-			});
-		});
-
-		describe("isUnreconciledOnly", function() {
-			it("should be true if the account is configured to show unreconciled transactions only", function() {
-				accountModel.isUnreconciledOnly(123).should.be.true;
-			});
-
-			it("should be false if the account is not configured to show unreconciled transactions only", function() {
-				accountModel.isUnreconciledOnly(456).should.be.false;
-			});
-		});
-
-		describe("unreconciledOnly", function() {
-			it("should save the unreconciledOnly setting for the specified account", function() {
-				accountModel.unreconciledOnly(123, true);
-				$window.localStorage.setItem.should.have.been.calledWith("lootUnreconciledOnly-123", true);
-			});
-		});
-
-		describe("flush", function() {
-			it("should remove the specified account from the account cache when an id is provided", function() {
-				accountModel.flush(1);
-				$cache.remove.should.have.been.calledWith("/accounts/1");
-			});
-
-			it("should flush the account cache when an id is not provided", function() {
-				accountModel.flush();
-				$cache.removeAll.should.have.been.called;
-			});
-		});
-
-		describe("addRecent", function() {
-			beforeEach(function() {
-				accountModel.addRecent("account");
-			});
-
-			it("should add the account to the recent list", function() {
-				ogLruCache.put.should.have.been.calledWith("account");
-				accountModel.recent.should.equal("updated list");
-			});
-
-			it("should save the updated recent list", function() {
-				$window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", "{}");
-			});
-		});
-
-		describe("removeRecent", function() {
-			beforeEach(function() {
-				accountModel.removeRecent("account");
-			});
-
-			it("should remove the account from the recent list", function() {
-				ogLruCache.remove.should.have.been.calledWith("account");
-				accountModel.recent.should.equal("updated list");
-			});
-
-			it("should save the updated recent list", function() {
-				$window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", "{}");
 			});
 		});
 	});
-})();
+
+	describe("allWithBalances", () => {
+		const expected = "accounts with balances";
+
+		beforeEach(() => accountModel.all = sinon.stub().returns(expected));
+
+		it("should call accountModel.all(true)", () => {
+			accountModel.allWithBalances();
+			accountModel.all.should.have.been.calledWith(true);
+		});
+
+		it("should return a list of all accounts including their balances", () => {
+			accountModel.allWithBalances().should.equal(expected);
+		});
+	});
+
+	describe("find", () => {
+		const expectedUrl = /accounts\/123/,
+					expectedResponse = "account details";
+
+		beforeEach(() => accountModel.addRecent = sinon.stub());
+
+		it("should dispatch a GET request to /accounts/{id}", () => {
+			$httpBackend.expect("GET", expectedUrl).respond(200);
+			accountModel.find(123);
+			$httpBackend.flush();
+		});
+
+		it("should cache the response in the $http cache", () => {
+			const httpGet = sinon.stub($http, "get").returns({
+				then() {}
+			});
+
+			accountModel.find(123);
+			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+		});
+
+		it("should add the account to the recent list", () => {
+			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
+			accountModel.find(123);
+			$httpBackend.flush();
+			accountModel.addRecent.should.have.been.calledWith(expectedResponse);
+		});
+
+		it("should return the account", () => {
+			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
+			accountModel.find(123).should.eventually.equal(expectedResponse);
+			$httpBackend.flush();
+		});
+	});
+
+	describe("save", () => {
+		beforeEach(() => {
+			accountModel.flush = sinon.stub();
+			$httpBackend.whenPOST(/accounts$/, {}).respond(200);
+			$httpBackend.whenPATCH(/accounts\/123$/, {id: 123}).respond(200);
+		});
+
+		it("should flush the account cache", () => {
+			accountModel.save({});
+			accountModel.flush.should.have.been.called;
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a POST request to /accounts when an id is not provided", () => {
+			$httpBackend.expectPOST(/accounts$/);
+			accountModel.save({});
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a PATCH request to /accounts/{id} when an id is provided", () => {
+			$httpBackend.expectPATCH(/accounts\/123$/);
+			accountModel.save({id: 123});
+			$httpBackend.flush();
+		});
+	});
+
+	describe("destroy", () => {
+		beforeEach(() => {
+			accountModel.flush = sinon.stub();
+			accountModel.removeRecent = sinon.stub();
+			$httpBackend.expectDELETE(/accounts\/123$/).respond(200);
+			accountModel.destroy({id: 123});
+			$httpBackend.flush();
+		});
+
+		it("should flush the account cache", () => accountModel.flush.should.have.been.called);
+
+		it("should dispatch a DELETE request to /accounts/{id}", () => {});
+
+		it("should remove the account from the recent list", () => accountModel.removeRecent.should.have.been.calledWith(123));
+	});
+
+	describe("reconcile", () => {
+		const expectedUrl = /accounts\/123\/reconcile/;
+
+		it("should dispatch a PUT request to /account/{id}/reconcile", () => {
+			$httpBackend.expect("PUT", expectedUrl).respond(200);
+			accountModel.reconcile(123);
+			$httpBackend.flush();
+		});
+	});
+
+	describe("isUnreconciledOnly", () => {
+		it("should be true if the account is configured to show unreconciled transactions only", () => accountModel.isUnreconciledOnly(123).should.be.true);
+
+		it("should be false if the account is not configured to show unreconciled transactions only", () => accountModel.isUnreconciledOnly(456).should.be.false);
+	});
+
+	describe("unreconciledOnly", () => {
+		it("should save the unreconciledOnly setting for the specified account", () => {
+			accountModel.unreconciledOnly(123, true);
+			$window.localStorage.setItem.should.have.been.calledWith("lootUnreconciledOnly-123", true);
+		});
+	});
+
+	describe("flush", () => {
+		it("should remove the specified account from the account cache when an id is provided", () => {
+			accountModel.flush(1);
+			$cache.remove.should.have.been.calledWith("/accounts/1");
+		});
+
+		it("should flush the account cache when an id is not provided", () => {
+			accountModel.flush();
+			$cache.removeAll.should.have.been.called;
+		});
+	});
+
+	describe("addRecent", () => {
+		beforeEach(() => accountModel.addRecent("account"));
+
+		it("should add the account to the recent list", () => {
+			ogLruCache.put.should.have.been.calledWith("account");
+			accountModel.recent.should.equal("updated list");
+		});
+
+		it("should save the updated recent list", () => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", "{}"));
+	});
+
+	describe("removeRecent", () => {
+		beforeEach(() => accountModel.removeRecent("account"));
+
+		it("should remove the account from the recent list", () => {
+			ogLruCache.remove.should.have.been.calledWith("account");
+			accountModel.recent.should.equal("updated list");
+		});
+
+		it("should save the updated recent list", () => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", "{}"));
+	});
+});

@@ -1,73 +1,58 @@
-(function() {
-	"use strict";
+describe("AccountDeleteController", () => {
+	let accountDeleteController,
+			$modalInstance,
+			accountModel,
+			account;
 
-	/*jshint expr: true */
+	// Load the modules
+	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "accountModel", "account"])));
 
-	describe("AccountDeleteController", function() {
-		// The object under test
-		var accountDeleteController;
+	// Configure & compile the object under test
+	beforeEach(inject((controllerTest, _$modalInstance_, _accountModel_, _account_) => {
+		$modalInstance = _$modalInstance_;
+		accountModel = _accountModel_;
+		account = _account_;
+		accountDeleteController = controllerTest("AccountDeleteController");
+	}));
 
-		// Dependencies
-		var $modalInstance,
-				accountModel,
-				account;
+	it("should make the passed account available to the view", () => {
+		account.account_type = `${account.account_type.charAt(0).toUpperCase()}${account.account_type.substr(1)}`;
+		account.status = `${account.status.charAt(0).toUpperCase()}${account.status.substr(1)}`;
+		accountDeleteController.account.should.deep.equal(account);
+	});
 
-		// Load the modules
-		beforeEach(module("lootMocks", "lootAccounts", function(mockDependenciesProvider) {
-			mockDependenciesProvider.load(["$modalInstance", "accountModel", "account"]);
-		}));
+	it("should capitalise the account type", () => accountDeleteController.account.account_type.should.equal("Bank"));
 
-		// Configure & compile the object under test
-		beforeEach(inject(function(controllerTest, _$modalInstance_, _accountModel_, _account_) {
-			$modalInstance = _$modalInstance_;
-			accountModel = _accountModel_;
-			account = _account_;
-			accountDeleteController = controllerTest("AccountDeleteController");
-		}));
+	it("should capitalise the status", () => accountDeleteController.account.status.should.equal("Open"));
 
-		it("should make the passed account available to the view", function() {
-			account.account_type = account.account_type.charAt(0).toUpperCase() + account.account_type.substr(1);
-			account.status = account.status.charAt(0).toUpperCase() + account.status.substr(1);
-			accountDeleteController.account.should.deep.equal(account);
+	describe("deleteAccount", () => {
+		it("should reset any previous error messages", () => {
+			accountDeleteController.errorMessage = "error message";
+			accountDeleteController.deleteAccount();
+			(null === accountDeleteController.errorMessage).should.be.true;
 		});
 
-		it("should capitalise the account type", function() {
-			accountDeleteController.account.account_type.should.equal("Bank");
+		it("should delete the account", () => {
+			accountDeleteController.deleteAccount();
+			accountModel.destroy.should.have.been.calledWith(account);
 		});
 
-		it("should capitalise the status", function() {
-			accountDeleteController.account.status.should.equal("Open");
+		it("should close the modal when the account delete is successful", () => {
+			accountDeleteController.deleteAccount();
+			$modalInstance.close.should.have.been.called;
 		});
 
-		describe("deleteAccount", function() {
-			it("should reset any previous error messages", function() {
-				accountDeleteController.errorMessage = "error message";
-				accountDeleteController.deleteAccount();
-				(null === accountDeleteController.errorMessage).should.be.true;
-			});
-
-			it("should delete the account", function() {
-				accountDeleteController.deleteAccount();
-				accountModel.destroy.should.have.been.calledWith(account);
-			});
-
-			it("should close the modal when the account delete is successful", function() {
-				accountDeleteController.deleteAccount();
-				$modalInstance.close.should.have.been.called;
-			});
-
-			it("should display an error message when the account delete is unsuccessful", function() {
-				accountDeleteController.account.id = -1;
-				accountDeleteController.deleteAccount();
-				accountDeleteController.errorMessage.should.equal("unsuccessful");
-			});
-		});
-
-		describe("cancel", function() {
-			it("should dismiss the modal", function() {
-				accountDeleteController.cancel();
-				$modalInstance.dismiss.should.have.been.called;
-			});
+		it("should display an error message when the account delete is unsuccessful", () => {
+			accountDeleteController.account.id = -1;
+			accountDeleteController.deleteAccount();
+			accountDeleteController.errorMessage.should.equal("unsuccessful");
 		});
 	});
-})();
+
+	describe("cancel", () => {
+		it("should dismiss the modal", () => {
+			accountDeleteController.cancel();
+			$modalInstance.dismiss.should.have.been.called;
+		});
+	});
+});

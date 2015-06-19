@@ -1,5 +1,22 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {}
+
+		// Mock input number controller object
+		ogInputNumberController() {
+			this.type = "ogInputNumberController";
+			this.formattedToRaw = sinon.stub().returnsArg(0);
+			this.rawToFormatted = sinon.stub().returnsArg(0);
+		}
+
+		$get() {
+			// Return the mock input number controller object
+			return this.ogInputNumberController;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,21 +26,7 @@
 		.provider("ogInputNumberControllerMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock input number controller object
-		provider.ogInputNumberController = function() {
-			this.type = "ogInputNumberController";
-			this.formattedToRaw = sinon.stub().returnsArg(0);
-			this.rawToFormatted = sinon.stub().returnsArg(0);
-		};
-
-		provider.$get = function() {
-			// Return the mock input number controller object
-			return provider.ogInputNumberController;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

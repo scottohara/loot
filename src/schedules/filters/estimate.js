@@ -1,24 +1,26 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Filter {
+		constructor() {
+			return (value, isEstimate) => `${isEstimate ? "~" : ""}${value}`;
+		}
+
+		static factory() {
+			return new Filter();
+		}
+	}
 
 	/**
 	 * Registration
 	 */
 	angular
 		.module("lootSchedules")
-		.filter("estimate", Filter);
+		.filter("estimate", Filter.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Filter.$inject = [];
-
-	/**
-	 * Implementation
-	 */
-	function Filter() {
-		return function(value, isEstimate) {
-			return (isEstimate ? "~" : "") + value;
-		};
-	}
-})();
+	Filter.factory.$inject = [];
+}

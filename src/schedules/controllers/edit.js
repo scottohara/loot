@@ -1,189 +1,169 @@
-(function() {
-	"use strict";
-
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootSchedules")
-		.controller("ScheduleEditController", Controller);
-
-	/**
-	 * Dependencies
-	 */
-	Controller.$inject = ["$scope", "$modalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"];
-
+{
 	/**
 	 * Implementation
 	 */
-	function Controller($scope, $modalInstance, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
-		var vm = this;
+	class Controller {
+		constructor($scope, $modalInstance, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
+			this.$modalInstance = $modalInstance;
+			this.$timeout = $timeout;
+			this.filterFilter = filterFilter;
+			this.limitToFilter = limitToFilter;
+			this.currencyFilter = currencyFilter;
+			this.payeeModel = payeeModel;
+			this.securityModel = securityModel;
+			this.categoryModel = categoryModel;
+			this.accountModel = accountModel;
+			this.transactionModel = transactionModel;
+			this.scheduleModel = scheduleModel;
+			this.transaction = angular.extend({transaction_type: "Basic", next_due_date: moment().startOf("day").toDate()}, schedule);
 
-		/**
-		 * Interface
-		 */
-		vm.transaction = angular.extend({transaction_type: "Basic", next_due_date: moment().startOf("day").toDate()}, schedule);
-		vm.mode = schedule ? "Enter Transaction" : "Add Schedule";	// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
-		vm.schedule = schedule ? angular.copy(vm.transaction) : vm.transaction;	// When schedule is passed, schedule & transaction are different objects; otherwise same object
-		vm.loadingLastTransaction = false;
-		vm.account_type = undefined;
-		vm.totalAllocated = undefined;
-		vm.scheduleFrequencies = {Weekly: { weeks: 1 }, Fortnightly: { weeks: 2 }, Monthly: { months: 1 }, Bimonthly: { months: 2 }, Quarterly: { months: 3 }, Yearly: { years: 1 }};
-		vm.payees = payees;
-		vm.securities = securities;
-		vm.categories = categories;
-		vm.investmentCategories = investmentCategories;
-		vm.isString = isString;
-		vm.payeeSelected = payeeSelected;
-		vm.securitySelected = securitySelected;
-		vm.getSubtransactions = getSubtransactions;
-		vm.useLastTransaction = useLastTransaction;
-		vm.categorySelected = categorySelected;
-		vm.investmentCategorySelected = investmentCategorySelected;
-		vm.primaryAccountSelected = primaryAccountSelected;
-		vm.memoFromSubtransactions = memoFromSubtransactions;
-		vm.primaryAccounts = primaryAccounts;
-		vm.accounts = accounts;
-		vm.frequencies = frequencies;
-		vm.addSubtransaction = addSubtransaction;
-		vm.deleteSubtransaction = deleteSubtransaction;
-		vm.addUnallocatedAmount = addUnallocatedAmount;
-		vm.calculateNextDue = calculateNextDue;
-		vm.updateInvestmentDetails = updateInvestmentDetails;
-		vm.edit = edit;
-		vm.enter = enter;
-		vm.skip = skip;
-		vm.save = save;
-		vm.cancel = cancel;
-		vm.errorMessage = null;
+			// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
+			this.mode = schedule ? "Enter Transaction" : "Add Schedule";
 
-		/**
-		 * Implemenation
-		 */
-		if (schedule) {
-			// Set the transaction id to null, so that on save a new transaction is created
-			vm.transaction.id = null;
+			// When schedule is passed, schedule & transaction are different objects; otherwise same object
+			this.schedule = schedule ? angular.copy(this.transaction) : this.transaction;
 
-			// Default the transaction date to the next due date
-			vm.transaction.transaction_date = vm.schedule.next_due_date;
+			this.loadingLastTransaction = false;
+			this.account_type = null;
+			this.totalAllocated = null;
+			this.scheduleFrequencies = {Weekly: {weeks: 1}, Fortnightly: {weeks: 2}, Monthly: {months: 1}, Bimonthly: {months: 2}, Quarterly: {months: 3}, Yearly: {years: 1}};
+			this.errorMessage = null;
+
+			if (schedule) {
+				// Set the transaction id to null, so that on save a new transaction is created
+				this.transaction.id = null;
+
+				// Default the transaction date to the next due date
+				this.transaction.transaction_date = this.schedule.next_due_date;
+			}
+
+			// Set the auto-flag property based on the presence/absence of a flag
+			this.schedule.autoFlag = Boolean(this.schedule.flag);
+			if ("(no memo)" === this.schedule.flag) {
+				this.schedule.flag = null;
+			}
+
+			// Prefetch the payees list so that the cache is populated
+			payeeModel.all();
+
+			// Watch the subtransactions array and recalculate the total allocated
+			$scope.$watch(() => this.transaction.subtransactions, (newValue, oldValue) => {
+				if (newValue !== oldValue && this.transaction.subtransactions) {
+					this.totalAllocated = this.transaction.subtransactions.reduce((total, subtransaction) => total + (Number(subtransaction.amount * (subtransaction.direction === this.transaction.direction ? 1 : -1)) || 0), 0);
+
+					// If we're adding a new transaction, join the subtransaction memos and update the parent memo
+					if (!this.transaction.id) {
+						this.memoFromSubtransactions();
+					}
+				}
+			}, true);
 		}
-
-		// Set the auto-flag property based on the presence/absence of a flag
-		vm.schedule.autoFlag = !!vm.schedule.flag;
-		if ("(no memo)" === vm.schedule.flag) {
-			vm.schedule.flag = null;
-		}
-
-		// Prefetch the payees list so that the cache is populated
-		payeeModel.all();
 
 		// List of payees for the typeahead
-		function payees(filter, limit) {
-			return payeeModel.all().then(function(payees) {
-				return limitToFilter(filterFilter(payees, {name: filter}), limit);
-			});
+		payees(filter, limit) {
+			return this.payeeModel.all().then(payees => this.limitToFilter(this.filterFilter(payees, {name: filter}), limit));
 		}
 
 		// List of securities for the typeahead
-		function securities(filter, limit) {
-			return securityModel.all().then(function(securities) {
-				return limitToFilter(filterFilter(securities, {name: filter}), limit);
-			});
+		securities(filter, limit) {
+			return this.securityModel.all().then(securities => this.limitToFilter(this.filterFilter(securities, {name: filter}), limit));
 		}
 
 		// List of categories for the typeahead
-		function categories(filter, limit, parent, includeSplits) {
+		categories(filter, limit, parent, includeSplits) {
 			// If a parent was specified but it doesn't have an id, return an empty array
 			if (parent && isNaN(parent.id)) {
 				return [];
 			}
 
 			// If the parent was specified, pass the parent's id
-			var parentId = parent ? parent.id : null;
+			const parentId = parent ? parent.id : null;
 
-			return categoryModel.all(parentId).then(function(categories) {
+			return this.categoryModel.all(parentId).then(categories => {
+				let psuedoCategories = categories;
+
 				// For the category dropdown, include psuedo-categories that change the transaction type
 				if (!parent) {
 					if (includeSplits) {
-						categories = [
-							{ id: "SplitTo", name: "Split To" },
-							{ id: "SplitFrom", name: "Split From" },
-							{ id: "Payslip", name: "Payslip" },
-							{ id: "LoanRepayment", name: "Loan Repayment" }
-						].concat(categories);
+						psuedoCategories = [
+							{id: "SplitTo", name: "Split To"},
+							{id: "SplitFrom", name: "Split From"},
+							{id: "Payslip", name: "Payslip"},
+							{id: "LoanRepayment", name: "Loan Repayment"}
+						].concat(psuedoCategories);
 					}
 
-					categories = [
-						{ id: "TransferTo", name: "Transfer To" },
-						{ id: "TransferFrom", name: "Transfer From" }
-					].concat(categories);
+					psuedoCategories = [
+						{id: "TransferTo", name: "Transfer To"},
+						{id: "TransferFrom", name: "Transfer From"}
+					].concat(psuedoCategories);
 				}
 
-				return limitToFilter(filterFilter(categories, {name: filter}), limit);
+				return this.limitToFilter(this.filterFilter(psuedoCategories, {name: filter}), limit);
 			});
 		}
 
 		// List of investment categories for the typeahead
-		function investmentCategories(filter, limit) {
-			var categories = [
-				{ id: "Buy", name: "Buy" },
-				{ id: "Sell", name: "Sell" },
-				{ id: "DividendTo", name: "Dividend To" },
-				{ id: "AddShares", name: "Add Shares" },
-				{ id: "RemoveShares", name: "Remove Shares" },
-				{ id: "TransferTo", name: "Transfer To" },
-				{ id: "TransferFrom", name: "Transfer From" }
+		investmentCategories(filter, limit) {
+			const categories = [
+				{id: "Buy", name: "Buy"},
+				{id: "Sell", name: "Sell"},
+				{id: "DividendTo", name: "Dividend To"},
+				{id: "AddShares", name: "Add Shares"},
+				{id: "RemoveShares", name: "Remove Shares"},
+				{id: "TransferTo", name: "Transfer To"},
+				{id: "TransferFrom", name: "Transfer From"}
 			];
 
-			return limitToFilter(filterFilter(categories, {name: filter}), limit);
+			return this.limitToFilter(this.filterFilter(categories, {name: filter}), limit);
 		}
 
 		// Returns true if the passed value is typeof string (and is not empty)
-		function isString(object) {
-			return (typeof object === "string") && object.length > 0;
+		isString(object) {
+			return "string" === typeof object && object.length > 0;
 		}
 
 		// Handler for payee changes
-		function payeeSelected() {
+		payeeSelected() {
 			// If we're adding a new schedule and an existing payee is selected
-			if (!vm.transaction.id && typeof vm.transaction.payee === "object" && vm.mode !== "Enter Transaction") {
+			if (!this.transaction.id && this.transaction.payee && "object" === typeof this.transaction.payee && "Enter Transaction" !== this.mode) {
 				// Show the loading indicator
-				vm.loadingLastTransaction = true;
+				this.loadingLastTransaction = true;
 
 				// Get the previous transaction for the payee
-				payeeModel.findLastTransaction(vm.transaction.payee.id, vm.transaction.primary_account.account_type).then(vm.getSubtransactions).then(vm.useLastTransaction).then(function() {
-					// Hide the loading indicator
-					vm.loadingLastTransaction = false;
-				});
+				this.payeeModel.findLastTransaction(this.transaction.payee.id, this.transaction.primary_account.account_type)
+					.then(this.getSubtransactions.bind(this))
+					.then(this.useLastTransaction.bind(this))
+					.then(() => this.loadingLastTransaction = false);
 			}
 		}
 
 		// Handler for security changes
-		function securitySelected() {
+		securitySelected() {
 			// If we're adding a new schedule and an existing security is selected
-			if (!vm.transaction.id && typeof vm.transaction.security === "object" && vm.mode !== "Enter Transaction") {
+			if (!this.transaction.id && this.transaction.security && "object" === typeof this.transaction.security && "Enter Transaction" !== this.mode) {
 				// Show the loading indicator
-				vm.loadingLastTransaction = true;
+				this.loadingLastTransaction = true;
 
 				// Get the previous transaction for the security
-				securityModel.findLastTransaction(vm.transaction.security.id, vm.transaction.primary_account.account_type).then(vm.getSubtransactions).then(vm.useLastTransaction).then(function() {
-					// Hide the loading indicator
-					vm.loadingLastTransaction = false;
-				});
+				this.securityModel.findLastTransaction(this.transaction.security.id, this.transaction.primary_account.account_type)
+					.then(this.getSubtransactions.bind(this))
+					.then(this.useLastTransaction.bind(this))
+					.then(() => this.loadingLastTransaction = false);
 			}
 		}
 
 		// Fetches the subtransactions for a transaction
-		function getSubtransactions(transaction) {
+		getSubtransactions(transaction) {
 			// If the last transaction was a Split/Loan Repayment/Payslip; fetch the subtransactions
 			switch (transaction.transaction_type) {
 				case "Split":
 				case "LoanRepayment":
 				case "Payslip":
 					transaction.subtransactions = [];
-					return transactionModel.findSubtransactions(transaction.id).then(function(subtransactions) {
+					return this.transactionModel.findSubtransactions(transaction.id).then(subtransactions => {
 						// Strip the subtransaction ids
-						transaction.subtransactions = subtransactions.map(function(subtransaction) {
+						transaction.subtransactions = subtransactions.map(subtransaction => {
 							subtransaction.id = null;
 							return subtransaction;
 						});
@@ -196,42 +176,40 @@
 		}
 
 		// Merges the details of a previous transaction into the current one
-		function useLastTransaction(transaction) {
+		useLastTransaction(transaction) {
 			// Strip the id, primary account, next due date, transaction date, frequency and status
-			delete transaction.id;
-			delete transaction.primary_account;
-			delete transaction.next_due_date;
-			delete transaction.transaction_date;
-			delete transaction.frequency;
-			delete transaction.status;
-			delete transaction.related_status;
+			Reflect.deleteProperty(transaction, "id");
+			Reflect.deleteProperty(transaction, "primary_account");
+			Reflect.deleteProperty(transaction, "next_due_date");
+			Reflect.deleteProperty(transaction, "transaction_date");
+			Reflect.deleteProperty(transaction, "frequency");
+			Reflect.deleteProperty(transaction, "status");
+			Reflect.deleteProperty(transaction, "related_status");
 
 			// Retain the schedule's flag (if any), don't overwrite with the previous transaction's flag
-			transaction.flag = vm.transaction.flag;
+			transaction.flag = this.transaction.flag;
 
 			// Merge the last transaction details into the transaction on the scope
-			vm.transaction = angular.extend(vm.transaction, transaction);
+			this.transaction = angular.extend(this.transaction, transaction);
 
 			// Depending on which field has focus, re-trigger the focus event handler to format/select the new value
-			angular.forEach(angular.element("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo"), function(field) {
+			angular.forEach(angular.element("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo"), field => {
 				if (field === document.activeElement) {
-					$timeout(function() {
-						angular.element(field).triggerHandler("focus");
-					}, 0);
+					this.$timeout(() => angular.element(field).triggerHandler("focus"));
 				}
 			});
 		}
 
 		// Handler for category changes
 		// (index) is the subtransaction index, or null for the main schedule
-		function categorySelected(index) {
-			var	transaction = isNaN(index) ? vm.transaction : vm.transaction.subtransactions[index],
-					type,
+		categorySelected(index) {
+			const transaction = isNaN(index) ? this.transaction : this.transaction.subtransactions[index];
+			let	type,
 					direction,
 					parentId;
 
 			// Check the category selection
-			if (typeof transaction.category === "object") {
+			if (transaction.category && "object" === typeof transaction.category) {
 				if (isNaN(index)) {
 					switch (transaction.category.id) {
 						case "TransferTo":
@@ -288,6 +266,8 @@
 								];
 							}
 							break;
+
+						// no default
 					}
 				} else {
 					switch (transaction.category.id) {
@@ -322,13 +302,13 @@
 		}
 
 		// Handler for investment category changes
-		function investmentCategorySelected() {
-			var	type,
+		investmentCategorySelected() {
+			let	type,
 					direction;
 
 			// Check the category selection
-			if (typeof vm.transaction.category === "object") {
-				switch (vm.transaction.category.id) {
+			if (this.transaction.category && "object" === typeof this.transaction.category) {
+				switch (this.transaction.category.id) {
 					case "TransferTo":
 						type = "SecurityTransfer";
 						direction = "outflow";
@@ -363,183 +343,170 @@
 						type = "Dividend";
 						direction = "outflow";
 						break;
+
+					// no default
 				}
 
 				// Update the transaction type & direction
-				vm.transaction.transaction_type = type;
-				vm.transaction.direction = direction;
+				this.transaction.transaction_type = type;
+				this.transaction.direction = direction;
 			}
 		}
 
 		// Handler for primary account changes
-		function primaryAccountSelected() {
-			var selectedAccountType = vm.transaction.primary_account && vm.transaction.primary_account.account_type;
+		primaryAccountSelected() {
+			const selectedAccountType = this.transaction.primary_account && this.transaction.primary_account.account_type;
 
-			if (vm.account_type && vm.account_type !== selectedAccountType) {
-				vm.transaction.category = null;
-				vm.transaction.subcategory = null;
+			if (this.account_type && this.account_type !== selectedAccountType) {
+				this.transaction.category = null;
+				this.transaction.subcategory = null;
 			}
-			vm.account_type = selectedAccountType;
+			this.account_type = selectedAccountType;
 
-			if (vm.transaction.account && vm.transaction.primary_account && vm.transaction.primary_account.id === vm.transaction.account.id) {
+			if (this.transaction.account && this.transaction.primary_account && this.transaction.primary_account.id === this.transaction.account.id) {
 				// Primary account and transfer account can't be the same, so clear the transfer account
-				vm.transaction.account = null;
+				this.transaction.account = null;
 			}
 		}
 
-		// Watch the subtransactions array and recalculate the total allocated
-		$scope.$watch(function() {
-			return vm.transaction.subtransactions;
-		}, function(newValue, oldValue) {
-			if (newValue !== oldValue && vm.transaction.subtransactions) {
-				vm.totalAllocated = vm.transaction.subtransactions.reduce(function(total, subtransaction) {
-					return total + (Number(subtransaction.amount * (subtransaction.direction === vm.transaction.direction ? 1 : -1)) || 0);
-				}, 0);
-
-				// If we're adding a new transaction, join the subtransaction memos and update the parent memo
-				if (!vm.transaction.id) {
-					vm.memoFromSubtransactions();
-				}
-			}
-		}, true);
-
 		// Joins the subtransaction memos and updates the parent memo
-		function memoFromSubtransactions() {
-			vm.transaction.memo = vm.transaction.subtransactions.reduce(function(memo, subtransaction) {
-				return memo + (subtransaction.memo ? ("" !== memo ? "; ": "") + subtransaction.memo : "");
-			}, "");
+		memoFromSubtransactions() {
+			this.transaction.memo = this.transaction.subtransactions.reduce((memo, subtransaction) => `${memo}${(subtransaction.memo ? `${"" !== memo ? "; " : ""}${subtransaction.memo}` : "")}`, "");
 		}
 
 		// List of primary accounts for the typeahead
-		function primaryAccounts(filter, limit) {
-			return accountModel.all().then(function(accounts) {
-				return limitToFilter(filterFilter(accounts, {name: filter}), limit);
-			});
+		primaryAccounts(filter, limit) {
+			return this.accountModel.all().then(accounts => this.limitToFilter(this.filterFilter(accounts, {name: filter}), limit));
 		}
 
 		// List of accounts for the typeahead
-		function accounts(filter, limit) {
-			return accountModel.all().then(function(accounts) {
-				var accountFilter = {
+		accounts(filter, limit) {
+			return this.accountModel.all().then(accounts => {
+				let filteredAccounts = accounts;
+
+				// Exclude investment accounts by default
+				const accountFilter = {
 					name: filter,
-					account_type: "!investment"		// exclude investment accounts by default
+					account_type: "!investment"
 				};
 
 				// Filter the primary account from the results (can't transfer to self)
-				if (vm.transaction.primary_account) {
-					accounts = filterFilter(accounts, {name: "!" + vm.transaction.primary_account.name}, true);
+				if (this.transaction.primary_account) {
+					filteredAccounts = this.filterFilter(filteredAccounts, {name: `!${this.transaction.primary_account.name}`}, true);
 				}
 
 				// For security transfers, only include investment accounts
-				if ("SecurityTransfer" === vm.transaction.transaction_type) {
+				if ("SecurityTransfer" === this.transaction.transaction_type) {
 					accountFilter.account_type = "investment";
 				}
 
-				return limitToFilter(filterFilter(accounts, accountFilter), limit);
+				return this.limitToFilter(this.filterFilter(filteredAccounts, accountFilter), limit);
 			});
 		}
 
 		// List of frequencies for the typeahead
-		function frequencies(filter, limit) {
-			return limitToFilter(filterFilter(Object.keys(vm.scheduleFrequencies), filter), limit);
+		frequencies(filter, limit) {
+			return this.limitToFilter(this.filterFilter(Object.keys(this.scheduleFrequencies), filter), limit);
 		}
 
 		// Add a new subtransaction
-		function addSubtransaction() {
-			vm.transaction.subtransactions.push({});
+		addSubtransaction() {
+			this.transaction.subtransactions.push({});
 		}
 
 		// Deletes a subtransaction
-		function deleteSubtransaction(index) {
-			vm.transaction.subtransactions.splice(index, 1);
+		deleteSubtransaction(index) {
+			this.transaction.subtransactions.splice(index, 1);
 		}
 
 		// Adds any unallocated amount to the specified subtransaction
-		function addUnallocatedAmount(index) {
-			vm.transaction.subtransactions[index].amount = (Number(vm.transaction.subtransactions[index].amount) || 0) + (vm.transaction.amount - vm.totalAllocated);
+		addUnallocatedAmount(index) {
+			this.transaction.subtransactions[index].amount = (Number(this.transaction.subtransactions[index].amount) || 0) + (this.transaction.amount - this.totalAllocated);
 		}
 
 		// Calculates the next due date
-		function calculateNextDue() {
-			vm.schedule.next_due_date = moment(vm.schedule.next_due_date).add(vm.scheduleFrequencies[vm.schedule.frequency]).toDate();
+		calculateNextDue() {
+			this.schedule.next_due_date = moment(this.schedule.next_due_date).add(this.scheduleFrequencies[this.schedule.frequency]).toDate();
 
-			if (vm.schedule.overdue_count > 0) {
-				vm.schedule.overdue_count--;
+			if (this.schedule.overdue_count > 0) {
+				this.schedule.overdue_count--;
 			}
 		}
 
 		// Updates the transaction amount and memo when the quantity, price or commission change
-		function updateInvestmentDetails() {
-			if ("SecurityInvestment" === vm.transaction.transaction_type) {
+		updateInvestmentDetails() {
+			if ("SecurityInvestment" === this.transaction.transaction_type) {
 				// Base amount is the quantity multiplied by the price
-				vm.transaction.amount = (vm.transaction.quantity || 0) * (vm.transaction.price || 0);
+				this.transaction.amount = (this.transaction.quantity || 0) * (this.transaction.price || 0);
 
 				// For a purchase, commission is added to the cost; for a sale, commission is subtracted from the proceeds
-				if ("inflow" === vm.transaction.direction) {
-					vm.transaction.amount += (vm.transaction.commission || 0);
+				if ("inflow" === this.transaction.direction) {
+					this.transaction.amount += this.transaction.commission || 0;
 				} else {
-					vm.transaction.amount -= (vm.transaction.commission || 0);
+					this.transaction.amount -= this.transaction.commission || 0;
 				}
 			}
 
 			// If we're adding a new buy or sell transaction, update the memo with the details
-			if (!vm.transaction.id && "SecurityInvestment" === vm.transaction.transaction_type) {
-				var	quantity = vm.transaction.quantity > 0 ? vm.transaction.quantity : "",
-						price = vm.transaction.price > 0 ? " @ " + currencyFilter(vm.transaction.price) : "",
-						commission = vm.transaction.commission > 0 ? " (" + ("inflow" === vm.transaction.direction ? "plus" : "less") + " " + currencyFilter(vm.transaction.commission) + " commission)" : "";
+			if (!this.transaction.id && "SecurityInvestment" === this.transaction.transaction_type) {
+				const	quantity = this.transaction.quantity > 0 ? this.transaction.quantity : "",
+							price = this.transaction.price > 0 ? ` @ ${this.currencyFilter(this.transaction.price)}` : "",
+							commission = this.transaction.commission > 0 ? ` (${"inflow" === this.transaction.direction ? "plus" : "less"} ${this.currencyFilter(this.transaction.commission)} commission)` : "";
 
-				vm.transaction.memo = quantity + price + commission;
+				this.transaction.memo = quantity + price + commission;
 			}
 		}
 
 		// Switches from Enter Transaction mode to Edit Schedule mode
-		function edit() {
-			vm.mode = "Edit Schedule";
-			vm.transaction = vm.schedule;
+		edit() {
+			this.mode = "Edit Schedule";
+			this.transaction = this.schedule;
 		}
 
 		// Enter a transaction based on the schedule, update the next due date and close the modal
-		function enter() {
-			vm.errorMessage = null;
-			transactionModel.save(vm.transaction).then(function() {
-				// Skip to the next due date
-				vm.skip();
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
+		enter() {
+			this.errorMessage = null;
+			this.transactionModel.save(this.transaction).then(() => this.skip(), error => this.errorMessage = error.data);
 		}
 
 		// Skip the next scheduled occurrence, update the next due date and close the modal
-		function skip() {
+		skip() {
 			// Calculate the next due date for the schedule
-			vm.calculateNextDue();
+			this.calculateNextDue();
 
 			// Update the schedule
-			vm.save(true);
+			this.save(true);
 		}
 
 		// Save and close the modal
-		function save(skipped) {
-			vm.errorMessage = null;
+		save(skipped) {
+			this.errorMessage = null;
 
 			// Ensure the flag is appropriately set or cleared
-			if (vm.schedule.autoFlag) {
-				vm.schedule.flag = vm.schedule.flag || "(no memo)";
+			if (this.schedule.autoFlag) {
+				this.schedule.flag = this.schedule.flag || "(no memo)";
 			} else {
-				vm.schedule.flag = null;
+				this.schedule.flag = null;
 			}
 
-			scheduleModel.save(vm.schedule).then(function(schedule) {
-				// Close the modal
-				$modalInstance.close({data: schedule, skipped: !!skipped});
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
+			this.scheduleModel.save(this.schedule).then(schedule => this.$modalInstance.close({data: schedule, skipped: Boolean(skipped)}), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without saving
-		function cancel() {
-			$modalInstance.dismiss();
+		cancel() {
+			this.$modalInstance.dismiss();
 		}
 	}
-})();
+
+	/**
+	 * Registration
+	 */
+	angular
+		.module("lootSchedules")
+		.controller("ScheduleEditController", Controller);
+
+	/**
+	 * Dependencies
+	 */
+	Controller.$inject = ["$scope", "$modalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"];
+}

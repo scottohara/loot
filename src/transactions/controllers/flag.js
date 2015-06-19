@@ -1,5 +1,38 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Controller {
+		constructor($modalInstance, transactionModel, transaction) {
+			this.$modalInstance = $modalInstance;
+			this.transactionModel = transactionModel;
+			this.transaction = transaction;
+			this.flag = "(no memo)" === transaction.flag ? null : transaction.flag;
+			this.flagged = Boolean(transaction.flag);
+			this.errorMessage = null;
+		}
+
+		// Save and close the modal
+		save() {
+			this.errorMessage = null;
+			this.transaction.flag = this.flag && this.flag || "(no memo)";
+			this.transactionModel.flag(this.transaction).then(() => this.$modalInstance.close(this.transaction), error => this.errorMessage = error.data);
+		}
+
+		// Delete and close the modal
+		deleteFlag() {
+			this.errorMessage = null;
+			this.transactionModel.unflag(this.transaction.id).then(() => {
+				this.transaction.flag = null;
+				this.$modalInstance.close(this.transaction);
+			}, error => this.errorMessage = error.data);
+		}
+
+		// Dismiss the modal without deleting
+		cancel() {
+			this.$modalInstance.dismiss();
+		}
+	}
 
 	/**
 	 * Registration
@@ -12,53 +45,4 @@
 	 * Dependencies
 	 */
 	Controller.$inject = ["$modalInstance", "transactionModel", "transaction"];
-
-	/**
-	 * Implementation
-	 */
-	function Controller($modalInstance, transactionModel, transaction) {
-		var vm = this;
-
-		/**
-		 * Interface
-		 */
-		vm.transaction = transaction;
-		vm.flag = "(no memo)" === transaction.flag ? null : transaction.flag;
-		vm.flagged = !!transaction.flag;
-		vm.save = save;
-		vm.deleteFlag = deleteFlag;
-		vm.cancel = cancel;
-		vm.errorMessage = null;
-
-		/**
-		 * Implementation
-		 */
-
-		// Save and close the modal
-		function save() {
-			vm.errorMessage = null;
-			vm.transaction.flag = vm.flag && vm.flag || "(no memo)";
-			transactionModel.flag(vm.transaction).then(function() {
-				$modalInstance.close(vm.transaction);
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
-		}
-
-		// Delete and close the modal
-		function deleteFlag() {
-			vm.errorMessage = null;
-			transactionModel.unflag(vm.transaction.id).then(function() {
-				vm.transaction.flag = null;
-				$modalInstance.close(vm.transaction);
-			}, function(error) {
-				vm.errorMessage = error.data;
-			});
-		}
-
-		// Dismiss the modal without deleting
-		function cancel() {
-			$modalInstance.dismiss();
-		}
-	}
-})();
+}

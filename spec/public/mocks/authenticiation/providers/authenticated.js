@@ -1,5 +1,18 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock authenticated status object
+			this.authenticated = true;
+		}
+
+		$get() {
+			// Return the mock authenticated status object
+			return this.authenticated;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,17 +22,7 @@
 		.provider("authenticatedMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock authenticated status object
-		provider.authenticated = true;
-
-		provider.$get = function() {
-			// Return the mock authenticated status object
-			return provider.authenticated;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

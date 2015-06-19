@@ -1,85 +1,72 @@
-(function() {
-	"use strict";
-
-	function CategoryEditView() {
-		var view = this;
-
-		/**
-		 * UI elements
-		 */
-		view.form = element(by.css("form[name=categoryForm]"));
-		view.heading = heading;
-		view.categoryNameInput = element(by.model("vm.category.name"));
-		view.categoryParentTypeahead = element(by.model("vm.category.parent"));
-		view.directionRadioButton = directionRadioButton;
-		view.errorMessage = element(by.binding("vm.errorMessage"));
-		view.cancelButton = element(by.buttonText("Cancel"));
-		view.saveButton = element(by.partialButtonText("Save"));
-
-		/**
-		 * Behaviours
-		 */
-		view.isPresent = isPresent;
-		view.enterCategoryDetails = enterCategoryDetails;
-		view.clearCategoryDetails = clearCategoryDetails;
-		view.cancel = cancel;
-		view.save = save;
-
-		function heading() {
-			return view.form.element(by.binding("::vm.mode")).getText();
+{
+	class CategoryEditView {
+		constructor() {
+			this.form = element(by.css("form[name=categoryForm]"));
+			this.categoryNameInput = element(by.model("vm.category.name"));
+			this.categoryParentTypeahead = element(by.model("vm.category.parent"));
+			this.errorMessage = element(by.binding("vm.errorMessage"));
+			this.cancelButton = element(by.buttonText("Cancel"));
+			this.saveButton = element(by.partialButtonText("Save"));
 		}
 
-		function directionRadioButton(direction, isActive) {
-			var selector = "label" + (isActive ? ".active" : "") + "[name=direction]",
-					buttonText = "inflow" === direction ? "Income" : "Expense";
+		heading() {
+			return this.form.element(by.binding("::vm.mode")).getText();
+		}
+
+		directionRadioButton(direction, isActive) {
+			const selector = `label${isActive ? ".active" : ""}[name=direction]`,
+						buttonText = "inflow" === direction ? "Income" : "Expense";
 
 			return element(by.cssContainingText(selector, buttonText));
 		}
 
-		function isPresent() {
+		isPresent() {
 			// Need to artificially wait for 350ms because bootstrap modals have a fade transition
 			browser.sleep(350);
 
-			return view.form.isPresent();
+			return this.form.isPresent();
 		}
 
-		function enterCategoryDetails(details) {
+		enterCategoryDetails(details) {
+			// Clear the values first
+			this.clearCategoryDetails();
+
 			// Category name
-			view.categoryNameInput.sendKeys(details.categoryName);
+			this.categoryNameInput.click().sendKeys(details.categoryName);
 
 			// Parent
 			if (details.categoryParent) {
-				view.categoryParentTypeahead.sendKeys(details.categoryParent);
+				this.categoryParentTypeahead.click().sendKeys(details.categoryParent);
 
 				// Wait for the typeahead $http promise to resolve
 				browser.waitForAngular();
 
 				// Send a TAB key to confirm the selection
-				view.categoryParentTypeahead.sendKeys(protractor.Key.TAB);
+				this.categoryParentTypeahead.sendKeys(protractor.Key.TAB);
 
 				// Click the form to force any blur event handlers to run
-				view.form.click();
+				this.form.click();
 			}
 
 			// Direction
 			if (!details.categoryParent && details.direction) {
-				view.directionRadioButton(details.direction).click();
+				this.directionRadioButton(details.direction).click();
 			}
 		}
 
-		function clearCategoryDetails() {
+		clearCategoryDetails() {
 			// Category name
-			view.categoryNameInput.clear();
+			this.categoryNameInput.clear();
 		}
 
-		function cancel() {
-			view.cancelButton.click();
+		cancel() {
+			this.cancelButton.click();
 		}
 
-		function save() {
-			view.saveButton.click();
+		save() {
+			this.saveButton.click();
 		}
 	}
 
 	module.exports = new CategoryEditView();
-})();
+}

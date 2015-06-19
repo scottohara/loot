@@ -1,5 +1,17 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor(payeeModelMockProvider) {
+			this.payeeModelMockProvider = payeeModelMockProvider;
+		}
+
+		$get() {
+			// Return the mock payeeModel object
+			return this.payeeModelMockProvider.$get();
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,14 +21,7 @@
 		.provider("contextModelMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider(payeeModelMockProvider) {
-		var provider = this;
-		
-		provider.$get = function() {
-			// Return the mock payeeModel object
-			return payeeModelMockProvider.$get();
-		};
-	}
-})();
+	Provider.$inject = ["payeeModelMockProvider"];
+}

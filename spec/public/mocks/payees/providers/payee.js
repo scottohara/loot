@@ -1,5 +1,18 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock payee object
+			this.payee = {id: 1, name: "aa"};
+		}
+
+		$get() {
+			// Return the mock payee object
+			return this.payee;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,17 +22,7 @@
 		.provider("payeeMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-
-		// Mock payee object
-		provider.payee = {id: 1, name: "aa"};
-
-		provider.$get = function() {
-			// Return the mock payee object
-			return provider.payee;
-		};
-	}
-})();
+	Provider.$inject = [];
+}

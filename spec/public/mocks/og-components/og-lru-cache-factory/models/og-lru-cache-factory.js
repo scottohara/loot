@@ -1,5 +1,23 @@
-(function() {
-	"use strict";
+{
+	/**
+	 * Implementation
+	 */
+	class Provider {
+		constructor() {
+			// Mock LruCache object
+			this.ogLruCache = {
+				list: sinon.stub().returns("recent list"),
+				put: sinon.stub().returns("updated list"),
+				remove: sinon.stub().returns("updated list"),
+				dump: sinon.stub().returns({})
+			};
+		}
+
+		$get() {
+			// Return the mock LruCache object
+			return () => this.ogLruCache;
+		}
+	}
 
 	/**
 	 * Registration
@@ -9,24 +27,7 @@
 		.provider("ogLruCacheFactoryMock", Provider);
 
 	/**
-	 * Implementation
+	 * Dependencies
 	 */
-	function Provider() {
-		var provider = this;
-		// Mock LruCache object
-		provider.ogLruCache = {
-			list: sinon.stub().returns("recent list"),
-			put: sinon.stub().returns("updated list"),
-			remove: sinon.stub().returns("updated list"),
-			dump: sinon.stub().returns({})
-		};
-
-		provider.$get = function() {
-			// Factory function
-			return function() {
-				// Return the mock LruCache object
-				return provider.ogLruCache;
-			};
-		};
-	}
-})();
+	Provider.$inject = [];
+}
