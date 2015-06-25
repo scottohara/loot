@@ -175,3 +175,6 @@ DEPENDENCIES
   rspec-rails
   simplecov
   unicorn
+
+BUNDLED WITH
+   1.10.4
