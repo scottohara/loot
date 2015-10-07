@@ -97,7 +97,7 @@
 			if (parent && isNaN(parent.id)) {
 				return [];
 			}
-			
+
 			// If the parent was specified, pass the parent's id
 			var parentId = parent ? parent.id : null;
 
@@ -187,7 +187,7 @@
 							subtransaction.id = null;
 							return subtransaction;
 						});
-						
+
 						return transaction;
 					});
 				default:
@@ -427,7 +427,7 @@
 
 				// Filter the primary account from the results (can't transfer to self)
 				if (vm.transaction.primary_account) {
-					accounts = filterFilter(accounts, {name: "!" + vm.transaction.primary_account.name});
+					accounts = filterFilter(accounts, {name: "!" + vm.transaction.primary_account.name}, true);
 				}
 
 				// For security transfers, only include investment accounts
