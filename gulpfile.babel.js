@@ -12,8 +12,6 @@
 				sourceMaps = require("gulp-sourcemaps"),
 				uglify = require("gulp-uglify"),
 				util = require("gulp-util"),
-				KarmaServer = require("karma").Server,
-				argv = require("yargs").argv,
 
 				appJsSource = "src/**/*.js",
 				vendorJsSource = [
@@ -62,7 +60,9 @@
 	}
 
 	function startKarma(configFile) {
-		const cliArgs = {};
+		const	KarmaServer = require("karma").Server,
+					argv = require("yargs").argv,
+					cliArgs = {};
 
 		if (argv.browsers) {
 			cliArgs.browsers = argv.browsers.split(",");
