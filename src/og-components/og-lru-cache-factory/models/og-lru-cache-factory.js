@@ -29,10 +29,10 @@
 							newHead = this.items[item.id];
 
 							// Unlink the existing item from the list
-							if (String(item.id) !== String(this.tail)) {
-								this.items[newHead.older].newer = newHead.newer;
-							} else {
+							if (String(item.id) === String(this.tail)) {
 								this.tail = newHead.newer;
+							} else {
+								this.items[newHead.older].newer = newHead.newer;
 							}
 							this.items[newHead.newer].older = newHead.older;
 

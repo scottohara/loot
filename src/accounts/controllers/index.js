@@ -56,7 +56,10 @@
 
 					// Add the account to the LRU cache
 					this.accountModel.addRecent(account);
-				} else if (currentAccountType !== accountType) {
+				} else if (currentAccountType === accountType) {
+					// Update the existing account in the array
+					this.accounts[accountType].accounts[index] = account;
+				} else {
 					// If the edited account type has changed, remove the account from the original array
 					this.accounts[accountType].accounts.splice(index, 1);
 
@@ -65,9 +68,6 @@
 
 					// Add the account to the end of the new array
 					this.accounts[currentAccountType].accounts.push(account);
-				} else {
-					// Update the existing account in the array
-					this.accounts[accountType].accounts[index] = account;
 				}
 
 				// Resort the array

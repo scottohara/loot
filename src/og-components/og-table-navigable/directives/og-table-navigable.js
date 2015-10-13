@@ -144,11 +144,11 @@
 						const targetRow = scope.getRowAtIndex(index);
 
 						if (targetRow.length > 0) {
-							if (scope.focussedRow !== index) {
-								scope.focusRow(targetRow);
-							} else {
+							if (scope.focussedRow === index) {
 								// Row is already focussed, just ensure it's highlighted
 								scope.highlightRow(targetRow);
+							} else {
+								scope.focusRow(targetRow);
 							}
 						}
 					};

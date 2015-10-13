@@ -330,7 +330,7 @@
 
 		// Joins the subtransaction memos and updates the parent memo
 		memoFromSubtransactions() {
-			this.transaction.memo = this.transaction.subtransactions.reduce((memo, subtransaction) => `${memo}${subtransaction.memo ? `${"" !== memo ? "; " : ""}${subtransaction.memo}` : ""}`, "");
+			this.transaction.memo = this.transaction.subtransactions.reduce((memo, subtransaction) => `${memo}${subtransaction.memo ? `${"" === memo ? "" : "; "}${subtransaction.memo}` : ""}`, "");
 		}
 
 		// List of accounts for the typeahead
@@ -485,10 +485,10 @@
 			this.accountModel.addRecent(transaction.primary_account);
 
 			// Add the payee or security to the LRU cache
-			if ("investment" !== transaction.primary_account.account_type) {
-				this.payeeModel.addRecent(transaction.payee);
-			} else {
+			if ("investment" === transaction.primary_account.account_type) {
 				this.securityModel.addRecent(transaction.security);
+			} else {
+				this.payeeModel.addRecent(transaction.payee);
 			}
 
 			switch (transaction.transaction_type) {

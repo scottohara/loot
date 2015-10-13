@@ -43,6 +43,7 @@
 		meteor: false,
 		mongo: false,
 		applescript: false,
+		nashorn: false,
 		serviceworker: false,
 		embertest: false,
 		es6: true
@@ -182,7 +183,9 @@
 			hoist: "all"
 		}],
 		no-undef-init: 2,
-		no-undef: 2,
+		no-undef: [2, {
+			typeof: true
+		}],
 		no-undefined: 2,
 		no-unused-vars: [2, {
 			vars: "all",
@@ -252,7 +255,8 @@
 		jsx-quotes: [2, "prefer-double"],
 		key-spacing: [2, {
 			beforeColon: false,
-			afterColon: true
+			afterColon: true,
+			mode: "strict"
 		}],
 		lines-around-comment: [2, {
 			beforeBlockComment: true,
@@ -281,6 +285,7 @@
 			max: 1
 		}],
 		no-nested-ternary: 0,												// Not using (sort helpers)
+		no-negated-condition: 2,
 		no-new-object: 2,
 		no-restricted-syntax: [2, "WithStatement"],
 		no-spaced-func: 2,
@@ -317,8 +322,11 @@
 			ignoreCase: false
 		}],
 		space-after-keywords: [2, "always"],
-		space-before-keywords: [0, "always"],				// Disabled waiting for fix in https://github.com/eslint/eslint/issues/3756
-		space-before-blocks: [2, "always"],
+		space-before-keywords: [2, "always"],
+		space-before-blocks: [2, {
+			functions: "always",
+			keywords: "always"
+		}],
 		space-before-function-paren: [2, {
 			anonymous: "never",
 			named: "never"

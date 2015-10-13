@@ -35,15 +35,15 @@
 			this.today = moment().startOf("day").toDate();
 			this.tableActions = {
 				selectAction(index) {
-					if (!self.reconciling) {
-						// When not reconciling, select action is to edit the transaction
-						self.editTransaction(index);
-					} else {
+					if (self.reconciling) {
 						// When reconciling, select action is to toggle the cleared status
 						const transaction = self.transactions[index];
 
 						transaction.status = "Cleared" === transaction.status ? "" : "Cleared";
 						self.toggleCleared(transaction);
+					} else {
+						// When not reconciling, select action is to edit the transaction
+						self.editTransaction(index);
 					}
 				},
 				editAction(index) {

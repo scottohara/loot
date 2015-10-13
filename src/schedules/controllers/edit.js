@@ -371,7 +371,7 @@
 
 		// Joins the subtransaction memos and updates the parent memo
 		memoFromSubtransactions() {
-			this.transaction.memo = this.transaction.subtransactions.reduce((memo, subtransaction) => `${memo}${(subtransaction.memo ? `${"" !== memo ? "; " : ""}${subtransaction.memo}` : "")}`, "");
+			this.transaction.memo = this.transaction.subtransactions.reduce((memo, subtransaction) => `${memo}${(subtransaction.memo ? `${"" === memo ? "" : "; "}${subtransaction.memo}` : "")}`, "");
 		}
 
 		// List of primary accounts for the typeahead

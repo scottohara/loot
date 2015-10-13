@@ -56,10 +56,10 @@ describe("categoryEditView", () => {
 	function checkEditFormMatchesIndexRow(row) {
 		categoryIndexView.getRowValues(row).then(values => {
 			categoryEditView.categoryNameInput.getAttribute("value").should.eventually.equal(values.categoryName);
-			if (!values.isSubcategory) {
-				categoryEditView.directionRadioButton(values.direction, true).isPresent().should.eventually.be.true;
-			} else {
+			if (values.isSubcategory) {
 				categoryEditView.categoryParentTypeahead.getAttribute("value").should.eventually.equal(values.categoryParent);
+			} else {
+				categoryEditView.directionRadioButton(values.direction, true).isPresent().should.eventually.be.true;
 			}
 		});
 	}
