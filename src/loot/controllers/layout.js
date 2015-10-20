@@ -3,10 +3,10 @@
 	 * Implementation
 	 */
 	class Controller {
-		constructor($scope, $state, $modal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
+		constructor($scope, $state, $uibModal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
 			this.$scope = $scope;
 			this.$state = $state;
-			this.$modal = $modal;
+			this.$uibModal = $uibModal;
 			this.authenticationModel = authenticationModel;
 			this.accountModel = accountModel;
 			this.payeeModel = payeeModel;
@@ -31,7 +31,7 @@
 
 		// Login
 		login() {
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "authentication/views/edit.html",
 				controller: "AuthenticationEditController",
 				controllerAs: "vm",
@@ -104,5 +104,5 @@
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
+	Controller.$inject = ["$scope", "$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
 }

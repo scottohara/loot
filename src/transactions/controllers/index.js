@@ -3,10 +3,10 @@
 	 * Implementation
 	 */
 	class Controller {
-		constructor($scope, $modal, $timeout, $window, $state, transactionModel, accountModel, ogTableNavigableService, ogViewScrollService, contextModel, context, transactionBatch) {
+		constructor($scope, $uibModal, $timeout, $window, $state, transactionModel, accountModel, ogTableNavigableService, ogViewScrollService, contextModel, context, transactionBatch) {
 			const self = this;
 
-			this.$modal = $modal;
+			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
 			this.$window = $window;
 			this.$state = $state;
@@ -96,7 +96,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "transactions/views/edit.html",
 				controller: "TransactionEditController",
 				controllerAs: "vm",
@@ -211,7 +211,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "transactions/views/delete.html",
 				controller: "TransactionDeleteController",
 				controllerAs: "vm",
@@ -289,7 +289,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "og-components/og-modal-confirm/views/confirm.html",
 				controller: "OgModalConfirmController",
 				controllerAs: "vm",
@@ -448,7 +448,7 @@
 				this.ogTableNavigableService.enabled = false;
 
 				// Show the modal
-				this.$modal.open({
+				this.$uibModal.open({
 					templateUrl: "accounts/views/reconcile.html",
 					controller: "AccountReconcileController",
 					controllerAs: "vm",
@@ -526,7 +526,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "transactions/views/flag.html",
 				controller: "TransactionFlagController",
 				controllerAs: "vm",
@@ -641,5 +641,5 @@
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "contextModel", "context", "transactionBatch"];
+	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "contextModel", "context", "transactionBatch"];
 }

@@ -3,7 +3,7 @@ describe("lootStatesProvider", () => {
 			$state,
 			$injector,
 			$httpBackend,
-			$modal,
+			$uibModal,
 			authenticationModel,
 			accountModel,
 			accountsWithBalances,
@@ -26,15 +26,15 @@ describe("lootStatesProvider", () => {
 			stateConfig;
 
 	// Load the modules
-	beforeEach(module("lootStates", "lootMocks", mockDependenciesProvider => mockDependenciesProvider.load(["$modal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"])));
+	beforeEach(module("lootStates", "lootMocks", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"])));
 
 	// Inject the object under test and it's dependencies
-	beforeEach(inject((_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$modal_, _authenticationModel_, _accountModel_, _accountsWithBalances_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_, _queryService_) => {
+	beforeEach(inject((_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$uibModal_, _authenticationModel_, _accountModel_, _accountsWithBalances_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_, _queryService_) => {
 		$rootScope = _$rootScope_;
 		$state = _$state_;
 		$injector = _$injector_;
 		$httpBackend = _$httpBackend_;
-		$modal = _$modal_;
+		$uibModal = _$uibModal_;
 		authenticationModel = _authenticationModel_;
 		accountModel = _accountModel_;
 		accountsWithBalances = _accountsWithBalances_;
@@ -79,16 +79,16 @@ describe("lootStatesProvider", () => {
 				resolvedAuthenticated = $injector.invoke(stateConfig.resolve.authenticated);
 			});
 
-			it("should show the login modal", () => $modal.open.should.have.been.called);
+			it("should show the login modal", () => $uibModal.open.should.have.been.called);
 
 			it("should resolve the authentication status of a logged in user when the login modal is closed", () => {
 				authenticationModel.isAuthenticated = true;
-				$modal.close();
+				$uibModal.close();
 				resolvedAuthenticated.should.eventually.be.true;
 			});
 
 			it("should resolve the authentication status of a non-logged in user when the login modal is dismissed", () => {
-				$modal.dismiss();
+				$uibModal.dismiss();
 				resolvedAuthenticated.should.eventually.be.false;
 			});
 		});

@@ -84,8 +84,8 @@
 	</div>
 </nav>
 <div ng-if="!vm.authenticated" class="alert alert-danger">You are not logged in. Click the Login button above to proceed.</div>
-<div class="quickscroll bottom hidden-xs" tooltip="Bottom" tooltip-placement="left"><a ng-click="vm.scrollTo('bottom')"><i class="glyphicon glyphicon-hand-down"></i></a></div>
-<div class="quickscroll top hidden-xs" tooltip="Top" tooltip-placement="left"><a ng-click="vm.scrollTo('top')"><i class="glyphicon glyphicon-hand-up"></i></a></div>
+<div class="quickscroll bottom hidden-xs" uib-tooltip="Bottom" tooltip-placement="left"><a ng-click="vm.scrollTo('bottom')"><i class="glyphicon glyphicon-hand-down"></i></a></div>
+<div class="quickscroll top hidden-xs" uib-tooltip="Top" tooltip-placement="left"><a ng-click="vm.scrollTo('top')"><i class="glyphicon glyphicon-hand-up"></i></a></div>
 <ui-view ng-if="vm.authenticated" autoscroll="false"></ui-view>
 <div ng-if="vm.loadingState" id="state-loading-spinner">
 	<div og-loading-spinner></div>

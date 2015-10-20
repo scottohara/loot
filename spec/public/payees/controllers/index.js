@@ -2,20 +2,20 @@ describe("PayeeIndexController", () => {
 	let	payeeIndexController,
 			controllerTest,
 			$timeout,
-			$modal,
+			$uibModal,
 			$state,
 			payeeModel,
 			ogTableNavigableService,
 			payees;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$modal", "$state", "payeeModel", "payees"])));
+	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "payeeModel", "payees"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$timeout_, _$modal_, _$state_, _payeeModel_, _ogTableNavigableService_, _payees_) => {
+	beforeEach(inject((_controllerTest_, _$timeout_, _$uibModal_, _$state_, _payeeModel_, _ogTableNavigableService_, _payees_) => {
 		controllerTest = _controllerTest_;
 		$timeout = _$timeout_;
-		$modal = _$modal_;
+		$uibModal = _$uibModal_;
 		$state = _$state_;
 		payeeModel = _payeeModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
@@ -42,14 +42,14 @@ describe("PayeeIndexController", () => {
 			beforeEach(() => payeeIndexController.editPayee(1));
 
 			it("should open the edit payee modal with a payee", () => {
-				$modal.open.should.have.been.called;
+				$uibModal.open.should.have.been.called;
 				payeeModel.addRecent.should.have.been.calledWith(payee);
-				$modal.resolves.payee.should.deep.equal(payee);
+				$uibModal.resolves.payee.should.deep.equal(payee);
 			});
 
 			it("should update the payee in the list of payees when the modal is closed", () => {
 				payee.name = "edited payee";
-				$modal.close(payee);
+				$uibModal.close(payee);
 				payeeIndexController.payees.should.include(payee);
 			});
 		});
@@ -61,18 +61,18 @@ describe("PayeeIndexController", () => {
 			});
 
 			it("should open the edit payee modal without a payee", () => {
-				$modal.open.should.have.been.called;
+				$uibModal.open.should.have.been.called;
 				payeeModel.addRecent.should.not.have.been.called;
-				(!$modal.resolves.payee).should.be.true;
+				(!$uibModal.resolves.payee).should.be.true;
 			});
 
 			it("should add the new payee to the list of payees when the modal is closed", () => {
-				$modal.close(payee);
+				$uibModal.close(payee);
 				payeeIndexController.payees.pop().should.deep.equal(payee);
 			});
 
 			it("should add the new payee to the recent list", () => {
-				$modal.close(payee);
+				$uibModal.close(payee);
 				payeeModel.addRecent.should.have.been.calledWith(payee);
 			});
 		});
@@ -81,13 +81,13 @@ describe("PayeeIndexController", () => {
 			const payeeWithHighestName = angular.copy(payeeIndexController.payees[2]);
 
 			payeeIndexController.editPayee();
-			$modal.close(payee);
+			$uibModal.close(payee);
 			payeeIndexController.payees.pop().should.deep.equal(payeeWithHighestName);
 		});
 
 		it("should focus the payee when the modal is closed", () => {
 			payeeIndexController.editPayee();
-			$modal.close(payee);
+			$uibModal.close(payee);
 			payeeIndexController.focusPayee.should.have.been.calledWith(payee.id);
 		});
 
@@ -95,19 +95,19 @@ describe("PayeeIndexController", () => {
 			const originalPayees = angular.copy(payeeIndexController.payees);
 
 			payeeIndexController.editPayee();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			payeeIndexController.payees.should.deep.equal(originalPayees);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			payeeIndexController.editPayee();
-			$modal.close(payee);
+			$uibModal.close(payee);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			payeeIndexController.editPayee();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});
@@ -129,37 +129,37 @@ describe("PayeeIndexController", () => {
 
 		it("should show an alert if the payee has transactions", () => {
 			payeeIndexController.deletePayee(2);
-			$modal.open.should.have.been.called;
-			$modal.resolves.alert.header.should.equal("Payee has existing transactions");
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.alert.header.should.equal("Payee has existing transactions");
 		});
 
 		it("should show the delete payee modal if the payee has no transactions", () => {
 			payeeIndexController.deletePayee(1);
-			$modal.open.should.have.been.called;
-			$modal.resolves.payee.should.deep.equal(payee);
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.payee.should.deep.equal(payee);
 		});
 
 		it("should remove the payee from the payees list when the modal is closed", () => {
 			payeeIndexController.deletePayee(1);
-			$modal.close(payee);
+			$uibModal.close(payee);
 			payeeIndexController.payees.should.not.include(payee);
 		});
 
 		it("should transition to the payees list when the modal is closed", () => {
 			payeeIndexController.deletePayee(1);
-			$modal.close(payee);
+			$uibModal.close(payee);
 			$state.go.should.have.been.calledWith("root.payees");
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			payeeIndexController.deletePayee(1);
-			$modal.close(payee);
+			$uibModal.close(payee);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			payeeIndexController.deletePayee(1);
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});

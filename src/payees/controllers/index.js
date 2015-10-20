@@ -3,11 +3,11 @@
 	 * Implementation
 	 */
 	class Controller {
-		constructor($scope, $modal, $timeout, $state, payeeModel, ogTableNavigableService, payees) {
+		constructor($scope, $uibModal, $timeout, $state, payeeModel, ogTableNavigableService, payees) {
 			const self = this;
 
 			this.$scope = $scope;
-			this.$modal = $modal;
+			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
 			this.$state = $state;
 			this.payeeModel = payeeModel;
@@ -48,7 +48,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "payees/views/edit.html",
 				controller: "PayeeEditController",
 				controllerAs: "vm",
@@ -125,7 +125,7 @@
 				}
 
 				// Show the modal
-				this.$modal.open(modalOptions).result.then(() => {
+				this.$uibModal.open(modalOptions).result.then(() => {
 					this.payees.splice(index, 1);
 					this.$state.go("root.payees");
 				}).finally(() => this.ogTableNavigableService.enabled = true);
@@ -169,5 +169,5 @@
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees"];
+	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees"];
 }

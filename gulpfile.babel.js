@@ -19,7 +19,8 @@
 					"node_modules/bootstrap/dist/js/bootstrap.min.js",
 					"node_modules/angular/angular.min.js",
 					"node_modules/angular-ui-router/release/angular-ui-router.min.js",
-					"node_modules/angular-bootstrap-npm/dist/angular-bootstrap.min.js",
+					"node_modules/angular-ui-bootstrap/ui-bootstrap.min.js",
+					"node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.min.js",
 					"node_modules/moment/min/moment.min.js",
 					"node_modules/babel-core/browser-polyfill.min.js"
 				],
@@ -36,8 +37,8 @@
 	 * Helpers
 	 */
 
-	function cleanIndex(cb) {
-		del("public/index.html", cb);
+	function cleanIndex() {
+		return del("public/index.html");
 	}
 
 	function buildIndex() {
@@ -56,7 +57,7 @@
 	}
 
 	function cleanAndBuildIndex() {
-		cleanIndex(buildIndex());
+		return cleanIndex(buildIndex());
 	}
 
 	function startKarma(configFile) {
@@ -133,7 +134,7 @@
 		.on("error", util.log));
 
 	// Clean application Javascript
-	gulp.task("clean:app:js", cb => del(["public/app*.js", "public/app*.js.map"], cb));
+	gulp.task("clean:app:js", () => del(["public/app*.js", "public/app*.js.map"]));
 
 	// Build templates
 	gulp.task("build:templates", ["build:app:templates"]);
@@ -156,7 +157,7 @@
 	});
 
 	// Clean app templates
-	gulp.task("clean:app:templates", cb => del("public/templates*.js", cb));
+	gulp.task("clean:app:templates", () => del("public/templates*.js"));
 
 	// Build vendor Javascript
 	gulp.task("build:vendor:js", ["clean:vendor:js"], () => gulp.src(vendorJsSource)
@@ -168,7 +169,7 @@
 		.on("error", util.log));
 
 	// Clean vendor Javascript
-	gulp.task("clean:vendor:js", cb => del(["public/vendor*.js", "public/vendor*.js.map"], cb));
+	gulp.task("clean:vendor:js", () => del(["public/vendor*.js", "public/vendor*.js.map"]));
 
 	// Build CSS
 	gulp.task("build:css", ["build:app:css", "build:vendor:css"]);
@@ -191,7 +192,7 @@
 		.on("error", util.log));
 
 	// Clean application CSS
-	gulp.task("clean:app:css", cb => del(["public/app*.css", "public/app*.css.map"], cb));
+	gulp.task("clean:app:css", () => del(["public/app*.css", "public/app*.css.map"]));
 
 	// Build vendor CSS
 	gulp.task("build:vendor:css", ["clean:vendor:css"], () => gulp.src(vendorCssSource)
@@ -203,7 +204,7 @@
 		.on("error", util.log));
 
 	// Clean vendor CSS
-	gulp.task("clean:vendor:css", cb => del(["public/vendor*.css", "public/vendor*.css.map"], cb));
+	gulp.task("clean:vendor:css", () => del(["public/vendor*.css", "public/vendor*.css.map"]));
 
 	// Copy static assets (HTML, icons, fonts etc.)
 	gulp.task("copy:assets", ["copy:app:assets", "copy:vendor:assets"]);
@@ -216,27 +217,18 @@
 		.pipe(gulp.dest("public")));
 
 	// Clean application static assets
-	gulp.task("clean:app:assets", cb => del(["public/*.html", "!public/index.html", "public/favicon.ico", "public/robots.txt"], cb));
+	gulp.task("clean:app:assets", () => del(["public/*.html", "!public/index.html", "public/favicon.ico", "public/robots.txt"]));
 
 	// Copy vendor static assets
 	gulp.task("copy:vendor:assets", ["clean:vendor:assets"], () => gulp.src(vendorAssetsSource)
 		.pipe(gulp.dest("public/fonts")));
 
 	// Clean vendor static assets
-	gulp.task("clean:vendor:assets", cb => del("public/fonts", cb));
+	gulp.task("clean:vendor:assets", () => del("public/fonts"));
 
 	/**
 	 * Test
 	 */
-
-	// Run JSHint
-	gulp.task("jshint", () => {
-		const jshint = require("gulp-jshint");
-
-		return gulp.src([appJsSource, "spec/public/**/*.js"])
-			.pipe(jshint())
-			.pipe(jshint.reporter("default", {verbose: true}));
-	});
 
 	// Run ESLint
 	gulp.task("eslint", () => {

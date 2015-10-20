@@ -3,9 +3,9 @@
 	 * Implementation
 	 */
 	class Controller {
-		constructor($scope, $modal, accountModel, accounts) {
+		constructor($scope, $uibModal, accountModel, accounts) {
 			this.$scope = $scope;
-			this.$modal = $modal;
+			this.$uibModal = $uibModal;
 			this.accountModel = accountModel;
 			this.accounts = accounts;
 			this.keydownHandler = event => this.keyHandler(event);
@@ -27,7 +27,7 @@
 			}
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "accounts/views/edit.html",
 				controller: "AccountEditController",
 				controllerAs: "vm",
@@ -112,7 +112,7 @@
 				}
 
 				// Show the modal
-				this.$modal.open(modalOptions).result.then(() => {
+				this.$uibModal.open(modalOptions).result.then(() => {
 					this.accounts[accountType].accounts.splice(index, 1);
 
 					// Recalculate the array total
@@ -152,5 +152,5 @@
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modal", "accountModel", "accounts"];
+	Controller.$inject = ["$scope", "$uibModal", "accountModel", "accounts"];
 }

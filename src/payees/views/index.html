@@ -8,7 +8,7 @@
 		<tr ng-repeat="payee in vm.payees">
 			<td class="has-action">
 				{{::payee.name}}
-				<i class="action glyphicon glyphicon-edit pull-right" tooltip="Edit payee" ng-click="vm.editPayee($index)"></i>
+				<i class="action glyphicon glyphicon-edit pull-right" uib-tooltip="Edit payee" ng-click="vm.editPayee($index)"></i>
 			</td>
 		</tr>
 	<tbody>

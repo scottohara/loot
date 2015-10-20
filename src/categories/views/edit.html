@@ -12,15 +12,15 @@
 		<!-- Parent -->
 		<div ng-if="::!vm.category.num_children" class="form-group has-feedback" ng-class="{'has-error': categoryForm.parent.$invalid}">
 			<label for="parent">Parent</label>
-			<input name="parent" class="form-control" ng-model="vm.category.parent" typeahead="parentCategory as parentCategory.name for parentCategory in vm.parentCategories($viewValue, 10)" typeahead-editable="false" placeholder="Parent" og-input-autoselect>
+			<input name="parent" class="form-control" ng-model="vm.category.parent" uib-typeahead="parentCategory as parentCategory.name for parentCategory in vm.parentCategories($viewValue, 10)" typeahead-editable="false" placeholder="Parent" og-input-autoselect>
 			<span ng-show="categoryForm.parent.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Direction -->
 		<label ng-if="!vm.category.parent" for="direction">Type</label>
 		<div ng-if="!vm.category.parent" class="form-group">
 			<div class="btn-group">
-				<label class="btn btn-default" name="direction" ng-model="vm.category.direction" btn-radio="'inflow'" required><i class="glyphicon glyphicon-plus-sign text-success"></i> Income</label>
-				<label class="btn btn-default" name="direction" ng-model="vm.category.direction" btn-radio="'outflow'" required><i class="glyphicon glyphicon-minus-sign text-danger"></i> Expense</label>
+				<label class="btn btn-default" name="direction" ng-model="vm.category.direction" uib-btn-radio="'inflow'" required><i class="glyphicon glyphicon-plus-sign text-success"></i> Income</label>
+				<label class="btn btn-default" name="direction" ng-model="vm.category.direction" uib-btn-radio="'outflow'" required><i class="glyphicon glyphicon-minus-sign text-danger"></i> Expense</label>
 			</div>
 			<span ng-show="categoryForm.direction.$invalid" class="text-danger glyphicon glyphicon-remove"></span>
 		</div>

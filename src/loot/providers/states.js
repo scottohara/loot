@@ -61,12 +61,12 @@
 						title: "Welcome"
 					},
 					resolve: {
-						authenticated: ["$modal", "authenticationModel",
-							($modal, authenticationModel) => {
+						authenticated: ["$uibModal", "authenticationModel",
+							($uibModal, authenticationModel) => {
 								// Check if the user is authenticated
 								if (!authenticationModel.isAuthenticated) {
 									// Not authenticated, show the login modal
-									return $modal.open({
+									return $uibModal.open({
 										templateUrl: "authentication/views/edit.html",
 										controller: "AuthenticationEditController",
 										controllerAs: "vm",

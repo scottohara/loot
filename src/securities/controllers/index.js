@@ -3,10 +3,10 @@
 	 * Implementation
 	 */
 	class Controller {
-		constructor($scope, $modal, $timeout, $state, securityModel, ogTableNavigableService, securities) {
+		constructor($scope, $uibModal, $timeout, $state, securityModel, ogTableNavigableService, securities) {
 			const self = this;
 
-			this.$modal = $modal;
+			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
 			this.$state = $state;
 			this.securityModel = securityModel;
@@ -61,7 +61,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "securities/views/edit.html",
 				controller: "SecurityEditController",
 				controllerAs: "vm",
@@ -138,7 +138,7 @@
 				}
 
 				// Show the modal
-				this.$modal.open(modalOptions).result.then(() => {
+				this.$uibModal.open(modalOptions).result.then(() => {
 					this.securities.splice(index, 1);
 					this.$state.go("root.securities");
 				}).finally(() => this.ogTableNavigableService.enabled = true);
@@ -182,5 +182,5 @@
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities"];
+	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities"];
 }

@@ -1,7 +1,7 @@
 describe("ScheduleIndexController", () => {
 	let	scheduleIndexController,
 			controllerTest,
-			$modal,
+			$uibModal,
 			$timeout,
 			$state,
 			transactionModel,
@@ -9,12 +9,12 @@ describe("ScheduleIndexController", () => {
 			schedules;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$modal", "$state", "scheduleModel", "transactionModel", "schedules"])));
+	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "scheduleModel", "transactionModel", "schedules"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modal_, _$timeout_, _$state_, _transactionModel_, _ogTableNavigableService_, _schedules_) => {
+	beforeEach(inject((_controllerTest_, _$uibModal_, _$timeout_, _$state_, _transactionModel_, _ogTableNavigableService_, _schedules_) => {
 		controllerTest = _controllerTest_;
-		$modal = _$modal_;
+		$uibModal = _$uibModal_;
 		$timeout = _$timeout_;
 		$state = _$state_;
 		transactionModel = _transactionModel_;
@@ -43,8 +43,8 @@ describe("ScheduleIndexController", () => {
 		describe("(edit existing)", () => {
 			it("should open the edit schedule modal with a schedule", () => {
 				scheduleIndexController.editSchedule(1);
-				$modal.open.should.have.been.called;
-				$modal.resolves.schedule.should.deep.equal(schedule);
+				$uibModal.open.should.have.been.called;
+				$uibModal.resolves.schedule.should.deep.equal(schedule);
 				transactionModel.findSubtransactions.should.not.have.been.called;
 			});
 
@@ -55,14 +55,14 @@ describe("ScheduleIndexController", () => {
 					scheduleIndexController.schedules[1].transaction_type = scenario;
 					scheduleIndexController.editSchedule(1);
 					transactionModel.findSubtransactions.should.have.been.calledWith(schedule.id);
-					$modal.resolves.schedule.should.eventually.have.a.property("subtransactions");
+					$uibModal.resolves.schedule.should.eventually.have.a.property("subtransactions");
 				});
 			});
 
 			it("should update the schedule in the list of schedules when the modal is closed", () => {
 				schedule.memo = "edited schedule";
 				scheduleIndexController.editSchedule(1);
-				$modal.close({data: schedule});
+				$uibModal.close({data: schedule});
 				scheduleIndexController.schedules.should.include(schedule);
 			});
 		});
@@ -74,12 +74,12 @@ describe("ScheduleIndexController", () => {
 			});
 
 			it("should open the edit schedule modal without a schedule", () => {
-				$modal.open.should.have.been.called;
-				(null === $modal.resolves.schedule).should.be.true;
+				$uibModal.open.should.have.been.called;
+				(null === $uibModal.resolves.schedule).should.be.true;
 			});
 
 			it("should add the new schedule to the list of schedules when the modal is closed", () => {
-				$modal.close({data: schedule});
+				$uibModal.close({data: schedule});
 				scheduleIndexController.schedules.pop().should.deep.equal(schedule);
 			});
 		});
@@ -88,21 +88,21 @@ describe("ScheduleIndexController", () => {
 			schedule.id = 999;
 			schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
 			scheduleIndexController.editSchedule(1);
-			$modal.close({data: schedule});
+			$uibModal.close({data: schedule});
 			scheduleIndexController.schedules.pop().should.deep.equal(schedule);
 		});
 
 		it("should focus the schedule when the modal is closed if the schedule was edited", () => {
 			schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
 			scheduleIndexController.editSchedule(1);
-			$modal.close({data: schedule});
+			$uibModal.close({data: schedule});
 			scheduleIndexController.focusSchedule.should.have.been.calledWith(schedule.id);
 		});
 
 		it("should focus the schedule now at the original index when the modal is closed if the schedule was entered or skipped", () => {
 			schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
 			scheduleIndexController.editSchedule(1);
-			$modal.close({data: schedule, skipped: true});
+			$uibModal.close({data: schedule, skipped: true});
 			scheduleIndexController.focusSchedule.should.have.been.calledWith(scheduleIndexController.schedules[1].id);
 		});
 
@@ -110,19 +110,19 @@ describe("ScheduleIndexController", () => {
 			const originalSchedules = angular.copy(scheduleIndexController.schedules);
 
 			scheduleIndexController.editSchedule();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			scheduleIndexController.schedules.should.deep.equal(originalSchedules);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			scheduleIndexController.editSchedule();
-			$modal.close({data: schedule});
+			$uibModal.close({data: schedule});
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			scheduleIndexController.editSchedule();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});
@@ -139,31 +139,31 @@ describe("ScheduleIndexController", () => {
 
 		it("should open the delete schedule modal with a schedule", () => {
 			scheduleIndexController.deleteSchedule(1);
-			$modal.open.should.have.been.called;
-			$modal.resolves.schedule.should.deep.equal(schedule);
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.schedule.should.deep.equal(schedule);
 		});
 
 		it("should remove the schedule from the schedules list when the modal is closed", () => {
 			scheduleIndexController.deleteSchedule(1);
-			$modal.close(schedule);
+			$uibModal.close(schedule);
 			scheduleIndexController.schedules.should.not.include(schedule);
 		});
 
 		it("should transition to the parent state", () => {
 			scheduleIndexController.deleteSchedule(1);
-			$modal.close(schedule);
+			$uibModal.close(schedule);
 			$state.go.should.have.been.calledWith("root.schedules");
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			scheduleIndexController.deleteSchedule(1);
-			$modal.close(schedule);
+			$uibModal.close(schedule);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			scheduleIndexController.deleteSchedule(1);
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});

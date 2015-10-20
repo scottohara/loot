@@ -1,7 +1,7 @@
 describe("LayoutController", () => {
 	let	layoutController,
 			$state,
-			$modal,
+			$uibModal,
 			authenticationModel,
 			ogTableNavigableService,
 			authenticated,
@@ -19,12 +19,12 @@ describe("LayoutController", () => {
 	}
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "$modal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
+	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$state_, _$modal_, _authenticationModel_, _ogTableNavigableService_, _authenticated_) => {
+	beforeEach(inject((controllerTest, _$state_, _$uibModal_, _authenticationModel_, _ogTableNavigableService_, _authenticated_) => {
 		$state = _$state_;
-		$modal = _$modal_;
+		$uibModal = _$uibModal_;
 		authenticationModel = _authenticationModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
 		authenticated = _authenticated_;
@@ -49,18 +49,18 @@ describe("LayoutController", () => {
 		beforeEach(() => layoutController.login());
 
 		it("should show the login modal", () => {
-			$modal.open.should.have.been.calledWith(sinon.match({
+			$uibModal.open.should.have.been.calledWith(sinon.match({
 				controller: "AuthenticationEditController"
 			}));
 		});
 
 		it("should reload the current state when the login modal is closed", () => {
-			$modal.close();
+			$uibModal.close();
 			$state.reload.should.have.been.called;
 		});
 
 		it("should not reload the current state when the login modal is dismissed", () => {
-			$modal.dismiss();
+			$uibModal.dismiss();
 			$state.reload.should.not.have.been.called;
 		});
 	});

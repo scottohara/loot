@@ -23,11 +23,11 @@
 				<button class="btn btn-primary" ng-click="vm.getTransactions('prev')">Previous</button>
 				<span>{{vm.firstTransactionDate | date:"dd/MM/yyyy"}} - {{vm.lastTransactionDate | date:"dd/MM/yyyy"}}</span>
 				<!-- Tools and options -->
-				<div class="btn-group pull-right" dropdown>
-					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+				<div class="btn-group pull-right" uib-dropdown>
+					<button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle>
 						<i class="glyphicon glyphicon-cog"></i> <span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
+					<ul class="uib-dropdown-menu" role="menu">
 						<li>
 							<a ng-click="vm.toggleShowAllDetails(!vm.showAllDetails)" ng-switch="vm.showAllDetails">
 								<i ng-switch-when="true" class="glyphicon glyphicon-ok text-success"></i>
@@ -56,7 +56,7 @@
 			<!-- Transaction date -->
 			<td class="has-action">
 				{{::transaction.transaction_date | date:'dd/MM/yyyy'}}
-				<i class="action glyphicon glyphicon-flag text-danger pull-right flag" ng-class="{'active': transaction.flag}" tooltip="{{transaction.flag || 'Flag transaction...'}}" ng-click="vm.flag($index)"></i>
+				<i class="action glyphicon glyphicon-flag text-danger pull-right flag" ng-class="{'active': transaction.flag}" uib-tooltip="{{transaction.flag || 'Flag transaction...'}}" ng-click="vm.flag($index)"></i>
 			</td>
 			<!-- Details table -->
 			<td class="details">
@@ -65,7 +65,7 @@
 					<tr ng-if="vm.contextType != 'account' && vm.showAllDetails">
 						<td colspan="2" class="has-action">
 							{{::transaction.primary_account.name}}
-							<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.primary_account.name}}" ng-click="vm.switchPrimaryAccount($event, transaction)"></i>
+							<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.primary_account.name}}" ng-click="vm.switchPrimaryAccount($event, transaction)"></i>
 						</td>
 					</tr>
 					<!-- Payee / Security -->
@@ -79,12 +79,12 @@
 							<!-- Payee -->
 							<span ng-if="::transaction.payee.id">
 								{{::transaction.payee.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.payee.name}}" ng-click="vm.switchPayee($event, transaction)"></i>
+								<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.payee.name}}" ng-click="vm.switchPayee($event, transaction)"></i>
 							</span>
 							<!-- Security -->
 							<span ng-if="::transaction.security.id">
 								{{::transaction.security.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.security.name}}" ng-click="vm.switchSecurity($event, transaction)"></i>
+								<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.security.name}}" ng-click="vm.switchSecurity($event, transaction)"></i>
 							</span>
 						</td>
 					</tr>
@@ -93,18 +93,18 @@
 						<!-- Category -->
 						<td class="category has-action" ng-if="::vm.contextType != 'category' || (vm.contextType == 'category' && vm.context.parent)">
 							{{::transaction.category.name}}
-							<i ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.category.name}}" ng-click="vm.switchCategory($event, transaction)"></i>
+							<i ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1" class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.category.name}}" ng-click="vm.switchCategory($event, transaction)"></i>
 						</td>
 						<!-- Subcategory / Transfer or Other Account -->
 						<td class="category has-action" ng-if="::vm.contextType != 'category' || (vm.contextType == 'category' && !vm.context.parent)">
 							<span ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1">
 								{{::transaction.subcategory.name}}
-								<i ng-if="::transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.subcategory.name}}" ng-click="vm.switchSubcategory($event, transaction)"></i>
+								<i ng-if="::transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.subcategory.name}}" ng-click="vm.switchSubcategory($event, transaction)"></i>
 							</span>
 							<!-- Transfer / Other Account -->
 							<span ng-if="::['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1">
 								{{::transaction.account.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" tooltip="Go to {{::transaction.account.name}}" ng-click="vm.switchAccount($event, transaction)"></i>
+								<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.account.name}}" ng-click="vm.switchAccount($event, transaction)"></i>
 							</span>
 							<!-- Toggle subtransactions -->
 							<span ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">

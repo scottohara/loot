@@ -38,7 +38,7 @@
 							scope.stack.push({operand});
 
 							// Show the popover
-							$timeout(() => angular.element(iElement).triggerHandler("showCalculator"));
+							$timeout(() => angular.element(iElement)[0].dispatchEvent(new Event("showCalculator")));
 						} else {
 							scope.stack[scope.stack.length - 1].operand = operand;
 						}
@@ -148,7 +148,7 @@
 
 					// Close the popover
 					scope.close = () => {
-						$timeout(() => angular.element(iElement).triggerHandler("hideCalculator"));
+						$timeout(() => angular.element(iElement)[0].dispatchEvent(new Event("hideCalculator")));
 					};
 
 					// Start with a cleared calculator
@@ -204,8 +204,8 @@
 	const mod = angular.module("ogComponents");
 
 	// Add a custom trigger to the $tooltipProvider for the calculator
-	mod.config(["$tooltipProvider",
-		$tooltipProvider => $tooltipProvider.setTriggers({showCalculator: "hideCalculator"})
+	mod.config(["$uibTooltipProvider",
+		$uibTooltipProvider => $uibTooltipProvider.setTriggers({showCalculator: "hideCalculator"})
 	]);
 
 	// Declare the ogInputCalculator directive

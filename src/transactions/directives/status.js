@@ -3,7 +3,7 @@
 	 * Implementation
 	 */
 	class Directive {
-		constructor(transactionModel, accountModel) {
+		constructor($sce, transactionModel, accountModel) {
 			return {
 				restrict: "A",
 				scope: {
@@ -31,6 +31,8 @@
 								scope.icon = "tag";
 								break;
 						}
+
+						scope.tooltip = $sce.trustAsHtml(`Status: <strong class="${scope.currentStatus.toLowerCase()}">${scope.currentStatus}</strong><br/>Click to mark as <strong class="${scope.nextStatus.toLowerCase()}">${scope.nextStatus}</strong>`);
 					}
 
 					// Declare a click handler to toggle the status
@@ -52,8 +54,8 @@
 			};
 		}
 
-		static factory(transactionModel, accountModel) {
-			return new Directive(transactionModel, accountModel);
+		static factory($sce, transactionModel, accountModel) {
+			return new Directive($sce, transactionModel, accountModel);
 		}
 	}
 
@@ -67,5 +69,5 @@
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = ["transactionModel", "accountModel"];
+	Directive.factory.$inject = ["$sce", "transactionModel", "accountModel"];
 }

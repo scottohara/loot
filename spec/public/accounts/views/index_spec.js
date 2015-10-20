@@ -40,9 +40,9 @@ describe("accountIndexView", () => {
 				{
 					heading: "Loan accounts",
 					accounts: [
-						{name: "loan account 9", closingBalance: "($1,000.00)"}
+						{name: "loan account 9", closingBalance: "-$1,000.00"}
 					],
-					total: "($1,000.00)"
+					total: "-$1,000.00"
 				}
 			],
 			total: "Total: $4,997.00"

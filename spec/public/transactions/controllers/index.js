@@ -1,7 +1,7 @@
 describe("TransactionIndexController", () => {
 	let	transactionIndexController,
 			controllerTest,
-			$modal,
+			$uibModal,
 			$timeout,
 			$window,
 			$state,
@@ -14,12 +14,12 @@ describe("TransactionIndexController", () => {
 			transactionBatch;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$modal", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch"])));
+	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modal_, _$timeout_, _$window_, _$state_, _transactionModel_, _accountModel_, _ogTableNavigableService_, _ogViewScrollService_, _contextModel_, _context_, _transactionBatch_) => {
+	beforeEach(inject((_controllerTest_, _$uibModal_, _$timeout_, _$window_, _$state_, _transactionModel_, _accountModel_, _ogTableNavigableService_, _ogViewScrollService_, _contextModel_, _context_, _transactionBatch_) => {
 		controllerTest = _controllerTest_;
-		$modal = _$modal_;
+		$uibModal = _$uibModal_;
 		$timeout = _$timeout_;
 		$window = _$window_;
 		$state = _$state_;
@@ -91,13 +91,13 @@ describe("TransactionIndexController", () => {
 				sinon.stub(transactionIndexController, "isAllowed").returns(false);
 				transactionIndexController.editTransaction(1);
 				Boolean(ogTableNavigableService.enabled).should.be.true;
-				$modal.open.should.not.have.been.called;
+				$uibModal.open.should.not.have.been.called;
 			});
 
 			it("should open the edit transaction modal with a transaction", () => {
 				transactionIndexController.editTransaction(1);
-				$modal.open.should.have.been.called;
-				$modal.resolves.transaction.should.deep.equal(transaction);
+				$uibModal.open.should.have.been.called;
+				$uibModal.resolves.transaction.should.deep.equal(transaction);
 				transactionModel.findSubtransactions.should.not.have.been.called;
 			});
 
@@ -108,7 +108,7 @@ describe("TransactionIndexController", () => {
 					transactionIndexController.transactions[1].transaction_type = scenario;
 					transactionIndexController.editTransaction(1);
 					transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
-					$modal.resolves.transaction.should.eventually.have.a.property("subtransactions");
+					$uibModal.resolves.transaction.should.eventually.have.a.property("subtransactions");
 				});
 			});
 
@@ -117,14 +117,14 @@ describe("TransactionIndexController", () => {
 
 				transaction.memo = "edited transaction";
 				transactionIndexController.editTransaction(1);
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.updateClosingBalance.should.have.been.calledWith(originalTransaction, transaction);
 			});
 
 			it("should update the transaction in the list of transactions when the modal is closed", () => {
 				transaction.memo = "edited transaction";
 				transactionIndexController.editTransaction(1);
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.transactions.should.include(transaction);
 			});
 		});
@@ -181,8 +181,8 @@ describe("TransactionIndexController", () => {
 
 				afterEach(() => {
 					transactionIndexController.editTransaction();
-					$modal.open.should.have.been.called;
-					$modal.resolves.transaction.should.deep.equal(transaction);
+					$uibModal.open.should.have.been.called;
+					$uibModal.resolves.transaction.should.deep.equal(transaction);
 				});
 			});
 
@@ -191,21 +191,21 @@ describe("TransactionIndexController", () => {
 				let originalTransaction;
 
 				transactionIndexController.editTransaction();
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.updateClosingBalance.should.have.been.calledWith(originalTransaction, transaction);
 			});
 
 			it("should add the new transaction to the list of transactions when the modal is closed", () => {
 				transaction.payee = context;
 				transactionIndexController.editTransaction();
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.transactions.pop().should.deep.equal(transaction);
 			});
 		});
 
 		it("should check if the context has changed when the modal is closed", () => {
 			transactionIndexController.editTransaction(1);
-			$modal.close(transaction);
+			$uibModal.close(transaction);
 			transactionIndexController.contextChanged.should.have.been.calledWith(transaction);
 		});
 
@@ -217,7 +217,7 @@ describe("TransactionIndexController", () => {
 			});
 
 			it("should remove the transaction from the list of transactions", () => {
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.removeTransaction.should.have.been.calledWith(1);
 			});
 		});
@@ -226,7 +226,7 @@ describe("TransactionIndexController", () => {
 			it("should fetch a new transaction batch starting from the new transaction date", () => {
 				transaction.transaction_date = moment(transactionIndexController.firstTransactionDate).subtract(1, "day").toDate();
 				transactionIndexController.editTransaction(1);
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.getTransactions.should.have.been.calledWith("next", moment(transaction.transaction_date).subtract(1, "day").toDate(), transaction.id);
 			});
 		});
@@ -239,13 +239,13 @@ describe("TransactionIndexController", () => {
 
 			it("should not fetch a new transaction batch if we're already at the end", () => {
 				transactionIndexController.atEnd = true;
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.getTransactions.should.not.have.been.called;
 			});
 
 			it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", () => {
 				transactionIndexController.atEnd = false;
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.getTransactions.should.have.been.calledWith("prev", moment(transaction.transaction_date).add(1, "day").toDate(), transaction.id);
 			});
 		});
@@ -253,7 +253,7 @@ describe("TransactionIndexController", () => {
 		describe("transaction date is within the current batch, or we're at the end", () => {
 			it("should not fetch a new transaction batch when the modal is closed", () => {
 				transactionIndexController.editTransaction(1);
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.getTransactions.should.not.have.been.called;
 			});
 
@@ -261,19 +261,19 @@ describe("TransactionIndexController", () => {
 				transaction.id = 999;
 				transaction.transaction_date = moment().startOf("day").subtract(1, "day").toDate();
 				transactionIndexController.editTransaction(1);
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.transactions.pop().should.deep.equal(transaction);
 			});
 
 			it("should recalculate the running balances when the modal is closed", () => {
 				transactionIndexController.editTransaction();
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.updateRunningBalances.should.have.been.called;
 			});
 
 			it("should focus the transaction when the modal is closed", () => {
 				transactionIndexController.editTransaction();
-				$modal.close(transaction);
+				$uibModal.close(transaction);
 				transactionIndexController.focusTransaction.should.have.been.calledWith(transaction.id);
 			});
 		});
@@ -282,19 +282,19 @@ describe("TransactionIndexController", () => {
 			const originalTransactions = angular.copy(transactionIndexController.transactions);
 
 			transactionIndexController.editTransaction();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			transactionIndexController.transactions.should.deep.equal(originalTransactions);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			transactionIndexController.editTransaction();
-			$modal.close(transaction);
+			$uibModal.close(transaction);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			transactionIndexController.editTransaction();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});
@@ -360,7 +360,7 @@ describe("TransactionIndexController", () => {
 			sinon.stub(transactionIndexController, "isAllowed").returns(false);
 			transactionIndexController.deleteTransaction(1);
 			Boolean(ogTableNavigableService.enabled).should.be.true;
-			$modal.open.should.not.have.been.called;
+			$uibModal.open.should.not.have.been.called;
 		});
 
 		it("should disable navigation on the table", () => {
@@ -370,25 +370,25 @@ describe("TransactionIndexController", () => {
 
 		it("should open the delete transaction modal with a transaction", () => {
 			transactionIndexController.deleteTransaction(1);
-			$modal.open.should.have.been.called;
-			$modal.resolves.transaction.should.deep.equal(transaction);
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.transaction.should.deep.equal(transaction);
 		});
 
 		it("should remove the transaction from the transactions list when the modal is closed", () => {
 			transactionIndexController.deleteTransaction(1);
-			$modal.close(transaction);
+			$uibModal.close(transaction);
 			transactionIndexController.removeTransaction.should.have.been.calledWith(1);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			transactionIndexController.deleteTransaction(1);
-			$modal.close(transaction);
+			$uibModal.close(transaction);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			transactionIndexController.deleteTransaction(1);
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});
@@ -555,28 +555,28 @@ describe("TransactionIndexController", () => {
 		it("should disable navigation on the table", () => ogTableNavigableService.enabled.should.be.false);
 
 		it("should prompt the user to switch to the other account", () => {
-			$modal.open.should.have.been.called;
-			$modal.resolves.confirm.message.should.equal(message);
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.confirm.message.should.equal(message);
 		});
 
 		it("should switch to the other account when the modal is closed", () => {
-			$modal.close();
+			$uibModal.close();
 			transactionIndexController.switchAccount.should.have.been.calledWith(null, transaction);
 		});
 
 		it("should switch to the primary account if there is no other account when the modal is closed", () => {
 			transaction.account = null;
-			$modal.close();
+			$uibModal.close();
 			transactionIndexController.switchPrimaryAccount.should.have.been.calledWith(null, transaction);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
-			$modal.close();
+			$uibModal.close();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dismissed", () => {
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});
@@ -919,7 +919,7 @@ describe("TransactionIndexController", () => {
 			it("should do nothing if we're currently reconciling", () => {
 				transactionIndexController.reconciling = true;
 				transactionIndexController.reconcile();
-				$modal.open.should.not.have.been.called;
+				$uibModal.open.should.not.have.been.called;
 			});
 
 			describe("(not already reconciling)", () => {
@@ -932,34 +932,34 @@ describe("TransactionIndexController", () => {
 				it("should disable navigation on the table", () => ogTableNavigableService.enabled.should.be.false);
 
 				it("should prompt the user for the accounts closing balance", () => {
-					$modal.open.should.have.been.called;
-					$modal.resolves.account.should.deep.equal(transactionIndexController.context);
+					$uibModal.open.should.have.been.called;
+					$uibModal.resolves.account.should.deep.equal(transactionIndexController.context);
 				});
 
 				it("should make the closing balance available to the view when the modal is closed", () => {
 					const closingBalance = 100;
 
-					$modal.close(closingBalance);
+					$uibModal.close(closingBalance);
 					transactionIndexController.closingBalance.should.equal(closingBalance);
 				});
 
 				it("should refetch the list of unreconciled transactions when the modal is closed", () => {
-					$modal.close();
+					$uibModal.close();
 					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(true);
 				});
 
 				it("should enter reconcile mode when the modal is closed", () => {
-					$modal.close();
+					$uibModal.close();
 					transactionIndexController.reconciling.should.be.true;
 				});
 
 				it("should enable navigation on the table when the modal is closed", () => {
-					$modal.close();
+					$uibModal.close();
 					ogTableNavigableService.enabled.should.be.true;
 				});
 
 				it("should enable navigation on the table when the modal is dismissed", () => {
-					$modal.dismiss();
+					$uibModal.dismiss();
 					ogTableNavigableService.enabled.should.be.true;
 				});
 			});
@@ -1082,23 +1082,23 @@ describe("TransactionIndexController", () => {
 		it("should disable navigation on the table", () => ogTableNavigableService.enabled.should.be.false);
 
 		it("should show the flag modal for the transaction", () => {
-			$modal.open.should.have.been.called;
-			$modal.resolves.transaction.should.deep.equal(transaction);
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.transaction.should.deep.equal(transaction);
 		});
 
 		it("should update the transaction in the list of transactions when the modal is closed", () => {
 			transaction.flag = "test flag";
-			$modal.close(transaction);
+			$uibModal.close(transaction);
 			transactionIndexController.transactions[1].should.deep.equal(transaction);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
-			$modal.close(transaction);
+			$uibModal.close(transaction);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dismissed", () => {
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});

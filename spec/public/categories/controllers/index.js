@@ -2,20 +2,20 @@ describe("CategoryIndexController", () => {
 	let	categoryIndexController,
 			controllerTest,
 			$timeout,
-			$modal,
+			$uibModal,
 			$state,
 			categoryModel,
 			ogTableNavigableService,
 			categories;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$modal", "$state", "categoryModel", "categories"])));
+	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "categoryModel", "categories"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$timeout_, _$modal_, _$state_, _categoryModel_, _ogTableNavigableService_, _categories_) => {
+	beforeEach(inject((_controllerTest_, _$timeout_, _$uibModal_, _$state_, _categoryModel_, _ogTableNavigableService_, _categories_) => {
 		controllerTest = _controllerTest_;
 		$timeout = _$timeout_;
-		$modal = _$modal_;
+		$uibModal = _$uibModal_;
 		$state = _$state_;
 		categoryModel = _categoryModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
@@ -55,19 +55,19 @@ describe("CategoryIndexController", () => {
 			beforeEach(() => categoryIndexController.editCategory(1));
 
 			it("should open the edit category modal with a category", () => {
-				$modal.open.should.have.been.called;
+				$uibModal.open.should.have.been.called;
 				categoryModel.addRecent.should.have.been.calledWith(category);
-				$modal.resolves.category.should.deep.equal(category);
+				$uibModal.resolves.category.should.deep.equal(category);
 			});
 
 			it("should not change the parent's children count if the parent category has not changed", () => {
-				$modal.close(category);
+				$uibModal.close(category);
 				categoryIndexController.categories[0].num_children.should.equal(2);
 			});
 
 			it("should decrement the original parent's children count when the parent category changes", () => {
 				category.parent_id = 2;
-				$modal.close(category);
+				$uibModal.close(category);
 				categoryIndexController.categories[0].num_children.should.equal(1);
 			});
 
@@ -78,7 +78,7 @@ describe("CategoryIndexController", () => {
 				originalCategories[1].parent_id = 2;
 				originalCategories[3].num_children = 3;
 				category.parent_id = 2;
-				$modal.close(category);
+				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
 				categoryIndexController.categories.should.deep.equal(originalCategories);
@@ -91,7 +91,7 @@ describe("CategoryIndexController", () => {
 				originalCategories[1].parent_id = 2;
 				originalCategories[3].num_children = 3;
 				category.parent_id = 2;
-				$modal.close(category);
+				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
 				categoryIndexController.categories.should.deep.equal(originalCategories);
@@ -100,7 +100,7 @@ describe("CategoryIndexController", () => {
 			it("should increment the new parent's children count when the parent category changes", () => {
 				category.parent_id = 3;
 				category.parent.name = "cc";
-				$modal.close(category);
+				$uibModal.close(category);
 				categoryIndexController.categories[5].num_children.should.equal(3);
 			});
 
@@ -110,7 +110,7 @@ describe("CategoryIndexController", () => {
 				Reflect.deleteProperty(originalCategories[1], "parent_id");
 				originalCategories[0].num_children = 1;
 				Reflect.deleteProperty(category, "parent_id");
-				$modal.close(category);
+				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
 				categoryIndexController.categories.should.deep.equal(originalCategories);
@@ -122,7 +122,7 @@ describe("CategoryIndexController", () => {
 				originalCategories[1].parent_id = 999;
 				originalCategories[0].num_children = 1;
 				category.parent_id = 999;
-				$modal.close(category);
+				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
 				categoryIndexController.categories.should.deep.equal(originalCategories);
@@ -130,7 +130,7 @@ describe("CategoryIndexController", () => {
 
 			it("should update the category in the list of categories when the modal is closed", () => {
 				category.name = "edited category";
-				$modal.close(category);
+				$uibModal.close(category);
 				categoryIndexController.categories.should.include(category);
 			});
 		});
@@ -142,24 +142,24 @@ describe("CategoryIndexController", () => {
 			});
 
 			it("should open the edit category modal without a category", () => {
-				$modal.open.should.have.been.called;
+				$uibModal.open.should.have.been.called;
 				categoryModel.addRecent.should.not.have.been.called;
-				(!$modal.resolves.category).should.be.true;
+				(!$uibModal.resolves.category).should.be.true;
 			});
 
 			it("should add the new category to the list of categories when the modal is closed", () => {
-				$modal.close(category);
+				$uibModal.close(category);
 				categoryIndexController.categories.pop().should.deep.equal(category);
 			});
 
 			it("should add the new category to the recent list", () => {
-				$modal.close(category);
+				$uibModal.close(category);
 				categoryModel.addRecent.should.have.been.calledWith(category);
 			});
 
 			it("should increment the parent's children count for a subcategory", () => {
 				category.parent_id = 1;
-				$modal.close(category);
+				$uibModal.close(category);
 				categoryIndexController.categories[0].num_children.should.equal(3);
 			});
 
@@ -167,7 +167,7 @@ describe("CategoryIndexController", () => {
 				const originalCategories = angular.copy(categoryIndexController.categories);
 
 				category.parent_id = 998;
-				$modal.close(category);
+				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
 				categoryIndexController.categories.pop();
@@ -179,13 +179,13 @@ describe("CategoryIndexController", () => {
 			const outflowCategoryWithHighestName = angular.copy(categoryIndexController.categories[13]);
 
 			categoryIndexController.editCategory();
-			$modal.close(category);
+			$uibModal.close(category);
 			categoryIndexController.categories.pop().should.deep.equal(outflowCategoryWithHighestName);
 		});
 
 		it("should focus the category when the modal is closed", () => {
 			categoryIndexController.editCategory();
-			$modal.close(category);
+			$uibModal.close(category);
 			categoryIndexController.focusCategory.should.have.been.calledWith(category.id);
 		});
 
@@ -193,19 +193,19 @@ describe("CategoryIndexController", () => {
 			const originalCategories = angular.copy(categoryIndexController.categories);
 
 			categoryIndexController.editCategory();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			categoryIndexController.categories.should.deep.equal(originalCategories);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			categoryIndexController.editCategory();
-			$modal.close(category);
+			$uibModal.close(category);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			categoryIndexController.editCategory();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});
@@ -227,19 +227,19 @@ describe("CategoryIndexController", () => {
 
 		it("should show an alert if the category has transactions", () => {
 			categoryIndexController.deleteCategory(6);
-			$modal.open.should.have.been.called;
-			$modal.resolves.alert.header.should.equal("Category has existing transactions");
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.alert.header.should.equal("Category has existing transactions");
 		});
 
 		it("should show the delete category modal if the category has no transactions", () => {
 			categoryIndexController.deleteCategory(3);
-			$modal.open.should.have.been.called;
-			$modal.resolves.category.should.deep.equal(category);
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.category.should.deep.equal(category);
 		});
 
 		it("should decrement the parent's children count for a subcategory", () => {
 			categoryIndexController.deleteCategory(1);
-			$modal.close(category);
+			$uibModal.close(category);
 			categoryIndexController.categories[0].num_children.should.equal(1);
 		});
 
@@ -249,7 +249,7 @@ describe("CategoryIndexController", () => {
 
 			originalCategories.splice(9, 1);
 			categoryIndexController.deleteCategory(9);
-			$modal.close(category);
+			$uibModal.close(category);
 			categoryIndexController.categories.should.deep.equal(originalCategories);
 		});
 
@@ -258,7 +258,7 @@ describe("CategoryIndexController", () => {
 						child2 = categoryIndexController.categories[5];
 
 			categoryIndexController.deleteCategory(3);
-			$modal.close(category);
+			$uibModal.close(category);
 			categoryIndexController.categories.should.not.include(category);
 			categoryIndexController.categories.should.not.include(child1);
 			categoryIndexController.categories.should.not.include(child2);
@@ -267,25 +267,25 @@ describe("CategoryIndexController", () => {
 		it("should remove a subcategory from the categories list when the modal is closed", () => {
 			category = categoryIndexController.categories[1];
 			categoryIndexController.deleteCategory(1);
-			$modal.close(category);
+			$uibModal.close(category);
 			categoryIndexController.categories.should.not.include(category);
 		});
 
 		it("should transition to the categories list when the modal is closed", () => {
 			categoryIndexController.deleteCategory(3);
-			$modal.close(category);
+			$uibModal.close(category);
 			$state.go.should.have.been.calledWith("root.categories");
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			categoryIndexController.deleteCategory(3);
-			$modal.close(category);
+			$uibModal.close(category);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			categoryIndexController.deleteCategory(3);
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});

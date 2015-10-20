@@ -1,6 +1,7 @@
 describe("transactionStatus", () => {
 	let	transactionStatus,
-			transactionModel;
+			transactionModel,
+			$sce;
 
 	// Load the modules
 	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["transactionModel"])));
@@ -9,7 +10,8 @@ describe("transactionStatus", () => {
 	beforeEach(module("transactions/views/status.html"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((directiveTest, _transactionModel_) => {
+	beforeEach(inject((_$sce_, directiveTest, _transactionModel_) => {
+		$sce = _$sce_;
 		transactionStatus = directiveTest;
 		transactionStatus.configure("transaction-status", "div");
 		transactionStatus.scope.model = {
@@ -27,32 +29,38 @@ describe("transactionStatus", () => {
 	const scenarios = [
 		{
 			nextStatus: "Cleared",
-			icon: "tag"
+			icon: "tag",
+			tooltip: "Status: <strong class=\"unreconciled\">Unreconciled</strong><br/>Click to mark as <strong class=\"cleared\">Cleared</strong>"
 		},
 		{
 			currentStatus: null,
 			nextStatus: "Cleared",
-			icon: "tag"
+			icon: "tag",
+			tooltip: "Status: <strong class=\"unreconciled\">Unreconciled</strong><br/>Click to mark as <strong class=\"cleared\">Cleared</strong>"
 		},
 		{
 			currentStatus: "Unreconciled",
 			nextStatus: "Cleared",
-			icon: "tag"
+			icon: "tag",
+			tooltip: "Status: <strong class=\"unreconciled\">Unreconciled</strong><br/>Click to mark as <strong class=\"cleared\">Cleared</strong>"
 		},
 		{
 			currentStatus: "Reconciled",
 			nextStatus: "Unreconciled",
-			icon: "lock"
+			icon: "lock",
+			tooltip: "Status: <strong class=\"reconciled\">Reconciled</strong><br/>Click to mark as <strong class=\"unreconciled\">Unreconciled</strong>"
 		},
 		{
 			currentStatus: "Cleared",
 			nextStatus: "Reconciled",
-			icon: "tag"
+			icon: "tag",
+			tooltip: "Status: <strong class=\"cleared\">Cleared</strong><br/>Click to mark as <strong class=\"reconciled\">Reconciled</strong>"
 		},
 		{
 			currentStatus: "anything else",
 			nextStatus: "Cleared",
-			icon: "tag"
+			icon: "tag",
+			tooltip: "Status: <strong class=\"anything else\">anything else</strong><br/>Click to mark as <strong class=\"cleared\">Cleared</strong>"
 		}
 	];
 
@@ -76,9 +84,14 @@ describe("transactionStatus", () => {
 			transactionStatus.element.isolateScope().nextStatus.should.equal(scenario.nextStatus);
 		});
 
-		it(`should set the icon to ${scenario.icon} when the current status is ${scenario.currentStatus}`, () => {
+		it(`should set the icon to ${scenario.icon} when the current status is ${String(scenario.currentStatus)}`, () => {
 			setup(scenario);
 			transactionStatus.element.isolateScope().icon.should.equal(scenario.icon);
+		});
+
+		it(`should set the tooltip when the current status is ${String(scenario.currentStatus)}`, () => {
+			setup(scenario);
+			$sce.getTrustedHtml(transactionStatus.element.isolateScope().tooltip).should.equal(scenario.tooltip);
 		});
 	});
 
@@ -103,8 +116,6 @@ describe("transactionStatus", () => {
 			transactionStatus.scope.$digest();
 			transactionStatus.element.find("i").hasClass("active").should.be.true;
 		});
-
-		it("should display a tooltip with the current and next status", () => i.attr("tooltip-html-unsafe").should.equal("Status: <strong class='unreconciled'>Unreconciled</strong><br/>Click to mark as <strong class='cleared'>Cleared</strong>"));
 	});
 
 	describe("on click", () => {

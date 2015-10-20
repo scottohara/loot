@@ -2,20 +2,20 @@ describe("SecurityIndexController", () => {
 	let	securityIndexController,
 			controllerTest,
 			$timeout,
-			$modal,
+			$uibModal,
 			$state,
 			securityModel,
 			ogTableNavigableService,
 			securities;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$modal", "$state", "securityModel", "securities"])));
+	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "securityModel", "securities"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$timeout_, _$modal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) => {
+	beforeEach(inject((_controllerTest_, _$timeout_, _$uibModal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) => {
 		controllerTest = _controllerTest_;
 		$timeout = _$timeout_;
-		$modal = _$modal_;
+		$uibModal = _$uibModal_;
 		$state = _$state_;
 		securityModel = _securityModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
@@ -44,14 +44,14 @@ describe("SecurityIndexController", () => {
 			beforeEach(() => securityIndexController.editSecurity(1));
 
 			it("should open the edit security modal with a security", () => {
-				$modal.open.should.have.been.called;
+				$uibModal.open.should.have.been.called;
 				securityModel.addRecent.should.have.been.calledWith(security);
-				$modal.resolves.security.should.deep.equal(security);
+				$uibModal.resolves.security.should.deep.equal(security);
 			});
 
 			it("should update the security in the list of securities when the modal is closed", () => {
 				security.name = "edited security";
-				$modal.close(security);
+				$uibModal.close(security);
 				securityIndexController.securities.should.include(security);
 			});
 		});
@@ -63,18 +63,18 @@ describe("SecurityIndexController", () => {
 			});
 
 			it("should open the edit security modal without a security", () => {
-				$modal.open.should.have.been.called;
+				$uibModal.open.should.have.been.called;
 				securityModel.addRecent.should.not.have.been.called;
-				(!$modal.resolves.security).should.be.true;
+				(!$uibModal.resolves.security).should.be.true;
 			});
 
 			it("should add the new security to the list of securities when the modal is closed", () => {
-				$modal.close(security);
+				$uibModal.close(security);
 				securityIndexController.securities.pop().should.deep.equal(security);
 			});
 
 			it("should add the new security to the recent list", () => {
-				$modal.close(security);
+				$uibModal.close(security);
 				securityModel.addRecent.should.have.been.calledWith(security);
 			});
 		});
@@ -83,13 +83,13 @@ describe("SecurityIndexController", () => {
 			const securityWithNoHoldingAndHighestName = angular.copy(securityIndexController.securities[6]);
 
 			securityIndexController.editSecurity();
-			$modal.close(security);
+			$uibModal.close(security);
 			securityIndexController.securities.pop().should.deep.equal(securityWithNoHoldingAndHighestName);
 		});
 
 		it("should focus the security when the modal is closed", () => {
 			securityIndexController.editSecurity();
-			$modal.close(security);
+			$uibModal.close(security);
 			securityIndexController.focusSecurity.should.have.been.calledWith(security.id);
 		});
 
@@ -97,19 +97,19 @@ describe("SecurityIndexController", () => {
 			const originalSecurities = angular.copy(securityIndexController.securities);
 
 			securityIndexController.editSecurity();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			securityIndexController.securities.should.deep.equal(originalSecurities);
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			securityIndexController.editSecurity();
-			$modal.close(security);
+			$uibModal.close(security);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			securityIndexController.editSecurity();
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});
@@ -131,37 +131,37 @@ describe("SecurityIndexController", () => {
 
 		it("should show an alert if the security has transactions", () => {
 			securityIndexController.deleteSecurity(2);
-			$modal.open.should.have.been.called;
-			$modal.resolves.alert.header.should.equal("Security has existing transactions");
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.alert.header.should.equal("Security has existing transactions");
 		});
 
 		it("should show the delete security modal if the security has no transactions", () => {
 			securityIndexController.deleteSecurity(1);
-			$modal.open.should.have.been.called;
-			$modal.resolves.security.should.deep.equal(security);
+			$uibModal.open.should.have.been.called;
+			$uibModal.resolves.security.should.deep.equal(security);
 		});
 
 		it("should remove the security from the securities list when the modal is closed", () => {
 			securityIndexController.deleteSecurity(1);
-			$modal.close(security);
+			$uibModal.close(security);
 			securityIndexController.securities.should.not.include(security);
 		});
 
 		it("should transition to the securities list when the modal is closed", () => {
 			securityIndexController.deleteSecurity(1);
-			$modal.close(security);
+			$uibModal.close(security);
 			$state.go.should.have.been.calledWith("root.securities");
 		});
 
 		it("should enable navigation on the table when the modal is closed", () => {
 			securityIndexController.deleteSecurity(1);
-			$modal.close(security);
+			$uibModal.close(security);
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", () => {
 			securityIndexController.deleteSecurity(1);
-			$modal.dismiss();
+			$uibModal.dismiss();
 			ogTableNavigableService.enabled.should.be.true;
 		});
 	});

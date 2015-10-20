@@ -3,11 +3,11 @@
 	 * Implementation
 	 */
 	class Controller {
-		constructor($scope, $modal, $timeout, $state, categoryModel, ogTableNavigableService, categories) {
+		constructor($scope, $uibModal, $timeout, $state, categoryModel, ogTableNavigableService, categories) {
 			const self = this;
 
 			this.$scope = $scope;
-			this.$modal = $modal;
+			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
 			this.$state = $state;
 			this.categoryModel = categoryModel;
@@ -60,7 +60,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "categories/views/edit.html",
 				controller: "CategoryEditController",
 				controllerAs: "vm",
@@ -169,7 +169,7 @@
 				}
 
 				// Show the modal
-				this.$modal.open(modalOptions).result.then(() => {
+				this.$uibModal.open(modalOptions).result.then(() => {
 					// If the deleted category has a parent, decrement the parent's children count
 					if (!isNaN(this.categories[index].parent_id)) {
 						// Find the parent category by it's id
@@ -234,5 +234,5 @@
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories"];
+	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories"];
 }

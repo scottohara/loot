@@ -3,10 +3,10 @@
 	 * Implementation
 	 */
 	class Controller {
-		constructor($scope, $modal, $timeout, $state, scheduleModel, transactionModel, ogTableNavigableService, schedules) {
+		constructor($scope, $uibModal, $timeout, $state, scheduleModel, transactionModel, ogTableNavigableService, schedules) {
 			const self = this;
 
-			this.$modal = $modal;
+			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
 			this.$state = $state;
 			this.scheduleModel = scheduleModel;
@@ -59,7 +59,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "schedules/views/edit.html",
 				controller: "ScheduleEditController",
 				controllerAs: "vm",
@@ -110,7 +110,7 @@
 			this.ogTableNavigableService.enabled = false;
 
 			// Show the modal
-			this.$modal.open({
+			this.$uibModal.open({
 				templateUrl: "schedules/views/delete.html",
 				controller: "ScheduleDeleteController",
 				controllerAs: "vm",
@@ -186,5 +186,5 @@
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modal", "$timeout", "$state", "scheduleModel", "transactionModel", "ogTableNavigableService", "schedules"];
+	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "scheduleModel", "transactionModel", "ogTableNavigableService", "schedules"];
 }

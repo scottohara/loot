@@ -1,12 +1,12 @@
 describe("ogInputCalculator", () => {
 	let	ogInputCalculator,
-			$tooltipProvider,
+			$uibTooltipProvider,
 			$timeout;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ui.bootstrap", _$tooltipProvider_ => {
-		$tooltipProvider = _$tooltipProvider_;
-		sinon.stub($tooltipProvider, "setTriggers");
+	beforeEach(module("lootMocks", "ui.bootstrap", _$uibTooltipProvider_ => {
+		$uibTooltipProvider = _$uibTooltipProvider_;
+		sinon.stub($uibTooltipProvider, "setTriggers");
 	}));
 
 	beforeEach(module("ogComponents"));
@@ -29,7 +29,7 @@ describe("ogInputCalculator", () => {
 		ogInputCalculator.element = ogInputCalculator.element.find("input");
 	}));
 
-	it("should add a custom trigger to the $tooltipProvider for the calculator", () => $tooltipProvider.setTriggers.should.have.been.calledWith({showCalculator: "hideCalculator"}));
+	it("should add a custom trigger to the $uibTooltipProvider for the calculator", () => $uibTooltipProvider.setTriggers.should.have.been.calledWith({showCalculator: "hideCalculator"}));
 
 	it("should default the position to left if unspecified", () => ogInputCalculator.scope.position.should.equal("left"));
 
@@ -63,9 +63,9 @@ describe("ogInputCalculator", () => {
 					realAngularElement;
 
 			beforeEach(() => {
-				mockAngularElement = {
-					triggerHandler: sinon.stub()
-				};
+				mockAngularElement = [{
+					dispatchEvent: sinon.stub()
+				}];
 
 				realAngularElement = angular.element;
 				angular.element = sinon.stub();
@@ -78,7 +78,7 @@ describe("ogInputCalculator", () => {
 
 			it("should push the operand onto the stack", () => ogInputCalculator.scope.stack[0].should.deep.equal({operand: 1}));
 
-			it("should show the popover", () => mockAngularElement.triggerHandler.should.have.been.calledWith("showCalculator"));
+			it("should show the popover", () => mockAngularElement[0].dispatchEvent.should.have.been.calledWith(sinon.match(event => "showCalculator" === event.type)));
 
 			it("should set operator and operand as the display expression", () => ogInputCalculator.scope.expression.should.equal("\n+ 1"));
 
@@ -294,9 +294,9 @@ describe("ogInputCalculator", () => {
 				realAngularElement;
 
 		beforeEach(() => {
-			mockAngularElement = {
-				triggerHandler: sinon.stub()
-			};
+			mockAngularElement = [{
+				dispatchEvent: sinon.stub()
+			}];
 
 			realAngularElement = angular.element;
 			angular.element = sinon.stub();
@@ -306,7 +306,7 @@ describe("ogInputCalculator", () => {
 			$timeout.flush();
 		});
 
-		it("should hide the popover", () => mockAngularElement.triggerHandler.should.have.been.called);
+		it("should hide the popover", () => mockAngularElement[0].dispatchEvent.should.have.been.calledWith(sinon.match(event => "hideCalculator" === event.type)));
 
 		afterEach(() => angular.element = realAngularElement);
 	});
