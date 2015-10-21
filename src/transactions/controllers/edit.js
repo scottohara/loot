@@ -385,21 +385,21 @@
 		updateInvestmentDetails() {
 			if ("SecurityInvestment" === this.transaction.transaction_type) {
 				// Base amount is the quantity multiplied by the price
-				this.transaction.amount = (this.transaction.quantity || 0) * (this.transaction.price || 0);
+				this.transaction.amount = (Number(this.transaction.quantity) || 0) * (Number(this.transaction.price) || 0);
 
 				// For a purchase, commission is added to the cost; for a sale, commission is subtracted from the proceeds
 				if ("inflow" === this.transaction.direction) {
-					this.transaction.amount += this.transaction.commission || 0;
+					this.transaction.amount += Number(this.transaction.commission) || 0;
 				} else {
-					this.transaction.amount -= this.transaction.commission || 0;
+					this.transaction.amount -= Number(this.transaction.commission) || 0;
 				}
 			}
 
 			// If we're adding a new buy or sell transaction, update the memo with the details
 			if (!this.transaction.id && "SecurityInvestment" === this.transaction.transaction_type) {
-				const	quantity = this.transaction.quantity > 0 ? this.transaction.quantity : "",
-							price = this.transaction.price > 0 ? ` @ ${this.currencyFilter(this.transaction.price)}` : "",
-							commission = this.transaction.commission > 0 ? ` (${"inflow" === this.transaction.direction ? "plus" : "less"} ${this.currencyFilter(this.transaction.commission)} commission)` : "";
+				const	quantity = Number(this.transaction.quantity) > 0 ? String(this.transaction.quantity) : "",
+							price = Number(this.transaction.price) > 0 ? ` @ ${this.currencyFilter(this.transaction.price)}` : "",
+							commission = Number(this.transaction.commission) > 0 ? ` (${"inflow" === this.transaction.direction ? "plus" : "less"} ${this.currencyFilter(this.transaction.commission)} commission)` : "";
 
 				this.transaction.memo = quantity + price + commission;
 			}
