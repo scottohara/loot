@@ -12,7 +12,7 @@ addons:
     repo_token: 26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
 before_install:
-  - npm install -g npm@latest           # Default npm version on Travis is (currently) 1.4.x; we need 2.x (for passing args to npm test)
+	- nvm install                         # Install node version from .nvmrc
   - export DISPLAY=:99.0                # Display number for xvfb (for headless browser testing)
   - sh -e /etc/init.d/xvfb start        # Start xvfb (for headless browser testing)
 
