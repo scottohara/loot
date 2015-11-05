@@ -57,7 +57,7 @@
 	}
 
 	function cleanAndBuildIndex() {
-		return cleanIndex(buildIndex());
+		return cleanIndex().then(buildIndex);
 	}
 
 	function startKarma(configFile) {
