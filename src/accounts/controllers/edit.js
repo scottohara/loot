@@ -3,7 +3,7 @@
 	 * Implementation
 	 */
 
-	class Controller {
+	class AccountEditController {
 		constructor($modalInstance, filterFilter, limitToFilter, accountModel, account) {
 			this.$modalInstance = $modalInstance;
 			this.filterFilter = filterFilter;
@@ -63,10 +63,10 @@
 	 */
 	angular
 		.module("lootAccounts")
-		.controller("AccountEditController", Controller);
+		.controller("AccountEditController", AccountEditController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "accountModel", "account"];
+	AccountEditController.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "accountModel", "account"];
 }

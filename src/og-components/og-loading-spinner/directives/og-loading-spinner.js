@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Directive {
+	class OgLoadingSpinnerDirective {
 		constructor() {
 			return {
 				restrict: "A",
@@ -15,7 +15,7 @@
 		}
 
 		static factory() {
-			return new Directive();
+			return new OgLoadingSpinnerDirective();
 		}
 	}
 
@@ -24,10 +24,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.directive("ogLoadingSpinner", Directive.factory);
+		.directive("ogLoadingSpinner", OgLoadingSpinnerDirective.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = [];
+	OgLoadingSpinnerDirective.factory.$inject = [];
 }

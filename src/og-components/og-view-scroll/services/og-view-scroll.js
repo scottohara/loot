@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Service {
+	class OgViewScrollService {
 		constructor($anchorScroll) {
 			this.$anchorScroll = $anchorScroll;
 		}
@@ -17,10 +17,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.service("ogViewScrollService", Service);
+		.service("ogViewScrollService", OgViewScrollService);
 
 	/**
 	 * Dependencies
 	 */
-	Service.$inject = ["$anchorScroll"];
+	OgViewScrollService.$inject = ["$anchorScroll"];
 }

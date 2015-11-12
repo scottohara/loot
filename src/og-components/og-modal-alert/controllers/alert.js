@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class OgModalAlertController {
 		constructor($modalInstance, alert) {
 			this.$modalInstance = $modalInstance;
 			this.alert = angular.extend({closeButtonStyle: "primary"}, alert);
@@ -19,10 +19,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.controller("OgModalAlertController", Controller);
+		.controller("OgModalAlertController", OgModalAlertController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "alert"];
+	OgModalAlertController.$inject = ["$modalInstance", "alert"];
 }

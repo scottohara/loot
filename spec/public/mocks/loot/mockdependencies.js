@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class MockDependenciesProvider {
 		constructor($provide, $injector) {
 			this.$provide = $provide;
 			this.$injector = $injector;
@@ -43,10 +43,10 @@
 	 */
 	angular
 		.module("lootMocks")
-		.provider("mockDependencies", Provider);
+		.provider("mockDependencies", MockDependenciesProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = ["$provide", "$injector"];
+	MockDependenciesProvider.$inject = ["$provide", "$injector"];
 }

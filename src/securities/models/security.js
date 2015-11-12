@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class SecurityModel {
 		constructor($http, $cacheFactory, $window, ogLruCacheFactory) {
 			this.$http = $http;
 			this.$window = $window;
@@ -106,10 +106,6 @@
 			// Update local storage with the new list
 			this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.dump()));
 		}
-
-		static factory($http, $cacheFactory, $window, ogLruCacheFactory) {
-			return new Factory($http, $cacheFactory, $window, ogLruCacheFactory);
-		}
 	}
 
 	/**
@@ -117,10 +113,10 @@
 	 */
 	angular
 		.module("lootSecurities")
-		.factory("securityModel", Factory.factory);
+		.service("securityModel", SecurityModel);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
+	SecurityModel.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
 }

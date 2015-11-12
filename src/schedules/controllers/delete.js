@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class ScheduleDeleteController {
 		constructor($modalInstance, scheduleModel, schedule) {
 			this.$modalInstance = $modalInstance;
 			this.scheduleModel = scheduleModel;
@@ -27,10 +27,10 @@
 	 */
 	angular
 		.module("lootSchedules")
-		.controller("ScheduleDeleteController", Controller);
+		.controller("ScheduleDeleteController", ScheduleDeleteController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "scheduleModel", "schedule"];
+	ScheduleDeleteController.$inject = ["$modalInstance", "scheduleModel", "schedule"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class OgInputNumberControllerMockProvider {
 		constructor() {}
 
 		// Mock input number controller object
@@ -23,10 +23,10 @@
 	 */
 	angular
 		.module("ogComponentsMocks")
-		.provider("ogInputNumberControllerMock", Provider);
+		.provider("ogInputNumberControllerMock", OgInputNumberControllerMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	OgInputNumberControllerMockProvider.$inject = [];
 }

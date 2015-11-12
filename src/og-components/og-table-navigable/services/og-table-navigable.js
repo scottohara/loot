@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Service {
+	class OgTableNavigableService {
 		constructor() {
 			// Enables/disables keyboard navigation on all navigable tables
 			this.isEnabled = true;
@@ -22,10 +22,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.service("ogTableNavigableService", Service);
+		.service("ogTableNavigableService", OgTableNavigableService);
 
 	/**
 	 * Dependencies
 	 */
-	Service.$inject = [];
+	OgTableNavigableService.$inject = [];
 }

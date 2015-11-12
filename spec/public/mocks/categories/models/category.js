@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class CategoryModelMockProvider {
 		constructor(categoryMockProvider, categoriesMockProvider, $qMockProvider) {
 			// success/error = options for the stub promises
 			const	success = {
@@ -61,10 +61,10 @@
 	 */
 	angular
 		.module("lootCategoriesMocks")
-		.provider("categoryModelMock", Provider);
+		.provider("categoryModelMock", CategoryModelMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = ["categoryMockProvider", "categoriesMockProvider", "$qMockProvider"];
+	CategoryModelMockProvider.$inject = ["categoryMockProvider", "categoriesMockProvider", "$qMockProvider"];
 }

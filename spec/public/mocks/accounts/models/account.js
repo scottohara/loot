@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class AccountModelMockProvider {
 		constructor(accountMockProvider, accountsMockProvider, accountsWithBalancesMockProvider, $qMockProvider) {
 			// success/error = options for the stub promises
 			// all/allWithBalances =  promise-like responses
@@ -65,10 +65,10 @@
 	 */
 	angular
 		.module("lootAccountsMocks")
-		.provider("accountModelMock", Provider);
+		.provider("accountModelMock", AccountModelMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = ["accountMockProvider", "accountsMockProvider", "accountsWithBalancesMockProvider", "$qMockProvider"];
+	AccountModelMockProvider.$inject = ["accountMockProvider", "accountsMockProvider", "accountsWithBalancesMockProvider", "$qMockProvider"];
 }

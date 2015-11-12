@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Service {
+	class QueryService {
 		constructor() {
 			this.query = null;
 		}
@@ -13,10 +13,10 @@
 	 */
 	angular
 		.module("lootTransactions")
-		.service("queryService", Service);
+		.service("queryService", QueryService);
 
 	/**
 	 * Dependencies
 	 */
-	Service.$inject = [];
+	QueryService.$inject = [];
 }

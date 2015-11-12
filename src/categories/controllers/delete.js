@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class CategoryDeleteController {
 		constructor($modalInstance, categoryModel, category) {
 			this.$modalInstance = $modalInstance;
 			this.categoryModel = categoryModel;
@@ -27,10 +27,10 @@
 	 */
 	angular
 		.module("lootCategories")
-		.controller("CategoryDeleteController", Controller);
+		.controller("CategoryDeleteController", CategoryDeleteController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "categoryModel", "category"];
+	CategoryDeleteController.$inject = ["$modalInstance", "categoryModel", "category"];
 }

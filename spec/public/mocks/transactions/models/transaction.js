@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class TransactionModelMockProvider {
 		constructor(transactionMockProvider, transactionBatchMockProvider, $qMockProvider) {
 			// success/error = options for the stub promises
 			const	success = {
@@ -62,10 +62,10 @@
 	 */
 	angular
 		.module("lootTransactionsMocks")
-		.provider("transactionModelMock", Provider);
+		.provider("transactionModelMock", TransactionModelMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = ["transactionMockProvider", "transactionBatchMockProvider", "$qMockProvider"];
+	TransactionModelMockProvider.$inject = ["transactionMockProvider", "transactionBatchMockProvider", "$qMockProvider"];
 }

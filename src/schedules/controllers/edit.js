@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class ScheduleEditController {
 		constructor($scope, $modalInstance, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
 			this.$modalInstance = $modalInstance;
 			this.$timeout = $timeout;
@@ -503,10 +503,10 @@
 	 */
 	angular
 		.module("lootSchedules")
-		.controller("ScheduleEditController", Controller);
+		.controller("ScheduleEditController", ScheduleEditController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"];
+	ScheduleEditController.$inject = ["$scope", "$modalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"];
 }

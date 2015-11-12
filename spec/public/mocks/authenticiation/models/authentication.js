@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class AuthenticationModelMockProvider {
 		constructor($qMockProvider) {
 			const $q = $qMockProvider.$get();
 
@@ -25,10 +25,10 @@
 	 */
 	angular
 		.module("lootAuthenticationMocks")
-		.provider("authenticationModelMock", Provider);
+		.provider("authenticationModelMock", AuthenticationModelMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = ["$qMockProvider"];
+	AuthenticationModelMockProvider.$inject = ["$qMockProvider"];
 }

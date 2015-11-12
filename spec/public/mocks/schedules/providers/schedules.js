@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class SchedulesMockProvider {
 		constructor() {
 			// Mock schedules object
 			this.schedules = [
@@ -29,10 +29,10 @@
 	 */
 	angular
 		.module("lootSchedulesMocks")
-		.provider("schedulesMock", Provider);
+		.provider("schedulesMock", SchedulesMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	SchedulesMockProvider.$inject = [];
 }

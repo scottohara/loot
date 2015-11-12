@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class AlertMockProvider {
 		constructor() {
 			// Mock alert object
 			this.alert = {message: "alert message"};
@@ -19,10 +19,10 @@
 	 */
 	angular
 		.module("ogComponentsMocks")
-		.provider("alertMock", Provider);
+		.provider("alertMock", AlertMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	AlertMockProvider.$inject = [];
 }

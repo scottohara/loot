@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class PayeeEditController {
 		constructor($modalInstance, payeeModel, payee) {
 			this.$modalInstance = $modalInstance;
 			this.payeeModel = payeeModel;
@@ -28,10 +28,10 @@
 	 */
 	angular
 		.module("lootPayees")
-		.controller("PayeeEditController", Controller);
+		.controller("PayeeEditController", PayeeEditController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "payeeModel", "payee"];
+	PayeeEditController.$inject = ["$modalInstance", "payeeModel", "payee"];
 }

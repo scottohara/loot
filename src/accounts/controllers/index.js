@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class AccountIndexController {
 		constructor($scope, $uibModal, accountModel, accounts) {
 			this.$scope = $scope;
 			this.$uibModal = $uibModal;
@@ -147,10 +147,10 @@
 	 */
 	angular
 		.module("lootAccounts")
-		.controller("AccountIndexController", Controller);
+		.controller("AccountIndexController", AccountIndexController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$uibModal", "accountModel", "accounts"];
+	AccountIndexController.$inject = ["$scope", "$uibModal", "accountModel", "accounts"];
 }

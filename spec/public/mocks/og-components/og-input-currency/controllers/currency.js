@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class OgInputCurrencyControllerMockProvider {
 		constructor() {}
 
 		// Mock input currency controller object
@@ -28,10 +28,10 @@
 	 */
 	angular
 		.module("ogComponentsMocks")
-		.provider("ogInputCurrencyControllerMock", Provider);
+		.provider("ogInputCurrencyControllerMock", OgInputCurrencyControllerMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	OgInputCurrencyControllerMockProvider.$inject = [];
 }

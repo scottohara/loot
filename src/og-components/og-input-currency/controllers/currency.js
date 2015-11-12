@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class OgInputCurrencyController {
 		constructor(numberFilter) {
 			this.numberFilter = numberFilter;
 			this.decimalPlaces = 2;
@@ -34,10 +34,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.controller("OgInputCurrencyController", Controller);
+		.controller("OgInputCurrencyController", OgInputCurrencyController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["numberFilter"];
+	OgInputCurrencyController.$inject = ["numberFilter"];
 }

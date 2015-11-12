@@ -2,13 +2,13 @@
 	/**
 	 * Implementation
 	 */
-	class Filter {
+	class EstimateFilter {
 		constructor() {
 			return (value, isEstimate) => `${isEstimate ? "~" : ""}${value}`;
 		}
 
 		static factory() {
-			return new Filter();
+			return new EstimateFilter();
 		}
 	}
 
@@ -17,10 +17,10 @@
 	 */
 	angular
 		.module("lootSchedules")
-		.filter("estimate", Filter.factory);
+		.filter("estimate", EstimateFilter.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Filter.factory.$inject = [];
+	EstimateFilter.factory.$inject = [];
 }

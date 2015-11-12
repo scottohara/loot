@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class TransactionModel {
 		constructor($http, $window, accountModel, payeeModel, categoryModel, securityModel) {
 			this.$http = $http;
 			this.$window = $window;
@@ -166,10 +166,6 @@
 		get lastTransactionDate() {
 			return this.lastUsedTransactionDate;
 		}
-
-		static factory($http, $window, accountModel, payeeModel, categoryModel, securityModel) {
-			return new Factory($http, $window, accountModel, payeeModel, categoryModel, securityModel);
-		}
 	}
 
 	/**
@@ -177,10 +173,10 @@
 	 */
 	angular
 		.module("lootTransactions")
-		.factory("transactionModel", Factory.factory);
+		.service("transactionModel", TransactionModel);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = ["$http", "$window", "accountModel", "payeeModel", "categoryModel", "securityModel"];
+	TransactionModel.$inject = ["$http", "$window", "accountModel", "payeeModel", "categoryModel", "securityModel"];
 }

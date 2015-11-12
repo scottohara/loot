@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class ScheduleModel {
 		constructor($http, payeeModel, categoryModel, securityModel) {
 			this.$http = $http;
 			this.payeeModel = payeeModel;
@@ -62,10 +62,6 @@
 		destroy(schedule) {
 			return this.$http.delete(this.path(schedule.id));
 		}
-
-		static factory($http, payeeModel, categoryModel, securityModel) {
-			return new Factory($http, payeeModel, categoryModel, securityModel);
-		}
 	}
 
 	/**
@@ -73,10 +69,10 @@
 	 */
 	angular
 		.module("lootSchedules")
-		.factory("scheduleModel", Factory.factory);
+		.service("scheduleModel", ScheduleModel);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = ["$http", "payeeModel", "categoryModel", "securityModel"];
+	ScheduleModel.$inject = ["$http", "payeeModel", "categoryModel", "securityModel"];
 }

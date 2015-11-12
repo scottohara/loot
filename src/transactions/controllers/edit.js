@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class TransactionEditController {
 		constructor($scope, $modalInstance, $q, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
 			this.$modalInstance = $modalInstance;
 			this.$q = $q;
@@ -569,10 +569,10 @@
 	 */
 	angular
 		.module("lootTransactions")
-		.controller("TransactionEditController", Controller);
+		.controller("TransactionEditController", TransactionEditController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$modalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"];
+	TransactionEditController.$inject = ["$scope", "$modalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"];
 }

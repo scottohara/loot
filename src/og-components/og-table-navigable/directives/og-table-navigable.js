@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Directive {
+	class OgTableNavigableDirective {
 		constructor(ogTableNavigableService) {
 			return {
 				restrict: "A",
@@ -258,7 +258,7 @@
 		}
 
 		static factory(ogTableNavigableService) {
-			return new Directive(ogTableNavigableService);
+			return new OgTableNavigableDirective(ogTableNavigableService);
 		}
 	}
 
@@ -267,10 +267,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.directive("ogTableNavigable", Directive.factory);
+		.directive("ogTableNavigable", OgTableNavigableDirective.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = ["ogTableNavigableService"];
+	OgTableNavigableDirective.factory.$inject = ["ogTableNavigableService"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class OgInputNumberController {
 		constructor() {}
 
 		// Converts formatted value to raw value
@@ -21,10 +21,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.controller("OgInputNumberController", Controller);
+		.controller("OgInputNumberController", OgInputNumberController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = [];
+	OgInputNumberController.$inject = [];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class AccountDeleteController {
 		constructor($modalInstance, accountModel, account) {
 			this.$modalInstance = $modalInstance;
 			this.accountModel = accountModel;
@@ -31,10 +31,10 @@
 	 */
 	angular
 		.module("lootAccounts")
-		.controller("AccountDeleteController", Controller);
+		.controller("AccountDeleteController", AccountDeleteController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "accountModel", "account"];
+	AccountDeleteController.$inject = ["$modalInstance", "accountModel", "account"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class PayeeIndexController {
 		constructor($scope, $uibModal, $timeout, $state, payeeModel, ogTableNavigableService, payees) {
 			const self = this;
 
@@ -164,10 +164,10 @@
 	 */
 	angular
 		.module("lootPayees")
-		.controller("PayeeIndexController", Controller);
+		.controller("PayeeIndexController", PayeeIndexController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees"];
+	PayeeIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees"];
 }

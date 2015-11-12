@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class TransactionFlagController {
 		constructor($modalInstance, transactionModel, transaction) {
 			this.$modalInstance = $modalInstance;
 			this.transactionModel = transactionModel;
@@ -39,10 +39,10 @@
 	 */
 	angular
 		.module("lootTransactions")
-		.controller("TransactionFlagController", Controller);
+		.controller("TransactionFlagController", TransactionFlagController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "transactionModel", "transaction"];
+	TransactionFlagController.$inject = ["$modalInstance", "transactionModel", "transaction"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class CategoryEditController {
 		constructor($modalInstance, filterFilter, limitToFilter, categoryModel, category) {
 			this.$modalInstance = $modalInstance;
 			this.filterFilter = filterFilter;
@@ -43,10 +43,10 @@
 	 */
 	angular
 		.module("lootCategories")
-		.controller("CategoryEditController", Controller);
+		.controller("CategoryEditController", CategoryEditController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "categoryModel", "category"];
+	CategoryEditController.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "categoryModel", "category"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class TransactionIndexController {
 		constructor($scope, $uibModal, $timeout, $window, $state, transactionModel, accountModel, ogTableNavigableService, ogViewScrollService, contextModel, context, transactionBatch) {
 			const self = this;
 
@@ -636,10 +636,10 @@
 	 */
 	angular
 		.module("lootTransactions")
-		.controller("TransactionIndexController", Controller);
+		.controller("TransactionIndexController", TransactionIndexController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "contextModel", "context", "transactionBatch"];
+	TransactionIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "contextModel", "context", "transactionBatch"];
 }

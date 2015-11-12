@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class AccountModel {
 		constructor($http, $cacheFactory, $window, ogLruCacheFactory) {
 			this.$http = $http;
 			this.$window = $window;
@@ -116,10 +116,6 @@
 			// Update local storage with the new list
 			this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.dump()));
 		}
-
-		static factory($http, $cacheFactory, $window, ogLruCacheFactory) {
-			return new Factory($http, $cacheFactory, $window, ogLruCacheFactory);
-		}
 	}
 
 	/**
@@ -127,10 +123,10 @@
 	 */
 	angular
 		.module("lootAccounts")
-		.factory("accountModel", Factory.factory);
+		.service("accountModel", AccountModel);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
+	AccountModel.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
 }

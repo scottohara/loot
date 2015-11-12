@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class OgLruCacheFactoryMockProvider {
 		constructor() {
 			// Mock LruCache object
 			this.ogLruCache = {
@@ -24,10 +24,10 @@
 	 */
 	angular
 		.module("ogComponentsMocks")
-		.provider("ogLruCacheFactoryMock", Provider);
+		.provider("ogLruCacheFactoryMock", OgLruCacheFactoryMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	OgLruCacheFactoryMockProvider.$inject = [];
 }

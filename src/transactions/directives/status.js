@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Directive {
+	class TransactionStatusDirective {
 		constructor($sce, transactionModel, accountModel) {
 			return {
 				restrict: "A",
@@ -55,7 +55,7 @@
 		}
 
 		static factory($sce, transactionModel, accountModel) {
-			return new Directive($sce, transactionModel, accountModel);
+			return new TransactionStatusDirective($sce, transactionModel, accountModel);
 		}
 	}
 
@@ -64,10 +64,10 @@
 	 */
 	angular
 		.module("lootTransactions")
-		.directive("transactionStatus", Directive.factory);
+		.directive("transactionStatus", TransactionStatusDirective.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = ["$sce", "transactionModel", "accountModel"];
+	TransactionStatusDirective.factory.$inject = ["$sce", "transactionModel", "accountModel"];
 }

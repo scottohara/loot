@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class SecurityEditController {
 		constructor($modalInstance, securityModel, security) {
 			this.$modalInstance = $modalInstance;
 			this.securityModel = securityModel;
@@ -28,10 +28,10 @@
 	 */
 	angular
 		.module("lootSecurities")
-		.controller("SecurityEditController", Controller);
+		.controller("SecurityEditController", SecurityEditController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "securityModel", "security"];
+	SecurityEditController.$inject = ["$modalInstance", "securityModel", "security"];
 }

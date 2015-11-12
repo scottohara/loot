@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Directive {
+	class OgInputAutoSelectDirective {
 		constructor($timeout) {
 			return {
 				restrict: "A",
@@ -21,7 +21,7 @@
 		}
 
 		static factory($timeout) {
-			return new Directive($timeout);
+			return new OgInputAutoSelectDirective($timeout);
 		}
 	}
 
@@ -30,10 +30,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.directive("ogInputAutoselect", Directive.factory);
+		.directive("ogInputAutoselect", OgInputAutoSelectDirective.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = ["$timeout"];
+	OgInputAutoSelectDirective.factory.$inject = ["$timeout"];
 }

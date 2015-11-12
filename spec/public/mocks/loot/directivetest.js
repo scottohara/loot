@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class DirectiveTest {
 		constructor($rootScope, $compile) {
 			this.$rootScope = $rootScope;
 			this.$compile = $compile;
@@ -60,10 +60,6 @@
 				this.element = this.element.find(this.tagName);
 			}
 		}
-
-		static factory($rootScope, $compile) {
-			return new Factory($rootScope, $compile);
-		}
 	}
 
 	/**
@@ -71,10 +67,10 @@
 	 */
 	angular
 		.module("lootMocks")
-		.factory("directiveTest", Factory.factory);
+		.service("directiveTest", DirectiveTest);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = ["$rootScope", "$compile"];
+	DirectiveTest.$inject = ["$rootScope", "$compile"];
 }

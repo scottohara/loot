@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Directive {
+	class OgInputNumberDirective {
 		constructor(numberFilter) {
 			return {
 				restrict: "A",
@@ -37,7 +37,7 @@
 		}
 
 		static factory(numberFilter) {
-			return new Directive(numberFilter);
+			return new OgInputNumberDirective(numberFilter);
 		}
 	}
 
@@ -46,10 +46,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.directive("ogInputNumber", Directive.factory);
+		.directive("ogInputNumber", OgInputNumberDirective.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = ["numberFilter"];
+	OgInputNumberDirective.factory.$inject = ["numberFilter"];
 }

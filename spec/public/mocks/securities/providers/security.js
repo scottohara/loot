@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class SecurityMockProvider {
 		constructor() {
 			// Mock security object
 			this.security = {id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false};
@@ -19,10 +19,10 @@
 	 */
 	angular
 		.module("lootSecuritiesMocks")
-		.provider("securityMock", Provider);
+		.provider("securityMock", SecurityMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	SecurityMockProvider.$inject = [];
 }

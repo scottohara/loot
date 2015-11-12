@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class OgLruCacheFactory {
 		constructor() {
 			// Cache object
 			class	LruCache {
@@ -163,10 +163,6 @@
 			// Factory function to return a new LruCache object with the specified capacity
 			return (capacity, data) => new LruCache(capacity, data);
 		}
-
-		static factory() {
-			return new Factory();
-		}
 	}
 
 	/**
@@ -174,10 +170,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.factory("ogLruCacheFactory", Factory.factory);
+		.service("ogLruCacheFactory", OgLruCacheFactory);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = [];
+	OgLruCacheFactory.$inject = [];
 }

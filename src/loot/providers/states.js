@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class LootStatesProvider {
 		constructor($stateProvider) {
 			const transactionViews = {
 				"@root": {
@@ -220,10 +220,10 @@
 			"lootSecurities",
 			"lootTransactions"
 		])
-		.provider("lootStates", Provider);
+		.provider("lootStates", LootStatesProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = ["$stateProvider"];
+	LootStatesProvider.$inject = ["$stateProvider"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class ControllerTest {
 		constructor($rootScope, $controller) {
 			// Loads the controller and returns a scope object
 			return (controller, locals = {}) => {
@@ -18,10 +18,6 @@
 				return instance;
 			};
 		}
-
-		static factory($rootScope, $controller) {
-			return new Factory($rootScope, $controller);
-		}
 	}
 
 	/**
@@ -29,10 +25,10 @@
 	 */
 	angular
 		.module("lootMocks")
-		.factory("controllerTest", Factory.factory);
+		.service("controllerTest", ControllerTest);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = ["$rootScope", "$controller"];
+	ControllerTest.$inject = ["$rootScope", "$controller"];
 }

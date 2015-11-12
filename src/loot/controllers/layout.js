@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class LayoutController {
 		constructor($scope, $state, $uibModal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
 			this.$scope = $scope;
 			this.$state = $state;
@@ -99,10 +99,10 @@
 	 */
 	angular
 		.module("lootApp")
-		.controller("LayoutController", Controller);
+		.controller("LayoutController", LayoutController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
+	LayoutController.$inject = ["$scope", "$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
 }

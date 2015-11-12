@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class ScheduleIndexController {
 		constructor($scope, $uibModal, $timeout, $state, scheduleModel, transactionModel, ogTableNavigableService, schedules) {
 			const self = this;
 
@@ -181,10 +181,10 @@
 	 */
 	angular
 		.module("lootSchedules")
-		.controller("ScheduleIndexController", Controller);
+		.controller("ScheduleIndexController", ScheduleIndexController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "scheduleModel", "transactionModel", "ogTableNavigableService", "schedules"];
+	ScheduleIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "scheduleModel", "transactionModel", "ogTableNavigableService", "schedules"];
 }

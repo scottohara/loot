@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class AuthenticatedMockProvider {
 		constructor() {
 			// Mock authenticated status object
 			this.authenticated = true;
@@ -19,10 +19,10 @@
 	 */
 	angular
 		.module("lootAuthenticationMocks")
-		.provider("authenticatedMock", Provider);
+		.provider("authenticatedMock", AuthenticatedMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	AuthenticatedMockProvider.$inject = [];
 }

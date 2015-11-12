@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class ContextModelMockProvider {
 		constructor(payeeModelMockProvider) {
 			this.payeeModelMockProvider = payeeModelMockProvider;
 		}
@@ -18,10 +18,10 @@
 	 */
 	angular
 		.module("lootTransactionsMocks")
-		.provider("contextModelMock", Provider);
+		.provider("contextModelMock", ContextModelMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = ["payeeModelMockProvider"];
+	ContextModelMockProvider.$inject = ["payeeModelMockProvider"];
 }

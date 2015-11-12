@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class AccountsWithBalancesMockProvider {
 		constructor() {
 			// Mock accounts object
 			this.accounts = {
@@ -36,10 +36,10 @@
 	 */
 	angular
 		.module("lootAccountsMocks")
-		.provider("accountsWithBalancesMock", Provider);
+		.provider("accountsWithBalancesMock", AccountsWithBalancesMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	AccountsWithBalancesMockProvider.$inject = [];
 }

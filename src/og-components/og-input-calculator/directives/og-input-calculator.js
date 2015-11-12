@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Directive {
+	class OgInputCalculatorDirective {
 		constructor($timeout) {
 			return {
 				restrict: "A",
@@ -194,7 +194,7 @@
 		}
 
 		static factory($timeout) {
-			return new Directive($timeout);
+			return new OgInputCalculatorDirective($timeout);
 		}
 	}
 
@@ -209,10 +209,10 @@
 	]);
 
 	// Declare the ogInputCalculator directive
-	mod.directive("ogInputCalculator", Directive.factory);
+	mod.directive("ogInputCalculator", OgInputCalculatorDirective.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = ["$timeout"];
+	OgInputCalculatorDirective.factory.$inject = ["$timeout"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class AccountReconcileController {
 		constructor($modalInstance, $window, account) {
 			this.$modalInstance = $modalInstance;
 			this.$window = $window;
@@ -32,10 +32,10 @@
 	 */
 	angular
 		.module("lootAccounts")
-		.controller("AccountReconcileController", Controller);
+		.controller("AccountReconcileController", AccountReconcileController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "$window", "account"];
+	AccountReconcileController.$inject = ["$modalInstance", "$window", "account"];
 }

@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Directive {
+	class OgTableLoadingDirective {
 		constructor() {
 			return {
 				restrict: "A",
@@ -16,7 +16,7 @@
 		}
 
 		static factory() {
-			return new Directive();
+			return new OgTableLoadingDirective();
 		}
 	}
 
@@ -25,10 +25,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.directive("ogTableLoading", Directive.factory);
+		.directive("ogTableLoading", OgTableLoadingDirective.factory);
 
 	/**
 	 * Dependencies
 	 */
-	Directive.factory.$inject = [];
+	OgTableLoadingDirective.factory.$inject = [];
 }

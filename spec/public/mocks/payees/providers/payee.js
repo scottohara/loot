@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class PayeeMockProvider {
 		constructor() {
 			// Mock payee object
 			this.payee = {id: 1, name: "aa"};
@@ -19,10 +19,10 @@
 	 */
 	angular
 		.module("lootPayeesMocks")
-		.provider("payeeMock", Provider);
+		.provider("payeeMock", PayeeMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	PayeeMockProvider.$inject = [];
 }

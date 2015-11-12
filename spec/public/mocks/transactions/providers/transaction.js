@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class TransactionMockProvider {
 		constructor() {
 			// Mock transaction object
 			this.transaction = {
@@ -24,10 +24,10 @@
 	 */
 	angular
 		.module("lootTransactionsMocks")
-		.provider("transactionMock", Provider);
+		.provider("transactionMock", TransactionMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	TransactionMockProvider.$inject = [];
 }

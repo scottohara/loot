@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Provider {
+	class ConfirmMockProvider {
 		constructor() {
 			// Mock confirm object
 			this.confirm = {message: "confirm message"};
@@ -19,10 +19,10 @@
 	 */
 	angular
 		.module("ogComponentsMocks")
-		.provider("confirmMock", Provider);
+		.provider("confirmMock", ConfirmMockProvider);
 
 	/**
 	 * Dependencies
 	 */
-	Provider.$inject = [];
+	ConfirmMockProvider.$inject = [];
 }

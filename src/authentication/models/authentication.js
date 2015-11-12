@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Factory {
+	class AuthenticationModel {
 		constructor($window, $http, $cacheFactory) {
 			this.$window = $window;
 			this.$http = $http;
@@ -67,10 +67,6 @@
 		authorisation(authenticationKey) {
 			return `Basic ${authenticationKey}`;
 		}
-
-		static factory($window, $http, $cacheFactory) {
-			return new Factory($window, $http, $cacheFactory);
-		}
 	}
 
 	/**
@@ -78,10 +74,10 @@
 	 */
 	angular
 		.module("lootAuthentication")
-		.factory("authenticationModel", Factory.factory);
+		.service("authenticationModel", AuthenticationModel);
 
 	/**
 	 * Dependencies
 	 */
-	Factory.factory.$inject = ["$window", "$http", "$cacheFactory"];
+	AuthenticationModel.$inject = ["$window", "$http", "$cacheFactory"];
 }

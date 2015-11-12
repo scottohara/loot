@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class OgModalConfirmController {
 		constructor($modalInstance, confirm) {
 			this.$modalInstance = $modalInstance;
 			this.confirm = angular.extend({noButtonStyle: "default", yesButtonStyle: "primary"}, confirm);
@@ -25,10 +25,10 @@
 	 */
 	angular
 		.module("ogComponents")
-		.controller("OgModalConfirmController", Controller);
+		.controller("OgModalConfirmController", OgModalConfirmController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$modalInstance", "confirm"];
+	OgModalConfirmController.$inject = ["$modalInstance", "confirm"];
 }

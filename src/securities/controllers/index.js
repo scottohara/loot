@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class SecurityIndexController {
 		constructor($scope, $uibModal, $timeout, $state, securityModel, ogTableNavigableService, securities) {
 			const self = this;
 
@@ -177,10 +177,10 @@
 	 */
 	angular
 		.module("lootSecurities")
-		.controller("SecurityIndexController", Controller);
+		.controller("SecurityIndexController", SecurityIndexController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities"];
+	SecurityIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities"];
 }

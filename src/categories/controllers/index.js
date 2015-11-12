@@ -2,7 +2,7 @@
 	/**
 	 * Implementation
 	 */
-	class Controller {
+	class CategoryIndexController {
 		constructor($scope, $uibModal, $timeout, $state, categoryModel, ogTableNavigableService, categories) {
 			const self = this;
 
@@ -229,10 +229,10 @@
 	 */
 	angular
 		.module("lootCategories")
-		.controller("CategoryIndexController", Controller);
+		.controller("CategoryIndexController", CategoryIndexController);
 
 	/**
 	 * Dependencies
 	 */
-	Controller.$inject = ["$scope", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories"];
+	CategoryIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories"];
 }
