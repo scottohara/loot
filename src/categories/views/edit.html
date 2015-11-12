@@ -12,7 +12,7 @@
 		<!-- Parent -->
 		<div ng-if="::!vm.category.num_children" class="form-group has-feedback" ng-class="{'has-error': categoryForm.parent.$invalid}">
 			<label for="parent">Parent</label>
-			<input name="parent" class="form-control" ng-model="vm.category.parent" uib-typeahead="parentCategory as parentCategory.name for parentCategory in vm.parentCategories($viewValue, 10)" typeahead-editable="false" placeholder="Parent" og-input-autoselect>
+			<input name="parent" class="form-control" ng-model="vm.category.parent" uib-typeahead="parentCategory as parentCategory.name for parentCategory in vm.parentCategories($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Parent" og-input-autoselect>
 			<span ng-show="categoryForm.parent.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Direction -->

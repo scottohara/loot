@@ -12,7 +12,7 @@
 		<!-- Type -->
 		<div class="form-group has-feedback" ng-class="{'has-error': accountForm.accountType.$invalid}">
 			<label for="accountType">Type</label>
-			<input name="accountType" class="form-control" ng-model="vm.account.account_type" uib-typeahead="accountType for accountType in vm.accountTypes($viewValue, 10)" ng-blur="vm.accountTypeSelected()" typeahead-editable="false" placeholder="Account Type" required og-input-autoselect>
+			<input name="accountType" class="form-control" ng-model="vm.account.account_type" uib-typeahead="accountType for accountType in vm.accountTypes($viewValue, 10)" ng-blur="vm.accountTypeSelected()" typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Account Type" required og-input-autoselect>
 			<span ng-show="accountForm.accountType.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Opening balance -->
@@ -39,7 +39,7 @@
 		<!-- Related Account -->
 		<div ng-if="vm.account.account_type.toLowerCase() == 'loan'" class="form-group has-feedback" ng-class="{'has-error': accountForm.relatedAccount.$invalid}">
 			<label for="relatedAccount">Related Asset</label>
-			<input name="relatedAccount" class="form-control" ng-model="vm.account.related_account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" typeahead-editable="false" placeholder="Asset" og-input-autoselect>
+			<input name="relatedAccount" class="form-control" ng-model="vm.account.related_account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Asset" og-input-autoselect>
 			<span ng-show="accountForm.relatedAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>

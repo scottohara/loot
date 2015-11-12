@@ -128,7 +128,7 @@ describe("categoryEditView", () => {
 			describe("expense", () => {
 				beforeEach(() => {
 					targetRow = categoryIndexView.table.lastRow();
-					expected = {categoryName: "ZZZ Test subcategory", categoryParent: "ZZZ Test categor", direction: "outflow", isSubcategory: true};
+					expected = {categoryName: "ZZZ Test subcategory", categoryParent: "ZZZ Test category", direction: "outflow", isSubcategory: true};
 					categoryEditView.enterCategoryDetails(expected);
 				});
 
@@ -148,7 +148,7 @@ describe("categoryEditView", () => {
 			describe("income", () => {
 				beforeEach(() => {
 					targetRow = categoryIndexView.table.row(1);
-					expected = {categoryName: "AAA Test subcategory", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
+					expected = {categoryName: "AAA Test subcategory", categoryParent: "AAA Test category", direction: "inflow", isSubcategory: true};
 					categoryEditView.enterCategoryDetails(expected);
 				});
 
@@ -232,7 +232,7 @@ describe("categoryEditView", () => {
 					// Check that the edit form is correctly populated
 					checkEditFormMatchesIndexRow(targetRow);
 
-					expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited", direction: "outflow", isSubcategory: true};
+					expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited)", direction: "outflow", isSubcategory: true};
 					categoryEditView.enterCategoryDetails(expected);
 				});
 
@@ -258,7 +258,7 @@ describe("categoryEditView", () => {
 					// Check that the edit form is correctly populated
 					checkEditFormMatchesIndexRow(targetRow);
 
-					expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
+					expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test category", direction: "inflow", isSubcategory: true};
 					categoryEditView.enterCategoryDetails(expected);
 				});
 

@@ -51,12 +51,12 @@
 
 			// Payee
 			if (details.payeeName) {
-				this.enterTypeaheadValue(this.payeeTypeahead, details.payeeName, true);
+				this.enterTypeaheadValue(this.payeeTypeahead, details.payeeName);
 			}
 
 			// Security
 			if (details.securityName) {
-				this.enterTypeaheadValue(this.securityTypeahead, details.securityName, true);
+				this.enterTypeaheadValue(this.securityTypeahead, details.securityName);
 			}
 
 			// Category
@@ -69,7 +69,7 @@
 
 			// Subcategory
 			if (details.subcategoryName) {
-				this.enterTypeaheadValue(this.subcategoryTypeahead, details.subcategoryName, true);
+				this.enterTypeaheadValue(this.subcategoryTypeahead, details.subcategoryName);
 			}
 
 			// Account
@@ -135,11 +135,11 @@
 			});
 
 			// Category
-			this.enterTypeaheadValue(row.element(by.model("subtransaction.category")), details.categoryName, true);
+			this.enterTypeaheadValue(row.element(by.model("subtransaction.category")), details.categoryName);
 
 			// Subcategory
 			if (details.subcategoryName) {
-				this.enterTypeaheadValue(row.element(by.model("subtransaction.subcategory")), details.subcategoryName, true);
+				this.enterTypeaheadValue(row.element(by.model("subtransaction.subcategory")), details.subcategoryName);
 			}
 
 			// Account
@@ -200,12 +200,9 @@
 			browser.sleep(350);
 		}
 
-		enterTypeaheadValue(typeahead, value, isEditable) {
-			// If the typeahead is not editable, need to take a character from the start of the string (https://github.com/scottohara/loot/issues/98)
-			const enterValue = isEditable ? value : value.substr(1);
-
+		enterTypeaheadValue(typeahead, value) {
 			// Enter the value into the typeahead
-			typeahead.click().sendKeys(enterValue);
+			typeahead.click().sendKeys(value);
 
 			// Wait for the typeahead $http promise to resolve
 			browser.waitForAngular();
