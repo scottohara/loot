@@ -77,7 +77,7 @@
 	 */
 
 	// Watch
-	gulp.task("watch", () => {
+	gulp.task("watch", ["build"], () => {
 		livereload.listen();
 		gulp.watch(appJsSource, ["watch:app:js"]);
 		gulp.watch(vendorJsSource, ["watch:vendor:js"]);
