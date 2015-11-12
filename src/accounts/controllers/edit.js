@@ -21,8 +21,8 @@
 		}
 
 		// List of account types for the typeahead
-		accountTypes(filter, limit) {
-			return this.limitToFilter(this.filterFilter(["Asset", "Bank", "Cash", "Credit", "Investment", "Liability", "Loan"], filter), limit);
+		accountTypes(filter) {
+			return this.filterFilter(["Asset", "Bank", "Cash", "Credit", "Investment", "Liability", "Loan"], filter);
 		}
 
 		// Handler for account type changes

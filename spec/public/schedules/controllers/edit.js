@@ -195,10 +195,11 @@ describe("ScheduleEditController", () => {
 	});
 
 	describe("investmentCategories", () => {
-		it("should return a filtered & limited list of investment categories", () => scheduleEditController.investmentCategories("a", 3).should.deep.equal([
+		it("should return a filtered list of investment categories", () => scheduleEditController.investmentCategories("a").should.deep.equal([
 			{id: "AddShares", name: "Add Shares"},
 			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"}
+			{id: "TransferTo", name: "Transfer To"},
+			{id: "TransferFrom", name: "Transfer From"}
 		]));
 	});
 
@@ -740,7 +741,7 @@ describe("ScheduleEditController", () => {
 	});
 
 	describe("frequencies", () => {
-		it("should return a filtered & limited list of frequencies", () => scheduleEditController.frequencies("t", 2).should.deep.equal(["Fortnightly", "Monthly"]));
+		it("should return a filtered list of frequencies", () => scheduleEditController.frequencies("t").should.deep.equal(["Fortnightly", "Monthly", "Bimonthly", "Quarterly"]));
 	});
 
 	describe("addSubtransaction", () => {

@@ -141,10 +141,11 @@ describe("TransactionEditController", () => {
 	});
 
 	describe("investmentCategories", () => {
-		it("should return a filtered & limited list of investment categories", () => transactionEditController.investmentCategories("a", 3).should.deep.equal([
+		it("should return a filtered list of investment categories", () => transactionEditController.investmentCategories("a").should.deep.equal([
 			{id: "AddShares", name: "Add Shares"},
 			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"}
+			{id: "TransferTo", name: "Transfer To"},
+			{id: "TransferFrom", name: "Transfer From"}
 		]));
 	});
 

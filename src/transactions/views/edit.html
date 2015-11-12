@@ -34,7 +34,7 @@
 		<!-- Investment Category -->
 		<div ng-if="vm.transaction.primary_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-error': transactionForm.category.$invalid}">
 			<label for="category">Category</label>
-			<input id="category" name="category" class="form-control" ng-model="vm.transaction.category" uib-typeahead="category as category.name for category in vm.investmentCategories($viewValue, 10)" ng-blur="vm.investmentCategorySelected()" typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Category" required og-input-autoselect>
+			<input id="category" name="category" class="form-control" ng-model="vm.transaction.category" uib-typeahead="category as category.name for category in vm.investmentCategories($viewValue)" ng-blur="vm.investmentCategorySelected()" typeahead-editable="false" typeahead-min-length="0" typeahead-select-on-blur="true" placeholder="Category" required og-input-autoselect>
 			<span ng-show="transactionForm.category.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Transaction Amount -->

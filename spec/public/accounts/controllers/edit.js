@@ -40,7 +40,7 @@ describe("AccountEditController", () => {
 	});
 
 	describe("accountTypes", () => {
-		it("should return a filtered & limited list of account types", () => accountEditController.accountTypes("t", 2).should.deep.equal(["Asset", "Credit"]));
+		it("should return a filtered list of account types", () => accountEditController.accountTypes("t").should.deep.equal(["Asset", "Credit", "Investment", "Liability"]));
 	});
 
 	describe("accountTypeSelected", () => {

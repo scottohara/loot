@@ -104,7 +104,7 @@
 		}
 
 		// List of investment categories for the typeahead
-		investmentCategories(filter, limit) {
+		investmentCategories(filter) {
 			const categories = [
 				{id: "Buy", name: "Buy"},
 				{id: "Sell", name: "Sell"},
@@ -115,7 +115,7 @@
 				{id: "TransferFrom", name: "Transfer From"}
 			];
 
-			return this.limitToFilter(this.filterFilter(categories, {name: filter}), limit);
+			return this.filterFilter(categories, {name: filter});
 		}
 
 		// Returns true if the passed value is typeof string (and is not empty)
@@ -405,8 +405,8 @@
 		}
 
 		// List of frequencies for the typeahead
-		frequencies(filter, limit) {
-			return this.limitToFilter(this.filterFilter(Object.keys(this.scheduleFrequencies), filter), limit);
+		frequencies(filter) {
+			return this.filterFilter(Object.keys(this.scheduleFrequencies), filter);
 		}
 
 		// Add a new subtransaction

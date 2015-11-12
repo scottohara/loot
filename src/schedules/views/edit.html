@@ -12,7 +12,7 @@
 		<!-- Frequency -->
 		<div ng-if="vm.mode != 'Enter Transaction'" class="form-group has-feedback" ng-class="{'has-error': scheduleForm.frequency.$invalid}">
 			<label for="frequency">Frequency</label>
-			<input name="frequency" class="form-control" ng-model="vm.schedule.frequency" uib-typeahead="frequency for frequency in vm.frequencies($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Frequency" required og-input-autoselect>
+			<input name="frequency" class="form-control" ng-model="vm.schedule.frequency" uib-typeahead="frequency for frequency in vm.frequencies($viewValue)" typeahead-editable="false" typeahead-min-length="0" typeahead-select-on-blur="true" placeholder="Frequency" required og-input-autoselect>
 			<span ng-show="scheduleForm.frequency.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 		<!-- Transaction/Next Due Date -->
@@ -37,7 +37,7 @@
 		<!-- Investment Category -->
 		<div ng-if="vm.transaction.primary_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(vm.transaction.category), 'has-error': scheduleForm.category.$invalid}">
 			<label for="category">Category</label>
-			<input id="category" name="category" class="form-control" ng-model="vm.transaction.category" uib-typeahead="category as category.name for category in vm.investmentCategories($viewValue, 10)" ng-blur="vm.investmentCategorySelected()" typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Category" required og-input-autoselect>
+			<input id="category" name="category" class="form-control" ng-model="vm.transaction.category" uib-typeahead="category as category.name for category in vm.investmentCategories($viewValue)" ng-blur="vm.investmentCategorySelected()" typeahead-editable="false" typeahead-min-length="0" typeahead-select-on-blur="true" placeholder="Category" required og-input-autoselect>
 			<span ng-show="vm.isString(vm.transaction.category) || scheduleForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.category), 'glyphicon-remove': scheduleForm.category.$invalid}"></span>
 		</div>
 		<!-- Transaction Amount -->
