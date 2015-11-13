@@ -7,8 +7,11 @@
 			return {
 				restrict: "A",
 				link: (scope, iElement) => {
+					scope.isFocussed = input => input === document.activeElement;
+
 					function select() {
-						$timeout(() => $(iElement).select());
+						// Select the value only if the element still has focus
+						$timeout(() => scope.isFocussed(iElement[0]) && $(iElement).select());
 					}
 
 					// Select the input value on focus
