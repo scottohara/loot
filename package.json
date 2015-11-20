@@ -38,7 +38,8 @@
     "gulp-uglify": "1.4.2",
     "gulp-util": "3.0.6",
     "jquery": "2.1.4",
-    "moment": "2.10.6"
+    "moment": "2.10.6",
+    "sw-precache": "2.2.0"
   },
   "devDependencies": {
     "angular-mocks": "1.4.7",

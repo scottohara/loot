@@ -3,13 +3,17 @@
 				babel = require("gulp-babel"),
 				concat = require("gulp-concat"),
 				del = require("del"),
+				inject = require("gulp-inject"),
 				less = require("gulp-less"),
 				livereload = require("gulp-livereload"),
 				minifyCss = require("gulp-minify-css"),
 				path = require("path"),
+				packageJson = require("./package.json"),
 				rev = require("gulp-rev"),
 				size = require("gulp-size"),
 				sourceMaps = require("gulp-sourcemaps"),
+				swPrecache = require("sw-precache"),
+				templateCache = require("gulp-angular-templatecache"),
 				uglify = require("gulp-uglify"),
 				util = require("gulp-util"),
 
@@ -31,34 +35,15 @@
 				vendorCssSource = "node_modules/bootstrap/dist/css/bootstrap.min.css",
 
 				appAssetsSource = ["src/*.html", "!src/index.html", "src/favicon.ico", "src/robots.txt"],
-				vendorAssetsSource = "node_modules/bootstrap/fonts/**";
+				vendorAssetsSource = "node_modules/bootstrap/fonts/**",
+
+				appAssets = ["public/app*.js", "public/app*.css"],
+				appTemplates = ["public/templates*.js"],
+				vendorAssets = ["public/vendor*.js", "public/vendor*.css"];
 
 	/**
 	 * Helpers
 	 */
-
-	function cleanIndex() {
-		return del("public/index.html");
-	}
-
-	function buildIndex() {
-		const	inject = require("gulp-inject"),
-					appAssets = gulp.src(["public/app*.js", "public/app*.css"], {read: false}),
-					templates = gulp.src(["public/templates*.js"], {read: false}),
-					vendorAssets = gulp.src(["public/vendor*.js", "public/vendor*.css"], {read: false});
-
-		return gulp.src("src/index.html")
-			.pipe(inject(appAssets, {ignorePath: "public", name: "app"}))
-			.pipe(inject(templates, {ignorePath: "public", name: "templates"}))
-			.pipe(inject(vendorAssets, {ignorePath: "public", name: "vendor"}))
-			.pipe(gulp.dest("public"))
-			.pipe(livereload())
-			.on("error", util.log);
-	}
-
-	function cleanAndBuildIndex() {
-		return cleanIndex().then(buildIndex);
-	}
 
 	function startKarma(configFile) {
 		const	KarmaServer = require("karma").Server,
@@ -89,29 +74,29 @@
 	});
 
 	// Watch application Javascript
-	gulp.task("watch:app:js", ["eslint", "build:app:js"], cleanAndBuildIndex);
+	gulp.task("watch:app:js", ["eslint", "build:app:js", "build:index", "build:serviceworker"], () => livereload.reload());
 
 	// Watch vendor Javascript
-	gulp.task("watch:vendor:js", ["build:vendor:js"], cleanAndBuildIndex);
+	gulp.task("watch:vendor:js", ["build:vendor:js", "build:index", "build:serviceworker"], () => livereload.reload());
 
 	// Watch application templates
-	gulp.task("watch:app:templates", ["build:app:templates"], cleanAndBuildIndex);
+	gulp.task("watch:app:templates", ["build:app:templates", "build:index", "build:serviceworker"], () => livereload.reload());
 
 	// Watch application CSS
-	gulp.task("watch:app:css", ["build:app:css"], cleanAndBuildIndex);
+	gulp.task("watch:app:css", ["build:app:css", "build:index", "build:serviceworker"], () => livereload.reload());
 
 	// Watch vendor CSS
-	gulp.task("watch:vendor:css", ["build:vendor:css"], cleanAndBuildIndex);
+	gulp.task("watch:vendor:css", ["build:vendor:css", "build:index", "build:serviceworker"], () => livereload.reload());
 
 	/**
 	 * Build
 	 */
 
 	// Build
-	gulp.task("build", ["clean", "build:js", "build:templates", "build:css", "copy:assets"], buildIndex);
+	gulp.task("build", ["clean", "build:js", "build:templates", "build:css", "copy:assets", "build:index", "build:serviceworker"]);
 
 	// Clean
-	gulp.task("clean", ["clean:js", "clean:templates", "clean:css", "clean:assets"], cleanIndex);
+	gulp.task("clean", ["clean:js", "clean:templates", "clean:css", "clean:assets", "clean:index", "clean:serviceworker"]);
 
 	// Build Javascript
 	gulp.task("build:js", ["build:app:js", "build:vendor:js"]);
@@ -143,18 +128,14 @@
 	gulp.task("clean:templates", ["clean:app:templates"]);
 
 	// Build app templates
-	gulp.task("build:app:templates", ["clean:app:templates"], () => {
-		const templateCache = require("gulp-angular-templatecache");
-
-		return gulp.src(appTemplatesSource)
-			.pipe(size({title: "app templates (original)"}))
-			.pipe(templateCache({module: "lootApp"}))
-			.pipe(rev())
-			.pipe(size({title: "app templates (concatenated)"}))
-			.pipe(size({title: "app templates (gzipped)", gzip: true}))
-			.pipe(gulp.dest("public"))
-			.on("error", util.log);
-	});
+	gulp.task("build:app:templates", ["clean:app:templates"], () => gulp.src(appTemplatesSource)
+		.pipe(size({title: "app templates (original)"}))
+		.pipe(templateCache({module: "lootApp"}))
+		.pipe(rev())
+		.pipe(size({title: "app templates (concatenated)"}))
+		.pipe(size({title: "app templates (gzipped)", gzip: true}))
+		.pipe(gulp.dest("public"))
+		.on("error", util.log));
 
 	// Clean app templates
 	gulp.task("clean:app:templates", () => del("public/templates*.js"));
@@ -225,6 +206,28 @@
 
 	// Clean vendor static assets
 	gulp.task("clean:vendor:assets", () => del("public/fonts"));
+
+	// Build index
+	gulp.task("build:index", ["clean:index", "build:js", "build:templates", "build:css", "copy:assets"], () => gulp.src("src/index.html")
+		.pipe(inject(gulp.src(appAssets, {read: false}), {ignorePath: "public", name: "app"}))
+		.pipe(inject(gulp.src(appTemplates, {read: false}), {ignorePath: "public", name: "templates"}))
+		.pipe(inject(gulp.src(vendorAssets, {read: false}), {ignorePath: "public", name: "vendor"}))
+		.pipe(gulp.dest("public"))
+		.on("error", util.log));
+
+	// Clean index
+	gulp.task("clean:index", () => del("public/index.html"));
+
+	// Build service worker
+	gulp.task("build:serviceworker", ["clean:serviceworker", "build:index"], () => swPrecache.write("public/service-worker.js", {
+		cacheId: packageJson.name,
+		staticFileGlobs: ["public/**/*.{html,js,css,ico}", "public/fonts/*"],
+		stripPrefix: "public",
+		logger: util.log
+	}));
+
+	// Clean service worker
+	gulp.task("clean:serviceworker", () => del("public/service-worker.js"));
 
 	/**
 	 * Test

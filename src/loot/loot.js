@@ -39,4 +39,9 @@
 			$rootScope.$on("$stateChangeError", (event, toState, toParams, fromState, fromParams, error) => $rootScope.stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error));
 		}
 	]);
+
+	// ServiceWorker registration
+	if ("serviceWorker" in navigator) {
+		navigator.serviceWorker.register("/service-worker.js").then(registration => console.log(`ServiceWorker registration successful with scope: ${registration.scope}`), error => console.log(`ServiceWorker registration failed: ${error}`));
+	}
 }
