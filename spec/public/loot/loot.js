@@ -3,7 +3,8 @@ describe("loot", () => {
 	let	$urlRouterProvider,
 			$http,
 			$rootScope,
-			$state;
+			$state,
+			ogNavigatorServiceWorkerService;
 
 	// Load the modules
 	beforeEach(module("ui.router", _$urlRouterProvider_ => {
@@ -11,13 +12,14 @@ describe("loot", () => {
 		sinon.stub($urlRouterProvider, "otherwise");
 	}));
 
-	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state"])));
+	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "ogNavigatorServiceWorkerService"])));
 
 	// Inject any dependencies that need to be configured first
-	beforeEach(inject((_$http_, _$rootScope_, _$state_) => {
+	beforeEach(inject((_$http_, _$rootScope_, _$state_, _ogNavigatorServiceWorkerService_) => {
 		$http = _$http_;
 		$rootScope = _$rootScope_;
 		$state = _$state_;
+		ogNavigatorServiceWorkerService = _ogNavigatorServiceWorkerService_;
 	}));
 
 	describe("config", () => {
@@ -49,5 +51,7 @@ describe("loot", () => {
 			$rootScope.$emit("$stateChangeError");
 			$rootScope.stateChangeErrorHandler.should.have.been.called;
 		});
+
+		it("should register a service worker", () => ogNavigatorServiceWorkerService.register.should.have.been.calledWith("/service-worker.js"));
 	});
 });

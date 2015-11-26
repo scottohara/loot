@@ -237,7 +237,7 @@
 		func-style: [2, "declaration"],
 		id-length: [2, {
 			min: 1,
-			max: 37,
+			max: 50,
 			properties: "always",
 			exceptions: []
 		}],

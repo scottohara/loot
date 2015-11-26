@@ -28,8 +28,8 @@
 	]);
 
 	// Runtime initialisation
-	mod.run(["$rootScope", "$state",
-		($rootScope, $state) => {
+	mod.run(["$rootScope", "$state", "ogNavigatorServiceWorkerService",
+		($rootScope, $state, ogNavigatorServiceWorkerService) => {
 			$rootScope.$state = $state;
 
 			// Listen for state change error events, and log them to the console
@@ -37,11 +37,9 @@
 
 			// Handler is wrapped in a function to aid with unit testing
 			$rootScope.$on("$stateChangeError", (event, toState, toParams, fromState, fromParams, error) => $rootScope.stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error));
+
+			// ServiceWorker registration
+			ogNavigatorServiceWorkerService.register("/service-worker.js");
 		}
 	]);
-
-	// ServiceWorker registration
-	if ("serviceWorker" in navigator) {
-		navigator.serviceWorker.register("/service-worker.js").then(registration => console.log(`ServiceWorker registration successful with scope: ${registration.scope}`), error => console.log(`ServiceWorker registration failed: ${error}`));
-	}
 }

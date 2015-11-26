@@ -19,7 +19,7 @@ describe("LayoutController", () => {
 	}
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
+	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "$uibModal", "ogNavigatorServiceWorkerService", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((controllerTest, _$state_, _$uibModal_, _authenticationModel_, _ogTableNavigableService_, _authenticated_) => {
