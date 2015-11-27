@@ -386,6 +386,7 @@
 
 		// Finds a specific transaction and focusses that row in the table
 		focusTransaction(transactionIdToFocus) {
+			const delay = 50;
 			let targetIndex;
 
 			// Find the transaction by it's id
@@ -397,7 +398,7 @@
 
 			// If found, focus the row
 			if (!isNaN(targetIndex)) {
-				this.$timeout(() => this.tableActions.focusRow(targetIndex), 50);
+				this.$timeout(() => this.tableActions.focusRow(targetIndex), delay);
 			}
 
 			return targetIndex;
@@ -472,8 +473,10 @@
 
 		// Helper function to calculate the total cleared/uncleared totals
 		updateReconciledTotals() {
+			const decimalPlaces = 2;
+
 			// Target is the closing balance, minus the opening balance
-			this.reconcileTarget = Number((this.closingBalance - this.openingBalance).toFixed(2));
+			this.reconcileTarget = Number((this.closingBalance - this.openingBalance).toFixed(decimalPlaces));
 
 			// Cleared total is the sum of all transaction amounts that are cleared
 			this.clearedTotal = this.transactions.reduce((clearedAmount, transaction) => {
@@ -483,11 +486,11 @@
 					clearedTotal += transaction.amount * ("inflow" === transaction.direction ? 1 : -1);
 				}
 
-				return Number(clearedTotal.toFixed(2));
+				return Number(clearedTotal.toFixed(decimalPlaces));
 			}, 0);
 
 			// Uncleared total is the target less the cleared total
-			this.unclearedTotal = Number((this.reconcileTarget - this.clearedTotal).toFixed(2));
+			this.unclearedTotal = Number((this.reconcileTarget - this.clearedTotal).toFixed(decimalPlaces));
 		}
 
 		// Toggles a transaction as cleared

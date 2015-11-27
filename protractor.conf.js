@@ -44,7 +44,9 @@ module.exports.config = {
 	// Initialise the mocha chai framework
 	onPrepare() {
 		// Load chai assertions
-		const chai = require("chai");
+		const	chai = require("chai"),
+					width = 1280,
+					height = 1024;
 
 		// Load chai-as-promised support
 		chai.use(require("chai-as-promised"));
@@ -56,7 +58,7 @@ module.exports.config = {
 		Reflect.defineProperty(protractor.promise.Promise.prototype, "should", Reflect.getOwnPropertyDescriptor(Object.prototype, "should"));
 
 		// Make sure the window is wide enough for the large bootstrap modals
-		browser.driver.manage().window().setSize(1280, 1024);
+		browser.driver.manage().window().setSize(width, height);
 	},
 
 	/* eslint-disable no-process-env */

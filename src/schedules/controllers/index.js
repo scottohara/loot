@@ -126,6 +126,7 @@
 
 		// Finds a specific schedule and focusses that row in the table
 		focusSchedule(scheduleIdToFocus) {
+			const delay = 50;
 			let targetIndex;
 
 			// Find the schedule by it's id
@@ -137,7 +138,7 @@
 
 			// If found, focus the row
 			if (!isNaN(targetIndex)) {
-				this.$timeout(() => this.tableActions.focusRow(targetIndex), 50);
+				this.$timeout(() => this.tableActions.focusRow(targetIndex), delay);
 			}
 
 			return targetIndex;

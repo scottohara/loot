@@ -193,11 +193,12 @@
 		// Finds a specific category and focusses that row in the table
 		focusCategory(categoryIdToFocus) {
 			// Find the category by it's id
-			const targetIndex = this.categoryIndexById(categoryIdToFocus);
+			const	targetIndex = this.categoryIndexById(categoryIdToFocus),
+						delay = 50;
 
 			// If found, focus the row
 			if (!isNaN(targetIndex)) {
-				this.$timeout(() => this.tableActions.focusRow(targetIndex), 50);
+				this.$timeout(() => this.tableActions.focusRow(targetIndex), delay);
 			}
 
 			return targetIndex;

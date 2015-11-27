@@ -9,7 +9,9 @@
 		}
 
 		setDecimalPlaces(decimalPlaces) {
-			this.decimalPlaces = Boolean(decimalPlaces) && Number(decimalPlaces) || 2;
+			const defaultDecimalPlaces = 2;
+
+			this.decimalPlaces = Boolean(decimalPlaces) && Number(decimalPlaces) || defaultDecimalPlaces;
 		}
 
 		// Converts formatted value to raw value

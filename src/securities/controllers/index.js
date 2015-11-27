@@ -4,7 +4,8 @@
 	 */
 	class SecurityIndexController {
 		constructor($scope, $uibModal, $timeout, $state, securityModel, ogTableNavigableService, securities) {
-			const self = this;
+			const	self = this,
+						decimalPlaces = 2;
 
 			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
@@ -12,7 +13,7 @@
 			this.securityModel = securityModel;
 			this.ogTableNavigableService = ogTableNavigableService;
 			this.securities = securities;
-			this.totalValue = securities.reduce((memo, security) => memo + Number(Number(security.closing_balance).toFixed(2)), 0);
+			this.totalValue = securities.reduce((memo, security) => memo + Number(Number(security.closing_balance).toFixed(decimalPlaces)), 0);
 			this.tableActions = {
 				selectAction() {
 					$state.go(".transactions");
@@ -147,6 +148,7 @@
 
 		// Finds a specific security and focusses that row in the table
 		focusSecurity(securityIdToFocus) {
+			const delay = 50;
 			let targetIndex;
 
 			// Find the security by it's id
@@ -158,7 +160,7 @@
 
 			// If found, focus the row
 			if (!isNaN(targetIndex)) {
-				this.$timeout(() => this.tableActions.focusRow(targetIndex), 50);
+				this.$timeout(() => this.tableActions.focusRow(targetIndex), delay);
 			}
 
 			return targetIndex;

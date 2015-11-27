@@ -134,6 +134,7 @@
 
 		// Finds a specific payee and focusses that row in the table
 		focusPayee(payeeIdToFocus) {
+			const delay = 50;
 			let targetIndex;
 
 			// Find the payee by it's id
@@ -145,7 +146,7 @@
 
 			// If found, focus the row
 			if (!isNaN(targetIndex)) {
-				this.$timeout(() => this.tableActions.focusRow(targetIndex), 50);
+				this.$timeout(() => this.tableActions.focusRow(targetIndex), delay);
 			}
 
 			return targetIndex;

@@ -52,7 +52,8 @@
 						const	rowTop = row.offset().top,
 									rowBottom = rowTop + row.height(),
 									viewTop = $(document).scrollTop(),
-									viewBottom = viewTop + $(window).height();
+									viewBottom = viewTop + $(window).height(),
+									scrollDuration = 200;
 						let scrollAmount;
 
 						// Determine if the row is off screen
@@ -66,7 +67,7 @@
 						if (scrollAmount) {
 							$("body").animate({
 								scrollTop: `+=${scrollAmount}px`
-							}, 200);
+							}, scrollDuration);
 						}
 					};
 

@@ -14,6 +14,8 @@
 					scope.position = iAttrs.ogInputCalculator || "left";
 
 					const ngModel = controllers[0],
+								ogInputCurrency = 1,
+								ogInputNumber = 2,
 								ACTION_KEYS = {
 									13() {
 										// Enter
@@ -29,7 +31,7 @@
 									}
 								};
 
-					scope.ogInput = controllers[1] || controllers[2];
+					scope.ogInput = controllers[ogInputCurrency] || controllers[ogInputNumber];
 
 					// Push an operation onto the stack
 					scope.push = (operand, operator) => {
@@ -102,14 +104,17 @@
 					// Handle input value changes
 					scope.inputChanged = value => {
 						// Matches any number of digits, periods or commas, followed by +, -, * or /
-						const	matches = (/([\-\d\.,]+)([\+\-\*\/])(.*)/gi).exec(value);
+						const	matches = (/([\-\d\.,]+)([\+\-\*\/])(.*)/gi).exec(value),
+									operand = 1,
+									operator = 2,
+									residual = 3;
 
 						if (matches) {
 							// Push the first (operand) and second (operator) matches onto the stack
-							scope.push(Number(matches[1]), matches[2]);
+							scope.push(Number(matches[operand]), matches[operator]);
 
 							// Update the view value to the third match (anything after the operator), which is typically an empty string
-							iElement.val(matches[3]);
+							iElement.val(matches[residual]);
 						} else {
 							// Recalculate
 							scope.calculate(value);
