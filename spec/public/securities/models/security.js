@@ -131,7 +131,7 @@ describe("securityModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /securities/{id}/transactions/last?account_type={accountType}", () => {});
+		it("should dispatch a GET request to /securities/{id}/transactions/last?account_type={accountType}", () => null);
 
 		it("should return the last transaction for the security", () => {
 			actualResponse.should.eventually.equal(expectedResponse);
@@ -210,7 +210,7 @@ describe("securityModel", () => {
 
 		it("should flush the security cache", () => securityModel.flush.should.have.been.called);
 
-		it("should dispatch a DELETE request to /securities/{id}", () => {});
+		it("should dispatch a DELETE request to /securities/{id}", () => null);
 
 		it("should remove the securty from the recent list", () => securityModel.removeRecent.should.have.been.calledWith(123));
 	});

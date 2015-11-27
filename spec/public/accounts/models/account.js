@@ -205,7 +205,7 @@ describe("accountModel", () => {
 
 		it("should flush the account cache", () => accountModel.flush.should.have.been.called);
 
-		it("should dispatch a DELETE request to /accounts/{id}", () => {});
+		it("should dispatch a DELETE request to /accounts/{id}", () => null);
 
 		it("should remove the account from the recent list", () => accountModel.removeRecent.should.have.been.calledWith(123));
 	});

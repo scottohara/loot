@@ -64,7 +64,7 @@ describe("scheduleModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /schedules", () => {});
+		it("should dispatch a GET request to /schedules", () => null);
 
 		it("should parse each schedule returned", () => scheduleModel.parse.should.have.been.calledTwice);
 

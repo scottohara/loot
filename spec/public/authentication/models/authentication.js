@@ -63,7 +63,7 @@ describe("authenticationModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a POST request to /logins, containing an Authorization header", () => {});
+		it("should dispatch a POST request to /logins, containing an Authorization header", () => null);
 
 		it("should save the authentication key to sessionStorage", () => $window.sessionStorage.setItem.should.have.been.calledWith("lootAuthenticationKey", "base64 encoded"));
 

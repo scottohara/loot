@@ -90,7 +90,7 @@ describe("payeeModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", () => {});
+		it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", () => null);
 
 		it("should return the last transaction for the payee", () => {
 			actualResponse.should.eventually.equal(expectedResponse);
@@ -169,7 +169,7 @@ describe("payeeModel", () => {
 
 		it("should flush the payee cache", () => payeeModel.flush.should.have.been.called);
 
-		it("should dispatch a DELETE request to /payees/{id}", () => {});
+		it("should dispatch a DELETE request to /payees/{id}", () => null);
 
 		it("should remove the payee from the recent list", () => payeeModel.removeRecent.should.have.been.calledWith(123));
 	});

@@ -75,7 +75,7 @@ describe("transactionModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /{context}/transactions?as_at={fromDate}&direction={direction}&unreconciled={unreconciledOnly}", () => {});
+		it("should dispatch a GET request to /{context}/transactions?as_at={fromDate}&direction={direction}&unreconciled={unreconciledOnly}", () => null);
 
 		it("should parse each transaction returned", () => transactionModel.parse.should.have.been.calledTwice);
 
@@ -95,7 +95,7 @@ describe("transactionModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /transactions?as_at={fromDate}&direction={direction}&query={query}", () => {});
+		it("should dispatch a GET request to /transactions?as_at={fromDate}&direction={direction}&query={query}", () => null);
 
 		it("should parse each transaction returned", () => transactionModel.parse.should.have.been.calledTwice);
 
@@ -114,7 +114,7 @@ describe("transactionModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /transactions/123/subtransactions", () => {});
+		it("should dispatch a GET request to /transactions/123/subtransactions", () => null);
 
 		it("should return a list of subtransactions", () => {
 			actualResponse.should.eventually.equal(expectedResponse);
@@ -132,7 +132,7 @@ describe("transactionModel", () => {
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /transactions/123", () => {});
+		it("should dispatch a GET request to /transactions/123", () => null);
 
 		it("should parse the transaction", () => transactionModel.parse.should.have.been.calledWith(expectedResponse));
 

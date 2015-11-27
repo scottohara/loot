@@ -197,7 +197,7 @@ describe("categoryModel", () => {
 
 		it("should flush the category cache", () => categoryModel.flush.should.have.been.called);
 
-		it("should dispatch a DELETE request to /categories/{id}", () => {});
+		it("should dispatch a DELETE request to /categories/{id}", () => null);
 
 		it("should remove the category from the recent list", () => categoryModel.removeRecent.should.have.been.calledWith(123));
 	});
