@@ -41,7 +41,7 @@ module.exports = config => {
 				watched: false
 			},
 			{
-				pattern: "node_modules/babel-core/browser-polyfill.min.js",
+				pattern: "node_modules/babel-polyfill/browser.js",
 				watched: false
 			},
 			{
@@ -98,7 +98,7 @@ module.exports = config => {
 
 		babelPreprocessor: {
 			options: {
-				sourceMap: "inline"
+				sourceMaps: "inline"
 			}
 		},
 

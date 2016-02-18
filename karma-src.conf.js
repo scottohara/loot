@@ -41,7 +41,7 @@ module.exports = config => {
 				watched: false
 			},
 			{
-				pattern: "node_modules/babel-core/browser-polyfill.min.js",
+				pattern: "node_modules/babel-polyfill/browser.js",
 				watched: false
 			},
 			{
@@ -88,19 +88,12 @@ module.exports = config => {
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			"**/src/**/views/*.html": ["ng-html2js"],
-			"**/src/**/*.js": ["babel", "coverage"],
-			"**/spec/public/**/*.js": ["babel", "coverage"]
+			"**/src/**/*.js": ["coverage"],
+			"**/spec/public/**/*.js": ["coverage"]
 		},
 
 		ngHtml2JsPreprocessor: {
 			stripPrefix: "src/"
-		},
-
-		babelPreprocessor: {
-			options: {
-				auxiliaryCommentBefore: "istanbul ignore next",
-				sourceMap: "inline"
-			}
 		},
 
 		// test results reporter to use
@@ -113,6 +106,13 @@ module.exports = config => {
 		},
 
 		coverageReporter: {
+			instrumenters: {
+				isparta: require("isparta")
+			},
+			instrumenter: {
+				"**/src/**/*.js": "isparta",
+				"**/spec/public/**/*.js": "isparta"
+			},
 			reporters: [
 				{type: "html", dir: "coverage"},
 				{type: "text"},

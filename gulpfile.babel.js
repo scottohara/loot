@@ -26,7 +26,7 @@
 					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
 					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
 					"node_modules/moment/min/moment.min.js",
-					"node_modules/babel-core/browser-polyfill.min.js"
+					"node_modules/babel-polyfill/browser.js"
 				],
 
 				appTemplatesSource = ["src/**/*.html", "!src/*.html"],
@@ -45,7 +45,7 @@
 	 * Helpers
 	 */
 
-	function startKarma(configFile) {
+	function startKarma(configFile, done) {
 		const	KarmaServer = require("karma").Server,
 					argv = require("yargs").argv,
 					cliArgs = {};
@@ -54,7 +54,7 @@
 			cliArgs.browsers = argv.browsers.split(",");
 		}
 
-		(new KarmaServer(Object.assign({configFile: path.resolve(configFile)}, cliArgs), exitCode => process.exit(exitCode))).start();
+		(new KarmaServer(Object.assign({configFile: path.resolve(configFile)}, cliArgs), done)).start();
 	}
 
 	/**
@@ -109,8 +109,8 @@
 		.pipe(sourceMaps.init())
 			.pipe(size({title: "app js (original)"}))
 			.pipe(concat("app.js"))
-			.pipe(babel({auxiliaryCommentBefore: "istanbul ignore next babel helper"}))
-			.pipe(uglify({preserveComments: (node, comment) => (/istanbul ignore next babel helper/).test(comment.value)}))
+			.pipe(babel())
+			.pipe(uglify())
 			.pipe(rev())
 			.pipe(size({title: "app js (minified)"}))
 			.pipe(size({title: "app js (gzipped)", gzip: true}))
@@ -243,19 +243,16 @@
 	});
 
 	// Run client-side unit tests
-	gulp.task("test:bdd", () => {
-		startKarma("./karma-bdd.conf.js");
-	});
+	gulp.task("test:bdd", done => startKarma("./karma-bdd.conf.js", done));
 
 	// Run client-side unit tests & code coverage analysis on original source files
-	gulp.task("test:src", () => {
-		startKarma("./karma-src.conf.js");
-	});
+	gulp.task("test:src", done => startKarma("./karma-src.conf.js", done));
 
 	// Run client-side unit tests & code coverage analysis on built files
-	gulp.task("test:build", () => {
-		startKarma("./karma.conf.js");
-	});
+	gulp.task("test:build", done => startKarma("./karma.conf.js", done));
+
+	// Run both test:src and test:build
+	gulp.task("test:ci", ["test:src", "test:build"]);
 
 	// Default task
 	gulp.task("default", ["watch"]);

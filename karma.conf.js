@@ -61,9 +61,9 @@ module.exports = config => {
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			"**/src/**/views/*.html": ["ng-html2js"],
-			"**/public/app*.js": ["sourcemap", "coverage"],
+			"**/public/app*.js": ["sourcemap"],
 			"**/public/vendor*.js": ["sourcemap"],
-			"**/spec/public/**/*.js": ["babel", "coverage"]
+			"**/spec/public/**/*.js": ["babel"]
 		},
 
 		ngHtml2JsPreprocessor: {
@@ -72,28 +72,17 @@ module.exports = config => {
 
 		babelPreprocessor: {
 			options: {
-				auxiliaryCommentBefore: "istanbul ignore next",
-				sourceMap: "inline"
+				sourceMaps: "inline"
 			}
 		},
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ["mocha", "coverage"],
+		reporters: ["mocha"],
 
 		mochaReporter: {
 			showDiff: true
-		},
-
-		coverageReporter: {
-			reporters: [
-				{type: "html", dir: "coverage"},
-				{type: "text"},
-				{type: "text-summary"},
-				{type: "lcovonly", dir: "coverage"}
-			],
-			subdir: "frontend"
 		},
 
 		// web server port
