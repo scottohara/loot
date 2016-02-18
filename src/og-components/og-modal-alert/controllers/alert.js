@@ -3,14 +3,14 @@
 	 * Implementation
 	 */
 	class OgModalAlertController {
-		constructor($modalInstance, alert) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, alert) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.alert = angular.extend({closeButtonStyle: "primary"}, alert);
 		}
 
 		// Close the modal
 		closeModal() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -24,5 +24,5 @@
 	/**
 	 * Dependencies
 	 */
-	OgModalAlertController.$inject = ["$modalInstance", "alert"];
+	OgModalAlertController.$inject = ["$uibModalInstance", "alert"];
 }

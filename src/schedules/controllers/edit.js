@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class ScheduleEditController {
-		constructor($scope, $modalInstance, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
-			this.$modalInstance = $modalInstance;
+		constructor($scope, $uibModalInstance, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.$timeout = $timeout;
 			this.filterFilter = filterFilter;
 			this.limitToFilter = limitToFilter;
@@ -489,12 +489,12 @@
 				this.schedule.flag = null;
 			}
 
-			this.scheduleModel.save(this.schedule).then(schedule => this.$modalInstance.close({data: schedule, skipped: Boolean(skipped)}), error => this.errorMessage = error.data);
+			this.scheduleModel.save(this.schedule).then(schedule => this.$uibModalInstance.close({data: schedule, skipped: Boolean(skipped)}), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without saving
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -508,5 +508,5 @@
 	/**
 	 * Dependencies
 	 */
-	ScheduleEditController.$inject = ["$scope", "$modalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"];
+	ScheduleEditController.$inject = ["$scope", "$uibModalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"];
 }

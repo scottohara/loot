@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class AuthenticationEditController {
-		constructor($modalInstance, authenticationModel) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, authenticationModel) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.authenticationModel = authenticationModel;
 			this.userName = null;
 			this.password = null;
@@ -20,7 +20,7 @@
 		login() {
 			this.errorMessage = null;
 			this.loginInProgress = true;
-			this.authenticationModel.login(this.userName, this.password).then(() => this.$modalInstance.close(), error => {
+			this.authenticationModel.login(this.userName, this.password).then(() => this.$uibModalInstance.close(), error => {
 				this.errorMessage = error.data;
 				this.loginInProgress = false;
 			});
@@ -28,7 +28,7 @@
 
 		// Dismiss the modal without logging in
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -42,5 +42,5 @@
 	/**
 	 * Dependencies
 	 */
-	AuthenticationEditController.$inject = ["$modalInstance", "authenticationModel"];
+	AuthenticationEditController.$inject = ["$uibModalInstance", "authenticationModel"];
 }

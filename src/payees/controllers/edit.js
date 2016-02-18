@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class PayeeEditController {
-		constructor($modalInstance, payeeModel, payee) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, payeeModel, payee) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.payeeModel = payeeModel;
 			this.payee = angular.extend({}, payee);
 			this.mode = payee ? "Edit" : "Add";
@@ -14,12 +14,12 @@
 		// Save and close the modal
 		save() {
 			this.errorMessage = null;
-			this.payeeModel.save(this.payee).then(payee => this.$modalInstance.close(payee.data), error => this.errorMessage = error.data);
+			this.payeeModel.save(this.payee).then(payee => this.$uibModalInstance.close(payee.data), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without saving
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -33,5 +33,5 @@
 	/**
 	 * Dependencies
 	 */
-	PayeeEditController.$inject = ["$modalInstance", "payeeModel", "payee"];
+	PayeeEditController.$inject = ["$uibModalInstance", "payeeModel", "payee"];
 }

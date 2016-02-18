@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class TransactionFlagController {
-		constructor($modalInstance, transactionModel, transaction) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, transactionModel, transaction) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.transactionModel = transactionModel;
 			this.transaction = transaction;
 			this.flag = "(no memo)" === transaction.flag ? null : transaction.flag;
@@ -16,7 +16,7 @@
 		save() {
 			this.errorMessage = null;
 			this.transaction.flag = this.flag && this.flag || "(no memo)";
-			this.transactionModel.flag(this.transaction).then(() => this.$modalInstance.close(this.transaction), error => this.errorMessage = error.data);
+			this.transactionModel.flag(this.transaction).then(() => this.$uibModalInstance.close(this.transaction), error => this.errorMessage = error.data);
 		}
 
 		// Delete and close the modal
@@ -24,13 +24,13 @@
 			this.errorMessage = null;
 			this.transactionModel.unflag(this.transaction.id).then(() => {
 				this.transaction.flag = null;
-				this.$modalInstance.close(this.transaction);
+				this.$uibModalInstance.close(this.transaction);
 			}, error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without deleting
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -44,5 +44,5 @@
 	/**
 	 * Dependencies
 	 */
-	TransactionFlagController.$inject = ["$modalInstance", "transactionModel", "transaction"];
+	TransactionFlagController.$inject = ["$uibModalInstance", "transactionModel", "transaction"];
 }

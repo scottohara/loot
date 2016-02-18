@@ -1,14 +1,14 @@
 describe("AuthenticationEditController", () => {
 	let	authenticationEditController,
-			$modalInstance,
+			$uibModalInstance,
 			authenticationModel;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAuthentication", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "authenticationModel"])));
+	beforeEach(module("lootMocks", "lootAuthentication", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "authenticationModel"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$modalInstance_, _authenticationModel_) => {
-		$modalInstance = _$modalInstance_;
+	beforeEach(inject((controllerTest, _$uibModalInstance_, _authenticationModel_) => {
+		$uibModalInstance = _$uibModalInstance_;
 		authenticationModel = _authenticationModel_;
 		authenticationEditController = controllerTest("AuthenticationEditController");
 	}));
@@ -37,7 +37,7 @@ describe("AuthenticationEditController", () => {
 
 		it("should close the modal when login successful", () => {
 			authenticationEditController.login();
-			$modalInstance.close.should.have.been.called;
+			$uibModalInstance.close.should.have.been.called;
 		});
 
 		it("should display an error message when login unsuccessful", () => {
@@ -52,7 +52,7 @@ describe("AuthenticationEditController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			authenticationEditController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

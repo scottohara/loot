@@ -1,15 +1,15 @@
 describe("SecurityDeleteController", () => {
 	let	securityDeleteController,
-			$modalInstance,
+			$uibModalInstance,
 			securityModel,
 			security;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "securityModel", "security"])));
+	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$modalInstance_, _securityModel_, _security_) => {
-		$modalInstance = _$modalInstance_;
+	beforeEach(inject((controllerTest, _$uibModalInstance_, _securityModel_, _security_) => {
+		$uibModalInstance = _$uibModalInstance_;
 		securityModel = _securityModel_;
 		security = _security_;
 		securityDeleteController = controllerTest("SecurityDeleteController");
@@ -31,7 +31,7 @@ describe("SecurityDeleteController", () => {
 
 		it("should close the modal when the security delete is successful", () => {
 			securityDeleteController.deleteSecurity();
-			$modalInstance.close.should.have.been.called;
+			$uibModalInstance.close.should.have.been.called;
 		});
 
 		it("should display an error message when the security delete is unsuccessful", () => {
@@ -44,7 +44,7 @@ describe("SecurityDeleteController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			securityDeleteController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

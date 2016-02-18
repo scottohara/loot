@@ -1,15 +1,15 @@
 describe("TransactionDeleteController", () => {
 	let	transactionDeleteController,
-			$modalInstance,
+			$uibModalInstance,
 			transactionModel,
 			transaction;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "transactionModel", "transaction"])));
+	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$modalInstance_, _transactionModel_, _transaction_) => {
-		$modalInstance = _$modalInstance_;
+	beforeEach(inject((controllerTest, _$uibModalInstance_, _transactionModel_, _transaction_) => {
+		$uibModalInstance = _$uibModalInstance_;
 		transactionModel = _transactionModel_;
 		transaction = _transaction_;
 		transactionDeleteController = controllerTest("TransactionDeleteController");
@@ -31,7 +31,7 @@ describe("TransactionDeleteController", () => {
 
 		it("should close the modal when the transaction delete is successful", () => {
 			transactionDeleteController.deleteTransaction();
-			$modalInstance.close.should.have.been.called;
+			$uibModalInstance.close.should.have.been.called;
 		});
 
 		it("should display an error message when the transaction delete is unsuccessful", () => {
@@ -44,7 +44,7 @@ describe("TransactionDeleteController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			transactionDeleteController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

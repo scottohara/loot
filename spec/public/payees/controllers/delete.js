@@ -1,15 +1,15 @@
 describe("PayeeDeleteController", () => {
 	let	payeeDeleteController,
-			$modalInstance,
+			$uibModalInstance,
 			payeeModel,
 			payee;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "payeeModel", "payee"])));
+	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "payee"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$modalInstance_, _payeeModel_, _payee_) => {
-		$modalInstance = _$modalInstance_;
+	beforeEach(inject((controllerTest, _$uibModalInstance_, _payeeModel_, _payee_) => {
+		$uibModalInstance = _$uibModalInstance_;
 		payeeModel = _payeeModel_;
 		payee = _payee_;
 		payeeDeleteController = controllerTest("PayeeDeleteController");
@@ -31,7 +31,7 @@ describe("PayeeDeleteController", () => {
 
 		it("should close the modal when the payee delete is successful", () => {
 			payeeDeleteController.deletePayee();
-			$modalInstance.close.should.have.been.called;
+			$uibModalInstance.close.should.have.been.called;
 		});
 
 		it("should display an error message when the payee delete is unsuccessful", () => {
@@ -44,7 +44,7 @@ describe("PayeeDeleteController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			payeeDeleteController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

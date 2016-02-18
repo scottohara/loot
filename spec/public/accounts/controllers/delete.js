@@ -1,15 +1,15 @@
 describe("AccountDeleteController", () => {
 	let accountDeleteController,
-			$modalInstance,
+			$uibModalInstance,
 			accountModel,
 			account;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "accountModel", "account"])));
+	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$modalInstance_, _accountModel_, _account_) => {
-		$modalInstance = _$modalInstance_;
+	beforeEach(inject((controllerTest, _$uibModalInstance_, _accountModel_, _account_) => {
+		$uibModalInstance = _$uibModalInstance_;
 		accountModel = _accountModel_;
 		account = _account_;
 		accountDeleteController = controllerTest("AccountDeleteController");
@@ -39,7 +39,7 @@ describe("AccountDeleteController", () => {
 
 		it("should close the modal when the account delete is successful", () => {
 			accountDeleteController.deleteAccount();
-			$modalInstance.close.should.have.been.called;
+			$uibModalInstance.close.should.have.been.called;
 		});
 
 		it("should display an error message when the account delete is unsuccessful", () => {
@@ -52,7 +52,7 @@ describe("AccountDeleteController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			accountDeleteController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

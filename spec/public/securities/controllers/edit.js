@@ -1,17 +1,17 @@
 describe("SecurityEditController", () => {
 	let	securityEditController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			securityModel,
 			security;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "securityModel", "security"])));
+	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _securityModel_, _security_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _securityModel_, _security_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		securityModel = _securityModel_;
 		security = _security_;
 		securityEditController = controllerTest("SecurityEditController");
@@ -48,7 +48,7 @@ describe("SecurityEditController", () => {
 
 		it("should close the modal when the security save is successful", () => {
 			securityEditController.save();
-			$modalInstance.close.should.have.been.calledWith(security);
+			$uibModalInstance.close.should.have.been.calledWith(security);
 		});
 
 		it("should display an error message when the security save is unsuccessful", () => {
@@ -61,7 +61,7 @@ describe("SecurityEditController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			securityEditController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

@@ -1,15 +1,15 @@
 describe("ScheduleDeleteController", () => {
 	let	scheduleDeleteController,
-			$modalInstance,
+			$uibModalInstance,
 			scheduleModel,
 			schedule;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "scheduleModel", "schedule"])));
+	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "scheduleModel", "schedule"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$modalInstance_, _scheduleModel_, _schedule_) => {
-		$modalInstance = _$modalInstance_;
+	beforeEach(inject((controllerTest, _$uibModalInstance_, _scheduleModel_, _schedule_) => {
+		$uibModalInstance = _$uibModalInstance_;
 		scheduleModel = _scheduleModel_;
 		schedule = _schedule_;
 		scheduleDeleteController = controllerTest("ScheduleDeleteController");
@@ -31,7 +31,7 @@ describe("ScheduleDeleteController", () => {
 
 		it("should close the modal when the schedule delete is successful", () => {
 			scheduleDeleteController.deleteSchedule();
-			$modalInstance.close.should.have.been.called;
+			$uibModalInstance.close.should.have.been.called;
 		});
 
 		it("should display an error message when the schedule delete is unsuccessful", () => {
@@ -44,7 +44,7 @@ describe("ScheduleDeleteController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			scheduleDeleteController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

@@ -1,7 +1,7 @@
 describe("ScheduleEditController", () => {
 	let	scheduleEditController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			$timeout,
 			payeeModel,
 			securityModel,
@@ -12,12 +12,12 @@ describe("ScheduleEditController", () => {
 			schedule;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"])));
+	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _$timeout_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _scheduleModel_, _schedule_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _$timeout_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _scheduleModel_, _schedule_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		$timeout = _$timeout_;
 		payeeModel = _payeeModel_;
 		securityModel = _securityModel_;
@@ -952,12 +952,12 @@ describe("ScheduleEditController", () => {
 
 		it("should close the modal when the schedule save is successful", () => {
 			scheduleEditController.save();
-			$modalInstance.close.should.have.been.calledWith({data: schedule, skipped: false});
+			$uibModalInstance.close.should.have.been.calledWith({data: schedule, skipped: false});
 		});
 
 		it("should mark the schedule as skipped when the skipped parameter is true", () => {
 			scheduleEditController.save(true);
-			$modalInstance.close.should.have.been.calledWith({data: schedule, skipped: true});
+			$uibModalInstance.close.should.have.been.calledWith({data: schedule, skipped: true});
 		});
 
 		it("should display an error message when the schedule save is unsuccessful", () => {
@@ -970,7 +970,7 @@ describe("ScheduleEditController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			scheduleEditController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

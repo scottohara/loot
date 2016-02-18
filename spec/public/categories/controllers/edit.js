@@ -1,17 +1,17 @@
 describe("CategoryEditController", () => {
 	let	categoryEditController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			categoryModel,
 			category;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "categoryModel", "category"])));
+	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "categoryModel", "category"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _categoryModel_, _category_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _categoryModel_, _category_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		categoryModel = _categoryModel_;
 		category = _category_;
 		categoryEditController = controllerTest("CategoryEditController");
@@ -81,7 +81,7 @@ describe("CategoryEditController", () => {
 
 		it("should close the modal when the category save is successful", () => {
 			categoryEditController.save();
-			$modalInstance.close.should.have.been.calledWith(category);
+			$uibModalInstance.close.should.have.been.calledWith(category);
 		});
 
 		it("should display an error message when the category save is unsuccessful", () => {
@@ -94,7 +94,7 @@ describe("CategoryEditController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			categoryEditController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

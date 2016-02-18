@@ -1,17 +1,17 @@
 describe("AccountEditController", () => {
 	let accountEditController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			accountModel,
 			account;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "accountModel", "account"])));
+	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _accountModel_, _account_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _accountModel_, _account_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		accountModel = _accountModel_;
 		account = _account_;
 		accountEditController = controllerTest("AccountEditController");
@@ -96,7 +96,7 @@ describe("AccountEditController", () => {
 
 		it("should close the modal when the account save is successful", () => {
 			accountEditController.save();
-			$modalInstance.close.should.have.been.calledWith(account);
+			$uibModalInstance.close.should.have.been.calledWith(account);
 		});
 
 		it("should display an error message when the account save is unsuccessful", () => {
@@ -109,7 +109,7 @@ describe("AccountEditController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			accountEditController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

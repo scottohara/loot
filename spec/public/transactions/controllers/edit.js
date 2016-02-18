@@ -1,7 +1,7 @@
 describe("TransactionEditController", () => {
 	let	transactionEditController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			$timeout,
 			payeeModel,
 			securityModel,
@@ -11,12 +11,12 @@ describe("TransactionEditController", () => {
 			transaction;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "$q", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"])));
+	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "$q", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _$timeout_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _transaction_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _$timeout_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _transaction_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		$timeout = _$timeout_;
 		payeeModel = _payeeModel_;
 		securityModel = _securityModel_;
@@ -978,7 +978,7 @@ describe("TransactionEditController", () => {
 
 		it("should close the modal when the transaction save is successful", () => {
 			transactionEditController.save();
-			$modalInstance.close.should.have.been.calledWith(transaction);
+			$uibModalInstance.close.should.have.been.calledWith(transaction);
 		});
 
 		it("should display an error message when the transaction save unsuccessful", () => {
@@ -991,7 +991,7 @@ describe("TransactionEditController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			transactionEditController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

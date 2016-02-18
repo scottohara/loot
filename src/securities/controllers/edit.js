@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class SecurityEditController {
-		constructor($modalInstance, securityModel, security) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, securityModel, security) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.securityModel = securityModel;
 			this.security = angular.extend({}, security);
 			this.mode = security ? "Edit" : "Add";
@@ -14,12 +14,12 @@
 		// Save and close the modal
 		save() {
 			this.errorMessage = null;
-			this.securityModel.save(this.security).then(security => this.$modalInstance.close(security.data), error => this.errorMessage = error.data);
+			this.securityModel.save(this.security).then(security => this.$uibModalInstance.close(security.data), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without saving
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -33,5 +33,5 @@
 	/**
 	 * Dependencies
 	 */
-	SecurityEditController.$inject = ["$modalInstance", "securityModel", "security"];
+	SecurityEditController.$inject = ["$uibModalInstance", "securityModel", "security"];
 }

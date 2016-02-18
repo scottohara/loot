@@ -1,17 +1,17 @@
 describe("TransactionFlagController", () => {
 	let	transactionFlagController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			transactionModel,
 			transaction;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "transactionModel", "transaction"])));
+	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _transactionModel_, _transaction_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _transactionModel_, _transaction_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		transactionModel = _transactionModel_;
 		transaction = _transaction_;
 		transactionFlagController = controllerTest("TransactionFlagController");
@@ -56,7 +56,7 @@ describe("TransactionFlagController", () => {
 
 		it("should close the modal when the flag save is successful", () => {
 			transactionFlagController.save();
-			$modalInstance.close.should.have.been.calledWith(transaction);
+			$uibModalInstance.close.should.have.been.calledWith(transaction);
 		});
 
 		it("should display an error message when the flag save is unsuccessful", () => {
@@ -85,7 +85,7 @@ describe("TransactionFlagController", () => {
 
 		it("should close the modal when the flag delete is successful", () => {
 			transactionFlagController.deleteFlag();
-			$modalInstance.close.should.have.been.calledWith(transaction);
+			$uibModalInstance.close.should.have.been.calledWith(transaction);
 		});
 
 		it("should display an error message when the flag delete is unsuccessful", () => {
@@ -98,7 +98,7 @@ describe("TransactionFlagController", () => {
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			transactionFlagController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

@@ -6,7 +6,7 @@
 				inject = require("gulp-inject"),
 				less = require("gulp-less"),
 				livereload = require("gulp-livereload"),
-				minifyCss = require("gulp-minify-css"),
+				cssNano = require("gulp-cssnano"),
 				path = require("path"),
 				packageJson = require("./package.json"),
 				rev = require("gulp-rev"),
@@ -23,8 +23,8 @@
 					"node_modules/bootstrap/dist/js/bootstrap.min.js",
 					"node_modules/angular/angular.min.js",
 					"node_modules/angular-ui-router/release/angular-ui-router.min.js",
-					"node_modules/angular-ui-bootstrap/ui-bootstrap.min.js",
-					"node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.min.js",
+					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
+					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
 					"node_modules/moment/min/moment.min.js",
 					"node_modules/babel-core/browser-polyfill.min.js"
 				],
@@ -164,7 +164,7 @@
 			.pipe(less({paths: ["node_modules"]}))
 			.pipe(size({title: "app css (original)"}))
 			.pipe(concat("app.css"))
-			.pipe(minifyCss())
+			.pipe(cssNano())
 			.pipe(rev())
 			.pipe(size({title: "app css (minified)"}))
 			.pipe(size({title: "app css (gzipped)", gzip: true}))

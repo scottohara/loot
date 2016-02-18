@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class CategoryDeleteController {
-		constructor($modalInstance, categoryModel, category) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, categoryModel, category) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.categoryModel = categoryModel;
 			this.category = category;
 			this.errorMessage = null;
@@ -13,12 +13,12 @@
 		// Delete and close the modal
 		deleteCategory() {
 			this.errorMessage = null;
-			this.categoryModel.destroy(this.category).then(() => this.$modalInstance.close(), error => this.errorMessage = error.data);
+			this.categoryModel.destroy(this.category).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without deleting
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -32,5 +32,5 @@
 	/**
 	 * Dependencies
 	 */
-	CategoryDeleteController.$inject = ["$modalInstance", "categoryModel", "category"];
+	CategoryDeleteController.$inject = ["$uibModalInstance", "categoryModel", "category"];
 }

@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class AccountDeleteController {
-		constructor($modalInstance, accountModel, account) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, accountModel, account) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.accountModel = accountModel;
 			this.account = account;
 			this.errorMessage = null;
@@ -17,12 +17,12 @@
 		// Delete and close the modal
 		deleteAccount() {
 			this.errorMessage = null;
-			this.accountModel.destroy(this.account).then(() => this.$modalInstance.close(), error => this.errorMessage = error.data);
+			this.accountModel.destroy(this.account).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without deleting
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -36,5 +36,5 @@
 	/**
 	 * Dependencies
 	 */
-	AccountDeleteController.$inject = ["$modalInstance", "accountModel", "account"];
+	AccountDeleteController.$inject = ["$uibModalInstance", "accountModel", "account"];
 }

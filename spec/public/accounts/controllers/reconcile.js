@@ -1,17 +1,17 @@
 describe("AccountReconcileController", () => {
 	let accountReconcileController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			$window,
 			account;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "$window", "account"])));
+	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "$window", "account"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _$window_, _account_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _$window_, _account_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		$window = _$window_;
 		account = _account_;
 		accountReconcileController = controllerTest("AccountReconcileController");
@@ -40,14 +40,14 @@ describe("AccountReconcileController", () => {
 
 		it("should close the modal when the transaction delete is successful", () => {
 			accountReconcileController.start();
-			$modalInstance.close.should.have.been.calledWith(1000);
+			$uibModalInstance.close.should.have.been.calledWith(1000);
 		});
 	});
 
 	describe("cancel", () => {
 		it("should dismiss the modal", () => {
 			accountReconcileController.cancel();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

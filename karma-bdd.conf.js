@@ -6,7 +6,7 @@ module.exports = config => {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ["mocha", "chai-as-promised", "chai", "sinon", "sinon-chai"],
+		frameworks: ["mocha", "chai-as-promised", "chai-sinon"],
 
 		// list of files / patterns to load in the browser
 		files: [
@@ -29,11 +29,11 @@ module.exports = config => {
 				watched: false
 			},
 			{
-				pattern: "node_modules/angular-ui-bootstrap/ui-bootstrap.js",
+				pattern: "node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
 				watched: false
 			},
 			{
-				pattern: "node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.js",
+				pattern: "node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
 				watched: false
 			},
 			{
@@ -106,6 +106,10 @@ module.exports = config => {
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
 		reporters: ["mocha"],
+
+		mochaReporter: {
+			showDiff: true
+		},
 
 		// web server port
 		port: 9876,

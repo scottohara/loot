@@ -1,16 +1,16 @@
 describe("OgModalAlertController", () => {
 	let	ogModalAlertController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			alert;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "alert"])));
+	beforeEach(module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "alert"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _alert_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _alert_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		alert = _alert_;
 		ogModalAlertController = controllerTest("OgModalAlertController");
 	}));
@@ -29,7 +29,7 @@ describe("OgModalAlertController", () => {
 	describe("closeModal", () => {
 		it("should dismiss the modal", () => {
 			ogModalAlertController.closeModal();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

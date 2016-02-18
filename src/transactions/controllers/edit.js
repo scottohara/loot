@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class TransactionEditController {
-		constructor($scope, $modalInstance, $q, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
-			this.$modalInstance = $modalInstance;
+		constructor($scope, $uibModalInstance, $q, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, transaction) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.$q = $q;
 			this.$timeout = $timeout;
 			this.filterFilter = filterFilter;
@@ -554,13 +554,13 @@
 			this.transactionModel.save(this.transaction)
 				.then(this.invalidateCaches.bind(this))
 				.then(this.updateLruCaches.bind(this))
-				.then(transaction => this.$modalInstance.close(transaction))
+				.then(transaction => this.$uibModalInstance.close(transaction))
 				.catch(error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without saving
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -574,5 +574,5 @@
 	/**
 	 * Dependencies
 	 */
-	TransactionEditController.$inject = ["$scope", "$modalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"];
+	TransactionEditController.$inject = ["$scope", "$uibModalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"];
 }

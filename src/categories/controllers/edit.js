@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class CategoryEditController {
-		constructor($modalInstance, filterFilter, limitToFilter, categoryModel, category) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, filterFilter, limitToFilter, categoryModel, category) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.filterFilter = filterFilter;
 			this.limitToFilter = limitToFilter;
 			this.categoryModel = categoryModel;
@@ -29,12 +29,12 @@
 			}
 
 			this.errorMessage = null;
-			this.categoryModel.save(this.category).then(category => this.$modalInstance.close(category.data), error => this.errorMessage = error.data);
+			this.categoryModel.save(this.category).then(category => this.$uibModalInstance.close(category.data), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without saving
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -48,5 +48,5 @@
 	/**
 	 * Dependencies
 	 */
-	CategoryEditController.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "categoryModel", "category"];
+	CategoryEditController.$inject = ["$uibModalInstance", "filterFilter", "limitToFilter", "categoryModel", "category"];
 }

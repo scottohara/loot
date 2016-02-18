@@ -6,7 +6,7 @@ module.exports = config => {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ["mocha", "chai-as-promised", "chai", "sinon", "sinon-chai"],
+		frameworks: ["mocha", "chai-as-promised", "chai-sinon"],
 
 		// list of files / patterns to load in the browser
 		files: [
@@ -81,6 +81,10 @@ module.exports = config => {
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
 		reporters: ["mocha", "coverage"],
+
+		mochaReporter: {
+			showDiff: true
+		},
 
 		coverageReporter: {
 			reporters: [

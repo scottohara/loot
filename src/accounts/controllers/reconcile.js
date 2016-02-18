@@ -3,8 +3,8 @@
 	 * Implementation
 	 */
 	class AccountReconcileController {
-		constructor($modalInstance, $window, account) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, $window, account) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.$window = $window;
 			this.account = account;
 			this.LOCAL_STORAGE_KEY = `lootClosingBalance-${account.id}`;
@@ -18,12 +18,12 @@
 			this.$window.localStorage.setItem(this.LOCAL_STORAGE_KEY, this.closingBalance);
 
 			// Close the modal and return the balance
-			this.$modalInstance.close(this.closingBalance);
+			this.$uibModalInstance.close(this.closingBalance);
 		}
 
 		// Dismiss the modal without saving
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -37,5 +37,5 @@
 	/**
 	 * Dependencies
 	 */
-	AccountReconcileController.$inject = ["$modalInstance", "$window", "account"];
+	AccountReconcileController.$inject = ["$uibModalInstance", "$window", "account"];
 }

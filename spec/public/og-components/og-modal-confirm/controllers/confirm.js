@@ -1,16 +1,16 @@
 describe("OgModalConfirmController", () => {
 	let	ogModalConfirmController,
 			controllerTest,
-			$modalInstance,
+			$uibModalInstance,
 			confirm;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$modalInstance", "confirm"])));
+	beforeEach(module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "confirm"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$modalInstance_, _confirm_) => {
+	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _confirm_) => {
 		controllerTest = _controllerTest_;
-		$modalInstance = _$modalInstance_;
+		$uibModalInstance = _$uibModalInstance_;
 		confirm = _confirm_;
 		ogModalConfirmController = controllerTest("OgModalConfirmController");
 	}));
@@ -32,14 +32,14 @@ describe("OgModalConfirmController", () => {
 	describe("yes", () => {
 		it("should close the modal and return true", () => {
 			ogModalConfirmController.yes();
-			$modalInstance.close.should.have.been.calledWith(true);
+			$uibModalInstance.close.should.have.been.calledWith(true);
 		});
 	});
 
 	describe("no", () => {
 		it("should dismiss the modal", () => {
 			ogModalConfirmController.no();
-			$modalInstance.dismiss.should.have.been.called;
+			$uibModalInstance.dismiss.should.have.been.called;
 		});
 	});
 });

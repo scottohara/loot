@@ -4,8 +4,8 @@
 	 */
 
 	class AccountEditController {
-		constructor($modalInstance, filterFilter, limitToFilter, accountModel, account) {
-			this.$modalInstance = $modalInstance;
+		constructor($uibModalInstance, filterFilter, limitToFilter, accountModel, account) {
+			this.$uibModalInstance = $uibModalInstance;
 			this.filterFilter = filterFilter;
 			this.limitToFilter = limitToFilter;
 			this.accountModel = accountModel;
@@ -49,12 +49,12 @@
 			this.account.account_type = this.account.account_type.toLowerCase();
 			this.account.status = this.account.status.toLowerCase();
 
-			this.accountModel.save(this.account).then(account => this.$modalInstance.close(account.data), error => this.errorMessage = error.data);
+			this.accountModel.save(this.account).then(account => this.$uibModalInstance.close(account.data), error => this.errorMessage = error.data);
 		}
 
 		// Dismiss the modal without saving
 		cancel() {
-			this.$modalInstance.dismiss();
+			this.$uibModalInstance.dismiss();
 		}
 	}
 
@@ -68,5 +68,5 @@
 	/**
 	 * Dependencies
 	 */
-	AccountEditController.$inject = ["$modalInstance", "filterFilter", "limitToFilter", "accountModel", "account"];
+	AccountEditController.$inject = ["$uibModalInstance", "filterFilter", "limitToFilter", "accountModel", "account"];
 }
