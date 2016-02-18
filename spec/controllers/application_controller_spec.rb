@@ -31,21 +31,21 @@ RSpec.describe ApplicationController, type: :controller do
 		let(:expected_status) { :unauthorized }
 
 		context "with no credentials" do
-			it "should respond with a text error message and a 403 Unauthorized status" do; end
+			it "should respond with a text error message and a 401 Unauthorized status" do; end
 		end
 
 		context "with invalid username" do
 			let(:user_name) { invalid_user_name }
 			let(:password) { valid_password }
 
-			it "should respond with a text error message and a 403 Unauthorized status" do; end
+			it "should respond with a text error message and a 401 Unauthorized status" do; end
 		end
 
 		context "with invalid password" do
 			let(:user_name) { valid_user_name }
 			let(:password) { invalid_password }
 
-			it "should respond with a text error message and a 403 Unauthorized status" do; end
+			it "should respond with a text error message and a 401 Unauthorized status" do; end
 		end
 
 		after :each do
