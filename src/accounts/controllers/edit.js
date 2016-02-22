@@ -22,7 +22,9 @@
 
 		// List of account types for the typeahead
 		accountTypes(filter) {
-			return this.filterFilter(["Asset", "Bank", "Cash", "Credit", "Investment", "Liability", "Loan"], filter);
+			const types = ["Asset", "Bank", "Cash", "Credit", "Investment", "Liability", "Loan"];
+
+			return filter ? this.filterFilter(types, filter) : types;
 		}
 
 		// Handler for account type changes

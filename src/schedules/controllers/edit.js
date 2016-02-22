@@ -115,7 +115,7 @@
 				{id: "TransferFrom", name: "Transfer From"}
 			];
 
-			return this.filterFilter(categories, {name: filter});
+			return filter ? this.filterFilter(categories, {name: filter}) : categories;
 		}
 
 		// Returns true if the passed value is typeof string (and is not empty)
@@ -406,7 +406,7 @@
 
 		// List of frequencies for the typeahead
 		frequencies(filter) {
-			return this.filterFilter(Object.keys(this.scheduleFrequencies), filter);
+			return filter ? this.filterFilter(Object.keys(this.scheduleFrequencies), filter) : Object.keys(this.scheduleFrequencies);
 		}
 
 		// Add a new subtransaction

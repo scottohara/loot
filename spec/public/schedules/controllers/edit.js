@@ -195,7 +195,17 @@ describe("ScheduleEditController", () => {
 	});
 
 	describe("investmentCategories", () => {
-		it("should return a filtered list of investment categories", () => scheduleEditController.investmentCategories("a").should.deep.equal([
+		it("should return the full list of investment categories when a filter is not specified", () => scheduleEditController.investmentCategories().should.deep.equal([
+			{id: "Buy", name: "Buy"},
+			{id: "Sell", name: "Sell"},
+			{id: "DividendTo", name: "Dividend To"},
+			{id: "AddShares", name: "Add Shares"},
+			{id: "RemoveShares", name: "Remove Shares"},
+			{id: "TransferTo", name: "Transfer To"},
+			{id: "TransferFrom", name: "Transfer From"}
+		]));
+
+		it("should return a filtered list of investment categories when a filter is specified", () => scheduleEditController.investmentCategories("a").should.deep.equal([
 			{id: "AddShares", name: "Add Shares"},
 			{id: "RemoveShares", name: "Remove Shares"},
 			{id: "TransferTo", name: "Transfer To"},
@@ -741,7 +751,9 @@ describe("ScheduleEditController", () => {
 	});
 
 	describe("frequencies", () => {
-		it("should return a filtered list of frequencies", () => scheduleEditController.frequencies("t").should.deep.equal(["Fortnightly", "Monthly", "Bimonthly", "Quarterly"]));
+		it("should return the full list of frequencies when a filter is not specified", () => scheduleEditController.frequencies().should.deep.equal(["Weekly", "Fortnightly", "Monthly", "Bimonthly", "Quarterly", "Yearly"]));
+
+		it("should return a filtered list of frequencies when a filter is specified", () => scheduleEditController.frequencies("t").should.deep.equal(["Fortnightly", "Monthly", "Bimonthly", "Quarterly"]));
 	});
 
 	describe("addSubtransaction", () => {

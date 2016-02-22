@@ -94,7 +94,7 @@
 				{id: "TransferFrom", name: "Transfer From"}
 			];
 
-			return this.filterFilter(categories, {name: filter});
+			return filter ? this.filterFilter(categories, {name: filter}) : categories;
 		}
 
 		// Returns true if the passed value is typeof string (and is not empty)

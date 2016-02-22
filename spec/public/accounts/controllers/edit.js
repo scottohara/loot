@@ -40,7 +40,9 @@ describe("AccountEditController", () => {
 	});
 
 	describe("accountTypes", () => {
-		it("should return a filtered list of account types", () => accountEditController.accountTypes("t").should.deep.equal(["Asset", "Credit", "Investment", "Liability"]));
+		it("should return the full list of account types when a filter is not specified", () => accountEditController.accountTypes().should.deep.equal(["Asset", "Bank", "Cash", "Credit", "Investment", "Liability", "Loan"]));
+
+		it("should return a filtered list of account types when a filter is specified", () => accountEditController.accountTypes("t").should.deep.equal(["Asset", "Credit", "Investment", "Liability"]));
 	});
 
 	describe("accountTypeSelected", () => {
