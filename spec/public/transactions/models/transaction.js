@@ -45,7 +45,7 @@ describe("transactionModel", () => {
 	describe("parse", () => {
 		let transaction;
 
-		beforeEach(() => transaction = transactionModel.parse({transaction_date: moment().format("YYYY-MM-DD HH:MM:SS")}));
+		beforeEach(() => transaction = transactionModel.parse({transaction_date: moment().format("YYYY-MM-DD HH:mm:ss")}));
 
 		it("should convert the transaction date from a string to a date", () => {
 			transaction.transaction_date.should.be.a.Date;
