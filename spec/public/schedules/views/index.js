@@ -39,6 +39,7 @@
 				if ("string" === typeof payee || payee.id) {
 					return row.element(by.binding("::schedule.payee.name")).getText();
 				}
+				return null;
 			});
 		}
 
@@ -47,6 +48,7 @@
 				if ("string" === typeof security || security.id) {
 					return row.element(by.binding("::schedule.security.name")).getText();
 				}
+				return null;
 			});
 		}
 
@@ -59,6 +61,7 @@
 				if (subcategory) {
 					return row.element(by.binding("::schedule.subcategory.name")).getText();
 				}
+				return null;
 			});
 		}
 
@@ -67,6 +70,7 @@
 				if (account.id) {
 					return row.element(by.binding("::schedule.account.name")).getText();
 				}
+				return null;
 			});
 		}
 
@@ -107,6 +111,7 @@
 				if (quantity) {
 					return row.element(by.binding("::schedule.quantity")).getText();
 				}
+				return null;
 			});
 		}
 
@@ -115,6 +120,7 @@
 				if (commission) {
 					return row.element(by.binding("::schedule.commission")).getText();
 				}
+				return null;
 			});
 		}
 
@@ -127,6 +133,7 @@
 				if (debit) {
 					return row.element(by.binding("::schedule.amount")).getText();
 				}
+				return null;
 			});
 		}
 
@@ -135,6 +142,7 @@
 				if (credit) {
 					return row.element(by.binding("::schedule.amount")).getText();
 				}
+				return null;
 			});
 		}
 

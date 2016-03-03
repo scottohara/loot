@@ -558,10 +558,9 @@ describe("TransactionEditController", () => {
 	});
 
 	describe("memoFromSubtransactions", () => {
-		let memo;
-
 		beforeEach(() => {
-			memo = "memo";
+			const memo = "memo";
+
 			transactionEditController.transaction.memo = memo;
 			transactionEditController.transaction.subtransactions = [
 				{memo: "memo 1"},

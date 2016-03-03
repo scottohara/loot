@@ -3,8 +3,6 @@
 	 * Implementation
 	 */
 	class OgInputNumberControllerMockProvider {
-		constructor() {}
-
 		// Mock input number controller object
 		ogInputNumberController() {
 			this.type = "ogInputNumberController";

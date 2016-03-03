@@ -1,13 +1,13 @@
 describe("OgInputNumberController", () => {
-	let	ogInputNumberController,
-			controllerTest;
+	let	ogInputNumberController;
 
 	// Load the modules
 	beforeEach(module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
 	beforeEach(inject(_controllerTest_ => {
-		controllerTest = _controllerTest_;
+		const controllerTest = _controllerTest_;
+
 		ogInputNumberController = controllerTest("OgInputNumberController");
 	}));
 

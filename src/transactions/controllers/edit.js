@@ -418,15 +418,13 @@
 							security: this.securityModel
 						};
 
-			let	resolve = true,
-					originalValue,
-					savedValue;
+			let	resolve = true;
 
 			// Compare each facet of the saved transaction with the original values
 			// For any that have changed, invalidate the original from the $http cache
 			angular.forEach(Object.keys(models), key => {
-				originalValue = this.originalTransaction[key] && this.originalTransaction[key].id || null;
-				savedValue = savedTransaction[key] && savedTransaction[key].id || null;
+				const	originalValue = this.originalTransaction[key] && this.originalTransaction[key].id || null,
+							savedValue = savedTransaction[key] && savedTransaction[key].id || null;
 
 				if (originalValue && originalValue !== savedValue) {
 					models[key].flush(originalValue);

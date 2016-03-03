@@ -27,8 +27,7 @@ describe("ogLruCacheFactory", () => {
 		});
 
 		describe("LruCache", () => {
-			let	capacity,
-					data,
+			let	data,
 					list;
 
 			// Helper function that adds an item to the data object used to populate the LruCache
@@ -42,7 +41,8 @@ describe("ogLruCacheFactory", () => {
 			}
 
 			beforeEach(() => {
-				capacity = 10;
+				const capacity = 10;
+
 				data = {
 					head: 10,
 					tail: 0,
@@ -103,15 +103,10 @@ describe("ogLruCacheFactory", () => {
 				scenarios.forEach(scenario => {
 					it(`should ${scenario.description}`, () => {
 						const oldHead = ogLruCache.items[ogLruCache.head],
-									expectedTail = scenario.currentIndex ? ogLruCache.items[ogLruCache.tail].id : ogLruCache.items[ogLruCache.tail].newer;
-
-						let	newHead,
-								newTail,
-								newList;
-
-						newList = ogLruCache.put(scenario.item);
-						newHead = ogLruCache.items[ogLruCache.head];
-						newTail = ogLruCache.items[ogLruCache.tail];
+									expectedTail = scenario.currentIndex ? ogLruCache.items[ogLruCache.tail].id : ogLruCache.items[ogLruCache.tail].newer,
+									newList = ogLruCache.put(scenario.item),
+									newHead = ogLruCache.items[ogLruCache.head],
+									newTail = ogLruCache.items[ogLruCache.tail];
 
 						ogLruCache.head.should.equal(scenario.item.id);
 						ogLruCache.tail.should.equal(expectedTail);
@@ -141,14 +136,10 @@ describe("ogLruCacheFactory", () => {
 					ogLruCache.tail = null;
 					ogLruCache.items = {};
 
-					const item = {id: 11, name: "item 11"};
-					let	newHead,
-							newTail,
-							newList;
-
-					newList = ogLruCache.put(item);
-					newHead = ogLruCache.items[ogLruCache.head];
-					newTail = ogLruCache.items[ogLruCache.tail];
+					const item = {id: 11, name: "item 11"},
+								newList = ogLruCache.put(item),
+								newHead = ogLruCache.items[ogLruCache.head],
+								newTail = ogLruCache.items[ogLruCache.tail];
 
 					ogLruCache.head.should.equal(item.id);
 					ogLruCache.tail.should.equal(item.id);

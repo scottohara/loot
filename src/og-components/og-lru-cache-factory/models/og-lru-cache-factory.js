@@ -109,14 +109,13 @@
 				// Check if the cache has exceeded it's capacity and trim as necessary
 				checkCapacity() {
 					while (Object.keys(this.items).length > this.capacity) {
-						const oldTail = this.items[this.tail];
-						let newTail;
+						const	oldTail = this.items[this.tail],
+									newTail = this.items[oldTail.newer];
 
 						// Update the tail pointer
 						this.tail = oldTail.newer;
 
 						// Delete the old tail
-						newTail = this.items[oldTail.newer];
 						Reflect.deleteProperty(this.items, newTail.older);
 
 						// Unlink the old tail from the list

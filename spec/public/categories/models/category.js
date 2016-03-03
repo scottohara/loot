@@ -2,10 +2,8 @@ describe("categoryModel", () => {
 	let	categoryModel,
 			$httpBackend,
 			$http,
-			$cacheFactory,
 			$cache,
 			$window,
-			ogLruCacheFactory,
 			ogLruCache;
 
 	// Load the modules
@@ -24,10 +22,10 @@ describe("categoryModel", () => {
 		$httpBackend = _$httpBackend_;
 		$http = _$http_;
 
-		$cacheFactory = _$cacheFactory_;
-		$cache = $cacheFactory();
+		const	$cacheFactory = _$cacheFactory_,
+					ogLruCacheFactory = _ogLruCacheFactory_;
 
-		ogLruCacheFactory = _ogLruCacheFactory_;
+		$cache = $cacheFactory();
 		ogLruCache = ogLruCacheFactory();
 	}));
 
@@ -70,7 +68,9 @@ describe("categoryModel", () => {
 
 		it("should cache the response in the $http cache", () => {
 			const httpGet = sinon.stub($http, "get").returns({
-				then() {}
+				then() {
+					// Do nothing
+				}
 			});
 
 			categoryModel.all();
@@ -97,7 +97,9 @@ describe("categoryModel", () => {
 
 			it("should not cache the response in the $http cache", () => {
 				const httpGet = sinon.stub($http, "get").returns({
-					then() {}
+					then() {
+						// Do nothing
+					}
 				});
 
 				categoryModel.all("parent", true);
@@ -139,7 +141,9 @@ describe("categoryModel", () => {
 
 		it("should cache the response in the $http cache", () => {
 			const httpGet = sinon.stub($http, "get").returns({
-				then() {}
+				then() {
+					// Do nothing
+				}
 			});
 
 			categoryModel.find(123);

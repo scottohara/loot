@@ -1,6 +1,5 @@
 describe("SecurityIndexController", () => {
 	let	securityIndexController,
-			controllerTest,
 			$timeout,
 			$uibModal,
 			$state,
@@ -13,7 +12,8 @@ describe("SecurityIndexController", () => {
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$timeout_, _$uibModal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) => {
-		controllerTest = _controllerTest_;
+		const controllerTest = _controllerTest_;
+
 		$timeout = _$timeout_;
 		$uibModal = _$uibModal_;
 		$state = _$state_;

@@ -2,10 +2,8 @@ describe("payeeModel", () => {
 	let	payeeModel,
 			$httpBackend,
 			$http,
-			$cacheFactory,
 			$cache,
 			$window,
-			ogLruCacheFactory,
 			ogLruCache;
 
 	// Load the modules
@@ -24,10 +22,10 @@ describe("payeeModel", () => {
 		$httpBackend = _$httpBackend_;
 		$http = _$http_;
 
-		$cacheFactory = _$cacheFactory_;
-		$cache = $cacheFactory();
+		const	$cacheFactory = _$cacheFactory_,
+					ogLruCacheFactory = _ogLruCacheFactory_;
 
-		ogLruCacheFactory = _ogLruCacheFactory_;
+		$cache = $cacheFactory();
 		ogLruCache = ogLruCacheFactory();
 	}));
 
@@ -66,7 +64,9 @@ describe("payeeModel", () => {
 
 		it("should cache the response in the $http cache", () => {
 			const httpGet = sinon.stub($http, "get").returns({
-				then() {}
+				then() {
+					// Do nothing
+				}
 			});
 
 			payeeModel.all();
@@ -111,7 +111,9 @@ describe("payeeModel", () => {
 
 		it("should cache the response in the $http cache", () => {
 			const httpGet = sinon.stub($http, "get").returns({
-				then() {}
+				then() {
+					// Do nothing
+				}
 			});
 
 			payeeModel.find(123);

@@ -33,7 +33,7 @@
 			$rootScope.$state = $state;
 
 			// Listen for state change error events, and log them to the console
-			$rootScope.stateChangeErrorHandler = (event, toState, toParams, fromState, fromParams, error) => console.log(toState, toParams, fromState, fromParams, error);
+			$rootScope.stateChangeErrorHandler = (event, toState, toParams, fromState, fromParams, error) => console.error(toState, toParams, fromState, fromParams, error);
 
 			// Handler is wrapped in a function to aid with unit testing
 			$rootScope.$on("$stateChangeError", (event, toState, toParams, fromState, fromParams, error) => $rootScope.stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error));

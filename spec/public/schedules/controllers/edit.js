@@ -609,10 +609,9 @@ describe("ScheduleEditController", () => {
 	});
 
 	describe("primaryAccountSelected", () => {
-		let accountType;
-
 		beforeEach(() => {
-			accountType = "new account type";
+			const accountType = "new account type";
+
 			scheduleEditController.transaction.primary_account = {id: 1, account_type: accountType};
 		});
 
@@ -683,10 +682,9 @@ describe("ScheduleEditController", () => {
 	});
 
 	describe("memoFromSubtransactions", () => {
-		let memo;
-
 		beforeEach(() => {
-			memo = "memo";
+			const memo = "memo";
+
 			scheduleEditController.transaction.memo = memo;
 			scheduleEditController.transaction.subtransactions = [
 				{memo: "memo 1"},

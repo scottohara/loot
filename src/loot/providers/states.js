@@ -26,10 +26,10 @@
 					},
 					resolve: {
 						contextModel: ["authenticated", `${parentContext}Model`,
-							(authenticated, contextModel) => authenticated ? contextModel : null
+							(authenticated, contextModel) => authenticated && contextModel || null
 						],
 						context: ["authenticated", "$stateParams", "contextModel",
-							(authenticated, $stateParams, contextModel) => authenticated ? contextModel.find($stateParams.id) : null
+							(authenticated, $stateParams, contextModel) => authenticated && contextModel.find($stateParams.id) || null
 						],
 						transactionBatch: ["authenticated", "transactionModel", "contextModel", "context",
 							(authenticated, transactionModel, contextModel, context) => {
@@ -38,6 +38,7 @@
 
 									return transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
 								}
+								return null;
 							}
 						]
 					},
@@ -91,7 +92,7 @@
 					},
 					resolve: {
 						accounts: ["authenticated", "accountModel",
-							(authenticated, accountModel) => authenticated ? accountModel.allWithBalances() : null
+							(authenticated, accountModel) => authenticated && accountModel.allWithBalances() || null
 						]
 					}
 				})
@@ -108,7 +109,7 @@
 					},
 					resolve: {
 						schedules: ["authenticated", "scheduleModel",
-							(authenticated, scheduleModel) => authenticated ? scheduleModel.all() : null
+							(authenticated, scheduleModel) => authenticated && scheduleModel.all() || null
 						]
 					}
 				})
@@ -123,7 +124,7 @@
 					},
 					resolve: {
 						payees: ["authenticated", "payeeModel",
-							(authenticated, payeeModel) => authenticated ? payeeModel.all() : null
+							(authenticated, payeeModel) => authenticated && payeeModel.all() || null
 						]
 					}
 				})
@@ -140,7 +141,7 @@
 					},
 					resolve: {
 						categories: ["authenticated", "categoryModel",
-							(authenticated, categoryModel) => authenticated ? categoryModel.allWithChildren() : null
+							(authenticated, categoryModel) => authenticated && categoryModel.allWithChildren() || null
 						]
 					}
 				})
@@ -157,7 +158,7 @@
 					},
 					resolve: {
 						securities: ["authenticated", "securityModel",
-							(authenticated, securityModel) => authenticated ? securityModel.allWithBalances() : null
+							(authenticated, securityModel) => authenticated && securityModel.allWithBalances() || null
 						]
 					}
 				})
@@ -178,6 +179,7 @@
 										params: $state.params
 									};
 								}
+								return null;
 							}
 						],
 						contextModel: () => null,
@@ -185,7 +187,7 @@
 							$stateParams => $stateParams.query
 						],
 						transactionBatch: ["authenticated", "transactionModel", "context",
-							(authenticated, transactionModel, context) => authenticated ? transactionModel.query(context, null, "prev") : null
+							(authenticated, transactionModel, context) => authenticated && transactionModel.query(context, null, "prev") || null
 						]
 					},
 					views: transactionViews,

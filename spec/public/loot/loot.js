@@ -39,10 +39,10 @@ describe("loot", () => {
 							fromParams = "from params",
 							error = "error";
 
-				sinon.stub(console, "log");
+				sinon.stub(console, "error");
 
 				$rootScope.stateChangeErrorHandler(null, toState, toParams, fromState, fromParams, error);
-				console.log.should.have.been.calledWith(toState, toParams, fromState, fromParams);
+				console.error.should.have.been.calledWith(toState, toParams, fromState, fromParams);
 			});
 		});
 

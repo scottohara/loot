@@ -3,8 +3,6 @@
 	 * Implementation
 	 */
 	class OgInputCurrencyControllerMockProvider {
-		constructor() {}
-
 		// Mock input currency controller object
 		ogInputCurrencyController($scope) {
 			$scope.setDecimalPlaces = sinon.stub();

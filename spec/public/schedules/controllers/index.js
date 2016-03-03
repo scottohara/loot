@@ -1,6 +1,5 @@
 describe("ScheduleIndexController", () => {
 	let	scheduleIndexController,
-			controllerTest,
 			$uibModal,
 			$timeout,
 			$state,
@@ -13,7 +12,8 @@ describe("ScheduleIndexController", () => {
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$uibModal_, _$timeout_, _$state_, _transactionModel_, _ogTableNavigableService_, _schedules_) => {
-		controllerTest = _controllerTest_;
+		const controllerTest = _controllerTest_;
+
 		$uibModal = _$uibModal_;
 		$timeout = _$timeout_;
 		$state = _$state_;

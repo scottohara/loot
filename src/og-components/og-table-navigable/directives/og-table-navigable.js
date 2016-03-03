@@ -71,6 +71,19 @@
 						}
 					};
 
+					// Helper function to make sure we're not outside the bounds of the table
+					function checkTargetIndex(targetIndex, totalRows) {
+						let checkedTargetIndex = targetIndex;
+
+						if (checkedTargetIndex < 0) {
+							checkedTargetIndex = 0;
+						} else if (checkedTargetIndex >= totalRows) {
+							checkedTargetIndex = totalRows - 1;
+						}
+
+						return checkedTargetIndex;
+					}
+
 					// Jump to X rows before or after the currently focussed row
 					scope.jumpToRow = offset => {
 						// If there is no current row focussed, do nothing
@@ -79,19 +92,10 @@
 						}
 
 						// Determine the row index to focus
-						const totalRows = scope.getRows().length;
-						let	targetIndex = scope.focussedRow + offset,
-								targetRow;
+						const	totalRows = scope.getRows().length,
+									targetIndex = checkTargetIndex(scope.focussedRow + offset, totalRows),
+									targetRow = scope.getRowAtIndex(targetIndex);
 
-						// Make sure we're not outside the bounds of the table
-						if (targetIndex < 0) {
-							targetIndex = 0;
-						} else if (targetIndex >= totalRows) {
-							targetIndex = totalRows - 1;
-						}
-
-						// Focus the target row
-						targetRow = scope.getRowAtIndex(targetIndex);
 						if (targetRow.length > 0) {
 							scope.focusRow(targetRow);
 						}

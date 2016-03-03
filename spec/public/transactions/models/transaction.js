@@ -220,10 +220,8 @@ describe("transactionModel", () => {
 	});
 
 	describe("invalidateCaches", () => {
-		let transaction;
-
 		beforeEach(() => {
-			transaction = {
+			const transaction = {
 				primary_account: "primary_account",
 				payee: "payee",
 				category: "category",
@@ -238,6 +236,7 @@ describe("transactionModel", () => {
 					}
 				]
 			};
+
 			transactionModel.invalidateCache = sinon.stub();
 			transactionModel.invalidateCaches(transaction);
 		});

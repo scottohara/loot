@@ -3,8 +3,6 @@
 	 * Implementation
 	 */
 	class OgInputNumberController {
-		constructor() {}
-
 		// Converts formatted value to raw value
 		formattedToRaw(value) {
 			return Number(value.replace(/[^0-9\-\.]/g, "")) || 0;

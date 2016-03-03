@@ -31,15 +31,15 @@ describe("ogTableLoading", () => {
 		});
 
 		it("should include a TD spanning the specified number of columns", () => {
-			let td;
-
 			ogTableLoading.compile({
 				"og-table-loading": "model",
 				colspan: 3
 			}, true);
 			ogTableLoading.scope.$digest();
 			ogTableLoading.element = ogTableLoading.element.find("tr");
-			td = ogTableLoading.element.find("td");
+
+			const td = ogTableLoading.element.find("td");
+
 			td.should.not.be.empty;
 			td.attr("colspan").should.equal("3");
 		});

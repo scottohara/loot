@@ -46,7 +46,7 @@
     "babel-eslint": "5.0.0",
     "chai": "3.5.0",
     "chai-as-promised": "5.2.0",
-    "gulp-eslint": "1.1.1",
+    "gulp-eslint": "2.0.0",
     "karma-babel-preprocessor": "5.2.2",
     "karma": "0.13.21",
     "karma-chai": "0.1.0",
