@@ -123,8 +123,10 @@
 							case "LoanRepayment":
 							case "Payslip":
 								this.transactions[index].subtransactions = [];
+
 								return this.transactionModel.findSubtransactions(this.transactions[index].id).then(subtransactions => {
 									this.transactions[index].subtransactions = subtransactions;
+
 									return this.transactions[index];
 								});
 							default:
@@ -192,9 +194,8 @@
 					currentContext = this.context.parent ? transaction.subcategory : transaction.category;
 					break;
 
+				// Search mode - check if the transaction memo still matches the search query
 				default:
-
-					// Search mode - check if the transaction memo still matches the search query
 					return -1 === transaction.memo.toLowerCase().indexOf(this.context.toLowerCase());
 			}
 
@@ -380,6 +381,7 @@
 
 			this.transactions.reduce((openingBalance, transaction) => {
 				transaction.balance = openingBalance + transaction.amount * ("inflow" === transaction.direction ? 1 : -1);
+
 				return transaction.balance;
 			}, this.openingBalance);
 		}

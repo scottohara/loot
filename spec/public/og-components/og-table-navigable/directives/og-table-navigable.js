@@ -136,6 +136,7 @@ describe("ogTableNavigable", () => {
 		it("should do nothing if the target row could not be determined", () => {
 			sinon.stub(ogTableNavigable.element.isolateScope(), "getRows", () => {
 				ogTableNavigable.element.isolateScope().getRows.restore();
+
 				return {
 					length: 4
 				};

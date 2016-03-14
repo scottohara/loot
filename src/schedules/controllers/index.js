@@ -78,8 +78,10 @@
 							case "LoanRepayment":
 							case "Payslip":
 								this.schedules[index].subtransactions = [];
+
 								return this.transactionModel.findSubtransactions(this.schedules[index].id).then(subtransactions => {
 									this.schedules[index].subtransactions = subtransactions;
+
 									return this.schedules[index];
 								});
 							default:

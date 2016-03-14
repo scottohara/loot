@@ -16,6 +16,7 @@
 				const children = category.children;
 
 				Reflect.deleteProperty(category, "children");
+
 				return flattened.concat(category, children);
 			}, []);
 			this.tableActions = {

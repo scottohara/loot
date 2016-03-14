@@ -31,6 +31,7 @@
 		parse(transaction) {
 			// Convert the transaction date from a string ("YYYY-MM-DD") to a native JS date
 			transaction.transaction_date = moment(transaction.transaction_date).startOf("day").toDate();
+
 			return transaction;
 		}
 
@@ -40,6 +41,7 @@
 			const transactionCopy = angular.copy(transaction);
 
 			transactionCopy.transaction_date = moment(transactionCopy.transaction_date).format("YYYY-MM-DD");
+
 			return transactionCopy;
 		}
 
@@ -53,6 +55,7 @@
 				}
 			}).then(response => {
 				response.data.transactions = response.data.transactions.map(this.parse);
+
 				return response.data;
 			});
 		}
@@ -67,6 +70,7 @@
 				}
 			}).then(response => {
 				response.data.transactions = response.data.transactions.map(this.parse);
+
 				return response.data;
 			});
 		}
@@ -92,6 +96,7 @@
 				data: this.stringify(transaction)
 			}).then(response => {
 				this.lastUsedTransactionDate = transaction.transaction_date;
+
 				return this.parse(response.data);
 			});
 		}

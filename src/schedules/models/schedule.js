@@ -19,6 +19,7 @@
 		parse(schedule) {
 			// Convert the next due date from a string ("YYYY-MM-DD") to a native JS date
 			schedule.next_due_date = moment(schedule.next_due_date).startOf("day").toDate();
+
 			return schedule;
 		}
 
@@ -28,6 +29,7 @@
 			const scheduleCopy = angular.copy(schedule);
 
 			scheduleCopy.next_due_date = moment(scheduleCopy.next_due_date).format("YYYY-MM-DD");
+
 			return scheduleCopy;
 		}
 

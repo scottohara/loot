@@ -32,19 +32,21 @@
 			this.searchInput.clear().click().sendKeys(query);
 
 			switch (trigger) {
-
-				// Send Enter key while the search input has focus
 				case "enterInput":
+
+					// Send Enter key while the search input has focus
 					this.searchInput.sendKeys(protractor.Key.ENTER);
 					break;
 
-				// Send Enter key while the search button has focus
 				case "enterButton":
+
+					// Send Enter key while the search button has focus
 					this.searchButton.sendKeys(protractor.Key.ENTER);
 					break;
 
-				// Click the search button
 				default:
+
+					// Click the search button
 					this.searchButton.click();
 					break;
 			}

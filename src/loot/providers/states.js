@@ -38,6 +38,7 @@
 
 									return transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
 								}
+
 								return null;
 							}
 						]
@@ -179,6 +180,7 @@
 										params: $state.params
 									};
 								}
+
 								return null;
 							}
 						],

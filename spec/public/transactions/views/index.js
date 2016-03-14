@@ -39,6 +39,7 @@
 				if ("account" !== contextType) {
 					return row.element(by.binding("::transaction.primary_account.name")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -48,6 +49,7 @@
 				if ("string" === typeof payee || payee.id) {
 					return row.element(by.binding("::transaction.payee.name")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -57,6 +59,7 @@
 				if ("string" === typeof security || security.id) {
 					return row.element(by.binding("::transaction.security.name")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -70,6 +73,7 @@
 				if (subcategory) {
 					return row.element(by.binding("::transaction.subcategory.name")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -79,6 +83,7 @@
 				if (account.id) {
 					return row.element(by.binding("::transaction.account.name")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -120,6 +125,7 @@
 				if (quantity) {
 					return row.element(by.binding("::transaction.quantity")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -129,6 +135,7 @@
 				if (debit) {
 					return row.element(by.binding("::transaction.amount")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -138,6 +145,7 @@
 				if (credit) {
 					return row.element(by.binding("::transaction.amount")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -147,6 +155,7 @@
 				if ("investment" === accountType) {
 					return row.all(by.css("td.amount.details")).first().element(by.binding("::transaction.quantity")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -156,6 +165,7 @@
 				if (securityInvestment) {
 					return row.element(by.binding("::transaction.price")).getText();
 				}
+
 				return null;
 			});
 		}
@@ -165,6 +175,7 @@
 				if (securityInvestment) {
 					return row.element(by.binding("::transaction.commission")).getText();
 				}
+
 				return null;
 			});
 		}

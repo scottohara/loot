@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "angular-mocks": "1.5.0",
-    "babel-eslint": "5.0.0",
+    "babel-eslint": "6.0.0",
     "chai": "3.5.0",
     "chai-as-promised": "5.2.0",
     "gulp-eslint": "2.0.0",

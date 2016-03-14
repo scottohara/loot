@@ -161,10 +161,12 @@
 				case "LoanRepayment":
 				case "Payslip":
 					transaction.subtransactions = [];
+
 					return this.transactionModel.findSubtransactions(transaction.id).then(subtransactions => {
 						// Strip the subtransaction ids
 						transaction.subtransactions = subtransactions.map(subtransaction => {
 							subtransaction.id = null;
+
 							return subtransaction;
 						});
 

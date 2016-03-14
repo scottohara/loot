@@ -21,6 +21,7 @@
 			if (authenticationKey) {
 				// Set the Authorization header for all http requests
 				this.$http.defaults.headers.common.Authorization = this.authorisation(authenticationKey);
+
 				return true;
 			}
 

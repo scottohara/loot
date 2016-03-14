@@ -56,6 +56,7 @@
 				cache: this.cache
 			}).then(response => {
 				this.addRecent(response.data);
+
 				return response.data;
 			});
 		}
