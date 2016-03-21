@@ -29,7 +29,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	end
 
 	def validate_amount_matches_investment_details
-		errors[:base] << "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.eql? (header.price * header.quantity + (header.commission * (investment_account.direction.eql?("inflow") ? 1 : -1))).round(2)
+		errors[:base] << "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.round(2).eql? (header.price * header.quantity + (header.commission * (investment_account.direction.eql?("inflow") ? 1 : -1))).round(2)
 	end
 
 	def update_from_json(json)
