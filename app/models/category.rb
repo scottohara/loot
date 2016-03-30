@@ -27,7 +27,7 @@ class Category < ActiveRecord::Base
 
 	class << self
 		def find_or_new(category, parent = nil)
-			category['id'].present? ? self.find(category['id']) : self.new(name: category, direction: (!!parent && parent.direction || 'outflow'), parent: parent)
+			(category.is_a?(Hash) && category['id'].present?) ? self.find(category['id']) : self.new(name: category, direction: (!!parent && parent.direction || 'outflow'), parent: parent)
 		end
 	end
 

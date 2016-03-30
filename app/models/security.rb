@@ -31,7 +31,7 @@ class Security < ActiveRecord::Base
 
 	class << self
 		def find_or_new(security)
-			security['id'].present? ? self.find(security['id']) : self.new(name: security)
+			(security.is_a?(Hash) && security['id'].present?) ? self.find(security['id']) : self.new(name: security)
 		end
 
 		def list

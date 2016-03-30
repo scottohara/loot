@@ -23,7 +23,7 @@ class Payee < ActiveRecord::Base
 
 	class << self
 		def find_or_new(payee)
-			payee['id'].present? ? self.find(payee['id']) : self.new(name: payee)
+			(payee.is_a?(Hash) && payee['id'].present?) ? self.find(payee['id']) : self.new(name: payee)
 		end
 	end
 
