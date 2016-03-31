@@ -85,7 +85,7 @@ describe("categoryModel", () => {
 
 		describe("(include children)", () => {
 			beforeEach(() => {
-				expectedUrl = /categories\?include_children\&parent=parent/;
+				expectedUrl = /categories\?include_children&parent=parent/;
 				expectedResponse = "categories with children";
 			});
 

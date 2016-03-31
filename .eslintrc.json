@@ -175,6 +175,7 @@
 		"no-unused-labels": "error",
 		"no-useless-call": "error",
 		"no-useless-concat": "error",
+		"no-useless-escape": "error",
 		"no-void": "error",
 		"no-warning-comments": ["error", {
 			"terms": ["todo"],
@@ -213,7 +214,9 @@
 			"vars": "all",
 			"varsIgnorePattern": "",
 			"args": "after-used",
-			"argsIgnorePattern": ""
+			"argsIgnorePattern": "",
+			"caughtErrors": "all",
+			"caughtErrorsIgnorePattern": ""
 		}],
 		"no-use-before-define": ["error", {
 			"classes": true,
@@ -338,6 +341,9 @@
 				"ignoreTopLevelFunctions": false
 			}
 		],
+		"max-statements-per-line": ["error", {
+			"max": 1
+		}],
 		"new-cap": ["error", {
 			"newIsCap": true,
 			"capIsNew": true,
@@ -439,7 +445,8 @@
 		}],
 		"space-unary-ops": ["error", {
 			"words": true,
-			"nonwords": false
+			"nonwords": false,
+			"overrides": {}
 		}],
 		"spaced-comment": ["error", "always", {
 			"line": {
@@ -471,6 +478,9 @@
 		}],
 		"no-const-assign": "error",
 		"no-dupe-class-members": "error",
+		"no-duplicate-imports": ["error", {
+			"includeExports": true
+		}],
 		"no-new-symbol": "error",
 		"no-this-before-super": "error",
 		"no-useless-constructor": "error",
