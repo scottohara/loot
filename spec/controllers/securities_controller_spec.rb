@@ -19,7 +19,7 @@ RSpec.describe SecuritiesController, type: :controller do
 			let(:json) { "security list without balances" }
 
 			before :each do
-				expect(Security).to receive(:order).with(:name).and_return json
+				expect(Security).to receive(:order).with({favourite: :desc}, :name).and_return json
 				get :index
 			end
 

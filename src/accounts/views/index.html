@@ -9,6 +9,7 @@
 			<td class="has-action">
 				<a ng-href="#/accounts/{{::account.id}}/transactions">{{::account.name}}</a>
 				<span ng-if="::account.account_type == 'investment' && account.related_account.id">(<a ng-href="#/accounts/{{::account.related_account.id}}/transactions">Cash</a>)</span>
+				<i og-favourite="{'context': account.favourite, 'type': 'account'}" ng-click="vm.toggleFavourite(type, $index)"></i>
 				<i class="action glyphicon glyphicon-trash pull-right" uib-tooltip="Delete account" ng-click="vm.deleteAccount(type, $index)"></i>
 				<i class="action glyphicon glyphicon-edit pull-right" uib-tooltip="Edit account" ng-click="vm.editAccount(type, $index)"></i>
 			</td>

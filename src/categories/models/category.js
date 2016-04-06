@@ -75,6 +75,17 @@
 			return this.$http.delete(this.path(category.id)).then(() => this.removeRecent(category.id));
 		}
 
+		// Favourites/unfavourites a category
+		toggleFavourite(category) {
+			// Flush the $http cache
+			this.flush();
+
+			return this.$http({
+				method: category.favourite ? "DELETE" : "PUT",
+				url: `${this.path(category.id)}/favourite`
+			}).then(() => !category.favourite);
+		}
+
 		// Flush the cache
 		flush(id) {
 			if (id) {

@@ -1,5 +1,5 @@
 class SecuritySerializer < ActiveModel::Serializer
-  attributes :id, :name, :code, :current_holding, :closing_balance, :num_transactions, :unused
+  attributes :id, :name, :code, :current_holding, :closing_balance, :num_transactions, :unused, :favourite
 
 	def current_holding
 		object.transactions.for_current_holding.reduce(0) do |holding, security|

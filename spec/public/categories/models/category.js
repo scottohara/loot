@@ -206,6 +206,36 @@ describe("categoryModel", () => {
 		it("should remove the category from the recent list", () => categoryModel.removeRecent.should.have.been.calledWith(123));
 	});
 
+	describe("toggleFavourite", () => {
+		let category;
+
+		beforeEach(() => {
+			categoryModel.flush = sinon.stub();
+			$httpBackend.whenDELETE(/categories\/123\/favourite$/).respond(200);
+			$httpBackend.whenPUT(/categories\/123\/favourite$/).respond(200);
+			category = {id: 123};
+		});
+
+		it("should flush the category cache", () => {
+			categoryModel.toggleFavourite(category);
+			categoryModel.flush.should.have.been.called;
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a DELETE request to /categories/{id}/favourite when the category is unfavourited", () => {
+			$httpBackend.expectDELETE(/categories\/123\/favourite$/);
+			category.favourite = true;
+			categoryModel.toggleFavourite(category).should.eventually.equal(false);
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a PUT request to /categories/{id}/favourite when the category is favourited", () => {
+			$httpBackend.expectPUT(/categories\/123\/favourite$/);
+			categoryModel.toggleFavourite(category).should.eventually.equal(true);
+			$httpBackend.flush();
+		});
+	});
+
 	describe("flush", () => {
 		it("should remove the specified category from the category cache when an id is provided", () => {
 			categoryModel.flush(1);

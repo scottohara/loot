@@ -21,14 +21,14 @@ FactoryGirl.define do
 					create(:security_add_transaction, account: account)
 					create(:security_remove_transaction, account: account)
 					create(:dividend_transaction, investment_account: account, cash_account: account.related_account)
-					
+
 					# Create any scheduled transactions
 					create_list :security_holding_transaction, evaluator.scheduled, :scheduled, account: account
 				else
 					create(:basic_expense_transaction, :flagged, account: account, status: "Cleared")			#flagged and cleared
 					create(:basic_income_transaction, account: account)
-					create(:transfer_transaction, source_account: account) 
-					create(:transfer_transaction, destination_account: account) 
+					create(:transfer_transaction, source_account: account)
+					create(:transfer_transaction, destination_account: account)
 					create(:split_to_transaction, account: account, subtransactions: 1, subtransfers: 1)
 					create(:split_from_transaction, account: account, subtransactions: 1, subtransfers: 1)
 					create(:subtransfer_to_transaction, account: account)
@@ -37,8 +37,8 @@ FactoryGirl.define do
 					create(:loan_repayment_transaction, account: account, subtransactions: 1, subtransfers: 1)
 					create(:security_purchase_transaction, cash_account: account)
 					create(:security_sale_transaction, cash_account: account)
-					create(:dividend_transaction, cash_account: account) 
-	
+					create(:dividend_transaction, cash_account: account)
+
 					# Create any scheduled transactions
 					create_list :basic_transaction, evaluator.scheduled, :scheduled, account: account
 				end
@@ -91,11 +91,16 @@ FactoryGirl.define do
 			status "closed"
 		end
 
+		trait :favourite do
+			favourite true
+		end
+
 		factory :asset_account, traits: [:asset]
 		factory :credit_account, traits: [:credit]
 		factory :investment_account, traits: [:investment]
 		factory :cash_account, traits: [:cash]
 		factory :loan_account, traits: [:loan]
 		factory :closed_account, traits: [:closed]
+		factory :favourite_account, traits: [:favourite]
 	end
 end

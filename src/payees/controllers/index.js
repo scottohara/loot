@@ -132,6 +132,10 @@
 			});
 		}
 
+		toggleFavourite(index) {
+			this.payeeModel.toggleFavourite(this.payees[index]).then(favourite => this.payees[index].favourite = favourite);
+		}
+
 		// Finds a specific payee and focusses that row in the table
 		focusPayee(payeeIdToFocus) {
 			const delay = 50;

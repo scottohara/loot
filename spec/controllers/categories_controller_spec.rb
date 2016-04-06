@@ -19,7 +19,7 @@ RSpec.describe CategoriesController, type: :controller do
 			let(:json) { "category list without children" }
 
 			before :each do
-				expect(Category).to receive_message_chain(:where, :order).with(:direction, :name).and_return json
+				expect(Category).to receive_message_chain(:where, :order).with({favourite: :desc}, :direction, :name).and_return json
 				get :index
 			end
 

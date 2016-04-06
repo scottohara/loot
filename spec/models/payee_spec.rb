@@ -36,7 +36,7 @@ RSpec.describe Payee, type: :model do
 
 	describe "#account_type" do
 		subject { create(:payee) }
-		
+
 		it "should return nil" do
 			expect(subject.account_type).to be_nil
 		end
@@ -51,6 +51,7 @@ RSpec.describe Payee, type: :model do
 			expect(json).to include(name: "Test Payee")
 			expect(json).to include(closing_balance: subject.closing_balance)
 			expect(json).to include(num_transactions: 1)
+			expect(json).to include(favourite: false)
 		end
 	end
 end

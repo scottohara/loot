@@ -28,6 +28,7 @@ class Security < ActiveRecord::Base
 	end
 
 	include Transactable
+	include Favouritable
 
 	class << self
 		def find_or_new(security)
@@ -39,6 +40,7 @@ class Security < ActiveRecord::Base
 				SELECT		securities.id,
 									securities.name,
 									securities.code,
+									securities.favourite,
 									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),3) AS current_holding,
 									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(p.price),2) AS closing_balance
 				FROM			securities
@@ -69,6 +71,7 @@ class Security < ActiveRecord::Base
 					id: security['id'].to_i,
 					name: security['name'],
 					code: security['code'],
+					favourite: security['favourite'].eql?('t'),
 					current_holding: security['current_holding'],
 					closing_balance: security['closing_balance'],
 					unused: false
@@ -86,6 +89,7 @@ class Security < ActiveRecord::Base
 					id: security['id'].to_i,
 					name: security['name'],
 					code: security['code'],
+					favourite: security['favourite'],
 					current_holding: 0,
 					closing_balance: 0,
 					unused: true

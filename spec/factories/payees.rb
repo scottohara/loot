@@ -11,7 +11,7 @@ FactoryGirl.define do
 			after :build do |payee, evaluator|
 				create(:basic_expense_transaction, :flagged, payee: payee, status: "Cleared")			#flagged and cleared
 				create(:basic_income_transaction, payee: payee)
-				create(:transfer_transaction, payee: payee) 
+				create(:transfer_transaction, payee: payee)
 				create(:split_to_transaction, payee: payee, subtransactions: 1, subtransfers: 1)
 				create(:split_from_transaction, payee: payee, subtransactions: 1, subtransfers: 1)
 				create(:payslip_transaction, payee: payee, subtransactions: 1, subtransfers: 1)
@@ -25,5 +25,11 @@ FactoryGirl.define do
 		after :build do |payee, evaluator|
 			create_list :basic_transaction, evaluator.transactions, payee: payee
 		end
+
+		trait :favourite do
+			favourite true
+		end
+
+		factory :favourite_payee, traits: [:favourite]
 	end
 end

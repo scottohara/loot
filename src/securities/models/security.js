@@ -81,6 +81,17 @@
 			return this.$http.delete(this.path(security.id)).then(() => this.removeRecent(security.id));
 		}
 
+		// Favourites/unfavourites a security
+		toggleFavourite(security) {
+			// Flush the $http cache
+			this.flush();
+
+			return this.$http({
+				method: security.favourite ? "DELETE" : "PUT",
+				url: `${this.path(security.id)}/favourite`
+			}).then(() => !security.favourite);
+		}
+
 		// Flush the cache
 		flush(id) {
 			if (id) {

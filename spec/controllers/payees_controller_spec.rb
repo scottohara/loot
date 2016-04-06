@@ -4,9 +4,22 @@ RSpec.describe PayeesController, type: :controller do
 	describe "GET index", request: true, json: true do
 		let(:json) { "payee list" }
 
-		it "should return the payee list" do
-			expect(Payee).to receive(:order).with(:name).and_return json
-			get :index
+		context "for payee list" do
+			before :each do
+				expect(Payee).to receive(:order).with(:name).and_return json
+				get :index, list: true
+			end
+
+			it "should return the payee list in name order" do; end
+		end
+
+		context "for payee typeahead" do
+			before :each do
+				expect(Payee).to receive(:order).with({favourite: :desc}, :name).and_return json
+				get :index
+			end
+
+			it "should return the payee list with favourites first" do; end
 		end
 	end
 

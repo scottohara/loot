@@ -146,6 +146,10 @@
 			});
 		}
 
+		toggleFavourite(index) {
+			this.securityModel.toggleFavourite(this.securities[index]).then(favourite => this.securities[index].favourite = favourite);
+		}
+
 		// Finds a specific security and focusses that row in the table
 		focusSecurity(securityIdToFocus) {
 			const delay = 50;

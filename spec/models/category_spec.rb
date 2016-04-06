@@ -60,7 +60,7 @@ RSpec.describe Category, type: :model do
 
 	describe "#account_type" do
 		subject { create(:category) }
-		
+
 		it "should return nil" do
 			expect(subject.account_type).to be_nil
 		end
@@ -71,7 +71,7 @@ RSpec.describe Category, type: :model do
 			let(:json) { subject.as_json }
 
 			before :each do
-				expect(CategorySerializer).to receive(:new).with(subject, only: [:id, :name, :direction, :parent_id]).and_call_original
+				expect(CategorySerializer).to receive(:new).with(subject, only: [:id, :name, :direction, :parent_id, :favourite]).and_call_original
 			end
 
 			context "category" do
@@ -130,6 +130,7 @@ RSpec.describe Category, type: :model do
 			expect(json).to include(id: subject.id)
 			expect(json).to include(name: "Test Category")
 			expect(json).to include(direction: "outflow")
+			expect(json).to include(favourite: false)
 		end
 	end
 end

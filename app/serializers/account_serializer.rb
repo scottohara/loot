@@ -1,5 +1,5 @@
 class AccountSerializer < ActiveModel::Serializer
-  attributes :id, :name, :account_type, :opening_balance, :status, :closing_balance, :num_transactions, :related_account
+  attributes :id, :name, :account_type, :opening_balance, :status, :closing_balance, :num_transactions, :related_account, :favourite
 
 	def opening_balance
 		object.opening_balance.to_f

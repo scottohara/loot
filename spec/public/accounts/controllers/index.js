@@ -204,4 +204,26 @@ describe("AccountIndexController", () => {
 			accountIndexController.accounts["Bank accounts"].total.should.equal(originalTotal + 10);
 		});
 	});
+
+	describe("toggleFavourite", () => {
+		let account;
+
+		beforeEach(() => {
+			account = accountIndexController.accounts["Bank accounts"].accounts[0];
+		});
+
+		it("should favourite the account", () => {
+			account.favourite = false;
+			accountIndexController.toggleFavourite("Bank accounts", 0);
+			account.favourite.should.be.true;
+		});
+
+		it("should unfavourite the account", () => {
+			account.favourite = true;
+			accountIndexController.toggleFavourite("Bank accounts", 0);
+			account.favourite.should.be.false;
+		});
+
+		afterEach(() => accountModel.toggleFavourite.should.have.been.called);
+	});
 });

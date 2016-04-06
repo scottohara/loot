@@ -191,6 +191,10 @@
 			});
 		}
 
+		toggleFavourite(index) {
+			this.categoryModel.toggleFavourite(this.categories[index]).then(favourite => this.categories[index].favourite = favourite);
+		}
+
 		// Finds a specific category and focusses that row in the table
 		focusCategory(categoryIdToFocus) {
 			// Find the category by it's id

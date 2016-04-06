@@ -25,5 +25,11 @@ FactoryGirl.define do
 		after :build do |security, evaluator|
 			create_list :security_holding_transaction, evaluator.transactions, security: security
 		end
+
+		trait :favourite do
+			favourite true
+		end
+
+		factory :favourite_security, traits: [:favourite]
 	end
 end

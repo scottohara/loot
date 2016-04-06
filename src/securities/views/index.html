@@ -11,6 +11,7 @@
 		<tr ng-repeat="security in vm.securities" ng-class="::{'text-muted': security.current_holding <= 0}">
 			<td class="has-action">
 				{{::security.name}}
+				<i og-favourite="{'context': security.favourite, 'type': 'security'}" ng-click="vm.toggleFavourite($index)"></i>
 				<i class="action glyphicon glyphicon-edit pull-right" uib-tooltip="Edit security" ng-click="vm.editSecurity($index)"></i>
 				<em ng-if="::security.unused" class="text-info pull-right">No transactions</em>
 			</td>

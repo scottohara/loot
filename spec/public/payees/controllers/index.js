@@ -164,6 +164,28 @@ describe("PayeeIndexController", () => {
 		});
 	});
 
+	describe("toggleFavourite", () => {
+		let payee;
+
+		beforeEach(() => {
+			payee = payeeIndexController.payees[0];
+		});
+
+		it("should favourite the payee", () => {
+			payee.favourite = false;
+			payeeIndexController.toggleFavourite(0);
+			payee.favourite.should.be.true;
+		});
+
+		it("should unfavourite the payee", () => {
+			payee.favourite = true;
+			payeeIndexController.toggleFavourite(0);
+			payee.favourite.should.be.false;
+		});
+
+		afterEach(() => payeeModel.toggleFavourite.should.have.been.called);
+	});
+
 	describe("tableActions.selectAction", () => {
 		it("should transition to the payee transactions list", () => {
 			payeeIndexController.tableActions.selectAction();

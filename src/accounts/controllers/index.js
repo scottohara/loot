@@ -140,6 +140,12 @@
 		calculateAccountTypeTotal(accountType) {
 			this.accounts[accountType].total = this.accounts[accountType].accounts.reduce((memo, account) => memo + account.closing_balance, 0);
 		}
+
+		toggleFavourite(accountType, index) {
+			const account = this.accounts[accountType].accounts[index];
+
+			this.accountModel.toggleFavourite(account).then(favourite => account.favourite = favourite);
+		}
 	}
 
 	/**

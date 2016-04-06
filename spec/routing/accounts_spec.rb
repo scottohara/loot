@@ -86,4 +86,21 @@ describe "accounts routes" do
 	it "should route GET /accounts/:account_id/transactions/last to transactions#last" do
 		expect({get: "/accounts/1/transactions/last"}).to route_to controller: "transactions", action: "last", account_id: "1"
 	end
+
+	# Favouritable routes
+	it "should route PATCH /accounts/:account_id/favourite to favourites#update" do
+		expect({patch: "/accounts/1/favourite"}).to route_to controller: "favourites", action: "update", account_id: "1"
+	end
+
+	it "should route PUT /accounts/:account_id/favourite to favourites#update" do
+		expect({put: "/accounts/1/favourite"}).to route_to controller: "favourites", action: "update", account_id: "1"
+	end
+
+	it "should route DELETE /accounts/:account_id/favourite to favourites#destroy" do
+		expect({delete: "/accounts/1/favourite"}).to route_to controller: "favourites", action: "destroy", account_id: "1"
+	end
+
+	it "should not route GET /accounts/:account_id/favourite" do
+		expect({get: "/accounts/1/favourite"}).to route_to controller: "application", action: "routing_error", unmatched_route: "accounts/1/favourite"
+	end
 end

@@ -12,6 +12,7 @@
 			</td>
 			<td class="has-action" ng-class="::{'subcategory': category.parent}">
 				{{::category.name}}
+				<i og-favourite="{'context': category.favourite, 'type': 'category'}" ng-click="vm.toggleFavourite($index)"></i>
 				<i class="action glyphicon glyphicon-edit pull-right" uib-tooltip="Edit category" ng-click="vm.editCategory($index)"></i>
 			</td>
 		</tr>

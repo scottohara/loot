@@ -8,6 +8,7 @@
 		<tr ng-repeat="payee in vm.payees">
 			<td class="has-action">
 				{{::payee.name}}
+				<i og-favourite="{'context': payee.favourite, 'type': 'payee'}" ng-click="vm.toggleFavourite($index)"></i>
 				<i class="action glyphicon glyphicon-edit pull-right" uib-tooltip="Edit payee" ng-click="vm.editPayee($index)"></i>
 			</td>
 		</tr>

@@ -5,7 +5,7 @@ class SecuritiesController < ApplicationController
 		if params.has_key? :include_balances
 			respond_with Security.list
 		else
-			respond_with Security.order(:name), except: [:current_holding, :closing_balance, :num_transactions, :unused]
+			respond_with Security.order({favourite: :desc}, :name), except: [:current_holding, :closing_balance, :num_transactions, :unused]
 		end
 	end
 

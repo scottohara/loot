@@ -22,7 +22,7 @@ RSpec.describe Account, type: :model do
 		subject { described_class }
 		# Accounts for non-investment transactions
 		let!(:bank_account) { create :bank_account }
-		let!(:another_bank_account) { create :bank_account }
+		let!(:another_bank_account) { create :bank_account, :favourite }
 
 		# Accounts for investment transactions
 		let!(:related_bank_account) { create :bank_account, opening_balance: 0 }
@@ -46,6 +46,7 @@ RSpec.describe Account, type: :model do
 						name: asset_account.name,
 						account_type: asset_account.account_type,
 						status: asset_account.status,
+						favourite: false,
 						opening_balance: asset_account.opening_balance.to_f,
 						closing_balance: asset_account.closing_balance.to_f,
 						related_account: {
@@ -66,6 +67,7 @@ RSpec.describe Account, type: :model do
 						name: bank_account.name,
 						account_type: bank_account.account_type,
 						status: bank_account.status,
+						favourite: false,
 						opening_balance: bank_account.opening_balance.to_f,
 						closing_balance: bank_account.closing_balance.to_f,
 						related_account: {
@@ -81,6 +83,7 @@ RSpec.describe Account, type: :model do
 						name: another_bank_account.name,
 						account_type: another_bank_account.account_type,
 						status: another_bank_account.status,
+						favourite: true,
 						opening_balance: another_bank_account.opening_balance.to_f,
 						closing_balance: another_bank_account.closing_balance.to_f,
 						related_account: {
@@ -101,6 +104,7 @@ RSpec.describe Account, type: :model do
 						name: investment_account.name,
 						account_type: investment_account.account_type,
 						status: investment_account.status,
+						favourite: false,
 						opening_balance: investment_account.opening_balance.to_f,
 						closing_balance: investment_account.closing_balance.to_f,
 						related_account: {
@@ -121,6 +125,7 @@ RSpec.describe Account, type: :model do
 						name: loan_account.name,
 						account_type: loan_account.account_type,
 						status: loan_account.status,
+						favourite: false,
 						opening_balance: loan_account.opening_balance.to_f,
 						closing_balance: loan_account.closing_balance.to_f,
 						related_account: {
@@ -136,6 +141,7 @@ RSpec.describe Account, type: :model do
 						name: another_loan_account.name,
 						account_type: another_loan_account.account_type,
 						status: another_loan_account.status,
+						favourite: false,
 						opening_balance: another_loan_account.opening_balance.to_f,
 						closing_balance: another_loan_account.closing_balance.to_f,
 						related_account: {
@@ -179,6 +185,7 @@ RSpec.describe Account, type: :model do
 			actual.account_type.eql? expected['account_type'] and \
 			actual.opening_balance.eql? expected['opening_balance'] and \
 			actual.status.eql? expected['status'] and \
+			actual.favourite.eql? expected['favourite'] and \
 			(related_account.nil? ? actual.related_account.nil? : \
 				(actual.related_account.name.eql? related_account.name and \
 				actual.related_account.account_type.eql? related_account.account_type and \
@@ -198,14 +205,15 @@ RSpec.describe Account, type: :model do
 			"name" => "Test account",
 			"account_type" => "bank",
 			"opening_balance" => 100,
-			"status" => "open"
+			"status" => "open",
+			"favourite" => true
 		} }
 		let(:related_account) { nil }
 
 		context "standard account", account_create_from_json: true do; end
 
 		context "investment account" do
-			let(:related_account) { Account.new name: "Test account (Cash)", account_type: "bank", opening_balance: 200, status: "open" }
+			let(:related_account) { Account.new name: "Test account (Cash)", account_type: "bank", opening_balance: 200, status: "open", favourite: true }
 
 			before :each do
 				json["account_type"] = "investment"
@@ -228,7 +236,7 @@ RSpec.describe Account, type: :model do
 			end
 
 			context "with asset", account_create_from_json: true do
-				let(:related_account) { create :asset_account }
+				let(:related_account) { create :asset_account, :favourite }
 
 				before :each do
 					json['related_account'] = {
@@ -253,7 +261,8 @@ RSpec.describe Account, type: :model do
 			"name" => "Test account",
 			"account_type" => "cash",
 			"opening_balance" => 100,
-			"status" => "closed"
+			"status" => "closed",
+			"favourite" => true
 		} }
 		let(:related_account) { nil }
 
@@ -262,7 +271,7 @@ RSpec.describe Account, type: :model do
 		end
 
 		context "investment account" do
-			let(:related_account) { create :bank_account, name: "Test account (Cash)", opening_balance: 200, status: "closed" }
+			let(:related_account) { create :bank_account, name: "Test account (Cash)", opening_balance: 200, status: "closed", favourite: true }
 
 			before :each do
 				json["account_type"] = "investment"
@@ -272,16 +281,16 @@ RSpec.describe Account, type: :model do
 			end
 
 			context "from investment account", account_update_from_json: true do
-				let(:account) { create :investment_account, related_account: create(:cash_account) }
+				let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
 			end
 
 			context "from non-investment account", account_update_from_json: true do
-				let(:account) { create :bank_account }
+				let(:account) { create :bank_account, :favourite }
 			end
 		end
 
 		context "non-investment account" do
-			let(:account) { create :investment_account, related_account: create(:cash_account) }
+			let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
 
 			before :each do
 				expect(account.related_account).to receive(:destroy)
@@ -293,7 +302,7 @@ RSpec.describe Account, type: :model do
 				end
 
 				context "with asset", account_update_from_json: true do
-					let(:related_account) { create :asset_account }
+					let(:related_account) { create :asset_account, :favourite }
 
 					before :each do
 						json['related_account'] = {
@@ -352,7 +361,7 @@ RSpec.describe Account, type: :model do
 			let(:json) { subject.as_json }
 
 			before :each do
-				expect(AccountSerializer).to receive(:new).with(subject, only: [:id, :name, :account_type, :opening_balance, :status]).and_call_original
+				expect(AccountSerializer).to receive(:new).with(subject, only: [:id, :name, :account_type, :opening_balance, :status, :favourite]).and_call_original
 			end
 
 			it "should return a JSON representation" do
@@ -378,6 +387,7 @@ RSpec.describe Account, type: :model do
 			expect(json).to include(account_type: "bank")
 			expect(json).to include(opening_balance: 1000)
 			expect(json).to include(status: "open")
+			expect(json).to include(favourite: false)
 		end
 	end
 end

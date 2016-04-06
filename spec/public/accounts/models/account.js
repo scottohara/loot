@@ -224,6 +224,36 @@ describe("accountModel", () => {
 		});
 	});
 
+	describe("toggleFavourite", () => {
+		let account;
+
+		beforeEach(() => {
+			accountModel.flush = sinon.stub();
+			$httpBackend.whenDELETE(/accounts\/123\/favourite$/).respond(200);
+			$httpBackend.whenPUT(/accounts\/123\/favourite$/).respond(200);
+			account = {id: 123};
+		});
+
+		it("should flush the account cache", () => {
+			accountModel.toggleFavourite(account);
+			accountModel.flush.should.have.been.called;
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a DELETE request to /accounts/{id}/favourite when the account is unfavourited", () => {
+			$httpBackend.expectDELETE(/accounts\/123\/favourite$/);
+			account.favourite = true;
+			accountModel.toggleFavourite(account).should.eventually.equal(false);
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a PUT request to /accounts/{id}/favourite when the account is favourited", () => {
+			$httpBackend.expectPUT(/accounts\/123\/favourite$/);
+			accountModel.toggleFavourite(account).should.eventually.equal(true);
+			$httpBackend.flush();
+		});
+	});
+
 	describe("isUnreconciledOnly", () => {
 		it("should be true if the account is configured to show unreconciled transactions only", () => accountModel.isUnreconciledOnly(123).should.be.true);
 

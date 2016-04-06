@@ -53,8 +53,8 @@ describe("payeeModel", () => {
 	});
 
 	describe("all", () => {
-		const expectedUrl = /payees$/,
-					expectedResponse = "payees";
+		let expectedUrl = /payees$/,
+				expectedResponse = "payees";
 
 		it("should dispatch a GET request to /payees", () => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);
@@ -78,6 +78,49 @@ describe("payeeModel", () => {
 			payeeModel.all().should.eventually.equal(expectedResponse);
 			$httpBackend.flush();
 		});
+
+		describe("(list)", () => {
+			beforeEach(() => {
+				expectedUrl = /payees\?list/;
+				expectedResponse = "payees list";
+			});
+
+			it("should dispatch a GET request to /payees?list", () => {
+				$httpBackend.expect("GET", expectedUrl).respond(200);
+				payeeModel.all(true);
+				$httpBackend.flush();
+			});
+
+			it("should not cache the response in the $http cache", () => {
+				const httpGet = sinon.stub($http, "get").returns({
+					then() {
+						// Do nothing
+					}
+				});
+
+				payeeModel.all(true);
+				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.false;
+			});
+
+			it("should return a list of all payees for the index list", () => {
+				$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
+				payeeModel.all(true).should.eventually.equal(expectedResponse);
+				$httpBackend.flush();
+			});
+		});
+	});
+
+	describe("allList", () => {
+		const expected = "payees list";
+
+		beforeEach(() => payeeModel.all = sinon.stub().returns(expected));
+
+		it("should call payeeModel.all(true)", () => {
+			payeeModel.allList();
+			payeeModel.all.should.have.been.calledWith(true);
+		});
+
+		it("should return a list of all payees for the index list", () => payeeModel.allList().should.equal(expected));
 	});
 
 	describe("findLastTransaction", () => {
@@ -174,6 +217,36 @@ describe("payeeModel", () => {
 		it("should dispatch a DELETE request to /payees/{id}", () => null);
 
 		it("should remove the payee from the recent list", () => payeeModel.removeRecent.should.have.been.calledWith(123));
+	});
+
+	describe("toggleFavourite", () => {
+		let payee;
+
+		beforeEach(() => {
+			payeeModel.flush = sinon.stub();
+			$httpBackend.whenDELETE(/payees\/123\/favourite$/).respond(200);
+			$httpBackend.whenPUT(/payees\/123\/favourite$/).respond(200);
+			payee = {id: 123};
+		});
+
+		it("should flush the payee cache", () => {
+			payeeModel.toggleFavourite(payee);
+			payeeModel.flush.should.have.been.called;
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a DELETE request to /payees/{id}/favourite when the payee is unfavourited", () => {
+			$httpBackend.expectDELETE(/payees\/123\/favourite$/);
+			payee.favourite = true;
+			payeeModel.toggleFavourite(payee).should.eventually.equal(false);
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a PUT request to /payees/{id}/favourite when the payee is favourited", () => {
+			$httpBackend.expectPUT(/payees\/123\/favourite$/);
+			payeeModel.toggleFavourite(payee).should.eventually.equal(true);
+			$httpBackend.flush();
+		});
 	});
 
 	describe("flush", () => {

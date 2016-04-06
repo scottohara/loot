@@ -65,4 +65,21 @@ describe "payees routes" do
 	it "should route GET /payees/:payee_id/transactions/last to transactions#last" do
 		expect({get: "/payees/1/transactions/last"}).to route_to controller: "transactions", action: "last", payee_id: "1"
 	end
+
+	# Favouritable routes
+	it "should route PATCH /payees/:payee_id/favourite to favourites#update" do
+		expect({patch: "/payees/1/favourite"}).to route_to controller: "favourites", action: "update", payee_id: "1"
+	end
+
+	it "should route PUT /payees/:payee_id/favourite to favourites#update" do
+		expect({put: "/payees/1/favourite"}).to route_to controller: "favourites", action: "update", payee_id: "1"
+	end
+
+	it "should route DELETE /payees/:payee_id/favourite to favourites#destroy" do
+		expect({delete: "/payees/1/favourite"}).to route_to controller: "favourites", action: "destroy", payee_id: "1"
+	end
+
+	it "should not route GET /payees/:payee_id/favourite" do
+		expect({get: "/payees/1/favourite"}).to route_to controller: "application", action: "routing_error", unmatched_route: "payees/1/favourite"
+	end
 end

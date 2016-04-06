@@ -20,6 +20,7 @@ class Payee < ActiveRecord::Base
 	end
 
 	include Transactable
+	include Favouritable
 
 	class << self
 		def find_or_new(payee)

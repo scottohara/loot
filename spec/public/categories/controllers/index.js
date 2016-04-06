@@ -290,6 +290,28 @@ describe("CategoryIndexController", () => {
 		});
 	});
 
+	describe("toggleFavourite", () => {
+		let category;
+
+		beforeEach(() => {
+			category = categoryIndexController.categories[0];
+		});
+
+		it("should favourite the category", () => {
+			category.favourite = false;
+			categoryIndexController.toggleFavourite(0);
+			category.favourite.should.be.true;
+		});
+
+		it("should unfavourite the category", () => {
+			category.favourite = true;
+			categoryIndexController.toggleFavourite(0);
+			category.favourite.should.be.false;
+		});
+
+		afterEach(() => categoryModel.toggleFavourite.should.have.been.called);
+	});
+
 	describe("tableActions.selectAction", () => {
 		it("should transition to the category transactions list", () => {
 			categoryIndexController.tableActions.selectAction();

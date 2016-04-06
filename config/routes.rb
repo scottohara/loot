@@ -22,12 +22,17 @@ Rails.application.routes.draw do
 		get 'last', on: :collection
 	end
 
-	resources :accounts, except: [:new, :edit] do
+	# Resource can be favourited
+	concern :favouritable do
+		resource :favourite, only: [:update, :destroy]
+	end
+
+	resources :accounts, except: [:new, :edit], concerns: [:favouritable] do
 		resources :transactions, only: [:index], concerns: [:reconcilable, :defaultable]
 		put 'reconcile', on: :member
 	end
 
-	resources :payees, :categories, :securities, except: [:new, :edit] do
+	resources :payees, :categories, :securities, except: [:new, :edit], concerns: [:favouritable] do
 		resources :transactions, only: [:index], concerns: [:defaultable]
 	end
 

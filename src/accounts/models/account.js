@@ -81,6 +81,17 @@
 			return this.$http.put(`${this.path(id)}/reconcile`);
 		}
 
+		// Favourites/unfavourites an account
+		toggleFavourite(account) {
+			// Flush the $http cache
+			this.flush();
+
+			return this.$http({
+				method: account.favourite ? "DELETE" : "PUT",
+				url: `${this.path(account.id)}/favourite`
+			}).then(() => !account.favourite);
+		}
+
 		// Get the unreconciled only setting for an account from local storage
 		isUnreconciledOnly(id) {
 			return this.$window.localStorage.getItem(this.UNRECONCILED_ONLY_LOCAL_STORAGE_KEY + id) !== "false";

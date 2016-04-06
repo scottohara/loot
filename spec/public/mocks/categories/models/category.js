@@ -42,12 +42,16 @@
 				},
 				save: $q.promisify(success, error),
 				destroy: $q.promisify(success, error),
+				toggleFavourite(category) {
+					return $q.promisify({response: !category.favourite})();
+				},
 				flush: sinon.stub(),
 				addRecent: sinon.stub()
 			};
 
-			// Spy on find()
+			// Spy on find() and toggleFavourite()
 			sinon.spy(this.categoryModel, "find");
+			sinon.spy(this.categoryModel, "toggleFavourite");
 		}
 
 		$get() {

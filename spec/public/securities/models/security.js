@@ -82,7 +82,7 @@ describe("securityModel", () => {
 		describe("(include balances)", () => {
 			beforeEach(() => {
 				expectedUrl = /securities\?include_balances/;
-				expectedResponse = "categories with children";
+				expectedResponse = "securities with balances";
 			});
 
 			it("should dispatch a GET request to /securities?include_balances", () => {
@@ -217,6 +217,36 @@ describe("securityModel", () => {
 		it("should dispatch a DELETE request to /securities/{id}", () => null);
 
 		it("should remove the securty from the recent list", () => securityModel.removeRecent.should.have.been.calledWith(123));
+	});
+
+	describe("toggleFavourite", () => {
+		let security;
+
+		beforeEach(() => {
+			securityModel.flush = sinon.stub();
+			$httpBackend.whenDELETE(/securities\/123\/favourite$/).respond(200);
+			$httpBackend.whenPUT(/securities\/123\/favourite$/).respond(200);
+			security = {id: 123};
+		});
+
+		it("should flush the security cache", () => {
+			securityModel.toggleFavourite(security);
+			securityModel.flush.should.have.been.called;
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a DELETE request to /securities/{id}/favourite when the security is unfavourited", () => {
+			$httpBackend.expectDELETE(/securities\/123\/favourite$/);
+			security.favourite = true;
+			securityModel.toggleFavourite(security).should.eventually.equal(false);
+			$httpBackend.flush();
+		});
+
+		it("should dispatch a PUT request to /securities/{id}/favourite when the security is favourited", () => {
+			$httpBackend.expectPUT(/securities\/123\/favourite$/);
+			securityModel.toggleFavourite(security).should.eventually.equal(true);
+			$httpBackend.flush();
+		});
 	});
 
 	describe("flush", () => {

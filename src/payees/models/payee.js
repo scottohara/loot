@@ -30,10 +30,15 @@
 		}
 
 		// Retrieves the list of payees
-		all() {
-			return this.$http.get(this.path(), {
-				cache: this.cache
+		all(list) {
+			return this.$http.get(`${this.path()}${list ? "?list" : ""}`, {
+				cache: list ? false : this.cache
 			}).then(response => response.data);
+		}
+
+		// Retrieves the list of payees for the index list
+		allList() {
+			return this.all(true);
 		}
 
 		// Retrieves the most recent transaction for a payee
@@ -74,6 +79,17 @@
 			this.flush();
 
 			return this.$http.delete(this.path(payee.id)).then(() => this.removeRecent(payee.id));
+		}
+
+		// Favourites/unfavourites a payee
+		toggleFavourite(payee) {
+			// Flush the $http cache
+			this.flush();
+
+			return this.$http({
+				method: payee.favourite ? "DELETE" : "PUT",
+				url: `${this.path(payee.id)}/favourite`
+			}).then(() => !payee.favourite);
 		}
 
 		// Flush the cache

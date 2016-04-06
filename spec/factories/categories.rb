@@ -42,9 +42,14 @@ FactoryGirl.define do
 			children 2
 		end
 
+		trait :favourite do
+			favourite true
+		end
+
 		factory :inflow_category, traits: [:inflow]
 		factory :subcategory, traits: [:parent_category]
 		factory :inflow_subcategory, traits: [:inflow, :parent_category]
 		factory :category_with_children, traits: [:with_children]
+		factory :favourite_category, traits: [:favourite]
 	end
 end

@@ -166,6 +166,28 @@ describe("SecurityIndexController", () => {
 		});
 	});
 
+	describe("toggleFavourite", () => {
+		let security;
+
+		beforeEach(() => {
+			security = securityIndexController.securities[0];
+		});
+
+		it("should favourite the security", () => {
+			security.favourite = false;
+			securityIndexController.toggleFavourite(0);
+			security.favourite.should.be.true;
+		});
+
+		it("should unfavourite the security", () => {
+			security.favourite = true;
+			securityIndexController.toggleFavourite(0);
+			security.favourite.should.be.false;
+		});
+
+		afterEach(() => securityModel.toggleFavourite.should.have.been.called);
+	});
+
 	describe("tableActions.selectAction", () => {
 		it("should transition to the security transactions list", () => {
 			securityIndexController.tableActions.selectAction();

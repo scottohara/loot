@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
 	end
 
 	include Transactable
+	include Favouritable
 
 	class << self
 		def list
@@ -31,6 +32,7 @@ class Account < ActiveRecord::Base
 												accounts.name,
 												accounts.status,
 												accounts.account_type,
+												accounts.favourite,
 												accounts.opening_balance,
 												SUM(security_holdings.current_value) as total_value,
 												related_accounts.id AS related_account_id,
@@ -74,6 +76,7 @@ class Account < ActiveRecord::Base
 												accounts.name,
 												accounts.status,
 												accounts.account_type,
+												accounts.favourite,
 												accounts.opening_balance,
 												accounts.opening_balance + COALESCE(basic_transactions.total,0) + COALESCE(subtransfer_transactions.total,0) + COALESCE(inflow_transactions.total,0) + COALESCE(outflow_transactions.total,0) AS closing_balance,
 												related_accounts.id AS related_account_id,
@@ -145,7 +148,7 @@ class Account < ActiveRecord::Base
 			# Overlay the investment holding balances on top of the related cash account closing balances
 			investment_accounts.each do |account|
 				cash_account = account_list[account['related_account_id']]
-				next if cash_account.nil? 
+				next if cash_account.nil?
 				cash_account.merge! account
 				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + cash_account['total_value'].to_f || 0
 			end
@@ -157,6 +160,7 @@ class Account < ActiveRecord::Base
 						name: a['name'],
 						account_type: a['account_type'],
 						status: a['status'],
+						favourite: a['favourite'].eql?('t'),
 						opening_balance: a['opening_balance'].to_f,
 						closing_balance: a['closing_balance'].to_f,
 						related_account: {
@@ -174,9 +178,9 @@ class Account < ActiveRecord::Base
 		end
 
 		def create_from_json(json)
-			account = Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status']
+			account = Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status'], favourite: !!json['favourite']
 			account.related_account_id = json['related_account']['id'] if account.account_type.eql?("loan") and !!json['related_account']
-			account.related_account = Account.new name: "#{json['name']} (Cash)", account_type: "bank", opening_balance: json['related_account']['opening_balance'], status: json['status'], related_account: account if account.account_type.eql?("investment")
+			account.related_account = Account.new name: "#{json['name']} (Cash)", account_type: "bank", opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: !!json['favourite'], related_account: account if account.account_type.eql?("investment")
 			account.save!
 			account
 		end
@@ -195,7 +199,8 @@ class Account < ActiveRecord::Base
 		self.account_type = json['account_type']
 		self.opening_balance = json['opening_balance']
 		self.status = json['status']
-		
+		self.favourite = !!json['favourite']
+
 		if self.account_type.eql? "investment"
 			if original_account_type.eql? "investment"
 				# Update the related cash account
@@ -203,9 +208,10 @@ class Account < ActiveRecord::Base
 				self.related_account.account_type = "bank"
 				self.related_account.opening_balance = json['related_account']['opening_balance']
 				self.related_account.status = json['status']
+				self.related_account.favourite = !!json['favourite']
 			else
 				# Create a new cash account
-				self.related_account = Account.new name: "#{json['name']} (Cash)", account_type: "bank", opening_balance: json['related_account']['opening_balance'], status: json['status'], related_account: self
+				self.related_account = Account.new name: "#{json['name']} (Cash)", account_type: "bank", opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: !!json['favourite'], related_account: self
 			end
 		else
 			# If changing from an investment account, delete the related cash account
@@ -230,7 +236,7 @@ class Account < ActiveRecord::Base
 			.update_all(status: 'Reconciled')
 	end
 
-	def as_json(options={only: [:id, :name, :account_type, :opening_balance, :status]})
+	def as_json(options={only: [:id, :name, :account_type, :opening_balance, :status, :favourite]})
 		# Defer to serializer
 		AccountSerializer.new(self, options).as_json
 	end

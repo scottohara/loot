@@ -32,8 +32,8 @@ RSpec.describe Security, type: :model do
 
 	describe "::list" do
 		subject { described_class }
-		let!(:security) { create :security, :with_all_transaction_types, transactions: 1, scheduled: 1 }
-		let!(:unused_security) { create :security }
+		let!(:security) { create :security, :with_all_transaction_types, :favourite, transactions: 1, scheduled: 1 }
+		let!(:unused_security) { create :security, :favourite }
 		let!(:unused_security_scheduled) { create :security, scheduled: 1 }
 		let!(:security_with_prices) { create :security, transactions: 2 }
 
@@ -42,6 +42,7 @@ RSpec.describe Security, type: :model do
 				id: security.id,
 				name: security.name,
 				code: security.code,
+				favourite: security.favourite,
 				current_holding: "10.000",
 				closing_balance: "10.00",
 				unused: false
@@ -50,6 +51,7 @@ RSpec.describe Security, type: :model do
 				id: security_with_prices.id,
 				name: security_with_prices.name,
 				code: security_with_prices.code,
+				favourite: security_with_prices.favourite,
 				current_holding: "20.000",
 				closing_balance: "40.00",
 				unused: false
@@ -58,6 +60,7 @@ RSpec.describe Security, type: :model do
 				id: unused_security.id,
 				name: unused_security.name,
 				code: unused_security.code,
+				favourite: unused_security.favourite,
 				current_holding: 0,
 				closing_balance: 0,
 				unused: true
@@ -66,6 +69,7 @@ RSpec.describe Security, type: :model do
 				id: unused_security_scheduled.id,
 				name: unused_security_scheduled.name,
 				code: unused_security_scheduled.code,
+				favourite: unused_security_scheduled.favourite,
 				current_holding: 0,
 				closing_balance: 0,
 				unused: true
@@ -175,7 +179,7 @@ RSpec.describe Security, type: :model do
 
 	describe "#account_type" do
 		subject { create(:security) }
-		
+
 		it "should return 'investment'" do
 			expect(subject.account_type).to eq "investment"
 		end
@@ -183,7 +187,7 @@ RSpec.describe Security, type: :model do
 
 	describe "#related_account" do
 		subject { create(:security) }
-		
+
 		it "should return nil" do
 			expect(subject.related_account).to be_nil
 		end
@@ -201,6 +205,7 @@ RSpec.describe Security, type: :model do
 			expect(json).to include(closing_balance: subject.closing_balance)
 			expect(json).to include(num_transactions: 1)
 			expect(json).to include(unused: false)
+			expect(json).to include(favourite: false)
 		end
 	end
 end

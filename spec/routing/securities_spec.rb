@@ -65,4 +65,21 @@ describe "securities routes" do
 	it "should route GET /securities/:security_id/transactions/last to transactions#last" do
 		expect({get: "/securities/1/transactions/last"}).to route_to controller: "transactions", action: "last", security_id: "1"
 	end
+
+	# Favouritable routes
+	it "should route PATCH /securities/:security_id/favourite to favourites#update" do
+		expect({patch: "/securities/1/favourite"}).to route_to controller: "favourites", action: "update", security_id: "1"
+	end
+
+	it "should route PUT /securities/:security_id/favourite to favourites#update" do
+		expect({put: "/securities/1/favourite"}).to route_to controller: "favourites", action: "update", security_id: "1"
+	end
+
+	it "should route DELETE /securities/:security_id/favourite to favourites#destroy" do
+		expect({delete: "/securities/1/favourite"}).to route_to controller: "favourites", action: "destroy", security_id: "1"
+	end
+
+	it "should not route GET /securities/:security_id/favourite" do
+		expect({get: "/securities/1/favourite"}).to route_to controller: "application", action: "routing_error", unmatched_route: "securities/1/favourite"
+	end
 end

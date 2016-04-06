@@ -284,7 +284,7 @@ describe("lootStatesProvider", () => {
 			it("should successfully transition", () => $state.current.name.should.equal(stateName));
 
 			it("should resolve the payees", () => {
-				payeeModel.all.should.have.been.called;
+				payeeModel.allList.should.have.been.called;
 				resolvedPayees.should.eventually.deep.equal(payees);
 			});
 

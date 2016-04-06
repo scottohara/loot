@@ -125,7 +125,7 @@
 					},
 					resolve: {
 						payees: ["authenticated", "payeeModel",
-							(authenticated, payeeModel) => authenticated && payeeModel.all() || null
+							(authenticated, payeeModel) => authenticated && payeeModel.allList() || null
 						]
 					}
 				})

@@ -45,13 +45,17 @@
 				save: $q.promisify(success, error),
 				destroy: $q.promisify(success, error),
 				reconcile: $q.promisify(),
+				toggleFavourite(account) {
+					return $q.promisify({response: !account.favourite})();
+				},
 				isUnreconciledOnly: sinon.stub().returns(true),
 				unreconciledOnly: sinon.stub(),
 				flush: sinon.stub()
 			};
 
-			// Spy on find()
+			// Spy on find() and toggleFavourite()
 			sinon.spy(this.accountModel, "find");
+			sinon.spy(this.accountModel, "toggleFavourite");
 		}
 
 		// Return the mock accountModel object

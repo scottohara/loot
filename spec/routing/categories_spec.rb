@@ -65,4 +65,21 @@ describe "categories routes" do
 	it "should route GET /categories/:category_id/transactions/last to transactions#last" do
 		expect({get: "/categories/1/transactions/last"}).to route_to controller: "transactions", action: "last", category_id: "1"
 	end
+
+	# Favouritable routes
+	it "should route PATCH /categories/:category_id/favourite to favourites#update" do
+		expect({patch: "/categories/1/favourite"}).to route_to controller: "favourites", action: "update", category_id: "1"
+	end
+
+	it "should route PUT /categories/:category_id/favourite to favourites#update" do
+		expect({put: "/categories/1/favourite"}).to route_to controller: "favourites", action: "update", category_id: "1"
+	end
+
+	it "should route DELETE /categories/:category_id/favourite to favourites#destroy" do
+		expect({delete: "/categories/1/favourite"}).to route_to controller: "favourites", action: "destroy", category_id: "1"
+	end
+
+	it "should not route GET /categories/:category_id/favourite" do
+		expect({get: "/categories/1/favourite"}).to route_to controller: "application", action: "routing_error", unmatched_route: "categories/1/favourite"
+	end
 end
