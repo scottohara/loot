@@ -73,7 +73,7 @@
     "test": "gulp test:ci"
   },
   "engines": {
-    "node": "5.9.1",
-    "npm": "3.8.5"
+    "node": "6.2.2",
+    "npm": "3.10.3"
   }
 }

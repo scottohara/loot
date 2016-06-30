@@ -1,4 +1,4 @@
-ruby "2.3.0"
+ruby "2.3.1"
 
 source 'https://rubygems.org'
 
@@ -16,7 +16,7 @@ end
 gem 'rails_12factor', group: :production
 
 # For JSON serialisation
-gem 'active_model_serializers'
+gem 'active_model_serializers', '0.9.5'
 
 # For controller respond_to
 gem 'responders'
