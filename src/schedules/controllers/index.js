@@ -104,7 +104,7 @@
 				// If we entered or skipped a transaction, refocus the schedule now at the original index,
 				// otherwise refocus the schedule that was edited
 				this.focusSchedule(schedule.skipped ? this.schedules[index].id : schedule.data.id);
-			}).finally(() => this.ogTableNavigableService.enabled = true);
+			}).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		deleteSchedule(index) {
@@ -123,7 +123,7 @@
 			}).result.then(() => {
 				this.schedules.splice(index, 1);
 				this.$state.go("root.schedules");
-			}).finally(() => this.ogTableNavigableService.enabled = true);
+			}).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		// Finds a specific schedule and focusses that row in the table

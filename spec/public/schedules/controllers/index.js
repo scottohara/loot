@@ -130,7 +130,7 @@ describe("ScheduleIndexController", () => {
 	describe("deleteSchedule", () => {
 		let schedule;
 
-		beforeEach(() => schedule = angular.copy(scheduleIndexController.schedules[1]));
+		beforeEach(() => (schedule = angular.copy(scheduleIndexController.schedules[1])));
 
 		it("should disable navigation on the table", () => {
 			scheduleIndexController.deleteSchedule(1);
@@ -214,7 +214,7 @@ describe("ScheduleIndexController", () => {
 	});
 
 	describe("focusSchedule", () => {
-		beforeEach(() => scheduleIndexController.tableActions.focusRow = sinon.stub());
+		beforeEach(() => (scheduleIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific schedule row could not be found", () => {
 			(!scheduleIndexController.focusSchedule(999)).should.be.true;

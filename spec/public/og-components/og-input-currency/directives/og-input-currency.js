@@ -14,13 +14,13 @@ describe("ogInputCurrency", () => {
 	}));
 
 	describe("on model change", () => {
-		beforeEach(() => expected = "$0.00");
+		beforeEach(() => (expected = "$0.00"));
 
 		it("should display $0.00 if the model is undefined", () => Reflect.deleteProperty(ogInputCurrency.scope, "model"));
 
-		it("should display $0.00 if the model is null", () => ogInputCurrency.scope.model = null);
+		it("should display $0.00 if the model is null", () => (ogInputCurrency.scope.model = null));
 
-		it("should display $0.00 if the model is NaN", () => ogInputCurrency.scope.model = "abc");
+		it("should display $0.00 if the model is NaN", () => (ogInputCurrency.scope.model = "abc"));
 
 		it("should display the value formatted to 2 decimals if the model is a valid number", () => {
 			expected = "$100,000.00";
@@ -45,7 +45,7 @@ describe("ogInputCurrency", () => {
 	});
 
 	describe("on input change", () => {
-		beforeEach(() => expected = 0);
+		beforeEach(() => (expected = 0));
 
 		it("should store 0 if the input is blank", () => ogInputCurrency.element.val(""));
 

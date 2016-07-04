@@ -213,7 +213,7 @@ describe("CategoryIndexController", () => {
 	describe("deleteCategory", () => {
 		let category;
 
-		beforeEach(() => category = angular.copy(categoryIndexController.categories[3]));
+		beforeEach(() => (category = angular.copy(categoryIndexController.categories[3])));
 
 		it("should fetch the category", () => {
 			categoryIndexController.deleteCategory(3);
@@ -357,7 +357,7 @@ describe("CategoryIndexController", () => {
 	});
 
 	describe("focusCategory", () => {
-		beforeEach(() => categoryIndexController.tableActions.focusRow = sinon.stub());
+		beforeEach(() => (categoryIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific category row could not be found", () => {
 			(!categoryIndexController.focusCategory(999)).should.be.true;

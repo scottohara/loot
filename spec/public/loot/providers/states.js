@@ -130,7 +130,7 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("account state", () => {
-				beforeEach(() => stateName += ".account");
+				beforeEach(() => (stateName += ".account"));
 
 				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/accounts/1"));
 
@@ -168,7 +168,7 @@ describe("lootStatesProvider", () => {
 							$rootScope.$digest();
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
-							$injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel}).then(context => resolvedContext = context);
+							$injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel}).then(context => (resolvedContext = context));
 							resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context: resolvedContext});
 						});
 
@@ -188,7 +188,7 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("account transaction state", () => {
-							beforeEach(() => stateName += ".transaction");
+							beforeEach(() => (stateName += ".transaction"));
 
 							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/accounts/1/transactions/2"));
 
@@ -240,7 +240,7 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("schedule state", () => {
-				beforeEach(() => stateName += ".schedule");
+				beforeEach(() => (stateName += ".schedule"));
 
 				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/schedules/1"));
 
@@ -289,7 +289,7 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("payee state", () => {
-				beforeEach(() => stateName += ".payee");
+				beforeEach(() => (stateName += ".payee"));
 
 				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/payees/1"));
 
@@ -328,7 +328,7 @@ describe("lootStatesProvider", () => {
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
 							resolvedContext = $injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel});
-							resolvedContext.then(context => resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context}));
+							resolvedContext.then(context => (resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context})));
 						});
 
 						it("should successfully transition", () => $state.current.name.should.equal(stateName));
@@ -346,7 +346,7 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("payee transaction state", () => {
-							beforeEach(() => stateName += ".transaction");
+							beforeEach(() => (stateName += ".transaction"));
 
 							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/payees/1/transactions/2"));
 
@@ -398,7 +398,7 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("category state", () => {
-				beforeEach(() => stateName += ".category");
+				beforeEach(() => (stateName += ".category"));
 
 				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/categories/1"));
 
@@ -437,7 +437,7 @@ describe("lootStatesProvider", () => {
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
 							resolvedContext = $injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel});
-							resolvedContext.then(context => resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context}));
+							resolvedContext.then(context => (resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context})));
 						});
 
 						it("should successfully transition", () => $state.current.name.should.equal(stateName));
@@ -455,7 +455,7 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("category transaction state", () => {
-							beforeEach(() => stateName += ".transaction");
+							beforeEach(() => (stateName += ".transaction"));
 
 							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/categories/1/transactions/2"));
 
@@ -507,7 +507,7 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("security state", () => {
-				beforeEach(() => stateName += ".security");
+				beforeEach(() => (stateName += ".security"));
 
 				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/securities/1"));
 
@@ -546,7 +546,7 @@ describe("lootStatesProvider", () => {
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
 							resolvedContext = $injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel});
-							resolvedContext.then(context => resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context}));
+							resolvedContext.then(context => (resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context})));
 						});
 
 						it("should successfully transition", () => $state.current.name.should.equal(stateName));
@@ -564,7 +564,7 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("security transaction state", () => {
-							beforeEach(() => stateName += ".transaction");
+							beforeEach(() => (stateName += ".transaction"));
 
 							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/securities/1/transactions/2"));
 
@@ -661,7 +661,7 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("transaction state", () => {
-				beforeEach(() => stateName += ".transaction");
+				beforeEach(() => (stateName += ".transaction"));
 
 				it("should resolve to a URL", () => $state.href(stateName, {query, transactionId: 2}).should.equal(`#/transactions/2?query=${query}`));
 

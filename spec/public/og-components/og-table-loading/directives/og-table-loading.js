@@ -22,7 +22,7 @@ describe("ogTableLoading", () => {
 	});
 
 	describe("isLoading", () => {
-		beforeEach(() => ogTableLoading.scope.model = true);
+		beforeEach(() => (ogTableLoading.scope.model = true));
 
 		it("should be visible", () => {
 			ogTableLoading.scope.$digest();

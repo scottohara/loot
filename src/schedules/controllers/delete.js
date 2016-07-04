@@ -13,7 +13,7 @@
 		// Delete and close the modal
 		deleteSchedule() {
 			this.errorMessage = null;
-			this.scheduleModel.destroy(this.schedule).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
+			this.scheduleModel.destroy(this.schedule).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without deleting

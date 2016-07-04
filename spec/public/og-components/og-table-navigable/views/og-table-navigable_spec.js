@@ -4,15 +4,15 @@
 			let	targetRow,
 					totalRows;
 
-			beforeEach(() => table.rows.count().then(count => totalRows = count));
+			beforeEach(() => table.rows.count().then(count => (totalRows = count)));
 
 			describe("forward", () => {
 				beforeEach(() => table.clickRow(0));
 
-				it("should focus the selected row", () => targetRow = 0);
+				it("should focus the selected row", () => (targetRow = 0));
 
 				describe("by one row", () => {
-					beforeEach(() => targetRow = 1);
+					beforeEach(() => (targetRow = 1));
 
 					it("should move the focus down by one row when the 'J' key is pressed", () => table.j());
 
@@ -20,7 +20,7 @@
 				});
 
 				describe("by ten rows", () => {
-					beforeEach(() => targetRow = totalRows > 10 ? 10 : totalRows - 1);
+					beforeEach(() => (targetRow = totalRows > 10 ? 10 : totalRows - 1));
 
 					it("should move the focus down by ten rows when the page down key is pressed", () => table.pageDown());
 				});
@@ -30,7 +30,7 @@
 				beforeEach(() => table.clickRow(totalRows - 1));
 
 				describe("by one row", () => {
-					beforeEach(() => targetRow = totalRows - 2);
+					beforeEach(() => (targetRow = totalRows - 2));
 
 					it("should move the focus up by one row when the 'K' key is pressed", () => table.k());
 
@@ -38,7 +38,7 @@
 				});
 
 				describe("by ten rows", () => {
-					beforeEach(() => targetRow = totalRows > 10 ? totalRows - 11 : 0);
+					beforeEach(() => (targetRow = totalRows > 10 ? totalRows - 11 : 0));
 
 					it("should move the focus up by ten rows when the page up key is pressed", () => table.pageUp());
 				});
@@ -54,7 +54,7 @@
 			let action;
 
 			describe("insert", () => {
-				beforeEach(() => action = "insert");
+				beforeEach(() => (action = "insert"));
 
 				it(`should display the ${table.actions.insert.heading} view when the insert key is pressed`, () => table.insert());
 
@@ -62,7 +62,7 @@
 			});
 
 			describe("edit", () => {
-				beforeEach(() => action = "edit");
+				beforeEach(() => (action = "edit"));
 
 				if (table.actions.edit.mouseAction) {
 					it(`should display the ${table.actions.edit.heading} view when the ${table.actions.edit.mouseAction.name}`, () => table.actions.edit.mouseAction.perform(table.row(0)));

@@ -123,7 +123,7 @@ describe("accountModel", () => {
 	describe("allWithBalances", () => {
 		const expected = "accounts with balances";
 
-		beforeEach(() => accountModel.all = sinon.stub().returns(expected));
+		beforeEach(() => (accountModel.all = sinon.stub().returns(expected)));
 
 		it("should call accountModel.all(true)", () => {
 			accountModel.allWithBalances();
@@ -139,7 +139,7 @@ describe("accountModel", () => {
 		const expectedUrl = /accounts\/123/,
 					expectedResponse = "account details";
 
-		beforeEach(() => accountModel.addRecent = sinon.stub());
+		beforeEach(() => (accountModel.addRecent = sinon.stub()));
 
 		it("should dispatch a GET request to /accounts/{id}", () => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);

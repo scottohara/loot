@@ -32,7 +32,7 @@ describe("AccountEditController", () => {
 	});
 
 	describe("when an account is not provided", () => {
-		beforeEach(() => accountEditController = controllerTest("AccountEditController", {account: null}));
+		beforeEach(() => (accountEditController = controllerTest("AccountEditController", {account: null})));
 
 		it("should make an empty account object available to the view", () => accountEditController.account.should.deep.equal({opening_balance: 0}));
 

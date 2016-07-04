@@ -5,7 +5,7 @@ describe("ogLruCacheFactory", () => {
 	beforeEach(module("lootMocks", "ogComponents"));
 
 	// Inject the object under test
-	beforeEach(inject(_ogLruCacheFactory_ => ogLruCacheFactory = _ogLruCacheFactory_));
+	beforeEach(inject(_ogLruCacheFactory_ => (ogLruCacheFactory = _ogLruCacheFactory_)));
 
 	it("should return a factory for creating new LruCache object", () => ogLruCacheFactory.should.be.a.function);
 
@@ -15,7 +15,7 @@ describe("ogLruCacheFactory", () => {
 		it("should return an LruCache", () => ogLruCacheFactory(10, {}).should.be.an.Object);
 
 		describe("LruCache (empty)", () => {
-			beforeEach(() => ogLruCache = ogLruCacheFactory(10, {}));
+			beforeEach(() => (ogLruCache = ogLruCacheFactory(10, {})));
 
 			it("should have the specified capacity", () => ogLruCache.capacity.should.equal(10));
 
@@ -195,7 +195,7 @@ describe("ogLruCacheFactory", () => {
 						ogLruCache.items[4].newer.should.equal(6);
 					});
 
-					afterEach(() => ogLruCache.items.hasOwnProperty(id).should.be.false);
+					afterEach(() => ogLruCache.should.not.have.a.property("id"));
 				});
 			});
 

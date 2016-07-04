@@ -14,7 +14,7 @@ describe("securityIndexView", () => {
 			let x, y;
 
 			if (a.unused === b.unused) {
-				if (a.holding > 0 === b.holding > 0) {
+				if ((a.holding > 0) === (b.holding > 0)) {
 					x = a.name;
 					y = b.name;
 				} else {

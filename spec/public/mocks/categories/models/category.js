@@ -31,7 +31,7 @@
 					if (id < 10) {
 						category = categoriesMockProvider.$get()[id - 1];
 					} else {
-						const parentId = id / 10 - 1,
+						const parentId = (id / 10) - 1,
 									childId = id % 10;
 
 						category = categoriesMockProvider.$get()[parentId].children[childId];

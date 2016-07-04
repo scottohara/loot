@@ -113,7 +113,7 @@
 				this.payeeModel.findLastTransaction(this.transaction.payee.id, this.transaction.primary_account.account_type)
 					.then(this.getSubtransactions.bind(this))
 					.then(this.useLastTransaction.bind(this))
-					.then(() => this.loadingLastTransaction = false);
+					.then(() => (this.loadingLastTransaction = false));
 			}
 		}
 
@@ -128,7 +128,7 @@
 				this.securityModel.findLastTransaction(this.transaction.security.id, this.transaction.primary_account.account_type)
 					.then(this.getSubtransactions.bind(this))
 					.then(this.useLastTransaction.bind(this))
-					.then(() => this.loadingLastTransaction = false);
+					.then(() => (this.loadingLastTransaction = false));
 			}
 		}
 
@@ -425,8 +425,8 @@
 			// Compare each facet of the saved transaction with the original values
 			// For any that have changed, invalidate the original from the $http cache
 			angular.forEach(Object.keys(models), key => {
-				const	originalValue = this.originalTransaction[key] && this.originalTransaction[key].id || null,
-							savedValue = savedTransaction[key] && savedTransaction[key].id || null;
+				const	originalValue = (this.originalTransaction[key] && this.originalTransaction[key].id) || null,
+							savedValue = (savedTransaction[key] && savedTransaction[key].id) || null;
 
 				if (originalValue && originalValue !== savedValue) {
 					models[key].flush(originalValue);
@@ -555,7 +555,7 @@
 				.then(this.invalidateCaches.bind(this))
 				.then(this.updateLruCaches.bind(this))
 				.then(transaction => this.$uibModalInstance.close(transaction))
-				.catch(error => this.errorMessage = error.data);
+				.catch(error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without saving

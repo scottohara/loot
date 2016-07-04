@@ -17,7 +17,7 @@
 		// Delete and close the modal
 		deleteAccount() {
 			this.errorMessage = null;
-			this.accountModel.destroy(this.account).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
+			this.accountModel.destroy(this.account).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without deleting

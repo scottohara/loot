@@ -19,9 +19,9 @@
 			this.scrollTo = ogViewScrollService.scrollTo.bind(ogViewScrollService);
 
 			// Handlers are wrapped in functions to aid with unit testing
-			$scope.$on("$stateChangeStart", () => this.loadingState = true);
-			$scope.$on("$stateChangeSuccess", () => this.loadingState = false);
-			$scope.$on("$stateChangeError", () => this.loadingState = false);
+			$scope.$on("$stateChangeStart", () => (this.loadingState = true));
+			$scope.$on("$stateChangeSuccess", () => (this.loadingState = false));
+			$scope.$on("$stateChangeError", () => (this.loadingState = false));
 			$("#transactionSearch").on("search", () => this.checkIfSearchCleared());
 		}
 

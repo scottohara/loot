@@ -39,7 +39,7 @@
 			let directive;
 
 			// Configure the directive with any passed options
-			directive = `${this.directive}${options.hasOwnProperty(this.directive) ? `="${options[this.directive]}"` : ""}`;
+			directive = `${this.directive}${Reflect.getOwnPropertyDescriptor(options, this.directive) ? `="${options[this.directive]}"` : ""}`;
 			directive = Object.keys(options).reduce((memo, option) => {
 				if (option !== this.directive) {
 					return `${memo} ${option}="${options[option]}"`;

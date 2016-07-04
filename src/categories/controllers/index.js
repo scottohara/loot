@@ -130,7 +130,7 @@
 
 				// Refocus the category
 				this.focusCategory(category.id);
-			}).finally(() => this.ogTableNavigableService.enabled = true);
+			}).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		deleteCategory(index) {
@@ -187,12 +187,12 @@
 
 					// Go back to the parent state
 					this.$state.go("root.categories");
-				}).finally(() => this.ogTableNavigableService.enabled = true);
+				}).finally(() => (this.ogTableNavigableService.enabled = true));
 			});
 		}
 
 		toggleFavourite(index) {
-			this.categoryModel.toggleFavourite(this.categories[index]).then(favourite => this.categories[index].favourite = favourite);
+			this.categoryModel.toggleFavourite(this.categories[index]).then(favourite => (this.categories[index].favourite = favourite));
 		}
 
 		// Finds a specific category and focusses that row in the table

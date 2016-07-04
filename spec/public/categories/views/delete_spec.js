@@ -11,14 +11,14 @@ describe("categoryDeleteView", () => {
 
 	// Gets the original and expected rows
 	function getRows() {
-		original().then(row => originalRow = row);
-		expected().then(row => expectedRow = row);
+		original().then(row => (originalRow = row));
+		expected().then(row => (expectedRow = row));
 	}
 
 	// Gets the values from the original and expected rows
 	function getValues() {
-		categoryIndexView.getRowValues(originalRow).then(values => originalValues = values);
-		categoryIndexView.getRowValues(expectedRow).then(values => expectedValues = values);
+		categoryIndexView.getRowValues(originalRow).then(values => (originalValues = values));
+		categoryIndexView.getRowValues(expectedRow).then(values => (expectedValues = values));
 	}
 
 	// Waits for the delete view to appear
@@ -81,7 +81,7 @@ describe("categoryDeleteView", () => {
 		browser.get("/index.html#/categories");
 		browser.wait(protractor.ExpectedConditions.presenceOf(categoryIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
-		categoryIndexView.table.rows.count().then(count => originalRowCount = count);
+		categoryIndexView.table.rows.count().then(count => (originalRowCount = count));
 	});
 
 	describe("deleting a category", () => {

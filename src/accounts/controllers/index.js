@@ -131,7 +131,7 @@
 						N_KEY = 78;
 
 			// Check if the Insert key or CTRL+N keys were pressed
-			if (INSERT_KEY === event.keyCode || event.ctrlKey && N_KEY === event.keyCode) {
+			if (INSERT_KEY === event.keyCode || (event.ctrlKey && N_KEY === event.keyCode)) {
 				this.editAccount();
 				event.preventDefault();
 			}
@@ -144,7 +144,7 @@
 		toggleFavourite(accountType, index) {
 			const account = this.accounts[accountType].accounts[index];
 
-			this.accountModel.toggleFavourite(account).then(favourite => account.favourite = favourite);
+			this.accountModel.toggleFavourite(account).then(favourite => (account.favourite = favourite));
 		}
 	}
 

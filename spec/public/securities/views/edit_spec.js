@@ -44,11 +44,11 @@ describe("securityEditView", () => {
 		browser.get("/index.html#/securities");
 		browser.wait(protractor.ExpectedConditions.presenceOf(securityIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
-		securityIndexView.table.rows.count().then(count => originalRowCount = count);
+		securityIndexView.table.rows.count().then(count => (originalRowCount = count));
 
-		securityIndexView.securityName(securityIndexView.table.lastRow()).then(securityName => lastSecurityName = securityName);
+		securityIndexView.securityName(securityIndexView.table.lastRow()).then(securityName => (lastSecurityName = securityName));
 
-		securityIndexView.securityCode(securityIndexView.table.lastRow()).then(securityCode => lastSecurityCode = securityCode);
+		securityIndexView.securityCode(securityIndexView.table.lastRow()).then(securityCode => (lastSecurityCode = securityCode));
 	});
 
 	describe("adding a security", () => {

@@ -117,7 +117,7 @@ describe("categoryModel", () => {
 	describe("allWithChildren", () => {
 		const expected = "categories with children";
 
-		beforeEach(() => categoryModel.all = sinon.stub().returns(expected));
+		beforeEach(() => (categoryModel.all = sinon.stub().returns(expected)));
 
 		it("should fetch the list of categories with children", () => {
 			categoryModel.allWithChildren("parent");
@@ -131,7 +131,7 @@ describe("categoryModel", () => {
 		const	expectedUrl = /categories\/123/,
 					expectedResponse = "category details";
 
-		beforeEach(() => categoryModel.addRecent = sinon.stub());
+		beforeEach(() => (categoryModel.addRecent = sinon.stub()));
 
 		it("should dispatch a GET request to /categories/{id}", () => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);

@@ -14,7 +14,7 @@
 		// Save and close the modal
 		save() {
 			this.errorMessage = null;
-			this.securityModel.save(this.security).then(security => this.$uibModalInstance.close(security.data), error => this.errorMessage = error.data);
+			this.securityModel.save(this.security).then(security => this.$uibModalInstance.close(security.data), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without saving

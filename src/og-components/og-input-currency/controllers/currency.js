@@ -11,7 +11,7 @@
 		setDecimalPlaces(decimalPlaces) {
 			const defaultDecimalPlaces = 2;
 
-			this.decimalPlaces = Boolean(decimalPlaces) && Number(decimalPlaces) || defaultDecimalPlaces;
+			this.decimalPlaces = (Boolean(decimalPlaces) && Number(decimalPlaces)) || defaultDecimalPlaces;
 		}
 
 		// Converts formatted value to raw value
@@ -21,7 +21,7 @@
 
 		// Converts raw value to formatted value
 		rawToFormatted(value) {
-			const formatted = this.numberFilter(Boolean(value) && Number(value) || 0, this.decimalPlaces);
+			const formatted = this.numberFilter((Boolean(value) && Number(value)) || 0, this.decimalPlaces);
 
 			if (0 === formatted.indexOf("-")) {
 				return `-$${formatted.substring(1)}`;

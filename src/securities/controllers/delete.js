@@ -13,7 +13,7 @@
 		// Delete and close the modal
 		deleteSecurity() {
 			this.errorMessage = null;
-			this.securityModel.destroy(this.security).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
+			this.securityModel.destroy(this.security).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without deleting

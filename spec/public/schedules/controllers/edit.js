@@ -103,7 +103,7 @@ describe("ScheduleEditController", () => {
 	describe("payees", () => {
 		let payees;
 
-		beforeEach(() => payees = scheduleEditController.payees("a", 3));
+		beforeEach(() => (payees = scheduleEditController.payees("a", 3)));
 
 		it("should fetch the list of payees", () => payeeModel.all.should.have.been.called);
 
@@ -117,7 +117,7 @@ describe("ScheduleEditController", () => {
 	describe("securities", () => {
 		let securities;
 
-		beforeEach(() => securities = scheduleEditController.securities("a", 3));
+		beforeEach(() => (securities = scheduleEditController.securities("a", 3)));
 
 		it("should fetch the list of securities", () => securityModel.all.should.have.been.called);
 
@@ -346,7 +346,7 @@ describe("ScheduleEditController", () => {
 	describe("getSubtransactions", () => {
 		let transaction;
 
-		beforeEach(() => transaction = {id: 1});
+		beforeEach(() => (transaction = {id: 1}));
 
 		it("should return the transaction if it is not a split, loan repayment or payslip", () => scheduleEditController.getSubtransactions(transaction).should.deep.equal(transaction));
 
@@ -470,7 +470,7 @@ describe("ScheduleEditController", () => {
 
 	describe("categorySelected", () => {
 		describe("(main transaction)", () => {
-			beforeEach(() => scheduleEditController.transaction.category = {direction: "inflow"});
+			beforeEach(() => (scheduleEditController.transaction.category = {direction: "inflow"}));
 
 			const scenarios = [
 				{id: "TransferTo", type: "Transfer", direction: "outflow"},
@@ -528,9 +528,9 @@ describe("ScheduleEditController", () => {
 		});
 
 		describe("(subtransaction)", () => {
-			beforeEach(() => scheduleEditController.transaction.subtransactions = [
+			beforeEach(() => (scheduleEditController.transaction.subtransactions = [
 				{category: {direction: "inflow"}}
-			]);
+			]));
 
 			const scenarios = [
 				{id: "TransferTo", type: "Subtransfer", direction: "outflow"},
@@ -574,7 +574,7 @@ describe("ScheduleEditController", () => {
 	});
 
 	describe("investmentCategorySelected", () => {
-		beforeEach(() => scheduleEditController.transaction.category = {});
+		beforeEach(() => (scheduleEditController.transaction.category = {}));
 
 		it("should do nothing if the selected category is not an existing category", () => {
 			const transactionType = "transaction type",
@@ -702,7 +702,7 @@ describe("ScheduleEditController", () => {
 	describe("primaryAccounts", () => {
 		let accounts;
 
-		beforeEach(() => accounts = scheduleEditController.primaryAccounts("a", 3));
+		beforeEach(() => (accounts = scheduleEditController.primaryAccounts("a", 3)));
 
 		it("should fetch the list of accounts", () => accountModel.all.should.have.been.called);
 

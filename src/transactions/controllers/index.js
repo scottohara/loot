@@ -170,7 +170,7 @@
 						this.focusTransaction(transaction.id);
 					}
 				}
-			}).finally(() => this.ogTableNavigableService.enabled = true);
+			}).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		contextChanged(transaction) {
@@ -220,7 +220,7 @@
 				resolve: {
 					transaction: () => this.transactions[index]
 				}
-			}).result.then(() => this.removeTransaction(index)).finally(() => this.ogTableNavigableService.enabled = true);
+			}).result.then(() => this.removeTransaction(index)).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		// Removes a transaction from the list
@@ -240,15 +240,15 @@
 		// Updates the context's closing balance after adding, editing or deleting a transaction
 		updateClosingBalance(originalTransaction, newTransaction) {
 			// Only proceed if the context has a closing balance (ie. not in search mode)
-			if (this.context.hasOwnProperty("closing_balance")) {
+			if ("object" === typeof this.context && Reflect.getOwnPropertyDescriptor(this.context, "closing_balance")) {
 				// If there was an original transaction, exclude it's amount from the closing balance
 				if (originalTransaction) {
-					this.context.closing_balance = Number(this.context.closing_balance) - Number(originalTransaction.amount) * ("inflow" === originalTransaction.direction ? 1 : -1);
+					this.context.closing_balance = Number(this.context.closing_balance) - (Number(originalTransaction.amount) * ("inflow" === originalTransaction.direction ? 1 : -1));
 				}
 
 				// If there is a new transaction, include it's amount in the closing balance
 				if (newTransaction) {
-					this.context.closing_balance = Number(this.context.closing_balance) + Number(newTransaction.amount) * ("inflow" === newTransaction.direction ? 1 : -1);
+					this.context.closing_balance = Number(this.context.closing_balance) + (Number(newTransaction.amount) * ("inflow" === newTransaction.direction ? 1 : -1));
 				}
 			}
 		}
@@ -308,7 +308,7 @@
 				} else {
 					this.switchPrimaryAccount(null, transaction);
 				}
-			}).finally(() => this.ogTableNavigableService.enabled = true);
+			}).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		// Fetch a batch of transactions
@@ -380,7 +380,7 @@
 			}
 
 			this.transactions.reduce((openingBalance, transaction) => {
-				transaction.balance = openingBalance + transaction.amount * ("inflow" === transaction.direction ? 1 : -1);
+				transaction.balance = openingBalance + (transaction.amount * ("inflow" === transaction.direction ? 1 : -1));
 
 				return transaction.balance;
 			}, this.openingBalance);
@@ -469,7 +469,7 @@
 
 					// Switch to reconcile mode
 					this.reconciling = true;
-				}).finally(() => this.ogTableNavigableService.enabled = true);
+				}).finally(() => (this.ogTableNavigableService.enabled = true));
 			}
 		}
 
@@ -540,7 +540,7 @@
 				resolve: {
 					transaction: () => this.transactions[index]
 				}
-			}).result.then(transaction => this.transactions[index] = transaction).finally(() => this.ogTableNavigableService.enabled = true);
+			}).result.then(transaction => (this.transactions[index] = transaction)).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		// Helper function for switching states

@@ -13,11 +13,11 @@ describe("payeeDeleteView", () => {
 		browser.get("/index.html#/payees");
 		browser.wait(protractor.ExpectedConditions.presenceOf(payeeIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
-		payeeIndexView.table.rows.count().then(count => originalRowCount = count);
+		payeeIndexView.table.rows.count().then(count => (originalRowCount = count));
 
-		payeeIndexView.payeeName(payeeIndexView.table.lastRow()).then(payeeName => lastPayeeName = payeeName);
+		payeeIndexView.payeeName(payeeIndexView.table.lastRow()).then(payeeName => (lastPayeeName = payeeName));
 
-		payeeIndexView.table.secondLastRow().then(payeeIndexView.payeeName).then(payeeName => secondLastPayeeName = payeeName);
+		payeeIndexView.table.secondLastRow().then(payeeIndexView.payeeName).then(payeeName => (secondLastPayeeName = payeeName));
 	});
 
 	describe("deleting a payee", () => {

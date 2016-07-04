@@ -1,0 +1,14 @@
+{
+	"globals": {
+		"inject": false,
+		"sinon": false
+	},
+	"rules": {
+		// Best practices
+		"no-magic-numbers": "off",												// Disable due to lots of numbers used in assertions
+		"no-unused-expressions": "off",										// Disable to allow Chai should syntax
+
+		// Stylistic issues
+		"object-property-newline": "off"									// Disable for readability of test fixtures (eg. categories)
+	}
+}

@@ -31,7 +31,7 @@
 		beforeEach(module("lootMocks"));
 
 		// Inject the object under test
-		beforeEach(inject(_mockDependencies_ => mockDependenciesProvider = _mockDependencies_));
+		beforeEach(inject(_mockDependencies_ => (mockDependenciesProvider = _mockDependencies_)));
 
 		describe("$get", () => {
 			it("should return the mockDependencies provider", () => mockDependenciesProvider.should.have.a.property("load"));

@@ -29,7 +29,7 @@
 			}
 
 			this.errorMessage = null;
-			this.categoryModel.save(this.category).then(category => this.$uibModalInstance.close(category.data), error => this.errorMessage = error.data);
+			this.categoryModel.save(this.category).then(category => this.$uibModalInstance.close(category.data), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without saving

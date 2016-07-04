@@ -14,7 +14,7 @@
 		// Save and close the modal
 		save() {
 			this.errorMessage = null;
-			this.payeeModel.save(this.payee).then(payee => this.$uibModalInstance.close(payee.data), error => this.errorMessage = error.data);
+			this.payeeModel.save(this.payee).then(payee => this.$uibModalInstance.close(payee.data), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without saving

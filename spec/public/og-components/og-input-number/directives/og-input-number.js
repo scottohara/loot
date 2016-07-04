@@ -14,13 +14,13 @@ describe("ogInputNumber", () => {
 	}));
 
 	describe("on model change", () => {
-		beforeEach(() => expected = "0");
+		beforeEach(() => (expected = "0"));
 
 		it("should display 0 if the model is undefined", () => Reflect.deleteProperty(ogInputNumber.scope, "model"));
 
-		it("should display 0 if the model is null", () => ogInputNumber.scope.model = null);
+		it("should display 0 if the model is null", () => (ogInputNumber.scope.model = null));
 
-		it("should display 0 if the model is NaN", () => ogInputNumber.scope.model = "abc");
+		it("should display 0 if the model is NaN", () => (ogInputNumber.scope.model = "abc"));
 
 		it("should display the value formatted as a number if the model is a valid number", () => {
 			expected = "-123,456.7";
@@ -34,7 +34,7 @@ describe("ogInputNumber", () => {
 	});
 
 	describe("on input change", () => {
-		beforeEach(() => expected = 0);
+		beforeEach(() => (expected = 0));
 
 		it("should store 0 if the input is blank", () => ogInputNumber.element.val(""));
 

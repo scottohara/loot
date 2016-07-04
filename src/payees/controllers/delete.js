@@ -13,7 +13,7 @@
 		// Delete and close the modal
 		deletePayee() {
 			this.errorMessage = null;
-			this.payeeModel.destroy(this.payee).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
+			this.payeeModel.destroy(this.payee).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without deleting

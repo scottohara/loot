@@ -53,7 +53,7 @@ describe("TransactionIndexController", () => {
 		transactionIndexController.transactions.should.be.empty;
 	});
 
-	it("should process the passed transaction batch", () => transactionIndexController.openingBalance = transactionBatch.openingBalance);
+	it("should process the passed transaction batch", () => (transactionIndexController.openingBalance = transactionBatch.openingBalance));
 
 	it("should ensure the transaction is focussed when the transaction id state param is present", () => {
 		$state.params.transactionId = "1";
@@ -302,7 +302,7 @@ describe("TransactionIndexController", () => {
 	describe("contextChanged", () => {
 		let transaction;
 
-		beforeEach(() => transaction = angular.copy(transactionIndexController.transactions[1]));
+		beforeEach(() => (transaction = angular.copy(transactionIndexController.transactions[1])));
 
 		describe("(search mode)", () => {
 			beforeEach(() => {
@@ -795,7 +795,7 @@ describe("TransactionIndexController", () => {
 	});
 
 	describe("focusTransaction", () => {
-		beforeEach(() => transactionIndexController.tableActions.focusRow = sinon.stub());
+		beforeEach(() => (transactionIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific transaction row could not be found", () => {
 			(!transactionIndexController.focusTransaction(999)).should.be.true;
@@ -830,7 +830,7 @@ describe("TransactionIndexController", () => {
 	});
 
 	describe("(account context)", () => {
-		beforeEach(() => transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel}));
+		beforeEach(() => (transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel})));
 
 		it("should set a flag to enable reconciling", () => transactionIndexController.reconcilable.should.be.true);
 

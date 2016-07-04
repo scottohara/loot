@@ -51,7 +51,7 @@
 			this.account.account_type = this.account.account_type.toLowerCase();
 			this.account.status = this.account.status.toLowerCase();
 
-			this.accountModel.save(this.account).then(account => this.$uibModalInstance.close(account.data), error => this.errorMessage = error.data);
+			this.accountModel.save(this.account).then(account => this.$uibModalInstance.close(account.data), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without saving

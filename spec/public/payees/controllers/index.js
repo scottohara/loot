@@ -115,7 +115,7 @@ describe("PayeeIndexController", () => {
 	describe("deletePayee", () => {
 		let payee;
 
-		beforeEach(() => payee = angular.copy(payeeIndexController.payees[1]));
+		beforeEach(() => (payee = angular.copy(payeeIndexController.payees[1])));
 
 		it("should fetch the payee", () => {
 			payeeIndexController.deletePayee(1);
@@ -231,7 +231,7 @@ describe("PayeeIndexController", () => {
 	});
 
 	describe("focusPayee", () => {
-		beforeEach(() => payeeIndexController.tableActions.focusRow = sinon.stub());
+		beforeEach(() => (payeeIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific payee row could not be found", () => {
 			(!payeeIndexController.focusPayee(999)).should.be.true;

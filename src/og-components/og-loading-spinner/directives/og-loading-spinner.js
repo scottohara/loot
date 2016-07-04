@@ -10,7 +10,7 @@
 					message: "=ogLoadingSpinner"
 				},
 				templateUrl: "og-components/og-loading-spinner/views/loading.html",
-				link: scope => scope.loadingMessage = scope.message || "Loading"
+				link: scope => (scope.loadingMessage = scope.message || "Loading")
 			};
 		}
 

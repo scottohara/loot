@@ -34,7 +34,7 @@ describe("TransactionEditController", () => {
 	});
 
 	describe("when a transaction is not provided", () => {
-		beforeEach(() => transactionEditController = controllerTest("TransactionEditController", {transaction: {}}));
+		beforeEach(() => (transactionEditController = controllerTest("TransactionEditController", {transaction: {}})));
 
 		it("should make the passed transaction available to the view", () => {
 			transactionEditController.transaction.should.be.an.Object;
@@ -49,7 +49,7 @@ describe("TransactionEditController", () => {
 	describe("payees", () => {
 		let payees;
 
-		beforeEach(() => payees = transactionEditController.payees("a", 3));
+		beforeEach(() => (payees = transactionEditController.payees("a", 3)));
 
 		it("should fetch the list of payees", () => payeeModel.all.should.have.been.called);
 
@@ -63,7 +63,7 @@ describe("TransactionEditController", () => {
 	describe("securities", () => {
 		let securities;
 
-		beforeEach(() => securities = transactionEditController.securities("a", 3));
+		beforeEach(() => (securities = transactionEditController.securities("a", 3)));
 
 		it("should fetch the list of securities", () => securityModel.all.should.have.been.called);
 
@@ -278,7 +278,7 @@ describe("TransactionEditController", () => {
 	describe("getSubtransactions", () => {
 		let splitTransaction;
 
-		beforeEach(() => splitTransaction = {id: 1});
+		beforeEach(() => (splitTransaction = {id: 1}));
 
 		it("should return the transaction if it is not a split, loan repayment or payslip", () => transactionEditController.getSubtransactions(splitTransaction).should.deep.equal(splitTransaction));
 
@@ -385,7 +385,7 @@ describe("TransactionEditController", () => {
 
 	describe("categorySelected", () => {
 		describe("(main transaction)", () => {
-			beforeEach(() => transactionEditController.transaction.category = {direction: "inflow"});
+			beforeEach(() => (transactionEditController.transaction.category = {direction: "inflow"}));
 
 			const scenarios = [
 				{id: "TransferTo", type: "Transfer", direction: "outflow"},
@@ -443,9 +443,9 @@ describe("TransactionEditController", () => {
 		});
 
 		describe("(subtransaction)", () => {
-			beforeEach(() => transactionEditController.transaction.subtransactions = [
+			beforeEach(() => (transactionEditController.transaction.subtransactions = [
 				{category: {direction: "inflow"}}
-			]);
+			]));
 
 			const scenarios = [
 				{id: "TransferTo", type: "Subtransfer", direction: "outflow"},
@@ -489,7 +489,7 @@ describe("TransactionEditController", () => {
 	});
 
 	describe("investmentCategorySelected", () => {
-		beforeEach(() => transactionEditController.transaction.category = {});
+		beforeEach(() => (transactionEditController.transaction.category = {}));
 
 		it("should do nothing if the selected category is not an existing category", () => {
 			const transactionType = "transaction type",
@@ -578,7 +578,7 @@ describe("TransactionEditController", () => {
 	describe("accounts", () => {
 		let accounts;
 
-		beforeEach(() => transactionEditController.transaction.primary_account = null);
+		beforeEach(() => (transactionEditController.transaction.primary_account = null));
 
 		it("should fetch the list of accounts", () => {
 			transactionEditController.accounts();

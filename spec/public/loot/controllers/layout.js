@@ -37,7 +37,7 @@ describe("LayoutController", () => {
 		layoutController = controllerTest("LayoutController");
 	}));
 
-	afterEach(() => window.$ = realJQueryInstance);
+	afterEach(() => (window.$ = realJQueryInstance));
 
 	it("should make the authentication status available to the view", () => layoutController.authenticated.should.equal(authenticated));
 
@@ -154,7 +154,7 @@ describe("LayoutController", () => {
 	});
 
 	describe("state change handlers", () => {
-		beforeEach(() => layoutController.loadingState = null);
+		beforeEach(() => (layoutController.loadingState = null));
 
 		const scenarios = [
 			{event: "$stateChangeStart", loading: true},

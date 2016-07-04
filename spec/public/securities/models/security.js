@@ -113,7 +113,7 @@ describe("securityModel", () => {
 	describe("allWithBalances", () => {
 		const expected = "securities with balances";
 
-		beforeEach(() => securityModel.all = sinon.stub().returns(expected));
+		beforeEach(() => (securityModel.all = sinon.stub().returns(expected)));
 
 		it("should call securityModel.all(true)", () => {
 			securityModel.allWithBalances();
@@ -144,7 +144,7 @@ describe("securityModel", () => {
 		const expectedUrl = /securities\/123/,
 					expectedResponse = "security details";
 
-		beforeEach(() => securityModel.addRecent = sinon.stub());
+		beforeEach(() => (securityModel.addRecent = sinon.stub()));
 
 		it("should dispatch a GET request to /securities/{id}", () => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);

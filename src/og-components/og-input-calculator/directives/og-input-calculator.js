@@ -49,7 +49,7 @@
 						scope.stack.push({operator});
 
 						// Update the display expression
-						$timeout(() => scope.expression = `\n${operator} ${scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(String(operand))) + (" " === scope.expression ? "" : scope.expression)}`);
+						$timeout(() => (scope.expression = `\n${operator} ${scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(String(operand))) + (" " === scope.expression ? "" : scope.expression)}`));
 					};
 
 					// Perform the calculation
@@ -173,7 +173,7 @@
 					scope.keyHandler = event => {
 						// Check if the key pressed was an action key, and there is a pending calculation
 						// (otherwise, let the event propagate)
-						if (!event.shiftKey && ACTION_KEYS.hasOwnProperty(event.keyCode) && scope.stack.length > 0) {
+						if (!event.shiftKey && Reflect.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length > 0) {
 							// Invoke the action
 							ACTION_KEYS[event.keyCode]();
 

@@ -13,7 +13,7 @@
 		// Delete and close the modal
 		deleteCategory() {
 			this.errorMessage = null;
-			this.categoryModel.destroy(this.category).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
+			this.categoryModel.destroy(this.category).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without deleting

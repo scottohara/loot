@@ -1,6 +1,6 @@
 {
 	"parserOptions": {
-		"ecmaVersion": 6,
+		"ecmaVersion": 7,
 		"sourceType": "script",
 		"ecmaFeatures": {
 			"globalReturn": false,
@@ -40,7 +40,7 @@
 		"angular": false,
 		"moment": false
 	},
-	"parser": "babel-eslint",
+	"parser": "espree",
 	"rules": {
 		// Possible errors
 		"comma-dangle": ["error", "never"],
@@ -48,18 +48,24 @@
 		"no-console": ["error", {
 			"allow": ["error"]
 		}],
-		"no-constant-condition": "error",
+		"no-constant-condition": ["error", {
+			"checkLoops": false
+		}],
 		"no-control-regex": "error",
 		"no-debugger": "error",
 		"no-dupe-args": "error",
 		"no-dupe-keys": "error",
 		"no-duplicate-case": "error",
-		"no-empty": "error",
+		"no-empty": ["error", {
+			"allowEmptyCatch": false
+		}],
 		"no-empty-character-class": "error",
 		"no-ex-assign": "error",
 		"no-extra-boolean-cast": "error",
 		"no-extra-parens": ["error", "all", {
-			"conditionalAssign": true
+			"conditionalAssign": true,
+			"returnAssign": false,												// Prevent conflict with no-return-assign
+			"nestedBinaryExpressions": false
 		}],
 		"no-extra-semi": "error",
 		"no-func-assign": "error",
@@ -68,14 +74,19 @@
 			"allowConstructorFlags": []
 		}],
 		"no-irregular-whitespace": ["error", {
-			"skipComments": false
+			"skipStrings": false,
+			"skipComments": false,
+			"skipRegExps": false,
+			"skipTemplates": false
 		}],
 		"no-negated-in-lhs": "error",
 		"no-obj-calls": "error",
+		"no-prototype-builtins": "error",
 		"no-regex-spaces": "error",
 		"no-sparse-arrays": "error",
 		"no-unexpected-multiline": "error",
 		"no-unreachable": "error",
+		"no-unsafe-finally": "error",
 		"use-isnan": "error",
 		"valid-jsdoc": "off",														// TODO: Many options to configure JSDoc style
 		"valid-typeof": "error",
@@ -87,16 +98,20 @@
 		"array-callback-return": "error",
 		"block-scoped-var": "error",
 		"complexity": ["off", {													// Not using
-			"maximum": 20
+			"max": 20
 		}],
-		"consistent-return": "error",
+		"consistent-return": ["error", {
+			"treatUndefinedAsUnspecified": false
+		}],
 		"curly": ["error", "all"],
-		"default-case": "error",
+		"default-case": ["error", {
+			"commentPattern": ""
+		}],
 		"dot-location": ["error", "property"],
 		"dot-notation": ["error", {
 			"allowKeywords": true
 		}],
-		"eqeqeq": ["error", "smart"],
+		"eqeqeq": ["error", "always"],
 		"guard-for-in": "error",
 		"no-alert": "error",
 		"no-caller": "error",
@@ -114,7 +129,9 @@
 		"no-extend-native": "error",
 		"no-extra-bind": "error",
 		"no-extra-label": "error",
-		"no-fallthrough": "error",
+		"no-fallthrough": ["error", {
+			"commentPattern": ""
+		}],
 		"no-floating-decimal": "error",
 		"no-implicit-coercion": ["error", {
 			"boolean": true,
@@ -161,7 +178,7 @@
 		"no-redeclare": ["error", {
 			"builtinGlobals": true
 		}],
-		"no-return-assign": ["off", "always"],					// Temporarily disabled due to https://github.com/eslint/eslint/issues/5150
+		"no-return-assign": ["error", "except-parens"],
 		"no-script-url": "error",
 		"no-self-assign": "error",
 		"no-self-compare": "error",
@@ -262,7 +279,7 @@
 		"computed-property-spacing": ["error", "never"],
 		"consistent-this": ["error", "self"],
 		"eol-last": ["off", "unix"],										// Not using
-		"func-names": "error",
+		"func-names": ["error", "always"],
 		"func-style": ["error", "declaration", {
 			"allowArrowFunctions": false
 		}],
@@ -282,7 +299,8 @@
 				"var": 2,
 				"let": 2,
 				"const": 3
-			}
+			},
+			"outerIIFEBody": 1
 		}],
 		"jsx-quotes": ["error", "prefer-double"],
 		"key-spacing": ["error", {
@@ -316,7 +334,7 @@
 			"allowArrayEnd": true
 		}],
 		"max-depth": ["off", {													// Not using
-			"maximum": 4
+			"max": 4
 		}],
 		"max-len": ["off", {														// Not using
 			"code": 80,
@@ -327,15 +345,20 @@
 			"ignoreUrls": false,
 			"ignorePattern": ""
 		}],
+		"max-lines": ["off", {													// Not using
+			"max": 300,
+			"skipBlankLines": true,
+			"skipComments": true
+		}],
 		"max-nested-callbacks": ["error", {
-			"maximum": 10
+			"max": 10
 		}],
 		"max-params": ["off", {													// Not using
-			"maximum": 3
+			"max": 3
 		}],
 		"max-statements": ["off",												// Not using
 			{
-				"maximum": 10
+				"max": 10
 			},
 			{
 				"ignoreTopLevelFunctions": false
@@ -364,6 +387,9 @@
 		"no-continue": "error",
 		"no-inline-comments": "error",
 		"no-lonely-if": "error",
+		"no-mixed-operators": ["error", {
+			"allowSamePrecedence": true
+		}],
 		"no-mixed-spaces-and-tabs": "error",
 		"no-multiple-empty-lines": ["error", {
 			"max": 1,
@@ -388,8 +414,19 @@
 		}],
 		"no-unneeded-ternary": "error",
 		"no-whitespace-before-property": "error",
+		"object-curly-newline": ["off", {								// Not using
+			"ObjectExpression": {
+				"multiline": true
+			},
+			"ObjectPattern": {
+				"multiline": true
+			}
+		}],
 		"object-curly-spacing": ["error", "never", {
 			"objectsInObjects": false
+		}],
+		"object-property-newline": ["error", {
+			"allowMultiplePropertiesPerLine": true
 		}],
 		"one-var": ["error", {
 			"var": "always",
@@ -411,7 +448,10 @@
 			"unnecessary": true,
 			"numbers": false
 		}],
-		"quotes": ["error", "double"],
+		"quotes": ["error", "double", {
+			"avoidEscape": false,
+			"allowTemplateLiterals": false
+		}],
 		"require-jsdoc": "off",													// Not using
 		"semi": ["error", "always", {
 			"omitLastInOneLineBlock": false
@@ -458,10 +498,13 @@
 				"markers": []
 			}
 		}],
+		"unicode-bom": ["error", "never"],
 		"wrap-regex": "error",
 
 		// ECMAScript 6
-		"arrow-body-style": ["error", "as-needed"],
+		"arrow-body-style": ["error", "as-needed", {
+			"requireReturnForObjectLiteral": false
+		}],
 		"arrow-parens": ["error", "as-needed"],
 		"arrow-spacing": ["error", {
 			"before": true,
@@ -483,23 +526,34 @@
 		}],
 		"no-new-symbol": "error",
 		"no-this-before-super": "error",
+		"no-useless-computed-key": "error",
 		"no-useless-constructor": "error",
+		"no-useless-rename": ["error", {
+			"ignoreDestructuring": false,
+			"ignoreImport": false,
+			"ignoreExport": false
+		}],
 		"no-var": "error",
 		"object-shorthand": ["error", "always", {
+			"avoidQuotes": false,
 			"ignoreConstructors": false
 		}],
-		"prefer-arrow-callback": "error",
-		"prefer-const": "error",
+		"prefer-arrow-callback": ["error", {
+			"allowNamedFunctions": false,
+			"allowUnboundThis": false
+		}],
+		"prefer-const": ["error", {
+			"destructuring": "any",
+			"ignoreReadBeforeAssign": false
+		}],
 		"prefer-reflect": ["error", {
-			"exceptions": [																// Temporarily add exceptions for protractor.conf.js until node 6
-				"defineProperty",
-				"getOwnPropertyDescriptor"
-			]
+			"exceptions": []
 		}],
 		"prefer-rest-params": "error",
 		"prefer-spread": "error",
 		"prefer-template": "error",
 		"require-yield": "error",
+		"rest-spread-spacing": ["error", "never"],
 		"template-curly-spacing": ["error", "never"],
 		"yield-star-spacing": ["error", {
 			"before": true,

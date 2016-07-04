@@ -30,7 +30,7 @@ describe("ogFavourite", () => {
 	});
 
 	describe("favourite", () => {
-		beforeEach(() => ogFavourite.scope.model.context = true);
+		beforeEach(() => (ogFavourite.scope.model.context = true));
 
 		it("should be active", () => {
 			ogFavourite.scope.$digest();

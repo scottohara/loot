@@ -15,8 +15,8 @@
 		// Save and close the modal
 		save() {
 			this.errorMessage = null;
-			this.transaction.flag = this.flag && this.flag || "(no memo)";
-			this.transactionModel.flag(this.transaction).then(() => this.$uibModalInstance.close(this.transaction), error => this.errorMessage = error.data);
+			this.transaction.flag = (this.flag && this.flag) || "(no memo)";
+			this.transactionModel.flag(this.transaction).then(() => this.$uibModalInstance.close(this.transaction), error => (this.errorMessage = error.data));
 		}
 
 		// Delete and close the modal
@@ -25,7 +25,7 @@
 			this.transactionModel.unflag(this.transaction.id).then(() => {
 				this.transaction.flag = null;
 				this.$uibModalInstance.close(this.transaction);
-			}, error => this.errorMessage = error.data);
+			}, error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without deleting

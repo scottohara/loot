@@ -117,7 +117,7 @@ describe("SecurityIndexController", () => {
 	describe("deleteSecurity", () => {
 		let security;
 
-		beforeEach(() => security = angular.copy(securityIndexController.securities[1]));
+		beforeEach(() => (security = angular.copy(securityIndexController.securities[1])));
 
 		it("should fetch the security", () => {
 			securityIndexController.deleteSecurity(1);
@@ -233,7 +233,7 @@ describe("SecurityIndexController", () => {
 	});
 
 	describe("focusSecurity", () => {
-		beforeEach(() => securityIndexController.tableActions.focusRow = sinon.stub());
+		beforeEach(() => (securityIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific security row could not be found", () => {
 			(!securityIndexController.focusSecurity(999)).should.be.true;

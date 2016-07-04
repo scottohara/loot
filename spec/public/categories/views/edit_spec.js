@@ -72,7 +72,7 @@ describe("categoryEditView", () => {
 		browser.get("/index.html#/categories");
 		browser.wait(protractor.ExpectedConditions.presenceOf(categoryIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
-		categoryIndexView.table.rows.count().then(count => originalRowCount = count);
+		categoryIndexView.table.rows.count().then(count => (originalRowCount = count));
 	});
 
 	describe("adding a category", () => {
@@ -170,7 +170,7 @@ describe("categoryEditView", () => {
 	describe("editing a category", () => {
 		describe("parent", () => {
 			describe("expense", () => {
-				beforeEach(() => categoryIndexView.lastCategory().then(row => targetRow = row));
+				beforeEach(() => categoryIndexView.lastCategory().then(row => (targetRow = row)));
 
 				beforeEach(editRow);
 
@@ -196,7 +196,7 @@ describe("categoryEditView", () => {
 			});
 
 			describe("income", () => {
-				beforeEach(() => categoryIndexView.firstCategory().then(row => targetRow = row));
+				beforeEach(() => categoryIndexView.firstCategory().then(row => (targetRow = row)));
 
 				beforeEach(editRow);
 
@@ -224,7 +224,7 @@ describe("categoryEditView", () => {
 
 		describe("subcategory", () => {
 			describe("income", () => {
-				beforeEach(() => categoryIndexView.firstSubcategory().then(row => targetRow = row));
+				beforeEach(() => categoryIndexView.firstSubcategory().then(row => (targetRow = row)));
 
 				beforeEach(editRow);
 
@@ -250,7 +250,7 @@ describe("categoryEditView", () => {
 			});
 
 			describe("expense", () => {
-				beforeEach(() => categoryIndexView.lastSubcategory().then(row => targetRow = row));
+				beforeEach(() => categoryIndexView.lastSubcategory().then(row => (targetRow = row)));
 
 				beforeEach(editRow);
 

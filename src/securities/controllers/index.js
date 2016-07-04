@@ -43,7 +43,7 @@
 				let x, y;
 
 				if (a.unused === b.unused) {
-					if (a.current_holding > 0 === b.current_holding > 0) {
+					if ((a.current_holding > 0) === (b.current_holding > 0)) {
 						x = a.name;
 						y = b.name;
 					} else {
@@ -99,7 +99,7 @@
 
 				// Refocus the security
 				this.focusSecurity(security.id);
-			}).finally(() => this.ogTableNavigableService.enabled = true);
+			}).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		deleteSecurity(index) {
@@ -142,12 +142,12 @@
 				this.$uibModal.open(modalOptions).result.then(() => {
 					this.securities.splice(index, 1);
 					this.$state.go("root.securities");
-				}).finally(() => this.ogTableNavigableService.enabled = true);
+				}).finally(() => (this.ogTableNavigableService.enabled = true));
 			});
 		}
 
 		toggleFavourite(index) {
-			this.securityModel.toggleFavourite(this.securities[index]).then(favourite => this.securities[index].favourite = favourite);
+			this.securityModel.toggleFavourite(this.securities[index]).then(favourite => (this.securities[index].favourite = favourite));
 		}
 
 		// Finds a specific security and focusses that row in the table

@@ -285,7 +285,7 @@ describe("transactionEditView", () => {
 				accountIndexView.goToAccount(account);
 				browser.wait(protractor.ExpectedConditions.presenceOf(transactionIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
-				transactionIndexView.table.rows.count().then(count => originalRowCount = count);
+				transactionIndexView.table.rows.count().then(count => (originalRowCount = count));
 			});
 
 			describe("adding a transaction", () => {

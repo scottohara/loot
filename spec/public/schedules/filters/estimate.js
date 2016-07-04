@@ -5,7 +5,7 @@ describe("estimate", () => {
 	beforeEach(module("lootMocks", "lootSchedules"));
 
 	// Inject the object under test
-	beforeEach(inject(_estimateFilter_ => estimateFilter = _estimateFilter_));
+	beforeEach(inject(_estimateFilter_ => (estimateFilter = _estimateFilter_)));
 
 	it("should prefix an estimate with ~", () => estimateFilter(1, true).should.equal("~1"));
 

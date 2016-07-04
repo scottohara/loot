@@ -85,7 +85,7 @@
 
 				// Refocus the payee
 				this.focusPayee(payee.id);
-			}).finally(() => this.ogTableNavigableService.enabled = true);
+			}).finally(() => (this.ogTableNavigableService.enabled = true));
 		}
 
 		deletePayee(index) {
@@ -128,12 +128,12 @@
 				this.$uibModal.open(modalOptions).result.then(() => {
 					this.payees.splice(index, 1);
 					this.$state.go("root.payees");
-				}).finally(() => this.ogTableNavigableService.enabled = true);
+				}).finally(() => (this.ogTableNavigableService.enabled = true));
 			});
 		}
 
 		toggleFavourite(index) {
-			this.payeeModel.toggleFavourite(this.payees[index]).then(favourite => this.payees[index].favourite = favourite);
+			this.payeeModel.toggleFavourite(this.payees[index]).then(favourite => (this.payees[index].favourite = favourite));
 		}
 
 		// Finds a specific payee and focusses that row in the table

@@ -82,7 +82,7 @@ describe("ogInputCalculator", () => {
 
 			it("should set operator and operand as the display expression", () => ogInputCalculator.scope.expression.should.equal("\n+ 1"));
 
-			afterEach(() => angular.element = realAngularElement);
+			afterEach(() => (angular.element = realAngularElement));
 		});
 
 		describe("(subsequent value)", () => {
@@ -308,7 +308,7 @@ describe("ogInputCalculator", () => {
 
 		it("should hide the popover", () => mockAngularElement[0].dispatchEvent.should.have.been.calledWith(sinon.match(event => "hideCalculator" === event.type)));
 
-		afterEach(() => angular.element = realAngularElement);
+		afterEach(() => (angular.element = realAngularElement));
 	});
 
 	it("should start with a cleared calculator", () => {
@@ -385,7 +385,7 @@ describe("ogInputCalculator", () => {
 			});
 		});
 
-		afterEach(() => window.$ = realJQueryInstance);
+		afterEach(() => (window.$ = realJQueryInstance));
 	});
 
 	describe("on keydown", () => {

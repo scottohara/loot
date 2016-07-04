@@ -134,7 +134,7 @@
 				this.payeeModel.findLastTransaction(this.transaction.payee.id, this.transaction.primary_account.account_type)
 					.then(this.getSubtransactions.bind(this))
 					.then(this.useLastTransaction.bind(this))
-					.then(() => this.loadingLastTransaction = false);
+					.then(() => (this.loadingLastTransaction = false));
 			}
 		}
 
@@ -149,7 +149,7 @@
 				this.securityModel.findLastTransaction(this.transaction.security.id, this.transaction.primary_account.account_type)
 					.then(this.getSubtransactions.bind(this))
 					.then(this.useLastTransaction.bind(this))
-					.then(() => this.loadingLastTransaction = false);
+					.then(() => (this.loadingLastTransaction = false));
 			}
 		}
 
@@ -468,7 +468,7 @@
 		// Enter a transaction based on the schedule, update the next due date and close the modal
 		enter() {
 			this.errorMessage = null;
-			this.transactionModel.save(this.transaction).then(() => this.skip(), error => this.errorMessage = error.data);
+			this.transactionModel.save(this.transaction).then(() => this.skip(), error => (this.errorMessage = error.data));
 		}
 
 		// Skip the next scheduled occurrence, update the next due date and close the modal
@@ -491,7 +491,7 @@
 				this.schedule.flag = null;
 			}
 
-			this.scheduleModel.save(this.schedule).then(schedule => this.$uibModalInstance.close({data: schedule, skipped: Boolean(skipped)}), error => this.errorMessage = error.data);
+			this.scheduleModel.save(this.schedule).then(schedule => this.$uibModalInstance.close({data: schedule, skipped: Boolean(skipped)}), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without saving

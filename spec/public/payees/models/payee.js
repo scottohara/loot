@@ -113,7 +113,7 @@ describe("payeeModel", () => {
 	describe("allList", () => {
 		const expected = "payees list";
 
-		beforeEach(() => payeeModel.all = sinon.stub().returns(expected));
+		beforeEach(() => (payeeModel.all = sinon.stub().returns(expected)));
 
 		it("should call payeeModel.all(true)", () => {
 			payeeModel.allList();
@@ -144,7 +144,7 @@ describe("payeeModel", () => {
 		const expectedUrl = /payees\/123/,
 					expectedResponse = "payee details";
 
-		beforeEach(() => payeeModel.addRecent = sinon.stub());
+		beforeEach(() => (payeeModel.addRecent = sinon.stub()));
 
 		it("should dispatch a GET request to /payees/{id}", () => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);

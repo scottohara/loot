@@ -34,7 +34,7 @@ describe("scheduleModel", () => {
 	describe("parse", () => {
 		let schedule;
 
-		beforeEach(() => schedule = scheduleModel.parse({next_due_date: moment().format("YYYY-MM-DD HH:mm:ss")}));
+		beforeEach(() => (schedule = scheduleModel.parse({next_due_date: moment().format("YYYY-MM-DD HH:mm:ss")})));
 
 		it("should convert the next due date from a string to a date", () => {
 			schedule.next_due_date.should.be.a.Date;
@@ -45,7 +45,7 @@ describe("scheduleModel", () => {
 	describe("stringify", () => {
 		let schedule;
 
-		beforeEach(() => schedule = scheduleModel.stringify({next_due_date: moment().startOf("day").toDate()}));
+		beforeEach(() => (schedule = scheduleModel.stringify({next_due_date: moment().startOf("day").toDate()})));
 
 		it("should convert the next due date from a date to a string", () => {
 			schedule.next_due_date.should.be.a.String;

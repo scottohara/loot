@@ -13,7 +13,7 @@
 		// Delete and close the modal
 		deleteTransaction() {
 			this.errorMessage = null;
-			this.transactionModel.destroy(this.transaction).then(() => this.$uibModalInstance.close(), error => this.errorMessage = error.data);
+			this.transactionModel.destroy(this.transaction).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
 		}
 
 		// Dismiss the modal without deleting

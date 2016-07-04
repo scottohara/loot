@@ -24,7 +24,7 @@
 					// Only update if the item is not already the current head
 					if (String(item.id) !== String(this.head)) {
 						// Check if the item already exists
-						if (this.items.hasOwnProperty(item.id)) {
+						if (Reflect.getOwnPropertyDescriptor(this.items, item.id)) {
 							// New head is the existing item
 							newHead = this.items[item.id];
 
@@ -76,7 +76,7 @@
 				// Remove an item from the cache
 				remove(id) {
 					// Check if the item is in the cache
-					if (this.items.hasOwnProperty(id)) {
+					if (Reflect.getOwnPropertyDescriptor(this.items, id)) {
 						if (String(id) === String(this.head)) {
 							// Item to remove is the current head. If there's an older item, make it the new head
 							this.head = this.items[this.head].older;

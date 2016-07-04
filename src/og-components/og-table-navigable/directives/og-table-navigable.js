@@ -208,14 +208,14 @@
 					scope.keyHandler = event => {
 						if (ogTableNavigableService.enabled) {
 							// Check if the key pressed was a movement key
-							if (MOVEMENT_KEYS.hasOwnProperty(event.keyCode)) {
+							if (Reflect.getOwnPropertyDescriptor(MOVEMENT_KEYS, event.keyCode)) {
 								// Jump the specified number of rows for the key
 								scope.jumpToRow(MOVEMENT_KEYS[event.keyCode]);
 								event.preventDefault();
 							}
 
 							// Check if the key pressed was an action key
-							if (ACTION_KEYS.hasOwnProperty(event.keyCode)) {
+							if (Reflect.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode)) {
 								// If an action is defined, invoke it for the focussed row
 								if (ACTION_KEYS[event.keyCode]) {
 									ACTION_KEYS[event.keyCode](scope.focussedRow);
@@ -224,7 +224,7 @@
 							}
 
 							// Check if the key pressed was a CTRL action key
-							if (event.ctrlKey && CTRL_ACTION_KEYS.hasOwnProperty(event.keyCode)) {
+							if (event.ctrlKey && Reflect.getOwnPropertyDescriptor(CTRL_ACTION_KEYS, event.keyCode)) {
 								// If an action is defined, invoke it for the focussed row
 								if (CTRL_ACTION_KEYS[event.keyCode]) {
 									CTRL_ACTION_KEYS[event.keyCode](scope.focussedRow);

@@ -17,7 +17,7 @@
 					ngModel.$parsers.push(scope.vm.formattedToRaw);
 
 					// Model to view
-					ngModel.$formatters.unshift(value => numberFilter(Boolean(value) && Number(value) || 0));
+					ngModel.$formatters.unshift(value => numberFilter((Boolean(value) && Number(value)) || 0));
 
 					function formattedToRaw() {
 						iElement.val(numberFilter(scope.vm.formattedToRaw(iElement.val())));

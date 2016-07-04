@@ -118,7 +118,7 @@ describe("ogTableNavigable", () => {
 			mockJQueryInstance.animate.should.not.have.been.called;
 		});
 
-		afterEach(() => window.$ = realJQueryInstance);
+		afterEach(() => (window.$ = realJQueryInstance));
 	});
 
 	describe("jumpToRow", () => {
