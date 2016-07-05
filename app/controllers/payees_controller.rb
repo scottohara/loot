@@ -26,6 +26,6 @@ class PayeesController < ApplicationController
 
 	def destroy
 		Payee.find(params[:id]).destroy
-		head status: :ok
+		head :ok
 	end
 end

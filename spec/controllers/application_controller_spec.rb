@@ -8,7 +8,7 @@ RSpec.describe ApplicationController, type: :controller do
 				when "record invalid" then raise ActiveRecord::RecordInvalid, FactoryGirl.create(:category, name: nil, direction: "invalid")
 				when "record not found" then raise ActiveRecord::RecordNotFound, params["context"]
 				when "routing error" then params[:unmatched_route] = params["context"]; routing_error
-				else render nothing: true
+				else head :ok
 			end
 		end
 	end
@@ -24,7 +24,7 @@ RSpec.describe ApplicationController, type: :controller do
 	end
 
 	before :each do |example|
-		get :index, context: example.metadata[:example_group][:description]
+		get :index, params: {context: example.metadata[:example_group][:description]}
 	end
 
 	describe "unauthenticated user" do
@@ -49,7 +49,7 @@ RSpec.describe ApplicationController, type: :controller do
 		end
 
 		after :each do
-			expect(response.content_type).to eq "text/html"
+			expect(response.content_type).to eq "text/plain"
 			expect(response.body).to eq "Invalid login and/or password"
 		end
 	end

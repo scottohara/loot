@@ -10,7 +10,7 @@ namespace :db do
 			include FactoryGirl::Syntax::Methods
 
 			# Connect to the test database
-			ActiveRecord::Base.establish_connection("test")
+			ActiveRecord::Base.establish_connection(:test)
 
 			# Truncate any existing data
 			DatabaseCleaner.clean_with :truncation
@@ -71,7 +71,7 @@ namespace :db do
 			create :security_transfer_transaction, security: security_1, source_account: investment_account_1, destination_account: investment_account_2
 			create :dividend_transaction, security: security_1, investment_account: investment_account_1, cash_account: bank_account_1
 
-			# Reset the database connection 
+			# Reset the database connection
 			ActiveRecord::Base.establish_connection(ENV['RAILS_ENV'])
 		end
 	end

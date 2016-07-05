@@ -7,12 +7,12 @@ RSpec.describe StatusesController, type: :controller do
 
 	describe "PATCH update", request: true do
 		before :each do
-			patch :update, account_id: "1", transaction_id: "1", (status || request_status) => true
+			patch :update, params: {account_id: "1", transaction_id: "1", (status || request_status) => true}
 		end
 
 		context "Cleared" do
 			let(:status) { "Cleared" }
-			
+
 			it "should update the status" do; end
 		end
 
@@ -20,7 +20,7 @@ RSpec.describe StatusesController, type: :controller do
 		context "Reconciled" do
 			let(:status) { "Reconciled" }
 
-			it "should update the existing flag" do; end
+			it "should update the status" do; end
 		end
 
 		context "invalid status" do
@@ -35,7 +35,7 @@ RSpec.describe StatusesController, type: :controller do
 		let(:status) { nil }
 
 		it "should clear the existing status" do
-			delete :destroy, account_id: "1", transaction_id: "1"
+			delete :destroy, params: {account_id: "1", transaction_id: "1"}
 		end
 	end
 end

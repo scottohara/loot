@@ -27,17 +27,17 @@ Rails.application.routes.draw do
 		resource :favourite, only: [:update, :destroy]
 	end
 
-	resources :accounts, except: [:new, :edit], concerns: [:favouritable] do
+	resources :accounts, concerns: [:favouritable] do
 		resources :transactions, only: [:index], concerns: [:reconcilable, :defaultable]
 		put 'reconcile', on: :member
 	end
 
-	resources :payees, :categories, :securities, except: [:new, :edit], concerns: [:favouritable] do
+	resources :payees, :categories, :securities, concerns: [:favouritable] do
 		resources :transactions, only: [:index], concerns: [:defaultable]
 	end
 
-	resources :transactions, except: [:new, :edit], concerns: [:flaggable, :splittable]
-	resources :schedules, except: [:new, :edit, :show]
+	resources :transactions, concerns: [:flaggable, :splittable]
+	resources :schedules, except: [:show]
 	resources :logins, only: [:create]
 
 	get '*unmatched_route', to: 'application#routing_error'

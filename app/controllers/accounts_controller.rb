@@ -28,11 +28,11 @@ class AccountsController < ApplicationController
 		account.related_account.destroy if account.account_type.eql?("investment") and !!account.related_account
 
 		account.destroy
-		head status: :ok
+		head :ok
 	end
 
 	def reconcile
 		Account.find(params[:id]).reconcile
-		head status: :ok
+		head :ok
 	end
 end

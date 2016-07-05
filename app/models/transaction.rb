@@ -1,9 +1,9 @@
-class Transaction < ActiveRecord::Base
+class Transaction < ApplicationRecord
 	validates :transaction_type, presence: true, inclusion: {in: %w(Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend)}
 	has_one :flag, class_name: 'TransactionFlag', foreign_key: 'transaction_id', dependent: :destroy, autosave: true
 
 	include Categorisable
-		
+
 	class << self
 		include Transactable
 
@@ -51,7 +51,7 @@ class Transaction < ActiveRecord::Base
 		end
 
 		def create_from_json(json)
-			# id included for the case where we destroy & recreate on transaction type change 
+			# id included for the case where we destroy & recreate on transaction type change
 			s = self.new(id: json[:id], memo: json['memo'])
 			s.build_flag(memo: json['flag']) unless json['flag'].nil?
 			s

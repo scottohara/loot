@@ -8,7 +8,7 @@ RSpec.describe SubtransactionsController, type: :controller do
 		it "should return the child transactions of a split transaction" do
 			expect(SplitTransaction).to receive(:find).with("1").and_return split_transaction
 			expect(split_transaction).to receive(:children).and_return json
-			get :index, transaction_id: "1"
+			get :index, params: {transaction_id: "1"}
 		end
 	end
 end

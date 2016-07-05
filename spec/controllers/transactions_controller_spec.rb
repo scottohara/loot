@@ -51,9 +51,10 @@ RSpec.describe TransactionsController, type: :controller do
 		end
 
 		after :each do
+			request_params.merge!({"controller" => "transactions", "action" => "index"})
 			expect(controller).to receive(:context).and_call_original
-			expect(context).to receive(:ledger).with(request_params.merge({"controller" => "transactions", "action" => "index"})).and_return [opening_balance, transactions, at_end]
-			get :index, request_params
+			expect(context).to receive(:ledger).with(ActionController::Parameters.new request_params).and_return [opening_balance, transactions, at_end]
+			get :index, params: request_params
 		end
 	end
 
@@ -64,7 +65,7 @@ RSpec.describe TransactionsController, type: :controller do
 		it "should return the details of the specified transaction" do
 			expect(Transaction).to receive(:find).with("1").and_return transaction
 			expect(transaction).to receive(:as_subclass).and_return json
-			get :show, id: "1"
+			get :show, params: {id: "1"}
 		end
 	end
 
@@ -88,15 +89,15 @@ RSpec.describe TransactionsController, type: :controller do
 		end
 
 		context "when transaction type hasn't changed" do
-			let(:request_body) { {"id" => "1", "transaction_type" => "Basic"} }
+			let(:request_body) { {id: "1", transaction_type: "Basic", controller: "transactions", action: "update"} }
 
 			it "should update the existing transaction" do
-				expect(BasicTransaction).to receive(:update_from_json).with(request_body.merge({"controller" => "transactions", "action" => "update"})).and_return json
+				expect(BasicTransaction).to receive(:update_from_json).with(ActionController::Parameters.new request_body).and_return json
 			end
 		end
 
 		context "when transaction type has changed" do
-			let(:request_body) { {"id" => "1", "transaction_type" => "Transfer"} }
+			let(:request_body) { {id: "1", transaction_type: "Transfer"} }
 
 			it "should destroy and recreate the transaction" do
 				expect(transaction).to receive(:as_subclass).and_return transaction
@@ -106,7 +107,7 @@ RSpec.describe TransactionsController, type: :controller do
 		end
 
 		after :each do
-			patch :update, request_body
+			patch :update, params: request_body
 		end
 	end
 
@@ -117,7 +118,7 @@ RSpec.describe TransactionsController, type: :controller do
 			expect(Transaction).to receive(:find).with("1").and_return transaction
 			expect(transaction).to receive(:as_subclass).and_return transaction
 			expect(transaction).to receive(:destroy)
-			delete :destroy, id: "1"
+			delete :destroy, params: {id: "1"}
 		end
 	end
 
@@ -170,27 +171,27 @@ RSpec.describe TransactionsController, type: :controller do
 			expect(Transaction).to receive(:types_for).with(account_type).and_return transaction_types
 			expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
 			expect(last_transaction).to receive(:as_subclass).and_return last_transaction
-			get :last, request_params.merge(account_type: account_type)
+			get :last, params: request_params.merge(account_type: account_type)
 		end
 	end
-	
+
 	describe "#clean" do
 		it "should remove any empty or nil values from the passed parameters" do
-			controller.params = {
+			controller.params = ActionController::Parameters.new({
 				a: "a",
 				b: "",
 				c: nil
-			}
+			})
 
 			controller.clean
 
-			expect(assigns :transaction).to eq "a" => "a"
+			expect(assigns(:transaction).to_unsafe_h).to eq "a" => "a"
 		end
 	end
 
 	describe "#create_transaction" do
 		it "should create a transaction from the JSON in the request body" do
-			controller.params = {"transaction_type" => "Basic"}
+			controller.params = ActionController::Parameters.new({"transaction_type" => "Basic"})
 			expect(BasicTransaction).to receive(:create_from_json).with controller.params
 
 			controller.clean

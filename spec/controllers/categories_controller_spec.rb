@@ -7,7 +7,7 @@ RSpec.describe CategoriesController, type: :controller do
 
 			before :each do
 				expect(Category).to receive_message_chain(:where, :includes, :order).with(:direction, :name).and_return json
-				get :index, include_children: true
+				get :index, params: {include_children: true}
 			end
 
 			it "should return the category list including children" do
@@ -34,7 +34,7 @@ RSpec.describe CategoriesController, type: :controller do
 
 		it "should return the details of the specified category" do
 			expect(Category).to receive(:find).with("1").and_return json
-			get :show, id: "1"
+			get :show, params: {id: "1"}
 		end
 	end
 
@@ -44,7 +44,7 @@ RSpec.describe CategoriesController, type: :controller do
 
 		it "should create a new category and return the details" do
 			expect(Category).to receive(:create).with(request_body).and_return json
-			post :create, request_body
+			post :create, params: request_body
 		end
 	end
 
@@ -58,7 +58,7 @@ RSpec.describe CategoriesController, type: :controller do
 			expect(Category).to receive(:find).with("1").and_return category
 			expect(category).to receive(:update_attributes!).with(request_body)
 			expect(category).to receive(:as_json).and_return raw_json
-			patch :update, request_body.merge(id: "1")
+			patch :update, params: request_body.merge(id: "1")
 		end
 	end
 
@@ -68,7 +68,7 @@ RSpec.describe CategoriesController, type: :controller do
 		it "should delete an existing category" do
 			expect(Category).to receive(:find).with("1").and_return category
 			expect(category).to receive(:destroy)
-			delete :destroy, id: "1"
+			delete :destroy, params: {id: "1"}
 		end
 	end
 end

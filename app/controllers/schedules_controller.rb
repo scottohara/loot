@@ -24,7 +24,7 @@ class SchedulesController < ApplicationController
 
 	def destroy
 		Transaction.find(params[:id]).as_subclass.destroy
-		head status: :ok
+		head :ok
 	end
 
 	def clean

@@ -1,4 +1,4 @@
-class Schedule < ActiveRecord::Base
+class Schedule < ApplicationRecord
 	validates :next_due_date, :frequency, presence: true
 	validates :estimate, :auto_enter, inclusion: {in: [true,false]}
 	has_one :transaction_header
@@ -36,7 +36,7 @@ class Schedule < ActiveRecord::Base
 										"transaction_headers.commission",
 										"transaction_accounts.direction",
 										"transactions.memo",
-										"transaction_flags.memo AS flag") 
+										"transaction_flags.memo AS flag")
 				.joins([		"JOIN transaction_headers ON transaction_headers.schedule_id = schedules.id",
 										"JOIN transactions ON transactions.id = transaction_headers.transaction_id",
 										"JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id",

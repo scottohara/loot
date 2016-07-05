@@ -8,12 +8,12 @@ class FlagsController < ApplicationController
 			transaction.flag.memo = params[:memo]
 		end
 		transaction.save
-		head status: :ok
+		head :ok
 	end
 
 	def destroy
 		Transaction.find(params[:transaction_id]).flag.destroy
-		head status: :ok
+		head :ok
 	end
 
 end

@@ -11,7 +11,7 @@ class FavouritesController < ApplicationController
 
 	def update_favourite(favourite)
 		@context.update_attributes!(favourite: favourite)
-		head status: :ok
+		head :ok
 	end
 
 	def context

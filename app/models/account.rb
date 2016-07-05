@@ -1,8 +1,8 @@
-class Account < ActiveRecord::Base
+class Account < ApplicationRecord
 	validates :name, :opening_balance, presence: true
 	validates :account_type, presence: true, inclusion: {in: %w(bank credit cash asset liability investment loan)}
 	validates :status, inclusion: {in: %w(open closed)}
-	belongs_to :related_account, class_name: 'Account', foreign_key: 'related_account_id', autosave: true
+	belongs_to :related_account, class_name: 'Account', foreign_key: 'related_account_id', autosave: true, optional: true
 	has_many :transaction_accounts
 	has_many :transactions, through: :transaction_accounts, source: :trx do
 		def for_ledger(opts)
@@ -160,7 +160,7 @@ class Account < ActiveRecord::Base
 						name: a['name'],
 						account_type: a['account_type'],
 						status: a['status'],
-						favourite: a['favourite'].eql?('t'),
+						favourite: a['favourite'],
 						opening_balance: a['opening_balance'].to_f,
 						closing_balance: a['closing_balance'].to_f,
 						related_account: {

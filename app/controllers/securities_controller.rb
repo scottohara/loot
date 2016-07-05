@@ -25,6 +25,6 @@ class SecuritiesController < ApplicationController
 
 	def destroy
 		Security.find(params[:id]).destroy
-		head status: :ok
+		head :ok
 	end
 end

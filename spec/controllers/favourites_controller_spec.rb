@@ -30,7 +30,7 @@ RSpec.describe FavouritesController, type: :controller do
 		let(:favourite) { true }
 
 		before :each do
-			patch :update, request_params
+			patch :update, params: request_params
 		end
 
 		it "should favourite an account", account: true do; end
@@ -43,7 +43,7 @@ RSpec.describe FavouritesController, type: :controller do
 		let(:favourite) { false }
 
 		before :each do
-			delete :destroy, request_params
+			delete :destroy, params: request_params
 		end
 
 		it "should unfavourite an account", account: true do; end

@@ -1,6 +1,6 @@
-class TransactionHeader < ActiveRecord::Base
-	belongs_to :trx, foreign_key: 'transaction_id', class_name: 'Transaction'
-	belongs_to :schedule, dependent: :destroy, autosave: true
+class TransactionHeader < ApplicationRecord
+	belongs_to :trx, foreign_key: 'transaction_id', class_name: 'Transaction', optional: true
+	belongs_to :schedule, dependent: :destroy, autosave: true, optional: true
 	self.primary_key = "transaction_id"
 
 	def validate_transaction_date_or_schedule_presence

@@ -1,4 +1,4 @@
-class Payee < ActiveRecord::Base
+class Payee < ApplicationRecord
 	validates :name, presence: true
 	has_many :payee_transaction_headers
 	has_many :transactions, through: :payee_transaction_headers, source: :trx do
@@ -24,7 +24,7 @@ class Payee < ActiveRecord::Base
 
 	class << self
 		def find_or_new(payee)
-			(payee.is_a?(Hash) && payee['id'].present?) ? self.find(payee['id']) : self.new(name: payee)
+			(!payee.is_a?(String) && payee['id'].present?) ? self.find(payee['id']) : self.new(name: payee)
 		end
 	end
 

@@ -1,4 +1,4 @@
-class Security < ActiveRecord::Base
+class Security < ApplicationRecord
 	validates :name, presence: true
 	has_many :prices, class_name: 'SecurityPrice', dependent: :destroy
 	has_many :security_transaction_headers
@@ -32,7 +32,7 @@ class Security < ActiveRecord::Base
 
 	class << self
 		def find_or_new(security)
-			(security.is_a?(Hash) && security['id'].present?) ? self.find(security['id']) : self.new(name: security)
+			(!security.is_a?(String) && security['id'].present?) ? self.find(security['id']) : self.new(name: security)
 		end
 
 		def list
@@ -71,7 +71,7 @@ class Security < ActiveRecord::Base
 					id: security['id'].to_i,
 					name: security['name'],
 					code: security['code'],
-					favourite: security['favourite'].eql?('t'),
+					favourite: security['favourite'],
 					current_holding: security['current_holding'],
 					closing_balance: security['closing_balance'],
 					unused: false

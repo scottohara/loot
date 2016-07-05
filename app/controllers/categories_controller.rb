@@ -25,6 +25,6 @@ class CategoriesController < ApplicationController
 
 	def destroy
 		Category.find(params[:id]).destroy
-		head status: :ok
+		head :ok
 	end
 end

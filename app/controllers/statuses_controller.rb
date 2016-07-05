@@ -15,6 +15,6 @@ class StatusesController < ApplicationController
 			.where(transaction_id: params[:transaction_id])
 			.update_all(status: status)
 
-		head status: :ok
+		head :ok
 	end
 end

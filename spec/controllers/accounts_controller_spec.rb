@@ -7,7 +7,7 @@ RSpec.describe AccountsController, type: :controller do
 
 			before :each do
 				expect(Account).to receive(:list).and_return json
-				get :index, include_balances: true
+				get :index, params: {include_balances: true}
 			end
 
 			it "should return the account list including balances" do
@@ -34,7 +34,7 @@ RSpec.describe AccountsController, type: :controller do
 
 		it "should return the details of the specified account" do
 			expect(Account).to receive(:find).with("1").and_return json
-			get :show, id: "1"
+			get :show, params: {id: "1"}
 		end
 	end
 
@@ -43,8 +43,8 @@ RSpec.describe AccountsController, type: :controller do
 		let(:json) { "created account" }
 
 		it "should create a new account and return the details" do
-			expect(Account).to receive(:create_from_json).with(request_body).and_return json
-			post :create, request_body
+			expect(Account).to receive(:create_from_json).with(ActionController::Parameters.new request_body).and_return json
+			post :create, params: request_body
 		end
 	end
 
@@ -54,8 +54,8 @@ RSpec.describe AccountsController, type: :controller do
 		let(:json) { "updated account" }
 
 		it "should update an existing account and return the details" do
-			expect(Account).to receive(:update_from_json).with(request_body).and_return json
-			patch :update, request_body
+			expect(Account).to receive(:update_from_json).with(ActionController::Parameters.new request_body).and_return json
+			patch :update, params: request_body
 		end
 	end
 
@@ -66,7 +66,7 @@ RSpec.describe AccountsController, type: :controller do
 			it "should delete an existing account" do
 				expect(Account).to receive_message_chain(:includes, :find).with("1").and_return account
 				expect(account).to receive(:destroy)
-				delete :destroy, id: "1"
+				delete :destroy, params: {id: "1"}
 			end
 		end
 
@@ -80,7 +80,7 @@ RSpec.describe AccountsController, type: :controller do
 				expect(Account).to receive_message_chain(:includes, :find).with("1").and_return account
 				expect(account.related_account).to receive_message_chain(:destroy)
 				expect(account).to receive(:destroy)
-				delete :destroy, id: "1"
+				delete :destroy, params: {id: "1"}
 			end
 		end
 	end
@@ -91,7 +91,7 @@ RSpec.describe AccountsController, type: :controller do
 		it "should return the details of the specified account" do
 			expect(Account).to receive(:find).with("1").and_return account
 			expect(account).to receive(:reconcile)
-			put :reconcile, id: "1"
+			put :reconcile, params: {id: "1"}
 		end
 	end
 end

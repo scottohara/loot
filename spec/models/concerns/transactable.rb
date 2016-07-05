@@ -10,7 +10,7 @@ RSpec.shared_examples Transactable do
 				@diffs = []
 
 				# Make sure the array lengths match
-				return false unless expected.uniq{|t| t[:id]}.size.eql? actual.uniq{|t| t[:id]}.size 
+				return false unless expected.distinct{|t| t[:id]}.size.eql? actual.uniq{|t| t[:id]}.size
 
 				# Check each expected transaction against it's actual counterpart(s)
 				expected.any? do |trx|
@@ -44,7 +44,7 @@ RSpec.shared_examples Transactable do
 			failure_message do
 				if @diffs.empty?
 					# Size mismatch
-					"expected #{expected.uniq{|t| t[:id]}.size} #{"transaction".pluralize} but got #{actual.uniq{|t| t[:id]}.size}"
+					"expected #{expected.distinct{|t| t[:id]}.size} #{"transaction".pluralize} but got #{actual.uniq{|t| t[:id]}.size}"
 				else
 					# Content mismatch
 					@diffs.reduce("") do |message, diff|
@@ -68,7 +68,7 @@ RSpec.shared_examples Transactable do
 
 				# Remove any keys that we don't care about
 				transaction = transaction.extract!(*expected_keys, *nested_keys.keys)
-				
+
 				# ..and the same for any nested keys
 				nested_keys.each do |nested_key, keys|
 					unless transaction[nested_key].nil?
@@ -128,7 +128,7 @@ RSpec.shared_examples Transactable do
 			expect(transactions.uniq{|t| t[:id]}.size).to eq 2
 			expect(transactions).to all_belong_to(context, ledger_json_key)
 		end
-		
+
 		context "when fetching backwards", spec_type: :range do
 			let(:direction) { :prev }
 

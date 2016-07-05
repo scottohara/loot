@@ -83,7 +83,7 @@ class SplitTransaction < PayeeCashTransaction
 								"transactions.amount",
 								"transaction_accounts.direction",
 						 		"transactions.memo",
-						 		"transaction_flags.memo AS flag") 
+						 		"transaction_flags.memo AS flag")
 			.joins([	"JOIN transaction_accounts ON transaction_accounts.transaction_id = transaction_splits.parent_id",
 								"JOIN transactions ON transactions.id = transaction_splits.transaction_id",
 								"JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id",
