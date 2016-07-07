@@ -1,5 +1,4 @@
 class FlagsController < ApplicationController
-
 	def update
 		transaction = Transaction.find(params[:transaction_id])
 		if transaction.flag.nil?
@@ -15,5 +14,4 @@ class FlagsController < ApplicationController
 		Transaction.find(params[:transaction_id]).flag.destroy
 		head :ok
 	end
-
 end

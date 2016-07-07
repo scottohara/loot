@@ -1,5 +1,4 @@
 class StatusesController < ApplicationController
-
 	def update
 		status = params.keys.keep_if {|status| %w(Cleared Reconciled).include? status }.first
 		update_status status

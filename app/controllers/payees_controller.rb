@@ -1,17 +1,15 @@
 class PayeesController < ApplicationController
-	respond_to :json
-
 	def index
 		sort = [:name]
 
 		# Only first by favourite for typeaheads
 		sort.unshift favourite: :desc unless params.has_key? :list
 
-		respond_with Payee.order(*sort), except: [:closing_balance, :num_transactions]
+		render json: Payee.order(*sort), except: [:closing_balance, :num_transactions]
 	end
 
 	def show
-		respond_with Payee.find params[:id]
+		render json: Payee.find(params[:id])
 	end
 
 	def create

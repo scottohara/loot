@@ -1,16 +1,14 @@
 class SecuritiesController < ApplicationController
-	respond_to :json
-
 	def index
 		if params.has_key? :include_balances
-			respond_with Security.list
+			render json: Security.list
 		else
-			respond_with Security.order({favourite: :desc}, :name), except: [:current_holding, :closing_balance, :num_transactions, :unused]
+			render json: Security.order({favourite: :desc}, :name), except: [:current_holding, :closing_balance, :num_transactions, :unused]
 		end
 	end
 
 	def show
-		respond_with Security.find params[:id]
+		render json: Security.find(params[:id])
 	end
 
 	def create

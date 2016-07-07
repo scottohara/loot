@@ -1,16 +1,14 @@
 class AccountsController < ApplicationController
-	respond_to :json
-
 	def index
 		if params.has_key? :include_balances
-			respond_with Account.list
+			render json: Account.list
 		else
-			respond_with Account.all.order({favourite: :desc}, :account_type, :name), except: [:closing_balance, :num_transactions, :related_account]
+			render json: Account.all.order({favourite: :desc}, :account_type, :name), except: [:closing_balance, :num_transactions, :related_account]
 		end
 	end
 
 	def show
-		respond_with Account.find params[:id]
+		render json: Account.find(params[:id])
 	end
 
 	def create

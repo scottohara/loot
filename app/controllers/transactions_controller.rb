@@ -1,5 +1,4 @@
 class TransactionsController < ApplicationController
-	respond_to :json
 	before_action :clean, only: [:create, :update]
 	before_action :context, only: [:index, :last]
 

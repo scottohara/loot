@@ -1,16 +1,14 @@
 class CategoriesController < ApplicationController
-	respond_to :json
-
 	def index
 		if params.has_key? :include_children
-			respond_with Category.where(parent_id: params[:parent]).includes(:parent, :children).order(:direction, :name), except: [:closing_balance, :num_transactions]
+			render json: Category.where(parent_id: params[:parent]).includes(:parent, :children).order(:direction, :name), except: [:closing_balance, :num_transactions]
 		else
-			respond_with Category.where(parent_id: params[:parent]).order({favourite: :desc}, :direction, :name), except: [:parent, :children, :num_children, :closing_balance, :num_transactions]
+			render json: Category.where(parent_id: params[:parent]).order({favourite: :desc}, :direction, :name), except: [:parent, :children, :num_children, :closing_balance, :num_transactions]
 		end
 	end
 
 	def show
-		respond_with Category.find params[:id]
+		render json: Category.find(params[:id])
 	end
 
 	def create

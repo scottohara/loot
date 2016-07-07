@@ -1,9 +1,8 @@
 class SchedulesController < ApplicationController
-	respond_to :json
 	before_action :clean, only: [:create, :update]
 
 	def index
-		respond_with Schedule.ledger
+		render json: Schedule.ledger
 	end
 
 	def create
