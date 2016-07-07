@@ -16,16 +16,8 @@
 		"lootTransactions"
 	]);
 
-	// Define the States and URL routing
-	mod.config(["$httpProvider", "$urlRouterProvider", "lootStatesProvider",
-		($httpProvider, $urlRouterProvider) => {
-			// All HTTP requests will be JSON
-			$httpProvider.defaults.headers.common.Accept = "application/json";
-
-			// Default to account list for any unmatched URLs
-			$urlRouterProvider.otherwise("/accounts");
-		}
-	]);
+	// Default to account list for any unmatched URLs
+	mod.config(["$urlRouterProvider", "lootStatesProvider", $urlRouterProvider => $urlRouterProvider.otherwise("/accounts")]);
 
 	// Runtime initialisation
 	mod.run(["$rootScope", "$state", "ogNavigatorServiceWorkerService",
