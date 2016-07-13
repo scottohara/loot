@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TransferTransaction, type: :model do
-	matcher :match_json do |expected, source_account, destination_account|
+	matcher :match_json do |expected, source_account, destination_account, header|
 		match do |actual|
 			actual[:transaction_type].eql? "Transfer" and \
 			actual[:id].eql? expected[:id] and \
@@ -11,13 +11,16 @@ RSpec.describe TransferTransaction, type: :model do
 			actual[:primary_account][:status].eql? source_account.status and \
 			actual[:status].eql? expected['status'] and \
 			actual[:account][:id].eql? destination_account.id and \
-			actual[:related_status].eql? expected['related_status']
+			actual[:related_status].eql? expected['related_status'] and \
+			actual[:payee][:id].eql? header.payee.id and \
+			actual[:transaction_date].eql? header.transaction_date
 		end
 	end
 
 	describe "::create_from_json" do
 		let(:primary_account) { create :bank_account }
 		let(:account) { create :bank_account }
+		let(:header) { build :payee_transaction_header }
 		let(:json) { {
 			id: 1,
 			"amount" => 1,
@@ -28,6 +31,10 @@ RSpec.describe TransferTransaction, type: :model do
 			"account" => {
 				"id" => account.id
 			},
+			"payee" => {
+				"id" => header.payee.id
+			},
+			"transaction_date" => header.transaction_date,
 			"status" => "Cleared",
 			"related_status" => "Reconciled"
 		} }
@@ -35,7 +42,7 @@ RSpec.describe TransferTransaction, type: :model do
 		before :each do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return account
-			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 		end
 
 		context "outflow" do
@@ -51,7 +58,7 @@ RSpec.describe TransferTransaction, type: :model do
 		end
 
 		after :each do
-			expect(TransferTransaction.create_from_json(json)).to match_json json, primary_account, account
+			expect(TransferTransaction.create_from_json(json)).to match_json json, primary_account, account, header
 		end
 	end
 
@@ -91,7 +98,7 @@ RSpec.describe TransferTransaction, type: :model do
 		end
 
 		after :each do
-			expect(TransferTransaction.update_from_json(json)).to match_json json, primary_account, account
+			expect(TransferTransaction.update_from_json(json)).to match_json json, primary_account, account, transaction.header
 		end
 	end
 

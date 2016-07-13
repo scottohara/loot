@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe SecurityHoldingTransaction, type: :model do
-	matcher :match_json do |expected, account|
+	matcher :match_json do |expected, account, header|
 		match do |actual|
 			actual.transaction_type.eql? "SecurityHolding" and \
 			actual.id.eql? expected[:id] and \
@@ -9,6 +9,8 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 			actual.transaction_account.direction.eql? expected['direction'] and \
 			actual.transaction_account.status.eql? expected['status'] and \
 			actual.account.eql? account and \
+			actual.header.security.eql? header.security and \
+			actual.header.transaction_date.eql? header.transaction_date and \
 			actual.header.price.nil? and \
 			actual.header.commission.nil?
 		end
@@ -16,12 +18,17 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 
 	describe "::create_from_json" do
 		let(:account) { create :investment_account }
+		let(:header) { build :security_transaction_header }
 		let(:json) { {
 			id: 1,
 			"memo" => "Test json",
 			"primary_account" => {
 				"id" => account.id
 			},
+			"security" => {
+				"id" => header.security.id
+			},
+			"transaction_date" => header.transaction_date,
 			"status" => "Cleared",
 			"price" => 1,
 			"commission" => 2
@@ -29,7 +36,7 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 
 		before :each do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
-			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json)
+			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("quantity")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("price")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("commission")
@@ -48,7 +55,7 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 		end
 
 		after :each do
-			expect(SecurityHoldingTransaction.create_from_json(json)).to match_json json, account
+			expect(SecurityHoldingTransaction.create_from_json(json)).to match_json json, account, header
 		end
 	end
 
@@ -82,7 +89,7 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 		end
 
 		after :each do
-			expect(SecurityHoldingTransaction.update_from_json(json)).to match_json json, account
+			expect(SecurityHoldingTransaction.update_from_json(json)).to match_json json, account, transaction.header
 		end
 	end
 

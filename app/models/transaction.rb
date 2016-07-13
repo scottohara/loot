@@ -1,6 +1,6 @@
 class Transaction < ApplicationRecord
 	validates :transaction_type, presence: true, inclusion: {in: %w(Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend)}
-	has_one :flag, class_name: 'TransactionFlag', foreign_key: 'transaction_id', dependent: :destroy, autosave: true
+	has_one :flag, class_name: 'TransactionFlag', foreign_key: 'transaction_id', dependent: :destroy, autosave: true, inverse_of: :trx
 
 	include Categorisable
 

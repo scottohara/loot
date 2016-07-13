@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe DividendTransaction, type: :model do
-	matcher :match_json do |expected, investment_account, cash_account|
+	matcher :match_json do |expected, investment_account, cash_account, header|
 		match do |actual|
 			actual.transaction_type.eql? "Dividend" and \
 			actual.id.eql? expected[:id] and \
@@ -13,6 +13,8 @@ RSpec.describe DividendTransaction, type: :model do
 			actual.cash_account.direction.eql? "inflow" and \
 			actual.cash_account.status.eql? expected['related_status'] and \
 			actual.cash_account.account.eql? cash_account and \
+			actual.header.security.eql? header.security and \
+			actual.header.transaction_date.eql? header.transaction_date and \
 			actual.header.quantity.nil? and \
 			actual.header.price.nil? and \
 			actual.header.commission.nil?
@@ -22,6 +24,7 @@ RSpec.describe DividendTransaction, type: :model do
 	describe "::create_from_json" do
 		let(:investment_account) { create :investment_account }
 		let(:cash_account) { create :bank_account }
+		let(:header) { build :security_transaction_header }
 		let(:json) { {
 			id: 1,
 			"amount" => 1,
@@ -32,6 +35,10 @@ RSpec.describe DividendTransaction, type: :model do
 			"account" => {
 				"id" => cash_account.id
 			},
+			"security" => {
+				"id" => header.security.id
+			},
+			"transaction_date" => header.transaction_date,
 			"status" => "Cleared",
 			"related_status" => "Reconciled",
 			"quantity" => 1,
@@ -42,14 +49,14 @@ RSpec.describe DividendTransaction, type: :model do
 		before :each do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
-			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("quantity")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("price")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("commission")
 		end
 
 		it "should create a transaction from a JSON representation" do
-			expect(DividendTransaction.create_from_json(json)).to match_json json, investment_account, cash_account
+			expect(DividendTransaction.create_from_json(json)).to match_json json, investment_account, cash_account, header
 		end
 	end
 
@@ -77,7 +84,7 @@ RSpec.describe DividendTransaction, type: :model do
 		end
 
 		it "should update a transaction from a JSON representation" do
-			expect(DividendTransaction.update_from_json(json)).to match_json json, investment_account, cash_account
+			expect(DividendTransaction.update_from_json(json)).to match_json json, investment_account, cash_account, transaction.header
 		end
 	end
 

@@ -1,6 +1,6 @@
 class PayeeTransactionHeader < TransactionHeader
 	validates :security_id, :quantity, :commission, :price, absence: true
-	belongs_to :payee, optional: true
+	belongs_to :payee
 
 	def update_from_json(json)
 		super

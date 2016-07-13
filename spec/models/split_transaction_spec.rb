@@ -4,7 +4,7 @@ require 'models/concerns/categorisable'
 RSpec.describe SplitTransaction, type: :model do
 	it_behaves_like Categorisable
 
-	matcher :match_json do |expected, account|
+	matcher :match_json do |expected, account, header|
 		match do |actual|
 			actual.transaction_type.eql? "Split" and \
 			actual.id.eql? expected[:id] and \
@@ -13,12 +13,15 @@ RSpec.describe SplitTransaction, type: :model do
 			actual.transaction_account.direction.eql? expected['direction'] and \
 			actual.transaction_account.status.eql? expected['status'] and \
 			actual.account.eql? account and \
+			actual.header.payee.eql? header.payee and \
+			actual.header.transaction_date.eql? header.transaction_date and \
 			actual.transaction_splits.size.eql? expected['subtransactions'].size
 		end
 	end
 
 	describe "::create_from_json" do
 		let(:account) { create :bank_account }
+		let(:header) { build :payee_transaction_header }
 		let(:json) { {
 			id: 1,
 			"amount" => 1,
@@ -26,16 +29,20 @@ RSpec.describe SplitTransaction, type: :model do
 			"primary_account" => {
 				"id" => account.id
 			},
+			"payee" => {
+				"id" => header.payee.id
+			},
 			"direction" => "outflow",
+			"transaction_date" => header.transaction_date,
 			"status" => "Cleared",
 			"subtransactions" => []
 		} }
 
 		it "should create a transaction from a JSON representation" do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
-			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 			expect_any_instance_of(SplitTransaction).to receive(:create_children).with json["subtransactions"]
-			expect(SplitTransaction.create_from_json(json)).to match_json json, account
+			expect(SplitTransaction.create_from_json(json)).to match_json json, account, header
 		end
 	end
 
@@ -57,7 +64,7 @@ RSpec.describe SplitTransaction, type: :model do
 			expect(SplitTransaction).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
-			expect(SplitTransaction.update_from_json(json)).to match_json json, account
+			expect(SplitTransaction.update_from_json(json)).to match_json json, account, transaction.header
 		end
 	end
 

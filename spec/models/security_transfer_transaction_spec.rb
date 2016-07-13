@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe SecurityTransferTransaction, type: :model do
-	matcher :match_json do |expected, source_account, destination_account|
+	matcher :match_json do |expected, source_account, destination_account, header|
 		match do |actual|
 			actual[:transaction_type].eql? "SecurityTransfer" and \
 			actual[:id].eql? expected[:id] and \
@@ -10,6 +10,9 @@ RSpec.describe SecurityTransferTransaction, type: :model do
 			actual[:status].eql? expected['status'] and \
 			actual[:account][:id].eql? destination_account.id and \
 			actual[:related_status].eql? expected['related_status'] and \
+			actual[:security][:id].eql? header.security.id and \
+			actual[:transaction_date].eql? header.transaction_date and \
+			actual[:quantity].eql? header.quantity and \
 			actual[:price].nil? and \
 			actual[:commission].nil?
 		end
@@ -18,6 +21,7 @@ RSpec.describe SecurityTransferTransaction, type: :model do
 	describe "::create_from_json" do
 		let(:primary_account) { create :investment_account }
 		let(:account) { create :investment_account }
+		let(:header) { build :security_transaction_header, quantity: 1 }
 		let(:json) { {
 			id: 1,
 			"memo" => "Test json",
@@ -27,16 +31,19 @@ RSpec.describe SecurityTransferTransaction, type: :model do
 			"account" => {
 				"id" => account.id
 			},
+			"security" => {
+				"id" => header.security.id
+			},
+			"transaction_date" => header.transaction_date,
 			"status" => "Cleared",
 			"related_status" => "Reconciled",
-			"price" => 1,
-			"commission" => 2
+			"quantity" => header.quantity
 		} }
 
 		before :each do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return account
-			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with("quantity")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("price")
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with("commission")
@@ -55,7 +62,7 @@ RSpec.describe SecurityTransferTransaction, type: :model do
 		end
 
 		after :each do
-			expect(SecurityTransferTransaction.create_from_json(json)).to match_json json, primary_account, account
+			expect(SecurityTransferTransaction.create_from_json(json)).to match_json json, primary_account, account, header
 		end
 	end
 
@@ -94,7 +101,7 @@ RSpec.describe SecurityTransferTransaction, type: :model do
 		end
 
 		after :each do
-			expect(SecurityTransferTransaction.update_from_json(json)).to match_json json, primary_account, account
+			expect(SecurityTransferTransaction.update_from_json(json)).to match_json json, primary_account, account, transaction.header
 		end
 	end
 
