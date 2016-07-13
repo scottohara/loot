@@ -1,4 +1,6 @@
 class TransactionHeader < ApplicationRecord
+	# trx is not really optional, but because the inverse has_one association is defined on a subclass of Transaction,
+	# when we build of of these (trx.build_header), this association is not automatically populated
 	belongs_to :trx, foreign_key: 'transaction_id', class_name: 'Transaction', optional: true
 	belongs_to :schedule, dependent: :destroy, autosave: true, optional: true
 	self.primary_key = "transaction_id"
