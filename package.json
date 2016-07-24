@@ -47,7 +47,7 @@
     "angular-mocks": "1.5.7",
     "chai": "3.5.0",
     "chai-as-promised": "5.3.0",
-    "gulp-eslint": "3.0.0",
+    "gulp-eslint": "3.0.1",
     "isparta": "4.0.0",
     "karma": "1.1.0",
     "karma-babel-preprocessor": "6.0.1",
@@ -72,7 +72,7 @@
     "test": "gulp test:ci"
   },
   "engines": {
-    "node": "6.2.2",
-    "npm": "3.10.3"
+    "node": "6.3.0",
+    "npm": "3.10.6"
   }
 }

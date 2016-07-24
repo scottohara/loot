@@ -367,6 +367,7 @@
 		"max-statements-per-line": ["error", {
 			"max": 1
 		}],
+		"multiline-ternary": "off",											// Not using
 		"new-cap": ["error", {
 			"newIsCap": true,
 			"capIsNew": true,
@@ -495,7 +496,8 @@
 			},
 			"block": {
 				"exceptions": [],
-				"markers": []
+				"markers": [],
+				"balanced": true
 			}
 		}],
 		"unicode-bom": ["error", "never"],
