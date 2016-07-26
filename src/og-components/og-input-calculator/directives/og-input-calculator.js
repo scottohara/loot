@@ -208,11 +208,6 @@
 	 */
 	const mod = angular.module("ogComponents");
 
-	// Add a custom trigger to the $tooltipProvider for the calculator
-	mod.config(["$uibTooltipProvider",
-		$uibTooltipProvider => $uibTooltipProvider.setTriggers({showCalculator: "hideCalculator"})
-	]);
-
 	// Declare the ogInputCalculator directive
 	mod.directive("ogInputCalculator", OgInputCalculatorDirective.factory);
 

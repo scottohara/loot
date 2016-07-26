@@ -54,9 +54,6 @@ module.exports.config = {
 		// Initialise should API (attaches as a property on Object)
 		chai.should();
 
-		// Copy the should property from Object to the protractor Promise
-		Reflect.defineProperty(protractor.promise.Promise.prototype, "should", Reflect.getOwnPropertyDescriptor(Object.prototype, "should"));
-
 		// Make sure the window is wide enough for the large bootstrap modals
 		browser.driver.manage().window().setSize(width, height);
 	},

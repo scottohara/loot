@@ -29,8 +29,6 @@ describe("ogInputCalculator", () => {
 		ogInputCalculator.element = ogInputCalculator.element.find("input");
 	}));
 
-	it("should add a custom trigger to the $uibTooltipProvider for the calculator", () => $uibTooltipProvider.setTriggers.should.have.been.calledWith({showCalculator: "hideCalculator"}));
-
 	it("should default the position to left if unspecified", () => ogInputCalculator.scope.position.should.equal("left"));
 
 	it("should set the position if specified", () => {
