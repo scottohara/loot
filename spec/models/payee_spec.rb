@@ -1,3 +1,5 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
 require 'rails_helper'
 require 'models/concerns/transactable'
 
@@ -5,53 +7,53 @@ RSpec.describe Payee, type: :model do
 	it_behaves_like Transactable do
 		let(:context_factory) { :payee }
 		let(:ledger_json_key) { :payee }
-		let(:expected_closing_balances) { {with_date: -1, without_date: 0 } }
+		let(:expected_closing_balances) { {with_date: -1, without_date: 0} }
 	end
 
-	describe "::find_or_new" do
-		context "existing payee" do
+	describe '::find_or_new' do
+		context 'existing payee' do
 			let(:payee) { create :payee }
 
-			it "should return the existing payee" do
-				expect(Payee.find_or_new({"id" => payee.id})).to eq payee
+			it 'should return the existing payee' do
+				expect(Payee.find_or_new 'id' => payee.id).to eq payee
 			end
 		end
 
-		context "new payee" do
-			let(:payee_name) { "New payee" }
+		context 'new payee' do
+			let(:payee_name) { 'New payee' }
 
-			it "should return a newly created payee" do
+			it 'should return a newly created payee' do
 				expect(Payee.find_or_new(payee_name).name).to eq payee_name
 			end
 		end
 	end
 
-	describe "#opening_balance" do
-		subject { create(:payee) }
+	describe '#opening_balance' do
+		subject { create :payee }
 
-		it "should return zero" do
+		it 'should return zero' do
 			expect(subject.opening_balance).to eq 0
 		end
 	end
 
-	describe "#account_type" do
-		subject { create(:payee) }
+	describe '#account_type' do
+		subject { create :payee }
 
-		it "should return nil" do
+		it 'should return nil' do
 			expect(subject.account_type).to be_nil
 		end
 	end
 
-	describe "#as_json" do
-		subject { create(:payee, name: "Test Payee", transactions: 1) }
+	describe '#as_json' do
+		subject { create :payee, name: 'Test Payee', transactions: 1 }
 		let(:json) { subject.as_json }
 
-		it "should return a JSON representation" do
-			expect(json).to include(id: subject.id)
-			expect(json).to include(name: "Test Payee")
-			expect(json).to include(closing_balance: subject.closing_balance)
-			expect(json).to include(num_transactions: 1)
-			expect(json).to include(favourite: false)
+		it 'should return a JSON representation' do
+			expect(json).to include id: subject.id
+			expect(json).to include name: 'Test Payee'
+			expect(json).to include closing_balance: subject.closing_balance
+			expect(json).to include num_transactions: 1
+			expect(json).to include favourite: false
 		end
 	end
 end

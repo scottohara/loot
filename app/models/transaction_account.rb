@@ -1,3 +1,7 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Transaction account
 class TransactionAccount < ApplicationRecord
 	validates :direction, presence: true, inclusion: {in: %w(inflow outflow)}
 	validates :status, inclusion: {in: %w(Cleared Reconciled)}, allow_blank: true

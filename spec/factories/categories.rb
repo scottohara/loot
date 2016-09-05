@@ -1,3 +1,5 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
 FactoryGirl.define do
 	factory :category, aliases: [:outflow_category] do
 		sequence(:name) { |n| "Category #{n}" }
@@ -11,8 +13,8 @@ FactoryGirl.define do
 
 		trait :with_all_transaction_types do
 			after :build do |category, evaluator|
-				create(:basic_transaction, :flagged, category: category, status: "Cleared")			#flagged and cleared
-				create(:split_transaction, direction: category.direction, category: category, subtransactions: 1)
+				create :basic_transaction, :flagged, category: category, status: 'Cleared' # flagged and cleared
+				create :split_transaction, direction: category.direction, category: category, subtransactions: 1
 
 				# Create any scheduled transactions
 				create_list :basic_transaction, evaluator.scheduled, :scheduled, category: category
@@ -25,11 +27,11 @@ FactoryGirl.define do
 		end
 
 		trait :outflow do
-			direction "outflow"
+			direction 'outflow'
 		end
 
 		trait :inflow do
-			direction "inflow"
+			direction 'inflow'
 		end
 
 		trait :parent_category do
@@ -48,7 +50,7 @@ FactoryGirl.define do
 
 		factory :inflow_category, traits: [:inflow]
 		factory :subcategory, traits: [:parent_category]
-		factory :inflow_subcategory, traits: [:inflow, :parent_category]
+		factory :inflow_subcategory, traits: %i(inflow parent_category)
 		factory :category_with_children, traits: [:with_children]
 		factory :favourite_category, traits: [:favourite]
 	end

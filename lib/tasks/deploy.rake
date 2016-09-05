@@ -1,4 +1,6 @@
-unless ENV[:RACK_ENV.to_s].eql?("production")
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+unless ENV[:RACK_ENV.to_s].eql? 'production'
 	require 'heroku-api'
 	require 'git'
 	require 'logger'
@@ -6,16 +8,14 @@ end
 
 namespace :deploy do
 	# Assumes two git remotes, named staging and production
-	[:staging, :production].each do |remote|
+	%i(staging production).each do |remote|
 		desc "Deploy to #{remote}"
 		task remote do
 			# Flush output immediately, don't buffer
 			$stdout.sync = true
-			logger = Logger.new($stdout)
+			logger = Logger.new $stdout
 			logger.level = Logger::WARN
-			logger.formatter = proc do |severity, datetime, progname, msg|
-				"#{msg}\n"
-			end
+			logger.formatter = proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
 
 			# Get a reference to the git repo
 			git = Git.open Rails.root, log: logger
@@ -36,24 +36,23 @@ namespace :deploy do
 			heroku = Heroku::API.new
 
 			# Get the APP_VERSION config var for the application
-			previous_version = heroku.get_config_vars(app_name).body["APP_VERSION"]
+			previous_version = heroku.get_config_vars(app_name).body['APP_VERSION']
 
 			# Abort if the version being pushed is already deployed
 			abort "#{latest_version} is already deployed to #{remote}. Please create a new tag for the new version." if latest_version.eql? previous_version
-			
+
 			print "Deploy #{latest_version} to #{remote} (#{app_name}), replacing #{previous_version}? (y)es or (n)o [enter = no]: "
-			abort "Deployment aborted" unless STDIN.gets.chomp.downcase.eql? 'y'
+			abort 'Deployment aborted' unless STDIN.gets.chomp.casecmp('y').zero?
 
 			logger.level = Logger::DEBUG
 
 			# Deploy the latest version to the specified remote
 			git.push remote, "#{latest_version}^{}:master"
-			
-			# Update the APP_VERSION config var
-			heroku.put_config_vars app_name, "APP_VERSION" => latest_version
 
-			puts "Deployment done"
+			# Update the APP_VERSION config var
+			heroku.put_config_vars app_name, 'APP_VERSION' => latest_version
+
+			puts 'Deployment done'
 		end
 	end
 end
-

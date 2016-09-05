@@ -1,6 +1,10 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Transactions controller
 class TransactionsController < ApplicationController
-	before_action :clean, only: [:create, :update]
-	before_action :context, only: [:index, :last]
+	before_action :clean, only: %i(create update)
+	before_action :context, only: %i(index last)
 
 	def index
 		opening_balance, transactions, at_end = @context.ledger params
@@ -26,13 +30,13 @@ class TransactionsController < ApplicationController
 			render json: Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
-			transaction.as_subclass.destroy
+			transaction.as_subclass.destroy!
 			render json: create_transaction
 		end
 	end
 
 	def destroy
-		Transaction.find(params[:id]).as_subclass.destroy
+		Transaction.find(params[:id]).as_subclass.destroy!
 		head :ok
 	end
 
@@ -42,23 +46,26 @@ class TransactionsController < ApplicationController
 
 	def clean
 		# Remove any blank values
-		@transaction = params.delete_if do |k,v|
-			v.blank?
-		end
+		@transaction = params.delete_if { |_k, v| v.blank? }
 	end
 
 	def context
 		# Instantiate the parent resource based on what params were passed
-		@context = case
-			when params[:account_id] then Account.find(params[:account_id])
-			when params[:payee_id] then Payee.find(params[:payee_id])
-			when params[:category_id] then Category.find(params[:category_id])
-			when params[:security_id] then Security.find(params[:security_id])
-			else Transaction
-		end
+		@context =
+			if params[:account_id]
+				Account.find params[:account_id]
+			elsif params[:payee_id]
+				Payee.find params[:payee_id]
+			elsif params[:category_id]
+				Category.find params[:category_id]
+			elsif params[:security_id]
+				Security.find params[:security_id]
+			else
+				Transaction
+			end
 	end
 
 	def create_transaction
-		Transaction.class_for(params['transaction_type']).create_from_json(@transaction)
+		Transaction.class_for(params['transaction_type']).create_from_json @transaction
 	end
 end

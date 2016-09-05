@@ -1,3 +1,7 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Basic transaction
 class BasicTransaction < PayeeCashTransaction
 	has_one :transaction_account, foreign_key: 'transaction_id', dependent: :destroy, autosave: true
 	has_one :account, through: :transaction_account
@@ -13,15 +17,15 @@ class BasicTransaction < PayeeCashTransaction
 			category = Category.find_or_new(json['subcategory'], category) unless json['subcategory'].nil?
 
 			s = super
-			s.build_transaction_account(direction: category.direction, status: json['status']).account = Account.find(json['primary_account']['id'])
+			s.build_transaction_account(direction: category.direction, status: json['status']).account = Account.find json['primary_account']['id']
 			s.build_transaction_category.category = category
 			s.save!
 			s
 		end
 
 		def update_from_json(json)
-			s = self.includes(:header).find(json[:id])
-			s.update_from_json(json)
+			s = includes(:header).find json[:id]
+			s.update_from_json json
 			s
 		end
 	end
@@ -31,19 +35,19 @@ class BasicTransaction < PayeeCashTransaction
 		category = Category.find_or_new(json['subcategory'], category) unless json['subcategory'].nil?
 
 		super
-		self.transaction_account.direction = category.direction
-		self.account = Account.find(json['primary_account']['id'])
+		transaction_account.direction = category.direction
+		self.account = Account.find json['primary_account']['id']
 		self.category = category
-		self.save!
+		save!
 	end
 
-	def as_json(options={})
-		super.merge({
-			primary_account: self.account.as_json,
-			category: self.category.parent.blank? && self.category.as_json || self.category.parent.as_json,
-			subcategory: self.category.parent.present? && self.category.as_json || nil,
-			direction: self.transaction_account.direction,
-			status: self.transaction_account.status
-		})
+	def as_json(options = {})
+		super.merge(
+			primary_account: account.as_json,
+			category: category.parent.blank? && category.as_json || category.parent.as_json,
+			subcategory: category.parent.present? && category.as_json || nil,
+			direction: transaction_account.direction,
+			status: transaction_account.status
+		)
 	end
 end

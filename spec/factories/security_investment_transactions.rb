@@ -1,14 +1,16 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
 FactoryGirl.define do
 	factory :security_investment_transaction, aliases: [:security_purchase_transaction] do
 		# Default attributes for security transaction
 		security_transaction
-		amount { price * quantity + (commission * (direction.eql?("Buy") ? 1 : -1)) }
+		amount { price * quantity + commission * (direction.eql?('Buy') ? 1 : -1) }
 
 		# Default accounts if none specified
 		transient do
-			investment_account { FactoryGirl.build(:investment_account, related_account: cash_account) }
-			cash_account { FactoryGirl.build(:bank_account) }
-			direction "Buy"
+			investment_account { FactoryGirl.build :investment_account, related_account: cash_account }
+			cash_account { FactoryGirl.build :bank_account }
+			direction 'Buy'
 			price 1
 			quantity 1
 			commission 1
@@ -19,21 +21,21 @@ FactoryGirl.define do
 			trx.header.price = evaluator.price
 			trx.header.quantity = evaluator.quantity
 			trx.header.commission = evaluator.commission
-			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.investment_account, direction: (evaluator.direction.eql?("Buy") ? "inflow" : "outflow"), status: evaluator.status)
-			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.cash_account, direction: (evaluator.direction.eql?("Buy") ? "outflow" : "inflow"))
+			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.investment_account, direction: (evaluator.direction.eql?('Buy') ? 'inflow' : 'outflow'), status: evaluator.status)
+			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.cash_account, direction: (evaluator.direction.eql?('Buy') ? 'outflow' : 'inflow'))
 		end
 
 		after :create do |trx|
-			trx.header.security.update_price! trx.header.price, trx.header.transaction_date, trx.id
+			trx.header.security.update_price! trx.header.price, trx.header.transaction_date, trx.id unless trx.header.transaction_date.nil?
 		end
 
 		trait :inflow do
-			direction "Sell"
+			direction 'Sell'
 		end
 
 		trait :scheduled do
 			transient do
-				next_due_date { Date.today.advance({months: -1}) }
+				next_due_date { Time.zone.today.advance months: -1 }
 			end
 
 			after :build do |trx, evaluator|

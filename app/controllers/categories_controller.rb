@@ -1,9 +1,13 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Categories controller
 class CategoriesController < ApplicationController
 	def index
-		if params.has_key? :include_children
-			render json: Category.where(parent_id: params[:parent]).includes(:parent, :children).order(:direction, :name), except: [:closing_balance, :num_transactions]
+		if params.key? :include_children
+			render json: Category.where(parent_id: params[:parent]).includes(:parent, :children).order(:direction, :name), except: %i(closing_balance num_transactions)
 		else
-			render json: Category.where(parent_id: params[:parent]).order({favourite: :desc}, :direction, :name), except: [:parent, :children, :num_children, :closing_balance, :num_transactions]
+			render json: Category.where(parent_id: params[:parent]).order({favourite: :desc}, :direction, :name), except: %i(parent children num_children closing_balance num_transactions)
 		end
 	end
 
@@ -12,7 +16,7 @@ class CategoriesController < ApplicationController
 	end
 
 	def create
-		render json: Category.create(name: params['name'], direction: params['direction'], parent_id: params['parent_id'])
+		render json: Category.create!(name: params['name'], direction: params['direction'], parent_id: params['parent_id'])
 	end
 
 	def update
@@ -22,7 +26,7 @@ class CategoriesController < ApplicationController
 	end
 
 	def destroy
-		Category.find(params[:id]).destroy
+		Category.find(params[:id]).destroy!
 		head :ok
 	end
 end

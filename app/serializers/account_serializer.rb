@@ -1,5 +1,9 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Account serializer
 class AccountSerializer < ActiveModel::Serializer
-  attributes :id, :name, :account_type, :opening_balance, :status, :closing_balance, :num_transactions, :related_account, :favourite
+	attributes :id, :name, :account_type, :opening_balance, :status, :closing_balance, :num_transactions, :related_account, :favourite
 
 	def opening_balance
 		object.opening_balance.to_f
@@ -14,6 +18,6 @@ class AccountSerializer < ActiveModel::Serializer
 	end
 
 	def related_account
-		AccountSerializer.new object.related_account, only: [:id, :name, :account_type, :opening_balance, :status] if object.related_account
+		AccountSerializer.new object.related_account, only: %i(id name account_type opening_balance status) if object.related_account
 	end
 end

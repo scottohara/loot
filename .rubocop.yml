@@ -1,0 +1,104 @@
+AllCops:
+  Include:
+    - 'app/**/*.rb'
+    - 'spec/**/*.rb'
+    - 'db/seeds.rb'
+
+  Exclude:
+    - 'bin/*'
+    - 'config/**/*'
+    - 'db/migrate/*'
+    - 'db/schema.rb'
+    - 'vendor/**/*'
+
+# Cops that are disabled by default
+Rails:
+  Enabled: true
+
+Rails/SaveBang:
+  Enabled: true
+
+Style/AutoResourceCleanup:
+  Enabled: true
+
+Style/CollectionMethods:
+  Enabled: true
+
+Style/Copyright:
+  Enabled: true
+  Notice: 'Copyright \(c\) 2016 Scott O.Hara, oharagroup.net'
+
+Style/FirstArrayElementLineBreak:
+  Enabled: true
+
+Style/FirstHashElementLineBreak:
+  Enabled: true
+
+Style/FirstMethodArgumentLineBreak:
+  Enabled: true
+
+Style/FirstMethodParameterLineBreak:
+  Enabled: true
+
+Style/ImplicitRuntimeError:
+  Enabled: true
+
+Style/MethodCalledOnDoEndBlock:
+  Enabled: true
+
+Style/MultilineAssignmentLayout:
+  Enabled: true
+
+Style/Send:
+  Enabled: true
+
+Style/StringMethods:
+  Enabled: true
+
+Style/SymbolArray:
+  Enabled: true
+
+# Block comment in spec_helper
+Style/BlockComments:
+  Enabled: false
+
+# Indent arrays consistently
+Style/IndentArray:
+  EnforcedStyle: consistent
+
+# Changed from 2 (spaces) to 1 (tab)
+Style/IndentationWidth:
+  Width: 1
+
+# Only require parens where absolutely necessary
+Style/NestedParenthesizedCalls:
+  Enabled: false
+
+Style/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+# Prefer tabs over spaces
+Style/Tab:
+  Enabled: false
+
+# Disable metrics
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false

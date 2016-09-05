@@ -1,9 +1,13 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Accounts controller
 class AccountsController < ApplicationController
 	def index
-		if params.has_key? :include_balances
+		if params.key? :include_balances
 			render json: Account.list
 		else
-			render json: Account.all.order({favourite: :desc}, :account_type, :name), except: [:closing_balance, :num_transactions, :related_account]
+			render json: Account.all.order({favourite: :desc}, :account_type, :name), except: %i(closing_balance num_transactions related_account)
 		end
 	end
 
@@ -23,9 +27,9 @@ class AccountsController < ApplicationController
 		account = Account.includes(:related_account).find(params[:id])
 
 		# For investment accounts, remove the associated cash account
-		account.related_account.destroy if account.account_type.eql?("investment") and !!account.related_account
+		account.related_account.destroy! if account.account_type.eql?('investment') && account.related_account.present?
 
-		account.destroy
+		account.destroy!
 		head :ok
 	end
 

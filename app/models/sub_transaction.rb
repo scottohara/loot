@@ -1,3 +1,7 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Sub transaction
 class SubTransaction < CashTransaction
 	has_one :transaction_split, foreign_key: 'transaction_id', dependent: :delete
 	has_one :parent, class_name: 'SplitTransaction', through: :transaction_split
@@ -9,8 +13,8 @@ class SubTransaction < CashTransaction
 
 	class << self
 		def create_from_json(json)
-			category = Category.find_or_new(json['category'])
-			category = Category.find_or_new(json['subcategory'], category) unless json['subcategory'].nil?
+			category = Category.find_or_new json['category']
+			category = Category.find_or_new json['subcategory'], category unless json['subcategory'].nil?
 
 			s = super
 			s.build_transaction_category.category = category
@@ -18,13 +22,13 @@ class SubTransaction < CashTransaction
 		end
 	end
 
-	def as_json(options={})
-		super.merge self.parent.header.as_json.merge({
-			primary_account: self.parent.account.as_json,
-			category: self.category.parent.blank? && self.category.as_json || self.category.parent.as_json,
-			subcategory: self.category.parent.present? && self.category.as_json || nil,
-			direction: self.parent.transaction_account.direction,
-			parent_id: self.parent.id
-		})
+	def as_json(options = {})
+		super.merge parent.header.as_json.merge(
+			primary_account: parent.account.as_json,
+			category: category.parent.blank? && category.as_json || category.parent.as_json,
+			subcategory: category.parent.present? && category.as_json || nil,
+			direction: parent.transaction_account.direction,
+			parent_id: parent.id
+		)
 	end
 end

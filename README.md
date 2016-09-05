@@ -20,7 +20,7 @@ Getting Started
 5. (Optional) Export your existing MS Money data (see below)
 6. Initialise the database (`rake db:setup`, or if you have no data to import `rake db:create && rake db:migrate`)
 7. Configure environment variables for the username and password to login as (`export LOOT_USERNAME=user && export LOOT_PASSWORD=pass`)
-8. Start the server (`unicorn`)
+8. Start the database server and app server in dev mode (`heroku local -f Procfile.dev`)
 9. Browse to http://localhost:8080/index.html and login using the credentials configured at step #8
 
 Exporting MS Money data
@@ -52,13 +52,34 @@ Running Tests
 =============
 Frontend specs are implemented using [mocha](http://visionmedia.github.io/mocha/)+[chai](http://chaijs.com/)+[sinon](http://sinonjs.org/).
 
-Three gulp tasks are available to run the test suite:
+Three gulp tasks are available to run the frontend test suite:
 
 1. `gulp test:bdd` (or simply `gulp`, as `test:bdd` is the default task) watches for any file changes and runs the full test suite
 2. `gulp test:src` does the same, but includes [instanbul](http://gotwarlost.github.io/istanbul/) code coverage reporting. Summary coverage reports are written to stdout, and detailed HTML reports are available in `/loot/coverage/index.html`
 3. `gulp test:build` does the same as `gulp test:src`, except it runs the test suite and coverage analysis against the built files in `/public` instead of against the original files
 
 (Note: `gulp test:src` will be deprecated once instanbul & karma-coverage add proper support for source maps in the HTML reports)
+
+Backend specs are implemented using [RSpec](http://rspec.info/):
+
+1. Ensure the database server is running (e.g. `postgres -D /usr/local/var/postgres`)
+2. Run the RSpec rake task (`rake spec`). To run specific specs, use RSpec filtering (`fdescribe`, `fit`, `xdescribe`, `xit`)
+
+Integration tests are implemented using [Protractor](http://www.protractortest.org/#/):
+
+1. Start the database server and app server in test mode (`heroku local -f Procfile.test`)
+2. Prepare the test data fixtures (`rake db:e2e:prepare`)
+3. Run the test suite (`protractor`). To run specific suites, use the `--suite` argument (e.g. `protractor --suite authentication,accounts`)
+
+Code Quality
+============
+Frontend checks are implemented using [eslint](http://eslint.org):
+
+1. `gulp eslint`
+
+Backend checks are implemented using [rubocop](http://batsov.com/rubocop/):
+
+1. `bundle exec rubocop`
 
 Deployment (Staging/Production)
 ===============================

@@ -38,6 +38,8 @@ group :development do
 	# For deployment to Heroku
 	gem 'heroku-api'
 	gem 'git'
+
+	gem 'rubocop', require: false
 end
 
 # Code Climate test coverage

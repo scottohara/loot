@@ -1,3 +1,5 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
 FactoryGirl.define do
 	factory :basic_transaction, aliases: [:basic_expense_transaction] do
 		# Default attributes for payee cash transaction
@@ -5,8 +7,8 @@ FactoryGirl.define do
 
 		# Default account and category if none specified
 		transient do
-			account { FactoryGirl.build(:account) }
-			category { FactoryGirl.build(:category) }
+			account { FactoryGirl.build :account }
+			category { FactoryGirl.build :category }
 			status nil
 		end
 
@@ -16,13 +18,13 @@ FactoryGirl.define do
 		end
 
 		trait :inflow do
-			category { FactoryGirl.build(:inflow_category) }
+			category { FactoryGirl.build :inflow_category }
 		end
 
 		trait :scheduled do
 			transient do
-				next_due_date { Date.today.advance({months: -1}) }
-				frequency "Monthly"
+				next_due_date { Time.zone.today.advance months: -1 }
+				frequency 'Monthly'
 				auto_enter true
 			end
 

@@ -1,3 +1,7 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Account
 class Account < ApplicationRecord
 	validates :name, :opening_balance, presence: true
 	validates :account_type, presence: true, inclusion: {in: %w(bank credit cash asset liability investment loan)}
@@ -5,19 +9,23 @@ class Account < ApplicationRecord
 	belongs_to :related_account, class_name: 'Account', foreign_key: 'related_account_id', autosave: true, optional: true
 	has_many :transaction_accounts
 	has_many :transactions, through: :transaction_accounts, source: :trx do
-		def for_ledger(opts)
-			joins([	"LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id",
-							"LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id",
-							"LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
+		def for_ledger(_opts)
+			joins [
+				'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
+				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+				'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
+			]
 		end
 
-		def for_closing_balance(opts)
-			joins("JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id")
+		def for_closing_balance(_opts)
+			joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
 		end
 
-		def for_basic_closing_balance(opts)
-			joins([	"JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id",
-							"JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id"])
+		def for_basic_closing_balance(_opts)
+			joins [
+				'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
+				'JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
+			]
 		end
 	end
 
@@ -141,9 +149,7 @@ class Account < ApplicationRecord
 			query
 
 			# Convert the array of accounts to a hash
-			account_list = other_accounts.each_with_object({}) do |account, hash|
-				hash[account['id']] = account
-			end
+			account_list = other_accounts.each_with_object({}) { |account, hash| hash[account['id']] = account }
 
 			# Overlay the investment holding balances on top of the related cash account closing balances
 			investment_accounts.each do |account|
@@ -153,90 +159,86 @@ class Account < ApplicationRecord
 				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + cash_account['total_value'].to_f || 0
 			end
 
-			account_list.values.sort_by {|a| a['account_type']}.group_by {|a| "#{a['account_type'].capitalize} account".pluralize}.each_with_object({}) do |(type,accounts),hash|
+			account_list.values.sort_by { |a| a['account_type'] }.group_by { |a| "#{a['account_type'].capitalize} account".pluralize }.each_with_object({}) do |(type, accounts), hash|
 				hash[type] = {
-					accounts: accounts.sort_by {|a| a['name']}.map {|a| {
-						id: a['id'].to_i,
-						name: a['name'],
-						account_type: a['account_type'],
-						status: a['status'],
-						favourite: a['favourite'],
-						opening_balance: a['opening_balance'].to_f,
-						closing_balance: a['closing_balance'].to_f,
-						related_account: {
-							id: a['related_account_id'] && a['related_account_id'].to_i,
-							name: a['related_account_name'],
-							account_type: a['related_account_type'],
-							opening_balance: a['related_account_opening_balance'] && a['related_account_opening_balance'].to_f,
-							status: a['related_account_status']
+					accounts: accounts.sort_by { |a| a['name'] }.map do |a|
+						{
+							id: a['id'].to_i,
+							name: a['name'],
+							account_type: a['account_type'],
+							status: a['status'],
+							favourite: a['favourite'],
+							opening_balance: a['opening_balance'].to_f,
+							closing_balance: a['closing_balance'].to_f,
+							related_account: {
+								id: a['related_account_id'] && a['related_account_id'].to_i,
+								name: a['related_account_name'],
+								account_type: a['related_account_type'],
+								opening_balance: a['related_account_opening_balance'] && a['related_account_opening_balance'].to_f,
+								status: a['related_account_status']
+							}
 						}
-					}},
-					total: accounts.map {|a| a['closing_balance'].to_f}.reduce(:+)
+					end,
+					total: accounts.map { |a| a['closing_balance'].to_f }.reduce(:+)
 				}
 			end
-
 		end
 
 		def create_from_json(json)
-			account = Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status'], favourite: !!json['favourite']
-			account.related_account_id = json['related_account']['id'] if account.account_type.eql?("loan") and !!json['related_account']
-			account.related_account = Account.new name: "#{json['name']} (Cash)", account_type: "bank", opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: !!json['favourite'], related_account: account if account.account_type.eql?("investment")
+			account = Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true)
+			account.related_account_id = json['related_account']['id'] if account.account_type.eql?('loan') && !json['related_account'].nil?
+			account.related_account = Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: account if account.account_type.eql? 'investment'
 			account.save!
 			account
 		end
 
 		def update_from_json(json)
-			s = self.includes(:related_account).find(json[:id])
-			s.update_from_json(json)
+			s = includes(:related_account).find json[:id]
+			s.update_from_json json
 			s
 		end
 	end
 
 	def update_from_json(json)
-		original_account_type = self.account_type
+		original_account_type = account_type
 
 		self.name = json['name']
 		self.account_type = json['account_type']
 		self.opening_balance = json['opening_balance']
 		self.status = json['status']
-		self.favourite = !!json['favourite']
+		self.favourite = json['favourite'].eql? true
 
-		if self.account_type.eql? "investment"
-			if original_account_type.eql? "investment"
+		if account_type.eql? 'investment'
+			if original_account_type.eql? 'investment'
 				# Update the related cash account
-				self.related_account.name = "#{json['name']} (Cash)"
-				self.related_account.account_type = "bank"
-				self.related_account.opening_balance = json['related_account']['opening_balance']
-				self.related_account.status = json['status']
-				self.related_account.favourite = !!json['favourite']
+				related_account.name = "#{json['name']} (Cash)"
+				related_account.account_type = 'bank'
+				related_account.opening_balance = json['related_account']['opening_balance']
+				related_account.status = json['status']
+				related_account.favourite = json['favourite'].eql?(true)
 			else
 				# Create a new cash account
-				self.related_account = Account.new name: "#{json['name']} (Cash)", account_type: "bank", opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: !!json['favourite'], related_account: self
+				self.related_account = Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: self
 			end
 		else
 			# If changing from an investment account, delete the related cash account
-			self.related_account.destroy if original_account_type.eql? "investment"
+			related_account.destroy! if original_account_type.eql? 'investment'
 
-			if self.account_type.eql? "loan"
-				# Set the related asset account
-				self.related_account = (json['related_account'].nil? || json['related_account']['id'].nil? ? nil : Account.find(json['related_account']['id']))
-			else
-				# Clear the related account (if any)
-				self.related_account = nil
-			end
+			# If changing to a loan account, set the related asset account
+			self.related_account = account_type.eql?('loan') && json.dig('related_account', 'id') && Account.find(json['related_account']['id']) || nil
 		end
 
-		self.save!
+		save!
 	end
 
 	def reconcile
 		# Mark all cleared transactions for the account as reconciled
-		self.transaction_accounts
+		transaction_accounts
 			.where(status: 'Cleared')
 			.update_all(status: 'Reconciled')
 	end
 
-	def as_json(options={only: [:id, :name, :account_type, :opening_balance, :status, :favourite]})
+	def as_json(options = {only: %i(id name account_type opening_balance status favourite)})
 		# Defer to serializer
 		AccountSerializer.new(self, options).as_json
 	end

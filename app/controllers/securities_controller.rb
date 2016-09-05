@@ -1,9 +1,13 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Securities controller
 class SecuritiesController < ApplicationController
 	def index
-		if params.has_key? :include_balances
+		if params.key? :include_balances
 			render json: Security.list
 		else
-			render json: Security.order({favourite: :desc}, :name), except: [:current_holding, :closing_balance, :num_transactions, :unused]
+			render json: Security.order({favourite: :desc}, :name), except: %i(current_holding closing_balance num_transactions unused)
 		end
 	end
 
@@ -12,7 +16,7 @@ class SecuritiesController < ApplicationController
 	end
 
 	def create
-		render json: Security.create(name: params['name'], code: params['code'])
+		render json: Security.create!(name: params['name'], code: params['code'])
 	end
 
 	def update
@@ -22,7 +26,7 @@ class SecuritiesController < ApplicationController
 	end
 
 	def destroy
-		Security.find(params[:id]).destroy
+		Security.find(params[:id]).destroy!
 		head :ok
 	end
 end

@@ -1,6 +1,10 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Statuses controller
 class StatusesController < ApplicationController
 	def update
-		status = params.keys.keep_if {|status| %w(Cleared Reconciled).include? status }.first
+		status = params.keys.keep_if { |key| %w(Cleared Reconciled).include? key }.first
 		update_status status
 	end
 

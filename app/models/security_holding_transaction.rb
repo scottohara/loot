@@ -1,3 +1,7 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Security holding transaction
 class SecurityHoldingTransaction < SecurityTransaction
 	validates :amount, absence: true
 	validate :validate_quantity_presence, :validate_price_absence, :validate_commission_absence
@@ -14,35 +18,35 @@ class SecurityHoldingTransaction < SecurityTransaction
 			json['commission'] = nil
 
 			s = super
-			s.build_transaction_account(direction: json['direction'], status: json['status']).account = Account.find(json['primary_account']['id'])
+			s.build_transaction_account(direction: json['direction'], status: json['status']).account = Account.find json['primary_account']['id']
 			s.save!
 			s
 		end
 
 		def update_from_json(json)
-			s = self.includes(:header).find(json[:id])
-			s.update_from_json(json)
+			s = includes(:header).find json[:id]
+			s.update_from_json json
 			s
 		end
 	end
 
 	def update_from_json(json)
 		super
-		self.transaction_account.direction = json['direction']
-		self.account = Account.find(json['primary_account']['id'])
-		self.save!
+		transaction_account.direction = json['direction']
+		self.account = Account.find json['primary_account']['id']
+		save!
 	end
 
-	def as_json(options={})
-		super.merge({
-			primary_account: self.account.as_json,
+	def as_json(options = {})
+		super.merge(
+			primary_account: account.as_json,
 			category: {
-				id: self.transaction_account.direction.eql?('inflow') && 'AddShares' || 'RemoveShares',
-				name: self.transaction_account.direction.eql?('inflow') && 'Add Shares' || 'Remove Shares'
+				id: transaction_account.direction.eql?('inflow') && 'AddShares' || 'RemoveShares',
+				name: transaction_account.direction.eql?('inflow') && 'Add Shares' || 'Remove Shares'
 			},
-			direction: self.transaction_account.direction,
-			status: self.transaction_account.status,
-			quantity: self.header.quantity
-		})
+			direction: transaction_account.direction,
+			status: transaction_account.status,
+			quantity: header.quantity
+		)
 	end
 end

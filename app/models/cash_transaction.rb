@@ -1,3 +1,7 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Cash transaction
 class CashTransaction < Transaction
 	validates :amount, presence: true
 
@@ -15,9 +19,7 @@ class CashTransaction < Transaction
 		self
 	end
 
-	def as_json(options={})
-		super.merge({
-			amount: self.amount
-		})
+	def as_json(options = {})
+		super.merge(amount: amount)
 	end
 end

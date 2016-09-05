@@ -1,3 +1,7 @@
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+# Application controller
 class ApplicationController < ActionController::API
 	before_action :authenticate_user, except: [:routing_error]
 	rescue_from StandardError, with: :internal_error
@@ -6,7 +10,7 @@ class ApplicationController < ActionController::API
 	include ActionController::HttpAuthentication::Basic::ControllerMethods
 
 	def authenticate_user
-		render plain: "Invalid login and/or password", status: :unauthorized unless authenticate_with_http_basic do |username, password|
+		render plain: 'Invalid login and/or password', status: :unauthorized unless authenticate_with_http_basic do |username, password|
 			username.eql?(ENV[:LOOT_USERNAME.to_s]) && password.eql?(ENV[:LOOT_PASSWORD.to_s])
 		end
 	end
