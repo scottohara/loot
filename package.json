@@ -62,7 +62,7 @@
     "karma-sinon": "1.0.5",
     "karma-sourcemap-loader": "0.3.7",
     "mocha": "2.5.3",
-    "protractor": "4.0.0",
+    "protractor": "4.0.9",
     "sinon": "1.17.4",
     "sinon-chai": "2.8.0",
     "yargs": "4.8.1"
