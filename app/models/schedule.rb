@@ -120,7 +120,7 @@ class Schedule < ApplicationRecord
 
 			overdue.each do |schedule|
 				# Find the associated transaction header
-				header = TransactionHeader.includes(:trx).find_by_schedule_id schedule.id
+				header = TransactionHeader.includes(:trx).find_by(schedule_id: schedule.id)
 
 				# What type of transaction is it?
 				transaction_class = Transaction.class_for header.trx.transaction_type
@@ -153,29 +153,33 @@ class Schedule < ApplicationRecord
 				transaction_json = transaction_json.with_indifferent_access
 
 				# Create new instances of the transaction until the next due date is in the future
-				while schedule.next_due_date.past?
-					# Set the transaction date to the next due date
-					transaction_json[:transaction_date] = schedule.next_due_date
-
-					# Create the transaction instance
-					transaction_class.create_from_json transaction_json
-
-					# Update the schedule's next due date
-					schedule.next_due_date = schedule.next_due_date.advance(
-						case schedule.frequency
-						when 'Weekly' then {weeks: 1}
-						when 'Fortnightly' then {weeks: 2}
-						when 'Monthly' then {months: 1}
-						when 'Bimonthly' then {months: 2}
-						when 'Quarterly' then {months: 3}
-						when 'Yearly' then {years: 1}
-						end
-					)
-				end
+				create_overdue_transaction schedule, transaction_class, transaction_json while schedule.next_due_date.past?
 
 				# Save the schedule
 				schedule.save!
 			end
+		end
+
+		private
+
+		def create_overdue_transaction(schedule, transaction_class, transaction_json)
+			# Set the transaction date to the next due date
+			transaction_json[:transaction_date] = schedule.next_due_date
+
+			# Create the transaction instance
+			transaction_class.create_from_json transaction_json
+
+			# Update the schedule's next due date
+			schedule.next_due_date = schedule.next_due_date.advance(
+				case schedule.frequency
+				when 'Weekly' then {weeks: 1}
+				when 'Fortnightly' then {weeks: 2}
+				when 'Monthly' then {months: 1}
+				when 'Bimonthly' then {months: 2}
+				when 'Quarterly' then {months: 3}
+				when 'Yearly' then {years: 1}
+				end
+			)
 		end
 	end
 
