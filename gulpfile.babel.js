@@ -107,13 +107,13 @@
 	// Build application Javascript
 	gulp.task("build:app:js", ["clean:app:js"], () => gulp.src(appJsSource)
 		.pipe(sourceMaps.init())
-			.pipe(size({title: "app js (original)"}))
-			.pipe(concat("app.js"))
-			.pipe(babel())
-			.pipe(uglify())
-			.pipe(rev())
-			.pipe(size({title: "app js (minified)"}))
-			.pipe(size({title: "app js (gzipped)", gzip: true}))
+		.pipe(size({title: "app js (original)"}))
+		.pipe(concat("app.js"))
+		.pipe(babel())
+		.pipe(uglify())
+		.pipe(rev())
+		.pipe(size({title: "app js (minified)"}))
+		.pipe(size({title: "app js (gzipped)", gzip: true}))
 		.pipe(sourceMaps.write("."))
 		.pipe(gulp.dest("public"))
 		.on("error", util.log));
@@ -143,8 +143,8 @@
 	// Build vendor Javascript
 	gulp.task("build:vendor:js", ["clean:vendor:js"], () => gulp.src(vendorJsSource)
 		.pipe(sourceMaps.init({loadMaps: true}))
-			.pipe(concat("vendor.js"))
-			.pipe(rev())
+		.pipe(concat("vendor.js"))
+		.pipe(rev())
 		.pipe(sourceMaps.write("."))
 		.pipe(gulp.dest("public"))
 		.on("error", util.log));
@@ -161,13 +161,13 @@
 	// Build application CSS
 	gulp.task("build:app:css", ["clean:app:css"], () => gulp.src(appCssSource)
 		.pipe(sourceMaps.init())
-			.pipe(less({paths: ["node_modules"]}))
-			.pipe(size({title: "app css (original)"}))
-			.pipe(concat("app.css"))
-			.pipe(cssNano())
-			.pipe(rev())
-			.pipe(size({title: "app css (minified)"}))
-			.pipe(size({title: "app css (gzipped)", gzip: true}))
+		.pipe(less({paths: ["node_modules"]}))
+		.pipe(size({title: "app css (original)"}))
+		.pipe(concat("app.css"))
+		.pipe(cssNano())
+		.pipe(rev())
+		.pipe(size({title: "app css (minified)"}))
+		.pipe(size({title: "app css (gzipped)", gzip: true}))
 		.pipe(sourceMaps.write("."))
 		.pipe(gulp.dest("public"))
 		.on("error", util.log));
@@ -178,8 +178,8 @@
 	// Build vendor CSS
 	gulp.task("build:vendor:css", ["clean:vendor:css"], () => gulp.src(vendorCssSource)
 		.pipe(sourceMaps.init())
-			.pipe(concat("vendor.css"))
-			.pipe(rev())
+		.pipe(concat("vendor.css"))
+		.pipe(rev())
 		.pipe(sourceMaps.write("."))
 		.pipe(gulp.dest("public"))
 		.on("error", util.log));
