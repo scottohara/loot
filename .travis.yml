@@ -6,8 +6,9 @@ cache: bundler
 # Required to use new Travis container-based infrastructure
 sudo: false
 
-# Code Climate token for coverage reporting
+# Use latest Firefox, and Code Climate token for coverage reporting
 addons:
+	firefox: latest
   code_climate:
     repo_token: 26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
