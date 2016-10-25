@@ -153,7 +153,7 @@ class Schedule < ApplicationRecord
 				transaction_json = transaction_json.with_indifferent_access
 
 				# Create new instances of the transaction until the next due date is in the future
-				create_overdue_transaction schedule, transaction_class, transaction_json while schedule.next_due_date.past?
+				create_overdue_transaction schedule, transaction_class, transaction_json until schedule.next_due_date.future?
 
 				# Save the schedule
 				schedule.save!

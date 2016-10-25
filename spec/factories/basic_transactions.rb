@@ -23,7 +23,7 @@ FactoryGirl.define do
 
 		trait :scheduled do
 			transient do
-				next_due_date { Time.zone.today.advance months: -1 }
+				next_due_date { Time.zone.tomorrow.advance months: -1 }
 				frequency 'Monthly'
 				auto_enter true
 			end

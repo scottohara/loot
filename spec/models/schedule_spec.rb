@@ -150,7 +150,7 @@ RSpec.describe Schedule, type: :model do
 
 		it 'should ignore non-scheduled, non-overdue or non-auto-enter transactions' do
 			create :basic_transaction # Non-scheduled
-			create :basic_transaction, :scheduled, next_due_date: (Time.zone.today + 1) # Non-overdue
+			create :basic_transaction, :scheduled, next_due_date: Time.zone.tomorrow # Non-overdue
 			create :basic_transaction, :scheduled, auto_enter: false # Non-auto-enter
 
 			expect(BasicTransaction).to_not receive :create_from_json
@@ -162,8 +162,8 @@ RSpec.describe Schedule, type: :model do
 			def months_ago(months)
 				# Date.advance(months: -x) will round down (ie. to an earlier date) if the date is invalid (eg. 30-Feb)
 				# To ensure that we only have one overdue transaction, make sure that advancing back yields the original date
-				target_date = Time.zone.today.advance months: -months
-				target_date = target_date.advance days: 1 until target_date.advance(months: months) >= Time.zone.today
+				target_date = Time.zone.tomorrow.advance months: -months
+				target_date = target_date.advance days: 1 until target_date.advance(months: months).future?
 				target_date
 			end
 
@@ -171,12 +171,12 @@ RSpec.describe Schedule, type: :model do
 				months_ago(months).advance months: months
 			end
 
-			weekly = create :basic_transaction, :scheduled, frequency: 'Weekly', next_due_date: Time.zone.today.advance(weeks: -1)
-			fortnightly = create :basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: Time.zone.today.advance(weeks: -2)
+			weekly = create :basic_transaction, :scheduled, frequency: 'Weekly', next_due_date: Time.zone.tomorrow.advance(weeks: -1)
+			fortnightly = create :basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: Time.zone.tomorrow.advance(weeks: -2)
 			monthly = create :basic_transaction, :scheduled, frequency: 'Monthly', next_due_date: months_ago(1)
 			bimonthly = create :basic_transaction, :scheduled, frequency: 'Bimonthly', next_due_date: months_ago(2)
 			quarterly = create :basic_transaction, :scheduled, frequency: 'Quarterly', next_due_date: months_ago(3)
-			yearly = create :basic_transaction, :scheduled, frequency: 'Yearly', next_due_date: Time.zone.today.advance(years: -1)
+			yearly = create :basic_transaction, :scheduled, frequency: 'Yearly', next_due_date: Time.zone.tomorrow.advance(years: -1)
 
 			expect(BasicTransaction).to be_created_from weekly.as_json, weekly.account.id, weekly.header.schedule.next_due_date
 			expect(BasicTransaction).to be_created_from fortnightly.as_json, fortnightly.account.id, fortnightly.header.schedule.next_due_date
@@ -187,23 +187,23 @@ RSpec.describe Schedule, type: :model do
 
 			Schedule.auto_enter_overdue
 
-			expect(Schedule.find(fortnightly.header.schedule.id).next_due_date).to eq Time.zone.today
+			expect(Schedule.find(fortnightly.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
 			expect(Schedule.find(monthly.header.schedule.id).next_due_date).to eq next_due_date(1)
 			expect(Schedule.find(bimonthly.header.schedule.id).next_due_date).to eq next_due_date(2)
 			expect(Schedule.find(quarterly.header.schedule.id).next_due_date).to eq next_due_date(3)
-			expect(Schedule.find(yearly.header.schedule.id).next_due_date).to eq Time.zone.today
+			expect(Schedule.find(yearly.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
 		end
 
 		it 'should create as many transactions as are overdue' do
-			three_overdue = create :basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: Time.zone.today.advance(weeks: -6)
+			three_overdue = create :basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: Time.zone.tomorrow.advance(weeks: -6)
 
-			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.today.advance(weeks: -6)
-			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.today.advance(weeks: -4)
-			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.today.advance(weeks: -2)
+			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.tomorrow.advance(weeks: -6)
+			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.tomorrow.advance(weeks: -4)
+			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.tomorrow.advance(weeks: -2)
 
 			Schedule.auto_enter_overdue
 
-			expect(Schedule.find(three_overdue.header.schedule.id).next_due_date).to eq Time.zone.today
+			expect(Schedule.find(three_overdue.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
 		end
 	end
 
