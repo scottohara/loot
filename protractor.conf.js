@@ -1,5 +1,3 @@
-require("babel-core/register");
-
 module.exports.config = {
 
 	// Connect directly to browsers

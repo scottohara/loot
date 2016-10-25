@@ -1,6 +1,5 @@
 {
 	const	gulp = require("gulp"),
-				babel = require("gulp-babel"),
 				concat = require("gulp-concat"),
 				del = require("del"),
 				inject = require("gulp-inject"),
@@ -14,7 +13,6 @@
 				sourceMaps = require("gulp-sourcemaps"),
 				swPrecache = require("sw-precache"),
 				templateCache = require("gulp-angular-templatecache"),
-				uglify = require("gulp-uglify"),
 				util = require("gulp-util"),
 
 				appJsSource = "src/**/*.js",
@@ -25,8 +23,7 @@
 					"node_modules/angular-ui-router/release/angular-ui-router.min.js",
 					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
 					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
-					"node_modules/moment/min/moment.min.js",
-					"node_modules/babel-polyfill/browser.js"
+					"node_modules/moment/min/moment.min.js"
 				],
 
 				appTemplatesSource = ["src/**/*.html", "!src/*.html"],
@@ -109,8 +106,6 @@
 		.pipe(sourceMaps.init())
 		.pipe(size({title: "app js (original)"}))
 		.pipe(concat("app.js"))
-		.pipe(babel())
-		.pipe(uglify())
 		.pipe(rev())
 		.pipe(size({title: "app js (minified)"}))
 		.pipe(size({title: "app js (gzipped)", gzip: true}))
@@ -221,6 +216,7 @@
 	// Build service worker
 	gulp.task("build:serviceworker", ["clean:serviceworker", "build:index"], () => swPrecache.write("public/service-worker.js", {
 		cacheId: packageJson.name,
+		dontCacheBustUrlsMatching: /(app|templates|vendor)-.*\.(js|css)$/,
 		staticFileGlobs: ["public/**/*.{html,js,css,ico}", "public/fonts/*"],
 		stripPrefix: "public",
 		logger: util.log

@@ -41,10 +41,6 @@ module.exports = config => {
 				watched: false
 			},
 			{
-				pattern: "node_modules/babel-polyfill/browser.js",
-				watched: false
-			},
-			{
 				pattern: "node_modules/angular-mocks/angular-mocks.js",
 				watched: false
 			},

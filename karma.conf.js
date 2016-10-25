@@ -62,18 +62,11 @@ module.exports = config => {
 		preprocessors: {
 			"**/src/**/views/*.html": ["ng-html2js"],
 			"**/public/app*.js": ["sourcemap"],
-			"**/public/vendor*.js": ["sourcemap"],
-			"**/spec/public/**/*.js": ["babel"]
+			"**/public/vendor*.js": ["sourcemap"]
 		},
 
 		ngHtml2JsPreprocessor: {
 			stripPrefix: "src/"
-		},
-
-		babelPreprocessor: {
-			options: {
-				sourceMaps: "inline"
-			}
 		},
 
 		// test results reporter to use

@@ -41,10 +41,6 @@ module.exports = config => {
 				watched: false
 			},
 			{
-				pattern: "node_modules/babel-polyfill/browser.js",
-				watched: false
-			},
-			{
 				pattern: "node_modules/angular-mocks/angular-mocks.js",
 				watched: false
 			},
@@ -87,19 +83,11 @@ module.exports = config => {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			"**/src/**/views/*.html": ["ng-html2js"],
-			"**/src/**/*.js": ["babel"],
-			"**/spec/public/**/*.js": ["babel"]
+			"**/src/**/views/*.html": ["ng-html2js"]
 		},
 
 		ngHtml2JsPreprocessor: {
 			stripPrefix: "src/"
-		},
-
-		babelPreprocessor: {
-			options: {
-				sourceMaps: "inline"
-			}
 		},
 
 		// test results reporter to use
