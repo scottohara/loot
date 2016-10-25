@@ -8,7 +8,7 @@ sudo: false
 
 # Use latest Firefox, and Code Climate token for coverage reporting
 addons:
-	firefox: latest
+  firefox: latest
   code_climate:
     repo_token: 26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
