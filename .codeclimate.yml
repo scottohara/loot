@@ -16,7 +16,7 @@ engines:
         - javascript
 
   eslint:
-    enabled: true
+    enabled: false        # Disabled due to lack of support for shared configs https://github.com/codeclimate/codeclimate-eslint/issues/86
     channel: "eslint-3"
 
   fixme:
