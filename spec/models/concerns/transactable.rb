@@ -29,14 +29,18 @@ RSpec.shared_examples Transactable do
 						# Compact (a copy of) the actual transaction
 						actual_json = compact actual_trx.deep_dup
 
+						# Skip if matches
+						return true if expected_json.hash.eql? actual_json.hash
+
 						diffs << {
 							id: trx.id,
 							type: trx.transaction_type,
 							expected: expected_json.delete_if { |key, value| actual_json[key].eql? value },
 							actual: actual_json.slice(*expected_json.keys)
-						} unless expected_json.hash.eql? actual_json.hash
+						}
 
-						expected_json.hash.eql? actual_json.hash
+						# If we get here, we have a mismatch
+						false
 					end
 
 					@diffs.empty?

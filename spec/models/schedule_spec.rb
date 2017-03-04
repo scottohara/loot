@@ -27,14 +27,19 @@ RSpec.describe Schedule, type: :model do
 				# Compact the actual transaction
 				actual_json = compact actual_trx
 
+				# Skip if matches
+				return true if expected_json.hash.eql? actual_json.hash
+
+				# Track the differences
 				@diffs << {
 					id: trx.id,
 					type: trx.transaction_type,
 					expected: expected_json.delete_if { |key, value| actual_json[key].eql? value },
 					actual: actual_json.slice(*expected_json.keys)
-				} unless expected_json.hash.eql? actual_json.hash
+				}
 
-				@diffs.empty?
+				# If we get here, we have a mismatch
+				false
 			end
 		end
 

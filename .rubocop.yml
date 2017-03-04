@@ -28,6 +28,11 @@ Style/Copyright:
   Enabled: true
   Notice: 'Copyright \(c\) 2016 Scott O.Hara, oharagroup.net'
 
+# Style/DocumentationMethod (disabled due to no documentation)
+
+Style/Encoding:
+  Enabled: true
+
 Style/FirstArrayElementLineBreak:
   Enabled: true
 
@@ -43,11 +48,18 @@ Style/FirstMethodParameterLineBreak:
 Style/ImplicitRuntimeError:
   Enabled: true
 
+# Style/InlineComment (disabled due to use of inline comments)
+# Style/MethodCallWithArgsParentheses (prefer no parens)
+
 Style/MethodCalledOnDoEndBlock:
   Enabled: true
 
+# Style/MissingElse (else not required)
+
 Style/MultilineAssignmentLayout:
   Enabled: true
+
+# Style/OptionHash (options required for as_json methods)
 
 Style/Send:
   Enabled: true
@@ -57,6 +69,15 @@ Style/StringMethods:
 
 Style/SymbolArray:
   Enabled: true
+
+Style/SingleLineBlockParams:
+  Enabled: true
+
+# END disabled by default cops
+
+# Disabled as we use update_all and update_column in a few places
+Rails/SkipsModelValidations:
+  Enabled: false
 
 # Block comment in spec_helper
 Style/BlockComments:

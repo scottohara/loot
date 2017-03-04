@@ -1,7 +1,10 @@
 language: ruby
 
 # Cache gems
-cache: bundler
+cache:
+	bundler: true
+	directories:
+		- node_modules
 
 # Required to use new Travis container-based infrastructure
 sudo: false
@@ -30,5 +33,7 @@ script:
   - bundle exec rake                    # Backend specs
   - npm test -- --browsers Firefox      # Frontend specs
 
-# Pipe the JS coverage data to Code Climate
-after_script: cat ./coverage/frontend/lcov.info | codeclimate
+# Pipe the coverage data to Code Climate
+after_script:
+  - cat ./coverage/frontend/lcov.info | ./node_modules/.bin/codeclimate-test-reporter
+  - bundle exec codeclimate-test-reporter

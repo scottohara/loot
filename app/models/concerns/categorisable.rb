@@ -52,11 +52,13 @@ module Categorisable
 		end
 
 		def basic_subcategory(trx)
+			return unless trx['parent_category_id'].present?
+			j
 			{
 				id: trx['category_id'].to_s,
 				name: trx['category_name'],
 				parent_id: trx['parent_category_id'].to_s
-			} if trx['parent_category_id'].present?
+			}
 		end
 
 		def psuedo_category(type, direction, parent_type = nil)

@@ -373,20 +373,22 @@ def load_bills
 	CSV.foreach csv_file_path('BILL'), headers: true do |row|
 		@tmp_head_bills[row['hbillHead']] = {next_unpaid_instance: row['iinstNextUnpaid'].to_i} if row['hbill'].to_i.eql?(row['hbillHead'].to_i) && row['cInstMax'].to_i.eql?(-1)
 
-		@tmp_bills[row['hbillHead']] = {
-			instance: row['iinst'].to_i,
-			last_date: row['dt'],
-			estimate: row['cEstInst'].to_i.eql?(0),
-			auto: !row['cDaysAutoEnter'].to_i.eql?(-1),
-			transaction: row['lHtrn'],
-			frequency:
-				case row['frq'].to_i
-				when 2 then 'Fortnightly'
-				when 3 then 'Monthly'
-				when 4 then 'Quarterly'
-				when 5 then 'Yearly'
-				end
-		} unless @tmp_bills.key?(row['hbillHead']) && row['iinst'].to_i <= @tmp_bills[row['hbillHead']][:instance]
+		unless @tmp_bills.key?(row['hbillHead']) && row['iinst'].to_i <= @tmp_bills[row['hbillHead']][:instance]
+			@tmp_bills[row['hbillHead']] = {
+				instance: row['iinst'].to_i,
+				last_date: row['dt'],
+				estimate: row['cEstInst'].to_i.eql?(0),
+				auto: !row['cDaysAutoEnter'].to_i.eql?(-1),
+				transaction: row['lHtrn'],
+				frequency:
+					case row['frq'].to_i
+					when 2 then 'Fortnightly'
+					when 3 then 'Monthly'
+					when 4 then 'Quarterly'
+					when 5 then 'Yearly'
+					end
+			}
+		end
 
 		progress 'Prepared', $INPUT_LINE_NUMBER, 'bill'
 	end
