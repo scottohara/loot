@@ -36,4 +36,4 @@ script:
 # Pipe the coverage data to Code Climate
 after_script:
   - cat ./coverage/frontend/lcov.info | ./node_modules/.bin/codeclimate-test-reporter
-  - bundle exec codeclimate-test-reporter
+  - bundle exec codeclimate-test-reporter coverage/backend/.resultset.json
