@@ -2,9 +2,9 @@ language: ruby
 
 # Cache gems
 cache:
-	bundler: true
-	directories:
-		- node_modules
+  bundler: true
+  directories:
+    - node_modules
 
 # Required to use new Travis container-based infrastructure
 sudo: false
