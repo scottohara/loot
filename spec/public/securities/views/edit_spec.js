@@ -41,7 +41,7 @@ describe("securityEditView", () => {
 		securityEditView = require("./edit");
 
 		// Go to the securities index page
-		browser.get("/index.html#/securities");
+		browser.get("/#!/securities");
 		browser.wait(protractor.ExpectedConditions.presenceOf(securityIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
 		securityIndexView.table.rows.count().then(count => (originalRowCount = count));

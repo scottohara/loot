@@ -103,7 +103,7 @@ describe("lootStatesProvider", () => {
 
 		it("should have a title", () => stateConfig.data.title.should.equal("Accounts"));
 
-		it("should resolve to a URL", () => $state.href(stateName).should.equal("#/accounts"));
+		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/accounts"));
 
 		it("should not transition if the user is unauthenticated", () => {
 			$state.get(stateName).resolve.authenticated = () => false;
@@ -132,7 +132,7 @@ describe("lootStatesProvider", () => {
 			describe("account state", () => {
 				beforeEach(() => (stateName += ".account"));
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/accounts/1"));
+				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/accounts/1"));
 
 				it("should successfully transition", () => {
 					$state.go(stateName);
@@ -149,7 +149,7 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Account Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/accounts/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/accounts/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
 						$state.get(stateName).resolve.authenticated = () => false;
@@ -190,7 +190,7 @@ describe("lootStatesProvider", () => {
 						describe("account transaction state", () => {
 							beforeEach(() => (stateName += ".transaction"));
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/accounts/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/accounts/1/transactions/2"));
 
 							it("should successfully transition", () => {
 								$state.go(stateName);
@@ -213,7 +213,7 @@ describe("lootStatesProvider", () => {
 
 		it("should have a title", () => stateConfig.data.title.should.equal("Schedules"));
 
-		it("should resolve to a URL", () => $state.href(stateName).should.equal("#/schedules"));
+		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/schedules"));
 
 		it("should not transition if the user is unauthenticated", () => {
 			$state.get(stateName).resolve.authenticated = () => false;
@@ -242,7 +242,7 @@ describe("lootStatesProvider", () => {
 			describe("schedule state", () => {
 				beforeEach(() => (stateName += ".schedule"));
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/schedules/1"));
+				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/schedules/1"));
 
 				it("should successfully transition", () => {
 					$state.go(stateName);
@@ -262,7 +262,7 @@ describe("lootStatesProvider", () => {
 
 		it("should have a title", () => stateConfig.data.title.should.equal("Payees"));
 
-		it("should resolve to a URL", () => $state.href(stateName).should.equal("#/payees"));
+		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/payees"));
 
 		it("should not transition if the user is unauthenticated", () => {
 			$state.get(stateName).resolve.authenticated = () => false;
@@ -291,7 +291,7 @@ describe("lootStatesProvider", () => {
 			describe("payee state", () => {
 				beforeEach(() => (stateName += ".payee"));
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/payees/1"));
+				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/payees/1"));
 
 				it("should successfully transition", () => {
 					$state.go(stateName);
@@ -308,7 +308,7 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Payee Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/payees/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/payees/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
 						$state.get(stateName).resolve.authenticated = () => false;
@@ -348,7 +348,7 @@ describe("lootStatesProvider", () => {
 						describe("payee transaction state", () => {
 							beforeEach(() => (stateName += ".transaction"));
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/payees/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/payees/1/transactions/2"));
 
 							it("should successfully transition", () => {
 								$state.go(stateName);
@@ -371,7 +371,7 @@ describe("lootStatesProvider", () => {
 
 		it("should have a title", () => stateConfig.data.title.should.equal("Categories"));
 
-		it("should resolve to a URL", () => $state.href(stateName).should.equal("#/categories"));
+		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/categories"));
 
 		it("should not transition if the user is unauthenticated", () => {
 			$state.get(stateName).resolve.authenticated = () => false;
@@ -400,7 +400,7 @@ describe("lootStatesProvider", () => {
 			describe("category state", () => {
 				beforeEach(() => (stateName += ".category"));
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/categories/1"));
+				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/categories/1"));
 
 				it("should successfully transition", () => {
 					$state.go(stateName);
@@ -417,7 +417,7 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Category Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/categories/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/categories/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
 						$state.get(stateName).resolve.authenticated = () => false;
@@ -457,7 +457,7 @@ describe("lootStatesProvider", () => {
 						describe("category transaction state", () => {
 							beforeEach(() => (stateName += ".transaction"));
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/categories/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/categories/1/transactions/2"));
 
 							it("should successfully transition", () => {
 								$state.go(stateName);
@@ -480,7 +480,7 @@ describe("lootStatesProvider", () => {
 
 		it("should have a title", () => stateConfig.data.title.should.equal("Securities"));
 
-		it("should resolve to a URL", () => $state.href(stateName).should.equal("#/securities"));
+		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/securities"));
 
 		it("should not transition if the user is unauthenticated", () => {
 			$state.get(stateName).resolve.authenticated = () => false;
@@ -509,7 +509,7 @@ describe("lootStatesProvider", () => {
 			describe("security state", () => {
 				beforeEach(() => (stateName += ".security"));
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/securities/1"));
+				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/securities/1"));
 
 				it("should successfully transition", () => {
 					$state.go(stateName);
@@ -526,7 +526,7 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Security Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#/securities/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/securities/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
 						$state.get(stateName).resolve.authenticated = () => false;
@@ -566,7 +566,7 @@ describe("lootStatesProvider", () => {
 						describe("security transaction state", () => {
 							beforeEach(() => (stateName += ".transaction"));
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#/securities/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/securities/1/transactions/2"));
 
 							it("should successfully transition", () => {
 								$state.go(stateName);
@@ -592,7 +592,7 @@ describe("lootStatesProvider", () => {
 
 		it("should have a title", () => stateConfig.data.title.should.equal("Search Transactions"));
 
-		it("should resolve to a URL", () => $state.href(stateName, {query}).should.equal(`#/transactions?query=${query}`));
+		it("should resolve to a URL", () => $state.href(stateName, {query}).should.equal(`#!/transactions?query=${query}`));
 
 		it("should not transition if the user is unauthenticated", () => {
 			$state.get(stateName).resolve.authenticated = () => false;
@@ -663,7 +663,7 @@ describe("lootStatesProvider", () => {
 			describe("transaction state", () => {
 				beforeEach(() => (stateName += ".transaction"));
 
-				it("should resolve to a URL", () => $state.href(stateName, {query, transactionId: 2}).should.equal(`#/transactions/2?query=${query}`));
+				it("should resolve to a URL", () => $state.href(stateName, {query, transactionId: 2}).should.equal(`#!/transactions/2?query=${query}`));
 
 				it("should successfully transition", () => {
 					$state.go(stateName);

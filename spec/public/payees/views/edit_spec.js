@@ -39,7 +39,7 @@ describe("payeeEditView", () => {
 		payeeEditView = require("./edit");
 
 		// Go to the payees index page
-		browser.get("/index.html#/payees");
+		browser.get("/#!/payees");
 		browser.wait(protractor.ExpectedConditions.presenceOf(payeeIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
 		payeeIndexView.table.rows.count().then(count => (originalRowCount = count));

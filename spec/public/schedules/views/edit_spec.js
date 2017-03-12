@@ -76,7 +76,7 @@ describe("scheduleEditView", () => {
 		scheduleEditView = require("./edit");
 
 		// Go to the schedule index page
-		browser.get("/index.html#/schedules");
+		browser.get("/#!/schedules");
 		browser.wait(protractor.ExpectedConditions.presenceOf(scheduleIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
 		scheduleIndexView.table.rows.count().then(count => (originalRowCount = count));

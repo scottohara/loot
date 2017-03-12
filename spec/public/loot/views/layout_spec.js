@@ -4,7 +4,7 @@ describe.skip("layoutView", () => {
 
 	it("should navigate to the accounts list when the home button is clicked", () => {
 		layoutView.homeButton.click();
-		browser.getCurrentUrl().should.eventually.equal(`${browser.baseUrl}#/accounts`);
+		browser.getCurrentUrl().should.eventually.equal(`${browser.baseUrl}#!/accounts`);
 	});
 
 	describe("accounts menu", () => {

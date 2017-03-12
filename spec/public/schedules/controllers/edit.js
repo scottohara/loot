@@ -417,6 +417,10 @@ describe("ScheduleEditController", () => {
 
 				return mockAngularElement;
 			});
+
+			// Make sure there are no pending tasks to begin with
+			// (see https://github.com/angular/angular.js/issues/14336)
+			$timeout.flush();
 		});
 
 		it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & related status", () => {

@@ -69,7 +69,7 @@ describe("categoryEditView", () => {
 		categoryEditView = require("./edit");
 
 		// Go to the categories index page
-		browser.get("/index.html#/categories");
+		browser.get("/#!/categories");
 		browser.wait(protractor.ExpectedConditions.presenceOf(categoryIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 
 		categoryIndexView.table.rows.count().then(count => (originalRowCount = count));

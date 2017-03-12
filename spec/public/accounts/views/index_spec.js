@@ -49,7 +49,7 @@ describe("accountIndexView", () => {
 		};
 
 		// Go to the account index page
-		browser.get("/index.html#/accounts");
+		browser.get("/#!/accounts");
 		browser.wait(protractor.ExpectedConditions.presenceOf(accountIndexView.total), 3000, "Timeout waiting for view to render");
 	});
 

@@ -42,18 +42,13 @@ module.exports.config = {
 	// Initialise the mocha chai framework
 	onPrepare() {
 		// Load chai assertions
-		const	chai = require("chai"),
-					width = 1280,
-					height = 1024;
+		const	chai = require("chai");
 
 		// Load chai-as-promised support
 		chai.use(require("chai-as-promised"));
 
 		// Initialise should API (attaches as a property on Object)
 		chai.should();
-
-		// Make sure the window is wide enough for the large bootstrap modals
-		browser.driver.manage().window().setSize(width, height);
 	},
 
 	/* eslint-disable no-process-env */

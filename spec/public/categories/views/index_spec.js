@@ -31,7 +31,7 @@ describe("categoryIndexView", () => {
 		});
 
 		// Go to the category index page
-		browser.get("/index.html#/categories");
+		browser.get("/#!/categories");
 		browser.wait(protractor.ExpectedConditions.presenceOf(categoryIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
 	});
 
