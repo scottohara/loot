@@ -54,7 +54,7 @@
 					y = b.direction;
 				}
 
-				return x < y ? -1 : x > y ? 1 : 0;
+				return x.localeCompare(y);
 			}
 
 			// Disable navigation on the table

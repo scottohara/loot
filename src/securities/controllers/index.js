@@ -44,18 +44,17 @@
 
 				if (a.unused === b.unused) {
 					if ((a.current_holding > 0) === (b.current_holding > 0)) {
-						x = a.name;
-						y = b.name;
-					} else {
-						x = a.current_holding <= 0;
-						y = b.current_holding <= 0;
+						return a.name.localeCompare(b.name);
 					}
+
+					x = a.current_holding <= 0;
+					y = b.current_holding <= 0;
 				} else {
 					x = a.unused;
 					y = b.unused;
 				}
 
-				return x < y ? -1 : x > y ? 1 : 0;
+				return x - y;
 			}
 
 			// Disable navigation on the table

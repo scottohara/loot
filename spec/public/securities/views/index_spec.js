@@ -15,18 +15,17 @@ describe("securityIndexView", () => {
 
 			if (a.unused === b.unused) {
 				if ((a.holding > 0) === (b.holding > 0)) {
-					x = a.name;
-					y = b.name;
-				} else {
-					x = a.holding <= 0;
-					y = b.holding <= 0;
+					return a.name.localeCompare(b.name);
 				}
+
+				x = a.holding <= 0;
+				y = b.holding <= 0;
 			} else {
 				x = a.unused;
 				y = b.unused;
 			}
 
-			return x < y ? -1 : x > y ? 1 : 0;
+			return x - y;
 		});
 		expectedTotal = "Total: -$1.00";
 

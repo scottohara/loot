@@ -27,7 +27,7 @@ describe("categoryIndexView", () => {
 				y = b.direction;
 			}
 
-			return x < y ? -1 : x > y ? 1 : 0;
+			return x.localeCompare(y);
 		});
 
 		// Go to the category index page

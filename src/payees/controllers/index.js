@@ -38,10 +38,7 @@
 		editPayee(index) {
 			// Helper function to sort by payee name
 			function byName(a, b) {
-				const x = a.name,
-							y = b.name;
-
-				return x < y ? -1 : x > y ? 1 : 0;
+				return a.name.localeCompare(b.name);
 			}
 
 			// Disable navigation on the table
