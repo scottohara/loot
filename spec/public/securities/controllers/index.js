@@ -170,7 +170,7 @@ describe("SecurityIndexController", () => {
 		let security;
 
 		beforeEach(() => {
-			security = securityIndexController.securities[0];
+			[security] = securityIndexController.securities;
 		});
 
 		it("should favourite the security", () => {
@@ -269,7 +269,7 @@ describe("SecurityIndexController", () => {
 		});
 
 		it("should do nothing when an id state parameter is not specified", () => {
-			Reflect.deleteProperty(toParams, "id");
+			delete toParams.id;
 			securityIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
 			securityIndexController.focusSecurity.should.not.have.been.called;
 		});

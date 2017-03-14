@@ -240,7 +240,7 @@
 		// Updates the context's closing balance after adding, editing or deleting a transaction
 		updateClosingBalance(originalTransaction, newTransaction) {
 			// Only proceed if the context has a closing balance (ie. not in search mode)
-			if ("object" === typeof this.context && Reflect.getOwnPropertyDescriptor(this.context, "closing_balance")) {
+			if ("object" === typeof this.context && Object.getOwnPropertyDescriptor(this.context, "closing_balance")) {
 				// If there was an original transaction, exclude it's amount from the closing balance
 				if (originalTransaction) {
 					this.context.closing_balance = Number(this.context.closing_balance) - (Number(originalTransaction.amount) * ("inflow" === originalTransaction.direction ? 1 : -1));
@@ -274,7 +274,7 @@
 					}
 					break;
 
-				// no default
+				// No default
 			}
 
 			// If the action is not allowed, show the confirmation prompt

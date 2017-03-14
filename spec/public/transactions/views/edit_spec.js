@@ -322,7 +322,7 @@ describe("transactionEditView", () => {
 				});
 			});
 
-			/*
+			/* Not implemented yet
 			describe("editing a category", () => {
 				describe("parent", () => {
 					describe("expense", () => {

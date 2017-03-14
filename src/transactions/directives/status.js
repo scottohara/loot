@@ -10,7 +10,7 @@
 					transactionStatus: "=transactionStatus"
 				},
 				templateUrl: "transactions/views/status.html",
-				link: (scope, iElement) => {
+				link(scope, iElement) {
 					// Set the current status & icon, calculate the next status
 					function setCurrentStatus(status) {
 						scope.currentStatus = status;

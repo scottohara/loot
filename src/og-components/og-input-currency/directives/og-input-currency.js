@@ -14,7 +14,7 @@
 				controller: "OgInputCurrencyController",
 				controllerAs: "vm",
 				bindToController: true,
-				link: (scope, iElement, iAttrs, ngModel) => {
+				link(scope, iElement, iAttrs, ngModel) {
 					// Set the decimal places
 					scope.vm.setDecimalPlaces(scope.vm.precision);
 

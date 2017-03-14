@@ -25,9 +25,9 @@ describe("CategoryIndexController", () => {
 
 	it("should flatten the passed categories & subcategories and make them available to the view", () => {
 		const firstParent = angular.copy(categories[0]),
-					firstChild = firstParent.children[0];
+					[firstChild] = firstParent.children;
 
-		Reflect.deleteProperty(firstParent, "children");
+		delete firstParent.children;
 		categoryIndexController.categories[0].should.deep.equal(firstParent);
 		categoryIndexController.categories[1].should.deep.equal(firstChild);
 		categoryIndexController.categories.length.should.equal(15);
@@ -72,7 +72,7 @@ describe("CategoryIndexController", () => {
 			});
 
 			it("should not attempt to decrement original parent's children count if there was no original parent", () => {
-				Reflect.deleteProperty(categoryIndexController.categories[1], "parent_id");
+				delete categoryIndexController.categories[1].parent_id;
 				const originalCategories = angular.copy(categoryIndexController.categories);
 
 				originalCategories[1].parent_id = 2;
@@ -107,9 +107,9 @@ describe("CategoryIndexController", () => {
 			it("should not attempt to increment new parent's children count if there is no new parent", () => {
 				const originalCategories = angular.copy(categoryIndexController.categories);
 
-				Reflect.deleteProperty(originalCategories[1], "parent_id");
+				delete originalCategories[1].parent_id;
 				originalCategories[0].num_children = 1;
-				Reflect.deleteProperty(category, "parent_id");
+				delete category.parent_id;
 				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
@@ -254,8 +254,7 @@ describe("CategoryIndexController", () => {
 		});
 
 		it("should remove a parent category and it's children from the categories list when the modal is closed", () => {
-			const child1 = categoryIndexController.categories[4],
-						child2 = categoryIndexController.categories[5];
+			const [, , , , child1, child2] = categoryIndexController.categories;
 
 			categoryIndexController.deleteCategory(3);
 			$uibModal.close(category);
@@ -265,7 +264,7 @@ describe("CategoryIndexController", () => {
 		});
 
 		it("should remove a subcategory from the categories list when the modal is closed", () => {
-			category = categoryIndexController.categories[1];
+			[, category] = categoryIndexController.categories;
 			categoryIndexController.deleteCategory(1);
 			$uibModal.close(category);
 			categoryIndexController.categories.should.not.include(category);
@@ -294,7 +293,7 @@ describe("CategoryIndexController", () => {
 		let category;
 
 		beforeEach(() => {
-			category = categoryIndexController.categories[0];
+			[category] = categoryIndexController.categories;
 		});
 
 		it("should favourite the category", () => {
@@ -393,7 +392,7 @@ describe("CategoryIndexController", () => {
 		});
 
 		it("should do nothing when an id state parameter is not specified", () => {
-			Reflect.deleteProperty(toParams, "id");
+			delete toParams.id;
 			categoryIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
 			categoryIndexController.focusCategory.should.not.have.been.called;
 		});

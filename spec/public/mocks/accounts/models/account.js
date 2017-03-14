@@ -4,7 +4,7 @@
 	 */
 	class AccountModelMockProvider {
 		constructor(accountMockProvider, accountsMockProvider, accountsWithBalancesMockProvider, $qMockProvider) {
-			// success/error = options for the stub promises
+			// Success/error = options for the stub promises
 			// all/allWithBalances =  promise-like responses
 			const success = {
 							args: {id: 1},

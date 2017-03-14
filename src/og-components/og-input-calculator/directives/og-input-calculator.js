@@ -9,11 +9,11 @@
 				require: ["ngModel", "?ogInputCurrency", "?ogInputNumber"],
 				replace: true,
 				templateUrl: "og-components/og-input-calculator/views/calculator.html",
-				link: (scope, iElement, iAttrs, controllers) => {
+				link(scope, iElement, iAttrs, controllers) {
 					// Get the position of the popover, or default to left if unspecified
 					scope.position = iAttrs.ogInputCalculator || "left";
 
-					const ngModel = controllers[0],
+					const [ngModel] = controllers,
 								ogInputCurrency = 1,
 								ogInputNumber = 2,
 								ACTION_KEYS = {
@@ -91,7 +91,7 @@
 										result /= operation.operand;
 										break;
 
-									// no default
+									// No default
 								}
 
 								return result;
@@ -104,7 +104,7 @@
 					// Handle input value changes
 					scope.inputChanged = value => {
 						// Matches any number of digits, periods or commas, followed by +, -, * or /
-						const	matches = (/([\-\d\.,]+)([\+\-\*\/])(.*)/gi).exec(value),
+						const	matches = (/([-\d.,]+)([+\-*/])(.*)/gi).exec(value),
 									operand = 1,
 									operator = 2,
 									residual = 3;
@@ -173,7 +173,7 @@
 					scope.keyHandler = event => {
 						// Check if the key pressed was an action key, and there is a pending calculation
 						// (otherwise, let the event propagate)
-						if (!event.shiftKey && Reflect.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length > 0) {
+						if (!event.shiftKey && Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length > 0) {
 							// Invoke the action
 							ACTION_KEYS[event.keyCode]();
 

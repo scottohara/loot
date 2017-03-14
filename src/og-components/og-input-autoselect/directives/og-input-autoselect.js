@@ -6,7 +6,7 @@
 		constructor($timeout) {
 			return {
 				restrict: "A",
-				link: (scope, iElement) => {
+				link(scope, iElement) {
 					scope.isFocussed = input => input === document.activeElement;
 
 					function select() {

@@ -1259,7 +1259,7 @@ describe("TransactionIndexController", () => {
 		});
 
 		it("should do nothing when a transaction id state parameter is not specified", () => {
-			Reflect.deleteProperty(toParams, "transactionId");
+			delete toParams.transactionId;
 			transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
 			transactionIndexController.focusTransaction.should.not.have.been.called;
 		});

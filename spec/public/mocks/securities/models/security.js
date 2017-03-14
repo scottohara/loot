@@ -4,7 +4,7 @@
 	 */
 	class SecurityModelMockProvider {
 		constructor(securityMockProvider, securitiesMockProvider, $qMockProvider) {
-			// success/error = options for the stub promises
+			// Success/error = options for the stub promises
 			const	success = {
 							args: {id: 1},
 							response: {data: securityMockProvider.$get()}

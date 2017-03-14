@@ -1,4 +1,4 @@
-/*
+/* Not implemented yet
 describe.skip("layoutView", () => {
 	const layoutView = require("./layout.js");
 

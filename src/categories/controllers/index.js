@@ -13,9 +13,9 @@
 			this.categoryModel = categoryModel;
 			this.ogTableNavigableService = ogTableNavigableService;
 			this.categories = angular.copy(categories).reduce((flattened, category) => {
-				const children = category.children;
+				const {children} = category;
 
-				Reflect.deleteProperty(category, "children");
+				delete category.children;
 
 				return flattened.concat(category, children);
 			}, []);

@@ -24,7 +24,7 @@
 					// Only update if the item is not already the current head
 					if (String(item.id) !== String(this.head)) {
 						// Check if the item already exists
-						if (Reflect.getOwnPropertyDescriptor(this.items, item.id)) {
+						if (Object.getOwnPropertyDescriptor(this.items, item.id)) {
 							// New head is the existing item
 							newHead = this.items[item.id];
 
@@ -76,7 +76,7 @@
 				// Remove an item from the cache
 				remove(id) {
 					// Check if the item is in the cache
-					if (Reflect.getOwnPropertyDescriptor(this.items, id)) {
+					if (Object.getOwnPropertyDescriptor(this.items, id)) {
 						if (String(id) === String(this.head)) {
 							// Item to remove is the current head. If there's an older item, make it the new head
 							this.head = this.items[this.head].older;
@@ -99,7 +99,7 @@
 						}
 
 						// Remove the item from the cache
-						Reflect.deleteProperty(this.items, id);
+						delete this.items[id];
 					}
 
 					// Return the list of cached items in order (MRU)
@@ -116,7 +116,7 @@
 						this.tail = oldTail.newer;
 
 						// Delete the old tail
-						Reflect.deleteProperty(this.items, newTail.older);
+						delete this.items[newTail.older];
 
 						// Unlink the old tail from the list
 						newTail.older = null;

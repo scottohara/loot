@@ -4,7 +4,7 @@
 	 */
 	class PayeeModelMockProvider {
 		constructor(payeeMockProvider, payeesMockProvider, $qMockProvider) {
-			// success/error = options for the stub promises
+			// Success/error = options for the stub promises
 			const	success = {
 							args: {id: 1},
 							response: {data: payeeMockProvider.$get()}

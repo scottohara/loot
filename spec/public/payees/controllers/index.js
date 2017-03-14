@@ -168,7 +168,7 @@ describe("PayeeIndexController", () => {
 		let payee;
 
 		beforeEach(() => {
-			payee = payeeIndexController.payees[0];
+			[payee] = payeeIndexController.payees;
 		});
 
 		it("should favourite the payee", () => {
@@ -267,7 +267,7 @@ describe("PayeeIndexController", () => {
 		});
 
 		it("should do nothing when an id state parameter is not specified", () => {
-			Reflect.deleteProperty(toParams, "id");
+			delete toParams.id;
 			payeeIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
 			payeeIndexController.focusPayee.should.not.have.been.called;
 		});

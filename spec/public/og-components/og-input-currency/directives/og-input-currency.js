@@ -16,7 +16,7 @@ describe("ogInputCurrency", () => {
 	describe("on model change", () => {
 		beforeEach(() => (expected = "$0.00"));
 
-		it("should display $0.00 if the model is undefined", () => Reflect.deleteProperty(ogInputCurrency.scope, "model"));
+		it("should display $0.00 if the model is undefined", () => delete ogInputCurrency.scope.model);
 
 		it("should display $0.00 if the model is null", () => (ogInputCurrency.scope.model = null));
 

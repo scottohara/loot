@@ -44,7 +44,7 @@
 
 	function startKarma(configFile, done) {
 		const	KarmaServer = require("karma").Server,
-					argv = require("yargs").argv,
+					{argv} = require("yargs"),
 					cliArgs = {};
 
 		if (argv.browsers) {

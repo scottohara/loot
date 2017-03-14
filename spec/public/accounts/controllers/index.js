@@ -209,7 +209,7 @@ describe("AccountIndexController", () => {
 		let account;
 
 		beforeEach(() => {
-			account = accountIndexController.accounts["Bank accounts"].accounts[0];
+			[account] = accountIndexController.accounts["Bank accounts"].accounts;
 		});
 
 		it("should favourite the account", () => {

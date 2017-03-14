@@ -324,7 +324,7 @@ describe("ScheduleIndexController", () => {
 		});
 
 		it("should do nothing when an id state parameter is not specified", () => {
-			Reflect.deleteProperty(toParams, "id");
+			delete toParams.id;
 			scheduleIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
 			scheduleIndexController.focusSchedule.should.not.have.been.called;
 		});

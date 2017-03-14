@@ -41,13 +41,13 @@ describe("ScheduleEditController", () => {
 		it("should make the passed schedule available to the view", () => scheduleEditController.transaction.should.deep.equal(schedule));
 
 		it("should default the transaction type to Basic if not specified", () => {
-			Reflect.deleteProperty(schedule, "transaction_type");
+			delete schedule.transaction_type;
 			scheduleEditController = controllerTest("ScheduleEditController");
 			scheduleEditController.transaction.transaction_type.should.equal("Basic");
 		});
 
 		it("should default the next due date to the current day if not specified", () => {
-			Reflect.deleteProperty(schedule, "next_due_date");
+			delete schedule.next_due_date;
 			scheduleEditController = controllerTest("ScheduleEditController");
 			scheduleEditController.transaction.next_due_date.should.deep.equal(moment().startOf("day").toDate());
 		});

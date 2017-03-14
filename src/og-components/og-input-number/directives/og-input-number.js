@@ -12,7 +12,7 @@
 				controller: "OgInputNumberController",
 				controllerAs: "vm",
 				bindToController: true,
-				link: (scope, iElement, iAttrs, ngModel) => {
+				link(scope, iElement, iAttrs, ngModel) {
 					// View to model
 					ngModel.$parsers.push(scope.vm.formattedToRaw);
 

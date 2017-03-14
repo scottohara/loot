@@ -16,7 +16,7 @@ describe("ogInputNumber", () => {
 	describe("on model change", () => {
 		beforeEach(() => (expected = "0"));
 
-		it("should display 0 if the model is undefined", () => Reflect.deleteProperty(ogInputNumber.scope, "model"));
+		it("should display 0 if the model is undefined", () => delete ogInputNumber.scope.model);
 
 		it("should display 0 if the model is null", () => (ogInputNumber.scope.model = null));
 

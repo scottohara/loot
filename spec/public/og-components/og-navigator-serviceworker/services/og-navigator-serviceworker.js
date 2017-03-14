@@ -13,9 +13,9 @@ describe("ogNavigatorServiceWorkerService", () => {
 
 	describe("register", () => {
 		it("should do nothing when serviceWorker is not supported", () => {
-			const serviceWorker = $window.navigator.serviceWorker;
+			const {serviceWorker} = $window.navigator;
 
-			Reflect.deleteProperty($window.navigator, "serviceWorker");
+			delete $window.navigator.serviceWorker;
 
 			ogNavigatorServiceWorkerService.register();
 			serviceWorker.register.should.not.have.been.called;

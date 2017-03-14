@@ -180,13 +180,13 @@
 		// Merges the details of a previous transaction into the current one
 		useLastTransaction(transaction) {
 			// Strip the id, primary account, next due date, transaction date, frequency and status
-			Reflect.deleteProperty(transaction, "id");
-			Reflect.deleteProperty(transaction, "primary_account");
-			Reflect.deleteProperty(transaction, "next_due_date");
-			Reflect.deleteProperty(transaction, "transaction_date");
-			Reflect.deleteProperty(transaction, "frequency");
-			Reflect.deleteProperty(transaction, "status");
-			Reflect.deleteProperty(transaction, "related_status");
+			delete transaction.id;
+			delete transaction.primary_account;
+			delete transaction.next_due_date;
+			delete transaction.transaction_date;
+			delete transaction.frequency;
+			delete transaction.status;
+			delete transaction.related_status;
 
 			// Retain the schedule's flag (if any), don't overwrite with the previous transaction's flag
 			transaction.flag = this.transaction.flag;
@@ -246,7 +246,7 @@
 
 						default:
 							type = "Basic";
-							direction = transaction.category.direction;
+							({direction} = transaction.category);
 							break;
 					}
 
@@ -269,7 +269,7 @@
 							}
 							break;
 
-						// no default
+						// No default
 					}
 				} else {
 					switch (transaction.category.id) {
@@ -285,7 +285,7 @@
 
 						default:
 							type = "Sub";
-							direction = transaction.category.direction;
+							({direction} = transaction.category);
 							break;
 					}
 				}
@@ -346,7 +346,7 @@
 						direction = "outflow";
 						break;
 
-					// no default
+					// No default
 				}
 
 				// Update the transaction type & direction

@@ -36,14 +36,14 @@ describe("authenticationModel", () => {
 		let isAuthenticated;
 
 		it("should fetch the authentication key from sessionStorage", () => {
-			isAuthenticated = authenticationModel.isAuthenticated;
+			({isAuthenticated} = authenticationModel);
 			$window.sessionStorage.getItem.should.have.been.calledWith("lootAuthenticationKey");
 		});
 
 		describe("when authenticated", () => {
 			beforeEach(() => {
 				$window.sessionStorage.getItem.returns("authentication key");
-				isAuthenticated = authenticationModel.isAuthenticated;
+				({isAuthenticated} = authenticationModel);
 			});
 
 			it("should set the default $http Authorization header", () => $http.defaults.headers.common.Authorization.should.equal("Basic authentication key"));

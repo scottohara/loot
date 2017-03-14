@@ -159,12 +159,12 @@
 		// Merges the details of a previous transaction into the current one
 		useLastTransaction(transaction) {
 			// Strip the id, transaction date, primary account, status & flag
-			Reflect.deleteProperty(transaction, "id");
-			Reflect.deleteProperty(transaction, "transaction_date");
-			Reflect.deleteProperty(transaction, "primary_account");
-			Reflect.deleteProperty(transaction, "status");
-			Reflect.deleteProperty(transaction, "related_status");
-			Reflect.deleteProperty(transaction, "flag");
+			delete transaction.id;
+			delete transaction.transaction_date;
+			delete transaction.primary_account;
+			delete transaction.status;
+			delete transaction.related_status;
+			delete transaction.flag;
 
 			// Merge the last transaction details into the transaction on the scope
 			this.transaction = angular.extend(this.transaction, transaction);
@@ -221,7 +221,7 @@
 
 						default:
 							type = "Basic";
-							direction = transaction.category.direction;
+							({direction} = transaction.category);
 							break;
 					}
 
@@ -244,7 +244,7 @@
 							}
 							break;
 
-						// no default
+						// No default
 					}
 				} else {
 					switch (transaction.category.id) {
@@ -260,7 +260,7 @@
 
 						default:
 							type = "Sub";
-							direction = transaction.category.direction;
+							({direction} = transaction.category);
 							break;
 					}
 				}
@@ -321,7 +321,7 @@
 						direction = "outflow";
 						break;
 
-					// no default
+					// No default
 				}
 
 				// Update the transaction type & direction
@@ -463,7 +463,7 @@
 					});
 					break;
 
-				// no default
+				// No default
 			}
 
 			// Resolve the promise (unless explicitly delayed)
@@ -536,7 +536,7 @@
 					});
 					break;
 
-				// no default
+				// No default
 			}
 
 			// Resolve the promise (unless explicitly delayed)

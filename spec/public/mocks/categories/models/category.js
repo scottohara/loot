@@ -4,7 +4,7 @@
 	 */
 	class CategoryModelMockProvider {
 		constructor(categoryMockProvider, categoriesMockProvider, $qMockProvider) {
-			// success/error = options for the stub promises
+			// Success/error = options for the stub promises
 			const	success = {
 							args: {id: 1},
 							response: {data: categoryMockProvider.$get()}
