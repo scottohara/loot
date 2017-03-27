@@ -24,8 +24,11 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active_model_serializers (0.9.5)
-      activemodel (>= 3.2)
+    active_model_serializers (0.10.5)
+      actionpack (>= 4.1, < 6)
+      activemodel (>= 4.1, < 6)
+      case_transform (>= 0.2)
+      jsonapi-renderer (>= 0.1.1.beta1, < 0.2)
     activejob (5.0.2)
       activesupport (= 5.0.2)
       globalid (>= 0.3.6)
@@ -43,6 +46,8 @@ GEM
     arel (7.1.4)
     ast (2.3.0)
     builder (3.2.3)
+    case_transform (0.2)
+      activesupport
     codeclimate-test-reporter (1.0.6)
       simplecov
     coderay (1.1.1)
@@ -66,6 +71,7 @@ GEM
       multi_json (~> 1.8)
     i18n (0.8.1)
     json (2.0.3)
+    jsonapi-renderer (0.1.2)
     kgio (2.11.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -192,7 +198,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_model_serializers (= 0.9.5)
+  active_model_serializers
   codeclimate-test-reporter
   database_cleaner
   factory_girl_rails

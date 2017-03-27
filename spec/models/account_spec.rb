@@ -364,20 +364,45 @@ RSpec.describe Account, type: :model do
 			let(:json) { subject.as_json }
 
 			before :each do
-				expect(AccountSerializer).to receive(:new).with(subject, only: %i(id name account_type opening_balance status favourite)).and_call_original
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i(id name account_type opening_balance status favourite)).and_call_original
 			end
 
-			it('should return a JSON representation') {}
+			it('should return a JSON representation') do
+				expect(json).not_to include :related_account
+			end
 		end
 
 		context 'with empty options' do
 			let(:json) { subject.as_json({}) }
 
 			before :each do
-				expect(AccountSerializer).to receive(:new).with(subject, {}).and_call_original
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, {}).and_call_original
 			end
 
-			it 'should return a JSON representation including related account' do
+			context 'without related account' do
+				it 'should return a JSON representation with no related account' do
+					expect(json).to include related_account: nil
+				end
+			end
+
+			context 'with related account' do
+				let(:related_account) { json[:related_account] }
+
+				before :each do
+					subject.related_account = create :account, name: 'Related Account'
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.related_account, fields: %i(id name account_type opening_balance status)).and_call_original
+				end
+
+				it 'should return a JSON representation including related account' do
+					expect(related_account).to include id: subject.related_account.id
+					expect(related_account).to include name: 'Related Account'
+					expect(related_account).to include account_type: 'bank'
+					expect(related_account).to include opening_balance: 1000
+					expect(related_account).to include status: 'open'
+				end
+			end
+
+			after :each do
 				expect(json).to include closing_balance: subject.closing_balance
 				expect(json).to include num_transactions: 1
 			end

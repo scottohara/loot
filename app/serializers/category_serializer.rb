@@ -3,15 +3,13 @@
 
 # Category serializer
 class CategorySerializer < ActiveModel::Serializer
-	has_many :children
-	attributes :id, :name, :direction, :parent_id, :num_children, :parent, :closing_balance, :num_transactions, :favourite
+	# Only serialize children if eagerly loaded
+	has_many :children, if: -> { !object.parent && object.children.loaded? }
+	attributes :id, :name, :direction, :parent_id, :num_children, :closing_balance, :num_transactions, :favourite
+	attribute :parent { object&.parent&.as_json fields: %i(id name direction) }
 
 	def num_children
 		object.children.size
-	end
-
-	def parent
-		CategorySerializer.new object.parent, only: %i(id name direction) if object.parent
 	end
 
 	def num_transactions

@@ -238,8 +238,8 @@ class Account < ApplicationRecord
 			.update_all(status: 'Reconciled')
 	end
 
-	def as_json(options = {only: %i(id name account_type opening_balance status favourite)})
+	def as_json(options = {fields: %i(id name account_type opening_balance status favourite)})
 		# Defer to serializer
-		AccountSerializer.new(self, options).as_json
+		ActiveModelSerializers::SerializableResource.new(self, options).as_json
 	end
 end

@@ -16,7 +16,7 @@ end
 gem 'rails_12factor', group: :production
 
 # For JSON serialisation
-gem 'active_model_serializers', '0.9.5'
+gem 'active_model_serializers'
 
 group :development, :test do
 	gem 'rspec-rails'

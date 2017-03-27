@@ -50,8 +50,8 @@ class Category < ApplicationRecord
 		nil
 	end
 
-	def as_json(options = {only: %i(id name direction parent_id favourite)})
+	def as_json(options = {fields: %i(id name direction parent_id favourite)})
 		# Defer to serializer
-		CategorySerializer.new(self, options).as_json
+		ActiveModelSerializers::SerializableResource.new(self, options).as_json
 	end
 end

@@ -73,7 +73,7 @@ RSpec.describe Category, type: :model do
 			let(:json) { subject.as_json }
 
 			before :each do
-				expect(CategorySerializer).to receive(:new).with(subject, only: %i(id name direction parent_id favourite)).and_call_original
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i(id name direction parent_id favourite)).and_call_original
 			end
 
 			context 'category' do
@@ -91,34 +91,75 @@ RSpec.describe Category, type: :model do
 					expect(json).to include parent_id: subject.parent.id
 				end
 			end
+
+			after :each do
+				expect(json).not_to include :num_children
+				expect(json).not_to include :parent
+				expect(json).not_to include :closing_balance
+				expect(json).not_to include :num_transactions
+				expect(json).not_to include :children
+			end
 		end
 
 		context 'with empty options' do
 			let(:json) { subject.as_json({}) }
 
+			before :each do
+				# Access the children association to ensure it is loaded
+				subject.children.length
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, {}).and_call_original
+			end
+
 			context 'category' do
 				subject { create :category, name: 'Test Category', children: 1, transactions: 1 }
+				let(:child) { json[:children].first }
+				let(:child_parent) { child[:parent] }
+
+				before :each do
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i(id name direction)).and_call_original
+				end
 
 				it 'should return a JSON representation including children' do
 					expect(json).to include parent_id: nil
 					expect(json).to include num_children: 1
 					expect(json).to include parent: nil
+
+					expect(child).to include id: subject.children.first.id
+					expect(child).to include name: subject.children.first.name
+					expect(child).to include direction: 'outflow'
+					expect(child).to include favourite: false
+					expect(child).to include parent_id: subject.id
+					expect(child).to include num_children: 0
+					expect(child).to include closing_balance: subject.children.first.closing_balance
+					expect(child).to include num_transactions: 0
+					expect(child).not_to include :children
+
+					expect(child_parent).to include id: subject.id
+					expect(child_parent).to include name: subject.name
+					expect(child_parent).to include direction: subject.direction
+					expect(child_parent).not_to include :num_children
+					expect(child_parent).not_to include :parent
+					expect(child_parent).not_to include :closing_balance
+					expect(child_parent).not_to include :num_transactions
+					expect(child_parent).not_to include :children
 				end
 			end
 
 			context 'subcategory' do
 				subject { create :subcategory, name: 'Test Category', transactions: 1 }
-				let(:parent_json) { {id: subject.parent.id, name: subject.parent.name, direction: subject.parent.direction} }
+				let(:parent) { json[:parent] }
 
 				before :each do
-					expect(CategorySerializer).to receive(:new).with(subject, {}).and_call_original
-					expect(CategorySerializer).to receive(:new).with(subject.parent, only: %i(id name direction)).and_return parent_json
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.parent, fields: %i(id name direction)).and_call_original
 				end
 
 				it 'should return a JSON representation including parent' do
 					expect(json).to include parent_id: subject.parent.id
 					expect(json).to include num_children: 0
-					expect(json).to include parent: parent_json
+					expect(json).not_to include :children
+					expect(parent).to include id: subject.parent.id
+					expect(parent).to include name: subject.parent.name
+					expect(parent).to include direction: 'outflow'
 				end
 			end
 

@@ -156,6 +156,6 @@ class Security < ApplicationRecord
 
 	def as_json(options = {})
 		# Defer to serializer
-		SecuritySerializer.new(self, options).as_json
+		ActiveModelSerializers::SerializableResource.new(self, options).as_json
 	end
 end

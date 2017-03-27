@@ -7,7 +7,7 @@ class SecuritiesController < ApplicationController
 		if params.key? :include_balances
 			render json: Security.list
 		else
-			render json: Security.order({favourite: :desc}, :name), except: %i(current_holding closing_balance num_transactions unused)
+			render json: Security.order({favourite: :desc}, :name), fields: %i(id name code favourite)
 		end
 	end
 
