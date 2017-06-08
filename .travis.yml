@@ -6,24 +6,26 @@ cache:
   directories:
     - node_modules
 
-# Required to use new Travis container-based infrastructure
-sudo: false
+# Use Trusty CI environment (remove this when Trusty is the defalt)
+dist: trusty
 
 # Use latest Firefox, and Code Climate token for coverage reporting
 addons:
-  firefox: latest
+  chrome: stable
+  #firefox: latest
   code_climate:
     repo_token: 26c7e954fe6e83150931914578222587ebd90734aca877d04a1a75d2d7823e2e
 
 before_install:
   - nvm install                         # Install node version from .nvmrc
-  - export DISPLAY=:99.0                # Display number for xvfb (for headless browser testing)
-  - sh -e /etc/init.d/xvfb start        # Start xvfb (for headless browser testing)
+  #- export DISPLAY=:99.0                # Display number for xvfb (for headless browser testing)
+  #- sh -e /etc/init.d/xvfb start        # Start xvfb (for headless browser testing)
 
 install:
   - bundle install --without production --path=${BUNDLE_PATH:-vendor/bundle}  # Install ruby gems, excluding production only gems such as unicorn (already present by default in Travis)
   - npm install                         # Install npm dependencies
-  - npm install karma-firefox-launcher codeclimate-test-reporter
+  #- npm install karma-firefox-launcher codeclimate-test-reporter
+  - npm install codeclimate-test-reporter
 
 # Setup the database
 before_script: bundle exec rake db:create db:migrate
@@ -31,7 +33,8 @@ before_script: bundle exec rake db:create db:migrate
 # Run the test suites
 script:
   - bundle exec rake                    # Backend specs
-  - npm test -- --browsers Firefox      # Frontend specs
+  #- npm test -- --browsers Firefox      # Frontend specs
+  - npm test                            # Frontend specs
 
 # Pipe the coverage data to Code Climate
 after_script:
