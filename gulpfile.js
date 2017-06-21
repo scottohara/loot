@@ -5,6 +5,7 @@
 				inject = require("gulp-inject"),
 				less = require("gulp-less"),
 				livereload = require("gulp-livereload"),
+				babili = require("gulp-babili"),
 				cssNano = require("gulp-cssnano"),
 				path = require("path"),
 				packageJson = require("./package.json"),
@@ -106,6 +107,7 @@
 		.pipe(sourceMaps.init())
 		.pipe(size({title: "app js (original)"}))
 		.pipe(concat("app.js"))
+		.pipe(babili())
 		.pipe(rev())
 		.pipe(size({title: "app js (minified)"}))
 		.pipe(size({title: "app js (gzipped)", gzip: true}))
