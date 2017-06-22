@@ -83,7 +83,13 @@ Backend checks are implemented using [rubocop](http://batsov.com/rubocop/):
 
 Deployment (Staging/Production)
 ===============================
-If you use use heroku, it's a simple `rake deploy:staging` and `rake deploy:production`. These rake tasks assume that you have heroku remotes named staging and production configured; and you must create an annotated tag before deploying (eg. `git tag -a -m "Version 1.00" v1.00`); which is what will be pushed to heroku.
+Before deploying, you should first create an annotated tag (e.g. `git tag -am "Version 1.00" v1.00`).
+
+If you use use heroku, it's a simple `git push heroku master`. If there are additional commits after the tag that shouldn't be deployed, just push the tag (`git push heroku v1.00:master`).
+
+The `Procfile` includes a `release` phase that automatically runs `db:migrate` before release is deployed.
+
+If you use heroku pipelines, the recommendation is that your `heroku` git remote maps to a `staging` app in the pipeline. This allows you to verify the release before promoting it to a `production` app in the pipeline.
 
 (Note: You must configure your heroku app to use the multi buildpack, eg. `heroku buildpack:set https://github.com/heroku/heroku-buildpack-multi`)
 
