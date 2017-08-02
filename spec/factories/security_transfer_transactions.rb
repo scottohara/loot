@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 FactoryGirl.define do
 	factory :security_transfer_transaction do
 		# Default attributes for security transaction

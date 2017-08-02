@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 require 'csv'
 require 'json'
 
@@ -327,7 +328,7 @@ def load_transactions
 		trx = @tmp_transactions[this_side]
 
 		# Only interested in transfers in/out
-		next unless %w(transfer_in transfer_out).include? trx[:type]
+		next unless %w[transfer_in transfer_out].include? trx[:type]
 
 		this_security = @tmp_transactions[this_side][:security]
 		other_security = @tmp_transactions[other_side][:security]
@@ -537,7 +538,7 @@ def create_payslip_transaction(trx)
 		'subtransactions' => @tmp_splits[trx[:id]].map do |trxid|
 			subtrx = @tmp_transactions[trxid]
 
-			if %w(subtransaction payslip_before_tax payslip_tax).include? subtrx[:type]
+			if %w[subtransaction payslip_before_tax payslip_tax].include? subtrx[:type]
 				category = subtrx[:category] && Category.find(subtrx[:category]) || nil
 			else
 				subaccount = subtrx[:account]
@@ -554,7 +555,7 @@ def create_payslip_transaction(trx)
 			{
 				'amount' => subtrx[:amount],
 				'memo' => subtrx[:memo],
-				'transaction_type' => %w(subtransaction payslip_before_tax payslip_tax).include?(subtrx[:type]) ? 'Sub' : 'Subtransfer',
+				'transaction_type' => %w[subtransaction payslip_before_tax payslip_tax].include?(subtrx[:type]) ? 'Sub' : 'Subtransfer',
 				'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
 				'subcategory' => category && category.parent.present? && {'id' => category.id} || nil,
 				'direction' => 'outflow',

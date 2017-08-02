@@ -4,8 +4,8 @@
 # Account
 class Account < ApplicationRecord
 	validates :name, :opening_balance, presence: true
-	validates :account_type, presence: true, inclusion: {in: %w(bank credit cash asset liability investment loan)}
-	validates :status, inclusion: {in: %w(open closed)}
+	validates :account_type, presence: true, inclusion: {in: %w[bank credit cash asset liability investment loan]}
+	validates :status, inclusion: {in: %w[open closed]}
 	belongs_to :related_account, class_name: 'Account', foreign_key: 'related_account_id', autosave: true, optional: true
 	has_many :transaction_accounts
 	has_many :transactions, through: :transaction_accounts, source: :trx do
@@ -238,7 +238,7 @@ class Account < ApplicationRecord
 			.update_all(status: 'Reconciled')
 	end
 
-	def as_json(options = {fields: %i(id name account_type opening_balance status favourite)})
+	def as_json(options = {fields: %i[id name account_type opening_balance status favourite]})
 		# Defer to serializer
 		ActiveModelSerializers::SerializableResource.new(self, options).as_json
 	end

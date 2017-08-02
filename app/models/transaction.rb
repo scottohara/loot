@@ -3,7 +3,7 @@
 
 # Transaction
 class Transaction < ApplicationRecord
-	validates :transaction_type, presence: true, inclusion: {in: %w(Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend)}
+	validates :transaction_type, presence: true, inclusion: {in: %w[Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend]}
 	has_one :flag, class_name: 'TransactionFlag', foreign_key: 'transaction_id', dependent: :destroy, autosave: true, inverse_of: :trx
 
 	include Categorisable
@@ -16,7 +16,7 @@ class Transaction < ApplicationRecord
 		end
 
 		def types_for(account_type)
-			account_type.eql?('investment') && %w(SecurityTransfer SecurityHolding SecurityInvestment Dividend) || %w(Basic Split Transfer Payslip LoanRepayment)
+			account_type.eql?('investment') && %w[SecurityTransfer SecurityHolding SecurityInvestment Dividend] || %w[Basic Split Transfer Payslip LoanRepayment]
 		end
 
 		# Transactable concern expects a transactions association, so just return self

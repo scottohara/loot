@@ -3,8 +3,8 @@
 
 # Transactions controller
 class TransactionsController < ApplicationController
-	before_action :clean, only: %i(create update)
-	before_action :context, only: %i(index last)
+	before_action :clean, only: %i[create update]
+	before_action :context, only: %i[index last]
 
 	def index
 		opening_balance, transactions, at_end = @context.ledger params

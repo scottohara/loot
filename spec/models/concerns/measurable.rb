@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 RSpec.shared_examples Measurable do
 	describe '::weeks_since' do
 		subject { described_class }

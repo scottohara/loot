@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 require 'rails_helper'
 require 'models/concerns/transactable'
 
@@ -73,7 +74,7 @@ RSpec.describe Category, type: :model do
 			let(:json) { subject.as_json }
 
 			before :each do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i(id name direction parent_id favourite)).and_call_original
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i[id name direction parent_id favourite]).and_call_original
 			end
 
 			context 'category' do
@@ -116,7 +117,7 @@ RSpec.describe Category, type: :model do
 				let(:child_parent) { child[:parent] }
 
 				before :each do
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i(id name direction)).and_call_original
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i[id name direction]).and_call_original
 				end
 
 				it 'should return a JSON representation including children' do
@@ -150,7 +151,7 @@ RSpec.describe Category, type: :model do
 				let(:parent) { json[:parent] }
 
 				before :each do
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.parent, fields: %i(id name direction)).and_call_original
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.parent, fields: %i[id name direction]).and_call_original
 				end
 
 				it 'should return a JSON representation including parent' do

@@ -9,7 +9,7 @@ class TransactionSplit < ApplicationRecord
 	before_destroy :destroy_transaction
 
 	def validate_transaction_type_inclusion
-		errors[:base] << "Transaction type #{trx.transaction_type} is not valid in a split transaction" unless %w(Sub Subtransfer).include? trx.transaction_type
+		errors[:base] << "Transaction type #{trx.transaction_type} is not valid in a split transaction" unless %w[Sub Subtransfer].include? trx.transaction_type
 	end
 
 	def destroy_transaction

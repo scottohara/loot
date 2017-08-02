@@ -1,12 +1,15 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 require 'simplecov'
 SimpleCov.start('rails') { coverage_dir 'coverage/backend' }
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
+ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
+# Prevent database truncation if the environment is production
+abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -61,13 +64,13 @@ RSpec.configure do |config|
 		DatabaseCleaner.clean_with :truncation
 
 		# Do *transaction_header factories first, cleaning the database between each to avoid duplicate primary key errors
-		%w(payee_transaction_header security_transaction_header transaction_header).each do |factory|
+		%w[payee_transaction_header security_transaction_header transaction_header].each do |factory|
 			FactoryGirl.lint [FactoryGirl.factory_by_name(factory)]
 			DatabaseCleaner.clean_with :truncation
 		end
 
 		# Do the rest (except TransactionAccount)
-		FactoryGirl.lint FactoryGirl.factories.reject { |factory| %i(transaction_header payee_transaction_header security_transaction_header transaction_account).include? factory.name }
+		FactoryGirl.lint(FactoryGirl.factories.reject { |factory| %i[transaction_header payee_transaction_header security_transaction_header transaction_account].include? factory.name })
 	end
 
 	# DatabaseCleaner configuration

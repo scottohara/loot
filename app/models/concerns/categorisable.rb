@@ -29,7 +29,7 @@ module Categorisable
 				when 'SecurityHolding' then trx['direction'].eql?('outflow') && ['RemoveShares', 'Remove Shares'] || ['AddShares', 'Add Shares']
 				when 'SecurityInvestment' then
 					if account_type.eql? 'investment'
-						trx['direction'].eql?('outflow') && %w(Sell Sell) || %w(Buy Buy)
+						trx['direction'].eql?('outflow') && %w[Sell Sell] || %w[Buy Buy]
 					else
 						psuedo_category 'Transfer', trx['direction']
 					end
@@ -52,8 +52,7 @@ module Categorisable
 		end
 
 		def basic_subcategory(trx)
-			return unless trx['parent_category_id'].present?
-			j
+			return if trx['parent_category_id'].blank?
 			{
 				id: trx['category_id'].to_s,
 				name: trx['category_name'],

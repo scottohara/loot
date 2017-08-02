@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 require 'models/concerns/categorisable'
 
 RSpec.shared_examples Transactable do
@@ -62,14 +63,14 @@ RSpec.shared_examples Transactable do
 			end
 
 			def compact(transaction)
-				expected_keys = %i(id transaction_type transaction_date parent_id amount quantity commission price direction status related_status memo flag)
+				expected_keys = %i[id transaction_type transaction_date parent_id amount quantity commission price direction status related_status memo flag]
 				nested_keys = {
-					primary_account: %i(id name account_type),
-					payee: %i(id name),
-					security: %i(id name),
-					category: %i(id name),
-					subcategory: %i(id name),
-					account: %i(id name)
+					primary_account: %i[id name account_type],
+					payee: %i[id name],
+					security: %i[id name],
+					category: %i[id name],
+					subcategory: %i[id name],
+					account: %i[id name]
 				}
 
 				# Remove any keys that we don't care about

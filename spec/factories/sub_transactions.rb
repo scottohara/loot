@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 FactoryGirl.define do
 	factory :sub_transaction, aliases: [:sub_expense_transaction] do
 		# Default attributes for cash transaction

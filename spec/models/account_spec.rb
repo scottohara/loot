@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 require 'rails_helper'
 require 'models/concerns/transactable'
 
@@ -348,7 +349,7 @@ RSpec.describe Account, type: :model do
 
 		it 'should mark all cleared transactions as reconciled' do
 			trx = subject.transaction_accounts.where(status: nil).first
-			trx.update_attributes status: 'Cleared'
+			trx.update_attributes! status: 'Cleared'
 
 			subject.reconcile
 
@@ -364,7 +365,7 @@ RSpec.describe Account, type: :model do
 			let(:json) { subject.as_json }
 
 			before :each do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i(id name account_type opening_balance status favourite)).and_call_original
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i[id name account_type opening_balance status favourite]).and_call_original
 			end
 
 			it('should return a JSON representation') do
@@ -390,7 +391,7 @@ RSpec.describe Account, type: :model do
 
 				before :each do
 					subject.related_account = create :account, name: 'Related Account'
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.related_account, fields: %i(id name account_type opening_balance status)).and_call_original
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.related_account, fields: %i[id name account_type opening_balance status]).and_call_original
 				end
 
 				it 'should return a JSON representation including related account' do

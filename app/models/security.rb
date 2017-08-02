@@ -29,7 +29,7 @@ class Security < ApplicationRecord
 					]
 				)
 				.where('accounts.account_type = \'investment\'')
-				.where(transaction_type: %w(SecurityInvestment SecurityTransfer SecurityHolding))
+				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
 				.where('transaction_headers.transaction_date IS NOT NULL')
 				.group 'transaction_accounts.direction'
 		end

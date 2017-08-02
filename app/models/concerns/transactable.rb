@@ -70,7 +70,7 @@ module Transactable
 						'SUM(transaction_headers.quantity) AS total_quantity'
 					]
 				)
-				.where(transaction_type: %w(SecurityInvestment SecurityTransfer SecurityHolding))
+				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
 				.where('transaction_headers.transaction_date <= ?', as_at)
 				.where('transaction_headers.transaction_date IS NOT NULL')
 				.group(
@@ -105,7 +105,7 @@ module Transactable
 					]
 				)
 				.joins('JOIN categories ON transaction_categories.category_id = categories.id')
-				.where(transaction_type: %w(Basic Sub))
+				.where(transaction_type: %w[Basic Sub])
 				.where('transaction_headers.transaction_date <= ?', as_at)
 				.where('transaction_headers.transaction_date IS NOT NULL')
 				.group 'categories.direction'
@@ -136,7 +136,7 @@ module Transactable
 			total_inflows =
 				transactions
 				.for_closing_balance(opts)
-				.where(transaction_type: %w(Split Payslip Transfer Dividend SecurityInvestment))
+				.where(transaction_type: %w[Split Payslip Transfer Dividend SecurityInvestment])
 				.where('transaction_headers.transaction_date <= ?', as_at)
 				.where('transaction_headers.transaction_date IS NOT NULL')
 				.where(transaction_accounts: {direction: 'inflow'})
@@ -146,7 +146,7 @@ module Transactable
 			total_outflows =
 				transactions
 				.for_closing_balance(opts)
-				.where(transaction_type: %w(Split LoanRepayment Transfer SecurityInvestment))
+				.where(transaction_type: %w[Split LoanRepayment Transfer SecurityInvestment])
 				.where('transaction_headers.transaction_date <= ?', as_at)
 				.where('transaction_headers.transaction_date IS NOT NULL')
 				.where(transaction_accounts: {direction: 'outflow'})

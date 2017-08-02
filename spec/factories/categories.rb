@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 FactoryGirl.define do
 	factory :category, aliases: [:outflow_category] do
 		sequence(:name) { |n| "Category #{n}" }
@@ -50,7 +51,7 @@ FactoryGirl.define do
 
 		factory :inflow_category, traits: [:inflow]
 		factory :subcategory, traits: [:parent_category]
-		factory :inflow_subcategory, traits: %i(inflow parent_category)
+		factory :inflow_subcategory, traits: %i[inflow parent_category]
 		factory :category_with_children, traits: [:with_children]
 		factory :favourite_category, traits: [:favourite]
 	end

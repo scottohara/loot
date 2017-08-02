@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 require 'rails_helper'
 require 'models/concerns/transactable'
 require 'models/concerns/categorisable'
@@ -35,13 +36,13 @@ RSpec.describe Transaction, type: :model do
 
 		context 'non-investment accounts' do
 			it 'should return the set of non-investment transactions' do
-				expect(subject.types_for 'bank').to eq %w(Basic Split Transfer Payslip LoanRepayment)
+				expect(subject.types_for 'bank').to eq %w[Basic Split Transfer Payslip LoanRepayment]
 			end
 		end
 
 		context 'investment accounts' do
 			it 'should return the set of investment transactions' do
-				expect(subject.types_for 'investment').to eq %w(SecurityTransfer SecurityHolding SecurityInvestment Dividend)
+				expect(subject.types_for 'investment').to eq %w[SecurityTransfer SecurityHolding SecurityInvestment Dividend]
 			end
 		end
 	end

@@ -1,17 +1,28 @@
 AllCops:
-  Include:
-    - 'app/**/*.rb'
-    - 'spec/**/*.rb'
-    - 'db/seeds.rb'
-
   Exclude:
     - 'bin/*'
     - 'config/**/*'
     - 'db/migrate/*'
     - 'db/schema.rb'
+    - 'node_modules/**/*'
     - 'vendor/**/*'
 
 # Cops that are disabled by default
+Layout/FirstArrayElementLineBreak:
+  Enabled: true
+
+Layout/FirstHashElementLineBreak:
+  Enabled: true
+
+Layout/FirstMethodArgumentLineBreak:
+  Enabled: true
+
+Layout/FirstMethodParameterLineBreak:
+  Enabled: true
+
+Layout/MultilineAssignmentLayout:
+  Enabled: true
+
 Rails:
   Enabled: true
 
@@ -33,18 +44,6 @@ Style/Copyright:
 Style/Encoding:
   Enabled: true
 
-Style/FirstArrayElementLineBreak:
-  Enabled: true
-
-Style/FirstHashElementLineBreak:
-  Enabled: true
-
-Style/FirstMethodArgumentLineBreak:
-  Enabled: true
-
-Style/FirstMethodParameterLineBreak:
-  Enabled: true
-
 Style/ImplicitRuntimeError:
   Enabled: true
 
@@ -55,19 +54,12 @@ Style/MethodCalledOnDoEndBlock:
   Enabled: true
 
 # Style/MissingElse (else not required)
-
-Style/MultilineAssignmentLayout:
-  Enabled: true
-
 # Style/OptionHash (options required for as_json methods)
 
 Style/Send:
   Enabled: true
 
 Style/StringMethods:
-  Enabled: true
-
-Style/SymbolArray:
   Enabled: true
 
 Style/SingleLineBlockParams:
@@ -84,22 +76,22 @@ Style/BlockComments:
   Enabled: false
 
 # Indent arrays consistently
-Style/IndentArray:
+Layout/IndentArray:
   EnforcedStyle: consistent
 
 # Changed from 2 (spaces) to 1 (tab)
-Style/IndentationWidth:
+Layout/IndentationWidth:
   Width: 1
 
-# Only require parens where absolutely necessary
-Style/NestedParenthesizedCalls:
-  Enabled: false
-
-Style/SpaceInsideHashLiteralBraces:
+Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
 # Prefer tabs over spaces
-Style/Tab:
+Layout/Tab:
+  Enabled: false
+
+# Only require parens where absolutely necessary
+Style/NestedParenthesizedCalls:
   Enabled: false
 
 # Disable metrics

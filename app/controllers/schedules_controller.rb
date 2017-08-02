@@ -3,7 +3,7 @@
 
 # Schedules controller
 class SchedulesController < ApplicationController
-	before_action :clean, only: %i(create update)
+	before_action :clean, only: %i[create update]
 
 	def index
 		render json: Schedule.ledger

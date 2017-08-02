@@ -4,7 +4,7 @@
 # Category
 class Category < ApplicationRecord
 	validates :name, presence: true
-	validates :direction, presence: true, inclusion: {in: %w(inflow outflow)}
+	validates :direction, presence: true, inclusion: {in: %w[inflow outflow]}
 	belongs_to :parent, class_name: 'Category', foreign_key: 'parent_id', optional: true
 	has_many :children, -> { order :name }, class_name: 'Category', foreign_key: 'parent_id', dependent: :destroy
 	has_many :transaction_categories, ->(object) { rewhere(category_id: object.children.pluck(:id).unshift(object.id)) }
@@ -50,7 +50,7 @@ class Category < ApplicationRecord
 		nil
 	end
 
-	def as_json(options = {fields: %i(id name direction parent_id favourite)})
+	def as_json(options = {fields: %i[id name direction parent_id favourite]})
 		# Defer to serializer
 		ActiveModelSerializers::SerializableResource.new(self, options).as_json
 	end

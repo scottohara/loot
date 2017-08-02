@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 require 'rails_helper'
 require 'models/concerns/categorisable'
 require 'models/concerns/measurable'
@@ -58,14 +59,14 @@ RSpec.describe Schedule, type: :model do
 		end
 
 		def compact(transaction)
-			expected_keys = %i(id transaction_type next_due_date frequency estimate auto_enter amount quantity commission price direction memo flag overdue_count)
+			expected_keys = %i[id transaction_type next_due_date frequency estimate auto_enter amount quantity commission price direction memo flag overdue_count]
 			nested_keys = {
-				primary_account: %i(id name account_type),
-				payee: %i(id name),
-				security: %i(id name),
-				category: %i(id name),
-				subcategory: %i(id name),
-				account: %i(id name)
+				primary_account: %i[id name account_type],
+				payee: %i[id name],
+				security: %i[id name],
+				category: %i[id name],
+				subcategory: %i[id name],
+				account: %i[id name]
 			}
 
 			# Remove any keys that we don't care about

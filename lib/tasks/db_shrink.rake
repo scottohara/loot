@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 def progress(action, count, type)
 	reset_line = "\r\e[0K"
 	print "#{reset_line}#{action} #{ActionController::Base.helpers.pluralize count, type}"
@@ -25,7 +26,7 @@ namespace :db do
 
 		transaction_headers.each_with_index do |header, index|
 			# Destroy the transaction
-			header.trx.as_subclass.destroy! unless header.trx.nil? || %w(Subtransfer Sub).include?(header.trx.transaction_type)
+			header.trx.as_subclass.destroy! unless header.trx.nil? || %w[Subtransfer Sub].include?(header.trx.transaction_type)
 
 			index += 1
 			progress 'Deleted', index, 'transaction'
@@ -33,7 +34,7 @@ namespace :db do
 		puts
 
 		# Remove any categories/payees/securities that no longer have transactions
-		%w(category payee security).each do |entity|
+		%w[category payee security].each do |entity|
 			table = entity.eql?('category') && 'categories' || 'headers'
 			where = entity.eql?('category') && 'categories.parent_id IS NOT NULL' || ''
 			entities = entity.capitalize.constantize.joins("LEFT OUTER JOIN transaction_#{table} ON transaction_#{table}.#{entity}_id = #{ActiveSupport::Inflector.pluralize entity}.id").where(where).group(:id).having "COUNT(transaction_#{table}.transaction_id) = 0"

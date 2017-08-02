@@ -1,5 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
+
 RSpec.shared_examples Categorisable do
 	describe '::transaction_category' do
 		subject { described_class }
@@ -17,7 +18,7 @@ RSpec.shared_examples Categorisable do
 			end
 
 			after :each do
-				expect(subject).to receive(:basic_category).with(trx).and_return %w(basic basic)
+				expect(subject).to receive(:basic_category).with(trx).and_return %w[basic basic]
 				expected[:id] = 'basic'
 				expected[:name] = 'basic'
 			end
@@ -40,7 +41,7 @@ RSpec.shared_examples Categorisable do
 				trx['direction'] = 'outflow'
 				trx['parent_transaction_type'] = 'parent_type'
 
-				expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction'], trx['parent_transaction_type']).and_return %w(transfer transfer)
+				expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction'], trx['parent_transaction_type']).and_return %w[transfer transfer]
 				expected[:id] = 'transfer'
 				expected[:name] = 'transfer'
 			end
@@ -58,7 +59,7 @@ RSpec.shared_examples Categorisable do
 			after :each do
 				trx['direction'] = 'outflow'
 
-				expect(subject).to receive(:psuedo_category).with(*trx.values).and_return %w(split split)
+				expect(subject).to receive(:psuedo_category).with(*trx.values).and_return %w[split split]
 				expected[:id] = 'split'
 				expected[:name] = 'split'
 			end
@@ -118,7 +119,7 @@ RSpec.shared_examples Categorisable do
 					trx['direction'] = 'outflow'
 					account[:type] = 'cash'
 
-					expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction']).and_return %w(transfer transfer)
+					expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction']).and_return %w[transfer transfer]
 					expected[:id] = 'transfer'
 					expected[:name] = 'transfer'
 				end

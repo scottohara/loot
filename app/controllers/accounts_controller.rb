@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
 		if params.key? :include_balances
 			render json: Account.list
 		else
-			render json: Account.all.order({favourite: :desc}, :account_type, :name), fields: %i(id name account_type opening_balance status favourite)
+			render json: Account.all.order({favourite: :desc}, :account_type, :name), fields: %i[id name account_type opening_balance status favourite]
 		end
 	end
 

@@ -1,8 +1,11 @@
-ruby "2.4.0"
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+ruby '2.4.1'
 
 source 'https://rubygems.org'
 
-gem 'rails', '5.0.2'
+gem 'rails', '5.1.2'
 
 # Postgres
 gem 'pg'
@@ -19,9 +22,9 @@ gem 'rails_12factor', group: :production
 gem 'active_model_serializers'
 
 group :development, :test do
-	gem 'rspec-rails'
-	gem 'factory_girl_rails'
 	gem 'database_cleaner'
+	gem 'factory_girl_rails'
+	gem 'rspec-rails'
 	gem 'simplecov'
 
 	# Required by RSpec in Rails >= 5 for 'assigns'
@@ -32,12 +35,8 @@ group :development do
 	gem 'listen'
 
 	# Use pry instead of IRB
-	gem 'pry-rails'
 	gem 'pry-nav'
-
-	# For deployment to Heroku
-	gem 'heroku-api'
-	gem 'git'
+	gem 'pry-rails'
 
 	gem 'rubocop', require: false
 end

@@ -72,7 +72,7 @@ class Schedule < ApplicationRecord
 
 			# For Transfer/SecurityTransfers, only keep the source account side; and for SecurityInvestment/Dividends only keep the investment account side
 			schedules.reject! do |trx|
-				(%w(Transfer SecurityTransfer).include?(trx['transaction_type']) && trx['direction'].eql?('inflow')) || (%w(SecurityInvestment Dividend).include?(trx['transaction_type']) && !trx['account_type'].eql?('investment'))
+				(%w[Transfer SecurityTransfer].include?(trx['transaction_type']) && trx['direction'].eql?('inflow')) || (%w[SecurityInvestment Dividend].include?(trx['transaction_type']) && !trx['account_type'].eql?('investment'))
 			end
 
 			# Remap to the desired output format
@@ -143,7 +143,7 @@ class Schedule < ApplicationRecord
 					end
 
 				# For Splits, we need to get the subtransactions as well
-				transaction_json['subtransactions'] = transaction.children if %w(Split Payslip LoanRepayment).include? transaction.transaction_type
+				transaction_json['subtransactions'] = transaction.children if %w[Split Payslip LoanRepayment].include? transaction.transaction_type
 
 				# Clear the id
 				transaction_json[:id] = nil

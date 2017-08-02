@@ -9,7 +9,7 @@ class PayeesController < ApplicationController
 		# Only first by favourite for typeaheads
 		sort.unshift favourite: :desc unless params.key? :list
 
-		render json: Payee.order(*sort), fields: %i(id name favourite)
+		render json: Payee.order(*sort), fields: %i[id name favourite]
 	end
 
 	def show
