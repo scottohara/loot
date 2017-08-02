@@ -11,6 +11,11 @@ describe("categoryEditView", () => {
 		categoryEditView.heading().should.eventually.equal(`${mode} Category`);
 	}
 
+	// Ensures that the target row is scrolled into view
+	function scrollIntoView(row) {
+		browser.executeScript(scrollToRow => scrollToRow.scrollIntoView(), row.getWebElement());
+	}
+
 	// Cancel & form invalid behaviour
 	function commonBehaviour() {
 		it("should not save changes when the cancel button is clicked", () => {
@@ -45,6 +50,7 @@ describe("categoryEditView", () => {
 
 	// Edits the target index row
 	function editRow() {
+		scrollIntoView(targetRow);
 		targetRow.evaluate("$index").then(index => {
 			// Edit an existing category
 			categoryIndexView.editCategory(index);

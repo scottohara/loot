@@ -18,8 +18,14 @@
 		}
 
 		// Returns a table row by it's index
-		row(index) {
-			return this.rows.get(index);
+		row(index, scrollIntoView) {
+			const row = this.rows.get(index);
+
+			if (scrollIntoView) {
+				browser.executeScript(scrollToRow => scrollToRow.scrollIntoView(), row);
+			}
+
+			return row;
 		}
 
 		// Returns the first table row
@@ -44,7 +50,7 @@
 
 		// Click on a row
 		clickRow(index) {
-			this.row(index).click();
+			this.row(index, true).click();
 		}
 
 		// Double click on a row

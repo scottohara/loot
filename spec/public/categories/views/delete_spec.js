@@ -26,8 +26,14 @@ describe("categoryDeleteView", () => {
 		browser.wait(categoryDeleteView.isPresent.bind(categoryDeleteView), 3000, "Timeout waiting for view to render");
 	}
 
+	// Ensures that the target row is scrolled into view
+	function scrollIntoView(row) {
+		browser.executeScript(scrollToRow => scrollToRow.scrollIntoView(), row.getWebElement());
+	}
+
 	// Deletes the target index row
 	function deleteRow() {
+		scrollIntoView(originalRow);
 		originalRow.evaluate("$index").then(index => {
 			// Delete an existing category
 			categoryIndexView.deleteCategory(index);
