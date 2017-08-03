@@ -1,4 +1,4 @@
-class CreateSecurityPrices < ActiveRecord::Migration
+class CreateSecurityPrices < ActiveRecord::Migration[5.1]
   def change
     create_table :security_prices do |t|
 			t.decimal :price, null: false

@@ -1,4 +1,4 @@
-class CreateTransactionAccounts < ActiveRecord::Migration
+class CreateTransactionAccounts < ActiveRecord::Migration[5.1]
   def change
     create_table :transaction_accounts do |t|
 			t.references :transaction, null: false

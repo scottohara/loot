@@ -1,4 +1,4 @@
-class CreateTransactions < ActiveRecord::Migration
+class CreateTransactions < ActiveRecord::Migration[5.1]
   def change
     create_table :transactions do |t|
       t.decimal :amount

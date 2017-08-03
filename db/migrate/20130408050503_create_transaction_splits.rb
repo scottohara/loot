@@ -1,4 +1,4 @@
-class CreateTransactionSplits < ActiveRecord::Migration
+class CreateTransactionSplits < ActiveRecord::Migration[5.1]
   def change
     create_table :transaction_splits do |t|
 			t.references :transaction, null: false
