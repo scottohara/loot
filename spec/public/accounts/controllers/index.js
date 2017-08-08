@@ -144,7 +144,7 @@ describe("AccountIndexController", () => {
 		const INSERT_KEY = 45,
 					N_KEY = 78;
 
-		let		event;
+		let	event;
 
 		beforeEach(() => {
 			event = {

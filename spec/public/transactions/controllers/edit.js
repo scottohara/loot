@@ -340,7 +340,7 @@ describe("TransactionEditController", () => {
 
 			currentElement = null;
 			realAngularElement = angular.element;
-			sinon.stub(angular, "element", selector => {
+			sinon.stub(angular, "element").callsFake(selector => {
 				if ("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo" === selector) {
 					return [currentElement];
 				}
