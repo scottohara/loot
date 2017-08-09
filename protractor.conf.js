@@ -41,14 +41,8 @@ module.exports.config = {
 
 	// Initialise the mocha chai framework
 	onPrepare() {
-		// Load chai assertions
-		const	chai = require("chai");
-
-		// Load chai-as-promised support
-		chai.use(require("chai-as-promised"));
-
-		// Initialise should API (attaches as a property on Object)
-		chai.should();
+		// Load chai assertions, chai-as-promised support, and initialise should API (attahces as a property on Object)
+		require("chai").use(require("chai-as-promised")).should();
 	},
 
 	/* eslint-disable no-process-env */
