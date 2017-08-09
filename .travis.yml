@@ -6,9 +6,6 @@ cache:
   directories:
     - node_modules
 
-# Use Trusty CI environment (remove this when Trusty is the defalt)
-dist: trusty
-
 # Use latest Firefox, and Code Climate token for coverage reporting
 addons:
   chrome: stable
