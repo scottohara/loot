@@ -3,7 +3,7 @@
 	 * Implementation
 	 */
 	class ScheduleIndexController {
-		constructor($scope, $uibModal, $timeout, $state, scheduleModel, transactionModel, ogTableNavigableService, schedules) {
+		constructor($scope, $transitions, $uibModal, $timeout, $state, scheduleModel, transactionModel, ogTableNavigableService, schedules) {
 			const self = this;
 
 			this.$uibModal = $uibModal;
@@ -35,8 +35,8 @@
 			// Today's date (for checking if a schedule is overdue
 			this.today = moment().startOf("day").toDate();
 
-			// Handler is wrapped in a function to aid with unit testing
-			$scope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => this.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams));
+			// When the id state parameter changes, focus the specified row
+			$scope.$on("$destroy", $transitions.onSuccess({to: "root.schedules.schedule"}, transition => this.focusSchedule(Number(transition.params("to").id))));
 		}
 
 		editSchedule(index) {
@@ -170,13 +170,6 @@
 
 			$event.cancelBubble = true;
 		}
-
-		// Listen for state change events, and when the schedule id changes, ensure the row is focussed
-		stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams) {
-			if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-				this.focusSchedule(Number(toParams.id));
-			}
-		}
 	}
 
 	/**
@@ -189,5 +182,5 @@
 	/**
 	 * Dependencies
 	 */
-	ScheduleIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "scheduleModel", "transactionModel", "ogTableNavigableService", "schedules"];
+	ScheduleIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "scheduleModel", "transactionModel", "ogTableNavigableService", "schedules"];
 }

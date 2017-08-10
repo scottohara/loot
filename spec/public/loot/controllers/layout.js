@@ -1,5 +1,7 @@
 describe("LayoutController", () => {
 	let	layoutController,
+			controllerTest,
+			$transitions,
 			$state,
 			$uibModal,
 			authenticationModel,
@@ -22,7 +24,9 @@ describe("LayoutController", () => {
 	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "$uibModal", "ogNavigatorServiceWorkerService", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest, _$state_, _$uibModal_, _authenticationModel_, _ogTableNavigableService_, _authenticated_) => {
+	beforeEach(inject((_controllerTest_, _$transitions_, _$state_, _$uibModal_, _authenticationModel_, _ogTableNavigableService_, _authenticated_) => {
+		controllerTest = _controllerTest_;
+		$transitions = _$transitions_;
 		$state = _$state_;
 		$uibModal = _$uibModal_;
 		authenticationModel = _authenticationModel_;
@@ -153,20 +157,41 @@ describe("LayoutController", () => {
 		});
 	});
 
-	describe("state change handlers", () => {
-		beforeEach(() => (layoutController.loadingState = null));
+	describe("state transitions", () => {
+		let mockTransition,
+				deregisterTransitionStartHook;
 
-		const scenarios = [
-			{event: "$stateChangeStart", loading: true},
-			{event: "$stateChangeSuccess", loading: false},
-			{event: "$stateChangeError", loading: false}
-		];
+		beforeEach(() => {
+			mockTransition = {
+				promise: {
+					finally: sinon.stub()
+				}
+			};
+			deregisterTransitionStartHook = sinon.stub();
+			sinon.stub($transitions, "onStart").yields(mockTransition).returns(deregisterTransitionStartHook);
+			layoutController = controllerTest("LayoutController");
+		});
 
-		scenarios.forEach(scenario => {
-			it(`should attach a ${scenario.event} handler`, () => {
-				layoutController.$scope.$emit(scenario.event);
-				layoutController.loadingState.should.equal(scenario.loading);
+		it("should register a start transition hook", () => $transitions.onStart.should.have.been.calledWith({}, sinon.match.func));
+
+		it("should deregister the start transition hook when the scope is destroyed", () => {
+			layoutController.$scope.$emit("$destroy");
+			deregisterTransitionStartHook.should.have.been.called;
+		});
+
+		describe("on transition start", () => {
+			it("should set the loading state", () => layoutController.loadingState.should.be.true);
+
+			it("should register a callback for when the transition ends", () => mockTransition.promise.finally.should.have.been.calledWith(sinon.match.func));
+		});
+
+		describe("on transition end", () => {
+			beforeEach(() => {
+				mockTransition.promise.finally.yields();
+				layoutController = controllerTest("LayoutController");
 			});
+
+			it("should clear the loading state", () => layoutController.loadingState.should.be.false);
 		});
 	});
 

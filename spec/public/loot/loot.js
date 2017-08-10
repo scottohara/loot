@@ -1,14 +1,14 @@
 describe("loot", () => {
 	// Dependencies
-	let	$urlRouterProvider,
+	let	$urlServiceProvider,
 			$rootScope,
 			$state,
 			ogNavigatorServiceWorkerService;
 
 	// Load the modules
-	beforeEach(module("ui.router", _$urlRouterProvider_ => {
-		$urlRouterProvider = _$urlRouterProvider_;
-		sinon.stub($urlRouterProvider, "otherwise");
+	beforeEach(module("ui.router", _$urlServiceProvider_ => {
+		$urlServiceProvider = _$urlServiceProvider_;
+		sinon.stub($urlServiceProvider.rules, "otherwise");
 	}));
 
 	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "ogNavigatorServiceWorkerService"])));
@@ -21,32 +21,11 @@ describe("loot", () => {
 	}));
 
 	describe("config", () => {
-		it("should set a default URL route", () => $urlRouterProvider.otherwise.should.have.been.calledWith("/accounts"));
+		it("should set a default URL route", () => $urlServiceProvider.rules.otherwise.should.have.been.calledWith("/accounts"));
 	});
 
 	describe("run", () => {
 		it("should make the state configuration available on the $rootScope", () => $rootScope.$state.should.deep.equal($state));
-
-		describe("stateChangeErrorHandler", () => {
-			it("should log the error to the browser console", () => {
-				const toState = "to state",
-							toParams = "to params",
-							fromState = "from state",
-							fromParams = "from params",
-							error = "error";
-
-				sinon.stub(console, "error");
-
-				$rootScope.stateChangeErrorHandler(null, toState, toParams, fromState, fromParams, error);
-				console.error.should.have.been.calledWith(toState, toParams, fromState, fromParams);
-			});
-		});
-
-		it("should attach a state change error handler", () => {
-			sinon.stub($rootScope, "stateChangeErrorHandler");
-			$rootScope.$emit("$stateChangeError");
-			$rootScope.stateChangeErrorHandler.should.have.been.called;
-		});
 
 		it("should register a service worker", () => ogNavigatorServiceWorkerService.register.should.have.been.calledWith("/service-worker.js"));
 	});

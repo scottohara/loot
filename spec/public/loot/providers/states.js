@@ -23,6 +23,7 @@ describe("lootStatesProvider", () => {
 			transactionBatch,
 			queryService,
 			stateName,
+			stateParams,
 			stateConfig;
 
 	// Load the modules
@@ -106,7 +107,7 @@ describe("lootStatesProvider", () => {
 		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/accounts"));
 
 		it("should not transition if the user is unauthenticated", () => {
-			$state.get(stateName).resolve.authenticated = () => false;
+			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
 			$state.current.name.should.not.equal(stateName);
@@ -130,12 +131,15 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("account state", () => {
-				beforeEach(() => (stateName += ".account"));
+				beforeEach(() => {
+					stateName += ".account";
+					stateParams = {id: 1};
+				});
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/accounts/1"));
+				it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/accounts/1"));
 
 				it("should successfully transition", () => {
-					$state.go(stateName);
+					$state.go(stateName, stateParams);
 					$rootScope.$digest();
 					$state.current.name.should.equal(stateName);
 				});
@@ -149,11 +153,11 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Account Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/accounts/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/accounts/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
-						$state.get(stateName).resolve.authenticated = () => false;
-						$state.go(stateName, {id: 1});
+						authenticationModel.isAuthenticated = false;
+						$state.go(stateName, stateParams);
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -164,7 +168,7 @@ describe("lootStatesProvider", () => {
 								resolvedTransactionBatch;
 
 						beforeEach(() => {
-							$state.go(stateName, {id: 1});
+							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
@@ -188,12 +192,15 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("account transaction state", () => {
-							beforeEach(() => (stateName += ".transaction"));
+							beforeEach(() => {
+								stateName += ".transaction";
+								stateParams.transactionId = 2;
+							});
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/accounts/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/accounts/1/transactions/2"));
 
 							it("should successfully transition", () => {
-								$state.go(stateName);
+								$state.go(stateName, stateParams);
 								$rootScope.$digest();
 								$state.current.name.should.equal(stateName);
 							});
@@ -216,7 +223,7 @@ describe("lootStatesProvider", () => {
 		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/schedules"));
 
 		it("should not transition if the user is unauthenticated", () => {
-			$state.get(stateName).resolve.authenticated = () => false;
+			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
 			$state.current.name.should.not.equal(stateName);
@@ -240,12 +247,15 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("schedule state", () => {
-				beforeEach(() => (stateName += ".schedule"));
+				beforeEach(() => {
+					stateName += ".schedule";
+					stateParams = {id: 1};
+				});
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/schedules/1"));
+				it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/schedules/1"));
 
 				it("should successfully transition", () => {
-					$state.go(stateName);
+					$state.go(stateName, stateParams);
 					$rootScope.$digest();
 					$state.current.name.should.equal(stateName);
 				});
@@ -265,7 +275,7 @@ describe("lootStatesProvider", () => {
 		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/payees"));
 
 		it("should not transition if the user is unauthenticated", () => {
-			$state.get(stateName).resolve.authenticated = () => false;
+			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
 			$state.current.name.should.not.equal(stateName);
@@ -289,12 +299,15 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("payee state", () => {
-				beforeEach(() => (stateName += ".payee"));
+				beforeEach(() => {
+					stateName += ".payee";
+					stateParams = {id: 1};
+				});
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/payees/1"));
+				it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/payees/1"));
 
 				it("should successfully transition", () => {
-					$state.go(stateName);
+					$state.go(stateName, stateParams);
 					$rootScope.$digest();
 					$state.current.name.should.equal(stateName);
 				});
@@ -308,11 +321,11 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Payee Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/payees/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/payees/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
-						$state.get(stateName).resolve.authenticated = () => false;
-						$state.go(stateName, {id: 1});
+						authenticationModel.isAuthenticated = false;
+						$state.go(stateName, stateParams);
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -323,7 +336,7 @@ describe("lootStatesProvider", () => {
 								resolvedTransactionBatch;
 
 						beforeEach(() => {
-							$state.go(stateName, {id: 1});
+							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
@@ -346,12 +359,15 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("payee transaction state", () => {
-							beforeEach(() => (stateName += ".transaction"));
+							beforeEach(() => {
+								stateName += ".transaction";
+								stateParams.transactionId = 2;
+							});
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/payees/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/payees/1/transactions/2"));
 
 							it("should successfully transition", () => {
-								$state.go(stateName);
+								$state.go(stateName, stateParams);
 								$rootScope.$digest();
 								$state.current.name.should.equal(stateName);
 							});
@@ -374,7 +390,7 @@ describe("lootStatesProvider", () => {
 		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/categories"));
 
 		it("should not transition if the user is unauthenticated", () => {
-			$state.get(stateName).resolve.authenticated = () => false;
+			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
 			$state.current.name.should.not.equal(stateName);
@@ -398,12 +414,15 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("category state", () => {
-				beforeEach(() => (stateName += ".category"));
+				beforeEach(() => {
+					stateName += ".category";
+					stateParams = {id: 1};
+				});
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/categories/1"));
+				it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/categories/1"));
 
 				it("should successfully transition", () => {
-					$state.go(stateName);
+					$state.go(stateName, stateParams);
 					$rootScope.$digest();
 					$state.current.name.should.equal(stateName);
 				});
@@ -417,11 +436,11 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Category Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/categories/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/categories/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
-						$state.get(stateName).resolve.authenticated = () => false;
-						$state.go(stateName, {id: 1});
+						authenticationModel.isAuthenticated = false;
+						$state.go(stateName, stateParams);
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -432,7 +451,7 @@ describe("lootStatesProvider", () => {
 								resolvedTransactionBatch;
 
 						beforeEach(() => {
-							$state.go(stateName, {id: 1});
+							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
@@ -455,12 +474,15 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("category transaction state", () => {
-							beforeEach(() => (stateName += ".transaction"));
+							beforeEach(() => {
+								stateName += ".transaction";
+								stateParams.transactionId = 2;
+							});
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/categories/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/categories/1/transactions/2"));
 
 							it("should successfully transition", () => {
-								$state.go(stateName);
+								$state.go(stateName, stateParams);
 								$rootScope.$digest();
 								$state.current.name.should.equal(stateName);
 							});
@@ -483,7 +505,7 @@ describe("lootStatesProvider", () => {
 		it("should resolve to a URL", () => $state.href(stateName).should.equal("#!/securities"));
 
 		it("should not transition if the user is unauthenticated", () => {
-			$state.get(stateName).resolve.authenticated = () => false;
+			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
 			$state.current.name.should.not.equal(stateName);
@@ -507,12 +529,15 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("security state", () => {
-				beforeEach(() => (stateName += ".security"));
+				beforeEach(() => {
+					stateName += ".security";
+					stateParams = {id: 1};
+				});
 
-				it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/securities/1"));
+				it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/securities/1"));
 
 				it("should successfully transition", () => {
-					$state.go(stateName);
+					$state.go(stateName, stateParams);
 					$rootScope.$digest();
 					$state.current.name.should.equal(stateName);
 				});
@@ -526,11 +551,11 @@ describe("lootStatesProvider", () => {
 
 					it("should have a title", () => stateConfig.data.title.should.equal("Security Transactions"));
 
-					it("should resolve to a URL", () => $state.href(stateName, {id: 1}).should.equal("#!/securities/1/transactions"));
+					it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/securities/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", () => {
-						$state.get(stateName).resolve.authenticated = () => false;
-						$state.go(stateName, {id: 1});
+						authenticationModel.isAuthenticated = false;
+						$state.go(stateName, stateParams);
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -541,7 +566,7 @@ describe("lootStatesProvider", () => {
 								resolvedTransactionBatch;
 
 						beforeEach(() => {
-							$state.go(stateName, {id: 1});
+							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
@@ -564,12 +589,15 @@ describe("lootStatesProvider", () => {
 						});
 
 						describe("security transaction state", () => {
-							beforeEach(() => (stateName += ".transaction"));
+							beforeEach(() => {
+								stateName += ".transaction";
+								stateParams.transactionId = 2;
+							});
 
-							it("should resolve to a URL", () => $state.href(stateName, {id: 1, transactionId: 2}).should.equal("#!/securities/1/transactions/2"));
+							it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal("#!/securities/1/transactions/2"));
 
 							it("should successfully transition", () => {
-								$state.go(stateName);
+								$state.go(stateName, stateParams);
 								$rootScope.$digest();
 								$state.current.name.should.equal(stateName);
 							});
@@ -586,17 +614,18 @@ describe("lootStatesProvider", () => {
 		beforeEach(() => {
 			query = "search";
 			stateName = "root.transactions";
+			stateParams = {query};
 			stateConfig = $state.get(stateName);
 			$httpBackend.expectGET("transactions/views/index.html").respond(200);
 		});
 
 		it("should have a title", () => stateConfig.data.title.should.equal("Search Transactions"));
 
-		it("should resolve to a URL", () => $state.href(stateName, {query}).should.equal(`#!/transactions?query=${query}`));
+		it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal(`#!/transactions?query=${query}`));
 
 		it("should not transition if the user is unauthenticated", () => {
-			$state.get(stateName).resolve.authenticated = () => false;
-			$state.go(stateName, {query});
+			authenticationModel.isAuthenticated = false;
+			$state.go(stateName, stateParams);
 			$rootScope.$digest();
 			$state.current.name.should.not.equal(stateName);
 		});
@@ -615,7 +644,7 @@ describe("lootStatesProvider", () => {
 					params: "previous params",
 					includes: sinon.stub().returns(false)
 				};
-				$state.go(stateName, {query});
+				$state.go(stateName, stateParams);
 				$rootScope.$digest();
 				$httpBackend.flush();
 				resolvedPreviousState = $injector.invoke($state.current.resolve.previousState, null, {$state: previousState});
@@ -661,12 +690,15 @@ describe("lootStatesProvider", () => {
 			});
 
 			describe("transaction state", () => {
-				beforeEach(() => (stateName += ".transaction"));
+				beforeEach(() => {
+					stateName += ".transaction";
+					stateParams.transactionId = 2;
+				});
 
-				it("should resolve to a URL", () => $state.href(stateName, {query, transactionId: 2}).should.equal(`#!/transactions/2?query=${query}`));
+				it("should resolve to a URL", () => $state.href(stateName, stateParams).should.equal(`#!/transactions/2?query=${query}`));
 
 				it("should successfully transition", () => {
-					$state.go(stateName);
+					$state.go(stateName, stateParams);
 					$rootScope.$digest();
 					$state.current.name.should.equal(stateName);
 				});

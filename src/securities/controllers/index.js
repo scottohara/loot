@@ -3,7 +3,7 @@
 	 * Implementation
 	 */
 	class SecurityIndexController {
-		constructor($scope, $uibModal, $timeout, $state, securityModel, ogTableNavigableService, securities) {
+		constructor($scope, $transitions, $uibModal, $timeout, $state, securityModel, ogTableNavigableService, securities) {
 			const	self = this,
 						decimalPlaces = 2;
 
@@ -33,8 +33,8 @@
 				}
 			};
 
-			// Handler is wrapped in a function to aid with unit testing
-			$scope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => this.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams));
+			// When the id state parameter changes, focus the specified row
+			$scope.$on("$destroy", $transitions.onSuccess({to: "root.securities.security"}, transition => this.focusSecurity(Number(transition.params("to").id))));
 		}
 
 		editSecurity(index) {
@@ -168,13 +168,6 @@
 
 			return targetIndex;
 		}
-
-		// Listen for state change events, and when the security id changes, ensure the row is focussed
-		stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams) {
-			if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-				this.focusSecurity(Number(toParams.id));
-			}
-		}
 	}
 
 	/**
@@ -187,5 +180,5 @@
 	/**
 	 * Dependencies
 	 */
-	SecurityIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities"];
+	SecurityIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities"];
 }

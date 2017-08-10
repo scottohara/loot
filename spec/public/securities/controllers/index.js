@@ -1,31 +1,51 @@
 describe("SecurityIndexController", () => {
 	let	securityIndexController,
+			$transitions,
 			$timeout,
 			$uibModal,
 			$state,
 			securityModel,
 			ogTableNavigableService,
-			securities;
+			securities,
+			deregisterTransitionSuccessHook;
 
 	// Load the modules
 	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "securityModel", "securities"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$timeout_, _$uibModal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) => {
+	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) => {
 		const controllerTest = _controllerTest_;
 
+		$transitions = _$transitions_;
 		$timeout = _$timeout_;
 		$uibModal = _$uibModal_;
 		$state = _$state_;
 		securityModel = _securityModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
 		securities = _securities_;
+		deregisterTransitionSuccessHook = sinon.stub();
+		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		securityIndexController = controllerTest("SecurityIndexController");
 	}));
 
 	it("should make the passed securities available to the view", () => securityIndexController.securities.should.deep.equal(securities));
 
 	it("should return the sum of all security values, to 2 decimal places", () => securityIndexController.totalValue.should.equal(45.01));
+
+	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.securities.security"}, sinon.match.func));
+
+	it("should deregister the success transition hook when the scope is destroyed", () => {
+		securityIndexController.$scope.$emit("$destroy");
+		deregisterTransitionSuccessHook.should.have.been.called;
+	});
+
+	it("should ensure the security is focussed when the security id state param changes", () => {
+		const toParams = {id: "1"};
+
+		sinon.stub(securityIndexController, "focusSecurity");
+		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		securityIndexController.focusSecurity.should.have.been.calledWith(Number(toParams.id));
+	});
 
 	describe("editSecurity", () => {
 		let security;
@@ -252,49 +272,5 @@ describe("SecurityIndexController", () => {
 
 			targetIndex.should.equal(0);
 		});
-	});
-
-	describe("stateChangeSuccessHandler", () => {
-		let	toState,
-				toParams,
-				fromState,
-				fromParams;
-
-		beforeEach(() => {
-			toState = {name: "state"};
-			toParams = {id: 1};
-			fromState = angular.copy(toState);
-			fromParams = angular.copy(toParams);
-			sinon.stub(securityIndexController, "focusSecurity");
-		});
-
-		it("should do nothing when an id state parameter is not specified", () => {
-			delete toParams.id;
-			securityIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			securityIndexController.focusSecurity.should.not.have.been.called;
-		});
-
-		it("should do nothing when state parameters have not changed", () => {
-			securityIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			securityIndexController.focusSecurity.should.not.have.been.called;
-		});
-
-		it("should ensure the security is focussed when the state name changes", () => {
-			toState.name = "new state";
-			securityIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			securityIndexController.focusSecurity.should.have.been.calledWith(toParams.id);
-		});
-
-		it("should ensure the security is focussed when the security id state param changes", () => {
-			toParams.id = 2;
-			securityIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			securityIndexController.focusSecurity.should.have.been.calledWith(toParams.id);
-		});
-	});
-
-	it("should attach a state change success handler", () => {
-		sinon.stub(securityIndexController, "stateChangeSuccessHandler");
-		securityIndexController.$scope.$emit("$stateChangeSuccess");
-		securityIndexController.stateChangeSuccessHandler.should.have.been.called;
 	});
 });

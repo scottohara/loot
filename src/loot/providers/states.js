@@ -26,20 +26,16 @@
 					},
 					resolve: {
 						contextModel: ["authenticated", `${parentContext}Model`,
-							(authenticated, contextModel) => (authenticated && contextModel) || null
+							(authenticated, contextModel) => authenticated && contextModel
 						],
 						context: ["authenticated", "$stateParams", "contextModel",
-							(authenticated, $stateParams, contextModel) => (authenticated && contextModel.find($stateParams.id)) || null
+							(authenticated, $stateParams, contextModel) => authenticated && contextModel.find($stateParams.id)
 						],
 						transactionBatch: ["authenticated", "transactionModel", "contextModel", "context",
 							(authenticated, transactionModel, contextModel, context) => {
-								if (authenticated) {
-									const unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
+								const unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
 
-									return transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
-								}
-
-								return null;
+								return authenticated && transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
 							}
 						]
 					},
@@ -93,7 +89,7 @@
 					},
 					resolve: {
 						accounts: ["authenticated", "accountModel",
-							(authenticated, accountModel) => (authenticated && accountModel.allWithBalances()) || null
+							(authenticated, accountModel) => authenticated && accountModel.allWithBalances()
 						]
 					}
 				})
@@ -110,7 +106,7 @@
 					},
 					resolve: {
 						schedules: ["authenticated", "scheduleModel",
-							(authenticated, scheduleModel) => (authenticated && scheduleModel.all()) || null
+							(authenticated, scheduleModel) => authenticated && scheduleModel.all()
 						]
 					}
 				})
@@ -125,7 +121,7 @@
 					},
 					resolve: {
 						payees: ["authenticated", "payeeModel",
-							(authenticated, payeeModel) => (authenticated && payeeModel.allList()) || null
+							(authenticated, payeeModel) => authenticated && payeeModel.allList()
 						]
 					}
 				})
@@ -142,7 +138,7 @@
 					},
 					resolve: {
 						categories: ["authenticated", "categoryModel",
-							(authenticated, categoryModel) => (authenticated && categoryModel.allWithChildren()) || null
+							(authenticated, categoryModel) => authenticated && categoryModel.allWithChildren()
 						]
 					}
 				})
@@ -159,7 +155,7 @@
 					},
 					resolve: {
 						securities: ["authenticated", "securityModel",
-							(authenticated, securityModel) => (authenticated && securityModel.allWithBalances()) || null
+							(authenticated, securityModel) => authenticated && securityModel.allWithBalances()
 						]
 					}
 				})
@@ -189,7 +185,7 @@
 							$stateParams => $stateParams.query
 						],
 						transactionBatch: ["authenticated", "transactionModel", "context",
-							(authenticated, transactionModel, context) => (authenticated && transactionModel.query(context, null, "prev")) || null
+							(authenticated, transactionModel, context) => authenticated && transactionModel.query(context, null, "prev")
 						]
 					},
 					views: transactionViews,
@@ -200,7 +196,10 @@
 						}
 					],
 					onExit: ["queryService",
-						queryService => (queryService.query = null)
+						// Can't use concise function body because implicit return of 'false' causes route transition to cancel in ui-router@1.x
+						queryService => {
+							queryService.query = null;
+						}
 					]
 				})
 				.state("root.transactions.transaction", transactionState());

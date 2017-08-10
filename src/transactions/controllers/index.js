@@ -3,7 +3,7 @@
 	 * Implementation
 	 */
 	class TransactionIndexController {
-		constructor($scope, $uibModal, $timeout, $window, $state, transactionModel, accountModel, ogTableNavigableService, ogViewScrollService, contextModel, context, transactionBatch) {
+		constructor($scope, $transitions, $uibModal, $timeout, $window, $state, transactionModel, accountModel, ogTableNavigableService, ogViewScrollService, contextModel, context, transactionBatch) {
 			const self = this;
 
 			this.$uibModal = $uibModal;
@@ -64,8 +64,8 @@
 			// Process the initial batch of transactions to display
 			this.processTransactions(transactionBatch, null, Number(this.$state.params.transactionId));
 
-			// Handler is wrapped in a function to aid with unit testing
-			$scope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => this.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams));
+			// When the transaction id state parameter changes, focus the specified row
+			$scope.$on("$destroy", $transitions.onSuccess({to: "**.transactions.transaction"}, transition => this.transitionSuccessHandler(Number(transition.params("to").transactionId))));
 
 			// Auto scroll to the bottom
 			$timeout(() => ogViewScrollService.scrollTo("bottom"));
@@ -600,38 +600,36 @@
 			this.switchTo($event, "categories.category", transaction.subcategory.id, transaction);
 		}
 
-		// Listen for state change events, and when the transactionId or id parameters change, ensure the row is focussed
-		stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams) {
-			if (toParams.transactionId && (toParams.transactionId !== fromParams.transactionId || toParams.id !== fromParams.id)) {
-				if (isNaN(this.focusTransaction(Number(toParams.transactionId)))) {
-					// Transaction was not found in the current set
+		// Ensure that the specified transaction is in the current set, and the row is focussed
+		transitionSuccessHandler(transactionId) {
+			if (isNaN(this.focusTransaction(transactionId))) {
+				// Transaction was not found in the current set
 
-					// Get the transaction details from the server
-					this.transactionModel.find(toParams.transactionId).then(transaction => {
-						let	fromDate = moment(transaction.transaction_date),
-								direction;
+				// Get the transaction details from the server
+				this.transactionModel.find(transactionId).then(transaction => {
+					let	fromDate = moment(transaction.transaction_date),
+							direction;
 
-						if (!fromDate.isAfter(this.firstTransactionDate)) {
-							// Transaction date is earlier than the earliest fetched transaction
-							fromDate = fromDate.subtract(1, "day");
-							direction = "next";
-						} else if (!fromDate.isBefore(this.lastTransactionDate) && !this.atEnd) {
-							// Transaction date is later than the latest fetched transaction
-							fromDate = fromDate.add(1, "day");
-							direction = "prev";
-						}
+					if (!fromDate.isAfter(this.firstTransactionDate)) {
+						// Transaction date is earlier than the earliest fetched transaction
+						fromDate = fromDate.subtract(1, "day");
+						direction = "next";
+					} else if (!fromDate.isBefore(this.lastTransactionDate) && !this.atEnd) {
+						// Transaction date is later than the latest fetched transaction
+						fromDate = fromDate.add(1, "day");
+						direction = "prev";
+					}
 
-						fromDate = fromDate.toDate();
+					fromDate = fromDate.toDate();
 
-						if (this.unreconciledOnly) {
-							// If we're not already showing reconciled transactions, toggle the setting
-							this.toggleUnreconciledOnly(false, direction, fromDate, Number(toParams.transactionId));
-						} else {
-							// Otherwise just get refresh the transactions from the new date
-							this.getTransactions(direction, fromDate, Number(toParams.transactionId));
-						}
-					});
-				}
+					if (this.unreconciledOnly) {
+						// If we're not already showing reconciled transactions, toggle the setting
+						this.toggleUnreconciledOnly(false, direction, fromDate, transactionId);
+					} else {
+						// Otherwise just get refresh the transactions from the new date
+						this.getTransactions(direction, fromDate, transactionId);
+					}
+				});
 			}
 		}
 	}
@@ -646,5 +644,5 @@
 	/**
 	 * Dependencies
 	 */
-	TransactionIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "contextModel", "context", "transactionBatch"];
+	TransactionIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "contextModel", "context", "transactionBatch"];
 }

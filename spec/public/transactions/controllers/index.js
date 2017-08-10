@@ -1,6 +1,7 @@
 describe("TransactionIndexController", () => {
 	let	transactionIndexController,
 			controllerTest,
+			$transitions,
 			$uibModal,
 			$timeout,
 			$window,
@@ -11,14 +12,16 @@ describe("TransactionIndexController", () => {
 			ogViewScrollService,
 			contextModel,
 			context,
-			transactionBatch;
+			transactionBatch,
+			deregisterTransitionSuccessHook;
 
 	// Load the modules
 	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$uibModal_, _$timeout_, _$window_, _$state_, _transactionModel_, _accountModel_, _ogTableNavigableService_, _ogViewScrollService_, _contextModel_, _context_, _transactionBatch_) => {
+	beforeEach(inject((_controllerTest_, _$transitions_, _$uibModal_, _$timeout_, _$window_, _$state_, _transactionModel_, _accountModel_, _ogTableNavigableService_, _ogViewScrollService_, _contextModel_, _context_, _transactionBatch_) => {
 		controllerTest = _controllerTest_;
+		$transitions = _$transitions_;
 		$uibModal = _$uibModal_;
 		$timeout = _$timeout_;
 		$window = _$window_;
@@ -30,6 +33,8 @@ describe("TransactionIndexController", () => {
 		contextModel = _contextModel_;
 		context = _context_;
 		transactionBatch = _transactionBatch_;
+		deregisterTransitionSuccessHook = sinon.stub();
+		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		sinon.stub(ogViewScrollService, "scrollTo");
 		transactionIndexController = controllerTest("TransactionIndexController");
 	}));
@@ -66,6 +71,26 @@ describe("TransactionIndexController", () => {
 	it("should set the previous/next loading indicators to false", () => {
 		transactionIndexController.loading.prev.should.be.false;
 		transactionIndexController.loading.next.should.be.false;
+	});
+
+	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "**.transactions.transaction"}, sinon.match.func));
+
+	it("should deregister the success transition hook when the scope is destroyed", () => {
+		transactionIndexController.$scope.$emit("$destroy");
+		deregisterTransitionSuccessHook.should.have.been.called;
+	});
+
+	it("should ensure the transaction is focussed when the transaction id state param changes", () => {
+		const toParams = {transactionId: "1"};
+
+		sinon.stub(transactionIndexController, "transitionSuccessHandler");
+		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		transactionIndexController.transitionSuccessHandler.should.have.been.calledWith(Number(toParams.transactionId));
+	});
+
+	it("should scroll to the bottom when the controller loads", () => {
+		$timeout.flush();
+		ogViewScrollService.scrollTo.should.have.been.calledWith("bottom");
 	});
 
 	describe("editTransaction", () => {
@@ -1243,54 +1268,28 @@ describe("TransactionIndexController", () => {
 		});
 	});
 
-	describe("stateChangeSuccessHandler", () => {
-		let	toState,
-				toParams,
-				fromState,
-				fromParams,
+	describe("transitionSuccessHandler", () => {
+		let	transactionId,
 				focusTransactionStub;
 
-		beforeEach(() => {
-			toState = {name: "state"};
-			toParams = {id: 1, transactionId: 1};
-			fromState = angular.copy(toState);
-			fromParams = angular.copy(toParams);
-			focusTransactionStub = sinon.stub(transactionIndexController, "focusTransaction").returns(1);
-		});
-
-		it("should do nothing when a transaction id state parameter is not specified", () => {
-			delete toParams.transactionId;
-			transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			transactionIndexController.focusTransaction.should.not.have.been.called;
-		});
-
-		it("should do nothing when state parameters have not changed", () => {
-			transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			transactionIndexController.focusTransaction.should.not.have.been.called;
-		});
-
-		it("should ensure the transaction is focussed when the id state param changes", () => {
-			toParams.id = 2;
-			transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			transactionIndexController.focusTransaction.should.have.been.calledWith(toParams.transactionId);
-		});
+		beforeEach(() => (focusTransactionStub = sinon.stub(transactionIndexController, "focusTransaction").returns(1)));
 
 		it("should ensure the transaction is focussed when the transaction id state param changes", () => {
-			toParams.transactionId = 2;
-			transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			transactionIndexController.focusTransaction.should.have.been.calledWith(toParams.transactionId);
+			transactionId = 2;
+			transactionIndexController.transitionSuccessHandler(transactionId);
+			transactionIndexController.focusTransaction.should.have.been.calledWith(transactionId);
 		});
 
 		describe("(transaction not found)", () => {
 			beforeEach(() => {
 				sinon.stub(transactionIndexController, "getTransactions");
 				focusTransactionStub.withArgs(3).returns(NaN);
-				toParams.transactionId = 3;
+				transactionId = 3;
 			});
 
 			it("should fetch the transaction details", () => {
-				transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-				transactionModel.find.should.have.been.calledWith(toParams.transactionId);
+				transactionIndexController.transitionSuccessHandler(transactionId);
+				transactionModel.find.should.have.been.calledWith(transactionId);
 			});
 
 			describe("(showing unreconciled only)", () => {
@@ -1302,8 +1301,8 @@ describe("TransactionIndexController", () => {
 					sinon.stub(transactionIndexController, "focusTransaction").returns(NaN);
 					sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
 					transactionIndexController.unreconciledOnly = true;
-					transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(false, direction, transactionDate, toParams.transactionId);
+					transactionIndexController.transitionSuccessHandler(transactionId);
+					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(false, direction, transactionDate, transactionId);
 				});
 			});
 
@@ -1312,7 +1311,7 @@ describe("TransactionIndexController", () => {
 					const fromDate = moment().startOf("day").subtract(2, "days").toDate();
 
 					transactionIndexController.firstTransactionDate = moment().startOf("day").toDate();
-					transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
+					transactionIndexController.transitionSuccessHandler(transactionId);
 					transactionIndexController.getTransactions.should.have.been.calledWith("next", fromDate);
 				});
 			});
@@ -1323,7 +1322,7 @@ describe("TransactionIndexController", () => {
 
 					transactionIndexController.lastTransactionDate = moment().startOf("day").subtract(2, "days").toDate();
 					transactionIndexController.atEnd = false;
-					transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
+					transactionIndexController.transitionSuccessHandler(transactionId);
 					transactionIndexController.getTransactions.should.have.been.calledWith("prev", fromDate);
 				});
 
@@ -1333,21 +1332,10 @@ describe("TransactionIndexController", () => {
 
 					transactionIndexController.lastTransactionDate = moment().startOf("day").subtract(2, "days").toDate();
 					transactionIndexController.atEnd = true;
-					transactionIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
+					transactionIndexController.transitionSuccessHandler(transactionId);
 					transactionIndexController.getTransactions.should.have.been.calledWith(direction, fromDate);
 				});
 			});
 		});
-	});
-
-	it("should attach a state change success handler", () => {
-		sinon.stub(transactionIndexController, "stateChangeSuccessHandler");
-		transactionIndexController.$scope.$emit("$stateChangeSuccess");
-		transactionIndexController.stateChangeSuccessHandler.should.have.been.called;
-	});
-
-	it("should scroll to the bottom when the controller loads", () => {
-		$timeout.flush();
-		ogViewScrollService.scrollTo.should.have.been.calledWith("bottom");
 	});
 });

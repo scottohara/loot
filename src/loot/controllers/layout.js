@@ -3,8 +3,7 @@
 	 * Implementation
 	 */
 	class LayoutController {
-		constructor($scope, $state, $uibModal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
-			this.$scope = $scope;
+		constructor($scope, $transitions, $state, $uibModal, authenticationModel, accountModel, payeeModel, categoryModel, securityModel, ogTableNavigableService, ogViewScrollService, queryService, authenticated) {
 			this.$state = $state;
 			this.$uibModal = $uibModal;
 			this.authenticationModel = authenticationModel;
@@ -18,10 +17,12 @@
 			this.isLoadingState = false;
 			this.scrollTo = ogViewScrollService.scrollTo.bind(ogViewScrollService);
 
-			// Handlers are wrapped in functions to aid with unit testing
-			$scope.$on("$stateChangeStart", () => (this.loadingState = true));
-			$scope.$on("$stateChangeSuccess", () => (this.loadingState = false));
-			$scope.$on("$stateChangeError", () => (this.loadingState = false));
+			// Show/hide spinner on all transitions
+			$scope.$on("$destroy", $transitions.onStart({}, transition => {
+				this.loadingState = true;
+				transition.promise.finally(() => (this.loadingState = false));
+			}));
+
 			$("#transactionSearch").on("search", () => this.checkIfSearchCleared());
 		}
 
@@ -104,5 +105,5 @@
 	/**
 	 * Dependencies
 	 */
-	LayoutController.$inject = ["$scope", "$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
+	LayoutController.$inject = ["$scope", "$transitions", "$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "authenticated"];
 }

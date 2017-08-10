@@ -1,29 +1,49 @@
 describe("PayeeIndexController", () => {
 	let	payeeIndexController,
+			$transitions,
 			$timeout,
 			$uibModal,
 			$state,
 			payeeModel,
 			ogTableNavigableService,
-			payees;
+			payees,
+			deregisterTransitionSuccessHook;
 
 	// Load the modules
 	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "payeeModel", "payees"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$timeout_, _$uibModal_, _$state_, _payeeModel_, _ogTableNavigableService_, _payees_) => {
+	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _payeeModel_, _ogTableNavigableService_, _payees_) => {
 		const controllerTest = _controllerTest_;
 
+		$transitions = _$transitions_;
 		$timeout = _$timeout_;
 		$uibModal = _$uibModal_;
 		$state = _$state_;
 		payeeModel = _payeeModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
 		payees = _payees_;
+		deregisterTransitionSuccessHook = sinon.stub();
+		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		payeeIndexController = controllerTest("PayeeIndexController");
 	}));
 
 	it("should make the passed payees available to the view", () => payeeIndexController.payees.should.deep.equal(payees));
+
+	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.payees.payee"}, sinon.match.func));
+
+	it("should deregister the success transition hook when the scope is destroyed", () => {
+		payeeIndexController.$scope.$emit("$destroy");
+		deregisterTransitionSuccessHook.should.have.been.called;
+	});
+
+	it("should ensure the payee is focussed when the payee id state param changes", () => {
+		const toParams = {id: "1"};
+
+		sinon.stub(payeeIndexController, "focusPayee");
+		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		payeeIndexController.focusPayee.should.have.been.calledWith(Number(toParams.id));
+	});
 
 	describe("editPayee", () => {
 		let payee;
@@ -250,49 +270,5 @@ describe("PayeeIndexController", () => {
 
 			targetIndex.should.equal(0);
 		});
-	});
-
-	describe("stateChangeSuccessHandler", () => {
-		let	toState,
-				toParams,
-				fromState,
-				fromParams;
-
-		beforeEach(() => {
-			toState = {name: "state"};
-			toParams = {id: 1};
-			fromState = angular.copy(toState);
-			fromParams = angular.copy(toParams);
-			sinon.stub(payeeIndexController, "focusPayee");
-		});
-
-		it("should do nothing when an id state parameter is not specified", () => {
-			delete toParams.id;
-			payeeIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			payeeIndexController.focusPayee.should.not.have.been.called;
-		});
-
-		it("should do nothing when state parameters have not changed", () => {
-			payeeIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			payeeIndexController.focusPayee.should.not.have.been.called;
-		});
-
-		it("should ensure the payee is focussed when the state name changes", () => {
-			toState.name = "new state";
-			payeeIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			payeeIndexController.focusPayee.should.have.been.calledWith(toParams.id);
-		});
-
-		it("should ensure the payee is focussed when the payee id state param changes", () => {
-			toParams.id = 2;
-			payeeIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			payeeIndexController.focusPayee.should.have.been.calledWith(toParams.id);
-		});
-	});
-
-	it("should attach a state change success handler", () => {
-		sinon.stub(payeeIndexController, "stateChangeSuccessHandler");
-		payeeIndexController.$scope.$emit("$stateChangeSuccess");
-		payeeIndexController.stateChangeSuccessHandler.should.have.been.called;
 	});
 });

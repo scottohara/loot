@@ -3,10 +3,9 @@
 	 * Implementation
 	 */
 	class CategoryIndexController {
-		constructor($scope, $uibModal, $timeout, $state, categoryModel, ogTableNavigableService, categories) {
+		constructor($scope, $transitions, $uibModal, $timeout, $state, categoryModel, ogTableNavigableService, categories) {
 			const self = this;
 
-			this.$scope = $scope;
 			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
 			this.$state = $state;
@@ -37,8 +36,8 @@
 				}
 			};
 
-			// Handler is wrapped in a function to aid with unit testing
-			this.$scope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => this.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams));
+			// When the id state parameter changes, focus the specified row
+			$scope.$on("$destroy", $transitions.onSuccess({to: "root.categories.category"}, transition => this.focusCategory(Number(transition.params("to").id))));
 		}
 
 		editCategory(index) {
@@ -221,13 +220,6 @@
 
 			return targetIndex;
 		}
-
-		// Listen for state change events, and when the security id changes, ensure the row is focussed
-		stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams) {
-			if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-				this.focusCategory(Number(toParams.id));
-			}
-		}
 	}
 
 	/**
@@ -240,5 +232,5 @@
 	/**
 	 * Dependencies
 	 */
-	CategoryIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories"];
+	CategoryIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories"];
 }

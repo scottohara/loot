@@ -25,7 +25,11 @@ module.exports = config => {
 				watched: false
 			},
 			{
-				pattern: "node_modules/angular-ui-router/release/angular-ui-router.js",
+				pattern: "node_modules/@uirouter/core/_bundles/ui-router-core.min.js",
+				watched: false
+			},
+			{
+				pattern: "node_modules/@uirouter/angularjs/release/ui-router-angularjs.min.js",
 				watched: false
 			},
 			{

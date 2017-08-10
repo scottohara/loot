@@ -1,31 +1,51 @@
 describe("ScheduleIndexController", () => {
 	let	scheduleIndexController,
+			$transitions,
 			$uibModal,
 			$timeout,
 			$state,
 			transactionModel,
 			ogTableNavigableService,
-			schedules;
+			schedules,
+			deregisterTransitionSuccessHook;
 
 	// Load the modules
 	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "scheduleModel", "transactionModel", "schedules"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$uibModal_, _$timeout_, _$state_, _transactionModel_, _ogTableNavigableService_, _schedules_) => {
+	beforeEach(inject((_controllerTest_, _$transitions_, _$uibModal_, _$timeout_, _$state_, _transactionModel_, _ogTableNavigableService_, _schedules_) => {
 		const controllerTest = _controllerTest_;
 
+		$transitions = _$transitions_;
 		$uibModal = _$uibModal_;
 		$timeout = _$timeout_;
 		$state = _$state_;
 		transactionModel = _transactionModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
 		schedules = _schedules_;
+		deregisterTransitionSuccessHook = sinon.stub();
+		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		scheduleIndexController = controllerTest("ScheduleIndexController");
 	}));
 
 	it("should make the passed schedules available to the view", () => scheduleIndexController.schedules.should.deep.equal(schedules));
 
 	it("should make today's date available to the view", () => scheduleIndexController.today.should.deep.equal(moment().startOf("day").toDate()));
+
+	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.schedules.schedule"}, sinon.match.func));
+
+	it("should deregister the success transition hook when the scope is destroyed", () => {
+		scheduleIndexController.$scope.$emit("$destroy");
+		deregisterTransitionSuccessHook.should.have.been.called;
+	});
+
+	it("should ensure the schedule is focussed when the schedule id state param changes", () => {
+		const toParams = {id: "1"};
+
+		sinon.stub(scheduleIndexController, "focusSchedule");
+		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		scheduleIndexController.focusSchedule.should.have.been.calledWith(Number(toParams.id));
+	});
 
 	describe("editSchedule", () => {
 		let schedule;
@@ -307,49 +327,5 @@ describe("ScheduleIndexController", () => {
 			scheduleIndexController.toggleSubtransactions(event, schedule);
 			event.cancelBubble.should.be.true;
 		});
-	});
-
-	describe("stateChangeSuccessHandler", () => {
-		let	toState,
-				toParams,
-				fromState,
-				fromParams;
-
-		beforeEach(() => {
-			toState = {name: "state"};
-			toParams = {id: 1};
-			fromState = angular.copy(toState);
-			fromParams = angular.copy(toParams);
-			sinon.stub(scheduleIndexController, "focusSchedule");
-		});
-
-		it("should do nothing when an id state parameter is not specified", () => {
-			delete toParams.id;
-			scheduleIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			scheduleIndexController.focusSchedule.should.not.have.been.called;
-		});
-
-		it("should do nothing when state parameters have not changed", () => {
-			scheduleIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			scheduleIndexController.focusSchedule.should.not.have.been.called;
-		});
-
-		it("should ensure the transaction is focussed when the state name changes", () => {
-			toState.name = "new state";
-			scheduleIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			scheduleIndexController.focusSchedule.should.have.been.calledWith(toParams.id);
-		});
-
-		it("should ensure the transaction is focussed when the schedule id state param changes", () => {
-			toParams.id = 2;
-			scheduleIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			scheduleIndexController.focusSchedule.should.have.been.calledWith(toParams.id);
-		});
-	});
-
-	it("should attach a state change success handler", () => {
-		sinon.stub(scheduleIndexController, "stateChangeSuccessHandler");
-		scheduleIndexController.$scope.$emit("$stateChangeSuccess");
-		scheduleIndexController.stateChangeSuccessHandler.should.have.been.called;
 	});
 });

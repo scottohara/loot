@@ -1,25 +1,30 @@
 describe("CategoryIndexController", () => {
 	let	categoryIndexController,
+			$transitions,
 			$timeout,
 			$uibModal,
 			$state,
 			categoryModel,
 			ogTableNavigableService,
-			categories;
+			categories,
+			deregisterTransitionSuccessHook;
 
 	// Load the modules
 	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "categoryModel", "categories"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$timeout_, _$uibModal_, _$state_, _categoryModel_, _ogTableNavigableService_, _categories_) => {
+	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _categoryModel_, _ogTableNavigableService_, _categories_) => {
 		const controllerTest = _controllerTest_;
 
+		$transitions = _$transitions_;
 		$timeout = _$timeout_;
 		$uibModal = _$uibModal_;
 		$state = _$state_;
 		categoryModel = _categoryModel_;
 		ogTableNavigableService = _ogTableNavigableService_;
 		categories = _categories_;
+		deregisterTransitionSuccessHook = sinon.stub();
+		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		categoryIndexController = controllerTest("CategoryIndexController");
 	}));
 
@@ -31,6 +36,21 @@ describe("CategoryIndexController", () => {
 		categoryIndexController.categories[0].should.deep.equal(firstParent);
 		categoryIndexController.categories[1].should.deep.equal(firstChild);
 		categoryIndexController.categories.length.should.equal(15);
+	});
+
+	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.categories.category"}, sinon.match.func));
+
+	it("should deregister the success transition hook when the scope is destroyed", () => {
+		categoryIndexController.$scope.$emit("$destroy");
+		deregisterTransitionSuccessHook.should.have.been.called;
+	});
+
+	it("should ensure the category is focussed when the category id state param changes", () => {
+		const toParams = {id: "1"};
+
+		sinon.stub(categoryIndexController, "focusCategory");
+		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		categoryIndexController.focusCategory.should.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editCategory", () => {
@@ -375,49 +395,5 @@ describe("CategoryIndexController", () => {
 
 			targetIndex.should.equal(0);
 		});
-	});
-
-	describe("stateChangeSuccessHandler", () => {
-		let toState,
-				toParams,
-				fromState,
-				fromParams;
-
-		beforeEach(() => {
-			toState = {name: "state"};
-			toParams = {id: 1};
-			fromState = angular.copy(toState);
-			fromParams = angular.copy(toParams);
-			sinon.stub(categoryIndexController, "focusCategory");
-		});
-
-		it("should do nothing when an id state parameter is not specified", () => {
-			delete toParams.id;
-			categoryIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			categoryIndexController.focusCategory.should.not.have.been.called;
-		});
-
-		it("should do nothing when state parameters have not changed", () => {
-			categoryIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			categoryIndexController.focusCategory.should.not.have.been.called;
-		});
-
-		it("should ensure the category is focussed when the state name changes", () => {
-			toState.name = "new state";
-			categoryIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			categoryIndexController.focusCategory.should.have.been.calledWith(toParams.id);
-		});
-
-		it("should ensure the category is focussed when the category id state param changes", () => {
-			toParams.id = 2;
-			categoryIndexController.stateChangeSuccessHandler(null, toState, toParams, fromState, fromParams);
-			categoryIndexController.focusCategory.should.have.been.calledWith(toParams.id);
-		});
-	});
-
-	it("should attach a state change success handler", () => {
-		sinon.stub(categoryIndexController, "stateChangeSuccessHandler");
-		categoryIndexController.$scope.$emit("$stateChangeSuccess");
-		categoryIndexController.stateChangeSuccessHandler.should.have.been.called;
 	});
 });

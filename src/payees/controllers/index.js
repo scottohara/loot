@@ -3,10 +3,9 @@
 	 * Implementation
 	 */
 	class PayeeIndexController {
-		constructor($scope, $uibModal, $timeout, $state, payeeModel, ogTableNavigableService, payees) {
+		constructor($scope, $transitions, $uibModal, $timeout, $state, payeeModel, ogTableNavigableService, payees) {
 			const self = this;
 
-			this.$scope = $scope;
 			this.$uibModal = $uibModal;
 			this.$timeout = $timeout;
 			this.$state = $state;
@@ -31,8 +30,8 @@
 				}
 			};
 
-			// Handler is wrapped in a function to aid with unit testing
-			this.$scope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => this.stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams));
+			// When the id state parameter changes, focus the specified row
+			$scope.$on("$destroy", $transitions.onSuccess({to: "root.payees.payee"}, transition => this.focusPayee(Number(transition.params("to").id))));
 		}
 
 		editPayee(index) {
@@ -152,13 +151,6 @@
 
 			return targetIndex;
 		}
-
-		// Listen for state change events, and when the payee id changes, ensure the row is focussed
-		stateChangeSuccessHandler(event, toState, toParams, fromState, fromParams) {
-			if (toParams.id && (toState.name !== fromState.name || toParams.id !== fromParams.id)) {
-				this.focusPayee(Number(toParams.id));
-			}
-		}
 	}
 
 	/**
@@ -171,5 +163,5 @@
 	/**
 	 * Dependencies
 	 */
-	PayeeIndexController.$inject = ["$scope", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees"];
+	PayeeIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees"];
 }
