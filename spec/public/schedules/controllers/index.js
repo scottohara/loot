@@ -1,5 +1,6 @@
 describe("ScheduleIndexController", () => {
 	let	scheduleIndexController,
+			controllerTest,
 			$transitions,
 			$uibModal,
 			$timeout,
@@ -14,8 +15,7 @@ describe("ScheduleIndexController", () => {
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$uibModal_, _$timeout_, _$state_, _transactionModel_, _ogTableNavigableService_, _schedules_) => {
-		const controllerTest = _controllerTest_;
-
+		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$uibModal = _$uibModal_;
 		$timeout = _$timeout_;
@@ -31,6 +31,16 @@ describe("ScheduleIndexController", () => {
 	it("should make the passed schedules available to the view", () => scheduleIndexController.schedules.should.deep.equal(schedules));
 
 	it("should make today's date available to the view", () => scheduleIndexController.today.should.deep.equal(moment().startOf("day").toDate()));
+
+	it("should focus the schedule when a schedule id is specified", () => {
+		$state.params.id = "1";
+		scheduleIndexController = controllerTest("ScheduleIndexController", {$state});
+		scheduleIndexController.tableActions.focusRow = sinon.stub();
+		$timeout.flush();
+		scheduleIndexController.tableActions.focusRow.should.have.been.calledWith(0);
+	});
+
+	it("should not focus the schedule when a schedule id is not specified", () =>	$timeout.verifyNoPendingTasks());
 
 	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.schedules.schedule"}, sinon.match.func));
 

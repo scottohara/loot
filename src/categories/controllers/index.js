@@ -36,6 +36,11 @@
 				}
 			};
 
+			// If we have a category id, focus the specified row
+			if (Number($state.params.id)) {
+				this.focusCategory(Number($state.params.id));
+			}
+
 			// When the id state parameter changes, focus the specified row
 			$scope.$on("$destroy", $transitions.onSuccess({to: "root.categories.category"}, transition => this.focusCategory(Number(transition.params("to").id))));
 		}

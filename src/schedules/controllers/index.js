@@ -35,6 +35,11 @@
 			// Today's date (for checking if a schedule is overdue
 			this.today = moment().startOf("day").toDate();
 
+			// If we have a schedule id, focus the specified row
+			if (Number($state.params.id)) {
+				this.focusSchedule(Number($state.params.id));
+			}
+
 			// When the id state parameter changes, focus the specified row
 			$scope.$on("$destroy", $transitions.onSuccess({to: "root.schedules.schedule"}, transition => this.focusSchedule(Number(transition.params("to").id))));
 		}

@@ -1,5 +1,6 @@
 describe("CategoryIndexController", () => {
 	let	categoryIndexController,
+			controllerTest,
 			$transitions,
 			$timeout,
 			$uibModal,
@@ -14,8 +15,7 @@ describe("CategoryIndexController", () => {
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _categoryModel_, _ogTableNavigableService_, _categories_) => {
-		const controllerTest = _controllerTest_;
-
+		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$timeout = _$timeout_;
 		$uibModal = _$uibModal_;
@@ -37,6 +37,16 @@ describe("CategoryIndexController", () => {
 		categoryIndexController.categories[1].should.deep.equal(firstChild);
 		categoryIndexController.categories.length.should.equal(15);
 	});
+
+	it("should focus the category when a category id is specified", () => {
+		$state.params.id = "1";
+		categoryIndexController = controllerTest("CategoryIndexController", {$state});
+		categoryIndexController.tableActions.focusRow = sinon.stub();
+		$timeout.flush();
+		categoryIndexController.tableActions.focusRow.should.have.been.calledWith(0);
+	});
+
+	it("should not focus the category when a category id is not specified", () =>	$timeout.verifyNoPendingTasks());
 
 	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.categories.category"}, sinon.match.func));
 

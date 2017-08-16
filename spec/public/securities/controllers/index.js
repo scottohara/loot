@@ -1,5 +1,6 @@
 describe("SecurityIndexController", () => {
 	let	securityIndexController,
+			controllerTest,
 			$transitions,
 			$timeout,
 			$uibModal,
@@ -14,8 +15,7 @@ describe("SecurityIndexController", () => {
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) => {
-		const controllerTest = _controllerTest_;
-
+		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$timeout = _$timeout_;
 		$uibModal = _$uibModal_;
@@ -31,6 +31,16 @@ describe("SecurityIndexController", () => {
 	it("should make the passed securities available to the view", () => securityIndexController.securities.should.deep.equal(securities));
 
 	it("should return the sum of all security values, to 2 decimal places", () => securityIndexController.totalValue.should.equal(45.01));
+
+	it("should focus the security when a security id is specified", () => {
+		$state.params.id = "1";
+		securityIndexController = controllerTest("SecurityIndexController", {$state});
+		securityIndexController.tableActions.focusRow = sinon.stub();
+		$timeout.flush();
+		securityIndexController.tableActions.focusRow.should.have.been.calledWith(0);
+	});
+
+	it("should not focus the security when a security id is not specified", () =>	$timeout.verifyNoPendingTasks());
 
 	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.securities.security"}, sinon.match.func));
 

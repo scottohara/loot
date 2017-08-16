@@ -1,5 +1,6 @@
 describe("PayeeIndexController", () => {
 	let	payeeIndexController,
+			controllerTest,
 			$transitions,
 			$timeout,
 			$uibModal,
@@ -14,8 +15,7 @@ describe("PayeeIndexController", () => {
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _payeeModel_, _ogTableNavigableService_, _payees_) => {
-		const controllerTest = _controllerTest_;
-
+		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$timeout = _$timeout_;
 		$uibModal = _$uibModal_;
@@ -29,6 +29,16 @@ describe("PayeeIndexController", () => {
 	}));
 
 	it("should make the passed payees available to the view", () => payeeIndexController.payees.should.deep.equal(payees));
+
+	it("should focus the payee when a payee id is specified", () => {
+		$state.params.id = "1";
+		payeeIndexController = controllerTest("PayeeIndexController", {$state});
+		payeeIndexController.tableActions.focusRow = sinon.stub();
+		$timeout.flush();
+		payeeIndexController.tableActions.focusRow.should.have.been.calledWith(0);
+	});
+
+	it("should not focus the payee when a payee id is not specified", () =>	$timeout.verifyNoPendingTasks());
 
 	it("should register a success transition hook", () => $transitions.onSuccess.should.have.been.calledWith({to: "root.payees.payee"}, sinon.match.func));
 
