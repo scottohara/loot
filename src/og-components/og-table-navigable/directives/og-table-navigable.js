@@ -53,21 +53,11 @@
 									rowBottom = rowTop + row.height(),
 									viewTop = $(document).scrollTop(),
 									viewBottom = viewTop + $(window).height(),
-									scrollDuration = 200;
-						let scrollAmount;
-
-						// Determine if the row is off screen
-						if (rowTop < viewTop) {
-							scrollAmount = rowTop - viewTop;
-						} else if (rowBottom > viewBottom) {
-							scrollAmount = rowBottom - viewBottom;
-						}
+									scrollNeeded = rowTop < viewTop || rowBottom > viewBottom;
 
 						// If we have somewhere to scroll, do it now
-						if (scrollAmount) {
-							$("body").animate({
-								scrollTop: `+=${scrollAmount}px`
-							}, scrollDuration);
+						if (scrollNeeded) {
+							row[0].scrollIntoView({behavior: "smooth"});
 						}
 					};
 

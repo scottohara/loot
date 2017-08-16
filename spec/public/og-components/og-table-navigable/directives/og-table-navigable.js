@@ -81,20 +81,20 @@ describe("ogTableNavigable", () => {
 	describe("scrollToRow", () => {
 		let	mockJQueryInstance,
 				realJQueryInstance,
+				scrollIntoView,
 				row,
 				top;
 
 		beforeEach(() => {
 			top = 110;
-			row = {
-				offset: () => ({top}),
-				height: () => 40
-			};
+			scrollIntoView = sinon.stub();
+			row = [{scrollIntoView}];
+			row.offset = () => ({top});
+			row.height = () => 40;
 
 			mockJQueryInstance = {
 				scrollTop: sinon.stub().returns(100),
-				height: sinon.stub().returns(200),
-				animate: sinon.stub()
+				height: sinon.stub().returns(200)
 			};
 
 			realJQueryInstance = window.$;
@@ -104,18 +104,18 @@ describe("ogTableNavigable", () => {
 		it("should scroll the page up if the specified row is off the top of the screen", () => {
 			top = 50;
 			ogTableNavigable.element.isolateScope().scrollToRow(row);
-			mockJQueryInstance.animate.should.have.been.calledWith({scrollTop: "+=-50px"}, 200);
+			scrollIntoView.should.have.been.calledWith({behavior: "smooth"});
 		});
 
 		it("should scroll the page down if the specified row is off the bottom of the screen", () => {
 			top = 350;
 			ogTableNavigable.element.isolateScope().scrollToRow(row);
-			mockJQueryInstance.animate.should.have.been.calledWith({scrollTop: "+=90px"}, 200);
+			scrollIntoView.should.have.been.calledWith({behavior: "smooth"});
 		});
 
 		it("should do nothing if the specified row is on screen", () => {
 			ogTableNavigable.element.isolateScope().scrollToRow(row);
-			mockJQueryInstance.animate.should.not.have.been.called;
+			scrollIntoView.should.not.have.been.called;
 		});
 
 		afterEach(() => (window.$ = realJQueryInstance));
