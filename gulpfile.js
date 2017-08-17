@@ -23,7 +23,6 @@
 					"node_modules/angular/angular.min.js",
 					"node_modules/@uirouter/core/_bundles/ui-router-core.min.js",
 					"node_modules/@uirouter/angularjs/release/ui-router-angularjs.min.js",
-					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
 					"node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
 					"node_modules/moment/min/moment.min.js"
 				],

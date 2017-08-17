@@ -33,10 +33,6 @@ module.exports = config => {
 				watched: false
 			},
 			{
-				pattern: "node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
-				watched: false
-			},
-			{
 				pattern: "node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
 				watched: false
 			},
