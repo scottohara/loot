@@ -12,9 +12,9 @@
 				rev = require("gulp-rev"),
 				size = require("gulp-size"),
 				sourceMaps = require("gulp-sourcemaps"),
-				swPrecache = require("sw-precache"),
 				templateCache = require("gulp-angular-templatecache"),
 				util = require("gulp-util"),
+				wbBuild = require("workbox-build"),
 
 				appJsSource = "src/**/*.js",
 				vendorJsSource = [
@@ -216,13 +216,16 @@
 	gulp.task("clean:index", () => del("public/index.html"));
 
 	// Build service worker
-	gulp.task("build:serviceworker", ["clean:serviceworker", "build:index"], () => swPrecache.write("public/service-worker.js", {
+	gulp.task("build:serviceworker", ["clean:serviceworker", "build:index"], () => wbBuild.generateSW({
+		swDest: "public/service-worker.js",
+		globDirectory: "public",
+		globPatterns: ["**/*.{html,js,css,ico}", "fonts/*"],
 		cacheId: packageJson.name,
+		skipWaiting: true,
+		clientsClaim: true,
+		modifyUrlPrefix: {public: ""},
 		dontCacheBustUrlsMatching: /(app|templates|vendor)-.*\.(js|css)$/,
-		staticFileGlobs: ["public/**/*.{html,js,css,ico}", "public/fonts/*"],
-		stripPrefix: "public",
-		logger: util.log
-	}));
+	}).catch(util.log));
 
 	// Clean service worker
 	gulp.task("clean:serviceworker", () => del("public/service-worker.js"));
