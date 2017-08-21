@@ -224,7 +224,7 @@
 		skipWaiting: true,
 		clientsClaim: true,
 		modifyUrlPrefix: {public: ""},
-		dontCacheBustUrlsMatching: /(app|templates|vendor)-.*\.(js|css)$/,
+		dontCacheBustUrlsMatching: /(app|templates|vendor)-.*\.(js|css)$/
 	}).catch(util.log));
 
 	// Clean service worker
