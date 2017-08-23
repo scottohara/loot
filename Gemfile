@@ -40,6 +40,3 @@ group :development do
 
 	gem 'rubocop', require: false
 end
-
-# Code Climate test coverage
-gem 'codeclimate-test-reporter', group: :test, require: nil
