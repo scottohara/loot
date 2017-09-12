@@ -641,7 +641,7 @@ describe("lootStatesProvider", () => {
 					current: {
 						name: "previous state"
 					},
-					params: "previous params",
+					params: {key: "value"},
 					includes: sinon.stub().returns(false)
 				};
 				$state.go(stateName, stateParams);

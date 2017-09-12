@@ -173,7 +173,7 @@
 								if (!$state.includes("root.transactions")) {
 									return {
 										name: $state.current.name,
-										params: $state.params
+										params: Object.assign({}, $state.params)
 									};
 								}
 
