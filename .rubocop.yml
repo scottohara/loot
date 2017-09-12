@@ -1,3 +1,8 @@
+inherit_gem:
+  rubocop-config-oharagroup:
+    - default.yml
+    - rails.yml
+
 AllCops:
   Exclude:
     - 'bin/*'
@@ -7,114 +12,34 @@ AllCops:
     - 'node_modules/**/*'
     - 'vendor/**/*'
 
-# Cops that are disabled by default
-Layout/FirstArrayElementLineBreak:
-  Enabled: true
+# ------------------------------------------------------------
+# Cops that rubocop disables by default, but we want to enable
+# ------------------------------------------------------------
 
-Layout/FirstHashElementLineBreak:
-  Enabled: true
+# Required for as_json methods
+Style/OptionHash:
+  Enabled: false
 
-Layout/FirstMethodArgumentLineBreak:
-  Enabled: true
-
-Layout/FirstMethodParameterLineBreak:
-  Enabled: true
-
-Layout/MultilineAssignmentLayout:
-  Enabled: true
-
-Rails:
-  Enabled: true
-
-Rails/SaveBang:
-  Enabled: true
-
-Style/AutoResourceCleanup:
-  Enabled: true
-
-Style/CollectionMethods:
-  Enabled: true
-
-Style/Copyright:
-  Enabled: true
-  Notice: 'Copyright \(c\) 2016 Scott O.Hara, oharagroup.net'
-
-# Style/DocumentationMethod (disabled due to no documentation)
-
-Style/Encoding:
-  Enabled: true
-
-Style/ImplicitRuntimeError:
-  Enabled: true
-
-# Style/InlineComment (disabled due to use of inline comments)
-# Style/MethodCallWithArgsParentheses (prefer no parens)
-
-Style/MethodCalledOnDoEndBlock:
-  Enabled: true
-
-# Style/MissingElse (else not required)
-# Style/OptionHash (options required for as_json methods)
-
-Style/Send:
-  Enabled: true
-
-Style/StringMethods:
-  Enabled: true
-
-Style/SingleLineBlockParams:
-  Enabled: true
-
+# ------------------------------------------------------------
 # END disabled by default cops
+# ------------------------------------------------------------
+# Cops that rubocop enables by default, but we want to disable
+# ------------------------------------------------------------
 
-# Disabled as we use update_all and update_column in a few places
+# Needed for update_all and update_column used in a few places
 Rails/SkipsModelValidations:
   Enabled: false
 
-# Block comment in spec_helper
-Style/BlockComments:
-  Enabled: false
+# ------------------------------------------------------------
+# END enabled by default cops
+# ------------------------------------------------------------
+# Cops that we want to reconfigure
+# ------------------------------------------------------------
 
 # Indent arrays consistently
 Layout/IndentArray:
   EnforcedStyle: consistent
 
-# Changed from 2 (spaces) to 1 (tab)
-Layout/IndentationWidth:
-  Width: 1
-
-Layout/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
-
-# Prefer tabs over spaces
-Layout/Tab:
-  Enabled: false
-
-# Only require parens where absolutely necessary
-Style/NestedParenthesizedCalls:
-  Enabled: false
-
-# Disable metrics
-Metrics/AbcSize:
-  Enabled: false
-
-Metrics/BlockLength:
-  Enabled: false
-
-Metrics/ClassLength:
-  Enabled: false
-
-Metrics/CyclomaticComplexity:
-  Enabled: false
-
-Metrics/LineLength:
-  Enabled: false
-
-Metrics/MethodLength:
-  Enabled: false
-
-Metrics/ModuleLength:
-  Enabled: false
-
-Metrics/PerceivedComplexity:
-  Enabled: false
+# ------------------------------------------------------------
+# END reconfigured cops
+# ------------------------------------------------------------

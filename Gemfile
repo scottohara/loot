@@ -29,6 +29,9 @@ group :development, :test do
 
 	# Required by RSpec in Rails >= 5 for 'assigns'
 	gem 'rails-controller-testing'
+
+	gem 'rubocop', require: false
+	gem 'rubocop-config-oharagroup', require: false
 end
 
 group :development do
@@ -37,6 +40,4 @@ group :development do
 	# Use pry instead of IRB
 	gem 'pry-nav'
 	gem 'pry-rails'
-
-	gem 'rubocop', require: false
 end
