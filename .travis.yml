@@ -6,7 +6,6 @@ cache:
   directories:
     - node_modules
 
-# Use latest Firefox, and Code Climate token for coverage reporting
 addons:
   chrome: stable
   #firefox: latest
@@ -32,13 +31,14 @@ before_script: bundle exec rake db:create db:migrate
 
 # Run the test suites
 script:
+  - bundle exec rubocop -DESP           # Backend linting
   - bundle exec rake                    # Backend specs
   #- npm test -- --browsers Firefox      # Frontend specs
-  - npm test                            # Frontend specs
+  - npm test                            # Frontend linting & specs
 
 # Pipe the coverage data to Code Climate
 after_script:
-  - cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.backend.json coverage/backend/.resultset.json # Format backend coverage
-  - cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.frontend.json coverage/frontend/lcov.info  # Format frontend coverage
-  - cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 2                  # Sum both coverage parts into coverage/codeclimate.json
-  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then cc-test-reporter upload-coverage; fi  # Upload coverage/codeclimate.json
+  - ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.backend.json coverage/backend/.resultset.json # Format backend coverage
+  - ./cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.frontend.json coverage/frontend/lcov.info  # Format frontend coverage
+  - ./cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 2                  # Sum both coverage parts into coverage/codeclimate.json
+  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then ./cc-test-reporter upload-coverage; fi  # Upload coverage/codeclimate.json

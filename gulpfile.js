@@ -252,8 +252,8 @@
 	// Run client-side unit tests & code coverage analysis on built files
 	gulp.task("test:build", ["build"], done => startKarma("./karma.conf.js", done));
 
-	// Run both test:src and test:build
-	gulp.task("test:ci", ["test:src", "test:build"]);
+	// Run ESLint and both test:src and test:build
+	gulp.task("test:ci", ["eslint", "test:src", "test:build"]);
 
 	// Default task
 	gulp.task("default", ["watch"]);
