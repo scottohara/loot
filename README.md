@@ -50,7 +50,7 @@ Run `gulp build`, which:
 
 Running Tests
 =============
-Frontend specs are implemented using [mocha](http://visionmedia.github.io/mocha/)+[chai](http://chaijs.com/)+[sinon](http://sinonjs.org/).
+Frontend specs are implemented using [mocha](http://mochajs.org/)+[chai](http://chaijs.com/)+[sinon](http://sinonjs.org/).
 
 Three gulp tasks are available to run the frontend test suite:
 
