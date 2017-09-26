@@ -29,7 +29,7 @@ engines:
     enabled: false
 
   rubocop:
-    enabled: true
+    enabled: false        # Disabled due to lack of support for inherit_gem https://github.com/codeclimate/codeclimate-eslint/issues/86
 
 ratings:
   paths:
