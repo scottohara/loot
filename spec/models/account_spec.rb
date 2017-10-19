@@ -21,6 +21,32 @@ RSpec.describe Account, type: :model do
 		end
 	end
 
+	describe 'before_destroy' do
+		subject { create :bank_account, account_type: account_type, related_account: related_account }
+		let!(:related_account) { create :cash_account }
+
+		before :each do
+			allow(related_account).to receive :destroy!
+			subject.destroy!
+		end
+
+		context 'non-investment account' do
+			let!(:account_type) { 'bank' }
+
+			it 'should not delete the related account' do
+				expect(related_account).to_not have_received :destroy!
+			end
+		end
+
+		context 'investment account' do
+			let!(:account_type) { 'investment' }
+
+			it 'should delete the related account' do
+				expect(related_account).to have_received :destroy!
+			end
+		end
+	end
+
 	describe '::list' do
 		subject { described_class }
 		# Accounts for non-investment transactions

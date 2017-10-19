@@ -65,26 +65,10 @@ RSpec.describe AccountsController, type: :controller do
 	describe 'DELETE destroy', request: true do
 		let(:account) { Account.new }
 
-		context 'non-investment account' do
-			it 'should delete an existing account' do
-				expect(Account).to receive_message_chain(:includes, :find).with('1').and_return account
-				expect(account).to receive :destroy!
-				delete :destroy, params: {id: '1'}
-			end
-		end
-
-		context 'investment account' do
-			before :each do
-				account.account_type = 'investment'
-				account.related_account = create :cash_account
-			end
-
-			it "should delete an existing account and it's associated cash account" do
-				expect(Account).to receive_message_chain(:includes, :find).with('1').and_return account
-				expect(account.related_account).to receive_message_chain :destroy!
-				expect(account).to receive :destroy!
-				delete :destroy, params: {id: '1'}
-			end
+		it 'should delete an existing account' do
+			expect(Account).to receive(:find).with('1').and_return account
+			expect(account).to receive :destroy!
+			delete :destroy, params: {id: '1'}
 		end
 	end
 

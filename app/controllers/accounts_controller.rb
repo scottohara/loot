@@ -24,12 +24,7 @@ class AccountsController < ApplicationController
 	end
 
 	def destroy
-		account = Account.includes(:related_account).find(params[:id])
-
-		# For investment accounts, remove the associated cash account
-		account.related_account.destroy! if account.account_type.eql?('investment') && account.related_account.present?
-
-		account.destroy!
+		Account.find(params[:id]).destroy!
 		head :ok
 	end
 

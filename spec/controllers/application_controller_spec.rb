@@ -9,6 +9,7 @@ RSpec.describe ApplicationController, type: :controller do
 			case params['context']
 			when 'internal error' then raise StandardError, params['context']
 			when 'record invalid' then raise ActiveRecord::RecordInvalid, FactoryGirl.create(:category, name: nil, direction: 'invalid')
+			when 'record not destroyed' then raise ActiveRecord::RecordNotDestroyed, FactoryGirl.create(:category, transactions: 1).destroy!
 			when 'record not found' then raise ActiveRecord::RecordNotFound, params['context']
 			when 'routing error' then
 				params[:unmatched_route] = params['context']
@@ -78,6 +79,13 @@ RSpec.describe ApplicationController, type: :controller do
 		let(:json) { "Name can't be blank, Direction is not included in the list" }
 
 		it('should respond with a JSON error message and a 422 Unprocessable Entity status') {}
+	end
+
+	context 'record not destroyed', request: true, json: true do
+		let(:expected_status) { :conflict }
+		let(:json) { 'Cannot delete record because dependent transaction categories exist' }
+
+		it('should respond with a JSON error message and a 409 Conflict status') {}
 	end
 
 	context 'record not found', request: true, json: true do

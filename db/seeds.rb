@@ -141,7 +141,7 @@ def create_category(id, name, direction)
 	subcats = subcategories id
 
 	# Create the subcategories
-	subcats.sort_by { |_k, v| v[:name] }.each { |_catid, category| c.children.build(name: category[:name], direction: direction) }
+	subcats.sort_by { |_k, v| v[:name] }.each_value { |category| c.children.build(name: category[:name], direction: direction) }
 
 	# Save the category (and it's children)
 	c.save!
@@ -179,7 +179,7 @@ def load_security_prices
 	@logger.info
 
 	loaded = 0
-	@tmp_securities.each do |_id, sec|
+	@tmp_securities.each_value do |sec|
 		s = Security.find sec[:id]
 		last_price = nil
 		sec[:prices].sort_by { |price| Date.parse price[:as_at_date] }.each do |price|
@@ -351,12 +351,12 @@ def load_transactions
 	progress 'Prepared', @tmp_transfers.length, 'security transaction'
 	@logger.info
 
-	@tmp_transactions.sort_by { |_k, v| Date.parse v[:transaction_date] }.each do |_id, trx|
+	@tmp_transactions.sort_by { |_k, v| Date.parse v[:transaction_date] }.each_value do |trx|
 		begin
 			# Only create transaction if the type and account are known, and it is not a void transaction
 			public_send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil? || trx[:account].nil? || void?(trx)
 			progress 'Loaded', index, 'transaction'
-		rescue
+		rescue StandardError
 			@logger.info trx
 			raise
 		end
@@ -430,7 +430,7 @@ def load_bills
 
 			loaded += 1
 			progress 'Loaded', loaded, 'bill'
-		rescue
+		rescue StandardError
 			@logger.info id, bill, trx, @tmp_bills[id]
 			raise
 		end
@@ -444,7 +444,7 @@ def create_basic_transaction(trx)
 
 	BasicTransaction.create_from_json({
 		'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-		'subcategory' => category && category.parent.present? && {'id' => category.id} || nil,
+		'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
 		'amount' => trx[:amount],
 		'memo' => trx[:memo],
 		'status' => trx[:status],
@@ -493,7 +493,7 @@ def create_split_transaction(trx, direction)
 				'memo' => subtrx[:memo],
 				'transaction_type' => subtrx[:type].eql?('subtransaction') ? 'Sub' : 'Subtransfer',
 				'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-				'subcategory' => category && category.parent.present? && {'id' => category.id} || nil,
+				'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
 				'direction' => direction,
 				'account' => {'id' => subaccount},
 				'status' => substatus
@@ -557,7 +557,7 @@ def create_payslip_transaction(trx)
 				'memo' => subtrx[:memo],
 				'transaction_type' => %w[subtransaction payslip_before_tax payslip_tax].include?(subtrx[:type]) ? 'Sub' : 'Subtransfer',
 				'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-				'subcategory' => category && category.parent.present? && {'id' => category.id} || nil,
+				'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
 				'direction' => 'outflow',
 				'account' => {'id' => subaccount},
 				'status' => substatus
@@ -597,7 +597,7 @@ def create_loanrepayment_transaction(trx)
 				'memo' => subtrx[:memo],
 				'transaction_type' => subtrx[:type].eql?('subtransaction') ? 'Sub' : 'Subtransfer',
 				'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-				'subcategory' => category && category.parent.present? && {'id' => category.id} || nil,
+				'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
 				'direction' => 'outflow',
 				'account' => {'id' => subaccount},
 				'status' => substatus
@@ -769,7 +769,7 @@ def verify_balances
 			# Check that it matches
 			balance_mismatches << [account_json['name'], number_to_currency(account_json['currentBalance']), number_to_currency(closing_balance)] unless number_to_currency(account_json['currentBalance']).eql? number_to_currency(closing_balance)
 			progress 'Checked', index, 'closing balance'
-		rescue => e
+		rescue StandardError => e
 			@logger.info account_json, e
 			@logger.info "Failed on Source ID: #{account_json['id']}, Target ID: #{@tmp_accounts[account_json['id'].to_s]}, OK: #{@tmp_accounts[account_json['id'].to_s]}"
 		end

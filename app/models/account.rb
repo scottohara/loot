@@ -7,7 +7,7 @@ class Account < ApplicationRecord
 	validates :account_type, presence: true, inclusion: {in: %w[bank credit cash asset liability investment loan]}
 	validates :status, inclusion: {in: %w[open closed]}
 	belongs_to :related_account, class_name: 'Account', foreign_key: 'related_account_id', autosave: true, optional: true
-	has_many :transaction_accounts
+	has_many :transaction_accounts, dependent: :restrict_with_error
 	has_many :transactions, through: :transaction_accounts, source: :trx do
 		def for_ledger(_opts)
 			joins [
@@ -29,13 +29,18 @@ class Account < ApplicationRecord
 		end
 	end
 
+	before_destroy do
+		# For investment accounts, remove the associated cash account
+		related_account.destroy! if account_type.eql?('investment') && related_account.present?
+	end
+
 	include Transactable
 	include Favouritable
 
 	class << self
 		def list
 			# Get the current holding balance of all investment accounts
-			investment_accounts = ActiveRecord::Base.connection.execute <<-query
+			investment_accounts = ActiveRecord::Base.connection.execute <<-QUERY
 				SELECT					accounts.id,
 												accounts.name,
 												accounts.status,
@@ -76,10 +81,10 @@ class Account < ApplicationRecord
 				WHERE						accounts.account_type = 'investment'
 				GROUP BY				accounts.id,
 												related_accounts.id
-			query
+			QUERY
 
 			# Get the current closing balance of all non-investment accounts
-			other_accounts = ActiveRecord::Base.connection.execute <<-query
+			other_accounts = ActiveRecord::Base.connection.execute <<-QUERY
 				SELECT					accounts.id,
 												accounts.name,
 												accounts.status,
@@ -146,7 +151,7 @@ class Account < ApplicationRecord
 													GROUP BY	accounts.id
 												) AS outflow_transactions ON outflow_transactions.id = accounts.id
 				WHERE						accounts.account_type != 'investment'
-			query
+			QUERY
 
 			# Convert the array of accounts to a hash
 			account_list = other_accounts.each_with_object({}) { |account, hash| hash[account['id']] = account }

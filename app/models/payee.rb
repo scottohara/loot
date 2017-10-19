@@ -4,7 +4,7 @@
 # Payee
 class Payee < ApplicationRecord
 	validates :name, presence: true
-	has_many :payee_transaction_headers
+	has_many :payee_transaction_headers, dependent: :restrict_with_error
 	has_many :transactions, through: :payee_transaction_headers, source: :trx do
 		def for_ledger(_opts)
 			joins([

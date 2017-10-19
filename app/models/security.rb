@@ -5,7 +5,7 @@
 class Security < ApplicationRecord
 	validates :name, presence: true
 	has_many :prices, class_name: 'SecurityPrice', dependent: :destroy
-	has_many :security_transaction_headers
+	has_many :security_transaction_headers, dependent: :restrict_with_error
 	has_many :transactions, through: :security_transaction_headers, source: :trx do
 		def for_ledger(_opts)
 			joins [
@@ -54,7 +54,7 @@ class Security < ApplicationRecord
 		end
 
 		def list
-			securities = ActiveRecord::Base.connection.execute <<-query
+			securities = ActiveRecord::Base.connection.execute <<-QUERY
 				SELECT		securities.id,
 									securities.name,
 									securities.code,
@@ -81,7 +81,7 @@ class Security < ApplicationRecord
 				GROUP BY	securities.id
 				ORDER BY	CASE WHEN ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),3) > 0 THEN 0 ELSE 1 END,
 									securities.name
-			query
+			QUERY
 
 			# Remap to the desired output format
 			security_list =

@@ -6,6 +6,7 @@ class ApplicationController < ActionController::API
 	before_action :authenticate_user, except: [:routing_error]
 	rescue_from StandardError, with: :internal_error
 	rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
+	rescue_from ActiveRecord::RecordNotDestroyed, with: :record_not_destroyed
 	rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 	include ActionController::HttpAuthentication::Basic::ControllerMethods
 
@@ -21,6 +22,10 @@ class ApplicationController < ActionController::API
 
 	def record_invalid(exception)
 		render json: exception.record.errors.full_messages.join(', '), status: :unprocessable_entity
+	end
+
+	def record_not_destroyed(exception)
+		render json: exception.record.errors.full_messages.join(', '), status: :conflict
 	end
 
 	def record_not_found(exception)
