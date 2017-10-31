@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("lootStatesProvider", () => {
 	let	$rootScope,
 			$state,
@@ -27,7 +29,7 @@ describe("lootStatesProvider", () => {
 			stateConfig;
 
 	// Load the modules
-	beforeEach(module("lootStates", "lootMocks", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"])));
+	beforeEach(angular.mock.module("lootStates", "lootMocks", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"])));
 
 	// Inject the object under test and it's dependencies
 	beforeEach(inject((_lootStates_, _$rootScope_, _$state_, _$injector_, _$httpBackend_, _$uibModal_, _authenticationModel_, _accountModel_, _accountsWithBalances_, _account_, _scheduleModel_, _schedules_, _payeeModel_, _payees_, _payee_, _categoryModel_, _categories_, _category_, _securityModel_, _securities_, _security_, _transactionModel_, _transactionBatch_, _queryService_) => {
@@ -119,7 +121,6 @@ describe("lootStatesProvider", () => {
 			beforeEach(() => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				$httpBackend.flush();
 				resolvedAccounts = $injector.invoke($state.current.resolve.accounts);
 			});
 
@@ -157,7 +158,7 @@ describe("lootStatesProvider", () => {
 
 					it("should not transition if the user is unauthenticated", () => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams);
+						$state.go(stateName, stateParams, {reload: true});
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -170,7 +171,6 @@ describe("lootStatesProvider", () => {
 						beforeEach(() => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
 							$injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel}).then(context => (resolvedContext = context));
 							resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context: resolvedContext});
@@ -235,7 +235,6 @@ describe("lootStatesProvider", () => {
 			beforeEach(() => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				$httpBackend.flush();
 				resolvedSchedules = $injector.invoke($state.current.resolve.schedules);
 			});
 
@@ -287,7 +286,6 @@ describe("lootStatesProvider", () => {
 			beforeEach(() => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				$httpBackend.flush();
 				resolvedPayees = $injector.invoke($state.current.resolve.payees);
 			});
 
@@ -325,7 +323,7 @@ describe("lootStatesProvider", () => {
 
 					it("should not transition if the user is unauthenticated", () => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams);
+						$state.go(stateName, stateParams, {reload: true});
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -338,7 +336,6 @@ describe("lootStatesProvider", () => {
 						beforeEach(() => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
 							resolvedContext = $injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel});
 							resolvedContext.then(context => (resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context})));
@@ -402,7 +399,6 @@ describe("lootStatesProvider", () => {
 			beforeEach(() => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				$httpBackend.flush();
 				resolvedCategories = $injector.invoke($state.current.resolve.categories);
 			});
 
@@ -440,7 +436,7 @@ describe("lootStatesProvider", () => {
 
 					it("should not transition if the user is unauthenticated", () => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams);
+						$state.go(stateName, stateParams, {reload: true});
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -453,7 +449,6 @@ describe("lootStatesProvider", () => {
 						beforeEach(() => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
 							resolvedContext = $injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel});
 							resolvedContext.then(context => (resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context})));
@@ -517,7 +512,6 @@ describe("lootStatesProvider", () => {
 			beforeEach(() => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				$httpBackend.flush();
 				resolvedSecurities = $injector.invoke($state.current.resolve.securities);
 			});
 
@@ -555,7 +549,7 @@ describe("lootStatesProvider", () => {
 
 					it("should not transition if the user is unauthenticated", () => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams);
+						$state.go(stateName, stateParams, {reload: true});
 						$rootScope.$digest();
 						$state.current.name.should.not.equal(stateName);
 					});
@@ -568,7 +562,6 @@ describe("lootStatesProvider", () => {
 						beforeEach(() => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							$httpBackend.flush();
 							resolvedContextModel = $injector.invoke($state.current.resolve.contextModel);
 							resolvedContext = $injector.invoke($state.current.resolve.context, null, {contextModel: resolvedContextModel});
 							resolvedContext.then(context => (resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {contextModel: resolvedContextModel, context})));
@@ -646,7 +639,6 @@ describe("lootStatesProvider", () => {
 				};
 				$state.go(stateName, stateParams);
 				$rootScope.$digest();
-				$httpBackend.flush();
 				resolvedPreviousState = $injector.invoke($state.current.resolve.previousState, null, {$state: previousState});
 				resolvedContext = $injector.invoke($state.current.resolve.context);
 				resolvedTransactionBatch = $injector.invoke($state.current.resolve.transactionBatch, null, {context: resolvedContext});
@@ -685,7 +677,6 @@ describe("lootStatesProvider", () => {
 				$httpBackend.expectGET("accounts/views/index.html").respond(200);
 				$state.go("root.accounts");
 				$rootScope.$digest();
-				$httpBackend.flush();
 				(!queryService.query).should.be.true;
 			});
 

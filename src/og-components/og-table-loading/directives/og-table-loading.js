@@ -1,34 +1,22 @@
-{
-	/**
-	 * Implementation
-	 */
-	class OgTableLoadingDirective {
-		constructor() {
-			return {
-				restrict: "A",
-				replace: true,
-				scope: {
-					isLoading: "=ogTableLoading",
-					colspan: "@"
-				},
-				templateUrl: "og-components/og-table-loading/views/loading.html"
-			};
-		}
+import "../css/og-table-loading.less";
+import OgTableLoadingView from "og-components/og-table-loading/views/loading.html";
 
-		static factory() {
-			return new OgTableLoadingDirective();
-		}
+export default class OgTableLoadingDirective {
+	constructor() {
+		return {
+			restrict: "A",
+			replace: true,
+			scope: {
+				isLoading: "=ogTableLoading",
+				colspan: "@"
+			},
+			templateUrl: OgTableLoadingView
+		};
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("ogComponents")
-		.directive("ogTableLoading", OgTableLoadingDirective.factory);
-
-	/**
-	 * Dependencies
-	 */
-	OgTableLoadingDirective.factory.$inject = [];
+	static factory() {
+		return new OgTableLoadingDirective();
+	}
 }
+
+OgTableLoadingDirective.factory.$inject = [];

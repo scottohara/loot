@@ -1,0 +1,105 @@
+@import "~bootstrap/less/variables.less";
+@import "~bootstrap/less/mixins.less";
+
+html, body {
+	-webkit-user-select: none;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: searchfield-cancel-button;
+}
+
+#state-loading-spinner {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 25%;
+	height: 25%;
+	margin: auto;
+	border: 1px solid gainsboro;
+	background-color: ghostwhite;
+	border-radius: 4px;
+	box-shadow: 1px 2px 10px -3px grey;
+
+	div {
+		position: fixed;
+		top: -20px;
+		bottom: 0;
+		left: -75px;
+		right: 0;
+		width: 0;
+		height: 0;
+		margin: auto;
+		overflow-x: visible;
+		white-space: nowrap;
+	}
+}
+
+.modal-lg {
+	width: 1200px;
+}
+
+.modal-body {
+	max-height: 600px;
+	overflow-y: scroll;
+
+	input.negative {
+		.text-emphasis-variant(@state-danger-text) !important;
+	}
+
+	table {
+		.form-inline {
+			.form-group {
+				width: 100%;
+
+				input {
+					width: inherit;
+				}
+			}
+		}
+
+		tfoot td.text-right {
+			padding-right: 50px;
+		}
+	}
+}
+
+.has-action {
+	i.action {
+		opacity: 0;
+		transition: all ease 0.6s;
+		color: @text-muted;
+
+		&.active {
+			opacity: 1;
+		}
+
+		& ~ i.action {
+			padding-right: 5px;
+		}
+	}
+
+	&:hover i.action {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	em {
+		padding-right: 10px;
+	}
+}
+
+.quickscroll {
+	position: fixed;
+	right: 1%;
+
+	&.top {
+		bottom: 10px;
+	}
+
+	&.bottom {
+		top: 10px;
+	}
+}

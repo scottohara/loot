@@ -1,13 +1,12 @@
+import angular from "angular";
+
 describe("transactionStatus", () => {
 	let	transactionStatus,
 			transactionModel,
 			$sce;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["transactionModel"])));
-
-	// Load the template
-	beforeEach(module("transactions/views/status.html"));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["transactionModel"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_$sce_, directiveTest, _transactionModel_) => {

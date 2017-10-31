@@ -1,3 +1,6 @@
+import angular from "angular";
+import moment from "moment";
+
 describe("ScheduleIndexController", () => {
 	let	scheduleIndexController,
 			controllerTest,
@@ -11,7 +14,7 @@ describe("ScheduleIndexController", () => {
 			deregisterTransitionSuccessHook;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "scheduleModel", "transactionModel", "schedules"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "scheduleModel", "transactionModel", "schedules"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$uibModal_, _$timeout_, _$state_, _transactionModel_, _ogTableNavigableService_, _schedules_) => {

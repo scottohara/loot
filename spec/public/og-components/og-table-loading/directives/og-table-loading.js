@@ -1,11 +1,10 @@
+import angular from "angular";
+
 describe("ogTableLoading", () => {
 	let ogTableLoading;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
-
-	// Load the template
-	beforeEach(module("og-components/og-table-loading/views/loading.html", "og-components/og-loading-spinner/views/loading.html"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
 	beforeEach(inject(directiveTest => {

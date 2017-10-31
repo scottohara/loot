@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("SecurityIndexController", () => {
 	let	securityIndexController,
 			controllerTest,
@@ -11,7 +13,7 @@ describe("SecurityIndexController", () => {
 			deregisterTransitionSuccessHook;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "securityModel", "securities"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "securityModel", "securities"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _securityModel_, _ogTableNavigableService_, _securities_) => {

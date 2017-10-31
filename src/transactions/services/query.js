@@ -1,22 +1,7 @@
-{
-	/**
-	 * Implementation
-	 */
-	class QueryService {
-		constructor() {
-			this.query = null;
-		}
+export default class QueryService {
+	constructor() {
+		this.query = null;
 	}
-
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootTransactions")
-		.service("queryService", QueryService);
-
-	/**
-	 * Dependencies
-	 */
-	QueryService.$inject = [];
 }
+
+QueryService.$inject = [];

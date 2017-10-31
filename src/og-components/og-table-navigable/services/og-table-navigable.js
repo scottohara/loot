@@ -1,31 +1,16 @@
-{
-	/**
-	 * Implementation
-	 */
-	class OgTableNavigableService {
-		constructor() {
-			// Enables/disables keyboard navigation on all navigable tables
-			this.isEnabled = true;
-		}
-
-		get enabled() {
-			return this.isEnabled;
-		}
-
-		set enabled(enabled) {
-			this.isEnabled = enabled;
-		}
+export default class OgTableNavigableService {
+	constructor() {
+		// Enables/disables keyboard navigation on all navigable tables
+		this.isEnabled = true;
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("ogComponents")
-		.service("ogTableNavigableService", OgTableNavigableService);
+	get enabled() {
+		return this.isEnabled;
+	}
 
-	/**
-	 * Dependencies
-	 */
-	OgTableNavigableService.$inject = [];
+	set enabled(enabled) {
+		this.isEnabled = enabled;
+	}
 }
+
+OgTableNavigableService.$inject = [];

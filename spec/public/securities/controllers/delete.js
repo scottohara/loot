@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("SecurityDeleteController", () => {
 	let	securityDeleteController,
 			$uibModalInstance,
@@ -5,7 +7,7 @@ describe("SecurityDeleteController", () => {
 			security;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSecurities", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((controllerTest, _$uibModalInstance_, _securityModel_, _security_) => {

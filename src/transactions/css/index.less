@@ -1,0 +1,106 @@
+@import "~bootstrap/less/variables.less";
+@import "~bootstrap/less/mixins.less";
+
+#reconciliation-progress {
+	position: fixed;
+	top: 0;
+	margin: 10px;
+}
+
+#transactions {
+	// Allows reconciliation progress panel to the right
+	float:left;
+}
+
+#transactions, #transactions-header {
+	// Background colours when reconciling
+	& > tbody.reconciling > tr.cleared {
+
+		&.warning > td {
+			background-color: rgba(128, 255, 0, 0.1);
+		}
+
+		& > td {
+			background-color: rgba(0, 255, 0, 0.1);
+		}
+	}
+
+	tr:not(.future) + tr.future {
+		border-top: 2px solid @state-warning-text;
+	}
+
+	td, th {
+		overflow-x: hidden;
+
+		&.has-dropdown {
+			overflow-x: visible;
+		}
+
+		&.transaction-date {
+			width: 10%;
+		}
+
+		&.account {
+			width: 10%;
+		}
+
+		&.details {
+			width: 58%;
+
+			table {
+				width: 100%;
+				background-color: transparent;
+
+				tr:last-child td {
+					border-bottom: 0;
+				}
+
+				td:first-child {
+					border-left: 0
+				}
+
+				td {
+					border-width: 0 0 1px 1px;
+					border-style: solid;
+					border-color: #ddd;
+
+					&.category {
+						width: 50%;
+					}
+
+					&.memo {
+						height: 20px;
+					}
+
+					small.transaction-status {
+						padding-left: 5px;
+
+						input[type=checkbox] {
+							margin: 2px 0 0 10px;
+						}
+					}
+
+					button {
+						width: 100%;
+						background-color: transparent;
+					}
+				}
+			}
+		}
+
+		&.amount {
+			width: 10%;
+			text-align: right;
+		}
+	}
+}
+
+.has-action {
+	i.action {
+		&.active {
+			&.flag {
+				.text-emphasis-variant(@state-danger-text);
+			}
+		}
+	}
+}

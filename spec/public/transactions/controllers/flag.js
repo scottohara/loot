@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("TransactionFlagController", () => {
 	let	transactionFlagController,
 			controllerTest,
@@ -6,7 +8,7 @@ describe("TransactionFlagController", () => {
 			transaction;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _transactionModel_, _transaction_) => {

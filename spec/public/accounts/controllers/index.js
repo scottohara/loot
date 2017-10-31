@@ -1,17 +1,23 @@
+import $ from "jquery";
+import angular from "angular";
+
 describe("AccountIndexController", () => {
 	let accountIndexController,
+			$window,
 			$uibModal,
 			accountModel,
 			accountsWithBalances;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "accountModel", "accountsWithBalances"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "accountModel", "accountsWithBalances"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_$uibModal_, controllerTest, _accountModel_, _accountsWithBalances_) => {
+	beforeEach(inject((_$window_, _$uibModal_, controllerTest, _accountModel_, _accountsWithBalances_) => {
+		$window = _$window_;
 		$uibModal = _$uibModal_;
 		accountModel = _accountModel_;
 		accountsWithBalances = _accountsWithBalances_;
+		$window.$ = $;
 		accountIndexController = controllerTest("AccountIndexController", {accounts: accountsWithBalances});
 	}));
 
@@ -179,7 +185,7 @@ describe("AccountIndexController", () => {
 
 	it("should attach a keydown handler to the document", () => {
 		sinon.stub(accountIndexController, "keyHandler");
-		$(document).triggerHandler("keydown");
+		$window.$(document).triggerHandler("keydown");
 		accountIndexController.keyHandler.should.have.been.called;
 	});
 
@@ -190,7 +196,7 @@ describe("AccountIndexController", () => {
 		});
 
 		it("should remove the keydown handler from the document", () => {
-			$(document).triggerHandler("keydown");
+			$window.$(document).triggerHandler("keydown");
 			accountIndexController.keyHandler.should.not.have.been.called;
 		});
 	});

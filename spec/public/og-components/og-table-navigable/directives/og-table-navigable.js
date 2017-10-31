@@ -1,12 +1,16 @@
+import angular from "angular";
+
 describe("ogTableNavigable", () => {
 	let	ogTableNavigable,
-			ogTableNavigableService;
+			ogTableNavigableService,
+			$window;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((directiveTest, _ogTableNavigableService_) => {
+	beforeEach(inject((_$window_, directiveTest, _ogTableNavigableService_) => {
+		$window = _$window_;
 		ogTableNavigableService = _ogTableNavigableService_;
 		ogTableNavigable = directiveTest;
 		ogTableNavigable.configure("og-table-navigable", "table", "<tbody><tr ng-repeat=\"row in rows\"><td></td></tr></tbody>");
@@ -31,7 +35,7 @@ describe("ogTableNavigable", () => {
 		beforeEach(() => {
 			sinon.stub(ogTableNavigable.element.isolateScope(), "highlightRow");
 			sinon.stub(ogTableNavigable.element.isolateScope(), "scrollToRow");
-			row = $(ogTableNavigable.element).children("tbody").children("tr").last();
+			row = $window.$(ogTableNavigable.element).children("tbody").children("tr").last();
 		});
 
 		it("should highlight the row", () => {
@@ -67,9 +71,9 @@ describe("ogTableNavigable", () => {
 				newRow;
 
 		beforeEach(() => {
-			oldRow = $(ogTableNavigable.element).children("tbody").children("tr").first();
+			oldRow = $window.$(ogTableNavigable.element).children("tbody").children("tr").first();
 			oldRow.addClass("warning");
-			newRow = $(ogTableNavigable.element).children("tbody").children("tr").last();
+			newRow = $window.$(ogTableNavigable.element).children("tbody").children("tr").last();
 			ogTableNavigable.element.isolateScope().highlightRow(newRow);
 		});
 
@@ -97,8 +101,8 @@ describe("ogTableNavigable", () => {
 				height: sinon.stub().returns(200)
 			};
 
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub().returns(mockJQueryInstance);
+			realJQueryInstance = $window.$;
+			$window.$ = sinon.stub().returns(mockJQueryInstance);
 		});
 
 		it("should scroll the page up if the specified row is off the top of the screen", () => {
@@ -118,7 +122,7 @@ describe("ogTableNavigable", () => {
 			scrollIntoView.should.not.have.been.called;
 		});
 
-		afterEach(() => (window.$ = realJQueryInstance));
+		afterEach(() => ($window.$ = realJQueryInstance));
 	});
 
 	describe("jumpToRow", () => {
@@ -149,21 +153,21 @@ describe("ogTableNavigable", () => {
 		it("should focus the first row if currently focussed row + offset is less than zero", () => {
 			ogTableNavigable.element.isolateScope().focussedRow = 0;
 			ogTableNavigable.element.isolateScope().jumpToRow(-10);
-			targetRow = $(ogTableNavigable.element).children("tbody").children("tr").first();
+			targetRow = $window.$(ogTableNavigable.element).children("tbody").children("tr").first();
 			ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(matchTargetRow);
 		});
 
 		it("should focus the last row if the currently focussed row + offset is greater than the number of rows", () => {
 			ogTableNavigable.element.isolateScope().focussedRow = 1;
 			ogTableNavigable.element.isolateScope().jumpToRow(10);
-			targetRow = $(ogTableNavigable.element).children("tbody").children("tr").last();
+			targetRow = $window.$(ogTableNavigable.element).children("tbody").children("tr").last();
 			ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(matchTargetRow);
 		});
 
 		it("should focus the currently focussed row + offset if within the bounds of the table", () => {
 			ogTableNavigable.element.isolateScope().focussedRow = 1;
 			ogTableNavigable.element.isolateScope().jumpToRow(-1);
-			targetRow = $(ogTableNavigable.element).children("tbody").children("tr").first();
+			targetRow = $window.$(ogTableNavigable.element).children("tbody").children("tr").first();
 			ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(matchTargetRow);
 		});
 	});
@@ -183,8 +187,8 @@ describe("ogTableNavigable", () => {
 		});
 
 		it("should focus the closest parent TR element to where the event occurred", () => {
-			const cellInLastRow = $(ogTableNavigable.element).find("tbody > tr > td").last(),
-						lastRow = $(cellInLastRow).closest("[og-table-navigable] > tbody > tr");
+			const cellInLastRow = $window.$(ogTableNavigable.element).find("tbody > tr > td").last(),
+						lastRow = $window.$(cellInLastRow).closest("[og-table-navigable] > tbody > tr");
 
 			ogTableNavigable.element.isolateScope().clickHandler({target: cellInLastRow});
 			ogTableNavigable.element.isolateScope().focusRow.should.have.been.calledWith(lastRow);
@@ -216,7 +220,7 @@ describe("ogTableNavigable", () => {
 		});
 
 		it("should invoke the selectAction handler for the closest parent TR element to where the event occurred", () => {
-			const cellInLastRow = $(ogTableNavigable.element).find("tbody > tr > td").last();
+			const cellInLastRow = $window.$(ogTableNavigable.element).find("tbody > tr > td").last();
 
 			ogTableNavigable.element.isolateScope().doubleClickHandler({target: cellInLastRow});
 			ogTableNavigable.scope.model.selectAction.should.have.been.calledWith(1);
@@ -231,7 +235,7 @@ describe("ogTableNavigable", () => {
 			sinon.stub(ogTableNavigable.element.isolateScope(), "focusRow");
 			sinon.stub(ogTableNavigable.element.isolateScope(), "highlightRow");
 			ogTableNavigable.element.isolateScope().focussedRow = 0;
-			lastRow = $(ogTableNavigable.element).children("tbody").children("tr").last();
+			lastRow = $window.$(ogTableNavigable.element).children("tbody").children("tr").last();
 		});
 
 		it("should do nothing if the target row could not be determined", () => {
@@ -336,7 +340,7 @@ describe("ogTableNavigable", () => {
 
 	it("should attach a keydown handler to the document", () => {
 		sinon.stub(ogTableNavigable.element.isolateScope(), "keyHandler");
-		$(document).triggerHandler("keydown");
+		$window.$(document).triggerHandler("keydown");
 		ogTableNavigable.element.isolateScope().keyHandler.should.have.been.called;
 	});
 
@@ -359,7 +363,7 @@ describe("ogTableNavigable", () => {
 		});
 
 		it("should remove the keydown handler from the element", () => {
-			$(document).triggerHandler("keydown");
+			$window.$(document).triggerHandler("keydown");
 			ogTableNavigable.element.isolateScope().keyHandler.should.not.have.been.called;
 		});
 	});

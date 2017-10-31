@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("TransactionEditController", () => {
 	let	transactionEditController,
 			controllerTest,
@@ -11,7 +13,7 @@ describe("TransactionEditController", () => {
 			transaction;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "$q", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "$q", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _$timeout_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _transaction_) => {

@@ -1,26 +1,11 @@
-{
-	/**
-	 * Implementation
-	 */
-	class EstimateFilter {
-		constructor() {
-			return (value, isEstimate) => `${isEstimate ? "~" : ""}${value}`;
-		}
-
-		static factory() {
-			return new EstimateFilter();
-		}
+export default class EstimateFilter {
+	constructor() {
+		return (value, isEstimate) => `${isEstimate ? "~" : ""}${value}`;
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootSchedules")
-		.filter("estimate", EstimateFilter.factory);
-
-	/**
-	 * Dependencies
-	 */
-	EstimateFilter.factory.$inject = [];
+	static factory() {
+		return new EstimateFilter();
+	}
 }
+
+EstimateFilter.factory.$inject = [];

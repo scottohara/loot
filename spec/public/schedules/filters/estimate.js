@@ -1,8 +1,10 @@
+import angular from "angular";
+
 describe("estimate", () => {
 	let estimateFilter;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSchedules"));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules"));
 
 	// Inject the object under test
 	beforeEach(inject(_estimateFilter_ => (estimateFilter = _estimateFilter_)));

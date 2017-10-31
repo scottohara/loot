@@ -1,37 +1,24 @@
-{
-	/**
-	 * Implementation
-	 */
-	class PayeeEditController {
-		constructor($uibModalInstance, payeeModel, payee) {
-			this.$uibModalInstance = $uibModalInstance;
-			this.payeeModel = payeeModel;
-			this.payee = angular.extend({}, payee);
-			this.mode = payee ? "Edit" : "Add";
-			this.errorMessage = null;
-		}
+import angular from "angular";
 
-		// Save and close the modal
-		save() {
-			this.errorMessage = null;
-			this.payeeModel.save(this.payee).then(payee => this.$uibModalInstance.close(payee.data), error => (this.errorMessage = error.data));
-		}
-
-		// Dismiss the modal without saving
-		cancel() {
-			this.$uibModalInstance.dismiss();
-		}
+export default class PayeeEditController {
+	constructor($uibModalInstance, payeeModel, payee) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.payeeModel = payeeModel;
+		this.payee = angular.extend({}, payee);
+		this.mode = payee ? "Edit" : "Add";
+		this.errorMessage = null;
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootPayees")
-		.controller("PayeeEditController", PayeeEditController);
+	// Save and close the modal
+	save() {
+		this.errorMessage = null;
+		this.payeeModel.save(this.payee).then(payee => this.$uibModalInstance.close(payee.data), error => (this.errorMessage = error.data));
+	}
 
-	/**
-	 * Dependencies
-	 */
-	PayeeEditController.$inject = ["$uibModalInstance", "payeeModel", "payee"];
+	// Dismiss the modal without saving
+	cancel() {
+		this.$uibModalInstance.dismiss();
+	}
 }
+
+PayeeEditController.$inject = ["$uibModalInstance", "payeeModel", "payee"];

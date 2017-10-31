@@ -1,21 +1,22 @@
+import angular from "angular";
+
 describe("ogInputCalculator", () => {
 	let	ogInputCalculator,
 			$uibTooltipProvider,
+			$window,
 			$timeout;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ui.bootstrap", _$uibTooltipProvider_ => {
+	beforeEach(angular.mock.module("lootMocks", "ui.bootstrap", _$uibTooltipProvider_ => {
 		$uibTooltipProvider = _$uibTooltipProvider_;
 		sinon.stub($uibTooltipProvider, "setTriggers");
 	}));
 
-	beforeEach(module("ogComponents"));
-
-	// Load the template
-	beforeEach(module("og-components/og-input-calculator/views/calculator.html"));
+	beforeEach(angular.mock.module("ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_$timeout_, ogInputCurrencyControllerMock, ogInputNumberControllerMock, ogInputCurrencyDirective, ogInputNumberDirective, directiveTest) => {
+	beforeEach(inject((_$window_, _$timeout_, ogInputCurrencyControllerMock, ogInputNumberControllerMock, ogInputCurrencyDirective, ogInputNumberDirective, directiveTest) => {
+		$window = _$window_;
 		$timeout = _$timeout_;
 
 		// Swap the input currency/number directive controllers with the mock versions
@@ -341,9 +342,9 @@ describe("ogInputCalculator", () => {
 				select: sinon.stub()
 			};
 
-			realJQueryInstance = window.$;
-			window.$ = sinon.stub();
-			window.$.withArgs(sinon.match(value => value[0] === ogInputCalculator.element[0])).returns(mockJQueryInstance);
+			realJQueryInstance = $window.$;
+			$window.$ = sinon.stub();
+			$window.$.withArgs(sinon.match(value => value[0] === ogInputCalculator.element[0])).returns(mockJQueryInstance);
 		});
 
 		TEST_ACTION_KEYS.forEach(key => {
@@ -383,7 +384,7 @@ describe("ogInputCalculator", () => {
 			});
 		});
 
-		afterEach(() => (window.$ = realJQueryInstance));
+		afterEach(() => ($window.$ = realJQueryInstance));
 	});
 
 	describe("on keydown", () => {

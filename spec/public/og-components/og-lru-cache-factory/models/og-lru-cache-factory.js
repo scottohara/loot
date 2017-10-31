@@ -1,8 +1,10 @@
+import angular from "angular";
+
 describe("ogLruCacheFactory", () => {
 	let ogLruCacheFactory;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Inject the object under test
 	beforeEach(inject(_ogLruCacheFactory_ => (ogLruCacheFactory = _ogLruCacheFactory_)));

@@ -1,33 +1,21 @@
-{
-	/**
-	 * Implementation
-	 */
-	class OgLoadingSpinnerDirective {
-		constructor() {
-			return {
-				restrict: "A",
-				scope: {
-					message: "=ogLoadingSpinner"
-				},
-				templateUrl: "og-components/og-loading-spinner/views/loading.html",
-				link: scope => (scope.loadingMessage = scope.message || "Loading")
-			};
-		}
+import "../css/og-loading-spinner.less";
+import OgLoadingSpinnerView from "og-components/og-loading-spinner/views/loading.html";
 
-		static factory() {
-			return new OgLoadingSpinnerDirective();
-		}
+export default class OgLoadingSpinnerDirective {
+	constructor() {
+		return {
+			restrict: "A",
+			scope: {
+				message: "=ogLoadingSpinner"
+			},
+			templateUrl: OgLoadingSpinnerView,
+			link: scope => (scope.loadingMessage = scope.message || "Loading")
+		};
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("ogComponents")
-		.directive("ogLoadingSpinner", OgLoadingSpinnerDirective.factory);
-
-	/**
-	 * Dependencies
-	 */
-	OgLoadingSpinnerDirective.factory.$inject = [];
+	static factory() {
+		return new OgLoadingSpinnerDirective();
+	}
 }
+
+OgLoadingSpinnerDirective.factory.$inject = [];

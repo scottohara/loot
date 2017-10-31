@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("AccountReconcileController", () => {
 	let accountReconcileController,
 			controllerTest,
@@ -6,7 +8,7 @@ describe("AccountReconcileController", () => {
 			account;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "$window", "account"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAccounts", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "$window", "account"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _$window_, _account_) => {

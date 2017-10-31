@@ -1,11 +1,10 @@
+import angular from "angular";
+
 describe("ogFavourite", () => {
 	let ogFavourite;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
-
-	// Load the template
-	beforeEach(module("og-components/og-favourite/views/favourite.html"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
 	beforeEach(inject(directiveTest => {

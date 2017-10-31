@@ -1,8 +1,7 @@
 [![Build Status](https://travis-ci.org/scottohara/loot.svg)](https://travis-ci.org/scottohara/loot)
 [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)
 [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)
-[![Dependency Status](https://www.versioneye.com/user/projects/549d100c6b1b81d9a4000925/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d100c6b1b81d9a4000925)
-[![Dependency Status](https://www.versioneye.com/user/projects/549d12836b1b81202d0005dc/badge.svg?style=flat)](https://www.versioneye.com/user/projects/549d12836b1b81202d0005dc)
+[![Dependency Status](https://img.shields.io/librariesio/github/scottohara/loot.svg)](https://libraries.io/github/scottohara/loot)
 
 Description
 ===========
@@ -20,7 +19,7 @@ Getting Started
 5. (Optional) Export your existing MS Money data (see below)
 6. Initialise the database (`rake db:setup`, or if you have no data to import `rake db:create && rake db:migrate`)
 7. Configure environment variables for the username and password to login as (`export LOOT_USERNAME=user && export LOOT_PASSWORD=pass`)
-8. Start the database server and app server in dev mode (`heroku local -f Procfile.dev`)
+8. Start the database server and app server in dev mode (`npm start`)
 9. Browse to http://localhost:8080/index.html and login using the credentials configured at step #8
 
 Exporting MS Money data
@@ -39,35 +38,25 @@ To get data out of MS Money and into Loot, I'm using the excellent [Sunriise](ht
 
 Building
 ========
-Run `gulp build`, which:
-
-1. Concatenates `/src/**/*.js` => `app.js`, minifies it, fingerprints it, and writes it to `/public/app-{hash}.js` along with source maps
-2. Concatenates 3rd-party vendor scripts => `vendor.js`, minifies it, fingerprints it, and writes it to `/public/vendor-{hash}.js` along with source maps
-3. Compiles all `/src/**/*.less` files, concatenates to `app.css`, minifies it, fingerprints it, and writes it to `/public/app-{hash}.css` along with source maps
-4. Concatenates 3rd-party vendor `*.css` => `vendor.css`, minifies it, fingerprints it, and writes it to `/public/vendor-{hash}.css` along with source maps
-5. Copies any static assets (eg. fonts) to `/public`
-6. Injects the fingerprinted file names into `index.html`
+`npm run build`
 
 Running Tests
 =============
 Frontend specs are implemented using [mocha](http://mochajs.org/)+[chai](http://chaijs.com/)+[sinon](http://sinonjs.org/).
 
-Three gulp tasks are available to run the frontend test suite:
+Two npm scripts are available to run the frontend test suite:
 
-1. `gulp test:bdd` (or simply `gulp`, as `test:bdd` is the default task) watches for any file changes and runs the full test suite
-2. `gulp test:src` does the same, but includes [instanbul](http://gotwarlost.github.io/istanbul/) code coverage reporting. Summary coverage reports are written to stdout, and detailed HTML reports are available in `/loot/coverage/index.html`
-3. `gulp test:build` does the same as `gulp test:src`, except it runs the test suite and coverage analysis against the built files in `/public` instead of against the original files
-
-(Note: `gulp test:src` will be deprecated once instanbul & karma-coverage add proper support for source maps in the HTML reports)
+1. `npm run test:bdd` watches for any file changes and runs the full test suite (without code coverage)
+2. `npm run test:coverage` performs a single full test suite run, including [instanbul](http://gotwarlost.github.io/istanbul/) code coverage reporting. Summary coverage reports are written to stdout, and detailed HTML reports are available in `/loot/coverage/index.html`
 
 Backend specs are implemented using [RSpec](http://rspec.info/):
 
-1. Ensure the database server is running (e.g. `postgres -D /usr/local/var/postgres`)
+1. Ensure the database server is running (e.g. `npm start:db`)
 2. Run the RSpec rake task (`rake spec`). To run specific specs, use RSpec filtering (`fdescribe`, `fit`, `xdescribe`, `xit`)
 
 Integration tests are implemented using [Protractor](http://www.protractortest.org/#/):
 
-1. Start the database server and app server in test mode (`heroku local -f Procfile.test`)
+1. Start the database server and app server in test mode (`npm test:e2e`)
 2. Prepare the test data fixtures (`rake db:e2e:prepare`)
 3. Run the test suite (`protractor`). To run specific suites, use the `--suite` argument (e.g. `protractor --suite authentication,accounts`)
 
@@ -75,7 +64,7 @@ Code Quality
 ============
 Frontend checks are implemented using [eslint](http://eslint.org):
 
-1. `gulp eslint`
+1. `npm run lint`
 
 Backend checks are implemented using [rubocop](http://batsov.com/rubocop/):
 

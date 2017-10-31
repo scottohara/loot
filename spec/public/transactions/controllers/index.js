@@ -1,3 +1,6 @@
+import angular from "angular";
+import moment from "moment";
+
 describe("TransactionIndexController", () => {
 	let	transactionIndexController,
 			controllerTest,
@@ -16,7 +19,7 @@ describe("TransactionIndexController", () => {
 			deregisterTransitionSuccessHook;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$window", "$state", "transactionModel", "accountModel", "contextModel", "context", "transactionBatch"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$uibModal_, _$timeout_, _$window_, _$state_, _transactionModel_, _accountModel_, _ogTableNavigableService_, _ogViewScrollService_, _contextModel_, _context_, _transactionBatch_) => {

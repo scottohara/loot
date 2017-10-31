@@ -1,8 +1,10 @@
+import angular from "angular";
+
 describe("OgInputNumberController", () => {
 	let	ogInputNumberController;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
 	beforeEach(inject(_controllerTest_ => {

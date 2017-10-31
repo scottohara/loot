@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("PayeeIndexController", () => {
 	let	payeeIndexController,
 			controllerTest,
@@ -11,7 +13,7 @@ describe("PayeeIndexController", () => {
 			deregisterTransitionSuccessHook;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "payeeModel", "payees"])));
+	beforeEach(angular.mock.module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "payeeModel", "payees"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _payeeModel_, _ogTableNavigableService_, _payees_) => {

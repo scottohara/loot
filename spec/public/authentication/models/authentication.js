@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("authenticationModel", () => {
 	let	authenticationModel,
 			$httpBackend,
@@ -7,7 +9,7 @@ describe("authenticationModel", () => {
 			$window;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAuthentication", mockDependenciesProvider => mockDependenciesProvider.load(["$cacheFactory", "$window"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", mockDependenciesProvider => mockDependenciesProvider.load(["$cacheFactory", "$window"])));
 
 	// Inject the object under test and the $httpBackend
 	beforeEach(inject((_authenticationModel_, _$httpBackend_, _$http_, _$cacheFactory_, _$window_) => {

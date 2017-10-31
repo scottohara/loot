@@ -1,14 +1,18 @@
+import angular from "angular";
+
 describe("ogInputAutoselect", () => {
 	let	ogInputAutoselect,
+			$window,
 			$timeout,
 			mockJQueryInstance,
 			realJQueryInstance;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_$timeout_, directiveTest) => {
+	beforeEach(inject((_$window_, _$timeout_, directiveTest) => {
+		$window = _$window_;
 		$timeout = _$timeout_;
 		ogInputAutoselect = directiveTest;
 		ogInputAutoselect.configure("og-input-autoselect", "input");
@@ -18,9 +22,9 @@ describe("ogInputAutoselect", () => {
 			select: sinon.stub()
 		};
 
-		realJQueryInstance = window.$;
-		window.$ = sinon.stub();
-		window.$.withArgs(sinon.match(value => value[0] === ogInputAutoselect.element[0])).returns(mockJQueryInstance);
+		realJQueryInstance = $window.$;
+		$window.$ = sinon.stub();
+		$window.$.withArgs(sinon.match(value => value[0] === ogInputAutoselect.element[0])).returns(mockJQueryInstance);
 	}));
 
 	describe("isFocussed", () => {
@@ -67,6 +71,6 @@ describe("ogInputAutoselect", () => {
 
 	afterEach(() => {
 		$timeout.verifyNoPendingTasks();
-		window.$ = realJQueryInstance;
+		$window.$ = realJQueryInstance;
 	});
 });

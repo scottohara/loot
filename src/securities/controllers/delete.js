@@ -1,36 +1,21 @@
-{
-	/**
-	 * Implementation
-	 */
-	class SecurityDeleteController {
-		constructor($uibModalInstance, securityModel, security) {
-			this.$uibModalInstance = $uibModalInstance;
-			this.securityModel = securityModel;
-			this.security = security;
-			this.errorMessage = null;
-		}
-
-		// Delete and close the modal
-		deleteSecurity() {
-			this.errorMessage = null;
-			this.securityModel.destroy(this.security).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
-		}
-
-		// Dismiss the modal without deleting
-		cancel() {
-			this.$uibModalInstance.dismiss();
-		}
+export default class SecurityDeleteController {
+	constructor($uibModalInstance, securityModel, security) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.securityModel = securityModel;
+		this.security = security;
+		this.errorMessage = null;
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootSecurities")
-		.controller("SecurityDeleteController", SecurityDeleteController);
+	// Delete and close the modal
+	deleteSecurity() {
+		this.errorMessage = null;
+		this.securityModel.destroy(this.security).then(() => this.$uibModalInstance.close(), error => (this.errorMessage = error.data));
+	}
 
-	/**
-	 * Dependencies
-	 */
-	SecurityDeleteController.$inject = ["$uibModalInstance", "securityModel", "security"];
+	// Dismiss the modal without deleting
+	cancel() {
+		this.$uibModalInstance.dismiss();
+	}
 }
+
+SecurityDeleteController.$inject = ["$uibModalInstance", "securityModel", "security"];

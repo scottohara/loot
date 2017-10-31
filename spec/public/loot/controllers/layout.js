@@ -1,6 +1,9 @@
+import angular from "angular";
+
 describe("LayoutController", () => {
 	let	layoutController,
 			controllerTest,
+			$window,
 			$transitions,
 			$state,
 			$uibModal,
@@ -21,11 +24,12 @@ describe("LayoutController", () => {
 	}
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "$uibModal", "ogNavigatorServiceWorkerService", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
+	beforeEach(angular.mock.module("lootMocks", "lootApp", mockDependenciesProvider => mockDependenciesProvider.load(["$state", "$uibModal", "ogNavigatorServiceWorkerService", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_, _$transitions_, _$state_, _$uibModal_, _authenticationModel_, _ogTableNavigableService_, _authenticated_) => {
+	beforeEach(inject((_controllerTest_, _$window_, _$transitions_, _$state_, _$uibModal_, _authenticationModel_, _ogTableNavigableService_, _authenticated_) => {
 		controllerTest = _controllerTest_;
+		$window = _$window_;
 		$transitions = _$transitions_;
 		$state = _$state_;
 		$uibModal = _$uibModal_;
@@ -34,14 +38,14 @@ describe("LayoutController", () => {
 		authenticated = _authenticated_;
 
 		mockJQueryInstance = new MockJQueryInstance();
-		realJQueryInstance = window.$;
-		window.$ = sinon.stub();
-		window.$.withArgs("#transactionSearch").returns(mockJQueryInstance);
+		realJQueryInstance = $window.$;
+		$window.$ = sinon.stub();
+		$window.$.withArgs("#transactionSearch").returns(mockJQueryInstance);
 
 		layoutController = controllerTest("LayoutController");
 	}));
 
-	afterEach(() => (window.$ = realJQueryInstance));
+	afterEach(() => ($window.$ = realJQueryInstance));
 
 	it("should make the authentication status available to the view", () => layoutController.authenticated.should.equal(authenticated));
 

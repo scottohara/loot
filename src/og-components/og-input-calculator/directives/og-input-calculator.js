@@ -1,218 +1,206 @@
-{
-	/**
-	 * Implementation
-	 */
-	class OgInputCalculatorDirective {
-		constructor($timeout) {
-			return {
-				restrict: "A",
-				require: ["ngModel", "?ogInputCurrency", "?ogInputNumber"],
-				replace: true,
-				templateUrl: "og-components/og-input-calculator/views/calculator.html",
-				link(scope, iElement, iAttrs, controllers) {
-					// Get the position of the popover, or default to left if unspecified
-					scope.position = iAttrs.ogInputCalculator || "left";
+import "../css/og-input-calculator.less";
+import OgInputCalculatorView from "og-components/og-input-calculator/views/calculator.html";
+import angular from "angular";
 
-					const [ngModel] = controllers,
-								ogInputCurrency = 1,
-								ogInputNumber = 2,
-								ACTION_KEYS = {
-									13() {
-										// Enter
-										scope.update();
-									},
-									27() {
-										// Esc
-										scope.cancel();
-									},
-									187() {
-										// Equals
-										scope.update();
-									}
-								};
+export default class OgInputCalculatorDirective {
+	constructor($window, $timeout) {
+		return {
+			restrict: "A",
+			require: ["ngModel", "?ogInputCurrency", "?ogInputNumber"],
+			replace: true,
+			templateUrl: OgInputCalculatorView,
+			link(scope, iElement, iAttrs, controllers) {
+				// Get the position of the popover, or default to left if unspecified
+				scope.position = iAttrs.ogInputCalculator || "left";
 
-					scope.ogInput = controllers[ogInputCurrency] || controllers[ogInputNumber];
-
-					// Push an operation onto the stack
-					scope.push = (operand, operator) => {
-						// Push the operand on the stack
-						if (0 === scope.stack.length) {
-							scope.stack.push({operand});
-
-							// Show the popover
-							$timeout(() => angular.element(iElement)[0].dispatchEvent(new Event("showCalculator")));
-						} else {
-							scope.stack[scope.stack.length - 1].operand = operand;
-						}
-
-						// Push the operator onto the stack
-						scope.stack.push({operator});
-
-						// Update the display expression
-						$timeout(() => (scope.expression = `\n${operator} ${scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(String(operand))) + (" " === scope.expression ? "" : scope.expression)}`));
-					};
-
-					// Perform the calculation
-					scope.calculate = value => {
-						// Default the result to the current view value
-						scope.result = Number(scope.ogInput.formattedToRaw(value));
-
-						// Make the current view value available on the scope
-						scope.current = scope.ogInput.rawToFormatted(String(scope.result));
-
-						if (scope.stack && scope.stack.length > 1) {
-							scope.result = scope.stack.reduce((memo, operation, index) => {
-								let result = memo;
-
-								// First time through, extract the operand from the memo
-								if (1 === index) {
-									result = memo.operand;
+				const [ngModel] = controllers,
+							ogInputCurrency = 1,
+							ogInputNumber = 2,
+							ACTION_KEYS = {
+								13() {
+									// Enter
+									scope.update();
+								},
+								27() {
+									// Esc
+									scope.cancel();
+								},
+								187() {
+									// Equals
+									scope.update();
 								}
+							};
 
-								// Last time through, use the view value for the operand
-								if (index === scope.stack.length - 1) {
-									operation.operand = scope.ogInput.formattedToRaw(value);
-								}
+				scope.ogInput = controllers[ogInputCurrency] || controllers[ogInputNumber];
 
-								switch (operation.operator) {
-									case "+":
-										result += operation.operand;
-										break;
+				// Push an operation onto the stack
+				scope.push = (operand, operator) => {
+					// Push the operand on the stack
+					if (0 === scope.stack.length) {
+						scope.stack.push({operand});
 
-									case "-":
-										result -= operation.operand;
-										break;
+						// Show the popover
+						$timeout(() => angular.element(iElement)[0].dispatchEvent(new Event("showCalculator")));
+					} else {
+						scope.stack[scope.stack.length - 1].operand = operand;
+					}
 
-									case "*":
-										result *= operation.operand;
-										break;
+					// Push the operator onto the stack
+					scope.stack.push({operator});
 
-									case "/":
-										result /= operation.operand;
-										break;
+					// Update the display expression
+					$timeout(() => (scope.expression = `\n${operator} ${scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(String(operand))) + (" " === scope.expression ? "" : scope.expression)}`));
+				};
 
-									// No default
-								}
+				// Perform the calculation
+				scope.calculate = value => {
+					// Default the result to the current view value
+					scope.result = Number(scope.ogInput.formattedToRaw(value));
 
-								return result;
-							});
-						}
+					// Make the current view value available on the scope
+					scope.current = scope.ogInput.rawToFormatted(String(scope.result));
 
-						scope.formattedResult = scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(String(scope.result)));
-					};
+					if (scope.stack && scope.stack.length > 1) {
+						scope.result = scope.stack.reduce((memo, operation, index) => {
+							let result = memo;
 
-					// Handle input value changes
-					scope.inputChanged = value => {
-						// Matches any number of digits, periods or commas, followed by +, -, * or /
-						const	matches = (/([-\d.,]+)([+\-*/])(.*)/gi).exec(value),
-									operand = 1,
-									operator = 2,
-									residual = 3;
+							// First time through, extract the operand from the memo
+							if (1 === index) {
+								result = memo.operand;
+							}
 
-						if (matches) {
-							// Push the first (operand) and second (operator) matches onto the stack
-							scope.push(Number(matches[operand]), matches[operator]);
+							// Last time through, use the view value for the operand
+							if (index === scope.stack.length - 1) {
+								operation.operand = scope.ogInput.formattedToRaw(value);
+							}
 
-							// Update the view value to the third match (anything after the operator), which is typically an empty string
-							iElement.val(matches[residual]);
-						} else {
-							// Recalculate
-							scope.calculate(value);
-						}
+							switch (operation.operator) {
+								case "+":
+									result += operation.operand;
+									break;
 
-						// Return the current result
-						return String(scope.result);
-					};
+								case "-":
+									result -= operation.operand;
+									break;
 
-					// View to model
-					ngModel.$parsers.push(scope.inputChanged);
+								case "*":
+									result *= operation.operand;
+									break;
 
-					// Update the input value and hide the calculator
-					scope.update = () => {
-						// Reset the stack
-						scope.clear();
+								case "/":
+									result /= operation.operand;
+									break;
 
-						// Set the value
-						iElement.val(scope.result);
+								// No default
+							}
 
-						// Hide the popover
-						scope.close();
-					};
+							return result;
+						});
+					}
 
-					// Cancel the calculation and hide the calculator
-					scope.cancel = () => {
-						scope.clear();
-						scope.close();
-					};
+					scope.formattedResult = scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(String(scope.result)));
+				};
 
-					// Clear the stack
-					scope.clear = () => {
-						scope.stack = [];
-						scope.expression = " ";
-					};
+				// Handle input value changes
+				scope.inputChanged = value => {
+					// Matches any number of digits, periods or commas, followed by +, -, * or /
+					const	matches = (/([-\d.,]+)([+\-*/])(.*)/gi).exec(value),
+								operand = 1,
+								operator = 2,
+								residual = 3;
 
-					// Close the popover
-					scope.close = () => {
-						$timeout(() => angular.element(iElement)[0].dispatchEvent(new Event("hideCalculator")));
-					};
+					if (matches) {
+						// Push the first (operand) and second (operator) matches onto the stack
+						scope.push(Number(matches[operand]), matches[operator]);
 
-					// Start with a cleared calculator
+						// Update the view value to the third match (anything after the operator), which is typically an empty string
+						iElement.val(matches[residual]);
+					} else {
+						// Recalculate
+						scope.calculate(value);
+					}
+
+					// Return the current result
+					return String(scope.result);
+				};
+
+				// View to model
+				ngModel.$parsers.push(scope.inputChanged);
+
+				// Update the input value and hide the calculator
+				scope.update = () => {
+					// Reset the stack
 					scope.clear();
 
-					function keyHandler(event) {
-						scope.keyHandler(event);
-					}
+					// Set the value
+					iElement.val(scope.result);
 
-					function update() {
-						if (scope.stack.length > 0) {
-							scope.update();
-						}
-					}
+					// Hide the popover
+					scope.close();
+				};
 
-					// Declare key handler to detect operators and actions
-					scope.keyHandler = event => {
-						// Check if the key pressed was an action key, and there is a pending calculation
-						// (otherwise, let the event propagate)
-						if (!event.shiftKey && Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length > 0) {
-							// Invoke the action
-							ACTION_KEYS[event.keyCode]();
+				// Cancel the calculation and hide the calculator
+				scope.cancel = () => {
+					scope.clear();
+					scope.close();
+				};
 
-							// Select the new input value
-							$timeout(() => $(iElement).select());
+				// Clear the stack
+				scope.clear = () => {
+					scope.stack = [];
+					scope.expression = " ";
+				};
 
-							// Swallow the event
-							event.preventDefault();
-							event.stopPropagation();
-						}
-					};
+				// Close the popover
+				scope.close = () => {
+					$timeout(() => angular.element(iElement)[0].dispatchEvent(new Event("hideCalculator")));
+				};
 
-					iElement.on("keydown", keyHandler);
-					iElement.on("blur", update);
+				// Start with a cleared calculator
+				scope.clear();
 
-					// When the element is destroyed, remove all event handlers
-					iElement.on("$destroy", () => {
-						iElement.off("keydown", keyHandler);
-						iElement.off("blur", update);
-					});
+				function keyHandler(event) {
+					scope.keyHandler(event);
 				}
-			};
-		}
 
-		static factory($timeout) {
-			return new OgInputCalculatorDirective($timeout);
-		}
+				function update() {
+					if (scope.stack.length > 0) {
+						scope.update();
+					}
+				}
+
+				// Declare key handler to detect operators and actions
+				scope.keyHandler = event => {
+					// Check if the key pressed was an action key, and there is a pending calculation
+					// (otherwise, let the event propagate)
+					if (!event.shiftKey && Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length > 0) {
+						// Invoke the action
+						ACTION_KEYS[event.keyCode]();
+
+						// Select the new input value
+						$timeout(() => $window.$(iElement).select());
+
+						// Swallow the event
+						event.preventDefault();
+						event.stopPropagation();
+					}
+				};
+
+				iElement.on("keydown", keyHandler);
+				iElement.on("blur", update);
+
+				// When the element is destroyed, remove all event handlers
+				iElement.on("$destroy", () => {
+					iElement.off("keydown", keyHandler);
+					iElement.off("blur", update);
+				});
+			}
+		};
 	}
 
-	/**
-	 * Registration
-	 */
-	const mod = angular.module("ogComponents");
-
-	// Declare the ogInputCalculator directive
-	mod.directive("ogInputCalculator", OgInputCalculatorDirective.factory);
-
-	/**
-	 * Dependencies
-	 */
-	OgInputCalculatorDirective.factory.$inject = ["$timeout"];
+	static factory($window, $timeout) {
+		return new OgInputCalculatorDirective($window, $timeout);
+	}
 }
+
+OgInputCalculatorDirective.factory.$inject = ["$window", "$timeout"];

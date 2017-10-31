@@ -1,34 +1,21 @@
-{
-	/**
-	 * Implementation
-	 */
-	class OgModalConfirmController {
-		constructor($uibModalInstance, confirm) {
-			this.$uibModalInstance = $uibModalInstance;
-			this.confirm = angular.extend({noButtonStyle: "default", yesButtonStyle: "primary"}, confirm);
-		}
+import angular from "angular";
 
-		// Yes response
-		yes() {
-			// Close the modal and return true
-			this.$uibModalInstance.close(true);
-		}
-
-		// No response
-		no() {
-			this.$uibModalInstance.dismiss();
-		}
+export default class OgModalConfirmController {
+	constructor($uibModalInstance, confirm) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.confirm = angular.extend({noButtonStyle: "default", yesButtonStyle: "primary"}, confirm);
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("ogComponents")
-		.controller("OgModalConfirmController", OgModalConfirmController);
+	// Yes response
+	yes() {
+		// Close the modal and return true
+		this.$uibModalInstance.close(true);
+	}
 
-	/**
-	 * Dependencies
-	 */
-	OgModalConfirmController.$inject = ["$uibModalInstance", "confirm"];
+	// No response
+	no() {
+		this.$uibModalInstance.dismiss();
+	}
 }
+
+OgModalConfirmController.$inject = ["$uibModalInstance", "confirm"];

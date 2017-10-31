@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("categoryModel", () => {
 	let	categoryModel,
 			$httpBackend,
@@ -7,7 +9,7 @@ describe("categoryModel", () => {
 			ogLruCache;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
 
 	// Inject any dependencies that need to be configured first
 	beforeEach(inject(_$window_ => {

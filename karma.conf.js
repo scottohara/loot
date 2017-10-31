@@ -1,3 +1,5 @@
+const webpack = require("./webpack.coverage.js");
+
 module.exports = config => {
 	config.set({
 
@@ -10,72 +12,35 @@ module.exports = config => {
 
 		// List of files / patterns to load in the browser
 		files: [
-
-			// Vendor script to include (but not watch)
-			{
-				pattern: "public/vendor*.js",
-				watched: false
-			},
-			{
-				pattern: "node_modules/angular-mocks/angular-mocks.js",
-				watched: false
-			},
-			{
-				pattern: "public/*.js.map",
-				included: false
-			},
-
-			// Source files
-			"public/app*.js",
-			"src/**/views/*.html",
-
-			/**
-			 * Test files
-			 */
-
-			// Mock modules
-			"spec/public/mocks/!(loot)/*.js",
-
-			// Mock base providers (eg. resolves)
-			"spec/public/mocks/!(loot)/**/providers/*.js",
-
-			// Mocks
-			"spec/public/mocks/!(loot)/**/*.js",
-
-			// LootMocks module
-			"spec/public/mocks/loot.js",
-
-			// LootMocks helpers
-			"spec/public/mocks/loot/*.js",
-
-			// Specs
-			"spec/public/**/*.js"
-		],
-
-		// List of files to exclude
-		exclude: [
-			"spec/public/**/views/*.js"
+			"spec/public/index.js"
 		],
 
 		// Preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			"**/src/**/views/*.html": ["ng-html2js"],
-			"**/public/app*.js": ["sourcemap"],
-			"**/public/vendor*.js": ["sourcemap"]
+			"spec/public/index.js": "webpack"
 		},
 
-		ngHtml2JsPreprocessor: {
-			stripPrefix: "src/"
-		},
+		// Webpack configuration
+		webpack,
 
 		// Test results reporter to use
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ["mocha"],
+		reporters: ["mocha", "coverage"],
 
 		mochaReporter: {
 			showDiff: true
+		},
+
+		coverageReporter: {
+			reporters: [
+				{type: "html", dir: "coverage"},
+				{type: "text"},
+				{type: "text-summary"},
+				{type: "lcovonly", dir: "coverage"}
+			],
+			subdir: "frontend"
 		},
 
 		// Web server port

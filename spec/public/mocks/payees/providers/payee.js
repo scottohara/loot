@@ -1,28 +1,13 @@
-{
-	/**
-	 * Implementation
-	 */
-	class PayeeMockProvider {
-		constructor() {
-			// Mock payee object
-			this.payee = {id: 1, name: "aa"};
-		}
-
-		$get() {
-			// Return the mock payee object
-			return this.payee;
-		}
+export default class PayeeMockProvider {
+	constructor() {
+		// Mock payee object
+		this.payee = {id: 1, name: "aa"};
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootPayeesMocks")
-		.provider("payeeMock", PayeeMockProvider);
-
-	/**
-	 * Dependencies
-	 */
-	PayeeMockProvider.$inject = [];
+	$get() {
+		// Return the mock payee object
+		return this.payee;
+	}
 }
+
+PayeeMockProvider.$inject = [];

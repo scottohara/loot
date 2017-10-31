@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("PayeeDeleteController", () => {
 	let	payeeDeleteController,
 			$uibModalInstance,
@@ -5,7 +7,7 @@ describe("PayeeDeleteController", () => {
 			payee;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "payee"])));
+	beforeEach(angular.mock.module("lootMocks", "lootPayees", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "payee"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((controllerTest, _$uibModalInstance_, _payeeModel_, _payee_) => {

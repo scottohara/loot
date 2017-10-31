@@ -1,28 +1,13 @@
-{
-	/**
-	 * Implementation
-	 */
-	class SecurityMockProvider {
-		constructor() {
-			// Mock security object
-			this.security = {id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false};
-		}
-
-		$get() {
-			// Return the mock security object
-			return this.security;
-		}
+export default class SecurityMockProvider {
+	constructor() {
+		// Mock security object
+		this.security = {id: 1, name: "aa", closing_balance: 1.006, current_holding: 1, unused: false};
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("lootSecuritiesMocks")
-		.provider("securityMock", SecurityMockProvider);
-
-	/**
-	 * Dependencies
-	 */
-	SecurityMockProvider.$inject = [];
+	$get() {
+		// Return the mock security object
+		return this.security;
+	}
 }
+
+SecurityMockProvider.$inject = [];

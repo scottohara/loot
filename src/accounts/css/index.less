@@ -1,0 +1,18 @@
+@import "~bootstrap/less/variables.less";
+
+table.accounts {
+	tr.closed-account {
+		color: @text-muted;
+
+		a {
+			color: inherit;
+		}
+	}
+
+	td, th {
+		&.amount {
+			width: 25%;
+			text-align: right;
+		}
+	}
+}

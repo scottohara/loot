@@ -1,10 +1,12 @@
+import angular from "angular";
+
 describe("AuthenticationEditController", () => {
 	let	authenticationEditController,
 			$uibModalInstance,
 			authenticationModel;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootAuthentication", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "authenticationModel"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "authenticationModel"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((controllerTest, _$uibModalInstance_, _authenticationModel_) => {

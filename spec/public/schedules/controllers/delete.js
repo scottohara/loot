@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("ScheduleDeleteController", () => {
 	let	scheduleDeleteController,
 			$uibModalInstance,
@@ -5,7 +7,7 @@ describe("ScheduleDeleteController", () => {
 			schedule;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "scheduleModel", "schedule"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "scheduleModel", "schedule"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((controllerTest, _$uibModalInstance_, _scheduleModel_, _schedule_) => {

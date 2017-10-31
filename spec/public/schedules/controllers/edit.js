@@ -1,3 +1,6 @@
+import angular from "angular";
+import moment from "moment";
+
 describe("ScheduleEditController", () => {
 	let	scheduleEditController,
 			controllerTest,
@@ -12,7 +15,7 @@ describe("ScheduleEditController", () => {
 			schedule;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _$timeout_, _payeeModel_, _securityModel_, _categoryModel_, _accountModel_, _transactionModel_, _scheduleModel_, _schedule_) => {

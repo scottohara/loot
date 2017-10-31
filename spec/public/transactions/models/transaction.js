@@ -1,3 +1,6 @@
+import angular from "angular";
+import moment from "moment";
+
 describe("transactionModel", () => {
 	let	transactionModel,
 			$httpBackend,
@@ -8,7 +11,7 @@ describe("transactionModel", () => {
 			securityModel;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$window", "accountModel", "payeeModel", "categoryModel", "securityModel"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", mockDependenciesProvider => mockDependenciesProvider.load(["$window", "accountModel", "payeeModel", "categoryModel", "securityModel"])));
 
 	// Inject the object under test and it's remaining dependencies
 	beforeEach(inject((_transactionModel_, _$httpBackend_, _$window_, _accountModel_, _payeeModel_, _categoryModel_, _securityModel_) => {

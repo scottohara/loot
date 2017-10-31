@@ -1,4 +1,0 @@
-/**
- * Registration
- */
-angular.module("lootSecuritiesMocks", []);

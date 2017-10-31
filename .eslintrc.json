@@ -1,15 +1,7 @@
 {
 	"extends": "oharagroup",
-	"parserOptions": {
-		"sourceType": "script"
-	},
 	"env": {
 		"mocha": true,
-		"protractor": true,
-		"jquery": true
-	},
-	"globals": {
-		"angular": false,
-		"moment": false
+		"protractor": true
 	}
 }

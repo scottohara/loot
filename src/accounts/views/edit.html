@@ -39,7 +39,7 @@
 		<!-- Related Account -->
 		<div ng-if="vm.account.account_type.toLowerCase() == 'loan'" class="form-group has-feedback" ng-class="{'has-error': accountForm.relatedAccount.$invalid}">
 			<label for="relatedAccount">Related Asset</label>
-			<input name="relatedAccount" class="form-control" ng-model="vm.account.related_account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" typeahead-template-url="og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Asset" og-input-autoselect>
+			<input name="relatedAccount" class="form-control" ng-model="vm.account.related_account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Asset" og-input-autoselect>
 			<span ng-show="accountForm.relatedAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>

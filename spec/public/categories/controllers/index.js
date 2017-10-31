@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("CategoryIndexController", () => {
 	let	categoryIndexController,
 			controllerTest,
@@ -11,7 +13,7 @@ describe("CategoryIndexController", () => {
 			deregisterTransitionSuccessHook;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "categoryModel", "categories"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModal", "$state", "categoryModel", "categories"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$transitions_, _$timeout_, _$uibModal_, _$state_, _categoryModel_, _ogTableNavigableService_, _categories_) => {

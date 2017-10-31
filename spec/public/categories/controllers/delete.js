@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("CategoryDeleteController", () => {
 	let	categoryDeleteController,
 			$uibModalInstance,
@@ -5,7 +7,7 @@ describe("CategoryDeleteController", () => {
 			category;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "categoryModel", "category"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "categoryModel", "category"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((controllerTest, _$uibModalInstance_, _categoryModel_, _category_) => {

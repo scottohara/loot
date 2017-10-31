@@ -1,9 +1,11 @@
+import angular from "angular";
+
 describe("ogNavigatorServiceWorkerService", () => {
 	let	ogNavigatorServiceWorkerService,
 			$window;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$window"])));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$window"])));
 
 	// Inject the object under test and it's remaining dependencies
 	beforeEach(inject((_ogNavigatorServiceWorkerService_, _$window_) => {

@@ -1,3 +1,5 @@
+import angular from "angular";
+
 describe("OgModalAlertController", () => {
 	let	ogModalAlertController,
 			controllerTest,
@@ -5,7 +7,7 @@ describe("OgModalAlertController", () => {
 			alert;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "alert"])));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents", mockDependenciesProvider => mockDependenciesProvider.load(["$uibModalInstance", "alert"])));
 
 	// Configure & compile the object under test
 	beforeEach(inject((_controllerTest_, _$uibModalInstance_, _alert_) => {

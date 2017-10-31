@@ -1,28 +1,15 @@
-{
-	/**
-	 * Implementation
-	 */
-	class OgModalAlertController {
-		constructor($uibModalInstance, alert) {
-			this.$uibModalInstance = $uibModalInstance;
-			this.alert = angular.extend({closeButtonStyle: "primary"}, alert);
-		}
+import angular from "angular";
 
-		// Close the modal
-		closeModal() {
-			this.$uibModalInstance.dismiss();
-		}
+export default class OgModalAlertController {
+	constructor($uibModalInstance, alert) {
+		this.$uibModalInstance = $uibModalInstance;
+		this.alert = angular.extend({closeButtonStyle: "primary"}, alert);
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("ogComponents")
-		.controller("OgModalAlertController", OgModalAlertController);
-
-	/**
-	 * Dependencies
-	 */
-	OgModalAlertController.$inject = ["$uibModalInstance", "alert"];
+	// Close the modal
+	closeModal() {
+		this.$uibModalInstance.dismiss();
+	}
 }
+
+OgModalAlertController.$inject = ["$uibModalInstance", "alert"];

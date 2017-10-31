@@ -1,9 +1,11 @@
+import angular from "angular";
+
 describe("ogInputNumber", () => {
 	let ogInputNumber,
 			expected;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
 	beforeEach(inject(directiveTest => {

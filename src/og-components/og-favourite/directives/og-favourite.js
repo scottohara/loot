@@ -1,33 +1,21 @@
-{
-	/**
-	 * Implementation
-	 */
-	class OgFavouriteDirective {
-		constructor() {
-			return {
-				restrict: "A",
-				replace: true,
-				scope: {
-					favourite: "=ogFavourite"
-				},
-				templateUrl: "og-components/og-favourite/views/favourite.html"
-			};
-		}
+import "../css/og-favourite.less";
+import OgFavouriteView from "og-components/og-favourite/views/favourite.html";
 
-		static factory() {
-			return new OgFavouriteDirective();
-		}
+export default class OgFavouriteDirective {
+	constructor() {
+		return {
+			restrict: "A",
+			replace: true,
+			scope: {
+				favourite: "=ogFavourite"
+			},
+			templateUrl: OgFavouriteView
+		};
 	}
 
-	/**
-	 * Registration
-	 */
-	angular
-		.module("ogComponents")
-		.directive("ogFavourite", OgFavouriteDirective.factory);
-
-	/**
-	 * Dependencies
-	 */
-	OgFavouriteDirective.factory.$inject = [];
+	static factory() {
+		return new OgFavouriteDirective();
+	}
 }
+
+OgFavouriteDirective.factory.$inject = [];

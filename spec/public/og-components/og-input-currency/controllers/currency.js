@@ -1,8 +1,10 @@
+import angular from "angular";
+
 describe("OgInputCurrencyController", () => {
 	let	ogInputCurrencyController;
 
 	// Load the modules
-	beforeEach(module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
 	beforeEach(inject(_controllerTest_ => {
