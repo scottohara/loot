@@ -1,5 +1,5 @@
+import {addMonths, addQuarters, addWeeks, addYears, startOfDay} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 describe("ScheduleEditController", () => {
 	let	scheduleEditController,
@@ -52,7 +52,7 @@ describe("ScheduleEditController", () => {
 		it("should default the next due date to the current day if not specified", () => {
 			delete schedule.next_due_date;
 			scheduleEditController = controllerTest("ScheduleEditController");
-			scheduleEditController.transaction.next_due_date.should.deep.equal(moment().startOf("day").toDate());
+			scheduleEditController.transaction.next_due_date.should.deep.equal(startOfDay(new Date()));
 		});
 
 		it("should set the mode to Enter Transaction", () => scheduleEditController.mode.should.equal("Enter Transaction"));
@@ -73,7 +73,7 @@ describe("ScheduleEditController", () => {
 		beforeEach(() => {
 			transaction = {
 				transaction_type: "Basic",
-				next_due_date: moment().startOf("day").toDate(),
+				next_due_date: startOfDay(new Date()),
 				autoFlag: false
 			};
 
@@ -796,12 +796,12 @@ describe("ScheduleEditController", () => {
 
 	describe("calculateNextDue", () => {
 		const scenarios = [
-			{frequency: "Weekly", period: "weeks", amount: 1},
-			{frequency: "Fortnightly", period: "weeks", amount: 2},
-			{frequency: "Monthly", period: "month", amount: 1},
-			{frequency: "Bimonthly", period: "month", amount: 2},
-			{frequency: "Quarterly", period: "months", amount: 3},
-			{frequency: "Yearly", period: "year", amount: 1}
+			{frequency: "Weekly", period: "weeks", amount: 1, addFn: addWeeks},
+			{frequency: "Fortnightly", period: "weeks", amount: 2, addFn: addWeeks},
+			{frequency: "Monthly", period: "month", amount: 1, addFn: addMonths},
+			{frequency: "Bimonthly", period: "month", amount: 2, addFn: addMonths},
+			{frequency: "Quarterly", period: "quarters", amount: 1, addFn: addQuarters},
+			{frequency: "Yearly", period: "year", amount: 1, addFn: addYears}
 		];
 
 		scenarios.forEach(scenario => {
@@ -810,18 +810,20 @@ describe("ScheduleEditController", () => {
 
 				scheduleEditController.schedule.frequency = scenario.frequency;
 				scheduleEditController.calculateNextDue();
-				scheduleEditController.schedule.next_due_date.should.deep.equal(moment(nextDueDate).add(scenario.amount, scenario.period).toDate());
+				scheduleEditController.schedule.next_due_date.should.deep.equal(scenario.addFn(nextDueDate, scenario.amount));
 			});
 		});
 
 		it("should decrement the overdue count when greater than zero", () => {
 			scheduleEditController.schedule.overdue_count = 1;
+			scheduleEditController.schedule.frequency = "Weekly";
 			scheduleEditController.calculateNextDue();
 			scheduleEditController.schedule.overdue_count.should.equal(0);
 		});
 
 		it("should leave the overdue account unchanged when zero", () => {
 			scheduleEditController.schedule.overdue_count = 0;
+			scheduleEditController.schedule.frequency = "Weekly";
 			scheduleEditController.calculateNextDue();
 			scheduleEditController.schedule.overdue_count.should.equal(0);
 		});

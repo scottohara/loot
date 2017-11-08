@@ -1,5 +1,5 @@
+import {startOfDay, subDays} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 describe("ScheduleIndexController", () => {
 	let	scheduleIndexController,
@@ -33,7 +33,7 @@ describe("ScheduleIndexController", () => {
 
 	it("should make the passed schedules available to the view", () => scheduleIndexController.schedules.should.deep.equal(schedules));
 
-	it("should make today's date available to the view", () => scheduleIndexController.today.should.deep.equal(moment().startOf("day").toDate()));
+	it("should make today's date available to the view", () => scheduleIndexController.today.should.deep.equal(startOfDay(new Date())));
 
 	it("should focus the schedule when a schedule id is specified", () => {
 		$state.params.id = "1";
@@ -119,21 +119,21 @@ describe("ScheduleIndexController", () => {
 
 		it("should resort the schedule list when the modal is closed", () => {
 			schedule.id = 999;
-			schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
+			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController.editSchedule(1);
 			$uibModal.close({data: schedule});
 			scheduleIndexController.schedules.pop().should.deep.equal(schedule);
 		});
 
 		it("should focus the schedule when the modal is closed if the schedule was edited", () => {
-			schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
+			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController.editSchedule(1);
 			$uibModal.close({data: schedule});
 			scheduleIndexController.focusSchedule.should.have.been.calledWith(schedule.id);
 		});
 
 		it("should focus the schedule now at the original index when the modal is closed if the schedule was entered or skipped", () => {
-			schedule.next_due_date = moment().startOf("day").subtract(1, "day").toDate();
+			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController.editSchedule(1);
 			$uibModal.close({data: schedule, skipped: true});
 			scheduleIndexController.focusSchedule.should.have.been.calledWith(scheduleIndexController.schedules[1].id);

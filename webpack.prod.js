@@ -69,7 +69,7 @@ module.exports = merge(config, {
 
 		// Needed temporarily because BabelMinifyWebpackPlugin doesn't support dead-code elimination
 		// (remove after switching to UglifyJSWebpackPlugin)
-		maxEntrypointSize: 900000,
-		maxAssetSize: 600000
+		maxEntrypointSize: 1000000,
+		maxAssetSize: 630000
 	}
 });

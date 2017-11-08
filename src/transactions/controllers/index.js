@@ -1,11 +1,11 @@
 import "../css/index.less";
+import {addDays, isAfter, isBefore, isEqual, startOfDay, subDays} from "date-fns/esm";
 import AccountReconcileView from "accounts/views/reconcile.html";
 import OgModalConfirmView from "og-components/og-modal-confirm/views/confirm.html";
 import TransactionDeleteView from "transactions/views/delete.html";
 import TransactionEditView from "transactions/views/edit.html";
 import TransactionFlagView from "transactions/views/flag.html";
 import angular from "angular";
-import moment from "moment";
 
 export default class TransactionIndexController {
 	constructor($scope, $transitions, $uibModal, $timeout, $window, $state, transactionModel, accountModel, ogTableNavigableService, ogViewScrollService, contextModel, context, transactionBatch) {
@@ -37,7 +37,7 @@ export default class TransactionIndexController {
 		this.showAllDetails = transactionModel.allDetailsShown();
 		this.unreconciledOnly = this.reconcilable && accountModel.isUnreconciledOnly(this.context.id);
 		this.loading = {prev: false, next: false};
-		this.today = moment().startOf("day").toDate();
+		this.today = startOfDay(new Date());
 		this.tableActions = {
 			selectAction(index) {
 				if (self.reconciling) {
@@ -81,7 +81,7 @@ export default class TransactionIndexController {
 		function byTransactionDateAndId(a, b) {
 			let x, y;
 
-			if (moment(a.transaction_date).isSame(b.transaction_date)) {
+			if (isEqual(a.transaction_date, b.transaction_date)) {
 				x = a.id;
 				y = b.id;
 			} else {
@@ -147,14 +147,12 @@ export default class TransactionIndexController {
 				// Update the closing balance
 				this.updateClosingBalance(this.transactions[index], transaction);
 
-				const fromDate = moment(transaction.transaction_date);
-
-				if (!fromDate.isAfter(this.firstTransactionDate)) {
+				if (!isAfter(transaction.transaction_date, this.firstTransactionDate)) {
 					// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-					this.getTransactions("next", fromDate.subtract(1, "days").toDate(), transaction.id);
-				} else if (!fromDate.isBefore(this.lastTransactionDate) && !this.atEnd) {
+					this.getTransactions("next", subDays(transaction.transaction_date, 1), transaction.id);
+				} else if (!isBefore(transaction.transaction_date, this.lastTransactionDate) && !this.atEnd) {
 					// Transaction date is later than the latest fetched transaction, refresh from the new date
-					this.getTransactions("prev", fromDate.add(1, "days").toDate(), transaction.id);
+					this.getTransactions("prev", addDays(transaction.transaction_date, 1), transaction.id);
 				} else {
 					// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
 					if (isNaN(index)) {
@@ -612,20 +610,18 @@ export default class TransactionIndexController {
 
 			// Get the transaction details from the server
 			this.transactionModel.find(transactionId).then(transaction => {
-				let	fromDate = moment(transaction.transaction_date),
+				let	fromDate = transaction.transaction_date,
 						direction;
 
-				if (!fromDate.isAfter(this.firstTransactionDate)) {
+				if (!isAfter(transaction.transaction_date, this.firstTransactionDate)) {
 					// Transaction date is earlier than the earliest fetched transaction
-					fromDate = fromDate.subtract(1, "day");
+					fromDate = subDays(transaction.transaction_date, 1);
 					direction = "next";
-				} else if (!fromDate.isBefore(this.lastTransactionDate) && !this.atEnd) {
+				} else if (!isBefore(transaction.transaction_date, this.lastTransactionDate) && !this.atEnd) {
 					// Transaction date is later than the latest fetched transaction
-					fromDate = fromDate.add(1, "day");
+					fromDate = addDays(transaction.transaction_date, 1);
 					direction = "prev";
 				}
-
-				fromDate = fromDate.toDate();
 
 				if (this.unreconciledOnly) {
 					// If we're not already showing reconciled transactions, toggle the setting

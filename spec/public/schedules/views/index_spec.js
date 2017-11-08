@@ -1,10 +1,10 @@
 describe("scheduleIndexView", () => {
-	const moment = require("../../../../node_modules/moment/moment");
+	const {addDays, format, startOfDay} = require("date-fns");
 	let scheduleIndexView = require("./index"),
 			expected;
 
 	beforeEach(() => {
-		const tomorrow = moment().add(1, "days").format("DD/MM/YYYY");
+		const tomorrow = format(addDays(startOfDay(new Date()), 1), "DD/MM/YYYY");
 
 		scheduleIndexView = require("./index");
 

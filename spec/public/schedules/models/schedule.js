@@ -1,5 +1,5 @@
+import {format, startOfDay} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 describe("scheduleModel", () => {
 	let	scheduleModel,
@@ -37,22 +37,22 @@ describe("scheduleModel", () => {
 	describe("parse", () => {
 		let schedule;
 
-		beforeEach(() => (schedule = scheduleModel.parse({next_due_date: moment().format("YYYY-MM-DD HH:mm:ss")})));
+		beforeEach(() => (schedule = scheduleModel.parse({next_due_date: format(new Date(), "YYYY-MM-DD HH:mm:ss")})));
 
 		it("should convert the next due date from a string to a date", () => {
 			schedule.next_due_date.should.be.a.Date;
-			schedule.next_due_date.should.deep.equal(moment().startOf("day").toDate());
+			schedule.next_due_date.should.deep.equal(startOfDay(new Date()));
 		});
 	});
 
 	describe("stringify", () => {
 		let schedule;
 
-		beforeEach(() => (schedule = scheduleModel.stringify({next_due_date: moment().startOf("day").toDate()})));
+		beforeEach(() => (schedule = scheduleModel.stringify({next_due_date: startOfDay(new Date())})));
 
 		it("should convert the next due date from a date to a string", () => {
 			schedule.next_due_date.should.be.a.String;
-			schedule.next_due_date.should.deep.equal(moment().format("YYYY-MM-DD"));
+			schedule.next_due_date.should.deep.equal(format(new Date(), "YYYY-MM-DD"));
 		});
 	});
 

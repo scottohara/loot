@@ -1,5 +1,5 @@
+import {addDays, startOfDay, subDays} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 describe("TransactionIndexController", () => {
 	let	transactionIndexController,
@@ -53,7 +53,7 @@ describe("TransactionIndexController", () => {
 
 	it("should fetch the show all details setting", () => transactionModel.allDetailsShown.should.have.been.called);
 
-	it("should make today's date available to the view", () => transactionIndexController.today.should.deep.equal(moment().startOf("day").toDate()));
+	it("should make today's date available to the view", () => transactionIndexController.today.should.deep.equal(startOfDay(new Date())));
 
 	it("should set an empty array of transactions to the view", () => {
 		transactionIndexController = controllerTest("TransactionIndexController", {transactionBatch: {transactions: {length: 0}}});
@@ -161,7 +161,7 @@ describe("TransactionIndexController", () => {
 			beforeEach(() => {
 				transaction = {
 					transaction_type: "Basic",
-					transaction_date: moment().startOf("day").toDate(),
+					transaction_date: startOfDay(new Date()),
 					primary_account: null,
 					payee: null,
 					security: null,
@@ -172,7 +172,7 @@ describe("TransactionIndexController", () => {
 
 			describe("(default values)", () => {
 				beforeEach(() => {
-					transactionModel.lastTransactionDate = moment().startOf("day").subtract(1, "days").toDate();
+					transactionModel.lastTransactionDate = subDays(startOfDay(new Date()), 1);
 					transaction.transaction_date = transactionModel.lastTransactionDate;
 				});
 
@@ -252,16 +252,16 @@ describe("TransactionIndexController", () => {
 
 		describe("(transaction date is before the current batch", () => {
 			it("should fetch a new transaction batch starting from the new transaction date", () => {
-				transaction.transaction_date = moment(transactionIndexController.firstTransactionDate).subtract(1, "day").toDate();
+				transaction.transaction_date = subDays(transactionIndexController.firstTransactionDate, 1);
 				transactionIndexController.editTransaction(1);
 				$uibModal.close(transaction);
-				transactionIndexController.getTransactions.should.have.been.calledWith("next", moment(transaction.transaction_date).subtract(1, "day").toDate(), transaction.id);
+				transactionIndexController.getTransactions.should.have.been.calledWith("next", subDays(transaction.transaction_date, 1), transaction.id);
 			});
 		});
 
 		describe("(transaction date is after the current batch", () => {
 			beforeEach(() => {
-				transaction.transaction_date = moment(transactionIndexController.lastTransactionDate).add(1, "day").toDate();
+				transaction.transaction_date = addDays(transactionIndexController.lastTransactionDate, 1);
 				transactionIndexController.editTransaction(1);
 			});
 
@@ -274,7 +274,7 @@ describe("TransactionIndexController", () => {
 			it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", () => {
 				transactionIndexController.atEnd = false;
 				$uibModal.close(transaction);
-				transactionIndexController.getTransactions.should.have.been.calledWith("prev", moment(transaction.transaction_date).add(1, "day").toDate(), transaction.id);
+				transactionIndexController.getTransactions.should.have.been.calledWith("prev", addDays(transaction.transaction_date, 1), transaction.id);
 			});
 		});
 
@@ -287,7 +287,7 @@ describe("TransactionIndexController", () => {
 
 			it("should resort the transaction list when the modal is closed", () => {
 				transaction.id = 999;
-				transaction.transaction_date = moment().startOf("day").subtract(1, "day").toDate();
+				transaction.transaction_date = subDays(startOfDay(new Date()), 1);
 				transactionIndexController.editTransaction(1);
 				$uibModal.close(transaction);
 				transactionIndexController.transactions.pop().should.deep.equal(transaction);
@@ -1297,7 +1297,7 @@ describe("TransactionIndexController", () => {
 
 			describe("(showing unreconciled only)", () => {
 				it("should toggle to show all transactions", () => {
-					const transactionDate = moment().startOf("day").subtract(1, "day").toDate();
+					const transactionDate = subDays(startOfDay(new Date()), 1);
 					let direction;
 
 					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel});
@@ -1311,9 +1311,9 @@ describe("TransactionIndexController", () => {
 
 			describe("(transaction date is before the current batch)", () => {
 				it("should fetch a new transaction batch starting from the new transaction date", () => {
-					const fromDate = moment().startOf("day").subtract(2, "days").toDate();
+					const fromDate = subDays(startOfDay(new Date()), 2);
 
-					transactionIndexController.firstTransactionDate = moment().startOf("day").toDate();
+					transactionIndexController.firstTransactionDate = startOfDay(new Date());
 					transactionIndexController.transitionSuccessHandler(transactionId);
 					transactionIndexController.getTransactions.should.have.been.calledWith("next", fromDate);
 				});
@@ -1321,19 +1321,19 @@ describe("TransactionIndexController", () => {
 
 			describe("(transaction date is after the current batch)", () => {
 				it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", () => {
-					const fromDate = moment().startOf("day").toDate();
+					const fromDate = startOfDay(new Date());
 
-					transactionIndexController.lastTransactionDate = moment().startOf("day").subtract(2, "days").toDate();
+					transactionIndexController.lastTransactionDate = subDays(startOfDay(new Date()), 2);
 					transactionIndexController.atEnd = false;
 					transactionIndexController.transitionSuccessHandler(transactionId);
 					transactionIndexController.getTransactions.should.have.been.calledWith("prev", fromDate);
 				});
 
 				it("should fetch a new transaction batch for the current transaction date if we're already at the end", () => {
-					const fromDate = moment().startOf("day").subtract(1, "day").toDate();
+					const fromDate = subDays(startOfDay(new Date()), 1);
 					let direction;
 
-					transactionIndexController.lastTransactionDate = moment().startOf("day").subtract(2, "days").toDate();
+					transactionIndexController.lastTransactionDate = subDays(startOfDay(new Date()), 2);
 					transactionIndexController.atEnd = true;
 					transactionIndexController.transitionSuccessHandler(transactionId);
 					transactionIndexController.getTransactions.should.have.been.calledWith(direction, fromDate);

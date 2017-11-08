@@ -1,5 +1,5 @@
+import {format, startOfDay} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 export default class ScheduleModel {
 	constructor($http, payeeModel, categoryModel, securityModel) {
@@ -17,7 +17,7 @@ export default class ScheduleModel {
 	// Performs post-processing after parsing from JSON
 	parse(schedule) {
 		// Convert the next due date from a string ("YYYY-MM-DD") to a native JS date
-		schedule.next_due_date = moment(schedule.next_due_date).startOf("day").toDate();
+		schedule.next_due_date = startOfDay(schedule.next_due_date);
 
 		return schedule;
 	}
@@ -27,7 +27,7 @@ export default class ScheduleModel {
 		// To avoid timezone issue, convert the native JS date back to a string ("YYYY-MM-DD") before saving
 		const scheduleCopy = angular.copy(schedule);
 
-		scheduleCopy.next_due_date = moment(scheduleCopy.next_due_date).format("YYYY-MM-DD");
+		scheduleCopy.next_due_date = format(scheduleCopy.next_due_date, "YYYY-MM-DD");
 
 		return scheduleCopy;
 	}

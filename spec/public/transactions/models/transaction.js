@@ -1,5 +1,5 @@
+import {format, parse, startOfDay} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 describe("transactionModel", () => {
 	let	transactionModel,
@@ -48,22 +48,22 @@ describe("transactionModel", () => {
 	describe("parse", () => {
 		let transaction;
 
-		beforeEach(() => (transaction = transactionModel.parse({transaction_date: moment().format("YYYY-MM-DD HH:mm:ss")})));
+		beforeEach(() => (transaction = transactionModel.parse({transaction_date: format(new Date(), "YYYY-MM-DD HH:mm:ss")})));
 
 		it("should convert the transaction date from a string to a date", () => {
 			transaction.transaction_date.should.be.a.Date;
-			transaction.transaction_date.should.deep.equal(moment().startOf("day").toDate());
+			transaction.transaction_date.should.deep.equal(startOfDay(new Date()));
 		});
 	});
 
 	describe("stringify", () => {
 		let transaction;
 
-		beforeEach(() => (transaction = transactionModel.stringify({transaction_date: moment().startOf("day").toDate()})));
+		beforeEach(() => (transaction = transactionModel.stringify({transaction_date: startOfDay(new Date())})));
 
 		it("should convert the transaction date from a date to a string", () => {
 			transaction.transaction_date.should.be.a.String;
-			transaction.transaction_date.should.deep.equal(moment().format("YYYY-MM-DD"));
+			transaction.transaction_date.should.deep.equal(format(new Date(), "YYYY-MM-DD"));
 		});
 	});
 
@@ -182,7 +182,7 @@ describe("transactionModel", () => {
 		});
 
 		it("should save the transaction date", () => {
-			const transactionDate = moment("2000-01-01").toDate();
+			const transactionDate = parse("2000-01-01", "YYYY-MM-DD", new Date());
 
 			transactionModel.save({transaction_date: transactionDate});
 			$httpBackend.flush();
@@ -352,6 +352,6 @@ describe("transactionModel", () => {
 	});
 
 	describe("lastTransactionDate", () => {
-		it("should return the last used transaction date", () => transactionModel.lastTransactionDate.should.deep.equal(moment().startOf("day").toDate()));
+		it("should return the last used transaction date", () => transactionModel.lastTransactionDate.should.deep.equal(startOfDay(new Date())));
 	});
 });

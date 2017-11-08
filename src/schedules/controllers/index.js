@@ -1,8 +1,8 @@
 import "transactions/css/index.less";
+import {isEqual, startOfDay} from "date-fns/esm";
 import ScheduleDeleteView from "schedules/views/delete.html";
 import ScheduleEditView from "schedules/views/edit.html";
 import angular from "angular";
-import moment from "moment";
 
 export default class ScheduleIndexController {
 	constructor($scope, $transitions, $uibModal, $timeout, $state, scheduleModel, transactionModel, ogTableNavigableService, schedules) {
@@ -35,7 +35,7 @@ export default class ScheduleIndexController {
 		};
 
 		// Today's date (for checking if a schedule is overdue
-		this.today = moment().startOf("day").toDate();
+		this.today = startOfDay(new Date());
 
 		// If we have a schedule id, focus the specified row
 		if (Number($state.params.id)) {
@@ -51,7 +51,7 @@ export default class ScheduleIndexController {
 		function byNextDueDateAndId(a, b) {
 			let x, y;
 
-			if (moment(a.next_due_date).isSame(b.next_due_date)) {
+			if (isEqual(a.next_due_date, b.next_due_date)) {
 				x = a.id;
 				y = b.id;
 			} else {

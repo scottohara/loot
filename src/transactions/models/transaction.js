@@ -1,5 +1,5 @@
+import {format, startOfDay} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 export default class TransactionModel {
 	constructor($http, $window, accountModel, payeeModel, categoryModel, securityModel) {
@@ -9,7 +9,7 @@ export default class TransactionModel {
 		this.payeeModel = payeeModel;
 		this.categoryModel = categoryModel;
 		this.securityModel = securityModel;
-		this.lastUsedTransactionDate = moment().startOf("day").toDate();
+		this.lastUsedTransactionDate = startOfDay(new Date());
 	}
 
 	get SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY() {
@@ -29,7 +29,7 @@ export default class TransactionModel {
 	// Performs post-processing after parsing from JSON
 	parse(transaction) {
 		// Convert the transaction date from a string ("YYYY-MM-DD") to a native JS date
-		transaction.transaction_date = moment(transaction.transaction_date).startOf("day").toDate();
+		transaction.transaction_date = startOfDay(transaction.transaction_date);
 
 		return transaction;
 	}
@@ -39,7 +39,7 @@ export default class TransactionModel {
 		// To avoid timezone issue, convert the native JS date back to a string ("YYYY-MM-DD") before saving
 		const transactionCopy = angular.copy(transaction);
 
-		transactionCopy.transaction_date = moment(transactionCopy.transaction_date).format("YYYY-MM-DD");
+		transactionCopy.transaction_date = format(transactionCopy.transaction_date, "YYYY-MM-DD");
 
 		return transactionCopy;
 	}

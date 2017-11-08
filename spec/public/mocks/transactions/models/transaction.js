@@ -1,4 +1,4 @@
-import moment from "moment";
+import {startOfDay} from "date-fns/esm";
 
 export default class TransactionModelMockProvider {
 	constructor(transactionMockProvider, transactionBatchMockProvider, $qMockProvider) {
@@ -45,7 +45,7 @@ export default class TransactionModelMockProvider {
 			unflag: $q.promisify(1, -1),
 			allDetailsShown: sinon.stub().returns(true),
 			showAllDetails: sinon.stub(),
-			lastTransactionDate: moment().startOf("day").toDate()
+			lastTransactionDate: startOfDay(new Date())
 		};
 	}
 

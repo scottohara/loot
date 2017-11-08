@@ -1,4 +1,4 @@
-import moment from "moment";
+import {addDays, startOfDay} from "date-fns/esm";
 
 export default class ScheduleMockProvider {
 	constructor() {
@@ -6,7 +6,7 @@ export default class ScheduleMockProvider {
 		this.schedule = {
 			id: 1,
 			transaction_type: "Transfer",
-			next_due_date: moment().startOf("day").add(3, "days").toDate(),
+			next_due_date: addDays(startOfDay(new Date()), 3),
 			subtransactions: [{}],
 			autoFlag: false,
 			flag: null

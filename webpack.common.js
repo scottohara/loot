@@ -16,7 +16,7 @@ const path = require("path"),
 					"angular",
 					"@uirouter/angularjs",
 					"angular-ui-bootstrap",
-					"moment"
+					"date-fns/esm"
 				]
 			},
 
@@ -119,7 +119,7 @@ const path = require("path"),
 				resolve: {
 					modules: [
 						path.resolve(__dirname, "src"),
-						"node_modules"
+						path.resolve(__dirname, "node_modules")
 					]
 				},
 

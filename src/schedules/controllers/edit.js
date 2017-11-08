@@ -1,5 +1,5 @@
+import {addMonths, addQuarters, addWeeks, addYears, startOfDay} from "date-fns/esm";
 import angular from "angular";
-import moment from "moment";
 
 export default class ScheduleEditController {
 	constructor($scope, $uibModalInstance, $timeout, filterFilter, limitToFilter, currencyFilter, payeeModel, securityModel, categoryModel, accountModel, transactionModel, scheduleModel, schedule) {
@@ -14,7 +14,7 @@ export default class ScheduleEditController {
 		this.accountModel = accountModel;
 		this.transactionModel = transactionModel;
 		this.scheduleModel = scheduleModel;
-		this.transaction = angular.extend({transaction_type: "Basic", next_due_date: moment().startOf("day").toDate()}, schedule);
+		this.transaction = angular.extend({transaction_type: "Basic", next_due_date: startOfDay(new Date())}, schedule);
 
 		// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
 		this.mode = schedule ? "Enter Transaction" : "Add Schedule";
@@ -25,7 +25,7 @@ export default class ScheduleEditController {
 		this.loadingLastTransaction = false;
 		this.account_type = null;
 		this.totalAllocated = null;
-		this.scheduleFrequencies = {Weekly: {weeks: 1}, Fortnightly: {weeks: 2}, Monthly: {months: 1}, Bimonthly: {months: 2}, Quarterly: {months: 3}, Yearly: {years: 1}};
+		this.scheduleFrequencies = ["Weekly", "Fortnightly", "Monthly", "Bimonthly", "Quarterly", "Yearly"];
 		this.errorMessage = null;
 
 		if (schedule) {
@@ -407,7 +407,7 @@ export default class ScheduleEditController {
 
 	// List of frequencies for the typeahead
 	frequencies(filter) {
-		return filter ? this.filterFilter(Object.keys(this.scheduleFrequencies), filter) : Object.keys(this.scheduleFrequencies);
+		return filter ? this.filterFilter(this.scheduleFrequencies, filter) : this.scheduleFrequencies;
 	}
 
 	// Add a new subtransaction
@@ -427,7 +427,50 @@ export default class ScheduleEditController {
 
 	// Calculates the next due date
 	calculateNextDue() {
-		this.schedule.next_due_date = moment(this.schedule.next_due_date).add(this.scheduleFrequencies[this.schedule.frequency]).toDate();
+		const WEEK = 1,
+					FORTNIGHT = 2,
+					MONTH = 1,
+					BIMONTH = 2,
+					QUARTER = 1,
+					YEAR = 1;
+
+		let addFn, amount;
+
+		switch (this.schedule.frequency) {
+			case "Weekly":
+				addFn = addWeeks;
+				amount = WEEK;
+				break;
+
+			case "Fortnightly":
+				addFn = addWeeks;
+				amount = FORTNIGHT;
+				break;
+
+			case "Monthly":
+				addFn = addMonths;
+				amount = MONTH;
+				break;
+
+			case "Bimonthly":
+				addFn = addMonths;
+				amount = BIMONTH;
+				break;
+
+			case "Quarterly":
+				addFn = addQuarters;
+				amount = QUARTER;
+				break;
+
+			case "Yearly":
+				addFn = addYears;
+				amount = YEAR;
+				break;
+
+			// No default
+		}
+
+		this.schedule.next_due_date = addFn(this.schedule.next_due_date, amount);
 
 		if (this.schedule.overdue_count > 0) {
 			this.schedule.overdue_count--;

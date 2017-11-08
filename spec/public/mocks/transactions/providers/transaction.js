@@ -1,4 +1,4 @@
-import moment from "moment";
+import {startOfDay, subDays} from "date-fns/esm";
 
 export default class TransactionMockProvider {
 	constructor() {
@@ -6,7 +6,7 @@ export default class TransactionMockProvider {
 		this.transaction = {
 			id: 1,
 			primary_account: {},
-			transaction_date: moment().startOf("day").subtract(1, "day").toDate(),
+			transaction_date: subDays(startOfDay(new Date()), 1),
 			flag: "transaction flag"
 		};
 	}
