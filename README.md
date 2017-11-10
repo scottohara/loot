@@ -2,6 +2,7 @@
 [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)
 [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)
 [![Dependency Status](https://img.shields.io/librariesio/github/scottohara/loot.svg)](https://libraries.io/github/scottohara/loot)
+[![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg)](https://snyk.io/test/github/scottohara/loot)
 
 Description
 ===========
