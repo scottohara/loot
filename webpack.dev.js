@@ -18,7 +18,7 @@ const webpack = require("webpack"),
 				createIndexHtml,
 				generateServiceWorker,
 				config
-			} = require("./webpack.common.js"),
+			} = require("./webpack.common"),
 			appCss = extractAppCss(),
 			vendorCss = extractVendorCss();
 

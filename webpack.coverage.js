@@ -1,4 +1,4 @@
-const config = require("./webpack.test.js");
+const config = require("./webpack.test");
 
 // Add instrumentation to *.js files
 config.module.rules.push({

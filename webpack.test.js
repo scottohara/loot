@@ -3,7 +3,7 @@ const merge = require("webpack-merge"),
 				defineEnvironment,
 				providejQuery,
 				config
-			} = require("./webpack.common.js");
+			} = require("./webpack.common");
 
 module.exports = merge(config, {
 	module: {

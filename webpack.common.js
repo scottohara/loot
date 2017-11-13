@@ -5,7 +5,7 @@ const path = require("path"),
 			HtmlWebpackPlugin = require("html-webpack-plugin"),
 			CopyWebpackPlugin = require("copy-webpack-plugin"),
 			WorkboxWebpackPlugin = require("workbox-webpack-plugin"),
-			packageJson = require("./package.json"),
+			packageJson = require("./package"),
 
 			// Default entry
 			entry = {
