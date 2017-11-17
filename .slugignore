@@ -1,10 +1,7 @@
-coverage
 doc
 lib/tasks/db_e2e_prepare.rake
 lib/tasks/deploy.rake
-log
 spec
-tmp
 .codeclimate.yml
 .editorconfig
 .eslingrc.json

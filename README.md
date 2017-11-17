@@ -1,10 +1,10 @@
 | Service					| Status																																																																																					|
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Travis CI				| [![Build Status](https://travis-ci.org/scottohara/loot.svg)](https://travis-ci.org/scottohara/loot)																																							|
+| Travis CI				| [![Build Status](https://travis-ci.org/scottohara/loot.svg?branch=master)](https://travis-ci.org/scottohara/loot)																																|
 | Code Climate		| [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)																								|
 | Code Climate		| [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)																					|
 | Gemnasium     	| [![Dependency Status](https://gemnasium.com/badges/github.com/scottohara/loot.svg)](https://gemnasium.com/github.com/scottohara/loot)																						|
-| Dependency CI 	|[![Dependency Status](https://dependencyci.com/github/scottohara/loot/badge)](https://dependencyci.com/github/scottohara/loot)																										|
+| Dependency CI 	| [![Dependency Status](https://dependencyci.com/github/scottohara/loot/badge)](https://dependencyci.com/github/scottohara/loot)																									|
 | Snyk (npm)			| [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg)](https://snyk.io/test/github/scottohara/loot)																									|
 | Snyk (Gemfile)	| [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg?targetFile=Gemfile.lock)](https://snyk.io/test/github/scottohara/loot?targetFile=Gemfile.lock)	|
 
