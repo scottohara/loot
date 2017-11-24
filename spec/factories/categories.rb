@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
 	factory :category, aliases: [:outflow_category] do
 		sequence(:name) { |n| "Category #{n}" }
 		outflow
@@ -37,7 +37,7 @@ FactoryGirl.define do
 
 		trait :parent_category do
 			after :build do |category|
-				category.parent = FactoryGirl.build :category, category.direction.to_sym
+				category.parent = FactoryBot.build :category, category.direction.to_sym
 			end
 		end
 

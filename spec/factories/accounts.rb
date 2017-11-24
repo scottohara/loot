@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
 	factory :account, aliases: [:bank_account] do
 		account_type 'bank'
 		sequence(:name) { |n| "#{account_type} account #{n}" }
@@ -66,7 +66,7 @@ FactoryGirl.define do
 			opening_balance 0
 
 			transient do
-				related_account { FactoryGirl.build :bank_account }
+				related_account { FactoryBot.build :bank_account }
 			end
 
 			after :build do |account, evaluator|

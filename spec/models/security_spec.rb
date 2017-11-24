@@ -6,7 +6,7 @@ require 'models/concerns/transactable'
 
 RSpec.describe Security, type: :model do
 	before :each do
-		FactoryGirl.reload
+		FactoryBot.reload
 	end
 
 	it_behaves_like Transactable do

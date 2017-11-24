@@ -126,7 +126,7 @@ RSpec.describe BasicTransaction, type: :model do
 		end
 
 		context 'with subcategory' do
-			subject { create :basic_transaction, category: FactoryGirl.create(:subcategory), status: 'Reconciled' }
+			subject { create :basic_transaction, category: FactoryBot.create(:subcategory), status: 'Reconciled' }
 
 			before :each do
 				expect(subject.category.parent).to receive(:as_json).and_return 'category json'

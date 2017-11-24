@@ -7,8 +7,8 @@ namespace :db do
 	namespace :e2e do
 		desc 'Load fixtures for e2e tests'
 		task prepare: :environment do
-			# Mixin factory girl syntax
-			include FactoryGirl::Syntax::Methods
+			# Mixin factory bot syntax
+			include FactoryBot::Syntax::Methods
 
 			# Connect to the test database
 			ActiveRecord::Base.establish_connection :test

@@ -68,7 +68,7 @@ RSpec.describe SubTransaction, type: :model do
 		end
 
 		context 'with subcategory' do
-			subject { create :sub_transaction, category: FactoryGirl.create(:subcategory) }
+			subject { create :sub_transaction, category: FactoryBot.create(:subcategory) }
 
 			before :each do
 				expect(subject.category.parent).to receive(:as_json).and_return 'category json'

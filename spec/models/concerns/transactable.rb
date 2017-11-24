@@ -180,7 +180,7 @@ RSpec.shared_examples Transactable do
 		end
 
 		after :each, spec_type: :range do
-			FactoryGirl.reload
+			FactoryBot.reload
 
 			# Create the context with 15 basic transactions
 			context = create context_factory, transactions: 15
@@ -204,7 +204,7 @@ RSpec.shared_examples Transactable do
 		subject { defined?(as_class_method) && described_class || context }
 
 		before :each do
-			FactoryGirl.reload
+			FactoryBot.reload
 
 			if defined? as_class_method
 				context # Needs reference here because context is lazy-loaded (otherwise transactions are never created)

@@ -1,14 +1,14 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
 	factory :security_holding_transaction, aliases: [:security_add_transaction] do
 		# Default attributes for security transaction
 		security_transaction
 
 		# Default accounts if none specified
 		transient do
-			account { FactoryGirl.build :investment_account }
+			account { FactoryBot.build :investment_account }
 			direction 'Add'
 			quantity 10
 			status nil
@@ -18,7 +18,7 @@ FactoryGirl.define do
 		after :build do |trx, evaluator|
 			trx.header.transaction_date = evaluator.transaction_date unless evaluator.transaction_date.nil?
 			trx.header.quantity = evaluator.quantity
-			trx.transaction_account = FactoryGirl.build :transaction_account, account: evaluator.account, direction: (evaluator.direction.eql?('Add') ? 'inflow' : 'outflow'), status: evaluator.status
+			trx.transaction_account = FactoryBot.build :transaction_account, account: evaluator.account, direction: (evaluator.direction.eql?('Add') ? 'inflow' : 'outflow'), status: evaluator.status
 		end
 
 		trait :outflow do

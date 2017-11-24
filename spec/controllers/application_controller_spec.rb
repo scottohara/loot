@@ -8,8 +8,8 @@ RSpec.describe ApplicationController, type: :controller do
 		def index
 			case params['context']
 			when 'internal error' then raise StandardError, params['context']
-			when 'record invalid' then raise ActiveRecord::RecordInvalid, FactoryGirl.create(:category, name: nil, direction: 'invalid')
-			when 'record not destroyed' then raise ActiveRecord::RecordNotDestroyed, FactoryGirl.create(:category, transactions: 1).destroy!
+			when 'record invalid' then raise ActiveRecord::RecordInvalid, FactoryBot.create(:category, name: nil, direction: 'invalid')
+			when 'record not destroyed' then raise ActiveRecord::RecordNotDestroyed, FactoryBot.create(:category, transactions: 1).destroy!
 			when 'record not found' then raise ActiveRecord::RecordNotFound, params['context']
 			when 'routing error' then
 				params[:unmatched_route] = params['context']

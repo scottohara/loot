@@ -1,25 +1,25 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
 	factory :basic_transaction, aliases: [:basic_expense_transaction] do
 		# Default attributes for payee cash transaction
 		payee_cash_transaction
 
 		# Default account and category if none specified
 		transient do
-			account { FactoryGirl.build :account }
-			category { FactoryGirl.build :category }
+			account { FactoryBot.build :account }
+			category { FactoryBot.build :category }
 			status nil
 		end
 
 		after :build do |trx, evaluator|
-			trx.transaction_account = FactoryGirl.build :transaction_account, account: evaluator.account, direction: evaluator.category.direction, status: evaluator.status
+			trx.transaction_account = FactoryBot.build :transaction_account, account: evaluator.account, direction: evaluator.category.direction, status: evaluator.status
 			trx.category = evaluator.category
 		end
 
 		trait :inflow do
-			category { FactoryGirl.build :inflow_category }
+			category { FactoryBot.build :inflow_category }
 		end
 
 		trait :scheduled do

@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
 	factory :security_investment_transaction, aliases: [:security_purchase_transaction] do
 		# Default attributes for security transaction
 		security_transaction
@@ -9,8 +9,8 @@ FactoryGirl.define do
 
 		# Default accounts if none specified
 		transient do
-			investment_account { FactoryGirl.build :investment_account, related_account: cash_account }
-			cash_account { FactoryGirl.build :bank_account }
+			investment_account { FactoryBot.build :investment_account, related_account: cash_account }
+			cash_account { FactoryBot.build :bank_account }
 			direction 'Buy'
 			price 1
 			quantity 1
@@ -22,8 +22,8 @@ FactoryGirl.define do
 			trx.header.price = evaluator.price
 			trx.header.quantity = evaluator.quantity
 			trx.header.commission = evaluator.commission
-			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.investment_account, direction: (evaluator.direction.eql?('Buy') ? 'inflow' : 'outflow'), status: evaluator.status)
-			trx.transaction_accounts << FactoryGirl.build(:transaction_account, account: evaluator.cash_account, direction: (evaluator.direction.eql?('Buy') ? 'outflow' : 'inflow'))
+			trx.transaction_accounts << FactoryBot.build(:transaction_account, account: evaluator.investment_account, direction: (evaluator.direction.eql?('Buy') ? 'inflow' : 'outflow'), status: evaluator.status)
+			trx.transaction_accounts << FactoryBot.build(:transaction_account, account: evaluator.cash_account, direction: (evaluator.direction.eql?('Buy') ? 'outflow' : 'inflow'))
 		end
 
 		after :create do |trx|
