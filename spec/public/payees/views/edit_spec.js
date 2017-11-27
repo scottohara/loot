@@ -27,10 +27,12 @@ describe("payeeEditView", () => {
 			it("should not enable the save button", () => payeeEditView.saveButton.isEnabled().should.eventually.be.false);
 
 			// MISSING - payee name should show red cross when invalid
+
 			// MISSING - form group around payee name should have 'has-error' class when invalid
 		});
 
 		// MISSING - error message should display when present
+
 		// MISSING - payee name text should be selected when input gets focus
 	}
 

@@ -201,8 +201,7 @@ export default class ScheduleEditController {
 		});
 	}
 
-	// Handler for category changes
-	// (index) is the subtransaction index, or null for the main schedule
+	// Handler for category changes (`index` is the subtransaction index, or null for the main schedule)
 	categorySelected(index) {
 		const transaction = isNaN(index) ? this.transaction : this.transaction.subtransactions[index];
 		let	type,
@@ -249,8 +248,10 @@ export default class ScheduleEditController {
 						break;
 				}
 
-				// If we have switched to a Split, Payslip or Loan Repayment and there are currently no subtransactions,
-				// create some stubs, copying the current transaction details into the first entry
+				/*
+				 * If we have switched to a Split, Payslip or Loan Repayment and there are currently no subtransactions,
+				 * create some stubs, copying the current transaction details into the first entry
+				 */
 				switch (type) {
 					case "Split":
 					case "Payslip":

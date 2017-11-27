@@ -175,8 +175,7 @@ export default class TransactionEditController {
 		});
 	}
 
-	// Handler for category changes
-	// (index) is the subtransaction index, or null for the main transaction
+	// Handler for category changes (`index` is the subtransaction index, or null for the main transaction)
 	categorySelected(index) {
 		const	transaction = isNaN(index) ? this.transaction : this.transaction.subtransactions[index];
 		let	type,
@@ -223,8 +222,10 @@ export default class TransactionEditController {
 						break;
 				}
 
-				// If we have switched to a Split, Payslip or Loan Repayment and there are currently no subtransactions,
-				// create some stubs, copying the current transaction details into the first entry
+				/*
+				 * If we have switched to a Split, Payslip or Loan Repayment and there are currently no subtransactions,
+				 * create some stubs, copying the current transaction details into the first entry
+				 */
 				switch (type) {
 					case "Split":
 					case "Payslip":
@@ -420,8 +421,10 @@ export default class TransactionEditController {
 
 		let	resolve = true;
 
-		// Compare each facet of the saved transaction with the original values
-		// For any that have changed, invalidate the original from the $http cache
+		/*
+		 * Compare each facet of the saved transaction with the original values
+		 * For any that have changed, invalidate the original from the $http cache
+		 */
 		angular.forEach(Object.keys(models), key => {
 			const	originalValue = (this.originalTransaction[key] && this.originalTransaction[key].id) || null,
 						savedValue = (savedTransaction[key] && savedTransaction[key].id) || null;
@@ -431,8 +434,10 @@ export default class TransactionEditController {
 			}
 		});
 
-		// For subtransactions, we can't be sure if the values have changed or not (as the ordering may have changed)
-		// so just invalidate any categories or accounts
+		/*
+		 * For subtransactions, we can't be sure if the values have changed or not (as the ordering may have changed)
+		 * so just invalidate any categories or accounts
+		 */
 		switch (this.originalTransaction.transaction_type) {
 			case "Split":
 			case "LoanRepayment":

@@ -40,11 +40,14 @@ describe("categoryEditView", () => {
 			});
 
 			// MISSING - category name, parent & direction should show red cross when invalid
+
 			// MISSING - form group around category name & parent should have 'has-error' class when invalid
+
 			// MISSING - parent should behave like non-editable typeahead
 		});
 
 		// MISSING - error message should display when present
+
 		// MISSING - category name & parent text should be selected when input gets focus
 	}
 

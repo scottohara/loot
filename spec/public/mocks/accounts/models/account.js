@@ -1,7 +1,9 @@
 export default class AccountModelMockProvider {
 	constructor(accountMockProvider, accountsMockProvider, accountsWithBalancesMockProvider, $qMockProvider) {
-		// Success/error = options for the stub promises
-		// all/allWithBalances =  promise-like responses
+		/*
+		 * Success/error = options for the stub promises
+		 * all/allWithBalances =  promise-like responses
+		 */
 		const success = {
 						args: {id: 1},
 						response: {data: accountMockProvider.$get()}

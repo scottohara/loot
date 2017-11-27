@@ -44,8 +44,10 @@ module.exports = merge(config, {
 	devtool: "source-map",
 
 	plugins: [
-		// Ensure that bundles only change when necessary by using a hash of the content for the module id
-		// instead of a numbers derived from the order of dependencies in the graph
+		/*
+		 * Ensure that bundles only change when necessary by using a hash of the content for the module id
+		 * instead of a numbers derived from the order of dependencies in the graph
+		 */
 		new webpack.HashedModuleIdsPlugin(),
 
 		defineEnvironment("production"),
@@ -67,8 +69,10 @@ module.exports = merge(config, {
 	performance: {
 		hints: "error",
 
-		// Needed temporarily because BabelMinifyWebpackPlugin doesn't support dead-code elimination
-		// (remove after switching to UglifyJSWebpackPlugin)
+		/*
+		 * Needed temporarily because BabelMinifyWebpackPlugin doesn't support dead-code elimination
+		 * (remove after switching to UglifyJSWebpackPlugin)
+		 */
 		maxEntrypointSize: 1000000,
 		maxAssetSize: 630000
 	}

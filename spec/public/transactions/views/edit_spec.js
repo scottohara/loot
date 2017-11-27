@@ -234,39 +234,42 @@ describe("transactionEditView", () => {
 			it("should not enable the save button", () => transactionEditView.saveButton.isEnabled().should.eventually.be.false);
 
 			// MISSING - category name, parent & direction should show red cross when invalid
+
 			// MISSING - form group around category name & parent should have 'has-error' class when invalid
+
 			// MISSING - parent should behave like non-editable typeahead
 		});
 
 		// MISSING - error message should display when present
+
 		// MISSING - category name & parent text should be selected when input gets focus
 	}
 
 	// Edits the target index row
 	/*
-	function editRow() {
-		targetRow.evaluate("$index").then(index => {
-			// Enter an existing transaction
-			transactionIndexView.enterTransaction(index);
-			waitForTransactionEditView("Edit");
-		});
-	}
-	*/
+	 *	function editRow() {
+	 *		targetRow.evaluate("$index").then(index => {
+	 *			// Enter an existing transaction
+	 *			transactionIndexView.enterTransaction(index);
+	 *			waitForTransactionEditView("Edit");
+	 *		});
+	 *	}
+	 */
 
 	// Checks the values in the edit form against the values from an index row
 	/*
-	function checkEditFormMatchesIndexRow(row) {
-		transactionIndexView.getRowValues(row).then(values => {
-			// MISSING
-			transactionEditView.categoryNameInput.getAttribute("value").should.eventually.equal(values.categoryName);
-			if (!values.isSubcategory) {
-				transactionEditView.directionRadioButton(values.direction, true).isPresent().should.eventually.be.true;
-			} else {
-				transactionEditView.categoryParentInput.getAttribute("value").should.eventually.equal(values.categoryParent);
-			}
-		});
-	}
-	*/
+	 *	function checkEditFormMatchesIndexRow(row) {
+	 *		transactionIndexView.getRowValues(row).then(values => {
+	 *			// MISSING
+	 *			transactionEditView.categoryNameInput.getAttribute("value").should.eventually.equal(values.categoryName);
+	 *			if (!values.isSubcategory) {
+	 *				transactionEditView.directionRadioButton(values.direction, true).isPresent().should.eventually.be.true;
+	 *			} else {
+	 *				transactionEditView.categoryParentInput.getAttribute("value").should.eventually.equal(values.categoryParent);
+	 *			}
+	 *		});
+	 *	}
+	 */
 
 	beforeEach(() => {
 		accountIndexView = require("../../accounts/views/index");
@@ -322,117 +325,119 @@ describe("transactionEditView", () => {
 				});
 			});
 
-			/* Not implemented yet
-			describe("editing a category", () => {
-				describe("parent", () => {
-					describe("expense", () => {
-						beforeEach(() => transactionIndexView.lastCategory().then(row => targetRow = row));
-
-						beforeEach(editRow);
-
-						beforeEach(() => {
-							// Check that the edit form is correctly populated
-							checkEditFormMatchesIndexRow(targetRow);
-
-							expected = {categoryName: "AA Test category (edited)", direction: "inflow"};
-							transactionEditView.enterCategoryDetails(expected);
-						});
-
-						commonBehaviour();
-
-						it("should update an existing category when the save button is clicked", () => {
-							transactionEditView.save();
-
-							// Row count should not have changed
-							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-							// After editing, the row should now be the first category
-							transactionIndexView.firstCategory().then(row => transactionIndexView.checkRowValues(row, expected));
-						});
-					});
-
-					describe("income", () => {
-						beforeEach(() => transactionIndexView.firstCategory().then(row => targetRow = row));
-
-						beforeEach(editRow);
-
-						beforeEach(() => {
-							// Check that the edit form is correctly populated
-							checkEditFormMatchesIndexRow(targetRow);
-
-							expected = {categoryName: "ZZZ Test category (edited)", direction: "outflow"};
-							transactionEditView.enterCategoryDetails(expected);
-						});
-
-						commonBehaviour();
-
-						it("should update an existing category when the save button is clicked", () => {
-							transactionEditView.save();
-
-							// Row count should not have changed
-							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-							// After editing, the row should now be the last category
-							transactionIndexView.lastCategory().then(row => transactionIndexView.checkRowValues(row, expected));
-						});
-					});
-				});
-
-				describe("subcategory", () => {
-					describe("income", () => {
-						beforeEach(() => transactionIndexView.firstSubcategory().then(row => targetRow = row));
-
-						beforeEach(editRow);
-
-						beforeEach(() => {
-							// Check that the edit form is correctly populated
-							checkEditFormMatchesIndexRow(targetRow);
-
-							expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited", direction: "outflow", isSubcategory: true};
-							transactionEditView.enterCategoryDetails(expected);
-						});
-
-						commonBehaviour();
-
-						it("should update an existing category when the save button is clicked", () => {
-							transactionEditView.save();
-
-							// Row count should not have changed
-							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-							// After editing, the row should now be the last subcategory
-							transactionIndexView.lastSubcategory().then(row => transactionIndexView.checkRowValues(row, expected));
-						});
-					});
-
-					describe("expense", () => {
-						beforeEach(() => transactionIndexView.lastSubcategory().then(row => targetRow = row));
-
-						beforeEach(editRow);
-
-						beforeEach(() => {
-							// Check that the edit form is correctly populated
-							checkEditFormMatchesIndexRow(targetRow);
-
-							expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
-							transactionEditView.enterCategoryDetails(expected);
-						});
-
-						commonBehaviour();
-
-						it("should update an existing category when the save button is clicked", () => {
-							transactionEditView.save();
-
-							// Row count should not have changed
-							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-							// After editing, the row should now be the first subcategory
-							transactionIndexView.firstSubcategory().then(row => transactionIndexView.checkRowValues(row, expected));
-						});
-					});
-				});
-			});
-			*/
+			/*
+			 * Not implemented yet
+			 *
+			 *			describe("editing a category", () => {
+			 *				describe("parent", () => {
+			 *					describe("expense", () => {
+			 *						beforeEach(() => transactionIndexView.lastCategory().then(row => targetRow = row));
+			 *
+			 *						beforeEach(editRow);
+			 *
+			 *						beforeEach(() => {
+			 *							// Check that the edit form is correctly populated
+			 *							checkEditFormMatchesIndexRow(targetRow);
+			 *
+			 *							expected = {categoryName: "AA Test category (edited)", direction: "inflow"};
+			 *							transactionEditView.enterCategoryDetails(expected);
+			 *						});
+			 *
+			 *						commonBehaviour();
+			 *
+			 *						it("should update an existing category when the save button is clicked", () => {
+			 *							transactionEditView.save();
+			 *
+			 *							// Row count should not have changed
+			 *							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+			 *
+			 *							// After editing, the row should now be the first category
+			 *							transactionIndexView.firstCategory().then(row => transactionIndexView.checkRowValues(row, expected));
+			 *						});
+			 *					});
+			 *
+			 *					describe("income", () => {
+			 *						beforeEach(() => transactionIndexView.firstCategory().then(row => targetRow = row));
+			 *
+			 *						beforeEach(editRow);
+			 *
+			 *						beforeEach(() => {
+			 *							// Check that the edit form is correctly populated
+			 *							checkEditFormMatchesIndexRow(targetRow);
+			 *
+			 *							expected = {categoryName: "ZZZ Test category (edited)", direction: "outflow"};
+			 *							transactionEditView.enterCategoryDetails(expected);
+			 *						});
+			 *
+			 *						commonBehaviour();
+			 *
+			 *						it("should update an existing category when the save button is clicked", () => {
+			 *							transactionEditView.save();
+			 *
+			 *							// Row count should not have changed
+			 *							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+			 *
+			 *							// After editing, the row should now be the last category
+			 *							transactionIndexView.lastCategory().then(row => transactionIndexView.checkRowValues(row, expected));
+			 *						});
+			 *					});
+			 *				});
+			 *
+			 *				describe("subcategory", () => {
+			 *					describe("income", () => {
+			 *						beforeEach(() => transactionIndexView.firstSubcategory().then(row => targetRow = row));
+			 *
+			 *						beforeEach(editRow);
+			 *
+			 *						beforeEach(() => {
+			 *							// Check that the edit form is correctly populated
+			 *							checkEditFormMatchesIndexRow(targetRow);
+			 *
+			 *							expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited", direction: "outflow", isSubcategory: true};
+			 *							transactionEditView.enterCategoryDetails(expected);
+			 *						});
+			 *
+			 *						commonBehaviour();
+			 *
+			 *						it("should update an existing category when the save button is clicked", () => {
+			 *							transactionEditView.save();
+			 *
+			 *							// Row count should not have changed
+			 *							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+			 *
+			 *							// After editing, the row should now be the last subcategory
+			 *							transactionIndexView.lastSubcategory().then(row => transactionIndexView.checkRowValues(row, expected));
+			 *						});
+			 *					});
+			 *
+			 *					describe("expense", () => {
+			 *						beforeEach(() => transactionIndexView.lastSubcategory().then(row => targetRow = row));
+			 *
+			 *						beforeEach(editRow);
+			 *
+			 *						beforeEach(() => {
+			 *							// Check that the edit form is correctly populated
+			 *							checkEditFormMatchesIndexRow(targetRow);
+			 *
+			 *							expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
+			 *							transactionEditView.enterCategoryDetails(expected);
+			 *						});
+			 *
+			 *						commonBehaviour();
+			 *
+			 *						it("should update an existing category when the save button is clicked", () => {
+			 *							transactionEditView.save();
+			 *
+			 *							// Row count should not have changed
+			 *							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+			 *
+			 *							// After editing, the row should now be the first subcategory
+			 *							transactionIndexView.firstSubcategory().then(row => transactionIndexView.checkRowValues(row, expected));
+			 *						});
+			 *					});
+			 *				});
+			 *			});
+			 */
 		});
 	});
 });

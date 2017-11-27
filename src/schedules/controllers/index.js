@@ -108,8 +108,10 @@ export default class ScheduleIndexController {
 			// Resort the array
 			this.schedules.sort(byNextDueDateAndId);
 
-			// If we entered or skipped a transaction, refocus the schedule now at the original index,
-			// otherwise refocus the schedule that was edited
+			/*
+			 * If we entered or skipped a transaction, refocus the schedule now at the original index,
+			 * otherwise refocus the schedule that was edited
+			 */
 			this.focusSchedule(schedule.skipped ? this.schedules[index].id : schedule.data.id);
 		}).finally(() => (this.ogTableNavigableService.enabled = true));
 	}

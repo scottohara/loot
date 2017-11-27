@@ -28,9 +28,11 @@ export default class DirectiveTest {
 		this.scope = this.$rootScope.$new();
 	}
 
-	// Compiles the directive and returns an array containing
-	// - the DOM element into which the directive was compiled
-	// - the scope object that it was compiled with
+	/*
+	 * Compiles the directive and returns an array containing
+	 * - the DOM element into which the directive was compiled
+	 * - the scope object that it was compiled with
+	 */
 	compile(options = {}, replace) {
 		let directive;
 

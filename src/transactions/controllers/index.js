@@ -548,8 +548,10 @@ export default class TransactionIndexController {
 
 	// Helper function for switching states
 	switchTo($event, state, id, transaction) {
-		// For Subtransactions, don't switch to the parent
-		// (only applies when switching between Category <=> Subcategory transaction lists)
+		/*
+		 * For Subtransactions, don't switch to the parent
+		 * (only applies when switching between Category <=> Subcategory transaction lists)
+		 */
 		if ("Sub" === transaction.transaction_type) {
 			transaction.parent_id = null;
 		}

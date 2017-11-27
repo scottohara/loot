@@ -75,16 +75,20 @@ const path = require("path"),
 			// Cleans the build directory
 			cleanBuildDirectory = new CleanWebpackPlugin(["./public"]),
 
-			// Exposes a global jQuery object (Bootstrap expects this global to exist)
-			// window.jQuery is needed to prevent Angular from using jqLite
+			/*
+			 * Exposes a global jQuery object (Bootstrap expects this global to exist)
+			 * window.jQuery is needed to prevent Angular from using jqLite
+			 */
 			providejQuery = new webpack.ProvidePlugin({
 				$: "jquery",
 				jQuery: "jquery",
 				"window.jQuery": "jquery"
 			}),
 
-			// Ensures all vendor dependencies are bundled separately to app code, and that the webpack manifest is kept
-			// separate so that changes to app code don't change the hash of the vendor chunk (or vice versa)
+			/*
+			 * Ensures all vendor dependencies are bundled separately to app code, and that the webpack manifest is kept
+			 * separate so that changes to app code don't change the hash of the vendor chunk (or vice versa)
+			 */
 			separateBundles = new webpack.optimize.CommonsChunkPlugin({
 				names: [
 					"vendor",
@@ -177,8 +181,10 @@ function defineEnvironment(env) {
 	return new webpack.DefinePlugin({"process.env.NODE_ENV": JSON.stringify(`${env}`)});
 }
 
-// Creates external *.css files from any imported styles (e.g. import "./my-styles.css";)
-// Note: HtmlWebpackPlugin injects <link> tags in the order listed in the plugins array, so vendor must be first
+/*
+ * Creates external *.css files from any imported styles (e.g. import "./my-styles.css";)
+ * Note: HtmlWebpackPlugin injects <link> tags in the order listed in the plugins array, so vendor must be first
+ */
 function extractAppCss(hashFilename) {
 	return new ExtractTextPlugin({
 		filename: hashFilename ? "app-[contenthash:6].css" : "app.css",

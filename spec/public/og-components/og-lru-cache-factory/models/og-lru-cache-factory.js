@@ -172,8 +172,8 @@ describe("ogLruCacheFactory", () => {
 						ogLruCache.tail = id;
 
 						ogLruCache.remove(id);
-						(Boolean(ogLruCache.head)).should.be.false;
-						(Boolean(ogLruCache.tail)).should.be.false;
+						Boolean(ogLruCache.head).should.be.false;
+						Boolean(ogLruCache.tail).should.be.false;
 					});
 
 					it("should remove an item from the head of the list", () => {

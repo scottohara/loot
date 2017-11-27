@@ -37,39 +37,42 @@ describe("scheduleEditView", () => {
 			it("should not enable the save button", () => scheduleEditView.saveButton.isEnabled().should.eventually.be.false);
 
 			// MISSING - category name, parent & direction should show red cross when invalid
+
 			// MISSING - form group around category name & parent should have 'has-error' class when invalid
+
 			// MISSING - parent should behave like non-editable typeahead
 		});
 
 		// MISSING - error message should display when present
+
 		// MISSING - category name & parent text should be selected when input gets focus
 	}
 
 	// Edits the target index row
 	/*
-	function editRow() {
-		targetRow.evaluate("$index").then(index => {
-			// Enter an existing schedule
-			scheduleIndexView.enterSchedule(index);
-			waitForScheduleEditView("Enter");
-		});
-	}
-	*/
+	 *	function editRow() {
+	 *		targetRow.evaluate("$index").then(index => {
+	 *			// Enter an existing schedule
+	 *			scheduleIndexView.enterSchedule(index);
+	 *			waitForScheduleEditView("Enter");
+	 *		});
+	 *	}
+	 */
 
 	// Checks the values in the edit form against the values from an index row
 	/*
-	function checkEditFormMatchesIndexRow(row) {
-		scheduleIndexView.getRowValues(row).then(values => {
-			// MISSING
-			scheduleEditView.categoryNameInput.getAttribute("value").should.eventually.equal(values.categoryName);
-			if (!values.isSubcategory) {
-				scheduleEditView.directionRadioButton(values.direction, true).isPresent().should.eventually.be.true;
-			} else {
-				scheduleEditView.categoryParentInput.getAttribute("value").should.eventually.equal(values.categoryParent);
-			}
-		});
-	}
-	*/
+	 *	function checkEditFormMatchesIndexRow(row) {
+	 *		scheduleIndexView.getRowValues(row).then(values => {
+	 *			// MISSING
+	 *			scheduleEditView.categoryNameInput.getAttribute("value").should.eventually.equal(values.categoryName);
+	 *			if (!values.isSubcategory) {
+	 *				scheduleEditView.directionRadioButton(values.direction, true).isPresent().should.eventually.be.true;
+	 *			} else {
+	 *				scheduleEditView.categoryParentInput.getAttribute("value").should.eventually.equal(values.categoryParent);
+	 *			}
+	 *		});
+	 *	}
+	 */
 
 	beforeEach(() => {
 		scheduleIndexView = require("./index");
@@ -337,115 +340,117 @@ describe("scheduleEditView", () => {
 		});
 	});
 
-	/* Not implemented yet
-	describe("editing a category", () => {
-		describe("parent", () => {
-			describe("expense", () => {
-				beforeEach(() => scheduleIndexView.lastCategory().then(row => targetRow = row));
-
-				beforeEach(editRow);
-
-				beforeEach(() => {
-					// Check that the edit form is correctly populated
-					checkEditFormMatchesIndexRow(targetRow);
-
-					expected = {categoryName: "AA Test category (edited)", direction: "inflow"};
-					scheduleEditView.enterCategoryDetails(expected);
-				});
-
-				commonBehaviour();
-
-				it("should update an existing category when the save button is clicked", () => {
-					scheduleEditView.save();
-
-					// Row count should not have changed
-					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-					// After editing, the row should now be the first category
-					scheduleIndexView.firstCategory().then(row => scheduleIndexView.checkRowValues(row, expected));
-				});
-			});
-
-			describe("income", () => {
-				beforeEach(() => scheduleIndexView.firstCategory().then(row => targetRow = row));
-
-				beforeEach(editRow);
-
-				beforeEach(() => {
-					// Check that the edit form is correctly populated
-					checkEditFormMatchesIndexRow(targetRow);
-
-					expected = {categoryName: "ZZZ Test category (edited)", direction: "outflow"};
-					scheduleEditView.enterCategoryDetails(expected);
-				});
-
-				commonBehaviour();
-
-				it("should update an existing category when the save button is clicked", () => {
-					scheduleEditView.save();
-
-					// Row count should not have changed
-					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-					// After editing, the row should now be the last category
-					scheduleIndexView.lastCategory().then(row => scheduleIndexView.checkRowValues(row, expected));
-				});
-			});
-		});
-
-		describe("subcategory", () => {
-			describe("income", () => {
-				beforeEach(() => scheduleIndexView.firstSubcategory().then(row => targetRow = row));
-
-				beforeEach(editRow);
-
-				beforeEach(() => {
-					// Check that the edit form is correctly populated
-					checkEditFormMatchesIndexRow(targetRow);
-
-					expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited", direction: "outflow", isSubcategory: true};
-					scheduleEditView.enterCategoryDetails(expected);
-				});
-
-				commonBehaviour();
-
-				it("should update an existing category when the save button is clicked", () => {
-					scheduleEditView.save();
-
-					// Row count should not have changed
-					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-					// After editing, the row should now be the last subcategory
-					scheduleIndexView.lastSubcategory().then(row => scheduleIndexView.checkRowValues(row, expected));
-				});
-			});
-
-			describe("expense", () => {
-				beforeEach(() => scheduleIndexView.lastSubcategory().then(row => targetRow = row));
-
-				beforeEach(editRow);
-
-				beforeEach(() => {
-					// Check that the edit form is correctly populated
-					checkEditFormMatchesIndexRow(targetRow);
-
-					expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
-					scheduleEditView.enterCategoryDetails(expected);
-				});
-
-				commonBehaviour();
-
-				it("should update an existing category when the save button is clicked", () => {
-					scheduleEditView.save();
-
-					// Row count should not have changed
-					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
-
-					// After editing, the row should now be the first subcategory
-					scheduleIndexView.firstSubcategory().then(row => scheduleIndexView.checkRowValues(row, expected));
-				});
-			});
-		});
-	});
-	*/
+	/*
+	 * Not implemented yet
+	 *
+	 *	describe("editing a category", () => {
+	 *		describe("parent", () => {
+	 *			describe("expense", () => {
+	 *				beforeEach(() => scheduleIndexView.lastCategory().then(row => targetRow = row));
+	 *
+	 *				beforeEach(editRow);
+	 *
+	 *				beforeEach(() => {
+	 *					// Check that the edit form is correctly populated
+	 *					checkEditFormMatchesIndexRow(targetRow);
+	 *
+	 *					expected = {categoryName: "AA Test category (edited)", direction: "inflow"};
+	 *					scheduleEditView.enterCategoryDetails(expected);
+	 *				});
+	 *
+	 *				commonBehaviour();
+	 *
+	 *				it("should update an existing category when the save button is clicked", () => {
+	 *					scheduleEditView.save();
+	 *
+	 *					// Row count should not have changed
+	 *					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+	 *
+	 *					// After editing, the row should now be the first category
+	 *					scheduleIndexView.firstCategory().then(row => scheduleIndexView.checkRowValues(row, expected));
+	 *				});
+	 *			});
+	 *
+	 *			describe("income", () => {
+	 *				beforeEach(() => scheduleIndexView.firstCategory().then(row => targetRow = row));
+	 *
+	 *				beforeEach(editRow);
+	 *
+	 *				beforeEach(() => {
+	 *					// Check that the edit form is correctly populated
+	 *					checkEditFormMatchesIndexRow(targetRow);
+	 *
+	 *					expected = {categoryName: "ZZZ Test category (edited)", direction: "outflow"};
+	 *					scheduleEditView.enterCategoryDetails(expected);
+	 *				});
+	 *
+	 *				commonBehaviour();
+	 *
+	 *				it("should update an existing category when the save button is clicked", () => {
+	 *					scheduleEditView.save();
+	 *
+	 *					// Row count should not have changed
+	 *					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+	 *
+	 *					// After editing, the row should now be the last category
+	 *					scheduleIndexView.lastCategory().then(row => scheduleIndexView.checkRowValues(row, expected));
+	 *				});
+	 *			});
+	 *		});
+	 *
+	 *		describe("subcategory", () => {
+	 *			describe("income", () => {
+	 *				beforeEach(() => scheduleIndexView.firstSubcategory().then(row => targetRow = row));
+	 *
+	 *				beforeEach(editRow);
+	 *
+	 *				beforeEach(() => {
+	 *					// Check that the edit form is correctly populated
+	 *					checkEditFormMatchesIndexRow(targetRow);
+	 *
+	 *					expected = {categoryName: "ZZZ Test subcategory (edited)", categoryParent: "ZZZ Test category (edited", direction: "outflow", isSubcategory: true};
+	 *					scheduleEditView.enterCategoryDetails(expected);
+	 *				});
+	 *
+	 *				commonBehaviour();
+	 *
+	 *				it("should update an existing category when the save button is clicked", () => {
+	 *					scheduleEditView.save();
+	 *
+	 *					// Row count should not have changed
+	 *					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+	 *
+	 *					// After editing, the row should now be the last subcategory
+	 *					scheduleIndexView.lastSubcategory().then(row => scheduleIndexView.checkRowValues(row, expected));
+	 *				});
+	 *			});
+	 *
+	 *			describe("expense", () => {
+	 *				beforeEach(() => scheduleIndexView.lastSubcategory().then(row => targetRow = row));
+	 *
+	 *				beforeEach(editRow);
+	 *
+	 *				beforeEach(() => {
+	 *					// Check that the edit form is correctly populated
+	 *					checkEditFormMatchesIndexRow(targetRow);
+	 *
+	 *					expected = {categoryName: "AAA Test subcategory (edited)", categoryParent: "AAA Test categor", direction: "inflow", isSubcategory: true};
+	 *					scheduleEditView.enterCategoryDetails(expected);
+	 *				});
+	 *
+	 *				commonBehaviour();
+	 *
+	 *				it("should update an existing category when the save button is clicked", () => {
+	 *					scheduleEditView.save();
+	 *
+	 *					// Row count should not have changed
+	 *					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount);
+	 *
+	 *					// After editing, the row should now be the first subcategory
+	 *					scheduleIndexView.firstSubcategory().then(row => scheduleIndexView.checkRowValues(row, expected));
+	 *				});
+	 *			});
+	 *		});
+	 *	});
+	 */
 });

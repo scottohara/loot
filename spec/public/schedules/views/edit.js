@@ -169,8 +169,10 @@ class ScheduleEditView {
 		this.frequencyTypeahead.clear();
 
 		// Next due date
-		// MISSING - can't clear date input (https://github.com/angular/protractor/issues/562)
-		// this.nextDueDateInput.clear();
+		/*
+		 * MISSING - can't clear date input (https://github.com/angular/protractor/issues/562)
+		 * this.nextDueDateInput.clear();
+		 */
 
 		// Payee
 		this.payeeTypeahead.clear();

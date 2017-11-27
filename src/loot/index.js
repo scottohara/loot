@@ -37,18 +37,16 @@ angular.module("lootApp", [
 	.config(["$urlServiceProvider", "lootStatesProvider", $urlServiceProvider => $urlServiceProvider.rules.otherwise("/accounts")])
 
 	// Runtime initialisation
-	.run(["$rootScope", "$window", "$state", "ogNavigatorServiceWorkerService",
-		($rootScope, $window, $state, ogNavigatorServiceWorkerService) => {
-			// Ensure that jQuery is available on the $window service
-			$window.$ = $;
+	.run(["$rootScope", "$window", "$state", "ogNavigatorServiceWorkerService", ($rootScope, $window, $state, ogNavigatorServiceWorkerService) => {
+		// Ensure that jQuery is available on the $window service
+		$window.$ = $;
 
-			// Ensure that the $state service is accessible from the $rootScope
-			$rootScope.$state = $state;
+		// Ensure that the $state service is accessible from the $rootScope
+		$rootScope.$state = $state;
 
-			// ServiceWorker registration
-			ogNavigatorServiceWorkerService.register("/service-worker.js");
-		}
-	]);
+		// ServiceWorker registration
+		ogNavigatorServiceWorkerService.register("/service-worker.js");
+	}]);
 
 angular.module("lootStates", [
 	"ui.bootstrap",

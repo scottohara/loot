@@ -171,8 +171,7 @@ export default class OgInputCalculatorDirective {
 
 				// Declare key handler to detect operators and actions
 				scope.keyHandler = event => {
-					// Check if the key pressed was an action key, and there is a pending calculation
-					// (otherwise, let the event propagate)
+					// Check if the key pressed was an action key, and there is a pending calculation (otherwise, let the event propagate)
 					if (!event.shiftKey && Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length > 0) {
 						// Invoke the action
 						ACTION_KEYS[event.keyCode]();

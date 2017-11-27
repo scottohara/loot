@@ -89,8 +89,7 @@ export default class OgTableNavigableDirective {
 					}
 				};
 
-				// Helper function to determine the parent TR element (that is a direct descendent of the element for this directive)
-				// where an event occurred
+				// Helper function to determine the parent TR element (that is a direct descendent of the element for this directive) where an event occurred
 				function closestRow(target) {
 					return $window.$(target).closest("[og-table-navigable] > tbody > tr");
 				}
@@ -222,8 +221,7 @@ export default class OgTableNavigableDirective {
 					}
 				};
 
-				// Attach the event handlers
-				// (The handlers are wrapped in functions to aid with unit testing)
+				// Attach the event handlers (the handlers are wrapped in functions to aid with unit testing)
 				function clickHandler(event) {
 					scope.clickHandler(event);
 				}

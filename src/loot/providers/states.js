@@ -30,19 +30,13 @@ export default class LootStatesProvider {
 					title: `${parentContext.charAt(0).toUpperCase() + parentContext.substring(1)} Transactions`
 				},
 				resolve: {
-					contextModel: ["authenticated", `${parentContext}Model`,
-						(authenticated, contextModel) => authenticated && contextModel
-					],
-					context: ["authenticated", "$stateParams", "contextModel",
-						(authenticated, $stateParams, contextModel) => authenticated && contextModel.find($stateParams.id)
-					],
-					transactionBatch: ["authenticated", "transactionModel", "contextModel", "context",
-						(authenticated, transactionModel, contextModel, context) => {
-							const unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
+					contextModel: ["authenticated", `${parentContext}Model`, (authenticated, contextModel) => authenticated && contextModel],
+					context: ["authenticated", "$stateParams", "contextModel", (authenticated, $stateParams, contextModel) => authenticated && contextModel.find($stateParams.id)],
+					transactionBatch: ["authenticated", "transactionModel", "contextModel", "context", (authenticated, transactionModel, contextModel, context) => {
+						const unreconciledOnly = contextModel.isUnreconciledOnly ? contextModel.isUnreconciledOnly(context.id) : false;
 
-							return authenticated && transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
-						}
-					]
+						return authenticated && transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
+					}]
 				},
 				views: transactionViews
 			};
@@ -64,24 +58,22 @@ export default class LootStatesProvider {
 					title: "Welcome"
 				},
 				resolve: {
-					authenticated: ["$uibModal", "authenticationModel",
-						($uibModal, authenticationModel) => {
-							// Check if the user is authenticated
-							if (!authenticationModel.isAuthenticated) {
-								// Not authenticated, show the login modal
-								return $uibModal.open({
-									templateUrl: AuthenticationEditView,
-									controller: "AuthenticationEditController",
-									controllerAs: "vm",
-									backdrop: "static",
-									size: "sm"
-								}).result.then(() => authenticationModel.isAuthenticated).catch(() => false);
-							}
-
-							// User is authenticated
-							return true;
+					authenticated: ["$uibModal", "authenticationModel",	($uibModal, authenticationModel) => {
+						// Check if the user is authenticated
+						if (!authenticationModel.isAuthenticated) {
+							// Not authenticated, show the login modal
+							return $uibModal.open({
+								templateUrl: AuthenticationEditView,
+								controller: "AuthenticationEditController",
+								controllerAs: "vm",
+								backdrop: "static",
+								size: "sm"
+							}).result.then(() => authenticationModel.isAuthenticated).catch(() => false);
 						}
-					]
+
+						// User is authenticated
+						return true;
+					}]
 				}
 			})
 			.state("root.accounts", {
@@ -93,9 +85,7 @@ export default class LootStatesProvider {
 					title: "Accounts"
 				},
 				resolve: {
-					accounts: ["authenticated", "accountModel",
-						(authenticated, accountModel) => authenticated && accountModel.allWithBalances()
-					]
+					accounts: ["authenticated", "accountModel", (authenticated, accountModel) => authenticated && accountModel.allWithBalances()]
 				}
 			})
 			.state("root.accounts.account", basicState())
@@ -110,9 +100,7 @@ export default class LootStatesProvider {
 					title: "Schedules"
 				},
 				resolve: {
-					schedules: ["authenticated", "scheduleModel",
-						(authenticated, scheduleModel) => authenticated && scheduleModel.all()
-					]
+					schedules: ["authenticated", "scheduleModel", (authenticated, scheduleModel) => authenticated && scheduleModel.all()]
 				}
 			})
 			.state("root.schedules.schedule", basicState())
@@ -125,9 +113,7 @@ export default class LootStatesProvider {
 					title: "Payees"
 				},
 				resolve: {
-					payees: ["authenticated", "payeeModel",
-						(authenticated, payeeModel) => authenticated && payeeModel.allList()
-					]
+					payees: ["authenticated", "payeeModel", (authenticated, payeeModel) => authenticated && payeeModel.allList()]
 				}
 			})
 			.state("root.payees.payee", basicState())
@@ -142,9 +128,7 @@ export default class LootStatesProvider {
 					title: "Categories"
 				},
 				resolve: {
-					categories: ["authenticated", "categoryModel",
-						(authenticated, categoryModel) => authenticated && categoryModel.allWithChildren()
-					]
+					categories: ["authenticated", "categoryModel", (authenticated, categoryModel) => authenticated && categoryModel.allWithChildren()]
 				}
 			})
 			.state("root.categories.category", basicState())
@@ -159,9 +143,7 @@ export default class LootStatesProvider {
 					title: "Securities"
 				},
 				resolve: {
-					securities: ["authenticated", "securityModel",
-						(authenticated, securityModel) => authenticated && securityModel.allWithBalances()
-					]
+					securities: ["authenticated", "securityModel", (authenticated, securityModel) => authenticated && securityModel.allWithBalances()]
 				}
 			})
 			.state("root.securities.security", basicState())
@@ -173,39 +155,29 @@ export default class LootStatesProvider {
 					title: "Search Transactions"
 				},
 				resolve: {
-					previousState: ["$state",
-						$state => {
-							if (!$state.includes("root.transactions")) {
-								return {
-									name: $state.current.name,
-									params: Object.assign({}, $state.params)
-								};
-							}
-
-							return null;
+					previousState: ["$state", $state => {
+						if (!$state.includes("root.transactions")) {
+							return {
+								name: $state.current.name,
+								params: Object.assign({}, $state.params)
+							};
 						}
-					],
+
+						return null;
+					}],
 					contextModel: () => null,
-					context: ["$stateParams",
-						$stateParams => $stateParams.query
-					],
-					transactionBatch: ["authenticated", "transactionModel", "context",
-						(authenticated, transactionModel, context) => authenticated && transactionModel.query(context, null, "prev")
-					]
+					context: ["$stateParams", $stateParams => $stateParams.query],
+					transactionBatch: ["authenticated", "transactionModel", "context", (authenticated, transactionModel, context) => authenticated && transactionModel.query(context, null, "prev")]
 				},
 				views: transactionViews,
-				onEnter: ["$stateParams", "queryService", "previousState",
-					($stateParams, queryService, previousState) => {
-						queryService.previousState = previousState || queryService.previousState;
-						queryService.query = $stateParams.query;
-					}
-				],
-				onExit: ["queryService",
+				onEnter: ["$stateParams", "queryService", "previousState", ($stateParams, queryService, previousState) => {
+					queryService.previousState = previousState || queryService.previousState;
+					queryService.query = $stateParams.query;
+				}],
+				onExit: ["queryService", queryService => {
 					// Can't use concise function body because implicit return of 'false' causes route transition to cancel in ui-router@1.x
-					queryService => {
-						queryService.query = null;
-					}
-				]
+					queryService.query = null;
+				}]
 			})
 			.state("root.transactions.transaction", transactionState());
 

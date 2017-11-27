@@ -29,10 +29,12 @@ describe("securityEditView", () => {
 			it("should not enable the save button", () => securityEditView.saveButton.isEnabled().should.eventually.be.false);
 
 			// MISSING - security name should show red cross when invalid
+
 			// MISSING - form group around security name should have 'has-error' class when invalid
 		});
 
 		// MISSING - error message should display when present
+
 		// MISSING - security name text should be selected when input gets focus
 	}
 

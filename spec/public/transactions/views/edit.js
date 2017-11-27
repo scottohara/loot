@@ -149,8 +149,10 @@ class TransactionEditView {
 		}
 
 		// Transaction date
-		// MISSING - can't clear date input (https://github.com/angular/protractor/issues/562)
-		// this.transactionDateInput.clear();
+		/*
+		 * MISSING - can't clear date input (https://github.com/angular/protractor/issues/562)
+		 * this.transactionDateInput.clear();
+		 */
 
 		// Payee
 		this.payeeTypeahead.isPresent().then(isPresent => {
