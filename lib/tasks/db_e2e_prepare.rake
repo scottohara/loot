@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'factory_girl' unless ENV[:RACK_ENV.to_s].eql? 'production'
+require 'factory_bot' unless ENV[:RACK_ENV.to_s].eql? 'production'
 
 namespace :db do
 	namespace :e2e do
