@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"baseUrl": ".",
+		"paths": {
+			"*": [
+				"src/*",
+				"spec/public/*"
+			]
+		},
+		"module": "es2015",
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"pretty": true,
+		"sourceMap": true,
+		"strictNullChecks": true,
+		"target": "ES2017"
+	},
+	"include": [
+		"src/**/*.ts",
+		"spec/public/**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

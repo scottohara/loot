@@ -1,4 +1,5 @@
-const merge = require("webpack-merge"),
+const path = require("path"),
+			merge = require("webpack-merge"),
 			{
 				defineEnvironment,
 				providejQuery,
@@ -12,6 +13,11 @@ module.exports = merge(config, {
 				test: /\.(less|css)$/,
 				loader: "ignore-loader"
 			}
+		]
+	},
+	resolve: {
+		modules: [
+			path.resolve(__dirname, "spec", "public")
 		]
 	},
 	devtool: "inline-source-map",

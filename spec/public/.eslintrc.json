@@ -1,10 +1,7 @@
 {
-	"globals": {
-		"inject": false,
-		"sinon": false
-	},
 	"rules": {
 		// Best practices
+		"dot-notation": "off"	,														// Disable to allow accessing private members using square-bracket notation
 		"no-magic-numbers": "off",												// Disable due to lots of numbers used in assertions
 		"no-unused-expressions": "off",										// Disable to allow Chai should syntax
 

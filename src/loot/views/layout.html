@@ -20,7 +20,7 @@
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent accounts</li>
-						<li ng-repeat="account in vm.recentlyAccessedAccounts">
+						<li ng-repeat="account in vm.recentlyAccessedAccounts track by account.id">
 							<a ui-sref="root.accounts.account.transactions({id: {{::account.id}}})">{{::account.name}}</a>
 						</li>
 					</ul>
@@ -36,7 +36,7 @@
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent payees</li>
-						<li ng-repeat="payee in vm.recentlyAccessedPayees">
+						<li ng-repeat="payee in vm.recentlyAccessedPayees track by payee.id">
 							<a ui-sref="root.payees.payee.transactions({id: {{::payee.id}}})">{{::payee.name}}</a>
 						</li>
 					</ul>
@@ -49,7 +49,7 @@
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent categories</li>
-						<li ng-repeat="category in vm.recentlyAccessedCategories">
+						<li ng-repeat="category in vm.recentlyAccessedCategories track by category.id">
 							<a ui-sref="root.categories.category.transactions({id: {{::category.id}}})">{{::category.name}}</a>
 						</li>
 					</ul>
@@ -62,7 +62,7 @@
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent securities</li>
-						<li ng-repeat="security in vm.recentlyAccessedSecurities">
+						<li ng-repeat="security in vm.recentlyAccessedSecurities track by security.id">
 							<a ui-sref="root.securities.security.transactions({id: {{::security.id}}})">{{::security.name}}</a>
 						</li>
 					</ul>

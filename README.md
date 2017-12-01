@@ -61,7 +61,7 @@ Backend specs are implemented using [RSpec](http://rspec.info/):
 
 Integration tests are implemented using [Protractor](http://www.protractortest.org/#/):
 
-1. Start the database server and app server in test mode (`npm test:e2e`)
+1. Start the database server and app server in test mode (`npm run test:e2e`)
 2. Prepare the test data fixtures (`rake db:e2e:prepare`)
 3. Run the test suite (`protractor`). To run specific suites, use the `--suite` argument (e.g. `protractor --suite authentication,accounts`)
 

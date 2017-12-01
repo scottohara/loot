@@ -1,7 +1,83 @@
 {
 	"extends": "oharagroup",
+	"parser": "typescript-eslint-parser",
+	"plugins": [
+		"typescript"
+	],
 	"env": {
-		"mocha": true,
 		"protractor": true
+	},
+	"rules": {
+		"camelcase": "off",		// disabled for camelcase in interfaces
+		"no-empty-function": "off",  // disabled for concise constructors
+		"no-extra-parens": "off",	// disabled for type guards (e.g. ((<Foo>this).bar) => {...})
+		"no-undef": "off",		// disabled for private class properties
+		"no-unused-vars": "off",	// disabled for shorthand constructor params
+		"no-useless-constructor": "off",  // disabled for concise constructors
+
+		"typescript/adjacent-overload-signatures": "error",
+		"typescript/class-name-casing": "error",
+		"typescript/explicit-function-return-type": "error",
+		"typescript/explicit-member-accessibility": "error",
+		"typescript/interface-name-prefix": ["error", "never"],
+		"typescript/member-delimiter-style": ["error", {
+			"delimiter": "semi",
+			"requireLast": true,
+			"ignoreSingleLine": true,
+			"overrides": {
+				"interface": {},
+				"typeLiteral": {}
+			}
+		}],
+		"typescript/member-naming": "off",
+		"typescript/member-ordering": "error",
+		"typescript/no-angle-bracket-type-assertion": "error",
+		"typescript/no-array-constructor": "error",
+		"typescript/no-empty-interface": "error",
+		"typescript/no-explicit-any": "error",
+		"typescript/no-namespace": ["error", {
+			"allowDeclarations": false,
+			"allowDefinitionFiles": false
+		}],
+		"typescript/no-parameter-properties": ["off", {
+			"allows": [
+				"readonly",
+				"private",
+				"protected",
+				"public",
+				"private readonly",
+				"protected readonly",
+				"public readonly"
+			]
+		}],
+		"typescript/no-triple-slash-reference": "error",
+		"typescript/no-type-alias": ["error", {
+			"allowAliases": "in-unions-and-intersections",
+			"allowCallbacks": true,
+			"allowLiterals": "in-unions-and-intersections",
+			"allowMappedTypes": "in-unions-and-intersections"
+		}],
+		"typescript/no-unused-vars": "error",
+		"typescript/no-use-before-define": ["error", {
+			"functions": true,
+			"classes": true,
+			"variables": true,
+			"typedefs": true
+		}],
+		"typescript/prefer-namespace-keyword": "error",
+		"typescript/type-annotation-spacing": ["error", {
+			"before": false,
+			"after": true,
+			"overrides": {
+				"colon": {
+					"before": false,
+					"after": true
+				},
+				"arrow": {
+					"before": true,
+					"after": true
+				}
+			}
+		}]
 	}
 }

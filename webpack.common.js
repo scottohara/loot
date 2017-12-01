@@ -25,6 +25,12 @@ const path = require("path"),
 				path: path.resolve(__dirname, "public")
 			},
 
+			// Rule for *.ts processing
+			tsRule = {
+				test: /\.ts$/,
+				loader: "ts-loader"
+			},
+
 			// Rule for font processing
 			fontRule = {
 				test: /\.(ttf|woff|woff2|eot|svg)$/,
@@ -116,11 +122,18 @@ const path = require("path"),
 
 				// Default rules for all environments
 				module: {
-					rules: [htmlRule]
+					rules: [
+						tsRule,
+						htmlRule
+					]
 				},
 
 				// Default resolve paths
 				resolve: {
+					extensions: [
+						".ts",
+						".js"
+					],
 					modules: [
 						path.resolve(__dirname, "src"),
 						path.resolve(__dirname, "node_modules")

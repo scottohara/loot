@@ -19,16 +19,16 @@ module.exports = config => {
 		 * possible values: 'dots', 'progress'
 		 * available reporters: https://npmjs.org/browse/keyword/karma-reporter
 		 */
-		reporters: ["mocha", "coverage"],
+		reporters: ["mocha", "coverage-istanbul"],
 
-		coverageReporter: {
-			reporters: [
-				{type: "html", dir: "coverage"},
-				{type: "text"},
-				{type: "text-summary"},
-				{type: "lcovonly", dir: "coverage"}
-			],
-			subdir: "frontend"
+		coverageIstanbulReporter: {
+			reports: ["html", "text", "text-summary", "lcovonly"],
+			dir: "coverage",
+			fixWebpackSourcePaths: true,
+			"report-config": {
+				html: {subdir: "frontend"},
+				lcovonly: {file: "frontend/lcov.info"}
+			}
 		},
 
 		// Enable / disable watching file and executing tests whenever any file changes
