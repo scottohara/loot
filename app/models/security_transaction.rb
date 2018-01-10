@@ -31,11 +31,11 @@ class SecurityTransaction < Transaction
 	end
 
 	def validate_presence(attr)
-		errors[:base] << "#{attr.capitalize} can't be blank" if instance_eval "header.#{attr}.blank?"
+		errors[:base] << "#{attr.capitalize} can't be blank" if instance_eval "header.#{attr}.blank?", __FILE__, __LINE__
 	end
 
 	def validate_absence(attr)
-		errors[:base] << "#{attr.capitalize} must be blank" unless instance_eval "header.#{attr}.blank?"
+		errors[:base] << "#{attr.capitalize} must be blank" unless instance_eval "header.#{attr}.blank?", __FILE__, __LINE__
 	end
 
 	def as_json(options = {})

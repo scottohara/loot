@@ -26,6 +26,10 @@ Style/OptionHash:
 # Cops that rubocop enables by default, but we want to disable
 # ------------------------------------------------------------
 
+# Can't use :inverse_of due to self-referential and polymorphic associations
+Rails/InverseOf:
+  Enabled: false
+
 # Needed for update_all and update_column used in a few places
 Rails/SkipsModelValidations:
   Enabled: false
