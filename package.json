@@ -22,7 +22,7 @@
     "angular": "1.6.7",
     "angular-ui-bootstrap": "2.5.6",
     "babel-minify-webpack-plugin": "0.2.0",
-    "bootstrap": "3.3.7",
+    "bootstrap": "4.0.0",
     "clean-webpack-plugin": "0.1.17",
     "copy-webpack-plugin": "4.2.3",
     "css-loader": "0.28.7",
