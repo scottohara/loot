@@ -1,4 +1,4 @@
-engines:
+plugins:
   brakeman:
     enabled: true
 
@@ -30,12 +30,3 @@ engines:
 
   rubocop:
     enabled: false        # Disabled due to lack of support for inherit_gem https://github.com/codeclimate/codeclimate-eslint/issues/86
-
-ratings:
-  paths:
-    - Gemfile.lock
-    - "**/*.js"
-    - "**/*.rb"
-    - "**/*.less"
-
-exclude_paths:
