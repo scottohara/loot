@@ -160,6 +160,7 @@ class Account < ApplicationRecord
 			investment_accounts.each do |account|
 				cash_account = account_list[account['related_account_id']]
 				next if cash_account.nil?
+
 				cash_account.merge! account
 				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + cash_account['total_value'].to_f || 0
 			end

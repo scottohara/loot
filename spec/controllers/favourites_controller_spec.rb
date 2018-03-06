@@ -26,7 +26,7 @@ RSpec.describe FavouritesController, type: :controller do
 
 	before :each do
 		expect(context.class).to receive(:find).with('1').and_return context
-		expect(context).to receive(:update_attributes!).with favourite: favourite
+		expect(context).to receive(:update!).with favourite: favourite
 	end
 
 	describe 'PATCH update', request: true do

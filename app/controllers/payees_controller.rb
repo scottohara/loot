@@ -22,7 +22,7 @@ class PayeesController < ApplicationController
 
 	def update
 		payee = Payee.find params[:id]
-		payee.update_attributes!(name: params['name'])
+		payee.update!(name: params['name'])
 		render json: payee
 	end
 

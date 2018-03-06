@@ -59,7 +59,7 @@ RSpec.describe SecuritiesController, type: :controller do
 
 		it 'should update an existing security and return the details' do
 			expect(Security).to receive(:find).with('1').and_return security
-			expect(security).to receive(:update_attributes!).with request_body
+			expect(security).to receive(:update!).with request_body
 			expect(security).to receive(:as_json).and_return raw_json
 			patch :update, params: request_body.merge(id: '1')
 		end

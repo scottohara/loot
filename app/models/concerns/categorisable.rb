@@ -53,6 +53,7 @@ module Categorisable
 
 		def basic_subcategory(trx)
 			return if trx['parent_category_id'].blank?
+
 			{
 				id: trx['category_id'].to_s,
 				name: trx['category_name'],

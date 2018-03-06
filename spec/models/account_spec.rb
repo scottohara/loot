@@ -375,7 +375,7 @@ RSpec.describe Account, type: :model do
 
 		it 'should mark all cleared transactions as reconciled' do
 			trx = subject.transaction_accounts.where(status: nil).first
-			trx.update_attributes! status: 'Cleared'
+			trx.update! status: 'Cleared'
 
 			subject.reconcile
 

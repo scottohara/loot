@@ -21,7 +21,7 @@ class SecuritiesController < ApplicationController
 
 	def update
 		security = Security.find params[:id]
-		security.update_attributes!(name: params['name'], code: params['code'])
+		security.update!(name: params['name'], code: params['code'])
 		render json: security
 	end
 

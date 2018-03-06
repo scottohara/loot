@@ -21,7 +21,7 @@ class CategoriesController < ApplicationController
 
 	def update
 		category = Category.find params[:id]
-		category.update_attributes!(name: params['name'], direction: params['direction'], parent_id: params['parent_id'])
+		category.update!(name: params['name'], direction: params['direction'], parent_id: params['parent_id'])
 		render json: category
 	end
 

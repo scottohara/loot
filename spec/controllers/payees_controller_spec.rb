@@ -53,7 +53,7 @@ RSpec.describe PayeesController, type: :controller do
 
 		it 'should update an existing payee and return the details' do
 			expect(Payee).to receive(:find).with('1').and_return payee
-			expect(payee).to receive(:update_attributes!).with request_body
+			expect(payee).to receive(:update!).with request_body
 			expect(payee).to receive(:as_json).and_return raw_json
 			patch :update, params: request_body.merge(id: '1')
 		end

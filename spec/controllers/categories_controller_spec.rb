@@ -59,7 +59,7 @@ RSpec.describe CategoriesController, type: :controller do
 
 		it 'should update an existing category and return the details' do
 			expect(Category).to receive(:find).with('1').and_return category
-			expect(category).to receive(:update_attributes!).with request_body
+			expect(category).to receive(:update!).with request_body
 			expect(category).to receive(:as_json).and_return raw_json
 			patch :update, params: request_body.merge(id: '1')
 		end

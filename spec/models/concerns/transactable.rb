@@ -79,6 +79,7 @@ RSpec.shared_examples Transactable do
 				# ..and the same for any nested keys
 				nested_keys.each do |nested_key, keys|
 					next if transaction[nested_key].nil?
+
 					transaction[nested_key] = transaction[nested_key].extract!(*keys)
 					transaction[nested_key].compact!
 					transaction[nested_key] = nil if transaction[nested_key].empty?
