@@ -1,6 +1,6 @@
 describe("transactionEditView", () => {
-	const	{format} = require("date-fns"),
-				today = format(new Date(), "DD/MM/YYYY"),
+	const	{format} = require("date-fns");
+	const today = format(new Date(), "DD/MM/YYYY"),
 				transactions = {
 					"bank account 1": {
 						transactions: [

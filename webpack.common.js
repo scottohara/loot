@@ -5,10 +5,10 @@ const path = require("path"),
 			HtmlWebpackPlugin = require("html-webpack-plugin"),
 			CopyWebpackPlugin = require("copy-webpack-plugin"),
 			WorkboxWebpackPlugin = require("workbox-webpack-plugin"),
-			packageJson = require("./package"),
+			packageJson = require("./package");
 
 			// Default entry
-			entry = {
+const	entry = {
 				app: "loot",
 				vendor: [
 					"jquery",

@@ -18,8 +18,9 @@ const webpack = require("webpack"),
 				copyStaticAssets,
 				generateServiceWorker,
 				config
-			} = require("./webpack.common"),
-			appCss = extractAppCss(true),
+			} = require("./webpack.common");
+
+const	appCss = extractAppCss(true),
 			vendorCss = extractVendorCss(true);
 
 module.exports = merge(config, {

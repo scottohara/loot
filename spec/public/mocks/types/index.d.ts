@@ -88,11 +88,11 @@ export interface KeyboardEventMock extends EventMock {
 
 interface JQueryEventMock extends EventMock {
 	delegateTarget?: Element;
-	data?: any;
+	data?: undefined;
 	namespace?: string;
 	originalEvent?: Event;
 	relatedTarget?: Element;
-	result?: any;
+	result?: undefined;
 	pageX?: number;
 	pageY?: number;
 	isDefaultPrevented?(): boolean;

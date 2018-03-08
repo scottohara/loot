@@ -18,8 +18,9 @@ const webpack = require("webpack"),
 				createIndexHtml,
 				generateServiceWorker,
 				config
-			} = require("./webpack.common"),
-			appCss = extractAppCss(),
+			} = require("./webpack.common");
+
+const	appCss = extractAppCss(),
 			vendorCss = extractVendorCss();
 
 module.exports = merge(config, {

@@ -1,7 +1,7 @@
 class CategoryIndexView {
 	constructor() {
-		const OgTableNavigableView = require("../../og-components/og-table-navigable/views/og-table-navigable.js"),
-					self = this;
+		const OgTableNavigableView = require("../../og-components/og-table-navigable/views/og-table-navigable.js");
+		const self = this;
 
 		this.table = new OgTableNavigableView({
 			rows: element.all(by.repeater("category in vm.categories")),

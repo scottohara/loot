@@ -217,8 +217,8 @@ describe("transactionIndexView", () => {
 		}
 	};
 
-	let accountIndexView,
-			transactionIndexView = require("./index");
+	let transactionIndexView = require("./index");
+	let accountIndexView;
 
 	beforeEach(() => {
 		accountIndexView = require("../../accounts/views/index");

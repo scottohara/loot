@@ -1,17 +1,17 @@
 import {DirectiveTestScope} from "mocks/types";
 
 export default class DirectiveTest {
-	public scope: DirectiveTestScope;
+	public scope!: DirectiveTestScope;
 
-	private directive: string;
+	private directive!: string;
 
-	private tagName: string;
+	private tagName!: string;
 
-	private content: string;
+	private content!: string;
 
-	private container: string;
+	private container!: string;
 
-	private element: JQuery<Element>;
+	private element!: JQuery<Element>;
 
 	public constructor(private readonly $rootScope: angular.IRootScopeService, private readonly $compile: angular.ICompileService) {}
 

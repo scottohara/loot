@@ -1,7 +1,7 @@
 describe("scheduleIndexView", () => {
 	const {addDays, format, startOfDay} = require("date-fns");
-	let scheduleIndexView = require("./index"),
-			expected;
+	let scheduleIndexView = require("./index");
+	let expected;
 
 	beforeEach(() => {
 		const tomorrow = format(addDays(startOfDay(new Date()), 1), "DD/MM/YYYY");
