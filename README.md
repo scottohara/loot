@@ -11,7 +11,7 @@
 Description
 ===========
 Loot is a web-based personal finance management application.
-It's main goal is to reproduce the core functionality of Microsoft Money 2008, for the web.
+Its main goal is to reproduce the core functionality of Microsoft Money 2008, for the web.
 
 Rails on the backend (JSON API); Angular.js + Bootstrap on the frontend
 
@@ -85,6 +85,6 @@ The `Procfile` includes a `release` phase that automatically runs `db:migrate` b
 
 If you use heroku pipelines, the recommendation is that your `heroku` git remote maps to a `staging` app in the pipeline. This allows you to verify the release before promoting it to a `production` app in the pipeline.
 
-(Note: You must configure your heroku app to use the multi buildpack, eg. `heroku buildpack:set https://github.com/heroku/heroku-buildpack-multi`)
+(Note: You must configure your heroku app to use the multi buildpack, e.g. `heroku buildpack:set https://github.com/heroku/heroku-buildpack-multi`)
 
-(Note: Ensure your server is configured to your local timezone. For heroku, this is done by setting the `TZ` config variable, eg. `heroku config:add TZ=Australia/Sydney`)
+(Note: Ensure your server is configured to your local timezone. For heroku, this is done by setting the `TZ` config variable, e.g. `heroku config:add TZ=Australia/Sydney`)
