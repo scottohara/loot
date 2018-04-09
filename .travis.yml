@@ -23,7 +23,7 @@ before_install:
 
 install:
   - bundle install --without production --path=${BUNDLE_PATH:-vendor/bundle}  # Install ruby gems, excluding production only gems such as unicorn (already present by default in Travis)
-  - npm install                         # Install npm dependencies
+  - npm ci                              # Install npm dependencies
   #- npm install karma-firefox-launcher codeclimate-test-reporter
 
 # Setup the database
