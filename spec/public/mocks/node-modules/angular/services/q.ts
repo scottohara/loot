@@ -13,7 +13,7 @@ export default class QMockProvider implements Mock<QMock> {
 	// Mock $q object
 	public constructor(private readonly $q: QMock = {
 		defer<T>(): DeferredMock<T> {
-			let	isResolved: boolean = false,
+			let	isResolved = false,
 					promiseValue: T | PromiseMock<T> | undefined,
 					callbackResult: T | PromiseMock<T>;
 

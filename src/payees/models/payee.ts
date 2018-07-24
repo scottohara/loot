@@ -3,8 +3,9 @@ import {
 	Favouritable,
 	Persistable
 } from "loot/types";
-import OgLruCacheFactory, {OgLruCache} from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 import {OgCacheEntry} from "og-components/og-lru-cache-factory/types";
+import OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
+import OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 import {Payee} from "payees/types";
 import {StoredAccountType} from "accounts/types";
 import {Transaction} from "transactions/types";

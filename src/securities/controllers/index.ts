@@ -29,7 +29,7 @@ export default class SecurityIndexController {
 											private readonly ogTableNavigableService: OgTableNavigableService,
 											public readonly securities: Security[]) {
 		const	self: this = this,
-					decimalPlaces: number = 2;
+					decimalPlaces = 2;
 
 		this.totalValue = securities.reduce((memo: number, security: Security): number => memo + Number(Number(security.closing_balance).toFixed(decimalPlaces)), 0);
 
@@ -175,7 +175,7 @@ export default class SecurityIndexController {
 
 	// Finds a specific security and focusses that row in the table
 	private focusSecurity(securityIdToFocus: string | number): number {
-		const delay: number = 50;
+		const delay = 50;
 		let targetIndex: number = NaN;
 
 		// Find the security by it's id

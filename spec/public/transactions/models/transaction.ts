@@ -150,7 +150,7 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("findSubtransactions", (): void => {
-		const expectedResponse: string = "subtransactions";
+		const expectedResponse = "subtransactions";
 		let actualResponse: angular.IPromise<SplitTransactionChild[]>;
 
 		beforeEach((): void => {
@@ -167,7 +167,7 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedResponse: string = "transaction";
+		const expectedResponse = "transaction";
 		let actualResponse: angular.IPromise<Transaction>;
 
 		beforeEach((): void => {
@@ -187,7 +187,7 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("save", (): void => {
-		const expectedResponse: string = "transaction";
+		const expectedResponse = "transaction";
 		let transaction: Transaction;
 
 		beforeEach((): void => {

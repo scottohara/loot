@@ -221,7 +221,7 @@ export default class CategoryIndexController {
 	private focusCategory(categoryIdToFocus: string | number): number {
 		// Find the category by it's id
 		const	targetIndex: number = this.categoryIndexById(categoryIdToFocus),
-					delay: number = 50;
+					delay = 50;
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {

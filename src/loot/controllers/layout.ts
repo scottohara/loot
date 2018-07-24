@@ -11,7 +11,9 @@ import QueryService from "transactions/services/query";
 import SecurityModel from "securities/models/security";
 
 export default class LayoutController {
-	private isLoadingState: boolean = false;
+	public readonly scrollTo: (anchor: string) => void;
+
+	private isLoadingState = false;
 
 	public constructor($scope: angular.IScope, $window: angular.IWindowService, $transitions: angular.ui.IStateParamsService,
 											private readonly $state: angular.ui.IStateService,
@@ -34,8 +36,6 @@ export default class LayoutController {
 
 		$window.$("#transactionSearch").on("search", (): void => this.checkIfSearchCleared());
 	}
-
-	public readonly scrollTo: (anchor: string) => void;
 
 	// Login
 	public login(): void {

@@ -15,6 +15,8 @@ import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
 import angular from "angular";
 
 export default class AccountIndexController {
+	private readonly keydownHandler: (event: KeyboardEvent) => void;
+
 	public constructor(private readonly $scope: angular.IScope, $window: angular.IWindowService,
 											private readonly $uibModal: IModalService,
 											private readonly accountModel: AccountModel,
@@ -141,8 +143,8 @@ export default class AccountIndexController {
 
 	// Declare key handler for inserting a new account
 	private keyHandler(event: KeyboardEvent): void {
-		const INSERT_KEY: number = 45,
-					N_KEY: number = 78;
+		const INSERT_KEY = 45,
+					N_KEY = 78;
 
 		// Check if the Insert key or CTRL+N keys were pressed
 		if (INSERT_KEY === event.keyCode || (event.ctrlKey && N_KEY === event.keyCode)) {
@@ -154,8 +156,6 @@ export default class AccountIndexController {
 	private calculateAccountTypeTotal(accountType: string): void {
 		this.accounts[accountType].total = this.accounts[accountType].accounts.reduce((memo: number, account: Account): number => memo + account.closing_balance, 0);
 	}
-
-	private readonly keydownHandler: (event: KeyboardEvent) => void;
 }
 
 AccountIndexController.$inject = ["$scope", "$window", "$uibModal", "accountModel", "accounts"];

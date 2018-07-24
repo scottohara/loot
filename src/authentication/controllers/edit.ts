@@ -8,7 +8,7 @@ export default class AuthenticationEditController {
 
 	public errorMessage: string | null = null;
 
-	public loginInProgress: boolean = false;
+	public loginInProgress = false;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
 											private readonly authenticationModel: AuthenticationModel) {}

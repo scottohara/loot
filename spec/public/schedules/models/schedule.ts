@@ -94,7 +94,7 @@ describe("scheduleModel", (): void => {
 	});
 
 	describe("save", (): void => {
-		const expectedResponse: string = "schedule";
+		const expectedResponse = "schedule";
 
 		beforeEach((): void => {
 			scheduleModel["stringify"] = sinon.stub().returnsArg(0);

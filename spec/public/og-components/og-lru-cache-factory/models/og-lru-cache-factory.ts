@@ -25,7 +25,7 @@ describe("ogLruCacheFactory", (): void => {
 		});
 
 		describe("LruCache", (): void => {
-			const capacity: number = 10;
+			const capacity = 10;
 			let	data: OgCacheEntry[],
 					list: OgCacheEntry[];
 

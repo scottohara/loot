@@ -70,7 +70,7 @@ describe("categoryModel", (): void => {
 
 	describe("all", (): void => {
 		let expectedUrl: RegExp = /categories\?parent=1$/,
-				expectedResponse: string = "categories without children";
+				expectedResponse = "categories without children";
 
 		it("should dispatch a GET request to /categories?parent={parent}", (): void => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);
@@ -127,7 +127,7 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("allWithChildren", (): void => {
-		const expected: string = "categories with children";
+		const expected = "categories with children";
 
 		beforeEach((): SinonStub => (categoryModel.all = sinon.stub().returns(expected)));
 
@@ -141,7 +141,7 @@ describe("categoryModel", (): void => {
 
 	describe("find", (): void => {
 		const	expectedUrl: RegExp = /categories\/123/,
-					expectedResponse: string = "category details";
+					expectedResponse = "category details";
 
 		beforeEach((): SinonStub => (categoryModel.addRecent = sinon.stub()));
 

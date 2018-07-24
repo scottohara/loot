@@ -466,8 +466,8 @@ describe("TransactionEditController", (): void => {
 			];
 
 			scenarios.forEach((scenario: {id: string, type: TransactionType, direction: TransactionDirection | "the category direction", subtransactions?: boolean}): void => {
-				const memo: string = "test memo",
-							amount: number = 123;
+				const memo = "test memo",
+							amount = 123;
 				let subtransactions: SplitTransactionChild[];
 
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
@@ -633,7 +633,7 @@ describe("TransactionEditController", (): void => {
 
 	describe("memoFromSubtransactions", (): void => {
 		beforeEach((): void => {
-			const memo: string = "memo";
+			const memo = "memo";
 
 			transactionEditController.transaction.memo = memo;
 			(transactionEditController.transaction as SplitTransaction).subtransactions = [

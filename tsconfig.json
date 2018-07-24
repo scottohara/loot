@@ -2,21 +2,21 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"baseUrl": ".",
+		"forceConsistentCasingInFileNames": true,
+		"module": "es2015",
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
 		"paths": {
 			"*": [
 				"src/*",
 				"spec/public/*"
 			]
 		},
-		"module": "es2015",
-		"moduleResolution": "node",
-		"noFallthroughCasesInSwitch": true,
-		"noImplicitAny": true,
-		"noImplicitThis": true,
-		"noImplicitReturns": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"pretty": true,
 		"sourceMap": true,
 		"strictPropertyInitialization": true,
 		"strictNullChecks": true,

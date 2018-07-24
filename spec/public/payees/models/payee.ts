@@ -71,7 +71,7 @@ describe("payeeModel", (): void => {
 
 	describe("all", (): void => {
 		let expectedUrl: RegExp = /payees$/,
-				expectedResponse: string = "payees";
+				expectedResponse = "payees";
 
 		it("should dispatch a GET request to /payees", (): void => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);
@@ -128,7 +128,7 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("allList", (): void => {
-		const expected: string = "payees list";
+		const expected = "payees list";
 
 		beforeEach((): SinonStub => (payeeModel.all = sinon.stub().returns(expected)));
 
@@ -159,7 +159,7 @@ describe("payeeModel", (): void => {
 
 	describe("find", (): void => {
 		const expectedUrl: RegExp = /payees\/123/,
-					expectedResponse: string = "payee details";
+					expectedResponse = "payee details";
 
 		beforeEach((): SinonStub => (payeeModel.addRecent = sinon.stub()));
 

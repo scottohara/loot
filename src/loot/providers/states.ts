@@ -27,6 +27,8 @@ import TransactionIndexView from "transactions/views/index.html";
 import TransactionModel from "transactions/models/transaction";
 
 export default class LootStatesProvider {
+	public $get: () => LootStatesProvider;
+
 	public constructor($stateProvider: angular.ui.IStateProvider) {
 		const transactionViews: {[name: string]: angular.ui.IState} = {
 			"@root": {
@@ -178,7 +180,7 @@ export default class LootStatesProvider {
 						if (!$state.includes("root.transactions")) {
 							return {
 								name: $state.current.name,
-								params: Object.assign({}, $state.params)
+								params: {...$state.params}
 							};
 						}
 
@@ -202,8 +204,6 @@ export default class LootStatesProvider {
 
 		this.$get = (): LootStatesProvider => this;
 	}
-
-	public $get: () => LootStatesProvider;
 }
 
 LootStatesProvider.$inject = ["$stateProvider"];

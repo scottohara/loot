@@ -1036,7 +1036,7 @@ describe("TransactionIndexController", (): void => {
 				});
 
 				it("should make the closing balance available to the view when the modal is closed", (): void => {
-					const closingBalance: number = 100;
+					const closingBalance = 100;
 
 					$uibModal.close(closingBalance);
 					transactionIndexController["closingBalance"].should.equal(closingBalance);

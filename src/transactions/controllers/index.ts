@@ -59,15 +59,15 @@ export default class TransactionIndexController {
 
 	public lastTransactionDate: Date;
 
-	public reconcileTarget: number = 0;
+	public reconcileTarget = 0;
 
-	public clearedTotal: number = 0;
+	public clearedTotal = 0;
 
-	public unclearedTotal: number = 0;
+	public unclearedTotal = 0;
 
 	public readonly reconcilable: boolean;
 
-	public reconciling: boolean = false;
+	public reconciling = false;
 
 	public showAllDetails: boolean;
 
@@ -75,11 +75,11 @@ export default class TransactionIndexController {
 
 	public readonly loading: {prev: boolean; next: boolean;} = {prev: false, next: false};
 
-	private atEnd: boolean = true;
+	private atEnd = true;
 
-	private openingBalance: number = 0;
+	private openingBalance = 0;
 
-	private closingBalance: number = 0;
+	private closingBalance = 0;
 
 	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
 											private readonly $uibModal: IModalService,
@@ -500,8 +500,8 @@ export default class TransactionIndexController {
 
 	// Returns true if the action is allowed for the transaction
 	private isAllowed(action: "edit" | "delete", transaction: Transaction | SplitTransactionChild): boolean {
-		let	allowed: boolean = true,
-				message: string = "";
+		let	allowed = true,
+				message = "";
 
 		// Check if the action is allowed
 		switch (transaction.transaction_type) {
@@ -599,7 +599,7 @@ export default class TransactionIndexController {
 
 	// Finds a specific transaction and focusses that row in the table
 	private focusTransaction(transactionIdToFocus: number): number {
-		const delay: number = 50;
+		const delay = 50;
 		let targetIndex: number = NaN;
 
 		// Find the transaction by it's id
@@ -619,7 +619,7 @@ export default class TransactionIndexController {
 
 	// Helper function to calculate the total cleared/uncleared totals
 	private updateReconciledTotals(): void {
-		const decimalPlaces: number = 2;
+		const decimalPlaces = 2;
 
 		// Target is the closing balance, minus the opening balance
 		this.reconcileTarget = Number((this.closingBalance - this.openingBalance).toFixed(decimalPlaces));

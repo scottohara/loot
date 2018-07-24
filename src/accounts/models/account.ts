@@ -7,8 +7,9 @@ import {
 	Favouritable,
 	Persistable
 } from "loot/types";
-import OgLruCacheFactory, {OgLruCache} from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 import {OgCacheEntry} from "og-components/og-lru-cache-factory/types";
+import OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
+import OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 
 // Number of accounts to keep in the LRU cache
 const LRU_CAPACITY = 10;

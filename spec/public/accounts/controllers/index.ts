@@ -165,8 +165,8 @@ describe("AccountIndexController", (): void => {
 	});
 
 	describe("keyHandler", (): void => {
-		const INSERT_KEY: number = 45,
-					N_KEY: number = 78;
+		const INSERT_KEY = 45,
+					N_KEY = 78;
 
 		let	event: KeyboardEventMock;
 

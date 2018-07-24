@@ -51,7 +51,7 @@ export default class ScheduleEditController {
 
 	public readonly schedule: ScheduledTransaction;
 
-	public loadingLastTransaction: boolean = false;
+	public loadingLastTransaction = false;
 
 	public totalAllocated: number | null = null;
 
@@ -544,15 +544,15 @@ export default class ScheduleEditController {
 
 	// Calculates the next due date
 	private calculateNextDue(): void {
-		const WEEK: number = 1,
-					FORTNIGHT: number = 2,
-					MONTH: number = 1,
-					BIMONTH: number = 2,
-					QUARTER: number = 1,
-					YEAR: number = 1;
+		const WEEK = 1,
+					FORTNIGHT = 2,
+					MONTH = 1,
+					BIMONTH = 2,
+					QUARTER = 1,
+					YEAR = 1;
 
 		let addFn: (nextDue: Date | string, amount: number) => Date = addWeeks,
-				amount: number = 0;
+				amount = 0;
 
 		switch (this.schedule.frequency) {
 			case "Weekly":

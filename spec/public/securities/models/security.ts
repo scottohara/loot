@@ -71,7 +71,7 @@ describe("securityModel", (): void => {
 
 	describe("all", (): void => {
 		let expectedUrl: RegExp = /securities$/,
-				expectedResponse: string = "securities without balances";
+				expectedResponse = "securities without balances";
 
 		it("should dispatch a GET request to /securities", (): void => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);
@@ -128,7 +128,7 @@ describe("securityModel", (): void => {
 	});
 
 	describe("allWithBalances", (): void => {
-		const expected: string = "securities with balances";
+		const expected = "securities with balances";
 
 		beforeEach((): SinonStub => (securityModel.all = sinon.stub().returns(expected)));
 
@@ -159,7 +159,7 @@ describe("securityModel", (): void => {
 
 	describe("find", (): void => {
 		const expectedUrl: RegExp = /securities\/123/,
-					expectedResponse: string = "security details";
+					expectedResponse = "security details";
 
 		beforeEach((): SinonStub => (securityModel.addRecent = sinon.stub()));
 

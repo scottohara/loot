@@ -4,12 +4,12 @@ import {
 	AccountType
 } from "accounts/types";
 
-let id: number = 1;
+let id = 1;
 
 export default function createAccount(props: Partial<Account> = {}): Account {
 	id++;
 
-	return Object.assign({
+	return {
 		id,
 		name: `Account ${id}`,
 		closing_balance: 0,
@@ -18,6 +18,7 @@ export default function createAccount(props: Partial<Account> = {}): Account {
 		favourite: false,
 		related_account: null,
 		opening_balance: 0,
-		num_transactions: 0
-	}, props);
+		num_transactions: 0,
+		...props
+	};
 }

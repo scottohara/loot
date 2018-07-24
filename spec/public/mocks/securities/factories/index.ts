@@ -1,11 +1,11 @@
 import {Security} from "securities/types";
 
-let id: number = 1;
+let id = 1;
 
 export default function createSecurity(props: Partial<Security> = {}): Security {
 	id++;
 
-	return Object.assign({
+	return {
 		id,
 		name: `Security ${id}`,
 		closing_balance: 0,
@@ -13,6 +13,7 @@ export default function createSecurity(props: Partial<Security> = {}): Security 
 		current_holding: 0,
 		favourite: false,
 		unused: false,
-		num_transactions: 0
-	}, props);
+		num_transactions: 0,
+		...props
+	};
 }

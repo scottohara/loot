@@ -41,7 +41,7 @@ export default class TransactionEditController {
 
 	public readonly mode: "Edit" | "Add";
 
-	public loadingLastTransaction: boolean = false;
+	public loadingLastTransaction = false;
 
 	public totalAllocated: number | null = null;
 
@@ -90,7 +90,7 @@ export default class TransactionEditController {
 	}
 
 	// List of categories for the typeahead
-	public categories(filter: string, limit: number, parent?: Category | null, includeSplits: boolean = false): angular.IPromise<DisplayCategory[]> | DisplayCategory[] {
+	public categories(filter: string, limit: number, parent?: Category | null, includeSplits = false): angular.IPromise<DisplayCategory[]> | DisplayCategory[] {
 		// If a parent was specified but it doesn't have an id, return an empty array
 		if (parent && isNaN(Number(parent.id))) {
 			return [];
@@ -476,7 +476,7 @@ export default class TransactionEditController {
 						security: this.securityModel
 					};
 
-		let	resolve: boolean = true;
+		let	resolve = true;
 
 		/*
 		 * Compare each facet of the saved transaction with the original values
@@ -539,7 +539,7 @@ export default class TransactionEditController {
 	private updateLruCaches(transaction: Transaction): angular.IPromise<Transaction> {
 		// Create a deferred so that we return a promise
 		const q: angular.IDeferred<Transaction> = this.$q.defer();
-		let resolve: boolean = true;
+		let resolve = true;
 
 		// Add the primary account to the LRU cache
 		this.accountModel.addRecent(transaction.primary_account);

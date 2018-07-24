@@ -16,7 +16,7 @@ export default class DirectiveTest {
 	public constructor(private readonly $rootScope: angular.IRootScopeService, private readonly $compile: angular.ICompileService) {}
 
 	// Configures the name of the directive and the element tag (and optionally, any contents)
-	public configure(directive: string, tagName: string = "div", content: string = ""): void {
+	public configure(directive: string, tagName = "div", content = ""): void {
 		this.directive = directive;
 		this.tagName = tagName;
 		this.content = content;

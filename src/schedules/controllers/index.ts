@@ -178,7 +178,7 @@ export default class ScheduleIndexController {
 
 	// Finds a specific schedule and focusses that row in the table
 	private focusSchedule(scheduleIdToFocus: number): number {
-		const delay: number = 50;
+		const delay = 50;
 		let targetIndex: number = NaN;
 
 		// Find the schedule by it's id

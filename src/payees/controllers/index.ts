@@ -155,7 +155,7 @@ export default class PayeeIndexController {
 
 	// Finds a specific payee and focusses that row in the table
 	private focusPayee(payeeIdToFocus: string | number): number {
-		const delay: number = 50;
+		const delay = 50;
 		let targetIndex: number = NaN;
 
 		// Find the payee by it's id

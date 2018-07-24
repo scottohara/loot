@@ -21,8 +21,8 @@ export default class OgInputCalculatorDirective {
 				scope.position = iAttrs.ogInputCalculator || "left";
 
 				const [ngModel] = controllers,
-							ogInputCurrency: number = 1,
-							ogInputNumber: number = 2,
+							ogInputCurrency = 1,
+							ogInputNumber = 2,
 							ACTION_KEYS: {[keyCode: string]: () => void} = {
 								13(): void {
 									// Enter
@@ -69,7 +69,7 @@ export default class OgInputCalculatorDirective {
 
 					if (scope.stack && scope.stack.length > 1) {
 						scope.result = Number(scope.stack.reduce((memo: OgInputCalculatorOperation, operation: OgInputCalculatorOperation, index: number): OgInputCalculatorOperation => {
-							const result: OgInputCalculatorOperation & {operand: number} = Object.assign({operand: 0}, memo);
+							const result: OgInputCalculatorOperation & {operand: number} = {operand: 0, ...memo};
 
 							// Last time through, use the view value for the operand
 							if (index === scope.stack.length - 1) {
@@ -107,9 +107,9 @@ export default class OgInputCalculatorDirective {
 				scope.inputChanged = (value: string): string => {
 					// Matches any number of digits, periods or commas, followed by +, -, * or /
 					const	matches: RegExpExecArray | null = (/([-\d.,]+)([+\-*/])(.*)/gi).exec(value),
-								operand: number = 1,
-								operator: number = 2,
-								residual: number = 3;
+								operand = 1,
+								operator = 2,
+								residual = 3;
 
 					if (matches) {
 						// Push the first (operand) and second (operator) matches onto the stack

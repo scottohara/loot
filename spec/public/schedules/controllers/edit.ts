@@ -503,7 +503,7 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should preserve the schedule's flag", (): void => {
-			const flag: string = "schedule flag";
+			const flag = "schedule flag";
 
 			scheduleEditController.transaction.flag = flag;
 			scheduleEditController["useLastTransaction"](transaction);
@@ -566,8 +566,8 @@ describe("ScheduleEditController", (): void => {
 
 			scenarios.forEach((scenario: {id: string, type: TransactionType, direction: TransactionDirection | "the category direction", subtransactions?: boolean}): void => {
 				let	subtransactions: SplitTransactionChild[];
-				const	memo: string = "test memo",
-							amount: number = 123;
+				const	memo = "test memo",
+							amount = 123;
 
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 					(scheduleEditController.transaction.category as PsuedoCategory).id = scenario.id;
@@ -760,7 +760,7 @@ describe("ScheduleEditController", (): void => {
 
 	describe("memoFromSubtransactions", (): void => {
 		beforeEach((): void => {
-			const memo: string = "memo";
+			const memo = "memo";
 
 			scheduleEditController.transaction.memo = memo;
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [
