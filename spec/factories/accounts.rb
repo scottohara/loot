@@ -3,15 +3,15 @@
 
 FactoryBot.define do
 	factory :account, aliases: [:bank_account] do
-		account_type 'bank'
+		account_type { 'bank' }
 		sequence(:name) { |n| "#{account_type} account #{n}" }
-		opening_balance 1000
-		status 'open'
+		opening_balance { 1000 }
+		status { 'open' }
 
 		transient do
-			transactions 0
-			reconciled 0
-			scheduled 0
+			transactions { 0 }
+			reconciled { 0 }
+			scheduled { 0 }
 		end
 
 		trait :with_all_transaction_types do
@@ -54,16 +54,16 @@ FactoryBot.define do
 		end
 
 		trait :asset do
-			account_type 'asset'
+			account_type { 'asset' }
 		end
 
 		trait :credit do
-			account_type 'credit'
+			account_type { 'credit' }
 		end
 
 		trait :investment do
-			account_type 'investment'
-			opening_balance 0
+			account_type { 'investment' }
+			opening_balance { 0 }
 
 			transient do
 				related_account { FactoryBot.build :bank_account }
@@ -75,11 +75,11 @@ FactoryBot.define do
 		end
 
 		trait :cash do
-			account_type 'cash'
+			account_type { 'cash' }
 		end
 
 		trait :loan do
-			account_type 'loan'
+			account_type { 'loan' }
 
 			transient do
 				related_account { nil }
@@ -91,11 +91,11 @@ FactoryBot.define do
 		end
 
 		trait :closed do
-			status 'closed'
+			status { 'closed' }
 		end
 
 		trait :favourite do
-			favourite true
+			favourite { true }
 		end
 
 		factory :asset_account, traits: [:asset]

@@ -5,13 +5,13 @@ FactoryBot.define do
 	factory :subtransfer_transaction, aliases: [:subtransfer_to_transaction] do
 		# Default attributes for cash transaction
 		payee_cash_transaction
-		transaction_type 'Subtransfer'
+		transaction_type { 'Subtransfer' }
 
 		# Default account, subtransactions and subtransfers if none specified
 		transient do
 			parent { FactoryBot.build :split_from_transaction }
 			account { FactoryBot.build :account }
-			status nil
+			status { nil }
 		end
 
 		after :build do |trx, evaluator|

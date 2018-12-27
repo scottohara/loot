@@ -11,7 +11,7 @@ FactoryBot.define do
 		transient do
 			investment_account { FactoryBot.build :investment_account, related_account: cash_account }
 			cash_account { FactoryBot.build :bank_account }
-			status nil
+			status { nil }
 		end
 
 		after :build do |trx, evaluator|

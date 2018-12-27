@@ -5,7 +5,7 @@ FactoryBot.define do
 	factory :sub_transaction, aliases: [:sub_expense_transaction] do
 		# Default attributes for cash transaction
 		cash_transaction
-		transaction_type 'Sub'
+		transaction_type { 'Sub' }
 
 		# Default account, subtransactions and subtransfers if none specified
 		transient do

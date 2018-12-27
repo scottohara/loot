@@ -11,11 +11,11 @@ FactoryBot.define do
 		transient do
 			investment_account { FactoryBot.build :investment_account, related_account: cash_account }
 			cash_account { FactoryBot.build :bank_account }
-			direction 'Buy'
-			price 1
-			quantity 1
-			commission 1
-			status nil
+			direction { 'Buy' }
+			price { 1 }
+			quantity { 1 }
+			commission { 1 }
+			status { nil }
 		end
 
 		after :build do |trx, evaluator|
@@ -31,7 +31,7 @@ FactoryBot.define do
 		end
 
 		trait :inflow do
-			direction 'Sell'
+			direction { 'Sell' }
 		end
 
 		trait :scheduled do

@@ -1,11 +1,12 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-ruby '2.5.1'
+ruby '2.6.0'
 
 source 'https://rubygems.org'
 
-gem 'rails', '5.1.5'
+# Web application framework
+gem 'rails', '5.2.2'
 
 # Postgres
 gem 'pg'
@@ -22,22 +23,35 @@ gem 'rails_12factor', group: :production
 gem 'active_model_serializers'
 
 group :development, :test do
+	# Cleans database on each test run
 	gem 'database_cleaner'
+
+	# Test factories
 	gem 'factory_bot_rails'
+
+	# BDD testing framework
 	gem 'rspec-rails'
+
+	# Code coverage
 	gem 'simplecov'
 
 	# Required by RSpec in Rails >= 5 for 'assigns'
 	gem 'rails-controller-testing'
 
+	# Code style checker
 	gem 'rubocop', require: false
+
+	# Shared Rubocop config
 	gem 'rubocop-config-oharagroup', require: false
 end
 
 group :development do
+	# File watcher
 	gem 'listen'
 
-	# Use pry instead of IRB
+	# Step/next commands for pry
 	gem 'pry-nav'
+
+	# Use pry instead of IRB
 	gem 'pry-rails'
 end

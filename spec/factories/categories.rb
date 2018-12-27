@@ -7,9 +7,9 @@ FactoryBot.define do
 		outflow
 
 		transient do
-			transactions 0
-			children 0
-			scheduled 0
+			transactions { 0 }
+			children { 0 }
+			scheduled { 0 }
 		end
 
 		trait :with_all_transaction_types do
@@ -28,11 +28,11 @@ FactoryBot.define do
 		end
 
 		trait :outflow do
-			direction 'outflow'
+			direction { 'outflow' }
 		end
 
 		trait :inflow do
-			direction 'inflow'
+			direction { 'inflow' }
 		end
 
 		trait :parent_category do
@@ -42,11 +42,11 @@ FactoryBot.define do
 		end
 
 		trait :with_children do
-			children 2
+			children { 2 }
 		end
 
 		trait :favourite do
-			favourite true
+			favourite { true }
 		end
 
 		factory :inflow_category, traits: [:inflow]

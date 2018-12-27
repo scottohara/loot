@@ -9,12 +9,12 @@ FactoryBot.define do
 		# Default account, subtransactions and subtransfers if none specified
 		transient do
 			account { FactoryBot.build :account }
-			direction 'outflow'
+			direction { 'outflow' }
 			category { FactoryBot.build :category, direction: direction }
-			subtransactions 0
-			subtransfers 0
+			subtransactions { 0 }
+			subtransfers { 0 }
 			subtransfer_account { FactoryBot.build :account }
-			status nil
+			status { nil }
 		end
 
 		after :build do |trx, evaluator|
@@ -25,7 +25,7 @@ FactoryBot.define do
 		end
 
 		trait :inflow do
-			direction 'inflow'
+			direction { 'inflow' }
 		end
 
 		trait :scheduled do

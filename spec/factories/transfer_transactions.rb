@@ -10,7 +10,7 @@ FactoryBot.define do
 		transient do
 			source_account { FactoryBot.build :account }
 			destination_account { FactoryBot.build :account }
-			status nil
+			status { nil }
 		end
 
 		trait :scheduled do

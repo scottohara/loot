@@ -10,8 +10,8 @@ FactoryBot.define do
 		transient do
 			source_account { FactoryBot.build :investment_account }
 			destination_account { FactoryBot.build :investment_account }
-			quantity 10
-			status nil
+			quantity { 10 }
+			status { nil }
 		end
 
 		after :build do |trx, evaluator|

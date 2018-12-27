@@ -3,7 +3,7 @@
 
 FactoryBot.define do
 	trait :amount do
-		amount 1
+		amount { 1 }
 	end
 
 	trait :memo do
@@ -17,7 +17,7 @@ FactoryBot.define do
 	end
 
 	factory :transaction do
-		transaction_type 'Basic'
+		transaction_type { 'Basic' }
 		amount
 		memo
 	end

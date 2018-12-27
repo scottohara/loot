@@ -10,7 +10,7 @@ FactoryBot.define do
 		transient do
 			account { FactoryBot.build :account }
 			category { FactoryBot.build :category }
-			status nil
+			status { nil }
 		end
 
 		after :build do |trx, evaluator|
@@ -25,8 +25,8 @@ FactoryBot.define do
 		trait :scheduled do
 			transient do
 				next_due_date { Time.zone.tomorrow.advance months: -1 }
-				frequency 'Monthly'
-				auto_enter true
+				frequency { 'Monthly' }
+				auto_enter { true }
 			end
 
 			after :build do |trx, evaluator|

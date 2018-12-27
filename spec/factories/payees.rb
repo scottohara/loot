@@ -6,8 +6,8 @@ FactoryBot.define do
 		sequence(:name) { |n| "Payee #{n}" }
 
 		transient do
-			transactions 0
-			scheduled 0
+			transactions { 0 }
+			scheduled { 0 }
 		end
 
 		trait :with_all_transaction_types do
@@ -30,7 +30,7 @@ FactoryBot.define do
 		end
 
 		trait :favourite do
-			favourite true
+			favourite { true }
 		end
 
 		factory :favourite_payee, traits: [:favourite]

@@ -3,7 +3,7 @@
 
 FactoryBot.define do
 	factory :transaction_account do
-		direction 'outflow'
+		direction { 'outflow' }
 		account
 	end
 end

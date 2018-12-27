@@ -9,10 +9,10 @@ FactoryBot.define do
 		# Default accounts if none specified
 		transient do
 			account { FactoryBot.build :investment_account }
-			direction 'Add'
-			quantity 10
-			status nil
-			transaction_date nil
+			direction { 'Add' }
+			quantity { 10 }
+			status { nil }
+			transaction_date { nil }
 		end
 
 		after :build do |trx, evaluator|
@@ -22,7 +22,7 @@ FactoryBot.define do
 		end
 
 		trait :outflow do
-			direction 'Remove'
+			direction { 'Remove' }
 		end
 
 		trait :scheduled do
