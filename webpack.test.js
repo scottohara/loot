@@ -1,7 +1,6 @@
-const path = require("path"),
-			merge = require("webpack-merge"),
+const merge = require("webpack-merge"),
+			path = require("path"),
 			{
-				defineEnvironment,
 				providejQuery,
 				config
 			} = require("./webpack.common");
@@ -10,7 +9,7 @@ module.exports = merge(config, {
 	module: {
 		rules: [
 			{
-				test: /\.(less|css)$/,
+				test: /\.(less|css)$/u,
 				loader: "ignore-loader"
 			}
 		]
@@ -22,7 +21,6 @@ module.exports = merge(config, {
 	},
 	devtool: "inline-source-map",
 	plugins: [
-		defineEnvironment("test"),
 		providejQuery
 	]
 });

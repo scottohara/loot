@@ -1,5 +1,4 @@
-const webpack = require("webpack"),
-			merge = require("webpack-merge"),
+const merge = require("webpack-merge"),
 			LiveReloadPlugin = require("webpack-livereload-plugin"),
 			OpenBrowserPlugin = require("open-browser-webpack-plugin"),
 			{
@@ -9,19 +8,14 @@ const webpack = require("webpack"),
 				cssRule,
 				fontRule,
 				iconRule,
-				defineEnvironment,
 				cleanBuildDirectory,
 				providejQuery,
-				separateBundles,
-				extractAppCss,
-				extractVendorCss,
+				extractCss,
 				createIndexHtml,
+				copyStaticAssets,
 				generateServiceWorker,
 				config
 			} = require("./webpack.common");
-
-const	appCss = extractAppCss(),
-			vendorCss = extractVendorCss();
 
 module.exports = merge(config, {
 	// Use default entry
@@ -29,16 +23,13 @@ module.exports = merge(config, {
 
 	// Use default output, with no hash in file names
 	output: merge(output, {
-		filename: "[name].js",
-
-		// Include detailed path info to assist with debugging
-		pathinfo: true
+		filename: "[name].js"
 	}),
 
 	module: {
 		rules: [
-			lessRule(appCss),
-			cssRule(vendorCss),
+			lessRule,
+			cssRule,
 			merge(fontRule, {
 				options: {
 					// No hash in file names
@@ -58,19 +49,12 @@ module.exports = merge(config, {
 	devtool: "eval-source-map",
 
 	plugins: [
-		// Use module names instead of numbers to assist with debugging
-		new webpack.NamedModulesPlugin(),
-
-		defineEnvironment("development"),
 		providejQuery,
 		cleanBuildDirectory,
-		separateBundles,
-		vendorCss,
-		appCss,
+		extractCss(),
 		createIndexHtml,
-
-		// No-op service worker
-		generateServiceWorker({handleFetch: false}),
+		copyStaticAssets,
+		generateServiceWorker,
 
 		// Live reload when in watch mode
 		new LiveReloadPlugin({

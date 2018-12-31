@@ -1,6 +1,5 @@
 const webpack = require("webpack"),
 			merge = require("webpack-merge"),
-			MinifyPlugin = require("babel-minify-webpack-plugin"),
 			{
 				entry,
 				output,
@@ -8,22 +7,18 @@ const webpack = require("webpack"),
 				cssRule,
 				fontRule,
 				iconRule,
-				defineEnvironment,
 				cleanBuildDirectory,
 				providejQuery,
-				separateBundles,
-				extractAppCss,
-				extractVendorCss,
+				extractCss,
 				createIndexHtml,
 				copyStaticAssets,
 				generateServiceWorker,
 				config
 			} = require("./webpack.common");
 
-const	appCss = extractAppCss(true),
-			vendorCss = extractVendorCss(true);
-
 module.exports = merge(config, {
+	mode: "production",
+
 	// Use default entry
 	entry,
 
@@ -34,8 +29,8 @@ module.exports = merge(config, {
 
 	module: {
 		rules: [
-			lessRule(appCss, {minimize: true}),
-			cssRule(vendorCss),
+			lessRule,
+			cssRule,
 			fontRule,
 			iconRule
 		]
@@ -51,30 +46,18 @@ module.exports = merge(config, {
 		 */
 		new webpack.HashedModuleIdsPlugin(),
 
-		defineEnvironment("production"),
 		providejQuery,
 		cleanBuildDirectory,
-		separateBundles,
-		vendorCss,
-		appCss,
-
-		// Minify bundles
-		new MinifyPlugin(),
-
+		extractCss(true),
 		createIndexHtml,
 		copyStaticAssets,
-		generateServiceWorker()
+		generateServiceWorker
 	],
 
 	// Fail if any chunks exceed performance budget
 	performance: {
 		hints: "error",
-
-		/*
-		 * Needed temporarily because BabelMinifyWebpackPlugin doesn't support dead-code elimination
-		 * (remove after switching to UglifyJSWebpackPlugin)
-		 */
-		maxEntrypointSize: 1000000,
-		maxAssetSize: 630000
+		maxEntrypointSize: 900000,
+		maxAssetSize: 600000
 	}
 });

@@ -1,23 +1,15 @@
 const path = require("path"),
 			webpack = require("webpack"),
-			ExtractTextPlugin = require("extract-text-webpack-plugin"),
+			MiniCssExtractPlugin = require("mini-css-extract-plugin"),
 			CleanWebpackPlugin = require("clean-webpack-plugin"),
 			HtmlWebpackPlugin = require("html-webpack-plugin"),
 			CopyWebpackPlugin = require("copy-webpack-plugin"),
-			WorkboxWebpackPlugin = require("workbox-webpack-plugin"),
+			{GenerateSW} = require("workbox-webpack-plugin"),
 			packageJson = require("./package");
 
-			// Default entry
+// Default entry
 const	entry = {
-				app: "loot",
-				vendor: [
-					"jquery",
-					"bootstrap",
-					"angular",
-					"@uirouter/angularjs",
-					"angular-ui-bootstrap",
-					"date-fns/esm"
-				]
+				app: "loot"
 			},
 
 			// Default output
@@ -27,13 +19,53 @@ const	entry = {
 
 			// Rule for *.ts processing
 			tsRule = {
-				test: /\.ts$/,
+				test: /\.ts$/u,
 				loader: "ts-loader"
+			},
+
+			// Rule for *.less processing
+			lessRule = {
+				test: /\.less$/u,
+				use: [
+					MiniCssExtractPlugin.loader,
+					{
+						loader: "css-loader",
+						options: {
+							// Apply the next loader (less-loader) to any @imports
+							importLoaders: 1,
+
+							// Generate sourcemaps
+							sourceMap: true
+						}
+					},
+					{
+						loader: "less-loader",
+						options: {
+							// Generate sourcemaps
+							sourceMap: true
+						}
+					}
+				]
+			},
+
+			// Rule for *.css processing
+			cssRule = {
+				test: /\.css$/u,
+				use: [
+					MiniCssExtractPlugin.loader,
+					{
+						loader: "css-loader",
+						options: {
+							// Generate sourcemaps
+							sourceMap: true
+						}
+					}
+				]
 			},
 
 			// Rule for font processing
 			fontRule = {
-				test: /\.(ttf|woff|woff2|eot|svg)$/,
+				test: /\.(ttf|woff|woff2|eot|svg)$/u,
 				loader: "url-loader",
 				options: {
 					// Use file-loader for anything bigger than 1 byte
@@ -46,7 +78,7 @@ const	entry = {
 
 			// Rule for *.ico processing
 			iconRule = {
-				test: /\.ico$/,
+				test: /\.ico$/u,
 				loader: "url-loader",
 				options: {
 					// Use file-loader for anything bigger than 1 byte
@@ -59,8 +91,8 @@ const	entry = {
 
 			// Rule for *.html processing
 			htmlRule = {
-				test: /\.html$/,
-				include: /views/,
+				test: /\.html$/u,
+				include: /views/u,
 				use: [
 					{
 						loader: "ngtemplate-loader",
@@ -91,18 +123,6 @@ const	entry = {
 				"window.jQuery": "jquery"
 			}),
 
-			/*
-			 * Ensures all vendor dependencies are bundled separately to app code, and that the webpack manifest is kept
-			 * separate so that changes to app code don't change the hash of the vendor chunk (or vice versa)
-			 */
-			separateBundles = new webpack.optimize.CommonsChunkPlugin({
-				names: [
-					"vendor",
-					"manifest"
-				],
-				minChunks: Infinity
-			}),
-
 			// Creates index.html with the bundled resources
 			createIndexHtml = new HtmlWebpackPlugin({template: "./src/index.html"}),
 
@@ -115,8 +135,17 @@ const	entry = {
 				ignore: ["index.html"]
 			}),
 
+			// Generate a service worker to precache static assets
+			generateServiceWorker = new GenerateSW({
+				cacheId: packageJson.name,
+				skipWaiting: true,
+				clientsClaim: true
+			}),
+
 			// Default config
 			config = {
+				mode: "development",
+
 				// Ensure that the context is the directory where the webpack.*.js config file is
 				context: path.resolve(__dirname),
 
@@ -140,93 +169,31 @@ const	entry = {
 					]
 				},
 
+				optimization: {
+					splitChunks: {
+						chunks: "all",
+						minSize: 0,
+						cacheGroups: {
+							app: {
+								name: "app",
+								priority: 10
+							},
+							vendor: {
+								name: "vendor",
+								test: /[\\/]node_modules[\\/]/u,
+								priority: 20
+							}
+						}
+					},
+					runtimeChunk: "single"
+				},
+
 				// Abort on first error
 				bail: true
 			};
 
-// Rule for *.less processing
-function lessRule(extractor, {minimize} = {minimize: false}) {
-	return {
-		test: /\.less$/,
-		use: extractor.extract({
-			use: [
-				{
-					loader: "css-loader",
-					options: {
-						// Apply the next loader (less-loader) to any @imports
-						importLoaders: 1,
-
-						// Minify using cssnano
-						minimize,
-
-						// Generate sourcemaps
-						sourceMap: true
-					}
-				},
-				{
-					loader: "less-loader",
-					options: {
-						// Generate sourcemaps
-						sourceMap: true
-					}
-				}
-			]
-		})
-	};
-}
-
-// Rule for *.css processing
-function cssRule(extractor) {
-	return {
-		test: /\.css$/,
-		use: extractor.extract({
-			loader: "css-loader",
-			options: {
-				// Generate sourcemaps
-				sourceMap: true
-			}
-		})
-	};
-}
-
-// Ensure that the environment is set
-function defineEnvironment(env) {
-	return new webpack.DefinePlugin({"process.env.NODE_ENV": JSON.stringify(`${env}`)});
-}
-
-/*
- * Creates external *.css files from any imported styles (e.g. import "./my-styles.css";)
- * Note: HtmlWebpackPlugin injects <link> tags in the order listed in the plugins array, so vendor must be first
- */
-function extractAppCss(hashFilename) {
-	return new ExtractTextPlugin({
-		filename: hashFilename ? "app-[contenthash:6].css" : "app.css",
-		disable: false,
-		allChunks: true
-	});
-}
-
-function extractVendorCss(hashFilename) {
-	return new ExtractTextPlugin({
-		filename: hashFilename ? "vendor-[contenthash:6].css" : "vendor.css",
-		disable: false,
-		allChunks: true
-	});
-}
-
-// Generate a service worker to precache static assets
-function generateServiceWorker({handleFetch} = {handleFetch: true}) {
-	return new WorkboxWebpackPlugin({
-		swDest: "public/service-worker.js",
-		globDirectory: "public",
-		globPatterns: ["**/*.{html,js,css,ico}", "fonts/*"],
-		cacheId: packageJson.name,
-		skipWaiting: true,
-		clientsClaim: true,
-		modifyUrlPrefix: {public: ""},
-		dontCacheBustUrlsMatching: /.*\.(js|css|ico|ttf|woff|woff2|eot|svg)$/,
-		handleFetch
-	});
+function extractCss(hashFilename) {
+	return new MiniCssExtractPlugin({filename: hashFilename ? "[name]-[chunkhash:6].css" : "[name].css"});
 }
 
 module.exports = {
@@ -236,12 +203,9 @@ module.exports = {
 	cssRule,
 	fontRule,
 	iconRule,
-	defineEnvironment,
 	cleanBuildDirectory,
 	providejQuery,
-	separateBundles,
-	extractAppCss,
-	extractVendorCss,
+	extractCss,
 	createIndexHtml,
 	copyStaticAssets,
 	generateServiceWorker,

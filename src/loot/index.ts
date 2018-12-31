@@ -1,3 +1,6 @@
+// These dependencies need to be loaded first
+import "./bootstrap";
+
 // Dependent modules
 import "angular-ui-bootstrap";
 import "og-components";
