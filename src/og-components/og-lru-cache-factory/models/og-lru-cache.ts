@@ -6,7 +6,7 @@ export default class OgLruCache {
 	// Put an item into the cache
 	public put(item: OgCacheEntry): OgCacheEntry[] {
 		// Exit early if the item is already the current head
-		if (this.items.length > 0 && this.items[0].id === item.id) {
+		if (this.items.length > 0 && Number(this.items[0].id) === Number(item.id)) {
 			return this.items;
 		}
 
