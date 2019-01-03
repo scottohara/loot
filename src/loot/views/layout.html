@@ -12,8 +12,8 @@
 		</div>
 		<div id="main-nav" ng-switch="vm.authenticated" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
-				<li class="dropdown" ui-sref-active="active">
-					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-list-alt"></i> Accounts <b class="caret"></b></a>
+				<li uib-dropdown ui-sref-active="active">
+					<a uib-dropdown-toggle><i class="glyphicon glyphicon-list-alt"></i> Accounts <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
 							<a ui-sref="root.accounts" ui-sref-opts="{reload: true}">Account List</a>
@@ -28,8 +28,8 @@
 				<li ui-sref-active="active">
 					<a ui-sref="root.schedules" ui-sref-opts="{reload: true}"><i class="glyphicon glyphicon-calendar"></i> Schedules</a>
 				</li>
-				<li class="dropdown" ui-sref-active="active">
-					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> Payees <b class="caret"></b></a>
+				<li uib-dropdown ui-sref-active="active">
+					<a uib-dropdown-toggle><i class="glyphicon glyphicon-user"></i> Payees <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
 							<a ui-sref="root.payees" ui-sref-opts="{reload: true}">Payee List</a>
@@ -41,8 +41,8 @@
 						</li>
 					</ul>
 				</li>
-				<li class="dropdown" ui-sref-active="active">
-					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-tags"></i> Categories <b class="caret"></b></a>
+				<li uib-dropdown ui-sref-active="active">
+					<a uib-dropdown-toggle><i class="glyphicon glyphicon-tags"></i> Categories <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
 							<a ui-sref="root.categories" ui-sref-opts="{reload: true}">Category List</a>
@@ -54,8 +54,8 @@
 						</li>
 					</ul>
 				</li>
-				<li class="dropdown" ui-sref-active="active">
-					<a class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-globe"></i> Securities <b class="caret"></b></a>
+				<li uib-dropdown ui-sref-active="active">
+					<a uib-dropdown-toggle><i class="glyphicon glyphicon-globe"></i> Securities <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li>
 							<a ui-sref="root.securities" ui-sref-opts="{reload: true}">Security List</a>
