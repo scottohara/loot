@@ -205,7 +205,7 @@ export default class CategoryIndexController {
 				}
 
 				// Remove the category (and any children) from the array
-				this.categories.splice(index, 1 + this.categories[index].num_children);
+				this.categories.splice(index, 1 + (this.categories[index].num_children || 0));
 
 				// Go back to the parent state
 				this.$state.go("root.categories");

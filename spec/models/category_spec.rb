@@ -117,6 +117,7 @@ RSpec.describe Category, type: :model do
 				let(:child_parent) { child[:parent] }
 
 				before :each do
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.children.first, fields: %i[id name direction parent_id parent num_transactions favourite]).and_call_original
 					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i[id name direction]).and_call_original
 				end
 
@@ -130,8 +131,6 @@ RSpec.describe Category, type: :model do
 					expect(child).to include direction: 'outflow'
 					expect(child).to include favourite: false
 					expect(child).to include parent_id: subject.id
-					expect(child).to include num_children: 0
-					expect(child).to include closing_balance: subject.children.first.closing_balance
 					expect(child).to include num_transactions: 0
 					expect(child).not_to include :children
 
@@ -156,7 +155,6 @@ RSpec.describe Category, type: :model do
 
 				it 'should return a JSON representation including parent' do
 					expect(json).to include parent_id: subject.parent.id
-					expect(json).to include num_children: 0
 					expect(json).not_to include :children
 					expect(parent).to include id: subject.parent.id
 					expect(parent).to include name: subject.parent.name
