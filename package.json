@@ -83,7 +83,6 @@
     "start": "heroku local --procfile Procfile.dev",
     "start:test": "heroku local --procfile Procfile.test",
     "start:db": "postgres -D /usr/local/var/postgres",
-    "postinstall": "npm run build",
     "build": "webpack --progress --config webpack.prod.js",
     "watch": "webpack --watch --config webpack.dev.js",
     "lint": "eslint 'src/**/*.{ts,js}' 'spec/public/**/*.{ts,js}' '*.{ts,js}'",
