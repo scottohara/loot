@@ -24,7 +24,7 @@ RSpec.describe SecurityTransferTransaction, type: :model do
 	describe '::create_from_json' do
 		let(:primary_account) { create :investment_account }
 		let(:account) { create :investment_account }
-		let(:header) { build :security_transaction_header, quantity: 1 }
+		let(:header) { create :security_transaction_header, quantity: 1 }
 		let(:json) do
 			{
 				id: 1,

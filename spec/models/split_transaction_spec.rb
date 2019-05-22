@@ -24,7 +24,7 @@ RSpec.describe SplitTransaction, type: :model do
 
 	describe '::create_from_json' do
 		let(:account) { create :bank_account }
-		let(:header) { build :payee_transaction_header }
+		let(:header) { create :payee_transaction_header }
 		let(:json) do
 			{
 				id: 1,

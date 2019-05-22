@@ -27,7 +27,7 @@ RSpec.describe DividendTransaction, type: :model do
 	describe '::create_from_json' do
 		let(:investment_account) { create :investment_account }
 		let(:cash_account) { create :bank_account }
-		let(:header) { build :security_transaction_header }
+		let(:header) { create :security_transaction_header }
 		let(:json) do
 			{
 				id: 1,
