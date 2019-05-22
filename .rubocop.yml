@@ -41,7 +41,7 @@ Rails/SkipsModelValidations:
 # ------------------------------------------------------------
 
 # Indent arrays consistently
-Layout/IndentArray:
+Layout/IndentFirstArrayElement:
   EnforcedStyle: consistent
 
 # ------------------------------------------------------------
