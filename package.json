@@ -92,7 +92,7 @@
     "test:e2e": "npm run build && npm run start:test"
   },
   "engines": {
-    "node": "11.5.0",
-    "npm": "6.5.0"
+    "node": "12.1.0",
+    "npm": "6.9.0"
   }
 }
