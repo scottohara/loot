@@ -2,7 +2,9 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"baseUrl": ".",
+		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
+		"incremental": true,
 		"module": "es2015",
 		"moduleResolution": "node",
 		"noFallthroughCasesInSwitch": true,
@@ -20,11 +22,9 @@
 		"sourceMap": true,
 		"strictPropertyInitialization": true,
 		"strictNullChecks": true,
-		"target": "ES2017"
+		"target": "ES2018",
+		"tsBuildInfoFile": ".tsbuildinfo"
 	},
-	"include": [
-		"src/**/*.ts"
-	],
 	"exclude": [
 		"node_modules"
 	]

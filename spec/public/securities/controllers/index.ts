@@ -31,7 +31,7 @@ describe("SecurityIndexController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "securityModel", "securities"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$timeout_: angular.ITimeoutService, _$uibModal_: UibModalMock, _$state_: StateMock, _securityModel_: SecurityModelMock, _ogTableNavigableService_: OgTableNavigableService, _securities_: Security[]): void => {
+	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$timeout_: angular.ITimeoutService, _$uibModal_: UibModalMock, _$state_: StateMock, _securityModel_: SecurityModelMock, _ogTableNavigableService_: OgTableNavigableService, _securities_: Security[]): void => {
 		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$timeout = _$timeout_;
@@ -67,7 +67,7 @@ describe("SecurityIndexController", (): void => {
 	});
 
 	it("should ensure the security is focussed when the security id state param changes", (): void => {
-		const toParams: {id: string} = {id: "1"};
+		const toParams: {id: string;} = {id: "1"};
 
 		sinon.stub(securityIndexController, "focusSecurity" as keyof SecurityIndexController);
 		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});

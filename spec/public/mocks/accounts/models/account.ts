@@ -19,20 +19,20 @@ export default class AccountModelMockProvider implements Mock<AccountModelMock> 
 		 * Success/error = options for the stub promises
 		 * all/allWithBalances =  promise-like responses
 		 */
-		const success: PromiseMockConfig<{data: Account}> = {
-						args: {id: 1},
-						response: {data: accountMockProvider.$get()}
-					},
-					error: PromiseMockConfig<void> = {
-						args: {id: -1}
-					},
-					$q: QMock = $qMockProvider.$get(),
+		const	$q: QMock = $qMockProvider.$get(),
 					all: SinonStub = $q.promisify({
 						response: accountsMockProvider.$get()
 					}),
 					allWithBalances: SinonStub = $q.promisify({
 						response: accountsWithBalancesMockProvider.$get()
-					});
+					}),
+					success: PromiseMockConfig<{data: Account;}> = {
+						args: {id: 1},
+						response: {data: accountMockProvider.$get()}
+					},
+					error: PromiseMockConfig<void> = {
+						args: {id: -1}
+					};
 
 		// Configure the different responses for all()
 		all.withArgs(true).returns(allWithBalances());

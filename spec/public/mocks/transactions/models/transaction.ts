@@ -20,14 +20,14 @@ export default class TransactionModelMockProvider implements Mock<TransactionMod
 
 	public constructor(transactionMockProvider: TransactionMockProvider, transactionBatchMockProvider: TransactionBatchMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
-		const	success: PromiseMockConfig<BasicTransaction> = {
+		const	$q: QMock = $qMockProvider.$get(),
+					success: PromiseMockConfig<BasicTransaction> = {
 						args: {id: 1},
 						response: transactionMockProvider.$get()
 					},
 					error: PromiseMockConfig<void> = {
 						args: {id: -1}
-					},
-					$q: QMock = $qMockProvider.$get();
+					};
 
 		// Mock transactionModel object
 		this.transactionModel = {

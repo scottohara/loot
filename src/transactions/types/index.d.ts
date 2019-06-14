@@ -4,7 +4,6 @@ import {
 } from "categories/types";
 import {Account} from "accounts/types";
 import {Payee} from "payees/types";
-import {Schedule} from "schedules/types";
 import {Security} from "securities/types";
 
 export type TransactionFetchDirection = "prev" | "next";
@@ -178,8 +177,7 @@ export interface DividendTransaction extends SecurityTransaction, TransferrableT
 }
 
 // All possible transaction types
-export type Transaction = BasicTransaction | TransferTransaction | SplitTransaction | LoanRepaymentTransaction | PayslipTransaction |
-													SecurityHoldingTransaction | SecurityInvestmentTransaction | SecurityTransferTransaction | DividendTransaction;
+export type Transaction = BasicTransaction | TransferTransaction | SplitTransaction | LoanRepaymentTransaction | PayslipTransaction | SecurityHoldingTransaction | SecurityInvestmentTransaction | SecurityTransferTransaction | DividendTransaction;
 
 export interface TransactionBatch {
 	transactions: Transaction[];

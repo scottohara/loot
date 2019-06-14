@@ -30,7 +30,7 @@ describe("AccountIndexController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "accountModel", "accountsWithBalances"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_$window_: angular.IWindowService, _$uibModal_: UibModalMock, controllerTest: ControllerTestFactory, _accountModel_: AccountModelMock, _accountsWithBalances_: Accounts): void => {
+	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, _$uibModal_: UibModalMock, controllerTest: ControllerTestFactory, _accountModel_: AccountModelMock, _accountsWithBalances_: Accounts): void => {
 		$window = _$window_;
 		$uibModal = _$uibModal_;
 		accountModel = _accountModel_;

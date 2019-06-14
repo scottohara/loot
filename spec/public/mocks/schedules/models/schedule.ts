@@ -15,14 +15,14 @@ export default class ScheduleModelMockProvider implements Mock<ScheduleModelMock
 
 	public constructor(scheduleMockProvider: ScheduleMockProvider, schedulesMockProvider: SchedulesMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
-		const	success: PromiseMockConfig<ScheduledTransferTransaction> = {
+		const	$q: QMock = $qMockProvider.$get(),
+					success: PromiseMockConfig<ScheduledTransferTransaction> = {
 						args: {id: 1},
 						response: scheduleMockProvider.$get()
 					},
 					error: PromiseMockConfig<void> = {
 						args: {id: -1}
-					},
-					$q: QMock = $qMockProvider.$get();
+					};
 
 		// Mock scheduleModel object
 		this.scheduleModel = {

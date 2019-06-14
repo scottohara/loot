@@ -19,7 +19,7 @@ export default class QMockProvider implements Mock<QMock> {
 
 			function updateValueAndReturn(result: PromiseMock<T> | T, promise: PromiseMock<T>): PromiseMock<T> | T {
 				// If the callback yielded a promise, we'll simply return that
-				if (result && angular.isFunction((result as PromiseMock<T>).then)) {
+				if (result && (result as PromiseMock<T>).then && angular.isFunction((result as PromiseMock<T>).then.bind(result))) {
 					return result;
 				}
 
@@ -57,7 +57,7 @@ export default class QMockProvider implements Mock<QMock> {
 				}
 			};
 		},
-		promisify<T>(success?: PromiseMockConfig<T> | string | number, error?: PromiseMockConfig<T> | string | number): SinonStub {
+		promisify<T, U>(success?: PromiseMockConfig<T> | string | number, error?: PromiseMockConfig<U> | string | number): SinonStub {
 			// Helper function to promise-ify a stub with success and error responses
 
 			// Create two new promises, one for a success and one for an error

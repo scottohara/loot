@@ -11,9 +11,9 @@ export default class CategoryEditController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly filterFilter: angular.IFilterFilter,
-											private readonly limitToFilter: angular.IFilterLimitTo,
-											private readonly categoryModel: CategoryModel, category: Category) {
+						private readonly filterFilter: angular.IFilterFilter,
+						private readonly limitToFilter: angular.IFilterLimitTo,
+						private readonly categoryModel: CategoryModel, category: Category) {
 		this.category = angular.extend({}, category);
 		this.mode = category ? "Edit" : "Add";
 	}

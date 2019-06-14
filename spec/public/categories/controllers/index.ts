@@ -31,7 +31,7 @@ describe("CategoryIndexController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "categoryModel", "categories"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$timeout_: angular.ITimeoutService, _$uibModal_: UibModalMock, _$state_: StateMock, _categoryModel_: CategoryModelMock, _ogTableNavigableService_: OgTableNavigableService, _categories_: Category[]): void => {
+	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$timeout_: angular.ITimeoutService, _$uibModal_: UibModalMock, _$state_: StateMock, _categoryModel_: CategoryModelMock, _ogTableNavigableService_: OgTableNavigableService, _categories_: Category[]): void => {
 		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$timeout = _$timeout_;
@@ -73,7 +73,7 @@ describe("CategoryIndexController", (): void => {
 	});
 
 	it("should ensure the category is focussed when the category id state param changes", (): void => {
-		const toParams: {id: string} = {id: "1"};
+		const toParams: {id: string;} = {id: "1"};
 
 		sinon.stub(categoryIndexController, "focusCategory" as keyof CategoryIndexController);
 		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});

@@ -70,7 +70,7 @@ describe("categoryDeleteView", () => {
 			categoryDeleteView.del();
 
 			// Row count should have decremented by one
-			categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount - (1 + originalValues.numChildren));
+			categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount - (1 + Number(originalValues.numChildren)));
 
 			// After deleting, the target row should now be a different category
 			expectedValues.should.not.deep.equal(originalValues);

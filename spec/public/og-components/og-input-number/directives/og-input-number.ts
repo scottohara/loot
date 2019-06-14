@@ -9,7 +9,7 @@ describe("ogInputNumber", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((directiveTest: DirectiveTest): void => {
+	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
 		ogInputNumber = directiveTest;
 		ogInputNumber.configure("og-input-number", "input");
 		ogInputNumber.compile();

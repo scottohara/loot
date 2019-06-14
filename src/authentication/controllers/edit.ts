@@ -11,7 +11,7 @@ export default class AuthenticationEditController {
 	public loginInProgress = false;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly authenticationModel: AuthenticationModel) {}
+						private readonly authenticationModel: AuthenticationModel) {}
 
 	// Login and close the modal
 	public login(): void {

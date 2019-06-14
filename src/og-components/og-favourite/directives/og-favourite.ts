@@ -3,14 +3,16 @@ import OgFavouriteView from "og-components/og-favourite/views/favourite.html";
 
 export default class OgFavouriteDirective {
 	public constructor() {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			replace: true,
 			scope: {
 				favourite: "=ogFavourite"
 			},
 			templateUrl: OgFavouriteView
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory(): OgFavouriteDirective {

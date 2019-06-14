@@ -29,7 +29,7 @@ describe("scheduleModel", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["payeeModel", "categoryModel", "securityModel"])));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(inject((_scheduleModel_: ScheduleModel, _$httpBackend_: angular.IHttpBackendService, _payeeModel_: PayeeModelMock, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
+	beforeEach(angular.mock.inject((_scheduleModel_: ScheduleModel, _$httpBackend_: angular.IHttpBackendService, _payeeModel_: PayeeModelMock, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
 		scheduleModel = _scheduleModel_;
 
 		$httpBackend = _$httpBackend_;
@@ -79,7 +79,7 @@ describe("scheduleModel", (): void => {
 
 		beforeEach((): void => {
 			scheduleModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(/schedules/).respond(200, expectedResponse);
+			$httpBackend.expectGET(/schedules/u).respond(200, expectedResponse);
 			actualResponse = scheduleModel.all();
 			$httpBackend.flush();
 		});
@@ -99,8 +99,8 @@ describe("scheduleModel", (): void => {
 		beforeEach((): void => {
 			scheduleModel["stringify"] = sinon.stub().returnsArg(0);
 			scheduleModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.whenPOST(/schedules$/).respond(200, expectedResponse);
-			$httpBackend.whenPATCH(/schedules\/1$/).respond(200, expectedResponse);
+			$httpBackend.whenPOST(/schedules$/u).respond(200, expectedResponse);
+			$httpBackend.whenPATCH(/schedules\/1$/u).respond(200, expectedResponse);
 		});
 
 		it("should flush the payee cache when the schedule payee is new", (): void => {
@@ -163,7 +163,7 @@ describe("scheduleModel", (): void => {
 			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction();
 
 			delete schedule.id;
-			$httpBackend.expectPOST(/schedules$/, schedule);
+			$httpBackend.expectPOST(/schedules$/u, schedule);
 			scheduleModel.save(schedule);
 			$httpBackend.flush();
 		});
@@ -171,7 +171,7 @@ describe("scheduleModel", (): void => {
 		it("should dispatch a PATCH request to /schedules/{id} when an id is provided", (): void => {
 			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({id: 1});
 
-			$httpBackend.expectPATCH(/schedules\/1$/, schedule);
+			$httpBackend.expectPATCH(/schedules\/1$/u, schedule);
 			scheduleModel.save(schedule);
 			$httpBackend.flush();
 		});
@@ -192,7 +192,7 @@ describe("scheduleModel", (): void => {
 
 	describe("destroy", (): void => {
 		it("should dispatch a DELETE request to /schedules/{id}", (): void => {
-			$httpBackend.expectDELETE(/schedules\/1$/).respond(200);
+			$httpBackend.expectDELETE(/schedules\/1$/u).respond(200);
 			scheduleModel.destroy(createScheduledBasicTransaction({id: 1}));
 			$httpBackend.flush();
 		});

@@ -23,7 +23,7 @@ describe("loot", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootApp", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$state", "ogNavigatorServiceWorkerService"])));
 
 	// Inject any dependencies that need to be configured first
-	beforeEach(inject((_$window_: angular.IWindowService, _$rootScope_: LootRootScope, _$state_: angular.ui.IStateService, _ogNavigatorServiceWorkerService_: OgNavigatorServiceWorkerService): void => {
+	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, _$rootScope_: LootRootScope, _$state_: angular.ui.IStateService, _ogNavigatorServiceWorkerService_: OgNavigatorServiceWorkerService): void => {
 		$window = _$window_;
 		$rootScope = _$rootScope_;
 		$state = _$state_;

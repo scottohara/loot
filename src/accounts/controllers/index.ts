@@ -18,9 +18,9 @@ export default class AccountIndexController {
 	private readonly keydownHandler: (event: KeyboardEvent) => void;
 
 	public constructor(private readonly $scope: angular.IScope, $window: angular.IWindowService,
-											private readonly $uibModal: IModalService,
-											private readonly accountModel: AccountModel,
-											public readonly accounts: Accounts) {
+						private readonly $uibModal: IModalService,
+						private readonly accountModel: AccountModel,
+						public readonly accounts: Accounts) {
 		this.keydownHandler = (event: KeyboardEvent): void => this.keyHandler(event);
 
 		// Handler is wrapped in a function to aid with unit testing
@@ -58,7 +58,7 @@ export default class AccountIndexController {
 				}
 			}
 		}).result.then((account: Account): void => {
-			const currentAccountType: string = `${account.account_type.charAt(0).toUpperCase() + account.account_type.substring(1)} accounts`;
+			const currentAccountType = `${account.account_type.charAt(0).toUpperCase() + account.account_type.substring(1)} accounts`;
 
 			if (!accountType || !index || isNaN(index)) {
 				// Add new account to the end of the array
@@ -143,7 +143,7 @@ export default class AccountIndexController {
 
 	// Declare key handler for inserting a new account
 	private keyHandler(event: KeyboardEvent): void {
-		const INSERT_KEY = 45,
+		const	INSERT_KEY = 45,
 					N_KEY = 78;
 
 		// Check if the Insert key or CTRL+N keys were pressed

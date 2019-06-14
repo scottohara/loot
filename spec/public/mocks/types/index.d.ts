@@ -10,7 +10,6 @@ import {
 	Transaction,
 	TransactionBatch
 } from "transactions/types";
-import {SinonStub} from "sinon";
 import {StateMock} from "mocks/node-modules/angular/types";
 
 export interface Mock<T> {
@@ -18,8 +17,8 @@ export interface Mock<T> {
 }
 
 export interface ControllerTestLocals {
-	[key: string]: angular.IScope | Accounts | Account | StateMock | Transaction | TransactionBatch | EntityModel | Entity | string | null | undefined;
 	$scope?: angular.IScope;
+	[key: string]: angular.IScope | Accounts | Account | StateMock | Transaction | TransactionBatch | EntityModel | Entity | string | null | undefined;
 }
 
 export type ControllerTestFactory = (controller: string, locals?: ControllerTestLocals, bindings?: {}) => angular.IController;
@@ -40,6 +39,7 @@ interface EventMock {
 	bubbles?: boolean;
 	cancelable?: boolean;
 	cancelBubble?: boolean;
+	composed?: boolean;
 	ctrlKey?: boolean;
 	currentTarget?: Element;
 	defaultPrevented?: boolean;
@@ -58,6 +58,8 @@ interface EventMock {
 	AT_TARGET?: number;
 	BUBBLING_PHASE?: number;
 	CAPTURING_PHASE?: number;
+	NONE?: number;
+	composedPath?(): EventTarget[];
 	deepPath?(): EventTarget[];
 	initEvent?(eventTypeArg: string, canBubbleArg: boolean, cancelableArg: boolean): void;
 	initUIEvent?(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number): void;

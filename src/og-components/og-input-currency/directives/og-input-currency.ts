@@ -2,7 +2,7 @@ import {OgInputCurrencyScope} from "og-components/og-input-currency/types";
 
 export default class OgInputCurrencyDirective {
 	public constructor(numberFilter: angular.IFilterNumber) {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			priority: 1,
 			require: "ngModel",
@@ -17,7 +17,7 @@ export default class OgInputCurrencyDirective {
 				scope.vm.decimalPlaces = scope.vm.precision;
 
 				// View to model
-				ngModel.$parsers.push(scope.vm.formattedToRaw);
+				ngModel.$parsers.push(scope.vm.formattedToRaw.bind(scope.vm));
 
 				// Model to view
 				ngModel.$formatters.unshift(scope.vm.rawToFormatted.bind(scope.vm));
@@ -40,7 +40,9 @@ export default class OgInputCurrencyDirective {
 					iElement.off("blur", rawToFormatted);
 				});
 			}
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory(numberFilter: angular.IFilterNumber): OgInputCurrencyDirective {

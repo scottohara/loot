@@ -6,8 +6,8 @@ export default class SecurityDeleteController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly securityModel: SecurityModel,
-											public readonly security: Security) {}
+						private readonly securityModel: SecurityModel,
+						public readonly security: Security) {}
 
 	// Delete and close the modal
 	public deleteSecurity(): void {

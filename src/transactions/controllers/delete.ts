@@ -6,8 +6,8 @@ export default class TransactionDeleteController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly transactionModel: TransactionModel,
-											private readonly transaction: Transaction) {}
+						private readonly transactionModel: TransactionModel,
+						private readonly transaction: Transaction) {}
 
 	// Delete and close the modal
 	public deleteTransaction(): void {

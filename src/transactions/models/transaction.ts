@@ -32,11 +32,11 @@ export default class TransactionModel {
 	private lastUsedTransactionDate: Date | string | undefined = startOfDay(new Date());
 
 	public constructor(private readonly $http: angular.IHttpService,
-											private readonly $window: angular.IWindowService,
-											private readonly accountModel: AccountModel,
-											private readonly payeeModel: PayeeModel,
-											private readonly categoryModel: CategoryModel,
-											private readonly securityModel: SecurityModel) {}
+						private readonly $window: angular.IWindowService,
+						private readonly accountModel: AccountModel,
+						private readonly payeeModel: PayeeModel,
+						private readonly categoryModel: CategoryModel,
+						private readonly securityModel: SecurityModel) {}
 
 	private get SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY(): string {
 		return "lootShowAllTransactionDetails";
@@ -61,7 +61,7 @@ export default class TransactionModel {
 				unreconciled: unreconciledOnly
 			}
 		}).then((response: angular.IHttpResponse<TransactionBatch>): TransactionBatch => {
-			response.data.transactions = response.data.transactions.map(this.parse);
+			response.data.transactions = response.data.transactions.map(this.parse.bind(this));
 
 			return response.data;
 		});
@@ -76,7 +76,7 @@ export default class TransactionModel {
 				direction
 			}
 		}).then((response: angular.IHttpResponse<TransactionBatch>): TransactionBatch => {
-			response.data.transactions = response.data.transactions.map(this.parse);
+			response.data.transactions = response.data.transactions.map(this.parse.bind(this));
 
 			return response.data;
 		});

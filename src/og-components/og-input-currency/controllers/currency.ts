@@ -15,7 +15,7 @@ export default class OgInputCurrencyController {
 
 	// Converts formatted value to raw value
 	public formattedToRaw(value: string): number {
-		return Number(value.replace(/[^0-9\-.]/g, "")) || 0;
+		return Number(value.replace(/[^0-9\-.]/gu, "")) || 0;
 	}
 
 	// Converts raw value to formatted value

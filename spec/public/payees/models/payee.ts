@@ -31,13 +31,13 @@ describe("payeeModel", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
 
 	// Inject any dependencies that need to be configured first
-	beforeEach(inject((_$window_: WindowMock): void => {
+	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
 		$window = _$window_;
 		$window.localStorage.getItem.withArgs("lootRecentPayees").returns(null);
 	}));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(inject((_payeeModel_: PayeeModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock): void => {
+	beforeEach(angular.mock.inject((_payeeModel_: PayeeModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock): void => {
 		payeeModel = _payeeModel_;
 
 		$httpBackend = _$httpBackend_;
@@ -70,7 +70,7 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl: RegExp = /payees$/,
+		let expectedUrl = /payees$/u,
 				expectedResponse = "payees";
 
 		it("should dispatch a GET request to /payees", (): void => {
@@ -98,7 +98,7 @@ describe("payeeModel", (): void => {
 
 		describe("(list)", (): void => {
 			beforeEach((): void => {
-				expectedUrl = /payees\?list/;
+				expectedUrl = /payees\?list/u;
 				expectedResponse = "payees list";
 			});
 
@@ -130,7 +130,7 @@ describe("payeeModel", (): void => {
 	describe("allList", (): void => {
 		const expected = "payees list";
 
-		beforeEach((): SinonStub => (payeeModel.all = sinon.stub().returns(expected)));
+		beforeEach((): SinonStub => sinon.stub(payeeModel, "all").returns(expected));
 
 		it("should call payeeModel.all(true)", (): void => {
 			payeeModel.allList();
@@ -145,7 +145,7 @@ describe("payeeModel", (): void => {
 		let actualResponse: angular.IPromise<Transaction>;
 
 		beforeEach((): void => {
-			$httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/).respond(200, expectedResponse);
+			$httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u).respond(200, expectedResponse);
 			actualResponse = payeeModel.findLastTransaction(1, "bank");
 			$httpBackend.flush();
 		});
@@ -158,10 +158,10 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedUrl: RegExp = /payees\/123/,
+		const expectedUrl = /payees\/123/u,
 					expectedResponse = "payee details";
 
-		beforeEach((): SinonStub => (payeeModel.addRecent = sinon.stub()));
+		beforeEach((): SinonStub => sinon.stub(payeeModel, "addRecent"));
 
 		it("should dispatch a GET request to /payees/{id}", (): void => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);
@@ -196,13 +196,13 @@ describe("payeeModel", (): void => {
 
 	describe("save", (): void => {
 		beforeEach((): void => {
-			payeeModel.flush = sinon.stub();
-			$httpBackend.whenPOST(/payees$/, payee).respond(200);
-			$httpBackend.whenPATCH(/payees\/1$/, payee).respond(200);
+			sinon.stub(payeeModel, "flush");
+			$httpBackend.whenPOST(/payees$/u, payee).respond(200);
+			$httpBackend.whenPATCH(/payees\/1$/u, payee).respond(200);
 		});
 
 		it("should flush the payee cache", (): void => {
-			$httpBackend.expectPATCH(/payees\/1$/);
+			$httpBackend.expectPATCH(/payees\/1$/u);
 			payeeModel.save(payee);
 			payeeModel.flush.should.have.been.called;
 			$httpBackend.flush();
@@ -210,13 +210,13 @@ describe("payeeModel", (): void => {
 
 		it("should dispatch a POST request to /payees when an id is not provided", (): void => {
 			delete payee.id;
-			$httpBackend.expectPOST(/payees$/);
+			$httpBackend.expectPOST(/payees$/u);
 			payeeModel.save(payee);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /payees/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/payees\/1$/);
+			$httpBackend.expectPATCH(/payees\/1$/u);
 			payeeModel.save(payee);
 			$httpBackend.flush();
 		});
@@ -224,9 +224,9 @@ describe("payeeModel", (): void => {
 
 	describe("destroy", (): void => {
 		beforeEach((): void => {
-			payeeModel.flush = sinon.stub();
-			payeeModel.removeRecent = sinon.stub();
-			$httpBackend.expectDELETE(/payees\/1$/).respond(200);
+			sinon.stub(payeeModel, "flush");
+			sinon.stub(payeeModel, "removeRecent");
+			$httpBackend.expectDELETE(/payees\/1$/u).respond(200);
 			payeeModel.destroy(payee);
 			$httpBackend.flush();
 		});
@@ -240,9 +240,9 @@ describe("payeeModel", (): void => {
 
 	describe("toggleFavourite", (): void => {
 		beforeEach((): void => {
-			payeeModel.flush = sinon.stub();
-			$httpBackend.whenDELETE(/payees\/1\/favourite$/).respond(200);
-			$httpBackend.whenPUT(/payees\/1\/favourite$/).respond(200);
+			sinon.stub(payeeModel, "flush");
+			$httpBackend.whenDELETE(/payees\/1\/favourite$/u).respond(200);
+			$httpBackend.whenPUT(/payees\/1\/favourite$/u).respond(200);
 		});
 
 		it("should flush the payee cache", (): void => {
@@ -252,14 +252,14 @@ describe("payeeModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /payees/{id}/favourite when the payee is unfavourited", (): void => {
-			$httpBackend.expectDELETE(/payees\/1\/favourite$/);
+			$httpBackend.expectDELETE(/payees\/1\/favourite$/u);
 			payee.favourite = true;
 			payeeModel.toggleFavourite(payee).should.eventually.equal(false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /payees/{id}/favourite when the payee is favourited", (): void => {
-			$httpBackend.expectPUT(/payees\/1\/favourite$/);
+			$httpBackend.expectPUT(/payees\/1\/favourite$/u);
 			payeeModel.toggleFavourite(payee).should.eventually.equal(true);
 			$httpBackend.flush();
 		});

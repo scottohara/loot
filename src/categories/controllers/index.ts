@@ -22,15 +22,15 @@ export default class CategoryIndexController {
 	public readonly tableActions: OgTableActions;
 
 	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
-											private readonly $uibModal: IModalService,
-											private readonly $timeout: angular.ITimeoutService,
-											private readonly $state: angular.ui.IStateService,
-											private readonly categoryModel: CategoryModel,
-											private readonly ogTableNavigableService: OgTableNavigableService, categories: Category[]) {
+						private readonly $uibModal: IModalService,
+						private readonly $timeout: angular.ITimeoutService,
+						private readonly $state: angular.ui.IStateService,
+						private readonly categoryModel: CategoryModel,
+						private readonly ogTableNavigableService: OgTableNavigableService, categories: Category[]) {
 		const self: this = this;
 
 		this.categories = angular.copy(categories).reduce((flattened: Category[], category: Category): Category[] => {
-			const {children}: {children?: Category[]} = category;
+			const {children}: {children?: Category[];} = category;
 
 			delete category.children;
 
@@ -233,7 +233,7 @@ export default class CategoryIndexController {
 
 	// Helper function to find a category by it's id and return it's index
 	private categoryIndexById(id: string | number | null): number {
-		let targetIndex: number = NaN;
+		let targetIndex = NaN;
 
 		angular.forEach(this.categories, (category: Category, index: number): void => {
 			if (isNaN(targetIndex) && category.id === id) {

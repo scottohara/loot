@@ -6,8 +6,8 @@ export default class ScheduleDeleteController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly scheduleModel: ScheduleModel,
-											public readonly schedule: ScheduledTransaction) {}
+						private readonly scheduleModel: ScheduleModel,
+						public readonly schedule: ScheduledTransaction) {}
 
 	// Delete and close the modal
 	public deleteSchedule(): void {

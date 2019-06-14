@@ -1,5 +1,6 @@
 import {
 	OgTableActionCallback,
+	OgTableMovementKeys,
 	OgTableNavigableScope
 } from "og-components/og-table-navigable/types";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
@@ -7,7 +8,7 @@ import angular from "angular";
 
 export default class OgTableNavigableDirective {
 	public constructor($window: angular.IWindowService, ogTableNavigableService: OgTableNavigableService) {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			scope: {
 				handlers: "=ogTableNavigable"
@@ -21,7 +22,7 @@ export default class OgTableNavigableDirective {
 
 				// Focus a row in the table
 				scope.focusRow = (row: JQuery<Element>): void => {
-					const rowIndex: number = (angular.element(row).scope() as angular.IRepeatScope).$index;
+					const rowIndex: number = angular.element(row).scope<angular.IRepeatScope>().$index;
 
 					// Highlight the row
 					scope.highlightRow(row);
@@ -56,7 +57,7 @@ export default class OgTableNavigableDirective {
 								viewTop: number = $window.$(document).scrollTop(),
 								rowTop: number = rowOffset ? rowOffset.top : viewTop,
 								rowBottom: number = rowTop + Number(row.height()),
-								viewBottom: number = viewTop + $window.$(window).height(),
+								viewBottom: number = viewTop + Number($window.$(window).height()),
 								scrollNeeded: boolean = rowTop < viewTop || rowBottom > viewBottom;
 
 					// If we have somewhere to scroll, do it now
@@ -131,7 +132,7 @@ export default class OgTableNavigableDirective {
 
 						if (clickedRow.length > 0) {
 							// Invoke the select action for the clicked row
-							scope.handlers.selectAction((angular.element(clickedRow).scope() as angular.IRepeatScope).$index);
+							scope.handlers.selectAction(angular.element(clickedRow).scope<angular.IRepeatScope>().$index);
 						}
 					}
 				};
@@ -151,7 +152,7 @@ export default class OgTableNavigableDirective {
 					}
 				};
 
-				const	MOVEMENT_KEYS: {[keyCode: number]: -10 | 10 | -1 | 1} = {
+				const	MOVEMENT_KEYS: {[keyCode: number]: OgTableMovementKeys;} = {
 								// Page up
 								33: -10,
 
@@ -170,7 +171,7 @@ export default class OgTableNavigableDirective {
 								// K
 								75: -1
 							},
-							ACTION_KEYS: {[keyCode: number]: OgTableActionCallback | undefined} = {
+							ACTION_KEYS: {[keyCode: number]: OgTableActionCallback | undefined;} = {
 								// Backspace
 								8: scope.handlers.deleteAction,
 
@@ -186,7 +187,7 @@ export default class OgTableNavigableDirective {
 								// Delete
 								46: scope.handlers.deleteAction
 							},
-							CTRL_ACTION_KEYS: {[keyCode: number]: OgTableActionCallback} = {
+							CTRL_ACTION_KEYS: {[keyCode: number]: OgTableActionCallback;} = {
 								// CTRL+E
 								69: scope.handlers.editAction,
 
@@ -219,7 +220,7 @@ export default class OgTableNavigableDirective {
 						if (event.ctrlKey && Object.getOwnPropertyDescriptor(CTRL_ACTION_KEYS, event.keyCode)) {
 							// If an action is defined, invoke it for the focussed row
 							if (CTRL_ACTION_KEYS[event.keyCode]) {
-								CTRL_ACTION_KEYS[event.keyCode]((Number(scope.focussedRow)));
+								CTRL_ACTION_KEYS[event.keyCode](Number(scope.focussedRow));
 							}
 							event.preventDefault();
 						}
@@ -250,7 +251,9 @@ export default class OgTableNavigableDirective {
 					$window.$(document).off("keydown", keyHandler);
 				});
 			}
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory($window: angular.IWindowService, ogTableNavigableService: OgTableNavigableService): OgTableNavigableDirective {

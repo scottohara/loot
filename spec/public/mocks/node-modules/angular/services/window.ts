@@ -11,15 +11,15 @@ export default class WindowMockProvider implements Mock<WindowMock> {
 	private readonly $window: WindowMock;
 
 	public constructor($qMockProvider: QMockProvider) {
-		const success: PromiseMockConfig<{scope: string}> = {
+		const $q: QMock = $qMockProvider.$get(),
+					success: PromiseMockConfig<{scope: string;}> = {
 						args: "good-script",
 						response: {scope: "test scope"}
 					},
 					error: PromiseMockConfig<string> = {
 						args: "bad-script",
 						response: "test error"
-					},
-					$q: QMock = $qMockProvider.$get();
+					};
 
 		// Mock $window object
 		this.$window = {

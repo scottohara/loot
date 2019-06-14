@@ -2,8 +2,6 @@ export default class OgTableNavigableService {
 	// Enables/disables keyboard navigation on all navigable tables
 	private isEnabled = true;
 
-	public constructor() {}
-
 	public get enabled(): boolean {
 		return this.isEnabled;
 	}

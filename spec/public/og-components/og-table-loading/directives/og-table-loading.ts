@@ -8,7 +8,7 @@ describe("ogTableLoading", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((directiveTest: DirectiveTest): void => {
+	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
 		ogTableLoading = directiveTest;
 		ogTableLoading.configure("og-table-loading", "tr");
 		ogTableLoading.scope.model = false;

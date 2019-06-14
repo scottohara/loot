@@ -2,7 +2,7 @@ import {OgInputAutoSelectScope} from "og-components/og-input-autoselect/types";
 
 export default class OgInputAutoSelectDirective {
 	public constructor($window: angular.IWindowService, $timeout: angular.ITimeoutService) {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			link(scope: OgInputAutoSelectScope, iElement: JQuery<Element>): void {
 				scope.isFocussed = (input?: Element): boolean => input === document.activeElement;
@@ -19,6 +19,8 @@ export default class OgInputAutoSelectDirective {
 				iElement.on("$destroy", (): JQuery<Element> => iElement.off("focus", select));
 			}
 		};
+
+		return directive;
 	}
 
 	public static factory($window: angular.IWindowService, $timeout: angular.ITimeoutService): OgInputAutoSelectDirective {

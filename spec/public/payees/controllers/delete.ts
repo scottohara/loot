@@ -16,7 +16,7 @@ describe("PayeeDeleteController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "payee"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _payeeModel_: PayeeModelMock, _payee_: Payee): void => {
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _payeeModel_: PayeeModelMock, _payee_: Payee): void => {
 		$uibModalInstance = _$uibModalInstance_;
 		payeeModel = _payeeModel_;
 		payee = _payee_;

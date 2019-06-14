@@ -20,7 +20,7 @@ describe("securityDeleteView", () => {
 
 		securityIndexView.securityCode(securityIndexView.table.lastRow()).then(securityCode => (lastSecurityCode = securityCode));
 
-		securityIndexView.table.secondLastRow().then(securityIndexView.securityName).then(securityName => (secondLastSecurityName = securityName));
+		securityIndexView.table.secondLastRow().then(securityIndexView.securityName.bind(securityIndexView)).then(securityName => (secondLastSecurityName = securityName));
 	});
 
 	describe("deleting a security", () => {

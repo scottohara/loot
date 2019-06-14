@@ -65,7 +65,7 @@ const	entry = {
 
 			// Rule for font processing
 			fontRule = {
-				test: /\.(ttf|woff|woff2|eot|svg)$/u,
+				test: /\.(?:ttf|woff|woff2|eot|svg)$/u,
 				loader: "url-loader",
 				options: {
 					// Use file-loader for anything bigger than 1 byte

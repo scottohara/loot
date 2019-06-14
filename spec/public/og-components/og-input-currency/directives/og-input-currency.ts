@@ -9,7 +9,7 @@ describe("ogInputCurrency", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((directiveTest: DirectiveTest): void => {
+	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
 		ogInputCurrency = directiveTest;
 		ogInputCurrency.configure("og-input-currency", "input");
 		ogInputCurrency.compile();

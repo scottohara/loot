@@ -10,7 +10,7 @@ describe("ogViewScrollService", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$anchorScroll"])));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(inject((_ogViewScrollService_: OgViewScrollService, _$anchorScroll_: angular.IAnchorScrollService): void => {
+	beforeEach(angular.mock.inject((_ogViewScrollService_: OgViewScrollService, _$anchorScroll_: angular.IAnchorScrollService): void => {
 		ogViewScrollService = _ogViewScrollService_;
 		$anchorScroll = _$anchorScroll_;
 	}));

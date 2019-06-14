@@ -15,14 +15,14 @@ export default class PayeeModelMockProvider implements Mock<PayeeModelMock> {
 
 	public constructor(payeeMockProvider: PayeeMockProvider, payeesMockProvider: PayeesMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
-		const	success: PromiseMockConfig<{data: Payee}> = {
+		const	$q: QMock = $qMockProvider.$get(),
+					success: PromiseMockConfig<{data: Payee;}> = {
 						args: {id: 1},
 						response: {data: payeeMockProvider.$get()}
 					},
 					error: PromiseMockConfig<void> = {
 						args: {id: -1}
-					},
-					$q: QMock = $qMockProvider.$get();
+					};
 
 		// Mock payeeModel object
 		this.payeeModel = {

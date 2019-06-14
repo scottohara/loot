@@ -7,7 +7,7 @@ describe("payeeIndexView", () => {
 		for (let i = 1; i <= 20; i++) {
 			expected.push(`Payee ${i}`);
 		}
-		expected = expected.sort();
+		expected = expected.sort((a, b) => a.localeCompare(b));
 
 		// Go to the payees index page
 		browser.get("/#!/payees");

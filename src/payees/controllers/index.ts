@@ -19,12 +19,12 @@ export default class PayeeIndexController {
 	public readonly tableActions: OgTableActions;
 
 	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
-											private readonly $uibModal: IModalService,
-											private readonly $timeout: angular.ITimeoutService,
-											private readonly $state: angular.ui.IStateService,
-											private readonly payeeModel: PayeeModel,
-											private readonly ogTableNavigableService: OgTableNavigableService,
-											public readonly payees: Payee[]) {
+						private readonly $uibModal: IModalService,
+						private readonly $timeout: angular.ITimeoutService,
+						private readonly $state: angular.ui.IStateService,
+						private readonly payeeModel: PayeeModel,
+						private readonly ogTableNavigableService: OgTableNavigableService,
+						public readonly payees: Payee[]) {
 		const self: this = this;
 
 		this.tableActions = {
@@ -156,7 +156,7 @@ export default class PayeeIndexController {
 	// Finds a specific payee and focusses that row in the table
 	private focusPayee(payeeIdToFocus: string | number): number {
 		const delay = 50;
-		let targetIndex: number = NaN;
+		let targetIndex = NaN;
 
 		// Find the payee by it's id
 		angular.forEach(this.payees, (payee: Payee, index: number): void => {

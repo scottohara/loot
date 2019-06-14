@@ -16,7 +16,7 @@ describe("ScheduleDeleteController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "scheduleModel", "schedule"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _scheduleModel_: ScheduleModelMock, _schedule_: ScheduledTransaction): void => {
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _scheduleModel_: ScheduleModelMock, _schedule_: ScheduledTransaction): void => {
 		$uibModalInstance = _$uibModalInstance_;
 		scheduleModel = _scheduleModel_;
 		schedule = _schedule_;

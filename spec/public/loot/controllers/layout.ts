@@ -24,9 +24,7 @@ describe("LayoutController", (): void => {
 			realJQueryInstance: JQuery;
 
 	class MockJQueryInstance {
-		private readonly events: {[event: string]: () => void} = {};
-
-		public constructor() {}
+		private readonly events: {[event: string]: () => void;} = {};
 
 		public on(event: string, handler: () => void): void {
 			this.events[event] = handler;
@@ -37,7 +35,7 @@ describe("LayoutController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootApp", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$state", "$uibModal", "ogNavigatorServiceWorkerService", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_: ControllerTestFactory, _$window_: angular.IWindowService, _$transitions_: angular.ui.IStateParamsService, _$state_: StateMock, _$uibModal_: UibModalMock, _authenticationModel_: AuthenticationModelMock, _ogTableNavigableService_: OgTableNavigableService, _authenticated_: boolean): void => {
+	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$window_: angular.IWindowService, _$transitions_: angular.ui.IStateParamsService, _$state_: StateMock, _$uibModal_: UibModalMock, _authenticationModel_: AuthenticationModelMock, _ogTableNavigableService_: OgTableNavigableService, _authenticated_: boolean): void => {
 		controllerTest = _controllerTest_;
 		$window = _$window_;
 		$transitions = _$transitions_;
@@ -168,7 +166,7 @@ describe("LayoutController", (): void => {
 	});
 
 	describe("state transitions", (): void => {
-		let mockTransition: {promise: {finally: SinonStub}},
+		let mockTransition: {promise: {finally: SinonStub;};},
 				deregisterTransitionStartHook: SinonStub;
 
 		beforeEach((): void => {

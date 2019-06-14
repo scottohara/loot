@@ -11,12 +11,12 @@ export default class OgInputCurrencyControllerMockProvider implements Mock<OgInp
 
 	// Mock input currency controller object
 	public constructor() {
-		const formattedToRaw = sinon.stub().callsFake((value: string): number => Number(value)),
-					rawToFormatted = sinon.stub().callsFake((value: number): string => String(value));
-
 		this.ogInputCurrencyController = ($scope: OgInputCurrencyController): OgInputCurrencyControllerType => {
-			$scope.formattedToRaw = formattedToRaw;
-			$scope.rawToFormatted = rawToFormatted;
+			const formattedToRaw = sinon.stub().callsFake((value: string): number => Number(value)),
+						rawToFormatted = sinon.stub().callsFake((value: number): string => String(value));
+
+			Object.defineProperty($scope, "formattedToRaw", {value: formattedToRaw});
+			Object.defineProperty($scope, "rawToFormatted", {value: rawToFormatted});
 
 			return {
 				type: "ogInputCurrencyController",

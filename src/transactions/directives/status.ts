@@ -9,7 +9,7 @@ import TransactionStatusView from "transactions/views/status.html";
 
 export default class TransactionStatusDirective {
 	public constructor($sce: angular.ISCEService, transactionModel: TransactionModel, accountModel: AccountModel) {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			scope: {
 				transactionStatus: "=transactionStatus"
@@ -56,7 +56,9 @@ export default class TransactionStatusDirective {
 				// When the element is destroyed, remove all event handlers
 				iElement.on("$destroy", (): JQuery<Element> => iElement.off("click", scope.clickHandler));
 			}
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory($sce: angular.ISCEService, transactionModel: TransactionModel, accountModel: AccountModel): TransactionStatusDirective {

@@ -30,7 +30,7 @@ export default class LootStatesProvider {
 	public $get: () => LootStatesProvider;
 
 	public constructor($stateProvider: angular.ui.IStateProvider) {
-		const transactionViews: {[name: string]: angular.ui.IState} = {
+		const transactionViews: {[name: string]: angular.ui.IState;} = {
 			"@root": {
 				templateUrl: TransactionIndexView,
 				controller: "TransactionIndexController",

@@ -2,18 +2,18 @@ class OgTableNavigableView {
 	constructor(config) {
 		this.rows = config.rows;
 		this.actions = config.actions;
-		this.j = this.sendJKey;
-		this.k = this.sendKKey;
-		this.arrowDown = this.sendArrowDownKey;
-		this.arrowUp = this.sendArrowUpKey;
-		this.pageDown = this.sendPageDownKey;
-		this.pageUp = this.sendPageUpKey;
-		this.insert = this.sendInsertKey;
-		this.ctrlN = this.sendCtrlNKeys;
-		this.ctrlE = this.sendCtrlEKeys;
-		this.del = this.sendDeleteKey;
-		this.backSpace = this.sendBackSpaceKey;
-		this.enter = this.sendEnterKey;
+		this.j = this.sendJKey.bind(this);
+		this.k = this.sendKKey.bind(this);
+		this.arrowDown = this.sendArrowDownKey.bind(this);
+		this.arrowUp = this.sendArrowUpKey.bind(this);
+		this.pageDown = this.sendPageDownKey.bind(this);
+		this.pageUp = this.sendPageUpKey.bind(this);
+		this.insert = this.sendInsertKey.bind(this);
+		this.ctrlN = this.sendCtrlNKeys.bind(this);
+		this.ctrlE = this.sendCtrlEKeys.bind(this);
+		this.del = this.sendDeleteKey.bind(this);
+		this.backSpace = this.sendBackSpaceKey.bind(this);
+		this.enter = this.sendEnterKey.bind(this);
 	}
 
 	// Returns a table row by it's index
@@ -44,7 +44,7 @@ class OgTableNavigableView {
 
 	// Returns the number of rows focussed
 	focussedRowCount() {
-		return this.rows.filter(this.isFocussed).count();
+		return this.rows.filter(this.isFocussed.bind(this)).count();
 	}
 
 	// Click on a row

@@ -22,7 +22,7 @@ describe("AccountEditController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _accountModel_: AccountModelMock, _account_: Account): void => {
+	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _accountModel_: AccountModelMock, _account_: Account): void => {
 		controllerTest = _controllerTest_;
 		$uibModalInstance = _$uibModalInstance_;
 		accountModel = _accountModel_;

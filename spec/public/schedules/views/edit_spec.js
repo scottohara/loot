@@ -331,7 +331,7 @@ describe("scheduleEditView", () => {
 					scheduleEditView.save();
 
 					// Row count should have incremented by one
-					scheduleIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+					scheduleIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 					// Schedule in the target row should be the new schedule
 					scheduleIndexView.checkRowValues(targetRow, expected);

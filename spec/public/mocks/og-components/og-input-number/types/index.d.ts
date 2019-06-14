@@ -6,6 +6,4 @@ export interface OgInputNumberControllerType {
 	rawToFormatted: SinonStub;
 }
 
-export interface OgInputNumberControllerMock {
-	(): OgInputNumberControllerType;
-}
+export type OgInputNumberControllerMock = () => OgInputNumberControllerType;

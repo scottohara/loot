@@ -20,7 +20,7 @@ describe("AccountDeleteController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _accountModel_: AccountModelMock, _account_: Account): void => {
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _accountModel_: AccountModelMock, _account_: Account): void => {
 		$uibModalInstance = _$uibModalInstance_;
 		accountModel = _accountModel_;
 		account = _account_;

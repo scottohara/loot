@@ -22,12 +22,12 @@ export default class SecurityIndexController {
 	public totalValue: number;
 
 	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
-											private readonly $uibModal: IModalService,
-											private readonly $timeout: angular.ITimeoutService,
-											private readonly $state: angular.ui.IStateService,
-											private readonly securityModel: SecurityModel,
-											private readonly ogTableNavigableService: OgTableNavigableService,
-											public readonly securities: Security[]) {
+						private readonly $uibModal: IModalService,
+						private readonly $timeout: angular.ITimeoutService,
+						private readonly $state: angular.ui.IStateService,
+						private readonly securityModel: SecurityModel,
+						private readonly ogTableNavigableService: OgTableNavigableService,
+						public readonly securities: Security[]) {
 		const	self: this = this,
 					decimalPlaces = 2;
 
@@ -176,7 +176,7 @@ export default class SecurityIndexController {
 	// Finds a specific security and focusses that row in the table
 	private focusSecurity(securityIdToFocus: string | number): number {
 		const delay = 50;
-		let targetIndex: number = NaN;
+		let targetIndex = NaN;
 
 		// Find the security by it's id
 		angular.forEach(this.securities, (security: Security, index: number): void => {

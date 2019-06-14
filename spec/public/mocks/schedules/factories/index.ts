@@ -17,7 +17,7 @@ import {
 	createTransferTransaction
 } from "mocks/transactions/factories";
 
-function createSchedule(props: Partial<Schedule> & {transaction_date: Date} = {transaction_date: new Date()}): Schedule & {transaction_date: Date} {
+function createSchedule(props: Partial<Schedule> & {transaction_date: Date;} = {transaction_date: new Date()}): Schedule & {transaction_date: Date;} {
 	return {
 		transaction_date: new Date(),
 		frequency: "Monthly" as ScheduleFrequency,

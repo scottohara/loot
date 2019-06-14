@@ -10,7 +10,7 @@ export default class MockDependenciesProvider {
 		angular.forEach(dependencies, (dependency: string): void => {
 			const mockProvider: Mock<T> = this.$injector.get(`${dependency}MockProvider`);
 
-			this.$provide.value(dependency, this.$injector.invoke(mockProvider.$get, mockProvider));
+			this.$provide.value(dependency, this.$injector.invoke(mockProvider.$get.bind(mockProvider), mockProvider));
 		}, this);
 	}
 
@@ -27,7 +27,7 @@ describe("mockDependenciesProvider", (): void => {
 	beforeEach(angular.mock.module("lootMocks"));
 
 	// Inject the object under test
-	beforeEach(inject((_mockDependencies_: MockDependenciesProvider): MockDependenciesProvider => (mockDependenciesProvider = _mockDependencies_)));
+	beforeEach(angular.mock.inject((_mockDependencies_: MockDependenciesProvider): MockDependenciesProvider => (mockDependenciesProvider = _mockDependencies_)));
 
 	describe("$get", (): void => {
 		it("should return the mockDependencies provider", (): Chai.Assertion => mockDependenciesProvider.should.have.property("load"));

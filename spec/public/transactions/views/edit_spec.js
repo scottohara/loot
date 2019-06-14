@@ -313,7 +313,7 @@ describe("transactionEditView", () => {
 							transactionEditView.save();
 
 							// Row count should have incremented by one
-							transactionIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+							transactionIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 							// Transaction in the target row should be the new transaction
 							transactionIndexView.checkRowValues(targetRow, expected);

@@ -8,7 +8,7 @@ describe("ogLoadingSpinner", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((directiveTest: DirectiveTest): void => {
+	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
 		ogLoadingSpinner = directiveTest;
 		ogLoadingSpinner.configure("og-loading-spinner");
 		ogLoadingSpinner.scope.model = "test message";

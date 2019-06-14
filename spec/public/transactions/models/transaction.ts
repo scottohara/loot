@@ -46,7 +46,7 @@ describe("transactionModel", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$window", "accountModel", "payeeModel", "categoryModel", "securityModel"])));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(inject((_transactionModel_: TransactionModel, _$httpBackend_: angular.IHttpBackendService, _$window_: WindowMock, _accountModel_: AccountModelMock, _payeeModel_: PayeeModel, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
+	beforeEach(angular.mock.inject((_transactionModel_: TransactionModel, _$httpBackend_: angular.IHttpBackendService, _$window_: WindowMock, _accountModel_: AccountModelMock, _payeeModel_: PayeeModel, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
 		transactionModel = _transactionModel_;
 
 		$httpBackend = _$httpBackend_;
@@ -72,7 +72,7 @@ describe("transactionModel", (): void => {
 
 	describe("fullPath", (): void => {
 		it("should return the path including the parent context", (): void => {
-			transactionModel.path = sinon.stub().returns("/path");
+			sinon.stub(transactionModel, "path").returns("/path");
 			transactionModel.fullPath("/context").should.equal("/context/path");
 		});
 	});
@@ -111,7 +111,7 @@ describe("transactionModel", (): void => {
 			const fromDate = new Date();
 
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(new RegExp(`context/transactions\\?as_at=${fromDate.toISOString()}&direction=prev&unreconciled=true`)).respond(200, expectedResponse);
+			$httpBackend.expectGET(new RegExp(`context/transactions\\?as_at=${fromDate.toISOString()}&direction=prev&unreconciled=true`, "u")).respond(200, expectedResponse);
 			actualResponse = transactionModel.all("context", fromDate, "prev", true);
 			$httpBackend.flush();
 		});
@@ -135,7 +135,7 @@ describe("transactionModel", (): void => {
 
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(/transactions\?direction=prev&query=query/).respond(200, expectedResponse);
+			$httpBackend.expectGET(/transactions\?direction=prev&query=query/u).respond(200, expectedResponse);
 			actualResponse = transactionModel.query("query", null, "prev");
 			$httpBackend.flush();
 		});
@@ -154,7 +154,7 @@ describe("transactionModel", (): void => {
 		let actualResponse: angular.IPromise<SplitTransactionChild[]>;
 
 		beforeEach((): void => {
-			$httpBackend.expectGET(/transactions\/123\/subtransactions/).respond(200, expectedResponse);
+			$httpBackend.expectGET(/transactions\/123\/subtransactions/u).respond(200, expectedResponse);
 			actualResponse = transactionModel.findSubtransactions(123);
 			$httpBackend.flush();
 		});
@@ -172,7 +172,7 @@ describe("transactionModel", (): void => {
 
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(/transactions\/123/).respond(200, expectedResponse);
+			$httpBackend.expectGET(/transactions\/123/u).respond(200, expectedResponse);
 			actualResponse = transactionModel.find(123);
 			$httpBackend.flush();
 		});
@@ -194,8 +194,8 @@ describe("transactionModel", (): void => {
 			transactionModel["invalidateCaches"] = sinon.stub();
 			transactionModel["stringify"] = sinon.stub().returnsArg(0);
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.whenPOST(/transactions$/).respond(200, expectedResponse);
-			$httpBackend.whenPATCH(/transactions\/1$/).respond(200, expectedResponse);
+			$httpBackend.whenPOST(/transactions$/u).respond(200, expectedResponse);
+			$httpBackend.whenPATCH(/transactions\/1$/u).respond(200, expectedResponse);
 			transaction = createBasicTransaction({id: 1});
 		});
 
@@ -213,13 +213,13 @@ describe("transactionModel", (): void => {
 
 		it("should dispatch a POST request to /transactions when an id is not provided", (): void => {
 			delete transaction.id;
-			$httpBackend.expectPOST(/transactions$/, transaction);
+			$httpBackend.expectPOST(/transactions$/u, transaction);
 			transactionModel.save(transaction);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /transactions/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/transactions\/1$/, transaction);
+			$httpBackend.expectPATCH(/transactions\/1$/u, transaction);
 			transactionModel.save(transaction);
 			$httpBackend.flush();
 		});
@@ -250,7 +250,7 @@ describe("transactionModel", (): void => {
 
 		beforeEach((): void => {
 			transactionModel["invalidateCaches"] = sinon.stub();
-			$httpBackend.whenDELETE(/transactions\/1$/).respond(200);
+			$httpBackend.whenDELETE(/transactions\/1$/u).respond(200);
 			transaction = createBasicTransaction({id: 1});
 		});
 
@@ -261,7 +261,7 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /transactions/{id}", (): void => {
-			$httpBackend.expectDELETE(/transactions\/1$/);
+			$httpBackend.expectDELETE(/transactions\/1$/u);
 			transactionModel.destroy(transaction);
 			$httpBackend.flush();
 		});
@@ -334,17 +334,17 @@ describe("transactionModel", (): void => {
 
 	describe("updateStatus", (): void => {
 		beforeEach((): void => {
-			$httpBackend.whenPATCH(/context\/transactions\/1\/status\?Cleared$/).respond(200);
-			$httpBackend.whenDELETE(/context\/transactions\/1\/status$/).respond(200);
+			$httpBackend.whenPATCH(/context\/transactions\/1\/status\?Cleared$/u).respond(200);
+			$httpBackend.whenDELETE(/context\/transactions\/1\/status$/u).respond(200);
 		});
 
 		it("should dispatch a PATCH request to /{context}/transactions/{id}/status?{status} when a status is provided", (): void => {
-			$httpBackend.expectPATCH(/context\/transactions\/1\/status\?Cleared$/);
+			$httpBackend.expectPATCH(/context\/transactions\/1\/status\?Cleared$/u);
 			transactionModel.updateStatus("context", 1, "Cleared");
 		});
 
 		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a status is not provided", (): void => {
-			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/);
+			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/u);
 			transactionModel.updateStatus("context", 1, "");
 		});
 
@@ -353,7 +353,7 @@ describe("transactionModel", (): void => {
 
 	describe("flag", (): void => {
 		it("should dispatch a PUT request to /transactions/{id}/flag", (): void => {
-			$httpBackend.expectPUT(/transactions\/1\/flag/, {memo: "flag"}).respond(200);
+			$httpBackend.expectPUT(/transactions\/1\/flag/u, {memo: "flag"}).respond(200);
 			transactionModel.flag(createBasicTransaction({id: 1, flag: "flag"}));
 			$httpBackend.flush();
 		});
@@ -361,7 +361,7 @@ describe("transactionModel", (): void => {
 
 	describe("unflag", (): void => {
 		it("should dispatch a DELETE request to /transactions/{id}/flag", (): void => {
-			$httpBackend.expectDELETE(/transactions\/1\/flag/).respond(200);
+			$httpBackend.expectDELETE(/transactions\/1\/flag/u).respond(200);
 			transactionModel.unflag(1);
 			$httpBackend.flush();
 		});

@@ -12,14 +12,14 @@ describe("ogNavigatorServiceWorkerService", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$window"])));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(inject((_ogNavigatorServiceWorkerService_: OgNavigatorServiceWorkerService, _$window_: WindowMock): void => {
+	beforeEach(angular.mock.inject((_ogNavigatorServiceWorkerService_: OgNavigatorServiceWorkerService, _$window_: WindowMock): void => {
 		ogNavigatorServiceWorkerService = _ogNavigatorServiceWorkerService_;
 		$window = _$window_;
 	}));
 
 	describe("register", (): void => {
 		it("should do nothing when serviceWorker is not supported", (): void => {
-			const {serviceWorker}: {serviceWorker: {register: SinonStub}} = $window.navigator;
+			const {serviceWorker}: {serviceWorker: {register: SinonStub;};} = $window.navigator;
 
 			delete $window.navigator.serviceWorker;
 

@@ -4,14 +4,16 @@ import OgLoadingSpinnerView from "og-components/og-loading-spinner/views/loading
 
 export default class OgLoadingSpinnerDirective {
 	public constructor() {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			scope: {
 				message: "=ogLoadingSpinner"
 			},
 			templateUrl: OgLoadingSpinnerView,
 			link: (scope: OgLoadingSpinnerScope): string => (scope.loadingMessage = scope.message || "Loading")
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory(): OgLoadingSpinnerDirective {

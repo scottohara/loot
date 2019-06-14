@@ -19,7 +19,7 @@ describe("authenticationModel", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window"])));
 
 	// Inject the object under test and the $httpBackend
-	beforeEach(inject((_authenticationModel_: AuthenticationModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _$window_: WindowMock): void => {
+	beforeEach(angular.mock.inject((_authenticationModel_: AuthenticationModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _$window_: WindowMock): void => {
 		authenticationModel = _authenticationModel_;
 
 		$httpBackend = _$httpBackend_;
@@ -77,7 +77,7 @@ describe("authenticationModel", (): void => {
 
 	describe("login", (): void => {
 		beforeEach((): void => {
-			$httpBackend.expectPOST(/logins/, "", (headers: angular.IHttpRequestConfigHeaders): boolean => "Basic base64 encoded" === headers.Authorization).respond(200, "authentication key");
+			$httpBackend.expectPOST(/logins/u, "", (headers: angular.IHttpRequestConfigHeaders): boolean => "Basic base64 encoded" === headers.Authorization).respond(200, "authentication key");
 			authenticationModel.login("username", "password");
 			$httpBackend.flush();
 		});

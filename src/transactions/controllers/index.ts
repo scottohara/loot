@@ -82,16 +82,16 @@ export default class TransactionIndexController {
 	private closingBalance = 0;
 
 	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
-											private readonly $uibModal: IModalService,
-											private readonly $timeout: angular.ITimeoutService,
-											private readonly $window: angular.IWindowService,
-											private readonly $state: angular.ui.IStateService,
-											private readonly transactionModel: TransactionModel,
-											private readonly accountModel: AccountModel,
-											private readonly ogTableNavigableService: OgTableNavigableService, ogViewScrollService: OgViewScrollService,
-											private readonly contextModel: EntityModel,
-											public readonly context: Entity | string,
-											public readonly transactionBatch: TransactionBatch) {
+						private readonly $uibModal: IModalService,
+						private readonly $timeout: angular.ITimeoutService,
+						private readonly $window: angular.IWindowService,
+						private readonly $state: angular.ui.IStateService,
+						private readonly transactionModel: TransactionModel,
+						private readonly accountModel: AccountModel,
+						private readonly ogTableNavigableService: OgTableNavigableService, ogViewScrollService: OgViewScrollService,
+						private readonly contextModel: EntityModel,
+						public readonly context: Entity | string,
+						public readonly transactionBatch: TransactionBatch) {
 		const self: this = this;
 
 		this.contextType = contextModel && contextModel.type;
@@ -295,7 +295,7 @@ export default class TransactionIndexController {
 
 	// Switch to the primary account of a transaction
 	public switchPrimaryAccount($event: Event | null, transaction: Transaction): void {
-		this.switchToAccount($event, (transaction.primary_account as Account).id, transaction);
+		this.switchToAccount($event, transaction.primary_account.id, transaction);
 	}
 
 	// Switch to the transaction's payee
@@ -323,12 +323,12 @@ export default class TransactionIndexController {
 		function byTransactionDateAndId(a: Transaction, b: Transaction): number {
 			let x: number | Date, y: number | Date;
 
-			if (isEqual((a.transaction_date as Date), (b.transaction_date as Date))) {
+			if (isEqual(a.transaction_date as Date, b.transaction_date as Date)) {
 				x = Number(a.id);
 				y = Number(b.id);
 			} else {
-				x = (a.transaction_date as Date);
-				y = (b.transaction_date as Date);
+				x = a.transaction_date as Date;
+				y = b.transaction_date as Date;
 			}
 
 			return x < y ? -1 : x > y ? 1 : 0;
@@ -350,18 +350,42 @@ export default class TransactionIndexController {
 			backdrop: "static",
 			size: "lg",
 			resolve: {
-				transaction: (): angular.IPromise<Transaction> | Transaction | Partial<Transaction> => {
+				transaction: (): angular.IPromise<Transaction> | Transaction | Partial<Transaction | SecurityTransaction> => {
 					// If we didn't get an index, we're adding a new transaction
 					if (isNaN(Number(index))) {
-						return {
+						if ("security" === this.contextType) {
+							const newSecurityTransaction: Partial<SecurityTransaction> = {
+								transaction_type: "SecurityHolding",
+								transaction_date: this.transactionModel.lastTransactionDate,
+								security: this.context as Security
+							};
+
+							return newSecurityTransaction;
+						}
+
+						const newTransaction: Partial<Transaction> = {
 							transaction_type: "Basic",
-							transaction_date: this.transactionModel.lastTransactionDate,
-							primary_account: "account" === this.contextType ? this.context as Account : null,
-							payee: "payee" === this.contextType ? this.context as Payee : null,
-							security: "security" === this.contextType ? this.context : null,
-							category: "category" === this.contextType ? (this.context as Category).parent ? (this.context as Category).parent : this.context : null,
-							subcategory: "category" === this.contextType && (this.context as Category).parent ? this.context : null
-						} as Partial<Transaction>;
+							transaction_date: this.transactionModel.lastTransactionDate
+						};
+
+						switch (this.contextType) {
+							case "account":
+								newTransaction.primary_account = this.context as Account;
+								break;
+
+							case "payee":
+								newTransaction.payee = this.context as Payee;
+								break;
+
+							case "category":
+								newTransaction.category = (this.context as Category).parent ? (this.context as Category).parent : this.context as Category;
+								newTransaction.subcategory = (this.context as Category).parent ? this.context as Category : null;
+								break;
+
+							// No default
+						}
+
+						return newTransaction;
 					}
 
 					// If the selected transaction is a Split/Loan Repayment/Payslip; fetch the subtransactions first
@@ -600,7 +624,7 @@ export default class TransactionIndexController {
 	// Finds a specific transaction and focusses that row in the table
 	private focusTransaction(transactionIdToFocus: number): number {
 		const delay = 50;
-		let targetIndex: number = NaN;
+		let targetIndex = NaN;
 
 		// Find the transaction by it's id
 		angular.forEach(this.transactions, (transaction: Transaction, index: number): void => {

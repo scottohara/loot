@@ -13,8 +13,8 @@ export default class TransactionFlagController {
 	public readonly flagged: boolean;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly transactionModel: TransactionModel,
-											private readonly transaction: Transaction) {
+						private readonly transactionModel: TransactionModel,
+						private readonly transaction: Transaction) {
 		this.flag = "(no memo)" === String(transaction.flag) ? null : transaction.flag;
 		this.flagged = Boolean(transaction.flag);
 	}

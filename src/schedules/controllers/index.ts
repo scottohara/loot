@@ -26,12 +26,12 @@ export default class ScheduleIndexController {
 	public readonly today: Date = startOfDay(new Date());
 
 	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
-											private readonly $uibModal: IModalService,
-											private readonly $timeout: angular.ITimeoutService,
-											private readonly $state: angular.ui.IStateService,
-											private readonly transactionModel: TransactionModel,
-											private readonly ogTableNavigableService: OgTableNavigableService,
-											public readonly schedules: ScheduledTransaction[]) {
+						private readonly $uibModal: IModalService,
+						private readonly $timeout: angular.ITimeoutService,
+						private readonly $state: angular.ui.IStateService,
+						private readonly transactionModel: TransactionModel,
+						private readonly ogTableNavigableService: OgTableNavigableService,
+						public readonly schedules: ScheduledTransaction[]) {
 		const self: this = this;
 
 		this.tableActions = {
@@ -137,7 +137,7 @@ export default class ScheduleIndexController {
 					}
 				}
 			}
-		}).result.then((schedule: {data: ScheduledTransaction, skipped: boolean}): void => {
+		}).result.then((schedule: {data: ScheduledTransaction; skipped: boolean;}): void => {
 			if (isNaN(Number(index))) {
 				// Add new schedule to the end of the array
 				this.schedules.push(schedule.data);
@@ -179,7 +179,7 @@ export default class ScheduleIndexController {
 	// Finds a specific schedule and focusses that row in the table
 	private focusSchedule(scheduleIdToFocus: number): number {
 		const delay = 50;
-		let targetIndex: number = NaN;
+		let targetIndex = NaN;
 
 		// Find the schedule by it's id
 		angular.forEach(this.schedules, (schedule: ScheduledTransaction, index: number): void => {

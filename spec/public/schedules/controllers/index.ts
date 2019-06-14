@@ -51,7 +51,7 @@ describe("ScheduleIndexController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "scheduleModel", "transactionModel", "schedules"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$uibModal_: UibModalMock, _$timeout_: angular.ITimeoutService, _$state_: StateMock, _transactionModel_: TransactionModelMock, _ogTableNavigableService_: OgTableNavigableService, _schedules_: ScheduledTransaction[]): void => {
+	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$uibModal_: UibModalMock, _$timeout_: angular.ITimeoutService, _$state_: StateMock, _transactionModel_: TransactionModelMock, _ogTableNavigableService_: OgTableNavigableService, _schedules_: ScheduledTransaction[]): void => {
 		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$uibModal = _$uibModal_;
@@ -87,7 +87,7 @@ describe("ScheduleIndexController", (): void => {
 	});
 
 	it("should ensure the schedule is focussed when the schedule id state param changes", (): void => {
-		const toParams: {id: string} = {id: "1"};
+		const toParams: {id: string;} = {id: "1"};
 
 		sinon.stub(scheduleIndexController, "focusSchedule" as keyof ScheduleIndexController);
 		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});

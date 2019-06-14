@@ -21,7 +21,7 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 	private readonly lruCache: OgLruCache;
 
 	public constructor(private readonly $http: angular.IHttpService, $cacheFactory: angular.ICacheFactoryService,
-											private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
+						private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
 		this.cache = $cacheFactory("securities");
 
 		// Create an LRU cache and populate with the recent payee list from local storage

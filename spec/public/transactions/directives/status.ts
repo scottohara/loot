@@ -22,7 +22,7 @@ describe("transactionStatus", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["transactionModel"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_$sce_: angular.ISCEService, directiveTest: DirectiveTest, _transactionModel_: TransactionModelMock): void => {
+	beforeEach(angular.mock.inject((_$sce_: angular.ISCEService, directiveTest: DirectiveTest, _transactionModel_: TransactionModelMock): void => {
 		$sce = _$sce_;
 		transactionStatus = directiveTest;
 		transactionStatus.configure("transaction-status", "div");
@@ -30,7 +30,7 @@ describe("transactionStatus", (): void => {
 		transactionModel = _transactionModel_;
 	}));
 
-	const scenarios: {currentStatus: TransactionStatus, nextStatus: TransactionStatus, icon: "tag" | "lock", tooltip: string}[] = [
+	const scenarios: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}[] = [
 		{
 			currentStatus: "",
 			nextStatus: "Cleared",
@@ -58,14 +58,14 @@ describe("transactionStatus", (): void => {
 	];
 
 	// Helper function in lieu of beforeEach (which we can't use for dynamically generated specs)
-	function setup(scenario: {currentStatus: TransactionStatus, nextStatus: TransactionStatus, icon: "tag" | "lock", tooltip: string}): void {
+	function setup(scenario: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}): void {
 		((transactionStatus.scope.model as DirectiveTestModel).transaction as Transaction).status = scenario.currentStatus;
 		transactionStatus.compile({"transaction-status": "model"});
 		transactionStatus.scope.$digest();
 		isolateScope = transactionStatus["element"].isolateScope();
 	}
 
-	scenarios.forEach((scenario: {currentStatus: TransactionStatus, nextStatus: TransactionStatus, icon: "tag" | "lock", tooltip: string}): void => {
+	scenarios.forEach((scenario: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}): void => {
 		if (!scenario.currentStatus) {
 			it(`should set the current status to 'Unreconciled' when the transaction status is ${String(scenario.currentStatus)}`, (): void => {
 				setup(scenario);

@@ -65,7 +65,7 @@ describe("payeeEditView", () => {
 			payeeEditView.save();
 
 			// Row count should have incremented by one
-			payeeIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+			payeeIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 			// Payee in the last row should be the new payee
 			payeeIndexView.payeeName(payeeIndexView.table.lastRow()).should.eventually.equal(expected);

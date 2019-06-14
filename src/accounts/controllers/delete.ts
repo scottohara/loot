@@ -10,8 +10,8 @@ export default class AccountDeleteController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly accountModel: AccountModel,
-											public readonly account: Account) {
+						private readonly accountModel: AccountModel,
+						public readonly account: Account) {
 		// Capitalise the account type and status
 		this.account.account_type = `${this.account.account_type.charAt(0).toUpperCase()}${this.account.account_type.substr(1)}` as DisplayAccountType;
 		this.account.status = `${this.account.status.charAt(0).toUpperCase()}${this.account.status.substr(1)}` as DisplayAccountStatus;

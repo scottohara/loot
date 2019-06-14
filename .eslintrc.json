@@ -1,9 +1,11 @@
 {
 	"extends": "oharagroup",
 	"env": {
+		"mocha": true,
 		"protractor": true
 	},
 	"rules": {
-		"camelcase": "off"															// Disabled for camelcase in Typescript interfaces (see https://github.com/eslint/typescript-eslint-parser/issues/492)
+		"camelcase": "off",															// Disabled for camelcase in Typescript interfaces
+		"@typescript-eslint/camelcase": "off"						// Disabled for camelcase in Typescript interfaces
 	}
 }

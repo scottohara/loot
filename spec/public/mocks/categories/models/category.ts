@@ -15,14 +15,14 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 
 	public constructor(categoryMockProvider: CategoryMockProvider, categoriesMockProvider: CategoriesMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
-		const	success: PromiseMockConfig<{data: Category}> = {
+		const	$q: QMock = $qMockProvider.$get(),
+					success: PromiseMockConfig<{data: Category;}> = {
 						args: {id: 1},
 						response: {data: categoryMockProvider.$get()}
 					},
 					error: PromiseMockConfig<void> = {
 						args: {id: -1}
-					},
-					$q: QMock = $qMockProvider.$get();
+					};
 
 		// Mock categoryModel object
 		this.categoryModel = {

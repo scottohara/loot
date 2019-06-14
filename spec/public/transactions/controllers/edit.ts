@@ -65,7 +65,7 @@ describe("TransactionEditController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "$q", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _$timeout_: angular.ITimeoutService, _payeeModel_: PayeeModelMock, _securityModel_: SecurityModelMock, _categoryModel_: CategoryModelMock, _accountModel_: AccountModelMock, _transactionModel_: TransactionModelMock, _transaction_: Transaction): void => {
+	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _$timeout_: angular.ITimeoutService, _payeeModel_: PayeeModelMock, _securityModel_: SecurityModelMock, _categoryModel_: CategoryModelMock, _accountModel_: AccountModelMock, _transactionModel_: TransactionModelMock, _transaction_: Transaction): void => {
 		controllerTest = _controllerTest_;
 		$uibModalInstance = _$uibModalInstance_;
 		$timeout = _$timeout_;
@@ -377,7 +377,7 @@ describe("TransactionEditController", (): void => {
 	describe("useLastTransaction", (): void => {
 		let	lastTransaction: TransferTransaction,
 				currentElement: Element | null,
-				mockAngularElement: {triggerHandler: SinonStub},
+				mockAngularElement: {triggerHandler: SinonStub;},
 				realAngularElement: JQueryStatic<HTMLElement>;
 
 		beforeEach((): void => {
@@ -399,7 +399,7 @@ describe("TransactionEditController", (): void => {
 
 			currentElement = null;
 			realAngularElement = angular.element;
-			sinon.stub(angular, "element").callsFake((selector: string): (Element | null)[] | {triggerHandler: SinonStub} => {
+			sinon.stub(angular, "element").callsFake((selector: string): (Element | null)[] | {triggerHandler: SinonStub;} => {
 				if ("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo" === selector) {
 					return [currentElement];
 				}
@@ -455,7 +455,7 @@ describe("TransactionEditController", (): void => {
 		describe("(main transaction)", (): void => {
 			beforeEach((): Category => (transactionEditController.transaction.category = createCategory()));
 
-			const scenarios: {id: string, type: TransactionType, direction: TransactionDirection | "the category direction", subtransactions?: boolean}[] = [
+			const scenarios: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}[] = [
 				{id: "TransferTo", type: "Transfer", direction: "outflow"},
 				{id: "TransferFrom", type: "Transfer", direction: "inflow"},
 				{id: "SplitTo", type: "Split", direction: "outflow", subtransactions: true},
@@ -465,7 +465,7 @@ describe("TransactionEditController", (): void => {
 				{id: "anything else", type: "Basic", direction: "the category direction"}
 			];
 
-			scenarios.forEach((scenario: {id: string, type: TransactionType, direction: TransactionDirection | "the category direction", subtransactions?: boolean}): void => {
+			scenarios.forEach((scenario: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}): void => {
 				const memo = "test memo",
 							amount = 123;
 				let subtransactions: SplitTransactionChild[];
@@ -516,20 +516,20 @@ describe("TransactionEditController", (): void => {
 		describe("(subtransaction)", (): void => {
 			beforeEach((): SplitTransactionChild[] => ((transactionEditController.transaction as SplitTransaction).subtransactions = [createSubtransaction()]));
 
-			const scenarios: {id: string, type: SubtransactionType, direction: TransactionDirection | "the category direction"}[] = [
+			const scenarios: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}[] = [
 				{id: "TransferTo", type: "Subtransfer", direction: "outflow"},
 				{id: "TransferFrom", type: "Subtransfer", direction: "inflow"},
 				{id: "anything else", type: "Sub", direction: "the category direction"}
 			];
 
-			scenarios.forEach((scenario: {id: string, type: SubtransactionType, direction: TransactionDirection | "the category direction"}): void => {
+			scenarios.forEach((scenario: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}): void => {
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 					((transactionEditController.transaction as SplitTransaction).subtransactions[0].category as PsuedoCategory).id = scenario.id;
 					transactionEditController.categorySelected(0);
 					((transactionEditController.transaction as SplitTransaction).subtransactions[0].transaction_type as SubtransactionType).should.equal(scenario.type);
 
 					if ("Sub" === scenario.type) {
-						((transactionEditController.transaction as SplitTransaction).subtransactions[0].direction as TransactionDirection).should.equal(((transactionEditController.transaction as SplitTransaction).subtransactions[0].category as Category).direction as TransactionDirection);
+						((transactionEditController.transaction as SplitTransaction).subtransactions[0].direction as TransactionDirection).should.equal(((transactionEditController.transaction as SplitTransaction).subtransactions[0].category as Category).direction);
 					} else {
 						((transactionEditController.transaction as SplitTransaction).subtransactions[0].direction as TransactionDirection).should.equal(scenario.direction);
 					}
@@ -577,7 +577,7 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.transaction.direction.should.equal(direction);
 		});
 
-		const scenarios: {id: string, type: SecurityTransactionType, direction: TransactionDirection}[] = [
+		const scenarios: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}[] = [
 			{id: "TransferTo", type: "SecurityTransfer", direction: "outflow"},
 			{id: "TransferFrom", type: "SecurityTransfer", direction: "inflow"},
 			{id: "RemoveShares", type: "SecurityHolding", direction: "outflow"},
@@ -587,7 +587,7 @@ describe("TransactionEditController", (): void => {
 			{id: "DividendTo", type: "Dividend", direction: "outflow"}
 		];
 
-		scenarios.forEach((scenario: {id: string, type: SecurityTransactionType, direction: TransactionDirection}): void => {
+		scenarios.forEach((scenario: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}): void => {
 			it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 				(transactionEditController.transaction.category as PsuedoCategory).id = scenario.id;
 				transactionEditController.investmentCategorySelected();
@@ -652,7 +652,7 @@ describe("TransactionEditController", (): void => {
 	describe("accounts", (): void => {
 		let accounts: angular.IPromise<Account[]>;
 
-		beforeEach((): boolean => (delete transactionEditController.transaction.primary_account));
+		beforeEach((): boolean => delete transactionEditController.transaction.primary_account);
 
 		it("should fetch the list of accounts", (): void => {
 			transactionEditController.accounts("a", 2);
@@ -774,12 +774,12 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.transaction.memo.should.equal(memo);
 		});
 
-		const scenarios: {direction: TransactionDirection, amount: number, memo: string}[] = [
+		const scenarios: {direction: TransactionDirection; amount: number; memo: string;}[] = [
 			{direction: "outflow", amount: 19, memo: "less"},
 			{direction: "inflow", amount: 21, memo: "plus"}
 		];
 
-		scenarios.forEach((scenario: {direction: TransactionDirection, amount: number, memo: string}): void => {
+		scenarios.forEach((scenario: {direction: TransactionDirection; amount: number; memo: string;}): void => {
 			it(`should set the transaction amount to zero and the memo to an empty string if the price, quantity and commission are not specified for a Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				transactionEditController.transaction.direction = scenario.direction;
 				delete (transactionEditController.transaction as SecurityInvestmentTransaction).quantity;
@@ -912,7 +912,7 @@ describe("TransactionEditController", (): void => {
 				original.transaction_type = scenario;
 				delete (subtransaction.category as Category).id;
 				delete ((subtransaction as Subtransaction).subcategory as Category).id;
-				delete ((subtransaction as SubtransferTransaction).account as Account).id;
+				delete (subtransaction as SubtransferTransaction).account.id;
 				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
 				categoryModel.flush.should.not.have.been.called;
@@ -937,7 +937,7 @@ describe("TransactionEditController", (): void => {
 				original.transaction_type = scenario;
 				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
-				accountModel.flush.should.have.been.calledWith(((subtransaction as SubtransferTransaction).account as Account).id);
+				accountModel.flush.should.have.been.calledWith((subtransaction as SubtransferTransaction).account.id);
 			});
 		});
 

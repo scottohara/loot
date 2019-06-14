@@ -16,7 +16,7 @@ describe("TransactionDeleteController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _transactionModel_: TransactionModelMock, _transaction_: Transaction): void => {
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _transactionModel_: TransactionModelMock, _transaction_: Transaction): void => {
 		$uibModalInstance = _$uibModalInstance_;
 		transactionModel = _transactionModel_;
 		transaction = _transaction_;

@@ -9,7 +9,7 @@ describe("ogFavourite", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((directiveTest: DirectiveTest): void => {
+	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
 		ogFavourite = directiveTest;
 		ogFavourite.configure("og-favourite", "i");
 		ogFavourite.scope.model = {

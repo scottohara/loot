@@ -9,7 +9,7 @@ describe("OgInputCurrencyController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest: ControllerTestFactory): OgInputCurrencyController => (ogInputCurrencyController = controllerTest("OgInputCurrencyController") as OgInputCurrencyController)));
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory): OgInputCurrencyController => (ogInputCurrencyController = controllerTest("OgInputCurrencyController") as OgInputCurrencyController)));
 
 	it("should default to 2 decimal places", (): Chai.Assertion => ogInputCurrencyController.decimalPlaces.should.equal(2));
 

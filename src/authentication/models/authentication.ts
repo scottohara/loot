@@ -2,8 +2,8 @@ import angular from "angular";
 
 export default class AuthenticationModel {
 	public constructor(private readonly $window: angular.IWindowService,
-											private readonly $http: angular.IHttpService,
-											private readonly $cacheFactory: angular.ICacheFactoryService) {}
+						private readonly $http: angular.IHttpService,
+						private readonly $cacheFactory: angular.ICacheFactoryService) {}
 
 	private get SESSION_STORAGE_KEY(): string {
 		return "lootAuthenticationKey";
@@ -53,7 +53,7 @@ export default class AuthenticationModel {
 		this.setAuthorisationHeader("");
 
 		// Clear all http caches (except the template cache)
-		angular.forEach(this.$cacheFactory.info(), ({id}: {id: string}): void => {
+		angular.forEach(this.$cacheFactory.info(), ({id}: {id: string;}): void => {
 			if ("templates" !== id) {
 				this.$cacheFactory.get(id).removeAll();
 			}

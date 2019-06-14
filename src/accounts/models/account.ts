@@ -22,7 +22,7 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 	private readonly lruCache: OgLruCache;
 
 	public constructor(private readonly $http: angular.IHttpService, $cacheFactory: angular.ICacheFactoryService,
-											private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
+						private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
 		// Angular HTTP cache for accounts
 		this.cache = $cacheFactory("accounts");
 
@@ -110,12 +110,12 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 
 	// Get the unreconciled only setting for an account from local storage
 	public isUnreconciledOnly(id: number): boolean {
-		return this.$window.localStorage.getItem(this.UNRECONCILED_ONLY_LOCAL_STORAGE_KEY + id) !== "false";
+		return this.$window.localStorage.getItem(`${this.UNRECONCILED_ONLY_LOCAL_STORAGE_KEY}${id}`) !== "false";
 	}
 
 	// Set the unreconciled only setting for an account in local storage
 	public unreconciledOnly(id: number, unreconciledOnly: boolean): void {
-		this.$window.localStorage.setItem(this.UNRECONCILED_ONLY_LOCAL_STORAGE_KEY + id, String(unreconciledOnly));
+		this.$window.localStorage.setItem(`${this.UNRECONCILED_ONLY_LOCAL_STORAGE_KEY}${id}`, String(unreconciledOnly));
 	}
 
 	// Flush the cache

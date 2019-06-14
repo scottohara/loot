@@ -8,7 +8,7 @@ describe("estimate", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootSchedules"));
 
 	// Inject the object under test
-	beforeEach(inject((_estimateFilter_: EstimateFilter): EstimateFilter => (estimateFilter = _estimateFilter_)));
+	beforeEach(angular.mock.inject((_estimateFilter_: EstimateFilter): EstimateFilter => (estimateFilter = _estimateFilter_)));
 
 	it("should prefix an estimate with ~", (): Chai.Assertion => (estimateFilter as Function)(1, true).should.equal("~1"));
 

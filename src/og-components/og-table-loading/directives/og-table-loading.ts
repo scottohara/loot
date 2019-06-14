@@ -3,7 +3,7 @@ import OgTableLoadingView from "og-components/og-table-loading/views/loading.htm
 
 export default class OgTableLoadingDirective {
 	public constructor() {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			replace: true,
 			scope: {
@@ -11,7 +11,9 @@ export default class OgTableLoadingDirective {
 				colspan: "@"
 			},
 			templateUrl: OgTableLoadingView
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory(): OgTableLoadingDirective {

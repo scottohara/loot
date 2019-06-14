@@ -31,13 +31,13 @@ describe("securityModel", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
 
 	// Inject any dependencies that need to be configured first
-	beforeEach(inject((_$window_: WindowMock): void => {
+	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
 		$window = _$window_;
 		$window.localStorage.getItem.withArgs("lootRecentSecurities").returns(null);
 	}));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(inject((_securityModel_: SecurityModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock): void => {
+	beforeEach(angular.mock.inject((_securityModel_: SecurityModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock): void => {
 		securityModel = _securityModel_;
 
 		$httpBackend = _$httpBackend_;
@@ -70,7 +70,7 @@ describe("securityModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl: RegExp = /securities$/,
+		let expectedUrl = /securities$/u,
 				expectedResponse = "securities without balances";
 
 		it("should dispatch a GET request to /securities", (): void => {
@@ -98,7 +98,7 @@ describe("securityModel", (): void => {
 
 		describe("(include balances)", (): void => {
 			beforeEach((): void => {
-				expectedUrl = /securities\?include_balances/;
+				expectedUrl = /securities\?include_balances/u;
 				expectedResponse = "securities with balances";
 			});
 
@@ -130,7 +130,7 @@ describe("securityModel", (): void => {
 	describe("allWithBalances", (): void => {
 		const expected = "securities with balances";
 
-		beforeEach((): SinonStub => (securityModel.all = sinon.stub().returns(expected)));
+		beforeEach((): SinonStub => sinon.stub(securityModel, "all").returns(expected));
 
 		it("should call securityModel.all(true)", (): void => {
 			securityModel.allWithBalances();
@@ -145,7 +145,7 @@ describe("securityModel", (): void => {
 		let actualResponse: angular.IPromise<Transaction>;
 
 		beforeEach((): void => {
-			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/).respond(200, expectedResponse);
+			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(200, expectedResponse);
 			actualResponse = securityModel.findLastTransaction(1, "bank");
 			$httpBackend.flush();
 		});
@@ -158,10 +158,10 @@ describe("securityModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedUrl: RegExp = /securities\/123/,
+		const expectedUrl = /securities\/123/u,
 					expectedResponse = "security details";
 
-		beforeEach((): SinonStub => (securityModel.addRecent = sinon.stub()));
+		beforeEach((): SinonStub => sinon.stub(securityModel, "addRecent"));
 
 		it("should dispatch a GET request to /securities/{id}", (): void => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);
@@ -196,13 +196,13 @@ describe("securityModel", (): void => {
 
 	describe("save", (): void => {
 		beforeEach((): void => {
-			securityModel.flush = sinon.stub();
-			$httpBackend.whenPOST(/securities$/, security).respond(200);
-			$httpBackend.whenPATCH(/securities\/1$/, security).respond(200);
+			sinon.stub(securityModel, "flush");
+			$httpBackend.whenPOST(/securities$/u, security).respond(200);
+			$httpBackend.whenPATCH(/securities\/1$/u, security).respond(200);
 		});
 
 		it("should flush the security cache", (): void => {
-			$httpBackend.expectPATCH(/securities\/1$/);
+			$httpBackend.expectPATCH(/securities\/1$/u);
 			securityModel.save(security);
 			securityModel.flush.should.have.been.called;
 			$httpBackend.flush();
@@ -210,13 +210,13 @@ describe("securityModel", (): void => {
 
 		it("should dispatch a POST request to /securities when an id is not provided", (): void => {
 			delete security.id;
-			$httpBackend.expectPOST(/securities$/);
+			$httpBackend.expectPOST(/securities$/u);
 			securityModel.save(security);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /securities/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/securities\/1$/);
+			$httpBackend.expectPATCH(/securities\/1$/u);
 			securityModel.save(security);
 			$httpBackend.flush();
 		});
@@ -224,9 +224,9 @@ describe("securityModel", (): void => {
 
 	describe("destroy", (): void => {
 		beforeEach((): void => {
-			securityModel.flush = sinon.stub();
-			securityModel.removeRecent = sinon.stub();
-			$httpBackend.expectDELETE(/securities\/1$/).respond(200);
+			sinon.stub(securityModel, "flush");
+			sinon.stub(securityModel, "removeRecent");
+			$httpBackend.expectDELETE(/securities\/1$/u).respond(200);
 			securityModel.destroy(security);
 			$httpBackend.flush();
 		});
@@ -240,9 +240,9 @@ describe("securityModel", (): void => {
 
 	describe("toggleFavourite", (): void => {
 		beforeEach((): void => {
-			securityModel.flush = sinon.stub();
-			$httpBackend.whenDELETE(/securities\/1\/favourite$/).respond(200);
-			$httpBackend.whenPUT(/securities\/1\/favourite$/).respond(200);
+			sinon.stub(securityModel, "flush");
+			$httpBackend.whenDELETE(/securities\/1\/favourite$/u).respond(200);
+			$httpBackend.whenPUT(/securities\/1\/favourite$/u).respond(200);
 		});
 
 		it("should flush the security cache", (): void => {
@@ -252,14 +252,14 @@ describe("securityModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /securities/{id}/favourite when the security is unfavourited", (): void => {
-			$httpBackend.expectDELETE(/securities\/1\/favourite$/);
+			$httpBackend.expectDELETE(/securities\/1\/favourite$/u);
 			security.favourite = true;
 			securityModel.toggleFavourite(security).should.eventually.equal(false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /securities/{id}/favourite when the security is favourited", (): void => {
-			$httpBackend.expectPUT(/securities\/1\/favourite$/);
+			$httpBackend.expectPUT(/securities\/1\/favourite$/u);
 			securityModel.toggleFavourite(security).should.eventually.equal(true);
 			$httpBackend.flush();
 		});

@@ -6,8 +6,8 @@ export default class PayeeDeleteController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly payeeModel: PayeeModel,
-											public readonly payee: Payee) {}
+						private readonly payeeModel: PayeeModel,
+						public readonly payee: Payee) {}
 
 	// Delete and close the modal
 	public deletePayee(): void {

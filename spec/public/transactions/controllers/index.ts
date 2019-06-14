@@ -87,7 +87,7 @@ describe("TransactionIndexController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$window", "$state", "transactionModel", "accountModel", "categoryModel", "securityModel", "contextModel", "context", "transactionBatch"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$uibModal_: UibModalMock, _$timeout_: angular.ITimeoutService, _$window_: angular.IWindowService, _$state_: StateMock, _transactionModel_: TransactionModelMock, _accountModel_: AccountModel, _categoryModel_: CategoryModel, _securityModel_: SecurityModel, _ogTableNavigableService_: OgTableNavigableService, _ogViewScrollService_: OgViewScrollService, _contextModel_: EntityModel, _context_: Entity, _transactionBatch_: TransactionBatch): void => {
+	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$uibModal_: UibModalMock, _$timeout_: angular.ITimeoutService, _$window_: angular.IWindowService, _$state_: StateMock, _transactionModel_: TransactionModelMock, _accountModel_: AccountModel, _categoryModel_: CategoryModel, _securityModel_: SecurityModel, _ogTableNavigableService_: OgTableNavigableService, _ogViewScrollService_: OgViewScrollService, _contextModel_: EntityModel, _context_: Entity, _transactionBatch_: TransactionBatch): void => {
 		controllerTest = _controllerTest_;
 		$transitions = _$transitions_;
 		$uibModal = _$uibModal_;
@@ -230,12 +230,7 @@ describe("TransactionIndexController", (): void => {
 			beforeEach((): void => {
 				newTransaction = {
 					transaction_type: "Basic",
-					transaction_date: startOfDay(new Date()),
-					primary_account: null,
-					payee: null,
-					category: null,
-					subcategory: null,
-					security: null
+					transaction_date: startOfDay(new Date())
 				} as Partial<BaseTransaction>;
 			});
 
@@ -245,27 +240,33 @@ describe("TransactionIndexController", (): void => {
 					(newTransaction as Transaction).transaction_date = transactionModel.lastTransactionDate;
 				});
 
-				it("should open the edit transaction modal with a default primary account if the context type is account", (): void => {
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel as EntityModel, context: createAccount() as Entity}) as TransactionIndexController;
-					(newTransaction as Transaction).primary_account = transactionIndexController.context as Account;
+				describe("(context type is security)", (): void => {
+					it("should open the edit transaction modal with a default security", (): void => {
+						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: securityModel as EntityModel, context: createSecurity() as Entity}) as TransactionIndexController;
+						(newTransaction as SecurityTransaction).transaction_type = "SecurityHolding";
+						(newTransaction as SecurityTransaction).security = transactionIndexController.context as Security;
+					});
 				});
 
-				it("should open the edit transaction modal with a default payee if the context type is payee", (): Payee => ((newTransaction as PayeeCashTransaction).payee = transactionIndexController.context as Payee));
+				describe("(context type is not security)", (): void => {
+					it("should open the edit transaction modal with a default primary account if the context type is account", (): void => {
+						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel as EntityModel, context: createAccount() as Entity}) as TransactionIndexController;
+						(newTransaction as Transaction).primary_account = transactionIndexController.context as Account;
+					});
 
-				it("should open the edit transaction modal with a default security if the context type is security", (): void => {
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: securityModel as EntityModel, context: createSecurity() as Entity}) as TransactionIndexController;
-					(newTransaction as SecurityTransaction).security = transactionIndexController.context as Security;
-				});
+					it("should open the edit transaction modal with a default payee if the context type is payee", (): Payee => ((newTransaction as PayeeCashTransaction).payee = transactionIndexController.context as Payee));
 
-				it("should open the edit transaction modal with a default category if the context type is category and the context is a category", (): void => {
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: categoryModel as EntityModel, context: createCategory() as Entity}) as TransactionIndexController;
-					(newTransaction as CategorisableTransaction).category = transactionIndexController.context as Category;
-				});
+					it("should open the edit transaction modal with a default category if the context type is category and the context is a category", (): void => {
+						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: categoryModel as EntityModel, context: createCategory() as Entity}) as TransactionIndexController;
+						(newTransaction as CategorisableTransaction).category = transactionIndexController.context as Category;
+						(newTransaction as SubcategorisableTransaction).subcategory = null;
+					});
 
-				it("should open the edit transaction modal with a default category and subcategory if the context type is category and the context is a subcategory", (): void => {
-					(newTransaction as CategorisableTransaction).category = createCategory();
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: categoryModel as EntityModel, context: createCategory({parent: (newTransaction as CategorisableTransaction).category as Category}) as Entity}) as TransactionIndexController;
-					(newTransaction as SubcategorisableTransaction).subcategory = transactionIndexController.context as Category;
+					it("should open the edit transaction modal with a default category and subcategory if the context type is category and the context is a subcategory", (): void => {
+						(newTransaction as CategorisableTransaction).category = createCategory();
+						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: categoryModel as EntityModel, context: createCategory({parent: (newTransaction as CategorisableTransaction).category as Category}) as Entity}) as TransactionIndexController;
+						(newTransaction as SubcategorisableTransaction).subcategory = transactionIndexController.context as Category;
+					});
 				});
 
 				afterEach((): void => {
@@ -389,9 +390,9 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("contextChanged", (): void => {
-		let transaction: Transaction & {[contextField: string]: Entity};
+		let transaction: Transaction & {[contextField: string]: Entity;};
 
-		beforeEach((): Transaction => (transaction = angular.copy(transactionIndexController.transactions[1]) as Transaction & {[contextField: string]: Entity}));
+		beforeEach((): Transaction => (transaction = angular.copy(transactionIndexController.transactions[1]) as Transaction & {[contextField: string]: Entity;}));
 
 		describe("(search mode)", (): void => {
 			beforeEach((): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", {contextModel: null, context: "Search"}) as TransactionIndexController));
@@ -408,14 +409,14 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(context mode)", (): void => {
-			const scenarios: {type: "payee" | "account" | "security" | "category", field: (keyof BasicTransaction | keyof SecurityTransaction), contextFactory: () => Entity}[] = [
+			const scenarios: {type: "payee" | "account" | "security" | "category"; field: (keyof BasicTransaction | keyof SecurityTransaction); contextFactory: () => Entity;}[] = [
 				{type: "account", field: "primary_account", contextFactory: createAccount},
 				{type: "payee", field: "payee", contextFactory: createPayee},
 				{type: "security", field: "security", contextFactory: createSecurity},
 				{type: "category", field: "category", contextFactory: createCategory},
 				{type: "category", field: "subcategory", contextFactory: (): Entity => createCategory({parent: createCategory()})}
 			];
-			let contextModels: {[type: string]: EntityModel};
+			let contextModels: {[type: string]: EntityModel;};
 
 			beforeEach((): void => {
 				contextModels = {
@@ -426,9 +427,9 @@ describe("TransactionIndexController", (): void => {
 				};
 			});
 
-			angular.forEach(scenarios, (scenario: {type: "payee" | "account" | "security" | "category", field: string, contextFactory: () => Entity}): void => {
+			angular.forEach(scenarios, (scenario: {type: "payee" | "account" | "security" | "category"; field: string; contextFactory: () => Entity;}): void => {
 				it(`should return true when the context type is ${scenario.type} and the transaction ${scenario.field} no longer matches the context`, (): void => {
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: contextModels[scenario.type], context: scenario.contextFactory() as Entity}) as TransactionIndexController;
+					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: contextModels[scenario.type], context: scenario.contextFactory()}) as TransactionIndexController;
 					transaction[scenario.field] = scenario.contextFactory();
 					transactionIndexController["contextChanged"](transaction).should.be.true;
 				});
@@ -588,7 +589,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(not allowed)", (): void => {
-			const scenarios: {action: "edit" | "delete", type: TransactionType, message: string}[] = [
+			const scenarios: {action: "edit" | "delete"; type: TransactionType; message: string;}[] = [
 				{action: "edit", type: "Sub", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?"},
 				{action: "delete", type: "Sub", message: "This transaction is part of a split transaction. You can only delete it from the parent account. Would you like to switch to the parent account now?"},
 				{action: "edit", type: "Subtransfer", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?"},
@@ -597,7 +598,7 @@ describe("TransactionIndexController", (): void => {
 				{action: "edit", type: "SecurityInvestment", message: "This is an investment transaction. You can only edit it from the investment account. Would you like to switch to the investment account now?"}
 			];
 
-			angular.forEach(scenarios, (scenario: {action: "edit" | "delete", type: TransactionType, message: string}): void => {
+			angular.forEach(scenarios, (scenario: {action: "edit" | "delete"; type: TransactionType; message: string;}): void => {
 				it(`should prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction`, (): void => {
 					transaction.transaction_type = scenario.type;
 					transactionIndexController["isAllowed"](scenario.action, transaction);
@@ -612,7 +613,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(allowed)", (): void => {
-			const scenarios: {action: "edit" | "delete", type: TransactionType, account_type?: "investment"}[] = [
+			const scenarios: {action: "edit" | "delete"; type: TransactionType; account_type?: "investment";}[] = [
 				{action: "edit", type: "Basic"},
 				{action: "delete", type: "Basic"},
 				{action: "edit", type: "Dividend", account_type: "investment"},
@@ -621,7 +622,7 @@ describe("TransactionIndexController", (): void => {
 				{action: "delete", type: "SecurityInvestment"}
 			];
 
-			angular.forEach(scenarios, (scenario: {action: "edit" | "delete", type: TransactionType, account_type?: "investment"}): void => {
+			angular.forEach(scenarios, (scenario: {action: "edit" | "delete"; type: TransactionType; account_type?: "investment";}): void => {
 				it(`should not prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction${scenario.account_type ? ` from an ${scenario.account_type} acount` : ""}`, (): void => {
 					transaction.transaction_type = scenario.type;
 					(transaction.primary_account as Account).account_type = scenario.account_type || (transaction.primary_account as Account).account_type;
@@ -1196,7 +1197,7 @@ describe("TransactionIndexController", (): void => {
 
 	describe("switchTo", (): void => {
 		let	transaction: SplitTransactionChild,
-				stateParams: {id: number, transactionId?: number | null},
+				stateParams: {id: number; transactionId?: number | null;},
 				$event: EventMock;
 
 		beforeEach((): void => {

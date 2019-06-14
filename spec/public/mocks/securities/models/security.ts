@@ -15,14 +15,14 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 
 	public constructor(securityMockProvider: SecurityMockProvider, securitiesMockProvider: SecuritiesMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
-		const	success: PromiseMockConfig<{data: Security}> = {
+		const	$q: QMock = $qMockProvider.$get(),
+					success: PromiseMockConfig<{data: Security;}> = {
 						args: {id: 1},
 						response: {data: securityMockProvider.$get()}
 					},
 					error: PromiseMockConfig<void> = {
 						args: {id: -1}
-					},
-					$q: QMock = $qMockProvider.$get();
+					};
 
 		// Mock securityModel object
 		this.securityModel = {

@@ -7,14 +7,12 @@ import {SinonStub} from "sinon";
 import {Transaction} from "transactions/types";
 
 export interface CacheFactoryMock {
-	(): angular.ICacheObject;
 	info?: SinonStub;
 	get?: SinonStub;
+	(): angular.ICacheObject;
 }
 
-export interface PromiseMockCallback<T> {
-	(value?: PromiseMock<T> | T): PromiseMock<T> | T;
-}
+export type PromiseMockCallback<T> = (value?: PromiseMock<T> | T) => PromiseMock<T> | T;
 
 export interface PromiseMock<T> {
 	then(successCallback: PromiseMockCallback<T>, errorCallback: PromiseMockCallback<T>): PromiseMock<T> | T;
@@ -24,7 +22,7 @@ export interface PromiseMock<T> {
 export interface DeferredMock<T> {
 	promise: PromiseMock<T>;
 	resolve(value?: T | null): void;
-	reject(value?: T | {data: "unsuccessful"}): void;
+	reject(value?: T | {data: "unsuccessful";}): void;
 }
 
 export interface PromiseMockConfig<T> {
@@ -59,7 +57,7 @@ export interface UibModalMockResolves {
 	[key: string]: UibModalMockResolve;
 }
 
-export type UibModalMockCloseResult = Entity | ScheduledTransaction | Transaction | number | {data: ScheduledTransaction; skipped?: boolean};
+export type UibModalMockCloseResult = Entity | ScheduledTransaction | Transaction | number | {data: ScheduledTransaction; skipped?: boolean;};
 
 export type UibModalMockResultCallback = (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
 
@@ -75,7 +73,7 @@ export interface UibModalMock {
 	closeCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
 	catchCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
 	finallyCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
-	open(options: IModalSettings): {result: UibModalMockResult};
+	open(options: IModalSettings): {result: UibModalMockResult;};
 	close(value?: UibModalMockCloseResult): void;
 	dismiss(): void;
 }

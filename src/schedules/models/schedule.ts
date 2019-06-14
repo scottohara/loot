@@ -16,9 +16,9 @@ import angular from "angular";
 
 export default class ScheduleModel {
 	public constructor(private readonly $http: angular.IHttpService,
-											private readonly payeeModel: PayeeModel,
-											private readonly categoryModel: CategoryModel,
-											private readonly securityModel: SecurityModel) {}
+						private readonly payeeModel: PayeeModel,
+						private readonly categoryModel: CategoryModel,
+						private readonly securityModel: SecurityModel) {}
 
 	// Returns the API path
 	public path(id?: number): string {
@@ -27,7 +27,7 @@ export default class ScheduleModel {
 
 	// Retrieves all schedules
 	public all(): angular.IPromise<ScheduledTransaction[]> {
-		return this.$http.get(this.path()).then((response: angular.IHttpResponse<ScheduledTransaction[]>): ScheduledTransaction[] => response.data.map(this.parse));
+		return this.$http.get(this.path()).then((response: angular.IHttpResponse<ScheduledTransaction[]>): ScheduledTransaction[] => response.data.map(this.parse.bind(this)));
 	}
 
 	// Saves a schedule

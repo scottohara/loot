@@ -17,7 +17,7 @@ describe("payeeDeleteView", () => {
 
 		payeeIndexView.payeeName(payeeIndexView.table.lastRow()).then(payeeName => (lastPayeeName = payeeName));
 
-		payeeIndexView.table.secondLastRow().then(payeeIndexView.payeeName).then(payeeName => (secondLastPayeeName = payeeName));
+		payeeIndexView.table.secondLastRow().then(payeeIndexView.payeeName.bind(payeeIndexView)).then(payeeName => (secondLastPayeeName = payeeName));
 	});
 
 	describe("deleting a payee", () => {

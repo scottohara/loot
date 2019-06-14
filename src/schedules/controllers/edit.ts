@@ -62,17 +62,17 @@ export default class ScheduleEditController {
 	private readonly scheduleFrequencies: ScheduleFrequency[] = ["Weekly", "Fortnightly", "Monthly", "Bimonthly", "Quarterly", "Yearly"];
 
 	public constructor($scope: angular.IScope,
-											private readonly $uibModalInstance: IModalInstanceService,
-											private readonly $timeout: angular.ITimeoutService,
-											private readonly filterFilter: angular.IFilterFilter,
-											private readonly limitToFilter: angular.IFilterLimitTo,
-											private readonly currencyFilter: angular.IFilterCurrency,
-											private readonly payeeModel: PayeeModel,
-											private readonly securityModel: SecurityModel,
-											private readonly categoryModel: CategoryModel,
-											private readonly accountModel: AccountModel,
-											private readonly transactionModel: TransactionModel,
-											private readonly scheduleModel: ScheduleModel, schedule: ScheduledTransaction) {
+						private readonly $uibModalInstance: IModalInstanceService,
+						private readonly $timeout: angular.ITimeoutService,
+						private readonly filterFilter: angular.IFilterFilter,
+						private readonly limitToFilter: angular.IFilterLimitTo,
+						private readonly currencyFilter: angular.IFilterCurrency,
+						private readonly payeeModel: PayeeModel,
+						private readonly securityModel: SecurityModel,
+						private readonly categoryModel: CategoryModel,
+						private readonly accountModel: AccountModel,
+						private readonly transactionModel: TransactionModel,
+						private readonly scheduleModel: ScheduleModel, schedule: ScheduledTransaction) {
 		this.transaction = angular.extend({transaction_type: "Basic", next_due_date: startOfDay(new Date())}, schedule);
 
 		// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode

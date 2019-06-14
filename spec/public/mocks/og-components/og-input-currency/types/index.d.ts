@@ -7,6 +7,4 @@ export interface OgInputCurrencyControllerType {
 	rawToFormatted: SinonStub;
 }
 
-export interface OgInputCurrencyControllerMock {
-	($scope: OgInputCurrencyController): OgInputCurrencyControllerType;
-}
+export type OgInputCurrencyControllerMock = ($scope: OgInputCurrencyController) => OgInputCurrencyControllerType;

@@ -69,7 +69,7 @@ describe("securityEditView", () => {
 			securityEditView.save();
 
 			// Row count should have incremented by one
-			securityIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+			securityIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 			// Security in the last row should be the new security
 			securityIndexView.securityName(securityIndexView.table.lastRow()).should.eventually.equal(`${expected.name}\nNo transactions`);

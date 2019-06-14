@@ -105,7 +105,7 @@ describe("categoryEditView", () => {
 					categoryEditView.save();
 
 					// Row count should have incremented by one
-					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+					categoryIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 					// Category in the target row should be the new category
 					categoryIndexView.checkRowValues(targetRow, expected);
@@ -125,7 +125,7 @@ describe("categoryEditView", () => {
 					categoryEditView.save();
 
 					// Row count should have incremented by one
-					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+					categoryIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 					// Category in the target row should be the new category
 					categoryIndexView.checkRowValues(targetRow, expected);
@@ -147,7 +147,7 @@ describe("categoryEditView", () => {
 					categoryEditView.save();
 
 					// Row count should have incremented by one
-					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+					categoryIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 					// Category in the target row should be the new category
 					categoryIndexView.checkRowValues(targetRow, expected);
@@ -167,7 +167,7 @@ describe("categoryEditView", () => {
 					categoryEditView.save();
 
 					// Row count should have incremented by one
-					categoryIndexView.table.rows.count().should.eventually.equal(originalRowCount + 1);
+					categoryIndexView.table.rows.count().should.eventually.equal(Number(originalRowCount) + 1);
 
 					// Category in the target row should be the new category
 					categoryIndexView.checkRowValues(targetRow, expected);

@@ -25,7 +25,7 @@ describe("accountModel", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "account"])));
 
 	// Inject any dependencies that need to be configured first
-	beforeEach(inject((_$window_: WindowMock): void => {
+	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
 		$window = _$window_;
 		$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(null);
 		$window.localStorage.getItem.withArgs("lootUnreconciledOnly-123").returns("true");
@@ -33,7 +33,7 @@ describe("accountModel", (): void => {
 	}));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(inject((_accountModel_: AccountModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _ogLruCacheFactory_: OgLruCacheFactoryMock, _account_: Account): void => {
+	beforeEach(angular.mock.inject((_accountModel_: AccountModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _ogLruCacheFactory_: OgLruCacheFactoryMock, _account_: Account): void => {
 		accountModel = _accountModel_;
 		$httpBackend = _$httpBackend_;
 		$http = _$http_;
@@ -75,7 +75,7 @@ describe("accountModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl: RegExp = /accounts$/,
+		let expectedUrl = /accounts$/u,
 				expectedResponse = "accounts without balances";
 
 		it("should dispatch a GET request to /accounts", (): void => {
@@ -103,7 +103,7 @@ describe("accountModel", (): void => {
 
 		describe("(include balances)", (): void => {
 			beforeEach((): void => {
-				expectedUrl = /accounts\?include_balances/;
+				expectedUrl = /accounts\?include_balances/u;
 				expectedResponse = "accounts with balances";
 			});
 
@@ -135,7 +135,7 @@ describe("accountModel", (): void => {
 	describe("allWithBalances", (): void => {
 		const expected = "accounts with balances";
 
-		beforeEach((): SinonStub => (accountModel.all = sinon.stub().returns(expected)));
+		beforeEach((): SinonStub => sinon.stub(accountModel, "all").returns(expected));
 
 		it("should call accountModel.all(true)", (): void => {
 			accountModel.allWithBalances();
@@ -148,10 +148,10 @@ describe("accountModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedUrl: RegExp = /accounts\/123/,
+		const expectedUrl = /accounts\/123/u,
 					expectedResponse = "account details";
 
-		beforeEach((): SinonStub => (accountModel.addRecent = sinon.stub()));
+		beforeEach((): SinonStub => sinon.stub(accountModel, "addRecent"));
 
 		it("should dispatch a GET request to /accounts/{id}", (): void => {
 			$httpBackend.expect("GET", expectedUrl).respond(200);
@@ -186,9 +186,9 @@ describe("accountModel", (): void => {
 
 	describe("save", (): void => {
 		beforeEach((): void => {
-			accountModel.flush = sinon.stub();
-			$httpBackend.whenPOST(/accounts$/, account).respond(200);
-			$httpBackend.whenPATCH(/accounts\/1$/, account).respond(200);
+			sinon.stub(accountModel, "flush");
+			$httpBackend.whenPOST(/accounts$/u, account).respond(200);
+			$httpBackend.whenPATCH(/accounts\/1$/u, account).respond(200);
 		});
 
 		it("should flush the account cache", (): void => {
@@ -199,13 +199,13 @@ describe("accountModel", (): void => {
 
 		it("should dispatch a POST request to /accounts when an id is not provided", (): void => {
 			delete account.id;
-			$httpBackend.expectPOST(/accounts$/);
+			$httpBackend.expectPOST(/accounts$/u);
 			accountModel.save(account);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /accounts/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/accounts\/1$/);
+			$httpBackend.expectPATCH(/accounts\/1$/u);
 			accountModel.save(account);
 			$httpBackend.flush();
 		});
@@ -213,9 +213,9 @@ describe("accountModel", (): void => {
 
 	describe("destroy", (): void => {
 		beforeEach((): void => {
-			accountModel.flush = sinon.stub();
-			accountModel.removeRecent = sinon.stub();
-			$httpBackend.expectDELETE(/accounts\/1$/).respond(200);
+			sinon.stub(accountModel, "flush");
+			sinon.stub(accountModel, "removeRecent");
+			$httpBackend.expectDELETE(/accounts\/1$/u).respond(200);
 			accountModel.destroy(account);
 			$httpBackend.flush();
 		});
@@ -228,7 +228,7 @@ describe("accountModel", (): void => {
 	});
 
 	describe("reconcile", (): void => {
-		const expectedUrl: RegExp = /accounts\/123\/reconcile/;
+		const expectedUrl = /accounts\/123\/reconcile/u;
 
 		it("should dispatch a PUT request to /account/{id}/reconcile", (): void => {
 			$httpBackend.expect("PUT", expectedUrl).respond(200);
@@ -239,9 +239,9 @@ describe("accountModel", (): void => {
 
 	describe("toggleFavourite", (): void => {
 		beforeEach((): void => {
-			accountModel.flush = sinon.stub();
-			$httpBackend.whenDELETE(/accounts\/1\/favourite$/).respond(200);
-			$httpBackend.whenPUT(/accounts\/1\/favourite$/).respond(200);
+			sinon.stub(accountModel, "flush");
+			$httpBackend.whenDELETE(/accounts\/1\/favourite$/u).respond(200);
+			$httpBackend.whenPUT(/accounts\/1\/favourite$/u).respond(200);
 		});
 
 		it("should flush the account cache", (): void => {
@@ -251,14 +251,14 @@ describe("accountModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /accounts/{id}/favourite when the account is unfavourited", (): void => {
-			$httpBackend.expectDELETE(/accounts\/1\/favourite$/);
+			$httpBackend.expectDELETE(/accounts\/1\/favourite$/u);
 			account.favourite = true;
 			accountModel.toggleFavourite(account).should.eventually.equal(false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /accounts/{id}/favourite when the account is favourited", (): void => {
-			$httpBackend.expectPUT(/accounts\/1\/favourite$/);
+			$httpBackend.expectPUT(/accounts\/1\/favourite$/u);
 			accountModel.toggleFavourite(account).should.eventually.equal(true);
 			$httpBackend.flush();
 		});

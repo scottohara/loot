@@ -48,18 +48,18 @@ export default class TransactionEditController {
 	public errorMessage: string | null = null;
 
 	public constructor($scope: angular.IScope,
-											private readonly $uibModalInstance: IModalInstanceService,
-											private readonly $q: angular.IQService,
-											private readonly $timeout: angular.ITimeoutService,
-											private readonly filterFilter: angular.IFilterFilter,
-											private readonly limitToFilter: angular.IFilterLimitTo,
-											private readonly currencyFilter: angular.IFilterCurrency,
-											private readonly payeeModel: PayeeModel,
-											private readonly securityModel: SecurityModel,
-											private readonly categoryModel: CategoryModel,
-											private readonly accountModel: AccountModel,
-											private readonly transactionModel: TransactionModel,
-											private readonly originalTransaction: Transaction) {
+						private readonly $uibModalInstance: IModalInstanceService,
+						private readonly $q: angular.IQService,
+						private readonly $timeout: angular.ITimeoutService,
+						private readonly filterFilter: angular.IFilterFilter,
+						private readonly limitToFilter: angular.IFilterLimitTo,
+						private readonly currencyFilter: angular.IFilterCurrency,
+						private readonly payeeModel: PayeeModel,
+						private readonly securityModel: SecurityModel,
+						private readonly categoryModel: CategoryModel,
+						private readonly accountModel: AccountModel,
+						private readonly transactionModel: TransactionModel,
+						private readonly originalTransaction: Transaction) {
 		this.transaction = angular.extend({}, originalTransaction);
 		this.mode = originalTransaction.id ? "Edit" : "Add";
 
@@ -467,7 +467,7 @@ export default class TransactionEditController {
 	private invalidateCaches(savedTransaction: Transaction): angular.IPromise<Transaction> {
 		// Create a deferred so that we return a promise
 		const q: angular.IDeferred<Transaction> = this.$q.defer(),
-					models: {[mode: string]: EntityModel} = {
+					models: {[mode: string]: EntityModel;} = {
 						primary_account: this.accountModel,
 						payee: this.payeeModel,
 						category: this.categoryModel,
@@ -581,7 +581,7 @@ export default class TransactionEditController {
 					angular.forEach(subtransactions, (subtransaction: SplitTransactionChild): void => {
 						if ("Subtransfer" === subtransaction.transaction_type) {
 							// Add the account to the LRU cache
-							this.accountModel.addRecent((subtransaction as SubtransferTransaction).account as Account);
+							this.accountModel.addRecent((subtransaction as SubtransferTransaction).account);
 						} else {
 							// Add the category and subcategory to the LRU cache
 							this.categoryModel.addRecent(subtransaction.category as Category);

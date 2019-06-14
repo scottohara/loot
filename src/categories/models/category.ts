@@ -19,7 +19,7 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 	private readonly lruCache: OgLruCache;
 
 	public constructor(private readonly $http: angular.IHttpService, $cacheFactory: angular.ICacheFactoryService,
-											private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
+						private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
 		this.cache = $cacheFactory("categories");
 
 		// Create an LRU cache and populate with the recent category list from local storage

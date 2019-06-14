@@ -13,7 +13,7 @@ import sinon from "sinon";
 export default class UibModalMockProvider implements Mock<UibModalMock> {
 	// Mock $uibModal object
 	public constructor(private readonly $uibModal: UibModalMock = {
-		open(options: IModalSettings): {result: UibModalMockResult} {
+		open(options: IModalSettings): {result: UibModalMockResult;} {
 			const self: UibModalMock = this;
 
 			// If there are any resolves, resolve them

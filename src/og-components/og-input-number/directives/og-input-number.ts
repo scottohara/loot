@@ -2,7 +2,7 @@ import {OgInputNumberScope} from "og-components/og-input-number/types";
 
 export default class OgInputNumberDirective {
 	public constructor(numberFilter: angular.IFilterNumber) {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			priority: 1,
 			require: "ngModel",
@@ -12,7 +12,7 @@ export default class OgInputNumberDirective {
 			bindToController: true,
 			link(scope: OgInputNumberScope, iElement: JQuery<Element>, _: angular.IAttributes, ngModel: angular.INgModelController): void {
 				// View to model
-				ngModel.$parsers.push(scope.vm.formattedToRaw);
+				ngModel.$parsers.push(scope.vm.formattedToRaw.bind(scope.vm));
 
 				// Model to view
 				ngModel.$formatters.unshift((value: number): string => numberFilter((Boolean(value) && Number(value)) || 0));
@@ -31,7 +31,9 @@ export default class OgInputNumberDirective {
 					iElement.off("blur", formattedToRaw);
 				});
 			}
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory(numberFilter: angular.IFilterNumber): OgInputNumberDirective {

@@ -6,8 +6,8 @@ export default class CategoryDeleteController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly categoryModel: CategoryModel,
-											public readonly category: Category) {}
+						private readonly categoryModel: CategoryModel,
+						public readonly category: Category) {}
 
 	// Delete and close the modal
 	public deleteCategory(): void {

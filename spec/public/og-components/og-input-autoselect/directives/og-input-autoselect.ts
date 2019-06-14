@@ -7,7 +7,7 @@ describe("ogInputAutoselect", (): void => {
 	let	ogInputAutoselect: DirectiveTest,
 			$window: angular.IWindowService,
 			$timeout: angular.ITimeoutService,
-			mockJQueryInstance: {select: SinonStub},
+			mockJQueryInstance: {select: SinonStub;},
 			realJQueryInstance: JQuery,
 			scope: OgInputAutoSelectScope;
 
@@ -15,7 +15,7 @@ describe("ogInputAutoselect", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_$window_: angular.IWindowService, _$timeout_: angular.ITimeoutService, directiveTest: DirectiveTest): void => {
+	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, _$timeout_: angular.ITimeoutService, directiveTest: DirectiveTest): void => {
 		$window = _$window_;
 		$timeout = _$timeout_;
 		ogInputAutoselect = directiveTest;
@@ -35,7 +35,7 @@ describe("ogInputAutoselect", (): void => {
 	describe("isFocussed", (): void => {
 		beforeEach((): void => $timeout.flush());
 
-		it("should be true if the passed element is the document's active element", (): Chai.Assertion => scope.isFocussed(document.activeElement).should.be.true);
+		it("should be true if the passed element is the document's active element", (): Chai.Assertion => scope.isFocussed(document.activeElement as Element).should.be.true);
 
 		it("should be false if the element is not the document's active element", (): Chai.Assertion => scope.isFocussed().should.be.false);
 	});

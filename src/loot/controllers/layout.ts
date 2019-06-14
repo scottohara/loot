@@ -16,16 +16,16 @@ export default class LayoutController {
 	private isLoadingState = false;
 
 	public constructor($scope: angular.IScope, $window: angular.IWindowService, $transitions: angular.ui.IStateParamsService,
-											private readonly $state: angular.ui.IStateService,
-											private readonly $uibModal: IModalService,
-											private readonly authenticationModel: AuthenticationModel,
-											private readonly accountModel: AccountModel,
-											private readonly payeeModel: PayeeModel,
-											private readonly categoryModel: CategoryModel,
-											private readonly securityModel: SecurityModel,
-											private readonly ogTableNavigableService: OgTableNavigableService, ogViewScrollService: OgViewScrollService,
-											public readonly queryService: QueryService,
-											public readonly authenticated: boolean) {
+						private readonly $state: angular.ui.IStateService,
+						private readonly $uibModal: IModalService,
+						private readonly authenticationModel: AuthenticationModel,
+						private readonly accountModel: AccountModel,
+						private readonly payeeModel: PayeeModel,
+						private readonly categoryModel: CategoryModel,
+						private readonly securityModel: SecurityModel,
+						private readonly ogTableNavigableService: OgTableNavigableService, ogViewScrollService: OgViewScrollService,
+						public readonly queryService: QueryService,
+						public readonly authenticated: boolean) {
 		this.scrollTo = ogViewScrollService.scrollTo.bind(ogViewScrollService);
 
 		// Show/hide spinner on all transitions

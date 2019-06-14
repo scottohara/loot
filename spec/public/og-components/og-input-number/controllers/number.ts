@@ -9,7 +9,7 @@ describe("OgInputNumberController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest: ControllerTestFactory): OgInputNumberController => (ogInputNumberController = controllerTest("OgInputNumberController") as OgInputNumberController)));
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory): OgInputNumberController => (ogInputNumberController = controllerTest("OgInputNumberController") as OgInputNumberController)));
 
 	describe("formattedToRaw", (): void => {
 		it("should return 0 if the value is blank", (): Chai.Assertion => ogInputNumberController.formattedToRaw("").should.equal(0));

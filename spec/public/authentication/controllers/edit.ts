@@ -14,7 +14,7 @@ describe("AuthenticationEditController", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "authenticationModel"])));
 
 	// Configure & compile the object under test
-	beforeEach(inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _authenticationModel_: AuthenticationModelMock): void => {
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _authenticationModel_: AuthenticationModelMock): void => {
 		$uibModalInstance = _$uibModalInstance_;
 		authenticationModel = _authenticationModel_;
 		authenticationEditController = controllerTest("AuthenticationEditController") as AuthenticationEditController;
@@ -51,7 +51,7 @@ describe("AuthenticationEditController", (): void => {
 			authenticationEditController.userName = "baduser";
 			authenticationEditController.password = "badpassword";
 			authenticationEditController.login();
-			(authenticationEditController.errorMessage as String).should.equal("unsuccessful");
+			(authenticationEditController.errorMessage as string).should.equal("unsuccessful");
 			authenticationEditController.loginInProgress.should.be.false;
 		});
 	});

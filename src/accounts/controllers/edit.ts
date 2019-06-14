@@ -17,9 +17,9 @@ export default class AccountEditController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly filterFilter: angular.IFilterFilter,
-											private readonly limitToFilter: angular.IFilterLimitTo,
-											private readonly accountModel: AccountModel, account: Account) {
+						private readonly filterFilter: angular.IFilterFilter,
+						private readonly limitToFilter: angular.IFilterLimitTo,
+						private readonly accountModel: AccountModel, account: Account) {
 		this.account = angular.extend({opening_balance: 0}, account);
 		this.mode = account ? "Edit" : "Add";
 

@@ -9,7 +9,7 @@ module.exports = merge(config, {
 	module: {
 		rules: [
 			{
-				test: /\.(less|css)$/u,
+				test: /\.(?:less|css)$/u,
 				loader: "ignore-loader"
 			}
 		]

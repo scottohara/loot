@@ -2,10 +2,14 @@
 	"rules": {
 		// Best practices
 		"dot-notation": "off"	,														// Disable to allow accessing private members using square-bracket notation
-		"no-magic-numbers": "off",												// Disable due to lots of numbers used in assertions
 		"no-unused-expressions": "off",										// Disable to allow Chai should syntax
 
 		// Stylistic issues
-		"object-property-newline": "off"									// Disable for readability of test fixtures (eg. categories)
+		"object-property-newline": "off",									// Disable for readability of test fixtures (eg. categories)
+
+		// Typescript
+		"@typescript-eslint/no-magic-numbers": "off",			// Disable due to lots of numbers used in assertions
+		"@typescript-eslint/no-object-literal-type-assertion": "off",	// Disable to allow mocking partial types
+		"@typescript-eslint/promise-function-async": "off" // Disable for JS based protractor specs (see https://github.com/typescript-eslint/typescript-eslint/pull/553)
 	}
 }

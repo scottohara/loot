@@ -11,7 +11,7 @@ export default class PayeeEditController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly payeeModel: PayeeModel, payee: Payee) {
+						private readonly payeeModel: PayeeModel, payee: Payee) {
 		this.payee = angular.extend({}, payee);
 		this.mode = payee ? "Edit" : "Add";
 	}

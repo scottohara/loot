@@ -19,19 +19,19 @@ describe("ogTableNavigable", (): void => {
 	let	ogTableNavigable: DirectiveTest,
 			ogTableNavigableService: OgTableNavigableService,
 			$window: angular.IWindowService,
-			scope: OgTableNavigableScope & {rows: {}[], model: OgTableActions},
+			scope: OgTableNavigableScope & {rows: {}[]; model: OgTableActions;},
 			isolateScope: OgTableNavigableScope;
 
 	// Load the modules
 	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
 
 	// Configure & compile the object under test
-	beforeEach(inject((_$window_: angular.IWindowService, directiveTest: DirectiveTest, _ogTableNavigableService_: OgTableNavigableService): void => {
+	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, directiveTest: DirectiveTest, _ogTableNavigableService_: OgTableNavigableService): void => {
 		$window = _$window_;
 		ogTableNavigableService = _ogTableNavigableService_;
 		ogTableNavigable = directiveTest;
 		ogTableNavigable.configure("og-table-navigable", "table", "<tbody><tr ng-repeat=\"row in rows\"><td></td></tr></tbody>");
-		scope = ogTableNavigable.scope as OgTableNavigableScope & {rows: {}[]; model: OgTableActions};
+		scope = ogTableNavigable.scope as OgTableNavigableScope & {rows: {}[]; model: OgTableActions;};
 		scope.rows = [{}, {}];
 		scope.model = {
 			selectAction: sinon.stub(),
@@ -102,7 +102,7 @@ describe("ogTableNavigable", (): void => {
 	});
 
 	describe("scrollToRow", (): void => {
-		let	mockJQueryInstance: {scrollTop: SinonStub, height: SinonStub},
+		let	mockJQueryInstance: {scrollTop: SinonStub; height: SinonStub;},
 				realJQueryInstance: JQuery,
 				row: JQuery<Element>,
 				top: number;
@@ -111,7 +111,7 @@ describe("ogTableNavigable", (): void => {
 			top = 110;
 			row = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first();
 			sinon.stub(row[0], "scrollIntoView");
-			sinon.stub(row, "offset").callsFake((): {top: number} => ({top}));
+			sinon.stub(row, "offset").callsFake((): {top: number;} => ({top}));
 			sinon.stub(row, "height").returns(40);
 
 			mockJQueryInstance = {
@@ -125,25 +125,25 @@ describe("ogTableNavigable", (): void => {
 
 		it("should scroll the page up if the specified row is off the top of the screen", (): void => {
 			top = 50;
-			isolateScope.scrollToRow(row as JQuery<Element>);
+			isolateScope.scrollToRow(row);
 			row[0].scrollIntoView.should.have.been.calledWith({behavior: "smooth"});
 		});
 
 		it("should scroll the page down if the specified row is off the bottom of the screen", (): void => {
 			top = 350;
-			isolateScope.scrollToRow(row as JQuery<Element>);
+			isolateScope.scrollToRow(row);
 			row[0].scrollIntoView.should.have.been.calledWith({behavior: "smooth"});
 		});
 
 		it("should do nothing if the specified row is on screen", (): void => {
-			isolateScope.scrollToRow(row as JQuery<Element>);
+			isolateScope.scrollToRow(row);
 			row[0].scrollIntoView.should.not.have.been.called;
 		});
 
 		it("should do nothing if the specified row offset can't be determined", (): void => {
 			(row.offset as SinonStub).restore();
 			sinon.stub(row, "offset").returns(null);
-			isolateScope.scrollToRow(row as JQuery<Element>);
+			isolateScope.scrollToRow(row);
 			row[0].scrollIntoView.should.not.have.been.called;
 		});
 
@@ -163,7 +163,7 @@ describe("ogTableNavigable", (): void => {
 		});
 
 		it("should do nothing if the target row could not be determined", (): void => {
-			sinon.stub(isolateScope, "getRows").callsFake((): {length: number} => {
+			sinon.stub(isolateScope, "getRows").callsFake((): {length: number;} => {
 				(isolateScope.getRows as SinonStub).restore();
 
 				return {
@@ -290,7 +290,7 @@ describe("ogTableNavigable", (): void => {
 	});
 
 	describe("keyHandler", (): void => {
-		const	TEST_MOVEMENT_KEYS: {code: number, name: string, amount: number}[] = [
+		const	TEST_MOVEMENT_KEYS: {code: number; name: string; amount: number;}[] = [
 						{code: 33, name: "page up", amount: -10},
 						{code: 34, name: "page down", amount: 10},
 						{code: 38, name: "arrow up", amount: -1},
@@ -298,7 +298,7 @@ describe("ogTableNavigable", (): void => {
 						{code: 74, name: "J", amount: 1},
 						{code: 75, name: "K", amount: -1}
 					],
-					TEST_ACTION_KEYS: {code: number, ctrl?: boolean, name: string, handler: string}[] = [
+					TEST_ACTION_KEYS: {code: number; ctrl?: boolean; name: string; handler: string;}[] = [
 						{code: 8, name: "Backspace", handler: "deleteAction"},
 						{code: 13, name: "Enter", handler: "selectAction"},
 						{code: 27, name: "Esc", handler: "cancelAction"},
@@ -325,7 +325,7 @@ describe("ogTableNavigable", (): void => {
 			scope.model.selectAction.should.not.have.been.called;
 		});
 
-		TEST_MOVEMENT_KEYS.forEach((key: {code: number, name: string, amount: number}): void => {
+		TEST_MOVEMENT_KEYS.forEach((key: {code: number; name: string; amount: number;}): void => {
 			it(`should jump ${key.amount < 0 ? "up" : "down"} ${Math.abs(key.amount)} row${1 === Math.abs(key.amount) ? "" : "s"} when the ${key.name} key is pressed`, (): void => {
 				event.keyCode = key.code;
 				isolateScope.keyHandler(event as JQueryKeyEventObject);
@@ -334,7 +334,7 @@ describe("ogTableNavigable", (): void => {
 			});
 		});
 
-		TEST_ACTION_KEYS.forEach((key: {code: number, ctrl?: boolean, name: string, handler: string}): void => {
+		TEST_ACTION_KEYS.forEach((key: {code: number; ctrl?: boolean; name: string; handler: string;}): void => {
 			it(`should do nothing when the ${key.name} key${key.ctrl ? "s are" : " is"} pressed and a ${key.handler} handler is not defined`, (): void => {
 				event.keyCode = key.code;
 				event.ctrlKey = key.ctrl;

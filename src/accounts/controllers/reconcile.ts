@@ -9,10 +9,10 @@ export default class AccountReconcileController {
 	private readonly LOCAL_STORAGE_KEY: string;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly $window: angular.IWindowService, account: Account) {
+						private readonly $window: angular.IWindowService, account: Account) {
 		this.LOCAL_STORAGE_KEY = `lootClosingBalance-${account.id}`;
 		this.closingBalance = Number(this.$window.localStorage.getItem(this.LOCAL_STORAGE_KEY));
-		this.expectNegativeBalance = ["credit", "loan"].indexOf(account.account_type) !== -1;
+		this.expectNegativeBalance = ["credit", "loan"].includes(account.account_type);
 	}
 
 	// Save and close the modal

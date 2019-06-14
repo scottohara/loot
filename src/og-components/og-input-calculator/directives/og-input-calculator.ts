@@ -11,7 +11,7 @@ import angular from "angular";
 
 export default class OgInputCalculatorDirective {
 	public constructor($window: angular.IWindowService, $timeout: angular.ITimeoutService) {
-		return {
+		const directive: angular.IDirective = {
 			restrict: "A",
 			require: ["ngModel", "?ogInputCurrency", "?ogInputNumber"],
 			replace: true,
@@ -23,7 +23,7 @@ export default class OgInputCalculatorDirective {
 				const [ngModel] = controllers,
 							ogInputCurrency = 1,
 							ogInputNumber = 2,
-							ACTION_KEYS: {[keyCode: string]: () => void} = {
+							ACTION_KEYS: {[keyCode: string]: () => void;} = {
 								13(): void {
 									// Enter
 									scope.update();
@@ -38,7 +38,7 @@ export default class OgInputCalculatorDirective {
 								}
 							};
 
-				scope.ogInput = (controllers[ogInputCurrency] as OgInputCurrencyController) || (controllers[ogInputNumber] as OgInputNumberController);
+				scope.ogInput = controllers[ogInputCurrency] as OgInputCurrencyController || controllers[ogInputNumber] as OgInputNumberController;
 
 				// Push an operation onto the stack
 				scope.push = (operand: number, operator: OgInputCalculatorOperator): void => {
@@ -69,7 +69,7 @@ export default class OgInputCalculatorDirective {
 
 					if (scope.stack && scope.stack.length > 1) {
 						scope.result = Number(scope.stack.reduce((memo: OgInputCalculatorOperation, operation: OgInputCalculatorOperation, index: number): OgInputCalculatorOperation => {
-							const result: OgInputCalculatorOperation & {operand: number} = {operand: 0, ...memo};
+							const result: OgInputCalculatorOperation & {operand: number;} = {operand: 0, ...memo};
 
 							// Last time through, use the view value for the operand
 							if (index === scope.stack.length - 1) {
@@ -106,17 +106,16 @@ export default class OgInputCalculatorDirective {
 				// Handle input value changes
 				scope.inputChanged = (value: string): string => {
 					// Matches any number of digits, periods or commas, followed by +, -, * or /
-					const	matches: RegExpExecArray | null = (/([-\d.,]+)([+\-*/])(.*)/gi).exec(value),
-								operand = 1,
-								operator = 2,
-								residual = 3;
+					const	matches: RegExpExecArray | null = (/(?<operand>[-\d.,]+)(?<operator>[+\-*/])(?<residual>.*)/giu).exec(value);
 
-					if (matches) {
+					if (matches && matches.groups) {
+						const {operand, operator, residual} = matches.groups;
+
 						// Push the first (operand) and second (operator) matches onto the stack
-						scope.push(Number(matches[operand]), matches[operator] as OgInputCalculatorOperator);
+						scope.push(Number(operand), operator as OgInputCalculatorOperator);
 
 						// Update the view value to the third match (anything after the operator), which is typically an empty string
-						iElement.val(matches[residual]);
+						iElement.val(residual);
 					} else {
 						// Recalculate
 						scope.calculate(value);
@@ -196,7 +195,9 @@ export default class OgInputCalculatorDirective {
 					iElement.off("blur", update);
 				});
 			}
-		} as angular.IDirective;
+		};
+
+		return directive;
 	}
 
 	public static factory($window: angular.IWindowService, $timeout: angular.ITimeoutService): OgInputCalculatorDirective {

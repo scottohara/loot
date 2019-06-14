@@ -11,7 +11,7 @@ export default class SecurityEditController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-											private readonly securityModel: SecurityModel, security: Security) {
+						private readonly securityModel: SecurityModel, security: Security) {
 		this.security = angular.extend({}, security);
 		this.mode = security ? "Edit" : "Add";
 	}
