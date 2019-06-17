@@ -1,0 +1,44 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - webpack > micromatch > extglob > expand-brackets > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > micromatch > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > micromatch > extglob > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - ts-loader > micromatch > extglob > expand-brackets > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - ts-loader > micromatch > braces > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > micromatch > braces > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > micromatch > nanomatch > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - ts-loader > micromatch > extglob > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - ts-loader > micromatch > nanomatch > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - ts-loader > micromatch > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > micromatch > extglob > expand-brackets > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - ts-loader > micromatch > extglob > expand-brackets > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > watchpack > chokidar > braces > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > watchpack > chokidar > anymatch > micromatch > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > watchpack > chokidar > anymatch > micromatch > braces > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > watchpack > chokidar > anymatch > micromatch > extglob > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > watchpack > chokidar > anymatch > micromatch > nanomatch > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > watchpack > chokidar > anymatch > micromatch > extglob > expand-brackets > debug:
+        patched: '2019-06-17T01:51:33.419Z'
+    - webpack > watchpack > chokidar > anymatch > micromatch > extglob > expand-brackets > snapdragon > debug:
+        patched: '2019-06-17T01:51:33.419Z'
