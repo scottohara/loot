@@ -2,12 +2,12 @@ import {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
+import sinon, { SinonStub } from "sinon";
 import CategoriesMockProvider from "mocks/categories/providers/categories";
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryMockProvider from "mocks/categories/providers/category";
-import {CategoryModelMock} from "mocks/categories/types";
-import {Mock} from "mocks/types";
+import { CategoryModelMock } from "mocks/categories/types";
+import { Mock } from "mocks/types";
 import QMockProvider from "mocks/node-modules/angular/services/q";
 
 export default class CategoryModelMockProvider implements Mock<CategoryModelMock> {
@@ -17,11 +17,11 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 		// Success/error = options for the stub promises
 		const	$q: QMock = $qMockProvider.$get(),
 					success: PromiseMockConfig<{data: Category;}> = {
-						args: {id: 1},
-						response: {data: categoryMockProvider.$get()}
+						args: { id: 1 },
+						response: { data: categoryMockProvider.$get() }
 					},
 					error: PromiseMockConfig<void> = {
-						args: {id: -1}
+						args: { id: -1 }
 					};
 
 		// Mock categoryModel object
@@ -49,12 +49,12 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 				}
 
 				// Return a promise-like object that resolves with the category
-				return $q.promisify({response: category})();
+				return $q.promisify({ response: category })();
 			},
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
 			toggleFavourite(category: Category): SinonStub {
-				return $q.promisify({response: !category.favourite})();
+				return $q.promisify({ response: !category.favourite })();
 			},
 			flush: sinon.stub(),
 			addRecent: sinon.stub()

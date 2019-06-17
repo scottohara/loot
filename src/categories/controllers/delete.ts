@@ -1,6 +1,6 @@
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class CategoryDeleteController {
 	public errorMessage: string | null = null;

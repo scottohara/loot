@@ -1,9 +1,9 @@
-import {ControllerTestFactory} from "mocks/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityEditController from "securities/controllers/edit";
-import {SecurityModelMock} from "mocks/securities/types";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { SecurityModelMock } from "mocks/securities/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("SecurityEditController", (): void => {
@@ -32,7 +32,7 @@ describe("SecurityEditController", (): void => {
 	});
 
 	describe("when a security is not provided", (): void => {
-		beforeEach((): SecurityEditController => (securityEditController = controllerTest("SecurityEditController", {security: null}) as SecurityEditController));
+		beforeEach((): SecurityEditController => (securityEditController = controllerTest("SecurityEditController", { security: null }) as SecurityEditController));
 
 		it("should make an empty security object available to the view", (): void => {
 			securityEditController.security.should.be.an("object");

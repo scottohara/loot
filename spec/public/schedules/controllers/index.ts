@@ -23,16 +23,16 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction
 } from "mocks/transactions/factories";
-import sinon, {SinonStub} from "sinon";
+import sinon, { SinonStub } from "sinon";
 import {
 	startOfDay,
 	subDays
 } from "date-fns/esm";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {OgTableActionHandlers} from "og-components/og-table-navigable/types";
+import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import ScheduleIndexController from "schedules/controllers";
-import {TransactionModelMock} from "mocks/transactions/types";
+import { TransactionModelMock } from "mocks/transactions/types";
 import angular from "angular";
 
 describe("ScheduleIndexController", (): void => {
@@ -71,7 +71,7 @@ describe("ScheduleIndexController", (): void => {
 
 	it("should focus the schedule when a schedule id is specified", (): void => {
 		$state.params.id = "1";
-		scheduleIndexController = controllerTest("ScheduleIndexController", {$state}) as ScheduleIndexController;
+		scheduleIndexController = controllerTest("ScheduleIndexController", { $state }) as ScheduleIndexController;
 		scheduleIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
 		(scheduleIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
@@ -79,7 +79,7 @@ describe("ScheduleIndexController", (): void => {
 
 	it("should not focus the schedule when a schedule id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({to: "root.schedules.schedule"}, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.schedules.schedule" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(scheduleIndexController as angular.IController).$scope.$emit("$destroy");
@@ -87,10 +87,10 @@ describe("ScheduleIndexController", (): void => {
 	});
 
 	it("should ensure the schedule is focussed when the schedule id state param changes", (): void => {
-		const toParams: {id: string;} = {id: "1"};
+		const toParams: {id: string;} = { id: "1" };
 
 		sinon.stub(scheduleIndexController, "focusSchedule" as keyof ScheduleIndexController);
-		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
 		scheduleIndexController["focusSchedule"].should.have.been.calledWith(Number(toParams.id));
 	});
 
@@ -129,7 +129,7 @@ describe("ScheduleIndexController", (): void => {
 			it("should update the schedule in the list of schedules when the modal is closed", (): void => {
 				schedule.memo = "edited schedule";
 				scheduleIndexController["editSchedule"](1);
-				$uibModal.close({data: schedule});
+				$uibModal.close({ data: schedule });
 				scheduleIndexController.schedules.should.include(schedule);
 			});
 		});
@@ -146,7 +146,7 @@ describe("ScheduleIndexController", (): void => {
 			});
 
 			it("should add the new schedule to the list of schedules when the modal is closed", (): void => {
-				$uibModal.close({data: schedule});
+				$uibModal.close({ data: schedule });
 				(scheduleIndexController.schedules.pop() as ScheduledTransaction).should.deep.equal(schedule);
 			});
 		});
@@ -155,21 +155,21 @@ describe("ScheduleIndexController", (): void => {
 			schedule.id = 999;
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
-			$uibModal.close({data: schedule});
+			$uibModal.close({ data: schedule });
 			(scheduleIndexController.schedules.pop() as ScheduledTransaction).should.deep.equal(schedule);
 		});
 
 		it("should focus the schedule when the modal is closed if the schedule was edited", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
-			$uibModal.close({data: schedule});
+			$uibModal.close({ data: schedule });
 			scheduleIndexController["focusSchedule"].should.have.been.calledWith(schedule.id);
 		});
 
 		it("should focus the schedule now at the original index when the modal is closed if the schedule was entered or skipped", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
-			$uibModal.close({data: schedule, skipped: true});
+			$uibModal.close({ data: schedule, skipped: true });
 			scheduleIndexController["focusSchedule"].should.have.been.calledWith(scheduleIndexController.schedules[1].id);
 		});
 
@@ -183,7 +183,7 @@ describe("ScheduleIndexController", (): void => {
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			scheduleIndexController["editSchedule"]();
-			$uibModal.close({data: schedule});
+			$uibModal.close({ data: schedule });
 			ogTableNavigableService.enabled.should.be.true;
 		});
 
@@ -270,13 +270,13 @@ describe("ScheduleIndexController", (): void => {
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a schedule when no schedule is currently focussed", (): void => {
 			scheduleIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".schedule", {id: 2});
+			$state.go.should.have.been.calledWith(".schedule", { id: 2 });
 		});
 
 		it("should focus a schedule when another schedule is currently focussed", (): void => {
 			$state.currentState("**.schedule");
 			scheduleIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.schedule", {id: 2});
+			$state.go.should.have.been.calledWith("^.schedule", { id: 2 });
 		});
 	});
 
@@ -307,8 +307,8 @@ describe("ScheduleIndexController", (): void => {
 				schedule: ScheduledSplitTransaction;
 
 		beforeEach((): void => {
-			event = {cancelBubble: false};
-			schedule = createScheduledSplitTransaction({id: -1, showSubtransactions: true});
+			event = { cancelBubble: false };
+			schedule = createScheduledSplitTransaction({ id: -1, showSubtransactions: true });
 		});
 
 		it("should toggle a flag on the schedule indicating whether subtransactions are shown", (): void => {
@@ -348,9 +348,9 @@ describe("ScheduleIndexController", (): void => {
 
 			it("should update the transaction with it's subtransactions", (): void => {
 				const subtransactions: SplitTransactionChild[] = [
-					createSubtransferTransaction({id: 1}),
-					createSubtransaction({id: 2}),
-					createSubtransaction({id: 3})
+					createSubtransferTransaction({ id: 1 }),
+					createSubtransaction({ id: 2 }),
+					createSubtransaction({ id: 3 })
 				];
 
 				schedule.id = 1;

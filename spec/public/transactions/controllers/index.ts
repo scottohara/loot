@@ -43,21 +43,21 @@ import {
 	createSubtransferTransaction,
 	createTransferTransaction
 } from "mocks/transactions/factories";
-import sinon, {SinonStub} from "sinon";
-import {Account} from "accounts/types";
+import sinon, { SinonStub } from "sinon";
+import { Account } from "accounts/types";
 import AccountModel from "accounts/models/account";
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {OgModalConfirm} from "og-components/og-modal-confirm/types";
-import {OgTableActionHandlers} from "og-components/og-table-navigable/types";
+import { OgModalConfirm } from "og-components/og-modal-confirm/types";
+import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import {Payee} from "payees/types";
-import {Security} from "securities/types";
+import { Payee } from "payees/types";
+import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import TransactionIndexController from "transactions/controllers";
-import {TransactionModelMock} from "mocks/transactions/types";
+import { TransactionModelMock } from "mocks/transactions/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import createCategory from "mocks/categories/factories";
@@ -114,7 +114,7 @@ describe("TransactionIndexController", (): void => {
 	it("should make the passed context type available to the view", (): Chai.Assertion => transactionIndexController.contextType.should.equal(contextModel.type));
 
 	it("should not set a context type when a context model was not specified", (): void => {
-		transactionIndexController = controllerTest("TransactionIndexController", {contextModel: null}) as TransactionIndexController;
+		transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null }) as TransactionIndexController;
 		(!transactionIndexController.contextType).should.be.true;
 	});
 
@@ -123,7 +123,7 @@ describe("TransactionIndexController", (): void => {
 	it("should make today's date available to the view", (): Chai.Assertion => transactionIndexController.today.should.deep.equal(startOfDay(new Date())));
 
 	it("should set an empty array of transactions to the view", (): void => {
-		transactionIndexController = controllerTest("TransactionIndexController", {transactionBatch: {transactions: {length: 0} as Transaction[], openingBalance: 0, atEnd: false}}) as TransactionIndexController;
+		transactionIndexController = controllerTest("TransactionIndexController", { transactionBatch: { transactions: { length: 0 } as Transaction[], openingBalance: 0, atEnd: false } }) as TransactionIndexController;
 		transactionIndexController.transactions.should.be.an("array");
 		transactionIndexController.transactions.should.be.empty;
 	});
@@ -132,7 +132,7 @@ describe("TransactionIndexController", (): void => {
 
 	it("should ensure the transaction is focussed when the transaction id state param is present", (): void => {
 		$state.params.transactionId = "1";
-		transactionIndexController = controllerTest("TransactionIndexController", {$state}) as TransactionIndexController;
+		transactionIndexController = controllerTest("TransactionIndexController", { $state }) as TransactionIndexController;
 		transactionIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
 		(transactionIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
@@ -143,7 +143,7 @@ describe("TransactionIndexController", (): void => {
 		transactionIndexController.loading.next.should.be.false;
 	});
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({to: "**.transactions.transaction"}, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "**.transactions.transaction" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(transactionIndexController as angular.IController).$scope.$emit("$destroy");
@@ -151,10 +151,10 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	it("should ensure the transaction is focussed when the transaction id state param changes", (): void => {
-		const toParams = {transactionId: "1"};
+		const toParams = { transactionId: "1" };
 
 		sinon.stub(transactionIndexController, "transitionSuccessHandler" as keyof TransactionIndexController);
-		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
 		transactionIndexController["transitionSuccessHandler"].should.have.been.calledWith(Number(toParams.transactionId));
 	});
 
@@ -242,7 +242,7 @@ describe("TransactionIndexController", (): void => {
 
 				describe("(context type is security)", (): void => {
 					it("should open the edit transaction modal with a default security", (): void => {
-						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: securityModel as EntityModel, context: createSecurity() as Entity}) as TransactionIndexController;
+						transactionIndexController = controllerTest("TransactionIndexController", { contextModel: securityModel as EntityModel, context: createSecurity() as Entity }) as TransactionIndexController;
 						(newTransaction as SecurityTransaction).transaction_type = "SecurityHolding";
 						(newTransaction as SecurityTransaction).security = transactionIndexController.context as Security;
 					});
@@ -250,21 +250,21 @@ describe("TransactionIndexController", (): void => {
 
 				describe("(context type is not security)", (): void => {
 					it("should open the edit transaction modal with a default primary account if the context type is account", (): void => {
-						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel as EntityModel, context: createAccount() as Entity}) as TransactionIndexController;
+						transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel as EntityModel, context: createAccount() as Entity }) as TransactionIndexController;
 						(newTransaction as Transaction).primary_account = transactionIndexController.context as Account;
 					});
 
 					it("should open the edit transaction modal with a default payee if the context type is payee", (): Payee => ((newTransaction as PayeeCashTransaction).payee = transactionIndexController.context as Payee));
 
 					it("should open the edit transaction modal with a default category if the context type is category and the context is a category", (): void => {
-						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: categoryModel as EntityModel, context: createCategory() as Entity}) as TransactionIndexController;
+						transactionIndexController = controllerTest("TransactionIndexController", { contextModel: categoryModel as EntityModel, context: createCategory() as Entity }) as TransactionIndexController;
 						(newTransaction as CategorisableTransaction).category = transactionIndexController.context as Category;
 						(newTransaction as SubcategorisableTransaction).subcategory = null;
 					});
 
 					it("should open the edit transaction modal with a default category and subcategory if the context type is category and the context is a subcategory", (): void => {
 						(newTransaction as CategorisableTransaction).category = createCategory();
-						transactionIndexController = controllerTest("TransactionIndexController", {contextModel: categoryModel as EntityModel, context: createCategory({parent: (newTransaction as CategorisableTransaction).category as Category}) as Entity}) as TransactionIndexController;
+						transactionIndexController = controllerTest("TransactionIndexController", { contextModel: categoryModel as EntityModel, context: createCategory({ parent: (newTransaction as CategorisableTransaction).category as Category }) as Entity }) as TransactionIndexController;
 						(newTransaction as SubcategorisableTransaction).subcategory = transactionIndexController.context as Category;
 					});
 				});
@@ -395,7 +395,7 @@ describe("TransactionIndexController", (): void => {
 		beforeEach((): Transaction => (transaction = angular.copy(transactionIndexController.transactions[1]) as Transaction & {[contextField: string]: Entity;}));
 
 		describe("(search mode)", (): void => {
-			beforeEach((): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", {contextModel: null, context: "Search"}) as TransactionIndexController));
+			beforeEach((): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null, context: "Search" }) as TransactionIndexController));
 
 			it("should return true when the transaction memo no longer contains the search query", (): void => {
 				transaction.memo = "test memo";
@@ -410,11 +410,11 @@ describe("TransactionIndexController", (): void => {
 
 		describe("(context mode)", (): void => {
 			const scenarios: {type: "payee" | "account" | "security" | "category"; field: (keyof BasicTransaction | keyof SecurityTransaction); contextFactory: () => Entity;}[] = [
-				{type: "account", field: "primary_account", contextFactory: createAccount},
-				{type: "payee", field: "payee", contextFactory: createPayee},
-				{type: "security", field: "security", contextFactory: createSecurity},
-				{type: "category", field: "category", contextFactory: createCategory},
-				{type: "category", field: "subcategory", contextFactory: (): Entity => createCategory({parent: createCategory()})}
+				{ type: "account", field: "primary_account", contextFactory: createAccount },
+				{ type: "payee", field: "payee", contextFactory: createPayee },
+				{ type: "security", field: "security", contextFactory: createSecurity },
+				{ type: "category", field: "category", contextFactory: createCategory },
+				{ type: "category", field: "subcategory", contextFactory: (): Entity => createCategory({ parent: createCategory() }) }
 			];
 			let contextModels: {[type: string]: EntityModel;};
 
@@ -429,21 +429,21 @@ describe("TransactionIndexController", (): void => {
 
 			angular.forEach(scenarios, (scenario: {type: "payee" | "account" | "security" | "category"; field: string; contextFactory: () => Entity;}): void => {
 				it(`should return true when the context type is ${scenario.type} and the transaction ${scenario.field} no longer matches the context`, (): void => {
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: contextModels[scenario.type], context: scenario.contextFactory()}) as TransactionIndexController;
+					transactionIndexController = controllerTest("TransactionIndexController", { contextModel: contextModels[scenario.type], context: scenario.contextFactory() }) as TransactionIndexController;
 					transaction[scenario.field] = scenario.contextFactory();
 					transactionIndexController["contextChanged"](transaction).should.be.true;
 				});
 
 				it(`should return false when the context type is ${scenario.type} and the transaction ${scenario.field} matches the context`, (): void => {
 					context = scenario.contextFactory();
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: contextModels[scenario.type], context}) as TransactionIndexController;
+					transactionIndexController = controllerTest("TransactionIndexController", { contextModel: contextModels[scenario.type], context }) as TransactionIndexController;
 					transaction[scenario.field] = context;
 					transactionIndexController["contextChanged"](transaction).should.be.false;
 				});
 			});
 
 			it("should return false when the transaction field is undefined", (): void => {
-				transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel as EntityModel}) as TransactionIndexController;
+				transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel as EntityModel }) as TransactionIndexController;
 				delete transaction.primary_account;
 				transactionIndexController["contextChanged"](transaction).should.be.false;
 			});
@@ -523,8 +523,8 @@ describe("TransactionIndexController", (): void => {
 	describe("updateClosingBalance", (): void => {
 		it("should do nothing if the context doesn't have a closing balance property", (): void => {
 			delete context.closing_balance;
-			transactionIndexController = controllerTest("TransactionIndexController", {context}) as TransactionIndexController;
-			transactionIndexController["updateClosingBalance"](createBasicTransaction({amount: 1}));
+			transactionIndexController = controllerTest("TransactionIndexController", { context }) as TransactionIndexController;
+			transactionIndexController["updateClosingBalance"](createBasicTransaction({ amount: 1 }));
 			transactionIndexController.should.not.have.property("closing_balance");
 		});
 
@@ -533,7 +533,7 @@ describe("TransactionIndexController", (): void => {
 					expected: number;
 
 			beforeEach((): void => {
-				transaction = createBasicTransaction({amount: 1});
+				transaction = createBasicTransaction({ amount: 1 });
 				(transactionIndexController.context as Account).closing_balance = 0;
 			});
 
@@ -590,12 +590,12 @@ describe("TransactionIndexController", (): void => {
 
 		describe("(not allowed)", (): void => {
 			const scenarios: {action: "edit" | "delete"; type: TransactionType; message: string;}[] = [
-				{action: "edit", type: "Sub", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?"},
-				{action: "delete", type: "Sub", message: "This transaction is part of a split transaction. You can only delete it from the parent account. Would you like to switch to the parent account now?"},
-				{action: "edit", type: "Subtransfer", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?"},
-				{action: "delete", type: "Subtransfer", message: "This transaction is part of a split transaction. You can only delete it from the parent account. Would you like to switch to the parent account now?"},
-				{action: "edit", type: "Dividend", message: "This is an investment transaction. You can only edit it from the investment account. Would you like to switch to the investment account now?"},
-				{action: "edit", type: "SecurityInvestment", message: "This is an investment transaction. You can only edit it from the investment account. Would you like to switch to the investment account now?"}
+				{ action: "edit", type: "Sub", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?" },
+				{ action: "delete", type: "Sub", message: "This transaction is part of a split transaction. You can only delete it from the parent account. Would you like to switch to the parent account now?" },
+				{ action: "edit", type: "Subtransfer", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?" },
+				{ action: "delete", type: "Subtransfer", message: "This transaction is part of a split transaction. You can only delete it from the parent account. Would you like to switch to the parent account now?" },
+				{ action: "edit", type: "Dividend", message: "This is an investment transaction. You can only edit it from the investment account. Would you like to switch to the investment account now?" },
+				{ action: "edit", type: "SecurityInvestment", message: "This is an investment transaction. You can only edit it from the investment account. Would you like to switch to the investment account now?" }
 			];
 
 			angular.forEach(scenarios, (scenario: {action: "edit" | "delete"; type: TransactionType; message: string;}): void => {
@@ -614,12 +614,12 @@ describe("TransactionIndexController", (): void => {
 
 		describe("(allowed)", (): void => {
 			const scenarios: {action: "edit" | "delete"; type: TransactionType; account_type?: "investment";}[] = [
-				{action: "edit", type: "Basic"},
-				{action: "delete", type: "Basic"},
-				{action: "edit", type: "Dividend", account_type: "investment"},
-				{action: "delete", type: "Dividend"},
-				{action: "edit", type: "SecurityInvestment", account_type: "investment"},
-				{action: "delete", type: "SecurityInvestment"}
+				{ action: "edit", type: "Basic" },
+				{ action: "delete", type: "Basic" },
+				{ action: "edit", type: "Dividend", account_type: "investment" },
+				{ action: "delete", type: "Dividend" },
+				{ action: "edit", type: "SecurityInvestment", account_type: "investment" },
+				{ action: "delete", type: "SecurityInvestment" }
 			];
 
 			angular.forEach(scenarios, (scenario: {action: "edit" | "delete"; type: TransactionType; account_type?: "investment";}): void => {
@@ -693,7 +693,7 @@ describe("TransactionIndexController", (): void => {
 
 		describe("(reconciling)", (): void => {
 			beforeEach((): void => {
-				transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel}) as TransactionIndexController;
+				transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel }) as TransactionIndexController;
 				transactionIndexController.reconciling = true;
 				sinon.stub(transactionIndexController, "toggleCleared");
 			});
@@ -744,13 +744,13 @@ describe("TransactionIndexController", (): void => {
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a transaction when no transaction is currently focussed", (): void => {
 			transactionIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".transaction", {transactionId: 2});
+			$state.go.should.have.been.calledWith(".transaction", { transactionId: 2 });
 		});
 
 		it("should focus a transaction when another transaction is currently focussed", (): void => {
 			$state.currentState("**.transaction");
 			transactionIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.transaction", {transactionId: 2});
+			$state.go.should.have.been.calledWith("^.transaction", { transactionId: 2 });
 		});
 	});
 
@@ -794,7 +794,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		it("should search for transactions from a specified date in either direction", (): void => {
-			transactionIndexController = controllerTest("TransactionIndexController", {contextModel: null, context: "search"}) as TransactionIndexController;
+			transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null, context: "search" }) as TransactionIndexController;
 			transactionIndexController.getTransactions("prev", fromDate);
 			transactionModel.query.should.have.been.calledWith("search", fromDate);
 		});
@@ -873,7 +873,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		it("should update the reconciled totals when reconciling", (): void => {
-			transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel}) as TransactionIndexController;
+			transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel }) as TransactionIndexController;
 			sinon.stub(transactionIndexController, "updateReconciledTotals" as keyof TransactionIndexController);
 			transactionIndexController.reconciling = true;
 			transactionIndexController["processTransactions"](transactionBatch);
@@ -930,7 +930,7 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("(account context)", (): void => {
-		beforeEach((): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel}) as TransactionIndexController));
+		beforeEach((): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel }) as TransactionIndexController));
 
 		it("should set a flag to enable reconciling", (): Chai.Assertion => transactionIndexController.reconcilable.should.be.true);
 
@@ -1099,8 +1099,8 @@ describe("TransactionIndexController", (): void => {
 				transaction: SplitTransaction;
 
 		beforeEach((): void => {
-			event = {cancelBubble: false};
-			transaction = createSplitTransaction({id: -1, showSubtransactions: true});
+			event = { cancelBubble: false };
+			transaction = createSplitTransaction({ id: -1, showSubtransactions: true });
 		});
 
 		it("should toggle a flag on the transaction indicating whether subtransactions are shown", (): void => {
@@ -1140,9 +1140,9 @@ describe("TransactionIndexController", (): void => {
 
 			it("should update the transaction with it's subtransactions", (): void => {
 				const subtransactions = [
-					createSubtransferTransaction({id: 1}),
-					createSubtransaction({id: 2}),
-					createSubtransaction({id: 3})
+					createSubtransferTransaction({ id: 1 }),
+					createSubtransaction({ id: 2 }),
+					createSubtransaction({ id: 3 })
 				];
 
 				transaction.id = 1;
@@ -1201,14 +1201,14 @@ describe("TransactionIndexController", (): void => {
 				$event: EventMock;
 
 		beforeEach((): void => {
-			transaction = createSubtransferTransaction({id: 2, parent_id: 1});
+			transaction = createSubtransferTransaction({ id: 2, parent_id: 1 });
 
 			stateParams = {
 				id: 3,
 				transactionId: transaction.id
 			};
 
-			$event = {stopPropagation: sinon.stub()};
+			$event = { stopPropagation: sinon.stub() };
 		});
 
 		it("should transition to the specified state passing the transaction id", (): void => {
@@ -1359,7 +1359,7 @@ describe("TransactionIndexController", (): void => {
 					const transactionDate: Date = subDays(startOfDay(new Date()), 1),
 								direction: TransactionFetchDirection = "next";
 
-					transactionIndexController = controllerTest("TransactionIndexController", {contextModel: accountModel}) as TransactionIndexController;
+					transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel }) as TransactionIndexController;
 					sinon.stub(transactionIndexController, "focusTransaction" as keyof TransactionIndexController).returns(NaN);
 					sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
 					transactionIndexController.unreconciledOnly = true;

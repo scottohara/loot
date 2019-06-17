@@ -1,5 +1,5 @@
-import {IModalInstanceService} from "angular-ui-bootstrap";
-import {Payee} from "payees/types";
+import { IModalInstanceService } from "angular-ui-bootstrap";
+import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 import angular from "angular";
 

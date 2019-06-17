@@ -1,4 +1,4 @@
-import {OgInputAutoSelectScope} from "og-components/og-input-autoselect/types";
+import { OgInputAutoSelectScope } from "og-components/og-input-autoselect/types";
 
 export default class OgInputAutoSelectDirective {
 	public constructor($window: angular.IWindowService, $timeout: angular.ITimeoutService) {

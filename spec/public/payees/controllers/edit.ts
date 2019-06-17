@@ -1,9 +1,9 @@
-import {ControllerTestFactory} from "mocks/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 import PayeeEditController from "payees/controllers/edit";
-import {PayeeModelMock} from "mocks/payees/types";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { PayeeModelMock } from "mocks/payees/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("PayeeEditController", (): void => {
@@ -32,7 +32,7 @@ describe("PayeeEditController", (): void => {
 	});
 
 	describe("when a payee is not provided", (): void => {
-		beforeEach((): PayeeEditController => (payeeEditController = controllerTest("PayeeEditController", {payee: null}) as PayeeEditController));
+		beforeEach((): PayeeEditController => (payeeEditController = controllerTest("PayeeEditController", { payee: null }) as PayeeEditController));
 
 		it("should make an empty payee object available to the view", (): void => {
 			payeeEditController.payee.should.be.an("object");

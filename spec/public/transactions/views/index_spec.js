@@ -265,7 +265,7 @@ describe("transactionIndexView", () => {
 							// Need to artificially wait for 350ms because bootstrap collapse has a fade transition
 							browser.sleep(350);
 
-							splits.push({index, row});
+							splits.push({ index, row });
 						}
 					});
 				});

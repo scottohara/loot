@@ -1,7 +1,7 @@
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
-import {SinonStub} from "sinon";
-import {WindowMock} from "mocks/node-modules/angular/types";
+import { SinonStub } from "sinon";
+import { WindowMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("ogNavigatorServiceWorkerService", (): void => {
@@ -19,7 +19,7 @@ describe("ogNavigatorServiceWorkerService", (): void => {
 
 	describe("register", (): void => {
 		it("should do nothing when serviceWorker is not supported", (): void => {
-			const {serviceWorker}: {serviceWorker: {register: SinonStub;};} = $window.navigator;
+			const { serviceWorker }: {serviceWorker: {register: SinonStub;};} = $window.navigator;
 
 			delete $window.navigator.serviceWorker;
 

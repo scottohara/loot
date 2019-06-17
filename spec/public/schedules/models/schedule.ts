@@ -10,11 +10,11 @@ import {
 	format,
 	startOfDay
 } from "date-fns/esm";
-import {CategoryModelMock} from "mocks/categories/types";
+import { CategoryModelMock } from "mocks/categories/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {PayeeModelMock} from "mocks/payees/types";
+import { PayeeModelMock } from "mocks/payees/types";
 import ScheduleModel from "schedules/models/schedule";
-import {SecurityModelMock} from "mocks/securities/types";
+import { SecurityModelMock } from "mocks/securities/types";
 import angular from "angular";
 import sinon from "sinon";
 
@@ -54,7 +54,7 @@ describe("scheduleModel", (): void => {
 	describe("parse", (): void => {
 		let schedule: ScheduledTransaction;
 
-		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["parse"](createScheduledBasicTransaction({next_due_date: format(new Date(), "YYYY-MM-DD HH:mm:ss")}))));
+		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["parse"](createScheduledBasicTransaction({ next_due_date: format(new Date(), "YYYY-MM-DD HH:mm:ss") }))));
 
 		it("should convert the next due date from a string to a date", (): void => {
 			schedule.next_due_date.should.be.a("date");
@@ -65,7 +65,7 @@ describe("scheduleModel", (): void => {
 	describe("stringify", (): void => {
 		let schedule: ScheduledTransaction;
 
-		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["stringify"](createScheduledBasicTransaction({next_due_date: startOfDay(new Date())}))));
+		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["stringify"](createScheduledBasicTransaction({ next_due_date: startOfDay(new Date()) }))));
 
 		it("should convert the next due date from a date to a string", (): void => {
 			schedule.next_due_date.should.be.a("string");
@@ -104,55 +104,55 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should flush the payee cache when the schedule payee is new", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({id: 1, payee: ""}));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1, payee: "" }));
 			payeeModel.flush.should.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the payee cache when the schedule payee is existing", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({id: 1}));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
 			payeeModel.flush.should.not.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should flush the category cache when the schedule category is new", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({id: 1, category: ""}));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1, category: "" }));
 			categoryModel.flush.should.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the category cache when the schedule category is existing", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({id: 1}));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
 			categoryModel.flush.should.not.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should flush the category cache when the schedule subcategory is new", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({id: 1, subcategory: ""}));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1, subcategory: "" }));
 			categoryModel.flush.should.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the category cache when the schedule subcategory is existing", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({id: 1}));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
 			categoryModel.flush.should.not.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should flush the security cache when the schedule security is new", (): void => {
-			scheduleModel.save(createScheduledSecurityHoldingTransaction({id: 1, security: ""}));
+			scheduleModel.save(createScheduledSecurityHoldingTransaction({ id: 1, security: "" }));
 			securityModel.flush.should.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the security cache when the schedule security is existing", (): void => {
-			scheduleModel.save(createScheduledSecurityHoldingTransaction({id: 1}));
+			scheduleModel.save(createScheduledSecurityHoldingTransaction({ id: 1 }));
 			securityModel.flush.should.not.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should stringify the schedule", (): void => {
-			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({id: 1});
+			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({ id: 1 });
 
 			scheduleModel.save(schedule);
 			scheduleModel["stringify"].should.have.been.calledWith(schedule);
@@ -169,7 +169,7 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should dispatch a PATCH request to /schedules/{id} when an id is provided", (): void => {
-			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({id: 1});
+			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({ id: 1 });
 
 			$httpBackend.expectPATCH(/schedules\/1$/u, schedule);
 			scheduleModel.save(schedule);
@@ -177,13 +177,13 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should parse the schedule", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({id: 1}));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
 			$httpBackend.flush();
 			scheduleModel["parse"].should.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the schedule", (): void => {
-			const actualResponse: angular.IPromise<ScheduledTransaction> = scheduleModel.save(createScheduledBasicTransaction({id: 1}));
+			const actualResponse: angular.IPromise<ScheduledTransaction> = scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
 
 			$httpBackend.flush();
 			actualResponse.should.eventually.equal(expectedResponse);
@@ -193,7 +193,7 @@ describe("scheduleModel", (): void => {
 	describe("destroy", (): void => {
 		it("should dispatch a DELETE request to /schedules/{id}", (): void => {
 			$httpBackend.expectDELETE(/schedules\/1$/u).respond(200);
-			scheduleModel.destroy(createScheduledBasicTransaction({id: 1}));
+			scheduleModel.destroy(createScheduledBasicTransaction({ id: 1 }));
 			$httpBackend.flush();
 		});
 	});

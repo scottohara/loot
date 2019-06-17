@@ -10,12 +10,12 @@ import {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
 } from "mocks/og-components/og-lru-cache-factory/types";
-import sinon, {SinonStub} from "sinon";
+import sinon, { SinonStub } from "sinon";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import angular from "angular";
-import {createBasicTransaction} from "mocks/transactions/factories";
+import { createBasicTransaction } from "mocks/transactions/factories";
 import createSecurity from "mocks/securities/factories";
 
 describe("securityModel", (): void => {
@@ -46,7 +46,7 @@ describe("securityModel", (): void => {
 		$cache = $cacheFactory();
 		ogLruCache = ogLruCacheFactory.new();
 
-		security = createSecurity({id: 1});
+		security = createSecurity({ id: 1 });
 	}));
 
 	// After each spec, verify that there are no outstanding http expectations or requests
@@ -57,7 +57,7 @@ describe("securityModel", (): void => {
 
 	it("should fetch the list of recent securities from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentSecurities"));
 
-	it("should have a list of recent securities", (): Chai.Assertion => securityModel.recent.should.deep.equal([{id: 1, name: "recent item"}]));
+	it("should have a list of recent securities", (): Chai.Assertion => securityModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
 
 	describe("type", (): void => {
 		it("should be 'security'", (): Chai.Assertion => securityModel.type.should.equal("security"));
@@ -285,7 +285,7 @@ describe("securityModel", (): void => {
 			securityModel.recent.should.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentSecurities", JSON.stringify([{id: 1, name: "recent item"}])));
+		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentSecurities", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 
 	describe("removeRecent", (): void => {
@@ -296,6 +296,6 @@ describe("securityModel", (): void => {
 			securityModel.recent.should.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentSecurities", JSON.stringify([{id: 1, name: "recent item"}])));
+		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentSecurities", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 });

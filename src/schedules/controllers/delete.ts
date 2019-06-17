@@ -1,6 +1,6 @@
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 import ScheduleModel from "schedules/models/schedule";
-import {ScheduledTransaction} from "schedules/types";
+import { ScheduledTransaction } from "schedules/types";
 
 export default class ScheduleDeleteController {
 	public errorMessage: string | null = null;

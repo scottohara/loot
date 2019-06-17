@@ -6,8 +6,8 @@ import {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
 } from "mocks/og-components/og-lru-cache-factory/types";
-import sinon, {SinonStub} from "sinon";
-import {Category} from "categories/types";
+import sinon, { SinonStub } from "sinon";
+import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import angular from "angular";
@@ -41,7 +41,7 @@ describe("categoryModel", (): void => {
 		$cache = $cacheFactory();
 		ogLruCache = ogLruCacheFactory.new();
 
-		category = createCategory({id: 1});
+		category = createCategory({ id: 1 });
 	}));
 
 	// After each spec, verify that there are no outstanding http expectations or requests
@@ -52,7 +52,7 @@ describe("categoryModel", (): void => {
 
 	it("should fetch the list of recent categories from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentCategories"));
 
-	it("should have a list of recent categories", (): Chai.Assertion => categoryModel.recent.should.deep.equal([{id: 1, name: "recent item"}]));
+	it("should have a list of recent categories", (): Chai.Assertion => categoryModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
 		it("should be 'lootRecentCategories'", (): Chai.Assertion => categoryModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentCategories"));
@@ -267,7 +267,7 @@ describe("categoryModel", (): void => {
 			categoryModel.recent.should.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentCategories", JSON.stringify([{id: 1, name: "recent item"}])));
+		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentCategories", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 
 	describe("removeRecent", (): void => {
@@ -278,6 +278,6 @@ describe("categoryModel", (): void => {
 			categoryModel.recent.should.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentCategories", JSON.stringify([{id: 1, name: "recent item"}])));
+		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentCategories", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 });

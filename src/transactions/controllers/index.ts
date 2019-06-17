@@ -29,17 +29,17 @@ import {
 	startOfDay,
 	subDays
 } from "date-fns/esm";
-import {Account} from "accounts/types";
+import { Account } from "accounts/types";
 import AccountModel from "accounts/models/account";
 import AccountReconcileView from "accounts/views/reconcile.html";
-import {Category} from "categories/types";
-import {IModalService} from "angular-ui-bootstrap";
-import {OgModalConfirm} from "og-components/og-modal-confirm/types";
+import { Category } from "categories/types";
+import { IModalService } from "angular-ui-bootstrap";
+import { OgModalConfirm } from "og-components/og-modal-confirm/types";
 import OgModalConfirmView from "og-components/og-modal-confirm/views/confirm.html";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import {Payee} from "payees/types";
-import {Security} from "securities/types";
+import { Payee } from "payees/types";
+import { Security } from "securities/types";
 import TransactionDeleteView from "transactions/views/delete.html";
 import TransactionEditView from "transactions/views/edit.html";
 import TransactionFlagView from "transactions/views/flag.html";
@@ -73,7 +73,7 @@ export default class TransactionIndexController {
 
 	public unreconciledOnly: boolean;
 
-	public readonly loading: {prev: boolean; next: boolean;} = {prev: false, next: false};
+	public readonly loading: {prev: boolean; next: boolean;} = { prev: false, next: false };
 
 	private atEnd = true;
 
@@ -124,7 +124,7 @@ export default class TransactionIndexController {
 				self.deleteTransaction(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.transaction") ? "^" : ""}.transaction`, {transactionId: self.transactions[index].id});
+				$state.go(`${$state.includes("**.transaction") ? "^" : ""}.transaction`, { transactionId: self.transactions[index].id });
 			},
 			focusRow(): void {}
 		};
@@ -133,7 +133,7 @@ export default class TransactionIndexController {
 		this.processTransactions(transactionBatch, null, Number(this.$state.params.transactionId));
 
 		// When the transaction id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({to: "**.transactions.transaction"}, (transition: angular.ui.IState): void => this.transitionSuccessHandler(Number(transition.params("to").transactionId))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "**.transactions.transaction" }, (transition: angular.ui.IState): void => this.transitionSuccessHandler(Number(transition.params("to").transactionId))));
 
 		// Auto scroll to the bottom
 		$timeout((): void => ogViewScrollService.scrollTo("bottom"));

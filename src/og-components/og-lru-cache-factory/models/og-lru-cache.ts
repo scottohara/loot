@@ -1,4 +1,4 @@
-import {OgCacheEntry} from "og-components/og-lru-cache-factory/types";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 
 export default class OgLruCache {
 	public constructor(private capacity: number, private items: OgCacheEntry[]) {}

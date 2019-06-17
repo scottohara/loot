@@ -56,7 +56,7 @@ describe("payeeEditView", () => {
 			// Add a new payee
 			payeeIndexView.addPayee();
 			waitForPayeeEditView("Add");
-			payeeEditView.enterPayeeDetails({payeeName: expected});
+			payeeEditView.enterPayeeDetails({ payeeName: expected });
 		});
 
 		commonBehaviour();
@@ -80,7 +80,7 @@ describe("payeeEditView", () => {
 			payeeIndexView.editPayee(originalRowCount - 1);
 			waitForPayeeEditView("Edit");
 			payeeEditView.payeeNameInput.getAttribute("value").should.eventually.equal(lastPayeeName);
-			payeeEditView.enterPayeeDetails({payeeName: expected});
+			payeeEditView.enterPayeeDetails({ payeeName: expected });
 		});
 
 		commonBehaviour();

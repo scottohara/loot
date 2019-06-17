@@ -5,10 +5,10 @@ describe("securityIndexView", () => {
 
 	beforeEach(() => {
 		expected = [];
-		expected.push({name: "Security 1", code: "A", holding: "1.000", balance: "$1.00", unused: false});
-		expected.push({name: "Security 2", code: "B", holding: "-2.000", balance: "-$2.00", unused: false});
+		expected.push({ name: "Security 1", code: "A", holding: "1.000", balance: "$1.00", unused: false });
+		expected.push({ name: "Security 2", code: "B", holding: "-2.000", balance: "-$2.00", unused: false });
 		for (let i = 3; i <= 20; i++) {
-			expected.push({name: `Security ${i}`, code: String.fromCharCode(64 + i), holding: "0.000", balance: "$0.00", unused: true});
+			expected.push({ name: `Security ${i}`, code: String.fromCharCode(64 + i), holding: "0.000", balance: "$0.00", unused: true });
 		}
 		expected = expected.sort((a, b) => {
 			let x, y;

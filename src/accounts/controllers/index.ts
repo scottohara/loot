@@ -10,7 +10,7 @@ import {
 import AccountDeleteView from "accounts/views/delete.html";
 import AccountEditView from "accounts/views/edit.html";
 import AccountModel from "accounts/models/account";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
 import angular from "angular";
 

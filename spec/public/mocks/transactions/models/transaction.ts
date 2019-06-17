@@ -6,14 +6,14 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction
 } from "mocks/transactions/factories";
-import {BasicTransaction} from "transactions/types";
-import {Mock} from "mocks/types";
+import { BasicTransaction } from "transactions/types";
+import { Mock } from "mocks/types";
 import QMockProvider from "mocks/node-modules/angular/services/q";
 import TransactionBatchMockProvider from "mocks/transactions/providers/transactionbatch";
 import TransactionMockProvider from "mocks/transactions/providers/transaction";
-import {TransactionModelMock} from "mocks/transactions/types";
+import { TransactionModelMock } from "mocks/transactions/types";
 import sinon from "sinon";
-import {startOfDay} from "date-fns/esm";
+import { startOfDay } from "date-fns/esm";
 
 export default class TransactionModelMockProvider implements Mock<TransactionModelMock> {
 	private readonly transactionModel: TransactionModelMock;
@@ -22,11 +22,11 @@ export default class TransactionModelMockProvider implements Mock<TransactionMod
 		// Success/error = options for the stub promises
 		const	$q: QMock = $qMockProvider.$get(),
 					success: PromiseMockConfig<BasicTransaction> = {
-						args: {id: 1},
+						args: { id: 1 },
 						response: transactionMockProvider.$get()
 					},
 					error: PromiseMockConfig<void> = {
-						args: {id: -1}
+						args: { id: -1 }
 					};
 
 		// Mock transactionModel object
@@ -45,9 +45,9 @@ export default class TransactionModelMockProvider implements Mock<TransactionMod
 			}),
 			findSubtransactions: $q.promisify({
 				response: [
-					createSubtransferTransaction({id: 1}),
-					createSubtransaction({id: 2}),
-					createSubtransaction({id: 3})
+					createSubtransferTransaction({ id: 1 }),
+					createSubtransaction({ id: 2 }),
+					createSubtransaction({ id: 3 })
 				]
 			}, {
 				args: -1

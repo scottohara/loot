@@ -3,9 +3,9 @@ import {
 	AccountType
 } from "accounts/types";
 import AccountReconcileController from "accounts/controllers/reconcile";
-import {ControllerTestFactory} from "mocks/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AccountReconcileController", (): void => {
@@ -37,7 +37,7 @@ describe("AccountReconcileController", (): void => {
 	["credit", "loan"].forEach((accountType: AccountType): void => {
 		it(`should expect a negative closing balance to be entered by the user for ${accountType} accounts`, (): void => {
 			account.account_type = accountType;
-			accountReconcileController = controllerTest("AccountReconcileController", {account}) as AccountReconcileController;
+			accountReconcileController = controllerTest("AccountReconcileController", { account }) as AccountReconcileController;
 			accountReconcileController.expectNegativeBalance.should.be.true;
 		});
 	});

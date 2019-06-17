@@ -41,20 +41,20 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction
 } from "mocks/transactions/factories";
-import sinon, {SinonStub} from "sinon";
-import {AccountModelMock} from "mocks/accounts/types";
-import {CategoryModelMock} from "mocks/categories/types";
-import {ControllerTestFactory} from "mocks/types";
+import sinon, { SinonStub } from "sinon";
+import { AccountModelMock } from "mocks/accounts/types";
+import { CategoryModelMock } from "mocks/categories/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {NewOrExistingEntity} from "loot/types";
-import {Payee} from "payees/types";
-import {PayeeModelMock} from "mocks/payees/types";
+import { NewOrExistingEntity } from "loot/types";
+import { Payee } from "payees/types";
+import { PayeeModelMock } from "mocks/payees/types";
 import ScheduleEditController from "schedules/controllers/edit";
-import {ScheduleModelMock} from "mocks/schedules/types";
-import {Security} from "securities/types";
-import {SecurityModelMock} from "mocks/securities/types";
-import {TransactionModelMock} from "mocks/transactions/types";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { ScheduleModelMock } from "mocks/schedules/types";
+import { Security } from "securities/types";
+import { SecurityModelMock } from "mocks/securities/types";
+import { TransactionModelMock } from "mocks/transactions/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import createCategory from "mocks/categories/factories";
@@ -136,7 +136,7 @@ describe("ScheduleEditController", (): void => {
 				next_due_date: startOfDay(new Date()),
 				autoFlag: false
 			};
-			scheduleEditController = controllerTest("ScheduleEditController", {schedule: null}) as ScheduleEditController;
+			scheduleEditController = controllerTest("ScheduleEditController", { schedule: null }) as ScheduleEditController;
 		});
 
 		it("should make an empty transaction object available to the view", (): Chai.Assertion => scheduleEditController.transaction.should.deep.equal(transaction));
@@ -170,9 +170,9 @@ describe("ScheduleEditController", (): void => {
 		it("should fetch the list of payees", (): Chai.Assertion => payeeModel.all.should.have.been.called);
 
 		it("should return a filtered & limited list of payees", (): Chai.PromisedAssertion => payees.should.eventually.deep.equal([
-			createPayee({id: 1, name: "aa"}),
-			createPayee({id: 4, name: "ba"}),
-			createPayee({id: 5, name: "ab"})
+			createPayee({ id: 1, name: "aa" }),
+			createPayee({ id: 4, name: "ba" }),
+			createPayee({ id: 5, name: "ab" })
 		]));
 	});
 
@@ -184,9 +184,9 @@ describe("ScheduleEditController", (): void => {
 		it("should fetch the list of securities", (): Chai.Assertion => securityModel.all.should.have.been.called);
 
 		it("should return a filtered & limited list of securities", (): Chai.PromisedAssertion => securities.should.eventually.deep.equal([
-			createSecurity({id: 1, name: "aa", closing_balance: 1.006, code: "A", current_holding: 1}),
-			createSecurity({id: 4, name: "ba", closing_balance: 4, code: "D", current_holding: 1}),
-			createSecurity({id: 5, name: "ab", closing_balance: 5, code: "E", current_holding: 1})
+			createSecurity({ id: 1, name: "aa", closing_balance: 1.006, code: "A", current_holding: 1 }),
+			createSecurity({ id: 4, name: "ba", closing_balance: 4, code: "D", current_holding: 1 }),
+			createSecurity({ id: 5, name: "ab", closing_balance: 5, code: "E", current_holding: 1 })
 		]));
 	});
 
@@ -194,7 +194,7 @@ describe("ScheduleEditController", (): void => {
 		let categories: angular.IPromise<DisplayCategory[]> | DisplayCategory[],
 				parentCategory: Category;
 
-		beforeEach((): Category => (parentCategory = createCategory({id: 1})));
+		beforeEach((): Category => (parentCategory = createCategory({ id: 1 })));
 
 		it("should return an empty array if the parent category is new", (): void => {
 			delete parentCategory.id;
@@ -212,38 +212,38 @@ describe("ScheduleEditController", (): void => {
 			it("should include transfer categories", (): void => {
 				categories = scheduleEditController.categories("a", 5);
 				categories.should.eventually.deep.equal([
-					{id: "TransferTo", name: "Transfer To"},
-					{id: "TransferFrom", name: "Transfer From"},
-					createCategory({id: 1, name: "aa", num_children: 2, children: [
-						createCategory({id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+					{ id: "TransferTo", name: "Transfer To" },
+					{ id: "TransferFrom", name: "Transfer From" },
+					createCategory({ id: 1, name: "aa", num_children: 2, children: [
+						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						}),
-						createCategory({id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						})
-					]}),
-					createCategory({id: 4, name: "ba", direction: "outflow", children: []}),
-					createCategory({id: 5, name: "ab", children: []})
+					] }),
+					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+					createCategory({ id: 5, name: "ab", children: [] })
 				]);
 			});
 
 			it("should include split categories if requested", (): void => {
 				categories = scheduleEditController.categories("a", 7, null, true);
 				categories.should.eventually.deep.equal([
-					{id: "TransferTo", name: "Transfer To"},
-					{id: "TransferFrom", name: "Transfer From"},
-					{id: "Payslip", name: "Payslip"},
-					{id: "LoanRepayment", name: "Loan Repayment"},
-					createCategory({id: 1, name: "aa", num_children: 2, children: [
-						createCategory({id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+					{ id: "TransferTo", name: "Transfer To" },
+					{ id: "TransferFrom", name: "Transfer From" },
+					{ id: "Payslip", name: "Payslip" },
+					{ id: "LoanRepayment", name: "Loan Repayment" },
+					createCategory({ id: 1, name: "aa", num_children: 2, children: [
+						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						}),
-						createCategory({id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						})
-					]}),
-					createCategory({id: 4, name: "ba", direction: "outflow", children: []}),
-					createCategory({id: 5, name: "ab", children: []})
+					] }),
+					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+					createCategory({ id: 5, name: "ab", children: [] })
 				]);
 			});
 		});
@@ -257,16 +257,16 @@ describe("ScheduleEditController", (): void => {
 			it("should eventually return a filtered & limited list of subcategories", (): void => {
 				categories = scheduleEditController.categories("a", 3, parentCategory);
 				categories.should.eventually.deep.equal([
-					createCategory({id: 1, name: "aa", num_children: 2, children: [
-						createCategory({id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+					createCategory({ id: 1, name: "aa", num_children: 2, children: [
+						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						}),
-						createCategory({id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						})
-					]}),
-					createCategory({id: 4, name: "ba", direction: "outflow", children: []}),
-					createCategory({id: 5, name: "ab", children: []})
+					] }),
+					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+					createCategory({ id: 5, name: "ab", children: [] })
 				]);
 			});
 		});
@@ -274,20 +274,20 @@ describe("ScheduleEditController", (): void => {
 
 	describe("investmentCategories", (): void => {
 		it("should return the full list of investment categories when a filter is not specified", (): Chai.Assertion => scheduleEditController.investmentCategories().should.deep.equal([
-			{id: "Buy", name: "Buy"},
-			{id: "Sell", name: "Sell"},
-			{id: "DividendTo", name: "Dividend To"},
-			{id: "AddShares", name: "Add Shares"},
-			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"},
-			{id: "TransferFrom", name: "Transfer From"}
+			{ id: "Buy", name: "Buy" },
+			{ id: "Sell", name: "Sell" },
+			{ id: "DividendTo", name: "Dividend To" },
+			{ id: "AddShares", name: "Add Shares" },
+			{ id: "RemoveShares", name: "Remove Shares" },
+			{ id: "TransferTo", name: "Transfer To" },
+			{ id: "TransferFrom", name: "Transfer From" }
 		]));
 
 		it("should return a filtered list of investment categories when a filter is specified", (): Chai.Assertion => scheduleEditController.investmentCategories("a").should.deep.equal([
-			{id: "AddShares", name: "Add Shares"},
-			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"},
-			{id: "TransferFrom", name: "Transfer From"}
+			{ id: "AddShares", name: "Add Shares" },
+			{ id: "RemoveShares", name: "Remove Shares" },
+			{ id: "TransferTo", name: "Transfer To" },
+			{ id: "TransferFrom", name: "Transfer From" }
 		]));
 	});
 
@@ -447,9 +447,9 @@ describe("ScheduleEditController", (): void => {
 			const expected: ScheduledSplitTransaction = angular.copy(transaction);
 
 			expected.subtransactions = [
-				createSubtransferTransaction({id: null}),
-				createSubtransaction({id: null}),
-				createSubtransaction({id: null})
+				createSubtransferTransaction({ id: null }),
+				createSubtransaction({ id: null }),
+				createSubtransaction({ id: null })
 			] as SplitTransactionChild[];
 
 			transaction = scheduleEditController["getSubtransactions"](transaction) as ScheduledSplitTransaction;
@@ -465,7 +465,7 @@ describe("ScheduleEditController", (): void => {
 
 		beforeEach((): void => {
 			// The previous transaction to merge
-			transaction = createScheduledTransferTransaction({flag: "flag"});
+			transaction = createScheduledTransferTransaction({ flag: "flag" });
 
 			// The current transaction to merge into
 			scheduleEditController.transaction = createScheduledTransferTransaction({
@@ -555,13 +555,13 @@ describe("ScheduleEditController", (): void => {
 			beforeEach((): Category => (scheduleEditController.transaction.category = createCategory()));
 
 			const scenarios: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}[] = [
-				{id: "TransferTo", type: "Transfer", direction: "outflow"},
-				{id: "TransferFrom", type: "Transfer", direction: "inflow"},
-				{id: "SplitTo", type: "Split", direction: "outflow", subtransactions: true},
-				{id: "SplitFrom", type: "Split", direction: "inflow", subtransactions: true},
-				{id: "Payslip", type: "Payslip", direction: "inflow", subtransactions: true},
-				{id: "LoanRepayment", type: "LoanRepayment", direction: "outflow", subtransactions: true},
-				{id: "anything else", type: "Basic", direction: "the category direction"}
+				{ id: "TransferTo", type: "Transfer", direction: "outflow" },
+				{ id: "TransferFrom", type: "Transfer", direction: "inflow" },
+				{ id: "SplitTo", type: "Split", direction: "outflow", subtransactions: true },
+				{ id: "SplitFrom", type: "Split", direction: "inflow", subtransactions: true },
+				{ id: "Payslip", type: "Payslip", direction: "inflow", subtransactions: true },
+				{ id: "LoanRepayment", type: "LoanRepayment", direction: "outflow", subtransactions: true },
+				{ id: "anything else", type: "Basic", direction: "the category direction" }
 			];
 
 			scenarios.forEach((scenario: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}): void => {
@@ -594,7 +594,7 @@ describe("ScheduleEditController", (): void => {
 					});
 
 					it(`should create four stub subtransactions for a ${scenario.id} if none exist`, (): void => {
-						subtransactions = [{memo, amount}, {}, {}, {}];
+						subtransactions = [{ memo, amount }, {}, {}, {}];
 						(scheduleEditController.transaction.category as PsuedoCategory).id = scenario.id;
 						delete (scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions;
 						scheduleEditController.transaction.memo = memo;
@@ -616,9 +616,9 @@ describe("ScheduleEditController", (): void => {
 			beforeEach((): SplitTransactionChild[] => ((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [createSubtransaction()]));
 
 			const scenarios: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}[] = [
-				{id: "TransferTo", type: "Subtransfer", direction: "outflow"},
-				{id: "TransferFrom", type: "Subtransfer", direction: "inflow"},
-				{id: "anything else", type: "Sub", direction: "the category direction"}
+				{ id: "TransferTo", type: "Subtransfer", direction: "outflow" },
+				{ id: "TransferFrom", type: "Subtransfer", direction: "inflow" },
+				{ id: "anything else", type: "Sub", direction: "the category direction" }
 			];
 
 			scenarios.forEach((scenario: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}): void => {
@@ -648,14 +648,14 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should clear the subcategory if it's parent no longer matches the selected category", (): void => {
-			(scheduleEditController.transaction as ScheduledBasicTransaction).subcategory = createCategory({parent_id: 2});
+			(scheduleEditController.transaction as ScheduledBasicTransaction).subcategory = createCategory({ parent_id: 2 });
 			scheduleEditController.categorySelected();
 			(null === (scheduleEditController.transaction as ScheduledBasicTransaction).subcategory).should.be.true;
 		});
 	});
 
 	describe("investmentCategorySelected", (): void => {
-		beforeEach((): PsuedoCategory => (scheduleEditController.transaction.category = {id: "", name: ""}));
+		beforeEach((): PsuedoCategory => (scheduleEditController.transaction.category = { id: "", name: "" }));
 
 		it("should do nothing if the selected category is not an existing category", (): void => {
 			const transactionType: SecurityTransactionType = "SecurityTransfer",
@@ -670,13 +670,13 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		const scenarios: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}[] = [
-			{id: "TransferTo", type: "SecurityTransfer", direction: "outflow"},
-			{id: "TransferFrom", type: "SecurityTransfer", direction: "inflow"},
-			{id: "RemoveShares", type: "SecurityHolding", direction: "outflow"},
-			{id: "AddShares", type: "SecurityHolding", direction: "inflow"},
-			{id: "Sell", type: "SecurityInvestment", direction: "outflow"},
-			{id: "Buy", type: "SecurityInvestment", direction: "inflow"},
-			{id: "DividendTo", type: "Dividend", direction: "outflow"}
+			{ id: "TransferTo", type: "SecurityTransfer", direction: "outflow" },
+			{ id: "TransferFrom", type: "SecurityTransfer", direction: "inflow" },
+			{ id: "RemoveShares", type: "SecurityHolding", direction: "outflow" },
+			{ id: "AddShares", type: "SecurityHolding", direction: "inflow" },
+			{ id: "Sell", type: "SecurityInvestment", direction: "outflow" },
+			{ id: "Buy", type: "SecurityInvestment", direction: "inflow" },
+			{ id: "DividendTo", type: "Dividend", direction: "outflow" }
 		];
 
 		scenarios.forEach((scenario: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}): void => {
@@ -690,7 +690,7 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("primaryAccountSelected", (): void => {
-		beforeEach((): Account => (scheduleEditController.transaction.primary_account = createAccount({id: 1})));
+		beforeEach((): Account => (scheduleEditController.transaction.primary_account = createAccount({ id: 1 })));
 
 		it("should clear the category and subcategory if the account type no longer matches the primary account type", (): void => {
 			scheduleEditController["account_type"] = "cash";
@@ -705,7 +705,7 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should clear the transfer account when the primary account matches", (): void => {
-			(scheduleEditController.transaction as ScheduledTransferTransaction).account = createAccount({id: 1});
+			(scheduleEditController.transaction as ScheduledTransferTransaction).account = createAccount({ id: 1 });
 			scheduleEditController.primaryAccountSelected();
 			(null === (scheduleEditController.transaction as ScheduledTransferTransaction).account).should.be.true;
 		});
@@ -716,8 +716,8 @@ describe("ScheduleEditController", (): void => {
 
 		beforeEach((): void => {
 			subtransactions = [
-				createSubtransaction({amount: 10, direction: "outflow"}),
-				createSubtransaction({amount: 5, direction: "inflow"}),
+				createSubtransaction({ amount: 10, direction: "outflow" }),
+				createSubtransaction({ amount: 5, direction: "inflow" }),
 				{}
 			];
 			sinon.stub(scheduleEditController, "memoFromSubtransactions");
@@ -764,8 +764,8 @@ describe("ScheduleEditController", (): void => {
 
 			scheduleEditController.transaction.memo = memo;
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [
-				createSubtransaction({memo: "memo 1"}),
-				createSubtransaction({memo: "memo 2"}),
+				createSubtransaction({ memo: "memo 1" }),
+				createSubtransaction({ memo: "memo 2" }),
 				{}
 			];
 		});
@@ -784,9 +784,9 @@ describe("ScheduleEditController", (): void => {
 		it("should fetch the list of accounts", (): Chai.Assertion => accountModel.all.should.have.been.called);
 
 		it("should return a filtered & limited list of accounts", (): Chai.PromisedAssertion => accounts.should.eventually.deep.equal([
-			createAccount({id: 1, name: "aa", closing_balance: 100, opening_balance: 100}),
-			createAccount({id: 4, name: "ba", account_type: "asset"}),
-			createAccount({id: 5, name: "ab", account_type: "asset"})
+			createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100 }),
+			createAccount({ id: 4, name: "ba", account_type: "asset" }),
+			createAccount({ id: 5, name: "ab", account_type: "asset" })
 		]));
 	});
 
@@ -799,11 +799,11 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should remove the current account from the list", (): void => {
-			scheduleEditController.transaction.primary_account = createAccount({name: "aa"});
+			scheduleEditController.transaction.primary_account = createAccount({ name: "aa" });
 			accounts = scheduleEditController.accounts("a", 2);
 			accounts.should.eventually.deep.equal([
-				createAccount({id: 4, name: "ba", account_type: "asset"}),
-				createAccount({id: 5, name: "ab", account_type: "asset"})
+				createAccount({ id: 4, name: "ba", account_type: "asset" }),
+				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
 		});
 
@@ -811,16 +811,16 @@ describe("ScheduleEditController", (): void => {
 			delete scheduleEditController.transaction.primary_account;
 			accounts = scheduleEditController.accounts("a", 2);
 			accounts.should.eventually.deep.equal([
-				createAccount({id: 1, name: "aa", closing_balance: 100, opening_balance: 100}),
-				createAccount({id: 4, name: "ba", account_type: "asset"})
+				createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100 }),
+				createAccount({ id: 4, name: "ba", account_type: "asset" })
 			]);
 		});
 
 		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", (): void => {
 			accounts = scheduleEditController.accounts("b", 2);
 			accounts.should.eventually.deep.equal([
-				createAccount({id: 4, name: "ba", account_type: "asset"}),
-				createAccount({id: 5, name: "ab", account_type: "asset"})
+				createAccount({ id: 4, name: "ba", account_type: "asset" }),
+				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
 		});
 
@@ -828,8 +828,8 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.transaction_type = "SecurityTransfer";
 			accounts = scheduleEditController.accounts("b", 2);
 			accounts.should.eventually.deep.equal([
-				createAccount({id: 2, name: "bb", account_type: "investment"}),
-				createAccount({id: 6, name: "bc", account_type: "investment"})
+				createAccount({ id: 2, name: "bb", account_type: "investment" }),
+				createAccount({ id: 6, name: "bc", account_type: "investment" })
 			]);
 		});
 	});
@@ -851,14 +851,14 @@ describe("ScheduleEditController", (): void => {
 	describe("deleteSubtransaction", (): void => {
 		it("should remove an item from the subtransactions array at the specified index", (): void => {
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [
-				createSubtransaction({id: 1}),
-				createSubtransaction({id: 2}),
-				createSubtransaction({id: 3})
+				createSubtransaction({ id: 1 }),
+				createSubtransaction({ id: 2 }),
+				createSubtransaction({ id: 3 })
 			];
 			scheduleEditController.deleteSubtransaction(1);
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions.should.deep.equal([
-				createSubtransaction({id: 1}),
-				createSubtransaction({id: 3})
+				createSubtransaction({ id: 1 }),
+				createSubtransaction({ id: 3 })
 			]);
 		});
 	});
@@ -868,8 +868,8 @@ describe("ScheduleEditController", (): void => {
 			(scheduleEditController.transaction as ScheduledSplitTransaction).amount = 100;
 			scheduleEditController.totalAllocated = 80;
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [
-				createSubtransaction({amount: 80}),
-				createSubtransaction({amount: 0})
+				createSubtransaction({ amount: 80 }),
+				createSubtransaction({ amount: 0 })
 			];
 		});
 
@@ -886,12 +886,12 @@ describe("ScheduleEditController", (): void => {
 
 	describe("calculateNextDue", (): void => {
 		const scenarios: {frequency: ScheduleFrequency; period: string; amount: number; addFn: (date: Date, amount: number) => Date;}[] = [
-			{frequency: "Weekly", period: "weeks", amount: 1, addFn: addWeeks},
-			{frequency: "Fortnightly", period: "weeks", amount: 2, addFn: addWeeks},
-			{frequency: "Monthly", period: "month", amount: 1, addFn: addMonths},
-			{frequency: "Bimonthly", period: "month", amount: 2, addFn: addMonths},
-			{frequency: "Quarterly", period: "quarters", amount: 1, addFn: addQuarters},
-			{frequency: "Yearly", period: "year", amount: 1, addFn: addYears}
+			{ frequency: "Weekly", period: "weeks", amount: 1, addFn: addWeeks },
+			{ frequency: "Fortnightly", period: "weeks", amount: 2, addFn: addWeeks },
+			{ frequency: "Monthly", period: "month", amount: 1, addFn: addMonths },
+			{ frequency: "Bimonthly", period: "month", amount: 2, addFn: addMonths },
+			{ frequency: "Quarterly", period: "quarters", amount: 1, addFn: addQuarters },
+			{ frequency: "Yearly", period: "year", amount: 1, addFn: addYears }
 		];
 
 		scenarios.forEach((scenario: {frequency: ScheduleFrequency; period: string; amount: number; addFn: (date: Date, amount: number) => Date;}): void => {
@@ -949,8 +949,8 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		const scenarios: {direction: TransactionDirection; amount: number; memo: string;}[] = [
-			{direction: "outflow", amount: 19, memo: "less"},
-			{direction: "inflow", amount: 21, memo: "plus"}
+			{ direction: "outflow", amount: 19, memo: "less" },
+			{ direction: "inflow", amount: 21, memo: "plus" }
 		];
 
 		scenarios.forEach((scenario: {direction: TransactionDirection; amount: number; memo: string;}): void => {
@@ -1053,12 +1053,12 @@ describe("ScheduleEditController", (): void => {
 
 		it("should close the modal when the schedule save is successful", (): void => {
 			scheduleEditController.save();
-			$uibModalInstance.close.should.have.been.calledWith({data: schedule, skipped: false});
+			$uibModalInstance.close.should.have.been.calledWith({ data: schedule, skipped: false });
 		});
 
 		it("should mark the schedule as skipped when the skipped parameter is true", (): void => {
 			scheduleEditController.save(true);
-			$uibModalInstance.close.should.have.been.calledWith({data: schedule, skipped: true});
+			$uibModalInstance.close.should.have.been.calledWith({ data: schedule, skipped: true });
 		});
 
 		it("should display an error message when the schedule save is unsuccessful", (): void => {

@@ -1,4 +1,4 @@
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 
 let id = 1;
 

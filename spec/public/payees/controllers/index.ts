@@ -3,15 +3,15 @@ import {
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
-import {ControllerTestFactory} from "mocks/types";
+import sinon, { SinonStub } from "sinon";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
-import {OgTableActionHandlers} from "og-components/og-table-navigable/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
+import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 import PayeeIndexController from "payees/controllers";
-import {PayeeModelMock} from "mocks/payees/types";
+import { PayeeModelMock } from "mocks/payees/types";
 import angular from "angular";
 import createPayee from "mocks/payees/factories";
 
@@ -49,7 +49,7 @@ describe("PayeeIndexController", (): void => {
 
 	it("should focus the payee when a payee id is specified", (): void => {
 		$state.params.id = "1";
-		payeeIndexController = controllerTest("PayeeIndexController", {$state}) as PayeeIndexController;
+		payeeIndexController = controllerTest("PayeeIndexController", { $state }) as PayeeIndexController;
 		payeeIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
 		(payeeIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
@@ -57,7 +57,7 @@ describe("PayeeIndexController", (): void => {
 
 	it("should not focus the payee when a payee id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({to: "root.payees.payee"}, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.payees.payee" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(payeeIndexController as angular.IController).$scope.$emit("$destroy");
@@ -65,10 +65,10 @@ describe("PayeeIndexController", (): void => {
 	});
 
 	it("should ensure the payee is focussed when the payee id state param changes", (): void => {
-		const toParams: {id: string;} = {id: "1"};
+		const toParams: {id: string;} = { id: "1" };
 
 		sinon.stub(payeeIndexController, "focusPayee" as keyof PayeeIndexController);
-		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
 		payeeIndexController["focusPayee"].should.have.been.calledWith(Number(toParams.id));
 	});
 
@@ -268,13 +268,13 @@ describe("PayeeIndexController", (): void => {
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a payee when no payee is currently focussed", (): void => {
 			payeeIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".payee", {id: 2});
+			$state.go.should.have.been.calledWith(".payee", { id: 2 });
 		});
 
 		it("should focus a payee when another payee is currently focussed", (): void => {
 			$state.currentState("**.payee");
 			payeeIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.payee", {id: 2});
+			$state.go.should.have.been.calledWith("^.payee", { id: 2 });
 		});
 	});
 

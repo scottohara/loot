@@ -3,15 +3,15 @@ import {
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
-import {ControllerTestFactory} from "mocks/types";
+import sinon, { SinonStub } from "sinon";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
-import {OgTableActionHandlers} from "og-components/og-table-navigable/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
+import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityIndexController from "securities/controllers";
-import {SecurityModelMock} from "mocks/securities/types";
+import { SecurityModelMock } from "mocks/securities/types";
 import angular from "angular";
 import createSecurity from "mocks/securities/factories";
 
@@ -51,7 +51,7 @@ describe("SecurityIndexController", (): void => {
 
 	it("should focus the security when a security id is specified", (): void => {
 		$state.params.id = "1";
-		securityIndexController = controllerTest("SecurityIndexController", {$state}) as SecurityIndexController;
+		securityIndexController = controllerTest("SecurityIndexController", { $state }) as SecurityIndexController;
 		securityIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
 		(securityIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
@@ -59,7 +59,7 @@ describe("SecurityIndexController", (): void => {
 
 	it("should not focus the security when a security id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({to: "root.securities.security"}, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.securities.security" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(securityIndexController as angular.IController).$scope.$emit("$destroy");
@@ -67,10 +67,10 @@ describe("SecurityIndexController", (): void => {
 	});
 
 	it("should ensure the security is focussed when the security id state param changes", (): void => {
-		const toParams: {id: string;} = {id: "1"};
+		const toParams: {id: string;} = { id: "1" };
 
 		sinon.stub(securityIndexController, "focusSecurity" as keyof SecurityIndexController);
-		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
 		securityIndexController["focusSecurity"].should.have.been.calledWith(Number(toParams.id));
 	});
 
@@ -105,7 +105,7 @@ describe("SecurityIndexController", (): void => {
 
 		describe("(add new)", (): void => {
 			beforeEach((): void => {
-				security = createSecurity({id: 999, unused: true});
+				security = createSecurity({ id: 999, unused: true });
 				securityIndexController.editSecurity();
 			});
 
@@ -267,13 +267,13 @@ describe("SecurityIndexController", (): void => {
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a security when no security is currently focussed", (): void => {
 			securityIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".security", {id: 2});
+			$state.go.should.have.been.calledWith(".security", { id: 2 });
 		});
 
 		it("should focus a security when another security is currently focussed", (): void => {
 			$state.currentState("**.security");
 			securityIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.security", {id: 2});
+			$state.go.should.have.been.calledWith("^.security", { id: 2 });
 		});
 	});
 

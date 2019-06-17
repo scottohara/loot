@@ -30,19 +30,19 @@ import {
 	createSubtransferTransaction,
 	createTransferTransaction
 } from "mocks/transactions/factories";
-import sinon, {SinonStub} from "sinon";
-import {Account} from "accounts/types";
-import {AccountModelMock} from "mocks/accounts/types";
-import {CategoryModelMock} from "mocks/categories/types";
-import {ControllerTestFactory} from "mocks/types";
+import sinon, { SinonStub } from "sinon";
+import { Account } from "accounts/types";
+import { AccountModelMock } from "mocks/accounts/types";
+import { CategoryModelMock } from "mocks/categories/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Payee} from "payees/types";
-import {PayeeModelMock} from "mocks/payees/types";
-import {Security} from "securities/types";
-import {SecurityModelMock} from "mocks/securities/types";
+import { Payee } from "payees/types";
+import { PayeeModelMock } from "mocks/payees/types";
+import { Security } from "securities/types";
+import { SecurityModelMock } from "mocks/securities/types";
 import TransactionEditController from "transactions/controllers/edit";
-import {TransactionModelMock} from "mocks/transactions/types";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { TransactionModelMock } from "mocks/transactions/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import createCategory from "mocks/categories/factories";
@@ -85,7 +85,7 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("when a transaction is not provided", (): void => {
-		beforeEach((): TransactionEditController => (transactionEditController = controllerTest("TransactionEditController", {transaction: {}}) as TransactionEditController));
+		beforeEach((): TransactionEditController => (transactionEditController = controllerTest("TransactionEditController", { transaction: {} }) as TransactionEditController));
 
 		it("should make the passed transaction available to the view", (): void => {
 			transactionEditController.transaction.should.be.an("object");
@@ -105,9 +105,9 @@ describe("TransactionEditController", (): void => {
 		it("should fetch the list of payees", (): Chai.Assertion => payeeModel.all.should.have.been.called);
 
 		it("should return a filtered & limited list of payees", (): Chai.PromisedAssertion => payees.should.eventually.deep.equal([
-			{id: 1, name: "aa", closing_balance: 0, favourite: false, num_transactions: 0},
-			{id: 4, name: "ba", closing_balance: 0, favourite: false, num_transactions: 0},
-			{id: 5, name: "ab", closing_balance: 0, favourite: false, num_transactions: 0}
+			{ id: 1, name: "aa", closing_balance: 0, favourite: false, num_transactions: 0 },
+			{ id: 4, name: "ba", closing_balance: 0, favourite: false, num_transactions: 0 },
+			{ id: 5, name: "ab", closing_balance: 0, favourite: false, num_transactions: 0 }
 		]));
 	});
 
@@ -119,9 +119,9 @@ describe("TransactionEditController", (): void => {
 		it("should fetch the list of securities", (): Chai.Assertion => securityModel.all.should.have.been.called);
 
 		it("should return a filtered & limited list of securities", (): Chai.PromisedAssertion => securities.should.eventually.deep.equal([
-			{id: 1, name: "aa", closing_balance: 1.006, code: "A", current_holding: 1, favourite: false, unused: false, num_transactions: 0},
-			{id: 4, name: "ba", closing_balance: 4, code: "D", current_holding: 1, favourite: false, unused: false, num_transactions: 0},
-			{id: 5, name: "ab", closing_balance: 5, code: "E", current_holding: 1, favourite: false, unused: false, num_transactions: 0}
+			{ id: 1, name: "aa", closing_balance: 1.006, code: "A", current_holding: 1, favourite: false, unused: false, num_transactions: 0 },
+			{ id: 4, name: "ba", closing_balance: 4, code: "D", current_holding: 1, favourite: false, unused: false, num_transactions: 0 },
+			{ id: 5, name: "ab", closing_balance: 5, code: "E", current_holding: 1, favourite: false, unused: false, num_transactions: 0 }
 		]));
 	});
 
@@ -143,61 +143,61 @@ describe("TransactionEditController", (): void => {
 			it("should include transfer categories", (): void => {
 				categories = transactionEditController.categories("a", 5);
 				categories.should.eventually.deep.equal([
-					{id: "TransferTo", name: "Transfer To"},
-					{id: "TransferFrom", name: "Transfer From"},
-					createCategory({id: 1, name: "aa", num_children: 2, children: [
-						createCategory({id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+					{ id: "TransferTo", name: "Transfer To" },
+					{ id: "TransferFrom", name: "Transfer From" },
+					createCategory({ id: 1, name: "aa", num_children: 2, children: [
+						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						}),
-						createCategory({id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						})
-					]}),
-					createCategory({id: 4, name: "ba", direction: "outflow", children: []}),
-					createCategory({id: 5, name: "ab", children: []})
+					] }),
+					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+					createCategory({ id: 5, name: "ab", children: [] })
 				]);
 			});
 
 			it("should include split categories if requested", (): void => {
 				categories = transactionEditController.categories("a", 7, null, true);
 				categories.should.eventually.deep.equal([
-					{id: "TransferTo", name: "Transfer To"},
-					{id: "TransferFrom", name: "Transfer From"},
-					{id: "Payslip", name: "Payslip"},
-					{id: "LoanRepayment", name: "Loan Repayment"},
-					createCategory({id: 1, name: "aa", num_children: 2, children: [
-						createCategory({id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+					{ id: "TransferTo", name: "Transfer To" },
+					{ id: "TransferFrom", name: "Transfer From" },
+					{ id: "Payslip", name: "Payslip" },
+					{ id: "LoanRepayment", name: "Loan Repayment" },
+					createCategory({ id: 1, name: "aa", num_children: 2, children: [
+						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						}),
-						createCategory({id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						})
-					]}),
-					createCategory({id: 4, name: "ba", direction: "outflow", children: []}),
-					createCategory({id: 5, name: "ab", children: []})
+					] }),
+					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+					createCategory({ id: 5, name: "ab", children: [] })
 				]);
 			});
 		});
 
 		describe("(subcategories)", (): void => {
 			it("should fetch the subcategories for the specified parent category", (): void => {
-				categories = transactionEditController.categories("a", 3, createCategory({id: 1}));
+				categories = transactionEditController.categories("a", 3, createCategory({ id: 1 }));
 				categoryModel.all.should.have.been.calledWith(1);
 			});
 
 			it("should eventually return a filtered & limited list of subcategories", (): void => {
-				categories = transactionEditController.categories("a", 3, createCategory({id: 1}));
+				categories = transactionEditController.categories("a", 3, createCategory({ id: 1 }));
 				categories.should.eventually.deep.equal([
-					createCategory({id: 1, name: "aa", num_children: 2, children: [
-						createCategory({id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+					createCategory({ id: 1, name: "aa", num_children: 2, children: [
+						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						}),
-						createCategory({id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({id: 1, name: "aa", num_children: 2})
+						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+							createCategory({ id: 1, name: "aa", num_children: 2 })
 						})
-					]}),
-					createCategory({id: 4, name: "ba", direction: "outflow", children: []}),
-					createCategory({id: 5, name: "ab", children: []})
+					] }),
+					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+					createCategory({ id: 5, name: "ab", children: [] })
 				]);
 			});
 		});
@@ -205,20 +205,20 @@ describe("TransactionEditController", (): void => {
 
 	describe("investmentCategories", (): void => {
 		it("should return the full list of investment categories when a filter is not specified", (): Chai.Assertion => transactionEditController.investmentCategories().should.deep.equal([
-			{id: "Buy", name: "Buy"},
-			{id: "Sell", name: "Sell"},
-			{id: "DividendTo", name: "Dividend To"},
-			{id: "AddShares", name: "Add Shares"},
-			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"},
-			{id: "TransferFrom", name: "Transfer From"}
+			{ id: "Buy", name: "Buy" },
+			{ id: "Sell", name: "Sell" },
+			{ id: "DividendTo", name: "Dividend To" },
+			{ id: "AddShares", name: "Add Shares" },
+			{ id: "RemoveShares", name: "Remove Shares" },
+			{ id: "TransferTo", name: "Transfer To" },
+			{ id: "TransferFrom", name: "Transfer From" }
 		]));
 
 		it("should return a filtered list of investment categories when a filter is specified", (): Chai.Assertion => transactionEditController.investmentCategories("a").should.deep.equal([
-			{id: "AddShares", name: "Add Shares"},
-			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"},
-			{id: "TransferFrom", name: "Transfer From"}
+			{ id: "AddShares", name: "Add Shares" },
+			{ id: "RemoveShares", name: "Remove Shares" },
+			{ id: "TransferTo", name: "Transfer To" },
+			{ id: "TransferFrom", name: "Transfer From" }
 		]));
 	});
 
@@ -364,9 +364,9 @@ describe("TransactionEditController", (): void => {
 			const expected: SplitTransaction = angular.copy(splitTransaction);
 
 			expected.subtransactions = [
-				createSubtransferTransaction({id: null}),
-				createSubtransaction({id: null}),
-				createSubtransaction({id: null})
+				createSubtransferTransaction({ id: null }),
+				createSubtransaction({ id: null }),
+				createSubtransaction({ id: null })
 			];
 
 			splitTransaction = transactionEditController["getSubtransactions"](splitTransaction) as SplitTransaction;
@@ -382,7 +382,7 @@ describe("TransactionEditController", (): void => {
 
 		beforeEach((): void => {
 			// The previous transaction to merge
-			lastTransaction = createTransferTransaction({flag: "flag"});
+			lastTransaction = createTransferTransaction({ flag: "flag" });
 
 			// The current transaction to merge into
 			transactionEditController.transaction = createTransferTransaction({
@@ -456,13 +456,13 @@ describe("TransactionEditController", (): void => {
 			beforeEach((): Category => (transactionEditController.transaction.category = createCategory()));
 
 			const scenarios: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}[] = [
-				{id: "TransferTo", type: "Transfer", direction: "outflow"},
-				{id: "TransferFrom", type: "Transfer", direction: "inflow"},
-				{id: "SplitTo", type: "Split", direction: "outflow", subtransactions: true},
-				{id: "SplitFrom", type: "Split", direction: "inflow", subtransactions: true},
-				{id: "Payslip", type: "Payslip", direction: "inflow", subtransactions: true},
-				{id: "LoanRepayment", type: "LoanRepayment", direction: "outflow", subtransactions: true},
-				{id: "anything else", type: "Basic", direction: "the category direction"}
+				{ id: "TransferTo", type: "Transfer", direction: "outflow" },
+				{ id: "TransferFrom", type: "Transfer", direction: "inflow" },
+				{ id: "SplitTo", type: "Split", direction: "outflow", subtransactions: true },
+				{ id: "SplitFrom", type: "Split", direction: "inflow", subtransactions: true },
+				{ id: "Payslip", type: "Payslip", direction: "inflow", subtransactions: true },
+				{ id: "LoanRepayment", type: "LoanRepayment", direction: "outflow", subtransactions: true },
+				{ id: "anything else", type: "Basic", direction: "the category direction" }
 			];
 
 			scenarios.forEach((scenario: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}): void => {
@@ -495,7 +495,7 @@ describe("TransactionEditController", (): void => {
 					});
 
 					it(`should create four stub subtransactions for a ${scenario.id} if none exist`, (): void => {
-						subtransactions = [{memo, amount}, {}, {}, {}];
+						subtransactions = [{ memo, amount }, {}, {}, {}];
 						(transactionEditController.transaction.category as PsuedoCategory).id = scenario.id;
 						delete (transactionEditController.transaction as SplitTransaction).subtransactions;
 						transactionEditController.transaction.memo = memo;
@@ -517,9 +517,9 @@ describe("TransactionEditController", (): void => {
 			beforeEach((): SplitTransactionChild[] => ((transactionEditController.transaction as SplitTransaction).subtransactions = [createSubtransaction()]));
 
 			const scenarios: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}[] = [
-				{id: "TransferTo", type: "Subtransfer", direction: "outflow"},
-				{id: "TransferFrom", type: "Subtransfer", direction: "inflow"},
-				{id: "anything else", type: "Sub", direction: "the category direction"}
+				{ id: "TransferTo", type: "Subtransfer", direction: "outflow" },
+				{ id: "TransferFrom", type: "Subtransfer", direction: "inflow" },
+				{ id: "anything else", type: "Sub", direction: "the category direction" }
 			];
 
 			scenarios.forEach((scenario: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}): void => {
@@ -550,7 +550,7 @@ describe("TransactionEditController", (): void => {
 		});
 
 		it("should clear the subcategory if it's parent no longer matches the selected category", (): void => {
-			(transactionEditController.transaction as BasicTransaction).subcategory = createCategory({parent_id: 2});
+			(transactionEditController.transaction as BasicTransaction).subcategory = createCategory({ parent_id: 2 });
 			transactionEditController.categorySelected();
 			(null === (transactionEditController.transaction as BasicTransaction).subcategory).should.be.true;
 		});
@@ -563,7 +563,7 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("investmentCategorySelected", (): void => {
-		beforeEach((): PsuedoCategory => (transactionEditController.transaction.category = {id: "", name: ""}));
+		beforeEach((): PsuedoCategory => (transactionEditController.transaction.category = { id: "", name: "" }));
 
 		it("should do nothing if the selected category is not an existing category", (): void => {
 			const transactionType: SecurityTransactionType = "SecurityTransfer",
@@ -578,13 +578,13 @@ describe("TransactionEditController", (): void => {
 		});
 
 		const scenarios: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}[] = [
-			{id: "TransferTo", type: "SecurityTransfer", direction: "outflow"},
-			{id: "TransferFrom", type: "SecurityTransfer", direction: "inflow"},
-			{id: "RemoveShares", type: "SecurityHolding", direction: "outflow"},
-			{id: "AddShares", type: "SecurityHolding", direction: "inflow"},
-			{id: "Sell", type: "SecurityInvestment", direction: "outflow"},
-			{id: "Buy", type: "SecurityInvestment", direction: "inflow"},
-			{id: "DividendTo", type: "Dividend", direction: "outflow"}
+			{ id: "TransferTo", type: "SecurityTransfer", direction: "outflow" },
+			{ id: "TransferFrom", type: "SecurityTransfer", direction: "inflow" },
+			{ id: "RemoveShares", type: "SecurityHolding", direction: "outflow" },
+			{ id: "AddShares", type: "SecurityHolding", direction: "inflow" },
+			{ id: "Sell", type: "SecurityInvestment", direction: "outflow" },
+			{ id: "Buy", type: "SecurityInvestment", direction: "inflow" },
+			{ id: "DividendTo", type: "Dividend", direction: "outflow" }
 		];
 
 		scenarios.forEach((scenario: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}): void => {
@@ -601,8 +601,8 @@ describe("TransactionEditController", (): void => {
 		beforeEach((): void => {
 			transactionEditController.transaction.direction = "outflow";
 			(transactionEditController.transaction as SplitTransaction).subtransactions = [
-				createSubtransaction({amount: 10, direction: "outflow"}),
-				createSubtransaction({amount: 5, direction: "inflow"}),
+				createSubtransaction({ amount: 10, direction: "outflow" }),
+				createSubtransaction({ amount: 5, direction: "inflow" }),
 				{}
 			];
 			sinon.stub(transactionEditController, "memoFromSubtransactions");
@@ -637,8 +637,8 @@ describe("TransactionEditController", (): void => {
 
 			transactionEditController.transaction.memo = memo;
 			(transactionEditController.transaction as SplitTransaction).subtransactions = [
-				createSubtransaction({memo: "memo 1"}),
-				createSubtransaction({memo: "memo 2"}),
+				createSubtransaction({ memo: "memo 1" }),
+				createSubtransaction({ memo: "memo 2" }),
 				{}
 			];
 		});
@@ -660,19 +660,19 @@ describe("TransactionEditController", (): void => {
 		});
 
 		it("should remove the current account from the list", (): void => {
-			transactionEditController.transaction.primary_account = createAccount({name: "aa"});
+			transactionEditController.transaction.primary_account = createAccount({ name: "aa" });
 			accounts = transactionEditController.accounts("a", 2);
 			accounts.should.eventually.deep.equal([
-				createAccount({id: 4, name: "ba", account_type: "asset"}),
-				createAccount({id: 5, name: "ab", account_type: "asset"})
+				createAccount({ id: 4, name: "ba", account_type: "asset" }),
+				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
 		});
 
 		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", (): void => {
 			accounts = transactionEditController.accounts("b", 2);
 			accounts.should.eventually.deep.equal([
-				createAccount({id: 4, name: "ba", account_type: "asset"}),
-				createAccount({id: 5, name: "ab", account_type: "asset"})
+				createAccount({ id: 4, name: "ba", account_type: "asset" }),
+				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
 		});
 
@@ -680,8 +680,8 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.transaction.transaction_type = "SecurityTransfer";
 			accounts = transactionEditController.accounts("b", 2);
 			accounts.should.eventually.deep.equal([
-				createAccount({id: 2, name: "bb", account_type: "investment"}),
-				createAccount({id: 6, name: "bc", account_type: "investment"})
+				createAccount({ id: 2, name: "bb", account_type: "investment" }),
+				createAccount({ id: 6, name: "bc", account_type: "investment" })
 			]);
 		});
 	});
@@ -694,8 +694,8 @@ describe("TransactionEditController", (): void => {
 		});
 
 		it("should clear the transfer account when the primary account matches", (): void => {
-			(transactionEditController.transaction as TransferrableTransaction).account = createAccount({id: 1});
-			transactionEditController.transaction.primary_account = createAccount({id: 1});
+			(transactionEditController.transaction as TransferrableTransaction).account = createAccount({ id: 1 });
+			transactionEditController.transaction.primary_account = createAccount({ id: 1 });
 			transactionEditController.primaryAccountSelected();
 			(null === (transactionEditController.transaction as TransferrableTransaction).account).should.be.true;
 		});
@@ -712,14 +712,14 @@ describe("TransactionEditController", (): void => {
 	describe("deleteSubtransaction", (): void => {
 		it("should remove an item from the subtransactions array at the specified index", (): void => {
 			(transactionEditController.transaction as SplitTransaction).subtransactions = [
-				createSubtransaction({id: 1}),
-				createSubtransaction({id: 2}),
-				createSubtransaction({id: 3})
+				createSubtransaction({ id: 1 }),
+				createSubtransaction({ id: 2 }),
+				createSubtransaction({ id: 3 })
 			];
 			transactionEditController.deleteSubtransaction(1);
 			(transactionEditController.transaction as SplitTransaction).subtransactions.should.deep.equal([
-				createSubtransaction({id: 1}),
-				createSubtransaction({id: 3})
+				createSubtransaction({ id: 1 }),
+				createSubtransaction({ id: 3 })
 			]);
 		});
 	});
@@ -729,8 +729,8 @@ describe("TransactionEditController", (): void => {
 			(transactionEditController.transaction as SplitTransaction).amount = 100;
 			transactionEditController.totalAllocated = 80;
 			(transactionEditController.transaction as SplitTransaction).subtransactions = [
-				createSubtransaction({amount: 80}),
-				createSubtransaction({amount: 0})
+				createSubtransaction({ amount: 80 }),
+				createSubtransaction({ amount: 0 })
 			];
 		});
 
@@ -775,8 +775,8 @@ describe("TransactionEditController", (): void => {
 		});
 
 		const scenarios: {direction: TransactionDirection; amount: number; memo: string;}[] = [
-			{direction: "outflow", amount: 19, memo: "less"},
-			{direction: "inflow", amount: 21, memo: "plus"}
+			{ direction: "outflow", amount: 19, memo: "less" },
+			{ direction: "inflow", amount: 21, memo: "plus" }
 		];
 
 		scenarios.forEach((scenario: {direction: TransactionDirection; amount: number; memo: string;}): void => {
@@ -825,11 +825,11 @@ describe("TransactionEditController", (): void => {
 				}
 			});
 
-			transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
+			transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 		});
 
 		it("should do nothing if the original values are undefined", (): void => {
-			transactionEditController = controllerTest("TransactionEditController", {transaction: {}}) as TransactionEditController;
+			transactionEditController = controllerTest("TransactionEditController", { transaction: {} }) as TransactionEditController;
 			delete (saved as TransferrableTransaction).account;
 			delete (saved as BasicTransaction).payee;
 			delete (saved as BasicTransaction).category;
@@ -892,7 +892,7 @@ describe("TransactionEditController", (): void => {
 		scenarios.forEach((scenario: SplitTransactionType): void => {
 			it(`should fetch the subtransactions when the type is ${scenario}`, (): void => {
 				original.transaction_type = scenario;
-				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
+				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
 				transactionModel.findSubtransactions.should.have.been.calledWith(original.id);
 			});
@@ -902,7 +902,7 @@ describe("TransactionEditController", (): void => {
 				delete subtransaction.category;
 				delete (subtransaction as Subtransaction).subcategory;
 				delete (subtransaction as SubtransferTransaction).account;
-				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
+				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
 				categoryModel.flush.should.not.have.been.called;
 				accountModel.flush.should.not.have.been.called;
@@ -913,7 +913,7 @@ describe("TransactionEditController", (): void => {
 				delete (subtransaction.category as Category).id;
 				delete ((subtransaction as Subtransaction).subcategory as Category).id;
 				delete (subtransaction as SubtransferTransaction).account.id;
-				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
+				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
 				categoryModel.flush.should.not.have.been.called;
 				accountModel.flush.should.not.have.been.called;
@@ -921,21 +921,21 @@ describe("TransactionEditController", (): void => {
 
 			it(`should invalidate the subtransaction category if defined when the type is ${scenario}`, (): void => {
 				original.transaction_type = scenario;
-				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
+				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
 				categoryModel.flush.should.have.been.calledWith((subtransaction.category as Category).id);
 			});
 
 			it(`should invalidate the subtransaction subcategory if defined when the type is ${scenario}`, (): void => {
 				original.transaction_type = scenario;
-				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
+				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
 				categoryModel.flush.should.have.been.calledWith(((subtransaction as Subtransaction).subcategory as Category).id);
 			});
 
 			it(`should invalidate the subtransfer account if defined when the type is ${scenario}`, (): void => {
 				original.transaction_type = scenario;
-				transactionEditController = controllerTest("TransactionEditController", {transaction: original}) as TransactionEditController;
+				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
 				accountModel.flush.should.have.been.calledWith((subtransaction as SubtransferTransaction).account.id);
 			});
@@ -976,7 +976,7 @@ describe("TransactionEditController", (): void => {
 		});
 
 		it("should add the security to the recent list for an investment account", (): void => {
-			data.primary_account = createAccount({account_type: "investment"});
+			data.primary_account = createAccount({ account_type: "investment" });
 			transactionEditController["updateLruCaches"](data);
 			securityModel.addRecent.should.have.been.calledWith((data as SecurityTransaction).security);
 			payeeModel.addRecent.should.not.have.been.called;

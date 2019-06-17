@@ -2,13 +2,13 @@ import {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
-import {Account} from "accounts/types";
+import sinon, { SinonStub } from "sinon";
+import { Account } from "accounts/types";
 import AccountMockProvider from "mocks/accounts/providers/account";
-import {AccountModelMock} from "mocks/accounts/types";
+import { AccountModelMock } from "mocks/accounts/types";
 import AccountsMockProvider from "mocks/accounts/providers/accounts";
 import AccountsWithBalancesMockProvider from "mocks/accounts/providers/accountsWithBalances";
-import {Mock} from "mocks/types";
+import { Mock } from "mocks/types";
 import QMockProvider from "mocks/node-modules/angular/services/q";
 
 export default class AccountModelMockProvider implements Mock<AccountModelMock> {
@@ -27,11 +27,11 @@ export default class AccountModelMockProvider implements Mock<AccountModelMock> 
 						response: accountsWithBalancesMockProvider.$get()
 					}),
 					success: PromiseMockConfig<{data: Account;}> = {
-						args: {id: 1},
-						response: {data: accountMockProvider.$get()}
+						args: { id: 1 },
+						response: { data: accountMockProvider.$get() }
 					},
 					error: PromiseMockConfig<void> = {
-						args: {id: -1}
+						args: { id: -1 }
 					};
 
 		// Configure the different responses for all()
@@ -51,13 +51,13 @@ export default class AccountModelMockProvider implements Mock<AccountModelMock> 
 				const account: Account = accountsMockProvider.$get()[id - 1];
 
 				// Return a promise-like object that resolves with the account
-				return $q.promisify({response: account})();
+				return $q.promisify({ response: account })();
 			},
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
 			reconcile: $q.promisify(),
 			toggleFavourite(account: Account): SinonStub {
-				return $q.promisify({response: !account.favourite})();
+				return $q.promisify({ response: !account.favourite })();
 			},
 			isUnreconciledOnly: sinon.stub().returns(true),
 			unreconciledOnly: sinon.stub(),

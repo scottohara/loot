@@ -1,5 +1,5 @@
-import {Account} from "accounts/types";
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { Account } from "accounts/types";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class AccountReconcileController {
 	public readonly closingBalance: number;

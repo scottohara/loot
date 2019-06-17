@@ -1,5 +1,5 @@
-import {OgCacheEntry} from "og-components/og-lru-cache-factory/types";
-import {SinonStub} from "sinon";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+import { SinonStub } from "sinon";
 
 export interface OgLruCacheMock {
 	list: OgCacheEntry[];

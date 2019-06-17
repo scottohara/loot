@@ -1,5 +1,5 @@
 import DirectiveTest from "mocks/loot/directivetest";
-import {DirectiveTestModel} from "mocks/types";
+import { DirectiveTestModel } from "mocks/types";
 import angular from "angular";
 
 describe("ogFavourite", (): void => {
@@ -16,7 +16,7 @@ describe("ogFavourite", (): void => {
 			context: false,
 			type: "test"
 		};
-		ogFavourite.compile({"og-favourite": "model"}, true);
+		ogFavourite.compile({ "og-favourite": "model" }, true);
 	}));
 
 	describe("default", (): void => {

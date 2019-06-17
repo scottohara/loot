@@ -2,7 +2,7 @@ import {
 	Account,
 	Accounts
 } from "accounts/types";
-import {SinonStub} from "sinon";
+import { SinonStub } from "sinon";
 
 export interface AccountModelMock {
 	recent: string;

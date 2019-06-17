@@ -10,37 +10,37 @@ describe("accountIndexView", () => {
 				{
 					heading: "Bank accounts",
 					accounts: [
-						{name: "bank account 1", closingBalance: "$998.00"},
-						{name: "bank account 2", closingBalance: "$1,001.00"}
+						{ name: "bank account 1", closingBalance: "$998.00" },
+						{ name: "bank account 2", closingBalance: "$1,001.00" }
 					],
 					total: "$1,999.00"
 				},
 				{
 					heading: "Cash accounts",
 					accounts: [
-						{name: "cash account 3", closingBalance: "$2,000.00"}
+						{ name: "cash account 3", closingBalance: "$2,000.00" }
 					],
 					total: "$2,000.00"
 				},
 				{
 					heading: "Credit accounts",
 					accounts: [
-						{name: "credit account 4", closingBalance: "$0.00"}
+						{ name: "credit account 4", closingBalance: "$0.00" }
 					],
 					total: "$0.00"
 				},
 				{
 					heading: "Investment accounts",
 					accounts: [
-						{name: "investment account 5", closingBalance: "$988.00"},
-						{name: "investment account 7", closingBalance: "$1,010.00"}
+						{ name: "investment account 5", closingBalance: "$988.00" },
+						{ name: "investment account 7", closingBalance: "$1,010.00" }
 					],
 					total: "$1,998.00"
 				},
 				{
 					heading: "Loan accounts",
 					accounts: [
-						{name: "loan account 9", closingBalance: "-$1,000.00"}
+						{ name: "loan account 9", closingBalance: "-$1,000.00" }
 					],
 					total: "-$1,000.00"
 				}

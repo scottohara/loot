@@ -2,9 +2,9 @@ import {
 	StateMock,
 	UibModalMock
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
-import {AuthenticationModelMock} from "mocks/authentication/types";
-import {ControllerTestFactory} from "mocks/types";
+import sinon, { SinonStub } from "sinon";
+import { AuthenticationModelMock } from "mocks/authentication/types";
+import { ControllerTestFactory } from "mocks/types";
 import LayoutController from "loot/controllers/layout";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
@@ -64,7 +64,7 @@ describe("LayoutController", (): void => {
 	describe("login", (): void => {
 		beforeEach((): void => layoutController.login());
 
-		it("should show the login modal", (): Chai.Assertion => $uibModal.open.should.have.been.calledWithMatch({controller: "AuthenticationEditController"}));
+		it("should show the login modal", (): Chai.Assertion => $uibModal.open.should.have.been.calledWithMatch({ controller: "AuthenticationEditController" }));
 
 		it("should reload the current state when the login modal is closed", (): void => {
 			$uibModal.close();
@@ -95,7 +95,7 @@ describe("LayoutController", (): void => {
 		it("should transition to the transaction search state passing the query", (): void => {
 			layoutController.queryService.query = "search query";
 			layoutController.search();
-			$state.go.should.have.been.calledWith("root.transactions", {query: "search query"});
+			$state.go.should.have.been.calledWith("root.transactions", { query: "search query" });
 		});
 	});
 
@@ -155,7 +155,7 @@ describe("LayoutController", (): void => {
 				previousStateName = "previous state";
 				previousStateParams = "previous params";
 				layoutController.queryService.query = "";
-				layoutController.queryService.previousState = {name: previousStateName, params: previousStateParams};
+				layoutController.queryService.previousState = { name: previousStateName, params: previousStateParams };
 				layoutController["checkIfSearchCleared"]();
 			});
 

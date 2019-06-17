@@ -2,9 +2,9 @@ import {
 	Category,
 	PsuedoCategory
 } from "categories/types";
-import {Account} from "accounts/types";
-import {Payee} from "payees/types";
-import {Security} from "securities/types";
+import { Account } from "accounts/types";
+import { Payee } from "payees/types";
+import { Security } from "securities/types";
 
 export type TransactionFetchDirection = "prev" | "next";
 export type TransactionStatus = "" | "Unreconciled" | "Cleared" | "Reconciled";

@@ -1,5 +1,5 @@
-import {Mock} from "mocks/types";
-import {Security} from "securities/types";
+import { Mock } from "mocks/types";
+import { Security } from "securities/types";
 import createSecurity from "mocks/securities/factories";
 
 export default class SecurityMockProvider implements Mock<Security> {

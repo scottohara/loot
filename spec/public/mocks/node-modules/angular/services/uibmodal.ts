@@ -6,8 +6,8 @@ import {
 	UibModalMockResult,
 	UibModalMockResultCallback
 } from "mocks/node-modules/angular/types";
-import {IModalSettings} from "angular-ui-bootstrap";
-import {Mock} from "mocks/types";
+import { IModalSettings } from "angular-ui-bootstrap";
+import { Mock } from "mocks/types";
 import sinon from "sinon";
 
 export default class UibModalMockProvider implements Mock<UibModalMock> {

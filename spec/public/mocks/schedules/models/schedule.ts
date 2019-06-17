@@ -2,11 +2,11 @@ import {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import {Mock} from "mocks/types";
+import { Mock } from "mocks/types";
 import QMockProvider from "mocks/node-modules/angular/services/q";
 import ScheduleMockProvider from "mocks/schedules/providers/schedule";
-import {ScheduleModelMock} from "mocks/schedules/types";
-import {ScheduledTransferTransaction} from "schedules/types";
+import { ScheduleModelMock } from "mocks/schedules/types";
+import { ScheduledTransferTransaction } from "schedules/types";
 import SchedulesMockProvider from "mocks/schedules/providers/schedules";
 import sinon from "sinon";
 
@@ -17,11 +17,11 @@ export default class ScheduleModelMockProvider implements Mock<ScheduleModelMock
 		// Success/error = options for the stub promises
 		const	$q: QMock = $qMockProvider.$get(),
 					success: PromiseMockConfig<ScheduledTransferTransaction> = {
-						args: {id: 1},
+						args: { id: 1 },
 						response: scheduleMockProvider.$get()
 					},
 					error: PromiseMockConfig<void> = {
-						args: {id: -1}
+						args: { id: -1 }
 					};
 
 		// Mock scheduleModel object

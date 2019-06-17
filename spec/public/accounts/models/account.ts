@@ -6,8 +6,8 @@ import {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
 } from "mocks/og-components/og-lru-cache-factory/types";
-import sinon, {SinonStub} from "sinon";
-import {Account} from "accounts/types";
+import sinon, { SinonStub } from "sinon";
+import { Account } from "accounts/types";
 import AccountModel from "accounts/models/account";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import angular from "angular";
@@ -54,7 +54,7 @@ describe("accountModel", (): void => {
 
 	it("should fetch the list of recent accounts from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentAccounts"));
 
-	it("should have a list of recent accounts", (): Chai.Assertion => accountModel.recent.should.deep.equal([{id: 1, name: "recent item"}]));
+	it("should have a list of recent accounts", (): Chai.Assertion => accountModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
 
 	describe("UNRECONCILED_ONLY_LOCAL_STORAGE_KEY", (): void => {
 		it("should be 'lootUnreconciledOnly-'", (): Chai.Assertion => accountModel["UNRECONCILED_ONLY_LOCAL_STORAGE_KEY"].should.equal("lootUnreconciledOnly-"));
@@ -297,7 +297,7 @@ describe("accountModel", (): void => {
 			accountModel.recent.should.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", JSON.stringify([{id: 1, name: "recent item"}])));
+		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 
 	describe("removeRecent", (): void => {
@@ -308,6 +308,6 @@ describe("accountModel", (): void => {
 			accountModel.recent.should.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", JSON.stringify([{id: 1, name: "recent item"}])));
+		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 });

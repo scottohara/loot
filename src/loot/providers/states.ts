@@ -4,25 +4,25 @@ import {
 } from "loot/types";
 import AccountIndexView from "accounts/views/index.html";
 import AccountModel from "accounts/models/account";
-import {Accounts} from "accounts/types";
+import { Accounts } from "accounts/types";
 import AuthenticationEditView from "authentication/views/edit.html";
 import AuthenticationModel from "authentication/models/authentication";
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryIndexView from "categories/views/index.html";
 import CategoryModel from "categories/models/category";
-import {IModalService} from "angular-ui-bootstrap";
+import { IModalService } from "angular-ui-bootstrap";
 import LootLayoutView from "loot/views/layout.html";
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 import PayeeIndexView from "payees/views/index.html";
 import PayeeModel from "payees/models/payee";
 import QueryService from "transactions/services/query";
-import {Schedule} from "schedules/types";
+import { Schedule } from "schedules/types";
 import ScheduleIndexView from "schedules/views/index.html";
 import ScheduleModel from "schedules/models/schedule";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityIndexView from "securities/views/index.html";
 import SecurityModel from "securities/models/security";
-import {TransactionBatch} from "transactions/types";
+import { TransactionBatch } from "transactions/types";
 import TransactionIndexView from "transactions/views/index.html";
 import TransactionModel from "transactions/models/transaction";
 
@@ -180,7 +180,7 @@ export default class LootStatesProvider {
 						if (!$state.includes("root.transactions")) {
 							return {
 								name: $state.current.name,
-								params: {...$state.params}
+								params: { ...$state.params }
 							};
 						}
 

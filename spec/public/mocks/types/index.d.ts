@@ -10,7 +10,7 @@ import {
 	Transaction,
 	TransactionBatch
 } from "transactions/types";
-import {StateMock} from "mocks/node-modules/angular/types";
+import { StateMock } from "mocks/node-modules/angular/types";
 
 export interface Mock<T> {
 	$get(): T;

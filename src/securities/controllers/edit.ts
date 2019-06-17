@@ -1,5 +1,5 @@
-import {IModalInstanceService} from "angular-ui-bootstrap";
-import {Security} from "securities/types";
+import { IModalInstanceService } from "angular-ui-bootstrap";
+import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import angular from "angular";
 

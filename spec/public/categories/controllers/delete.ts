@@ -1,9 +1,9 @@
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryDeleteController from "categories/controllers/delete";
-import {CategoryModelMock} from "mocks/categories/types";
-import {ControllerTestFactory} from "mocks/types";
+import { CategoryModelMock } from "mocks/categories/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("CategoryDeleteController", (): void => {

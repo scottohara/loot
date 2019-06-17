@@ -3,12 +3,12 @@ import {
 	Favouritable,
 	Persistable
 } from "loot/types";
-import {OgCacheEntry} from "og-components/og-lru-cache-factory/types";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
 import OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
-import {Security} from "securities/types";
-import {StoredAccountType} from "accounts/types";
-import {Transaction} from "transactions/types";
+import { Security } from "securities/types";
+import { StoredAccountType } from "accounts/types";
+import { Transaction } from "transactions/types";
 
 // Number of securities to keep in the LRU cache
 const LRU_CAPACITY = 10;

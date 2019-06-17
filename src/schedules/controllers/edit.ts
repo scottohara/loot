@@ -35,11 +35,11 @@ import {
 } from "date-fns/esm";
 import AccountModel from "accounts/models/account";
 import CategoryModel from "categories/models/category";
-import {IModalInstanceService} from "angular-ui-bootstrap";
-import {Payee} from "payees/types";
+import { IModalInstanceService } from "angular-ui-bootstrap";
+import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 import ScheduleModel from "schedules/models/schedule";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import TransactionModel from "transactions/models/transaction";
 import angular from "angular";
@@ -73,7 +73,7 @@ export default class ScheduleEditController {
 						private readonly accountModel: AccountModel,
 						private readonly transactionModel: TransactionModel,
 						private readonly scheduleModel: ScheduleModel, schedule: ScheduledTransaction) {
-		this.transaction = angular.extend({transaction_type: "Basic", next_due_date: startOfDay(new Date())}, schedule);
+		this.transaction = angular.extend({ transaction_type: "Basic", next_due_date: startOfDay(new Date()) }, schedule);
 
 		// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
 		this.mode = schedule ? "Enter Transaction" : "Add Schedule";
@@ -113,12 +113,12 @@ export default class ScheduleEditController {
 
 	// List of payees for the typeahead
 	public payees(filter: string, limit: number): angular.IPromise<Payee[]> {
-		return this.payeeModel.all().then((payees: Payee[]): Payee[] => this.limitToFilter(this.filterFilter(payees, {name: filter}), limit));
+		return this.payeeModel.all().then((payees: Payee[]): Payee[] => this.limitToFilter(this.filterFilter(payees, { name: filter }), limit));
 	}
 
 	// List of securities for the typeahead
 	public securities(filter: string, limit: number): angular.IPromise<Security[]> {
-		return this.securityModel.all().then((securities: Security[]): Security[] => this.limitToFilter(this.filterFilter(securities, {name: filter}), limit));
+		return this.securityModel.all().then((securities: Security[]): Security[] => this.limitToFilter(this.filterFilter(securities, { name: filter }), limit));
 	}
 
 	// List of categories for the typeahead
@@ -138,36 +138,36 @@ export default class ScheduleEditController {
 			if (!parent) {
 				if (includeSplits) {
 					psuedoCategories = ([
-						{id: "SplitTo", name: "Split To"},
-						{id: "SplitFrom", name: "Split From"},
-						{id: "Payslip", name: "Payslip"},
-						{id: "LoanRepayment", name: "Loan Repayment"}
+						{ id: "SplitTo", name: "Split To" },
+						{ id: "SplitFrom", name: "Split From" },
+						{ id: "Payslip", name: "Payslip" },
+						{ id: "LoanRepayment", name: "Loan Repayment" }
 					] as DisplayCategory[]).concat(psuedoCategories);
 				}
 
 				psuedoCategories = ([
-					{id: "TransferTo", name: "Transfer To"},
-					{id: "TransferFrom", name: "Transfer From"}
+					{ id: "TransferTo", name: "Transfer To" },
+					{ id: "TransferFrom", name: "Transfer From" }
 				] as DisplayCategory[]).concat(psuedoCategories);
 			}
 
-			return this.limitToFilter(this.filterFilter(psuedoCategories, {name: filter}), limit);
+			return this.limitToFilter(this.filterFilter(psuedoCategories, { name: filter }), limit);
 		});
 	}
 
 	// List of investment categories for the typeahead
 	public investmentCategories(filter?: string): DisplayCategory[] {
 		const categories: DisplayCategory[] = [
-			{id: "Buy", name: "Buy"},
-			{id: "Sell", name: "Sell"},
-			{id: "DividendTo", name: "Dividend To"},
-			{id: "AddShares", name: "Add Shares"},
-			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"},
-			{id: "TransferFrom", name: "Transfer From"}
+			{ id: "Buy", name: "Buy" },
+			{ id: "Sell", name: "Sell" },
+			{ id: "DividendTo", name: "Dividend To" },
+			{ id: "AddShares", name: "Add Shares" },
+			{ id: "RemoveShares", name: "Remove Shares" },
+			{ id: "TransferTo", name: "Transfer To" },
+			{ id: "TransferFrom", name: "Transfer From" }
 		];
 
-		return filter ? this.filterFilter(categories, {name: filter}) : categories;
+		return filter ? this.filterFilter(categories, { name: filter }) : categories;
 	}
 
 	// Returns true if the passed value is typeof string (and is not empty)
@@ -248,7 +248,7 @@ export default class ScheduleEditController {
 
 					default:
 						type = "Basic";
-						({direction} = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
+						({ direction } = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
 						break;
 				}
 
@@ -289,7 +289,7 @@ export default class ScheduleEditController {
 
 					default:
 						type = "Sub";
-						({direction} = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
+						({ direction } = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
 						break;
 				}
 			}
@@ -309,7 +309,7 @@ export default class ScheduleEditController {
 
 	// Handler for investment category changes
 	public investmentCategorySelected(): void {
-		let	{transaction_type, direction} = this.transaction;
+		let	{ transaction_type, direction } = this.transaction;
 
 		// Check the category selection
 		if (this.transaction.category && "object" === typeof this.transaction.category) {
@@ -381,7 +381,7 @@ export default class ScheduleEditController {
 
 	// List of primary accounts for the typeahead
 	public primaryAccounts(filter: string, limit: number): angular.IPromise<Account[]> {
-		return this.accountModel.all().then((accounts: Account[] | Accounts): Account[] => this.limitToFilter(this.filterFilter(accounts as Account[], {name: filter}), limit));
+		return this.accountModel.all().then((accounts: Account[] | Accounts): Account[] => this.limitToFilter(this.filterFilter(accounts as Account[], { name: filter }), limit));
 	}
 
 	// List of accounts for the typeahead
@@ -397,7 +397,7 @@ export default class ScheduleEditController {
 
 			// Filter the primary account from the results (can't transfer to self)
 			if (this.transaction.primary_account) {
-				filteredAccounts = this.filterFilter(filteredAccounts, {name: `!${this.transaction.primary_account.name}`}, true);
+				filteredAccounts = this.filterFilter(filteredAccounts, { name: `!${this.transaction.primary_account.name}` }, true);
 			}
 
 			// For security transfers, only include investment accounts
@@ -485,7 +485,7 @@ export default class ScheduleEditController {
 			this.schedule.flag = null;
 		}
 
-		this.scheduleModel.save(this.schedule).then((schedule: ScheduledTransaction): void => this.$uibModalInstance.close({data: schedule, skipped: Boolean(skipped)}), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
+		this.scheduleModel.save(this.schedule).then((schedule: ScheduledTransaction): void => this.$uibModalInstance.close({ data: schedule, skipped: Boolean(skipped) }), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
 	}
 
 	// Dismiss the modal without saving

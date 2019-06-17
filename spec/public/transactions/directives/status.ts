@@ -4,12 +4,12 @@ import {
 	TransactionStatusScope
 } from "transactions/types";
 import DirectiveTest from "mocks/loot/directivetest";
-import {DirectiveTestModel} from "mocks/types";
+import { DirectiveTestModel } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {TransactionModelMock} from "mocks/transactions/types";
+import { TransactionModelMock } from "mocks/transactions/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
-import {createBasicTransaction} from "mocks/transactions/factories";
+import { createBasicTransaction } from "mocks/transactions/factories";
 import sinon from "sinon";
 
 describe("transactionStatus", (): void => {
@@ -26,7 +26,7 @@ describe("transactionStatus", (): void => {
 		$sce = _$sce_;
 		transactionStatus = directiveTest;
 		transactionStatus.configure("transaction-status", "div");
-		transactionStatus.scope.model = {account: createAccount({id: 123}), transaction: createBasicTransaction({id: 456})};
+		transactionStatus.scope.model = { account: createAccount({ id: 123 }), transaction: createBasicTransaction({ id: 456 }) };
 		transactionModel = _transactionModel_;
 	}));
 
@@ -60,7 +60,7 @@ describe("transactionStatus", (): void => {
 	// Helper function in lieu of beforeEach (which we can't use for dynamically generated specs)
 	function setup(scenario: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}): void {
 		((transactionStatus.scope.model as DirectiveTestModel).transaction as Transaction).status = scenario.currentStatus;
-		transactionStatus.compile({"transaction-status": "model"});
+		transactionStatus.compile({ "transaction-status": "model" });
 		transactionStatus.scope.$digest();
 		isolateScope = transactionStatus["element"].isolateScope();
 	}
@@ -93,7 +93,7 @@ describe("transactionStatus", (): void => {
 		let i: JQuery<Element>;
 
 		beforeEach((): void => {
-			transactionStatus.compile({"transaction-status": "model"});
+			transactionStatus.compile({ "transaction-status": "model" });
 			transactionStatus.scope.$digest();
 			i = transactionStatus["element"].find("i");
 		});
@@ -106,7 +106,7 @@ describe("transactionStatus", (): void => {
 
 		it("should be opaque when the current status is not Unreconciled", (): void => {
 			((transactionStatus.scope.model as DirectiveTestModel).transaction as Transaction).status = "Cleared";
-			transactionStatus.compile({"transaction-status": "model"});
+			transactionStatus.compile({ "transaction-status": "model" });
 			transactionStatus.scope.$digest();
 			transactionStatus["element"].find("i").hasClass("active").should.be.true;
 		});
@@ -114,7 +114,7 @@ describe("transactionStatus", (): void => {
 
 	describe("on click", (): void => {
 		beforeEach((): void => {
-			transactionStatus.compile({"transaction-status": "model"});
+			transactionStatus.compile({ "transaction-status": "model" });
 			transactionStatus.scope.$digest();
 			isolateScope = transactionStatus["element"].isolateScope();
 		});
@@ -142,7 +142,7 @@ describe("transactionStatus", (): void => {
 
 	describe("on destroy", (): void => {
 		beforeEach((): void => {
-			transactionStatus.compile({"transaction-status": "model"});
+			transactionStatus.compile({ "transaction-status": "model" });
 			transactionStatus.scope.$digest();
 			isolateScope = transactionStatus["element"].isolateScope();
 			sinon.stub(isolateScope, "clickHandler");

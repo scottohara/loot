@@ -1,4 +1,4 @@
-import {Mock} from "mocks/types";
+import { Mock } from "mocks/types";
 import angular from "angular";
 
 export default class MockDependenciesProvider {

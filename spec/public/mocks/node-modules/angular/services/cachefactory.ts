@@ -1,5 +1,5 @@
-import {CacheFactoryMock} from "mocks/node-modules/angular/types";
-import {Mock} from "mocks/types";
+import { CacheFactoryMock } from "mocks/node-modules/angular/types";
+import { Mock } from "mocks/types";
 import sinon from "sinon";
 
 function mockCache(): angular.ICacheObject {
@@ -20,8 +20,8 @@ export default class CacheFactoryMockProvider implements Mock<CacheFactoryMock> 
 		const factory: CacheFactoryMock = (): angular.ICacheObject => this.$cache;
 
 		factory.info = sinon.stub().returns([
-			{id: "templates"},
-			{id: "test"}
+			{ id: "templates" },
+			{ id: "test" }
 		]);
 
 		// Returns a cache by it's name

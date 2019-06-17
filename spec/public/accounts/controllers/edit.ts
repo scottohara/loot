@@ -4,10 +4,10 @@ import {
 	AccountType
 } from "accounts/types";
 import AccountEditController from "accounts/controllers/edit";
-import {AccountModelMock} from "mocks/accounts/types";
-import {ControllerTestFactory} from "mocks/types";
+import { AccountModelMock } from "mocks/accounts/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 
@@ -45,9 +45,9 @@ describe("AccountEditController", (): void => {
 	});
 
 	describe("when an account is not provided", (): void => {
-		beforeEach((): AccountEditController => (accountEditController = controllerTest("AccountEditController", {account: null}) as AccountEditController));
+		beforeEach((): AccountEditController => (accountEditController = controllerTest("AccountEditController", { account: null }) as AccountEditController));
 
-		it("should make an empty account object available to the view", (): Chai.Assertion => accountEditController.account.should.deep.equal({opening_balance: 0}));
+		it("should make an empty account object available to the view", (): Chai.Assertion => accountEditController.account.should.deep.equal({ opening_balance: 0 }));
 
 		it("should set the mode to Add", (): Chai.Assertion => accountEditController.mode.should.equal("Add"));
 	});
@@ -61,13 +61,13 @@ describe("AccountEditController", (): void => {
 	describe("accountTypeSelected", (): void => {
 		it("should reset the related account if the account type is investment", (): void => {
 			accountEditController.account.account_type = "Investment";
-			accountEditController.account.related_account = {id: 1, name: "related account", opening_balance: 100};
+			accountEditController.account.related_account = { id: 1, name: "related account", opening_balance: 100 };
 			accountEditController.accountTypeSelected();
-			(accountEditController.account.related_account as Account).should.deep.equal({opening_balance: 0});
+			(accountEditController.account.related_account as Account).should.deep.equal({ opening_balance: 0 });
 		});
 
 		it("should clear the related account if the account type is not investment", (): void => {
-			accountEditController.account.related_account = {id: 1, name: "related account", opening_balance: 100};
+			accountEditController.account.related_account = { id: 1, name: "related account", opening_balance: 100 };
 			accountEditController.accountTypeSelected();
 			(null === accountEditController.account.related_account).should.be.true;
 		});
@@ -81,8 +81,8 @@ describe("AccountEditController", (): void => {
 
 		it("should return a filtered & limited list of asset accounts", (): void => {
 			accountEditController.accounts("b", 2).should.eventually.deep.equal([
-				createAccount({id: 4, name: "ba", account_type: "asset"}),
-				createAccount({id: 5, name: "ab", account_type: "asset"})
+				createAccount({ id: 4, name: "ba", account_type: "asset" }),
+				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
 		});
 	});

@@ -1,5 +1,5 @@
 import AuthenticationModel from "authentication/models/authentication";
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class AuthenticationEditController {
 	public userName: string | null = null;

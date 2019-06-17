@@ -1,5 +1,5 @@
 describe("scheduleIndexView", () => {
-	const {addDays, format, startOfDay} = require("date-fns");
+	const { addDays, format, startOfDay } = require("date-fns");
 	let scheduleIndexView = require("./index");
 	let expected;
 
@@ -203,7 +203,7 @@ describe("scheduleIndexView", () => {
 				if (expected[index].subtransactions) {
 					// Show subtransactions
 					scheduleIndexView.toggleSubtransactionsButton(row).click();
-					splits.push({index, row});
+					splits.push({ index, row });
 				}
 			});
 		});

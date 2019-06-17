@@ -4,7 +4,7 @@ import {
 	DisplayAccountType
 } from "accounts/types";
 import AccountModel from "accounts/models/account";
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class AccountDeleteController {
 	public errorMessage: string | null = null;

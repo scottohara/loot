@@ -1,9 +1,9 @@
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryEditController from "categories/controllers/edit";
-import {CategoryModelMock} from "mocks/categories/types";
-import {ControllerTestFactory} from "mocks/types";
+import { CategoryModelMock } from "mocks/categories/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createCategory from "mocks/categories/factories";
 
@@ -33,7 +33,7 @@ describe("CategoryEditController", (): void => {
 	});
 
 	describe("when a category is not provided", (): void => {
-		beforeEach((): CategoryEditController => (categoryEditController = controllerTest("CategoryEditController", {category: null}) as CategoryEditController));
+		beforeEach((): CategoryEditController => (categoryEditController = controllerTest("CategoryEditController", { category: null }) as CategoryEditController));
 
 		it("should make an empty category object available to the view", (): void => {
 			categoryEditController.category.should.be.an("object");
@@ -50,16 +50,16 @@ describe("CategoryEditController", (): void => {
 		});
 
 		it("should return a filtered & limited list of parent categories", (): Chai.PromisedAssertion => categoryEditController.parentCategories("a", 3).should.eventually.deep.equal([
-			createCategory({id: 1, name: "aa", num_children: 2, children: [
-				createCategory({id: 10, name: "aa_1", parent_id: 1, parent:
-					createCategory({id: 1, name: "aa", num_children: 2})
+			createCategory({ id: 1, name: "aa", num_children: 2, children: [
+				createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+					createCategory({ id: 1, name: "aa", num_children: 2 })
 				}),
-				createCategory({id: 11, name: "aa_2", parent_id: 1, parent:
-					createCategory({id: 1, name: "aa", num_children: 2})
+				createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+					createCategory({ id: 1, name: "aa", num_children: 2 })
 				})
-			]}),
-			createCategory({id: 4, name: "ba", direction: "outflow", children: []}),
-			createCategory({id: 5, name: "ab", children: []})
+			] }),
+			createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+			createCategory({ id: 5, name: "ab", children: [] })
 		]));
 	});
 

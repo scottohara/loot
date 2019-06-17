@@ -4,7 +4,7 @@ import {
 } from "mocks/node-modules/angular/types";
 import AuthenticationModel from "authentication/models/authentication";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {SinonStub} from "sinon";
+import { SinonStub } from "sinon";
 import angular from "angular";
 
 describe("authenticationModel", (): void => {
@@ -45,7 +45,7 @@ describe("authenticationModel", (): void => {
 		let isAuthenticated: boolean;
 
 		it("should fetch the authentication key from sessionStorage", (): void => {
-			({isAuthenticated} = authenticationModel);
+			({ isAuthenticated } = authenticationModel);
 			$window.sessionStorage.getItem.should.have.been.calledWith("lootAuthenticationKey");
 		});
 
@@ -54,18 +54,18 @@ describe("authenticationModel", (): void => {
 
 			it("should set the default $http Authorization header", (): void => {
 				$http.defaults = {};
-				({isAuthenticated} = authenticationModel);
+				({ isAuthenticated } = authenticationModel);
 				($http.defaults.headers as angular.IHttpRequestConfigHeaders).common.Authorization.should.equal("Basic authentication key");
 			});
 
 			it("should update the default $http Authorization header", (): void => {
-				$http.defaults.headers = {common: {Authorization: ""}};
-				({isAuthenticated} = authenticationModel);
+				$http.defaults.headers = { common: { Authorization: "" } };
+				({ isAuthenticated } = authenticationModel);
 				$http.defaults.headers.common.Authorization.should.equal("Basic authentication key");
 			});
 
 			it("should be true", (): void => {
-				({isAuthenticated} = authenticationModel);
+				({ isAuthenticated } = authenticationModel);
 				isAuthenticated.should.be.true;
 			});
 		});

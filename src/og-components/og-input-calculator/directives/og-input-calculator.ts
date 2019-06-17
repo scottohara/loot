@@ -44,7 +44,7 @@ export default class OgInputCalculatorDirective {
 				scope.push = (operand: number, operator: OgInputCalculatorOperator): void => {
 					// Push the operand on the stack
 					if (0 === scope.stack.length) {
-						scope.stack.push({operand});
+						scope.stack.push({ operand });
 
 						// Show the popover
 						$timeout((): boolean => angular.element(iElement)[0].dispatchEvent(new Event("showCalculator")));
@@ -53,7 +53,7 @@ export default class OgInputCalculatorDirective {
 					}
 
 					// Push the operator onto the stack
-					scope.stack.push({operator});
+					scope.stack.push({ operator });
 
 					// Update the display expression
 					$timeout((): string => (scope.expression = `\n${operator} ${scope.ogInput.rawToFormatted(scope.ogInput.formattedToRaw(String(operand))) + (" " === scope.expression ? "" : scope.expression)}`));
@@ -69,7 +69,7 @@ export default class OgInputCalculatorDirective {
 
 					if (scope.stack && scope.stack.length > 1) {
 						scope.result = Number(scope.stack.reduce((memo: OgInputCalculatorOperation, operation: OgInputCalculatorOperation, index: number): OgInputCalculatorOperation => {
-							const result: OgInputCalculatorOperation & {operand: number;} = {operand: 0, ...memo};
+							const result: OgInputCalculatorOperation & {operand: number;} = { operand: 0, ...memo };
 
 							// Last time through, use the view value for the operand
 							if (index === scope.stack.length - 1) {
@@ -109,7 +109,7 @@ export default class OgInputCalculatorDirective {
 					const	matches: RegExpExecArray | null = (/(?<operand>[-\d.,]+)(?<operator>[+\-*/])(?<residual>.*)/giu).exec(value);
 
 					if (matches && matches.groups) {
-						const {operand, operator, residual} = matches.groups;
+						const { operand, operator, residual } = matches.groups;
 
 						// Push the first (operand) and second (operator) matches onto the stack
 						scope.push(Number(operand), operator as OgInputCalculatorOperator);

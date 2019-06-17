@@ -3,14 +3,14 @@ import {
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
-import {Category} from "categories/types";
+import sinon, { SinonStub } from "sinon";
+import { Category } from "categories/types";
 import CategoryIndexController from "categories/controllers";
-import {CategoryModelMock} from "mocks/categories/types";
-import {ControllerTestFactory} from "mocks/types";
+import { CategoryModelMock } from "mocks/categories/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
-import {OgTableActionHandlers} from "og-components/og-table-navigable/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
+import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 import createCategory from "mocks/categories/factories";
@@ -57,7 +57,7 @@ describe("CategoryIndexController", (): void => {
 
 	it("should focus the category when a category id is specified", (): void => {
 		$state.params.id = "1";
-		categoryIndexController = controllerTest("CategoryIndexController", {$state}) as CategoryIndexController;
+		categoryIndexController = controllerTest("CategoryIndexController", { $state }) as CategoryIndexController;
 		categoryIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
 		(categoryIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
@@ -65,7 +65,7 @@ describe("CategoryIndexController", (): void => {
 
 	it("should not focus the category when a category id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({to: "root.categories.category"}, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.categories.category" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(categoryIndexController as angular.IController).$scope.$emit("$destroy");
@@ -73,10 +73,10 @@ describe("CategoryIndexController", (): void => {
 	});
 
 	it("should ensure the category is focussed when the category id state param changes", (): void => {
-		const toParams: {id: string;} = {id: "1"};
+		const toParams: {id: string;} = { id: "1" };
 
 		sinon.stub(categoryIndexController, "focusCategory" as keyof CategoryIndexController);
-		$transitions.onSuccess.firstCall.args[1]({params: sinon.stub().withArgs("to").returns(toParams)});
+		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
 		categoryIndexController["focusCategory"].should.have.been.calledWith(Number(toParams.id));
 	});
 
@@ -415,13 +415,13 @@ describe("CategoryIndexController", (): void => {
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a category when no category is currently focussed", (): void => {
 			categoryIndexController.tableActions.focusAction(3);
-			$state.go.should.have.been.calledWith(".category", {id: 2});
+			$state.go.should.have.been.calledWith(".category", { id: 2 });
 		});
 
 		it("should focus a category when another category is currently focussed", (): void => {
 			$state.currentState("**.category");
 			categoryIndexController.tableActions.focusAction(3);
-			$state.go.should.have.been.calledWith("^.category", {id: 2});
+			$state.go.should.have.been.calledWith("^.category", { id: 2 });
 		});
 	});
 

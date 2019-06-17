@@ -1,9 +1,9 @@
-import {ControllerTestFactory} from "mocks/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityDeleteController from "securities/controllers/delete";
-import {SecurityModelMock} from "mocks/securities/types";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { SecurityModelMock } from "mocks/securities/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("SecurityDeleteController", (): void => {

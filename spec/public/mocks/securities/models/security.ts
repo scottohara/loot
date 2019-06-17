@@ -2,13 +2,13 @@ import {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
-import {Mock} from "mocks/types";
+import sinon, { SinonStub } from "sinon";
+import { Mock } from "mocks/types";
 import QMockProvider from "mocks/node-modules/angular/services/q";
 import SecuritiesMockProvider from "mocks/securities/providers/securities";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityMockProvider from "mocks/securities/providers/security";
-import {SecurityModelMock} from "mocks/securities/types";
+import { SecurityModelMock } from "mocks/securities/types";
 
 export default class SecurityModelMockProvider implements Mock<SecurityModelMock> {
 	private readonly securityModel: SecurityModelMock;
@@ -17,11 +17,11 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 		// Success/error = options for the stub promises
 		const	$q: QMock = $qMockProvider.$get(),
 					success: PromiseMockConfig<{data: Security;}> = {
-						args: {id: 1},
-						response: {data: securityMockProvider.$get()}
+						args: { id: 1 },
+						response: { data: securityMockProvider.$get() }
 					},
 					error: PromiseMockConfig<void> = {
-						args: {id: -1}
+						args: { id: -1 }
 					};
 
 		// Mock securityModel object
@@ -40,13 +40,13 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 				const security: Security = securitiesMockProvider.$get()[id - 1];
 
 				// Return a promise-like object that resolves with the security
-				return $q.promisify({response: security})();
+				return $q.promisify({ response: security })();
 			},
-			findLastTransaction: $q.promisify({response: {}}, {args: -1}),
+			findLastTransaction: $q.promisify({ response: {} }, { args: -1 }),
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
 			toggleFavourite(security: Security): SinonStub {
-				return $q.promisify({response: !security.favourite})();
+				return $q.promisify({ response: !security.favourite })();
 			},
 			flush: sinon.stub(),
 			addRecent: sinon.stub()

@@ -55,12 +55,12 @@ describe("securityEditView", () => {
 
 	describe("adding a security", () => {
 		beforeEach(() => {
-			expected = {name: "Test security", code: "TEST"};
+			expected = { name: "Test security", code: "TEST" };
 
 			// Add a new security
 			securityIndexView.addSecurity();
 			waitForSecurityEditView("Add");
-			securityEditView.enterSecurityDetails({securityName: expected.name, securityCode: expected.code});
+			securityEditView.enterSecurityDetails({ securityName: expected.name, securityCode: expected.code });
 		});
 
 		commonBehaviour();
@@ -79,14 +79,14 @@ describe("securityEditView", () => {
 
 	describe("editing a security", () => {
 		beforeEach(() => {
-			expected = {name: "Test security (edited)", code: "TEST2"};
+			expected = { name: "Test security (edited)", code: "TEST2" };
 
 			// Edit an existing security
 			securityIndexView.editSecurity(originalRowCount - 1);
 			waitForSecurityEditView("Edit");
 			securityEditView.securityNameInput.getAttribute("value").should.eventually.equal(lastSecurityName.replace("\nNo transactions", ""));
 			securityEditView.securityCodeInput.getAttribute("value").should.eventually.equal(lastSecurityCode);
-			securityEditView.enterSecurityDetails({securityName: expected.name, securityCode: expected.code});
+			securityEditView.enterSecurityDetails({ securityName: expected.name, securityCode: expected.code });
 		});
 
 		commonBehaviour();

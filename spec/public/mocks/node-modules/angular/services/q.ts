@@ -5,8 +5,8 @@ import {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
-import {Mock} from "mocks/types";
+import sinon, { SinonStub } from "sinon";
+import { Mock } from "mocks/types";
 import angular from "angular";
 
 export default class QMockProvider implements Mock<QMock> {
@@ -69,7 +69,7 @@ export default class QMockProvider implements Mock<QMock> {
 			qSuccess.resolve(success ? (success as PromiseMockConfig<T>).response : null);
 
 			// Auto-reject the error promise with the specified error response
-			qError.reject(error && (error as PromiseMockConfig<T>).response ? (error as PromiseMockConfig<T>).response : {data: "unsuccessful"});
+			qError.reject(error && (error as PromiseMockConfig<T>).response ? (error as PromiseMockConfig<T>).response : { data: "unsuccessful" });
 
 			// Configure the stub to return the appropriate promise based on the call arguments
 			if (!success || (angular.isObject(success) && !(success as PromiseMockConfig<T>).args)) {

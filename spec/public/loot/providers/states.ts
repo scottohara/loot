@@ -7,19 +7,19 @@ import {
 	UibModalMock
 } from "mocks/node-modules/angular/types";
 import AccountModel from "accounts/models/account";
-import {AuthenticationModelMock} from "mocks/authentication/types";
-import {Category} from "categories/types";
+import { AuthenticationModelMock } from "mocks/authentication/types";
+import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
 import LootStatesProvider from "loot/providers/states";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 import QueryService from "transactions/services/query";
-import {Schedule} from "schedules/types";
+import { Schedule } from "schedules/types";
 import ScheduleModel from "schedules/models/schedule";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
-import {TransactionBatch} from "transactions/types";
+import { TransactionBatch } from "transactions/types";
 import TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 import sinon from "sinon";
@@ -158,7 +158,7 @@ describe("lootStatesProvider", (): void => {
 			describe("account state", (): void => {
 				beforeEach((): void => {
 					stateName += ".account";
-					stateParams = {id: 1};
+					stateParams = { id: 1 };
 				});
 
 				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/accounts/1"));
@@ -182,7 +182,7 @@ describe("lootStatesProvider", (): void => {
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams, {reload: true});
+						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
 						($state.current.name as string).should.not.equal(stateName);
 					});
@@ -196,8 +196,8 @@ describe("lootStatesProvider", (): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => AccountModel;}).contextModel);
-							$injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Account>;}).context, null, {contextModel: resolvedContextModel}).then((context: Account): Account => (resolvedContext = context));
-							resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, {contextModel: resolvedContextModel, context: resolvedContext});
+							$injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Account>;}).context, null, { contextModel: resolvedContextModel }).then((context: Account): Account => (resolvedContext = context));
+							resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context: resolvedContext });
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -272,7 +272,7 @@ describe("lootStatesProvider", (): void => {
 			describe("schedule state", (): void => {
 				beforeEach((): void => {
 					stateName += ".schedule";
-					stateParams = {id: 1};
+					stateParams = { id: 1 };
 				});
 
 				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/schedules/1"));
@@ -323,7 +323,7 @@ describe("lootStatesProvider", (): void => {
 			describe("payee state", (): void => {
 				beforeEach((): void => {
 					stateName += ".payee";
-					stateParams = {id: 1};
+					stateParams = { id: 1 };
 				});
 
 				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/payees/1"));
@@ -347,7 +347,7 @@ describe("lootStatesProvider", (): void => {
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams, {reload: true});
+						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
 						($state.current.name as string).should.not.equal(stateName);
 					});
@@ -361,8 +361,8 @@ describe("lootStatesProvider", (): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => PayeeModel;}).contextModel);
-							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Payee>;}).context, null, {contextModel: resolvedContextModel});
-							resolvedContext.then((context: Payee): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, {contextModel: resolvedContextModel, context})));
+							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Payee>;}).context, null, { contextModel: resolvedContextModel });
+							resolvedContext.then((context: Payee): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -436,7 +436,7 @@ describe("lootStatesProvider", (): void => {
 			describe("category state", (): void => {
 				beforeEach((): void => {
 					stateName += ".category";
-					stateParams = {id: 1};
+					stateParams = { id: 1 };
 				});
 
 				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/categories/1"));
@@ -460,7 +460,7 @@ describe("lootStatesProvider", (): void => {
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams, {reload: true});
+						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
 						($state.current.name as string).should.not.equal(stateName);
 					});
@@ -474,8 +474,8 @@ describe("lootStatesProvider", (): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => CategoryModel;}).contextModel);
-							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Category>;}).context, null, {contextModel: resolvedContextModel});
-							resolvedContext.then((context: Category): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, {contextModel: resolvedContextModel, context})));
+							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Category>;}).context, null, { contextModel: resolvedContextModel });
+							resolvedContext.then((context: Category): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -549,7 +549,7 @@ describe("lootStatesProvider", (): void => {
 			describe("security state", (): void => {
 				beforeEach((): void => {
 					stateName += ".security";
-					stateParams = {id: 1};
+					stateParams = { id: 1 };
 				});
 
 				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/securities/1"));
@@ -573,7 +573,7 @@ describe("lootStatesProvider", (): void => {
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
-						$state.go(stateName, stateParams, {reload: true});
+						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
 						($state.current.name as string).should.not.equal(stateName);
 					});
@@ -587,8 +587,8 @@ describe("lootStatesProvider", (): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => SecurityModel;}).contextModel);
-							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Security>;}).context, null, {contextModel: resolvedContextModel});
-							resolvedContext.then((context: Security): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, {contextModel: resolvedContextModel, context})));
+							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Security>;}).context, null, { contextModel: resolvedContextModel });
+							resolvedContext.then((context: Security): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -631,7 +631,7 @@ describe("lootStatesProvider", (): void => {
 		beforeEach((): void => {
 			query = "search";
 			stateName = "root.transactions";
-			stateParams = {query};
+			stateParams = { query };
 			stateConfig = $state.get(stateName);
 			$httpBackend.expectGET("transactions/views/index.html").respond(200);
 		});
@@ -666,19 +666,19 @@ describe("lootStatesProvider", (): void => {
 				};
 				$state.go(stateName, stateParams);
 				$rootScope.$digest();
-				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, {$state: previousState});
+				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, { $state: previousState });
 				resolvedContext = $injector.invoke(($state.current.resolve as {context: () => string;}).context);
-				resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, {context: resolvedContext});
-				$injector.invoke($state.current.onEnter as Function, null, {previousState: resolvedPreviousState});
+				resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { context: resolvedContext });
+				$injector.invoke($state.current.onEnter as Function, null, { previousState: resolvedPreviousState });
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
 
-			it("should resolve the previous state", (): Chai.Assertion => resolvedPreviousState.should.deep.equal({name: (previousState.current as {name: string;}).name, params: previousState.params}));
+			it("should resolve the previous state", (): Chai.Assertion => resolvedPreviousState.should.deep.equal({ name: (previousState.current as {name: string;}).name, params: previousState.params }));
 
 			it("should not resolve the previous state if transitioning from a different query", (): void => {
 				previousState.includes.withArgs("root.transactions").returns(true);
-				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, {$state: previousState});
+				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, { $state: previousState });
 				(!resolvedPreviousState).should.be.true;
 			});
 
@@ -694,7 +694,7 @@ describe("lootStatesProvider", (): void => {
 			it("should set the previous state property on the query service on enter", (): Chai.Assertion => (queryService.previousState as angular.ui.IState).should.deep.equal(resolvedPreviousState));
 
 			it("should not update the previous state property on the query service on enter if the previous state did not resolve", (): void => {
-				$injector.invoke($state.current.onEnter as Function, null, {previousState: null});
+				$injector.invoke($state.current.onEnter as Function, null, { previousState: null });
 				(queryService.previousState as angular.ui.IState).should.deep.equal(resolvedPreviousState);
 			});
 

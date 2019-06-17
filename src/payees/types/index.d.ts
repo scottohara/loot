@@ -1,4 +1,4 @@
-import {Entity} from "loot/types";
+import { Entity } from "loot/types";
 
 export interface Payee extends Entity {
 	favourite: boolean;

@@ -1,10 +1,10 @@
-import {Entity} from "loot/types";
-import {IModalSettings} from "angular-ui-bootstrap";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
-import {OgModalConfirm} from "og-components/og-modal-confirm/types";
-import {ScheduledTransaction} from "schedules/types";
-import {SinonStub} from "sinon";
-import {Transaction} from "transactions/types";
+import { Entity } from "loot/types";
+import { IModalSettings } from "angular-ui-bootstrap";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
+import { OgModalConfirm } from "og-components/og-modal-confirm/types";
+import { ScheduledTransaction } from "schedules/types";
+import { SinonStub } from "sinon";
+import { Transaction } from "transactions/types";
 
 export interface CacheFactoryMock {
 	info?: SinonStub;

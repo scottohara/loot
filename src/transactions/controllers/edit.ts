@@ -28,10 +28,10 @@ import {
 } from "loot/types";
 import AccountModel from "accounts/models/account";
 import CategoryModel from "categories/models/category";
-import {IModalInstanceService} from "angular-ui-bootstrap";
-import {Payee} from "payees/types";
+import { IModalInstanceService } from "angular-ui-bootstrap";
+import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import TransactionModel from "transactions/models/transaction";
 import angular from "angular";
@@ -81,12 +81,12 @@ export default class TransactionEditController {
 
 	// List of payees for the typeahead
 	public payees(filter: string, limit: number): angular.IPromise<Payee[]> {
-		return this.payeeModel.all().then((payees: Payee[]): Payee[] => this.limitToFilter(this.filterFilter(payees, {name: filter}), limit));
+		return this.payeeModel.all().then((payees: Payee[]): Payee[] => this.limitToFilter(this.filterFilter(payees, { name: filter }), limit));
 	}
 
 	// List of securities for the typeahead
 	public securities(filter: string, limit: number): angular.IPromise<Security[]> {
-		return this.securityModel.all().then((securities: Security[]): Security[] => this.limitToFilter(this.filterFilter(securities, {name: filter}), limit));
+		return this.securityModel.all().then((securities: Security[]): Security[] => this.limitToFilter(this.filterFilter(securities, { name: filter }), limit));
 	}
 
 	// List of categories for the typeahead
@@ -106,36 +106,36 @@ export default class TransactionEditController {
 			if (!parent) {
 				if (includeSplits) {
 					psuedoCategories = ([
-						{id: "SplitTo", name: "Split To"},
-						{id: "SplitFrom", name: "Split From"},
-						{id: "Payslip", name: "Payslip"},
-						{id: "LoanRepayment", name: "Loan Repayment"}
+						{ id: "SplitTo", name: "Split To" },
+						{ id: "SplitFrom", name: "Split From" },
+						{ id: "Payslip", name: "Payslip" },
+						{ id: "LoanRepayment", name: "Loan Repayment" }
 					] as DisplayCategory[]).concat(psuedoCategories);
 				}
 
 				psuedoCategories = ([
-					{id: "TransferTo", name: "Transfer To"},
-					{id: "TransferFrom", name: "Transfer From"}
+					{ id: "TransferTo", name: "Transfer To" },
+					{ id: "TransferFrom", name: "Transfer From" }
 				] as DisplayCategory[]).concat(psuedoCategories);
 			}
 
-			return this.limitToFilter(this.filterFilter(psuedoCategories, {name: filter}), limit);
+			return this.limitToFilter(this.filterFilter(psuedoCategories, { name: filter }), limit);
 		});
 	}
 
 	// List of investment categories for the typeahead
 	public investmentCategories(filter?: string): DisplayCategory[] {
 		const categories: DisplayCategory[] = [
-			{id: "Buy", name: "Buy"},
-			{id: "Sell", name: "Sell"},
-			{id: "DividendTo", name: "Dividend To"},
-			{id: "AddShares", name: "Add Shares"},
-			{id: "RemoveShares", name: "Remove Shares"},
-			{id: "TransferTo", name: "Transfer To"},
-			{id: "TransferFrom", name: "Transfer From"}
+			{ id: "Buy", name: "Buy" },
+			{ id: "Sell", name: "Sell" },
+			{ id: "DividendTo", name: "Dividend To" },
+			{ id: "AddShares", name: "Add Shares" },
+			{ id: "RemoveShares", name: "Remove Shares" },
+			{ id: "TransferTo", name: "Transfer To" },
+			{ id: "TransferFrom", name: "Transfer From" }
 		];
 
-		return filter ? this.filterFilter(categories, {name: filter}) : categories;
+		return filter ? this.filterFilter(categories, { name: filter }) : categories;
 	}
 
 	// Returns true if the passed value is typeof string (and is not empty)
@@ -216,7 +216,7 @@ export default class TransactionEditController {
 
 					default:
 						type = "Basic";
-						({direction} = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
+						({ direction } = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
 						break;
 				}
 
@@ -257,7 +257,7 @@ export default class TransactionEditController {
 
 					default:
 						type = "Sub";
-						({direction} = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
+						({ direction } = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
 						break;
 				}
 			}
@@ -277,7 +277,7 @@ export default class TransactionEditController {
 
 	// Handler for investment category changes
 	public investmentCategorySelected(): void {
-		let	{transaction_type, direction} = this.transaction;
+		let	{ transaction_type, direction } = this.transaction;
 
 		// Check the category selection
 		if (this.transaction.category && "object" === typeof this.transaction.category) {
@@ -352,7 +352,7 @@ export default class TransactionEditController {
 
 			// Filter the current account from the results (can't transfer to self)
 			if (this.transaction.primary_account) {
-				filteredAccounts = this.filterFilter(filteredAccounts, {name: `!${this.transaction.primary_account.name}`}, true);
+				filteredAccounts = this.filterFilter(filteredAccounts, { name: `!${this.transaction.primary_account.name}` }, true);
 			}
 
 			// For security transfers, only include investment accounts

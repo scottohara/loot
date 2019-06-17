@@ -2,9 +2,9 @@ import {
 	startOfDay,
 	subDays
 } from "date-fns/esm";
-import {Mock} from "mocks/types";
-import {ScheduledBasicTransaction} from "schedules/types";
-import {createScheduledBasicTransaction} from "mocks/schedules/factories";
+import { Mock } from "mocks/types";
+import { ScheduledBasicTransaction } from "schedules/types";
+import { createScheduledBasicTransaction } from "mocks/schedules/factories";
 
 function *schedules(count: number): Iterable<ScheduledBasicTransaction> {
 	for (let id = 1, daysAgo = count + 1; id < count + 1; id++, daysAgo--) {

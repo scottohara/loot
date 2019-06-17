@@ -10,12 +10,12 @@ import {
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, {SinonStub} from "sinon";
+import sinon, { SinonStub } from "sinon";
 import $ from "jquery";
 import AccountIndexController from "accounts/controllers";
-import {AccountModelMock} from "mocks/accounts/types";
+import { AccountModelMock } from "mocks/accounts/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 
@@ -36,7 +36,7 @@ describe("AccountIndexController", (): void => {
 		accountModel = _accountModel_;
 		accountsWithBalances = _accountsWithBalances_;
 		$window.$ = $;
-		accountIndexController = controllerTest("AccountIndexController", {accounts: accountsWithBalances}) as AccountIndexController;
+		accountIndexController = controllerTest("AccountIndexController", { accounts: accountsWithBalances }) as AccountIndexController;
 	}));
 
 	it("should make the account list available to the view", (): Chai.Assertion => accountIndexController.accounts.should.equal(accountsWithBalances));
@@ -82,7 +82,7 @@ describe("AccountIndexController", (): void => {
 
 		describe("(add new)", (): void => {
 			beforeEach((): void => {
-				account = createAccount({id: 999, name: "new account"});
+				account = createAccount({ id: 999, name: "new account" });
 				accountIndexController.editAccount();
 			});
 

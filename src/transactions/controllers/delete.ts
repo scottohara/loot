@@ -1,5 +1,5 @@
-import {IModalInstanceService} from "angular-ui-bootstrap";
-import {Transaction} from "transactions/types";
+import { IModalInstanceService } from "angular-ui-bootstrap";
+import { Transaction } from "transactions/types";
 import TransactionModel from "transactions/models/transaction";
 
 export default class TransactionDeleteController {

@@ -1,5 +1,5 @@
-import {Accounts} from "accounts/types";
-import {Mock} from "mocks/types";
+import { Accounts } from "accounts/types";
+import { Mock } from "mocks/types";
 import createAccount from "mocks/accounts/factories";
 
 export default class AccountsWithBalancesMockProvider implements Mock<Accounts> {
@@ -7,10 +7,10 @@ export default class AccountsWithBalancesMockProvider implements Mock<Accounts> 
 	public constructor(private readonly accounts: Accounts = {
 		"Bank accounts": {
 			accounts: [
-				createAccount({id: 1, name: "aa", closing_balance: 30}),
-				createAccount({id: 2, name: "bb", closing_balance: 30}),
-				createAccount({id: 3, name: "cc", closing_balance: 30}),
-				createAccount({id: 4, name: "ba", closing_balance: 10})
+				createAccount({ id: 1, name: "aa", closing_balance: 30 }),
+				createAccount({ id: 2, name: "bb", closing_balance: 30 }),
+				createAccount({ id: 3, name: "cc", closing_balance: 30 }),
+				createAccount({ id: 4, name: "ba", closing_balance: 10 })
 			],
 			total: 100
 		},

@@ -1,9 +1,9 @@
-import {ControllerTestFactory} from "mocks/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 import PayeeDeleteController from "payees/controllers/delete";
-import {PayeeModelMock} from "mocks/payees/types";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { PayeeModelMock } from "mocks/payees/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("PayeeDeleteController", (): void => {

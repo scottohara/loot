@@ -1,5 +1,5 @@
-import {Mock} from "mocks/types";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
+import { Mock } from "mocks/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
 
 export default class AlertMockProvider implements Mock<OgModalAlert> {
 	// Mock alert object

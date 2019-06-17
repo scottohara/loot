@@ -11,11 +11,11 @@ import {
 	isEqual,
 	startOfDay
 } from "date-fns/esm";
-import {IModalService} from "angular-ui-bootstrap";
+import { IModalService } from "angular-ui-bootstrap";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import ScheduleDeleteView from "schedules/views/delete.html";
 import ScheduleEditView from "schedules/views/edit.html";
-import {ScheduledTransaction} from "schedules/types";
+import { ScheduledTransaction } from "schedules/types";
 import TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 
@@ -48,7 +48,7 @@ export default class ScheduleIndexController {
 				self.deleteSchedule(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, {id: self.schedules[index].id});
+				$state.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, { id: self.schedules[index].id });
 			},
 			focusRow(): void {}
 		};
@@ -59,7 +59,7 @@ export default class ScheduleIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({to: "root.schedules.schedule"}, (transition: angular.ui.IState): number => this.focusSchedule(Number(transition.params("to").id))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.schedules.schedule" }, (transition: angular.ui.IState): number => this.focusSchedule(Number(transition.params("to").id))));
 	}
 
 	// Shows/hides subtransactions

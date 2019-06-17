@@ -1,4 +1,4 @@
-import {ControllerTestFactory} from "mocks/types";
+import { ControllerTestFactory } from "mocks/types";
 import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
 import angular from "angular";
 

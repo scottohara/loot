@@ -6,7 +6,7 @@ import {
 	StoredAccountType
 } from "accounts/types";
 import AccountModel from "accounts/models/account";
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 import angular from "angular";
 
 export default class AccountEditController {
@@ -20,7 +20,7 @@ export default class AccountEditController {
 						private readonly filterFilter: angular.IFilterFilter,
 						private readonly limitToFilter: angular.IFilterLimitTo,
 						private readonly accountModel: AccountModel, account: Account) {
-		this.account = angular.extend({opening_balance: 0}, account);
+		this.account = angular.extend({ opening_balance: 0 }, account);
 		this.mode = account ? "Edit" : "Add";
 
 		// Capitalise the account type and status
@@ -50,7 +50,7 @@ export default class AccountEditController {
 
 	// List of accounts for the typeahead
 	public accounts(filter: string, limit: number): angular.IPromise<Account[]> {
-		return this.accountModel.all().then((accounts: Account[]): Account[] => this.limitToFilter(this.filterFilter(accounts, {name: filter, account_type: "asset"}), limit));
+		return this.accountModel.all().then((accounts: Account[]): Account[] => this.limitToFilter(this.filterFilter(accounts, { name: filter, account_type: "asset" }), limit));
 	}
 
 	// Save and close the modal

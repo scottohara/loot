@@ -62,7 +62,7 @@ export default class OgTableNavigableDirective {
 
 					// If we have somewhere to scroll, do it now
 					if (scrollNeeded) {
-						row[0].scrollIntoView({behavior: "smooth"});
+						row[0].scrollIntoView({ behavior: "smooth" });
 					}
 				};
 

@@ -1,4 +1,4 @@
-import {OgCacheEntry} from "og-components/og-lru-cache-factory/types";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
 import OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 import angular from "angular";
@@ -32,7 +32,7 @@ describe("ogLruCacheFactory", (): void => {
 
 			beforeEach((): void => {
 				// Populate the data with capacity + 1 items (to check that the oldest item is evicted)
-				data = [...Array(capacity + 1).keys()].reverse().map((id: number): OgCacheEntry => ({id, name: `item ${id}`}));
+				data = [...Array(capacity + 1).keys()].reverse().map((id: number): OgCacheEntry => ({ id, name: `item ${id}` }));
 				list = data.slice(0, capacity);
 
 				// Create the LruCache
@@ -42,21 +42,21 @@ describe("ogLruCacheFactory", (): void => {
 			it("should be populated with the initial set of items", (): Chai.Assertion => ogLruCache["items"].should.deep.equal(list));
 
 			describe("put", (): void => {
-				it("should leave the list unchanged if the item is already the current head", (): Chai.Assertion => ogLruCache.put({id: capacity, name: `item ${capacity}`}).should.deep.equal(list));
+				it("should leave the list unchanged if the item is already the current head", (): Chai.Assertion => ogLruCache.put({ id: capacity, name: `item ${capacity}` }).should.deep.equal(list));
 
 				const scenarios: {description: string; item: OgCacheEntry; currentIndex?: number;}[] = [
 					{
 						description: "move an existing item from the tail of the list to the head of the list",
-						item: {id: 1, name: "item 1"}
+						item: { id: 1, name: "item 1" }
 					},
 					{
 						description: "move an existing item to the head of the list",
-						item: {id: 2, name: "item 2"},
+						item: { id: 2, name: "item 2" },
 						currentIndex: 8
 					},
 					{
 						description: "add a new item to the list",
-						item: {id: 11, name: "item 11"}
+						item: { id: 11, name: "item 11" }
 					}
 				];
 
@@ -77,7 +77,7 @@ describe("ogLruCacheFactory", (): void => {
 				it("should add a new item to an empty list", (): void => {
 					ogLruCache["items"] = [];
 
-					const item: OgCacheEntry = {id: 11, name: "item 11"},
+					const item: OgCacheEntry = { id: 11, name: "item 11" },
 								newList: OgCacheEntry[] = ogLruCache.put(item);
 
 					list = [item];
@@ -94,7 +94,7 @@ describe("ogLruCacheFactory", (): void => {
 					it("should remove the only item from the list", (): void => {
 						id = 1;
 						ogLruCache["items"] = [
-							{id, name: `item ${id}`}
+							{ id, name: `item ${id}` }
 						];
 
 						ogLruCache.remove(id);

@@ -7,10 +7,10 @@ import {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityDeleteView from "securities/views/delete.html";
 import SecurityEditView from "securities/views/edit.html";
 import SecurityModel from "securities/models/security";
@@ -47,7 +47,7 @@ export default class SecurityIndexController {
 				self.deleteSecurity(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.security") ? "^" : ""}.security`, {id: self.securities[index].id});
+				$state.go(`${$state.includes("**.security") ? "^" : ""}.security`, { id: self.securities[index].id });
 			},
 			focusRow(): void {}
 		};
@@ -58,7 +58,7 @@ export default class SecurityIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({to: "root.securities.security"}, (transition: angular.ui.IState): number => this.focusSecurity(Number(transition.params("to").id))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.securities.security" }, (transition: angular.ui.IState): number => this.focusSecurity(Number(transition.params("to").id))));
 	}
 
 	public editSecurity(index?: number): void {

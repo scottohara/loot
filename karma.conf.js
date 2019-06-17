@@ -26,8 +26,8 @@ module.exports = config => {
 			dir: "coverage",
 			fixWebpackSourcePaths: true,
 			"report-config": {
-				html: {subdir: "frontend"},
-				lcovonly: {file: "frontend/lcov.info"}
+				html: { subdir: "frontend" },
+				lcovonly: { file: "frontend/lcov.info" }
 			}
 		},
 

@@ -36,7 +36,7 @@ describe("ogInputCurrency", (): void => {
 		});
 
 		it("should display the value formatted to a specified number of decimals if the model is a valid number", (): void => {
-			ogInputCurrency.compile({"og-input-currency": "3"});
+			ogInputCurrency.compile({ "og-input-currency": "3" });
 			expected = "$100,000.000";
 			ogInputCurrency.scope.model = 100000;
 		});

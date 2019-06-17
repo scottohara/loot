@@ -4,10 +4,10 @@ import {
 	AccountType
 } from "accounts/types";
 import AccountDeleteController from "accounts/controllers/delete";
-import {AccountModelMock} from "mocks/accounts/types";
-import {ControllerTestFactory} from "mocks/types";
+import { AccountModelMock } from "mocks/accounts/types";
+import { ControllerTestFactory } from "mocks/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {UibModalInstanceMock} from "mocks/node-modules/angular/types";
+import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AccountDeleteController", (): void => {

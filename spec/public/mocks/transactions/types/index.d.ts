@@ -1,4 +1,4 @@
-import {SinonStub} from "sinon";
+import { SinonStub } from "sinon";
 
 export interface TransactionModelMock {
 	all: SinonStub;

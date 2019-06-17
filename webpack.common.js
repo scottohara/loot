@@ -4,7 +4,7 @@ const path = require("path"),
 			CleanWebpackPlugin = require("clean-webpack-plugin"),
 			HtmlWebpackPlugin = require("html-webpack-plugin"),
 			CopyWebpackPlugin = require("copy-webpack-plugin"),
-			{GenerateSW} = require("workbox-webpack-plugin"),
+			{ GenerateSW } = require("workbox-webpack-plugin"),
 			packageJson = require("./package");
 
 // Default entry
@@ -124,7 +124,7 @@ const	entry = {
 			}),
 
 			// Creates index.html with the bundled resources
-			createIndexHtml = new HtmlWebpackPlugin({template: "./src/index.html"}),
+			createIndexHtml = new HtmlWebpackPlugin({ template: "./src/index.html" }),
 
 			// Copies static resources to the build directory
 			copyStaticAssets = new CopyWebpackPlugin([
@@ -193,7 +193,7 @@ const	entry = {
 			};
 
 function extractCss(hashFilename) {
-	return new MiniCssExtractPlugin({filename: hashFilename ? "[name]-[chunkhash:6].css" : "[name].css"});
+	return new MiniCssExtractPlugin({ filename: hashFilename ? "[name]-[chunkhash:6].css" : "[name].css" });
 }
 
 module.exports = {

@@ -1,8 +1,8 @@
 import $ from "jquery";
-import {LootRootScope} from "loot/types";
+import { LootRootScope } from "loot/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
-import {UrlService} from "@uirouter/angularjs";
+import { UrlService } from "@uirouter/angularjs";
 import angular from "angular";
 import sinon from "sinon";
 

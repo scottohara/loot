@@ -5,15 +5,15 @@ describe("categoryIndexView", () => {
 	beforeEach(() => {
 		expected = [];
 		for (let i = 1; i <= 10; i += 3) {
-			expected.push({direction: "inflow", categoryName: `Category ${i}`});
-			expected.push({direction: "inflow", categoryName: `Category ${i + 1}`, parent: `Category ${i}`, isSubcategory: true});
-			expected.push({direction: "inflow", categoryName: `Category ${i + 2}`, parent: `Category ${i}`, isSubcategory: true});
+			expected.push({ direction: "inflow", categoryName: `Category ${i}` });
+			expected.push({ direction: "inflow", categoryName: `Category ${i + 1}`, parent: `Category ${i}`, isSubcategory: true });
+			expected.push({ direction: "inflow", categoryName: `Category ${i + 2}`, parent: `Category ${i}`, isSubcategory: true });
 		}
 
 		for (let i = 13; i <= 19; i += 3) {
-			expected.push({direction: "outflow", categoryName: `Category ${i}`});
-			expected.push({direction: "outflow", categoryName: `Category ${i + 1}`, parent: `Category ${i}`, isSubcategory: true});
-			expected.push({direction: "outflow", categoryName: `Category ${i + 2}`, parent: `Category ${i}`, isSubcategory: true});
+			expected.push({ direction: "outflow", categoryName: `Category ${i}` });
+			expected.push({ direction: "outflow", categoryName: `Category ${i + 1}`, parent: `Category ${i}`, isSubcategory: true });
+			expected.push({ direction: "outflow", categoryName: `Category ${i + 2}`, parent: `Category ${i}`, isSubcategory: true });
 		}
 
 		expected = expected.sort((a, b) => {

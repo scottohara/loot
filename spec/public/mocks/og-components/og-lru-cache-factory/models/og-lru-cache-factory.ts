@@ -2,7 +2,7 @@ import {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
 } from "mocks/og-components/og-lru-cache-factory/types";
-import {Mock} from "mocks/types";
+import { Mock } from "mocks/types";
 import sinon from "sinon";
 
 export default class OgLruCacheFactoryMockProvider implements Mock<OgLruCacheFactoryMock> {
@@ -11,7 +11,7 @@ export default class OgLruCacheFactoryMockProvider implements Mock<OgLruCacheFac
 	// Mock LruCache object
 	public constructor() {
 		const ogLruCache: OgLruCacheMock = {
-			list: [{id: 1, name: "recent item"}],
+			list: [{ id: 1, name: "recent item" }],
 			put: sinon.stub().returns("updated list"),
 			remove: sinon.stub().returns("updated list")
 		};

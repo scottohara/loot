@@ -40,20 +40,20 @@ function createPartialTransaction(props: Partial<Transaction | SplitTransactionC
 function createPartialCashTransaction(props: Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild>): Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild> {
 	return createPartialTransaction({
 		amount: 0,
-		primary_account: createAccount({id: 1, name: "Account 1"}),
+		primary_account: createAccount({ id: 1, name: "Account 1" }),
 		direction: "inflow" as TransactionDirection,
 		...props
 	}) as Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild>;
 }
 
 function createPartialPayeeTransaction(props: Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild>): Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild> {
-	return createPartialCashTransaction({payee: createPayee({id: 1, name: "Payee 1"}), ...props});
+	return createPartialCashTransaction({ payee: createPayee({ id: 1, name: "Payee 1" }), ...props });
 }
 
 function createPartialSecurityTransaction(props: Partial<SecurityHoldingTransaction>): Partial<SecurityHoldingTransaction> {
 	return createPartialTransaction({
-		security: createSecurity({id: 1, name: "Security 1"}),
-		primary_account: createAccount({id: 1, name: "Account 1"}),
+		security: createSecurity({ id: 1, name: "Security 1" }),
+		primary_account: createAccount({ id: 1, name: "Account 1" }),
 		category: {
 			id: "AddShares",
 			name: "Add Shares"
@@ -66,8 +66,8 @@ function createPartialSecurityTransaction(props: Partial<SecurityHoldingTransact
 export function createBasicTransaction(props: Partial<BasicTransaction> = {}): BasicTransaction {
 	return createPartialPayeeTransaction({
 		transaction_type: "Basic" as TransactionType,
-		category: createCategory({id: 1, name: "Category 1"}),
-		subcategory: createCategory({id: 2, name: "Category 2", parent_id: 1}),
+		category: createCategory({ id: 1, name: "Category 1" }),
+		subcategory: createCategory({ id: 2, name: "Category 2", parent_id: 1 }),
 		...props
 	} as Partial<BasicTransaction>) as BasicTransaction;
 }
@@ -79,7 +79,7 @@ export function createTransferTransaction(props: Partial<TransferTransaction> = 
 			id: "TransferTo",
 			name: "Transfer To"
 		},
-		account: createAccount({id: 2, name: "Account 2"}),
+		account: createAccount({ id: 2, name: "Account 2" }),
 		related_status: "" as TransactionStatus,
 		...props
 	} as Partial<TransferTransaction>) as TransferTransaction;
@@ -107,7 +107,7 @@ export function createSubtransferTransaction(props: Partial<SubtransferTransacti
 			id: "TransferTo",
 			name: "Transfer To"
 		},
-		account: createAccount({id: 2, name: "Account 2"}),
+		account: createAccount({ id: 2, name: "Account 2" }),
 		related_status: "",
 		parent_id: null,
 		...props
@@ -117,8 +117,8 @@ export function createSubtransferTransaction(props: Partial<SubtransferTransacti
 export function createSubtransaction(props: Partial<Subtransaction> = {}): Subtransaction {
 	return createPartialTransaction({
 		transaction_type: "Sub" as SubtransactionType,
-		category: createCategory({id: 1, name: "Category 1"}),
-		subcategory: createCategory({id: 2, name: "Category 2", parent_id: 1}),
+		category: createCategory({ id: 1, name: "Category 1" }),
+		subcategory: createCategory({ id: 2, name: "Category 2", parent_id: 1 }),
 		parent_id: null,
 		...props
 	} as Partial<Subtransaction>) as Subtransaction;

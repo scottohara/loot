@@ -1,4 +1,4 @@
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 
 let id = 1;
 

@@ -2,7 +2,7 @@ import {
 	Transaction,
 	TransactionFlag
 } from "transactions/types";
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 import TransactionModel from "transactions/models/transaction";
 
 export default class TransactionFlagController {

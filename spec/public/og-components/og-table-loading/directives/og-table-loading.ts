@@ -12,7 +12,7 @@ describe("ogTableLoading", (): void => {
 		ogTableLoading = directiveTest;
 		ogTableLoading.configure("og-table-loading", "tr");
 		ogTableLoading.scope.model = false;
-		ogTableLoading.compile({"og-table-loading": "model"}, true);
+		ogTableLoading.compile({ "og-table-loading": "model" }, true);
 	}));
 
 	it("should be hidden", (): void => {

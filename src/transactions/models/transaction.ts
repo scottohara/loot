@@ -20,11 +20,11 @@ import {
 	startOfDay
 } from "date-fns/esm";
 import AccountModel from "accounts/models/account";
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
-import {Security} from "securities/types";
+import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import angular from "angular";
 

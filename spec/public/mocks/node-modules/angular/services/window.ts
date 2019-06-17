@@ -3,7 +3,7 @@ import {
 	QMock,
 	WindowMock
 } from "mocks/node-modules/angular/types";
-import {Mock} from "mocks/types";
+import { Mock } from "mocks/types";
 import QMockProvider from "mocks/node-modules/angular/services/q";
 import sinon from "sinon";
 
@@ -14,7 +14,7 @@ export default class WindowMockProvider implements Mock<WindowMock> {
 		const $q: QMock = $qMockProvider.$get(),
 					success: PromiseMockConfig<{scope: string;}> = {
 						args: "good-script",
-						response: {scope: "test scope"}
+						response: { scope: "test scope" }
 					},
 					error: PromiseMockConfig<string> = {
 						args: "bad-script",

@@ -41,7 +41,7 @@ describe("ogTableNavigable", (): void => {
 			editAction: sinon.stub(),
 			focusAction: sinon.stub()
 		};
-		ogTableNavigable.compile({"og-table-navigable": "model"});
+		ogTableNavigable.compile({ "og-table-navigable": "model" });
 		ogTableNavigable.scope.$digest();
 		isolateScope = ogTableNavigable["element"].isolateScope();
 	}));
@@ -111,7 +111,7 @@ describe("ogTableNavigable", (): void => {
 			top = 110;
 			row = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first();
 			sinon.stub(row[0], "scrollIntoView");
-			sinon.stub(row, "offset").callsFake((): {top: number;} => ({top}));
+			sinon.stub(row, "offset").callsFake((): {top: number;} => ({ top }));
 			sinon.stub(row, "height").returns(40);
 
 			mockJQueryInstance = {
@@ -126,13 +126,13 @@ describe("ogTableNavigable", (): void => {
 		it("should scroll the page up if the specified row is off the top of the screen", (): void => {
 			top = 50;
 			isolateScope.scrollToRow(row);
-			row[0].scrollIntoView.should.have.been.calledWith({behavior: "smooth"});
+			row[0].scrollIntoView.should.have.been.calledWith({ behavior: "smooth" });
 		});
 
 		it("should scroll the page down if the specified row is off the bottom of the screen", (): void => {
 			top = 350;
 			isolateScope.scrollToRow(row);
-			row[0].scrollIntoView.should.have.been.calledWith({behavior: "smooth"});
+			row[0].scrollIntoView.should.have.been.calledWith({ behavior: "smooth" });
 		});
 
 		it("should do nothing if the specified row is on screen", (): void => {
@@ -240,13 +240,13 @@ describe("ogTableNavigable", (): void => {
 		});
 
 		it("should do nothing if the event was triggered by a button click", (): void => {
-			event.target = {localName: "button"} as Element;
+			event.target = { localName: "button" } as Element;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
 			scope.model.selectAction.should.not.have.been.called;
 		});
 
 		it("should do nothing if the closest parent TR element to where the event occurred could not be determined", (): void => {
-			event.target = {localName: "td"} as Element;
+			event.target = { localName: "td" } as Element;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
 			scope.model.selectAction.should.not.have.been.called;
 		});
@@ -291,21 +291,21 @@ describe("ogTableNavigable", (): void => {
 
 	describe("keyHandler", (): void => {
 		const	TEST_MOVEMENT_KEYS: {code: number; name: string; amount: number;}[] = [
-						{code: 33, name: "page up", amount: -10},
-						{code: 34, name: "page down", amount: 10},
-						{code: 38, name: "arrow up", amount: -1},
-						{code: 40, name: "arrow down", amount: 1},
-						{code: 74, name: "J", amount: 1},
-						{code: 75, name: "K", amount: -1}
+						{ code: 33, name: "page up", amount: -10 },
+						{ code: 34, name: "page down", amount: 10 },
+						{ code: 38, name: "arrow up", amount: -1 },
+						{ code: 40, name: "arrow down", amount: 1 },
+						{ code: 74, name: "J", amount: 1 },
+						{ code: 75, name: "K", amount: -1 }
 					],
 					TEST_ACTION_KEYS: {code: number; ctrl?: boolean; name: string; handler: string;}[] = [
-						{code: 8, name: "Backspace", handler: "deleteAction"},
-						{code: 13, name: "Enter", handler: "selectAction"},
-						{code: 27, name: "Esc", handler: "cancelAction"},
-						{code: 45, name: "Insert", handler: "insertAction"},
-						{code: 46, name: "Delete", handler: "deleteAction"},
-						{code: 69, ctrl: true, name: "CTRL+E", handler: "editAction"},
-						{code: 78, ctrl: true, name: "CTRL+N", handler: "insertAction"}
+						{ code: 8, name: "Backspace", handler: "deleteAction" },
+						{ code: 13, name: "Enter", handler: "selectAction" },
+						{ code: 27, name: "Esc", handler: "cancelAction" },
+						{ code: 45, name: "Insert", handler: "insertAction" },
+						{ code: 46, name: "Delete", handler: "deleteAction" },
+						{ code: 69, ctrl: true, name: "CTRL+E", handler: "editAction" },
+						{ code: 78, ctrl: true, name: "CTRL+N", handler: "insertAction" }
 					];
 
 		let event: JQueryKeyEventObjectMock;
@@ -339,7 +339,7 @@ describe("ogTableNavigable", (): void => {
 				event.keyCode = key.code;
 				event.ctrlKey = key.ctrl;
 				scope.model[key.handler] = null;
-				ogTableNavigable.compile({"og-table-navigable": "model"});
+				ogTableNavigable.compile({ "og-table-navigable": "model" });
 				ogTableNavigable.scope.$digest();
 				isolateScope = ogTableNavigable["element"].isolateScope();
 				sinon.stub(isolateScope, "jumpToRow");

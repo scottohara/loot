@@ -7,11 +7,11 @@ import {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryDeleteView from "categories/views/delete.html";
 import CategoryEditView from "categories/views/edit.html";
 import CategoryModel from "categories/models/category";
-import {OgModalAlert} from "og-components/og-modal-alert/types";
+import { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
@@ -30,7 +30,7 @@ export default class CategoryIndexController {
 		const self: this = this;
 
 		this.categories = angular.copy(categories).reduce((flattened: Category[], category: Category): Category[] => {
-			const {children}: {children?: Category[];} = category;
+			const { children }: {children?: Category[];} = category;
 
 			delete category.children;
 
@@ -50,7 +50,7 @@ export default class CategoryIndexController {
 				self.deleteCategory(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.category") ? "^" : ""}.category`, {id: self.categories[index].id});
+				$state.go(`${$state.includes("**.category") ? "^" : ""}.category`, { id: self.categories[index].id });
 			}
 		};
 
@@ -60,7 +60,7 @@ export default class CategoryIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({to: "root.categories.category"}, (transition: angular.ui.IState): number => this.focusCategory(Number(transition.params("to").id))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.categories.category" }, (transition: angular.ui.IState): number => this.focusCategory(Number(transition.params("to").id))));
 	}
 
 	public editCategory(index?: number): void {

@@ -1,4 +1,4 @@
-import {Entity} from "loot/types";
+import { Entity } from "loot/types";
 
 export type StoredAccountType =	"asset" | "bank" | "cash" | "credit" | "investment" | "liability" | "loan";
 

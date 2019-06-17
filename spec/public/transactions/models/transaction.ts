@@ -19,14 +19,14 @@ import {
 	parse,
 	startOfDay
 } from "date-fns/esm";
-import {AccountModelMock} from "mocks/accounts/types";
-import {CategoryModelMock} from "mocks/categories/types";
+import { AccountModelMock } from "mocks/accounts/types";
+import { CategoryModelMock } from "mocks/categories/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import {Payee} from "payees/types";
+import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
-import {SecurityModelMock} from "mocks/securities/types";
+import { SecurityModelMock } from "mocks/securities/types";
 import TransactionModel from "transactions/models/transaction";
-import {WindowMock} from "mocks/node-modules/angular/types";
+import { WindowMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import createPayee from "mocks/payees/factories";
@@ -80,7 +80,7 @@ describe("transactionModel", (): void => {
 	describe("parse", (): void => {
 		let transaction: Transaction;
 
-		beforeEach((): Transaction => (transaction = transactionModel["parse"](createBasicTransaction({transaction_date: format(new Date(), "YYYY-MM-DD HH:mm:ss")}))));
+		beforeEach((): Transaction => (transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: format(new Date(), "YYYY-MM-DD HH:mm:ss") }))));
 
 		it("should convert the transaction date from a string to a date", (): void => {
 			(transaction.transaction_date as Date).should.be.a("date");
@@ -91,7 +91,7 @@ describe("transactionModel", (): void => {
 	describe("stringify", (): void => {
 		let transaction: Transaction;
 
-		beforeEach((): Transaction => (transaction = transactionModel["stringify"](createBasicTransaction({transaction_date: startOfDay(new Date())}))));
+		beforeEach((): Transaction => (transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: startOfDay(new Date()) }))));
 
 		it("should convert the transaction date from a date to a string", (): void => {
 			(transaction.transaction_date as string).should.be.a("string");
@@ -196,7 +196,7 @@ describe("transactionModel", (): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
 			$httpBackend.whenPOST(/transactions$/u).respond(200, expectedResponse);
 			$httpBackend.whenPATCH(/transactions\/1$/u).respond(200, expectedResponse);
-			transaction = createBasicTransaction({id: 1});
+			transaction = createBasicTransaction({ id: 1 });
 		});
 
 		it("should invalidate the associated $http caches", (): void => {
@@ -251,7 +251,7 @@ describe("transactionModel", (): void => {
 		beforeEach((): void => {
 			transactionModel["invalidateCaches"] = sinon.stub();
 			$httpBackend.whenDELETE(/transactions\/1$/u).respond(200);
-			transaction = createBasicTransaction({id: 1});
+			transaction = createBasicTransaction({ id: 1 });
 		});
 
 		it("should invalidate the associated $http caches", (): void => {
@@ -327,7 +327,7 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should remove the item from the $http cache when the item has an id", (): void => {
-			transactionModel["invalidateCache"](payeeModel, createPayee({id: 1}));
+			transactionModel["invalidateCache"](payeeModel, createPayee({ id: 1 }));
 			payeeModel.flush.should.have.been.calledWith(1);
 		});
 	});
@@ -353,8 +353,8 @@ describe("transactionModel", (): void => {
 
 	describe("flag", (): void => {
 		it("should dispatch a PUT request to /transactions/{id}/flag", (): void => {
-			$httpBackend.expectPUT(/transactions\/1\/flag/u, {memo: "flag"}).respond(200);
-			transactionModel.flag(createBasicTransaction({id: 1, flag: "flag"}));
+			$httpBackend.expectPUT(/transactions\/1\/flag/u, { memo: "flag" }).respond(200);
+			transactionModel.flag(createBasicTransaction({ id: 1, flag: "flag" }));
 			$httpBackend.flush();
 		});
 	});

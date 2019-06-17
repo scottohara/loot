@@ -1,4 +1,4 @@
-import {OgInputCurrencyScope} from "og-components/og-input-currency/types";
+import { OgInputCurrencyScope } from "og-components/og-input-currency/types";
 
 export default class OgInputCurrencyDirective {
 	public constructor(numberFilter: angular.IFilterNumber) {

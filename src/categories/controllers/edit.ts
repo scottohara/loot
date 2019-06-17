@@ -1,6 +1,6 @@
-import {Category} from "categories/types";
+import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
-import {IModalInstanceService} from "angular-ui-bootstrap";
+import { IModalInstanceService } from "angular-ui-bootstrap";
 import angular from "angular";
 
 export default class CategoryEditController {
@@ -20,7 +20,7 @@ export default class CategoryEditController {
 
 	// List of parent categories for the typeahead
 	public parentCategories(filter: string, limit: number): angular.IPromise<Category[]> {
-		return this.categoryModel.all().then((categories: Category[]): Category[] => this.limitToFilter(this.filterFilter(categories, {name: filter}), limit));
+		return this.categoryModel.all().then((categories: Category[]): Category[] => this.limitToFilter(this.filterFilter(categories, { name: filter }), limit));
 	}
 
 	// Save and close the modal

@@ -1,5 +1,5 @@
-import {Security} from "securities/types";
-import {SinonStub} from "sinon";
+import { Security } from "securities/types";
+import { SinonStub } from "sinon";
 
 export interface SecurityModelMock {
 	recent: string;

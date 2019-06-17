@@ -10,7 +10,7 @@ import {
 } from "date-fns/esm";
 import CategoryModel from "categories/models/category";
 import PayeeModel from "payees/models/payee";
-import {ScheduledTransaction} from "schedules/types";
+import { ScheduledTransaction } from "schedules/types";
 import SecurityModel from "securities/models/security";
 import angular from "angular";
 

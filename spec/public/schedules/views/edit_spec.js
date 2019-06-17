@@ -1,5 +1,5 @@
 describe("scheduleEditView", () => {
-	const {addDays, format, startOfDay} = require("date-fns");
+	const { addDays, format, startOfDay } = require("date-fns");
 	let	scheduleIndexView,
 			scheduleEditView,
 			expected,

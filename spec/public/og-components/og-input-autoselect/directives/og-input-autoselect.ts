@@ -1,6 +1,6 @@
-import sinon, {SinonStub} from "sinon";
+import sinon, { SinonStub } from "sinon";
 import DirectiveTest from "mocks/loot/directivetest";
-import {OgInputAutoSelectScope} from "og-components/og-input-autoselect/types";
+import { OgInputAutoSelectScope } from "og-components/og-input-autoselect/types";
 import angular from "angular";
 
 describe("ogInputAutoselect", (): void => {
