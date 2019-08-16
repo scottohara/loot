@@ -20,23 +20,23 @@ end
 gem 'rails_12factor', group: :production
 
 # For JSON serialisation
-gem 'active_model_serializers'
+gem 'active_model_serializers', '>= 0.10.9'
 
 group :development, :test do
 	# Cleans database on each test run
 	gem 'database_cleaner'
 
 	# Test factories
-	gem 'factory_bot_rails'
+	gem 'factory_bot_rails', '>= 5.0.2'
 
 	# BDD testing framework
-	gem 'rspec-rails'
+	gem 'rspec-rails', '>= 3.8.2'
 
 	# Code coverage
 	gem 'simplecov'
 
 	# Required by RSpec in Rails >= 5 for 'assigns'
-	gem 'rails-controller-testing'
+	gem 'rails-controller-testing', '>= 1.0.4'
 
 	# Code style checker
 	gem 'rubocop', require: false
