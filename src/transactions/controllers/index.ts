@@ -36,6 +36,7 @@ import { Category } from "categories/types";
 import { IModalService } from "angular-ui-bootstrap";
 import { OgModalConfirm } from "og-components/og-modal-confirm/types";
 import OgModalConfirmView from "og-components/og-modal-confirm/views/confirm.html";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
 import { Payee } from "payees/types";
@@ -81,14 +82,19 @@ export default class TransactionIndexController {
 
 	private closingBalance = 0;
 
-	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
+	private readonly showError: (message?: string) => void;
+
+	public constructor($scope: angular.IScope,
+						$transitions: angular.ui.IStateParamsService,
 						private readonly $uibModal: IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $window: angular.IWindowService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly transactionModel: TransactionModel,
 						private readonly accountModel: AccountModel,
-						private readonly ogTableNavigableService: OgTableNavigableService, ogViewScrollService: OgViewScrollService,
+						private readonly ogTableNavigableService: OgTableNavigableService,
+						ogViewScrollService: OgViewScrollService,
+						ogModalErrorService: OgModalErrorService,
 						private readonly contextModel: EntityModel,
 						public readonly context: Entity | string,
 						public readonly transactionBatch: TransactionBatch) {
@@ -124,10 +130,12 @@ export default class TransactionIndexController {
 				self.deleteTransaction(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.transaction") ? "^" : ""}.transaction`, { transactionId: self.transactions[index].id });
+				$state.go(`${$state.includes("**.transaction") ? "^" : ""}.transaction`, { transactionId: self.transactions[index].id }).catch(self.showError);
 			},
 			focusRow(): void {}
 		};
+
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// Process the initial batch of transactions to display
 		this.processTransactions(transactionBatch, null, Number(this.$state.params.transactionId));
@@ -136,7 +144,7 @@ export default class TransactionIndexController {
 		$scope.$on("$destroy", $transitions.onSuccess({ to: "**.transactions.transaction" }, (transition: angular.ui.IState): void => this.transitionSuccessHandler(Number(transition.params("to").transactionId))));
 
 		// Auto scroll to the bottom
-		$timeout((): void => ogViewScrollService.scrollTo("bottom"));
+		$timeout((): void => ogViewScrollService.scrollTo("bottom")).catch(this.showError);
 	}
 
 	// Fetch a batch of transactions
@@ -170,7 +178,7 @@ export default class TransactionIndexController {
 
 			// Hide spinner
 			this.loading[direction] = false;
-		});
+		}).catch(this.showError);
 	}
 
 	// Toggles the show all details flag
@@ -203,7 +211,7 @@ export default class TransactionIndexController {
 			// Refresh the transaction list
 			this.transactions = [];
 			this.getTransactions("prev");
-		});
+		}).catch(this.showError);
 	}
 
 	// Cancels the reconciliation process
@@ -227,22 +235,27 @@ export default class TransactionIndexController {
 				resolve: {
 					account: (): Entity => this.context as Entity
 				}
-			}).result.then((closingBalance: number): void => {
-				// Make the closing balance available on the scope
-				this.closingBalance = closingBalance;
+			}).result
+				.then((closingBalance: number): void => {
+					// Make the closing balance available on the scope
+					this.closingBalance = closingBalance;
 
-				// Refresh the list with only unreconciled transactions
-				this.toggleUnreconciledOnly(true);
+					// Refresh the list with only unreconciled transactions
+					this.toggleUnreconciledOnly(true);
 
-				// Switch to reconcile mode
-				this.reconciling = true;
-			}).finally((): true => (this.ogTableNavigableService.enabled = true));
+					// Switch to reconcile mode
+					this.reconciling = true;
+				})
+				.finally((): true => (this.ogTableNavigableService.enabled = true))
+				.catch(this.showError);
 		}
 	}
 
 	// Toggles a transaction as cleared
 	public toggleCleared(transaction: Transaction): void {
-		this.transactionModel.updateStatus(this.contextModel.path((this.context as Entity).id), Number(transaction.id), transaction.status).then((): void => this.updateReconciledTotals());
+		this.transactionModel.updateStatus(this.contextModel.path((this.context as Entity).id), Number(transaction.id), transaction.status)
+			.then((): void => this.updateReconciledTotals())
+			.catch(this.showError);
 	}
 
 	// Shows/hides subtransactions
@@ -264,7 +277,7 @@ export default class TransactionIndexController {
 
 				// Hide the loading indicator
 				transaction.loadingSubtransactions = false;
-			});
+			}).catch(this.showError);
 		}
 
 		$event.cancelBubble = true;
@@ -285,7 +298,10 @@ export default class TransactionIndexController {
 			resolve: {
 				transaction: (): Transaction => this.transactions[index]
 			}
-		}).result.then((transaction: Transaction): Transaction => (this.transactions[index] = transaction)).finally((): true => (this.ogTableNavigableService.enabled = true));
+		}).result
+			.then((transaction: Transaction): Transaction => (this.transactions[index] = transaction))
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	// Switch to the other side of a transaction
@@ -405,41 +421,44 @@ export default class TransactionIndexController {
 					}
 				}
 			}
-		}).result.then((transaction: Transaction): void => {
-			// If the context has changed, remove the transaction from the array
-			if (this.contextChanged(transaction)) {
-				this.removeTransaction(Number(index));
-			} else {
-				// Update the closing balance
-				this.updateClosingBalance(this.transactions[Number(index)], transaction);
-
-				if (!isAfter(transaction.transaction_date as Date, this.firstTransactionDate)) {
-					// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
-					this.getTransactions("next", subDays(transaction.transaction_date as Date, 1), Number(transaction.id));
-				} else if (!isBefore(transaction.transaction_date as Date, this.lastTransactionDate) && !this.atEnd) {
-					// Transaction date is later than the latest fetched transaction, refresh from the new date
-					this.getTransactions("prev", addDays(transaction.transaction_date as Date, 1), Number(transaction.id));
+		}).result
+			.then((transaction: Transaction): void => {
+				// If the context has changed, remove the transaction from the array
+				if (this.contextChanged(transaction)) {
+					this.removeTransaction(Number(index));
 				} else {
-					// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
-					if (isNaN(Number(index))) {
-						// Add new transaction to the end of the array
-						this.transactions.push(transaction);
+					// Update the closing balance
+					this.updateClosingBalance(this.transactions[Number(index)], transaction);
+
+					if (!isAfter(transaction.transaction_date as Date, this.firstTransactionDate)) {
+						// Transaction date is earlier than the earliest fetched transaction, refresh from the new date
+						this.getTransactions("next", subDays(transaction.transaction_date as Date, 1), Number(transaction.id));
+					} else if (!isBefore(transaction.transaction_date as Date, this.lastTransactionDate) && !this.atEnd) {
+						// Transaction date is later than the latest fetched transaction, refresh from the new date
+						this.getTransactions("prev", addDays(transaction.transaction_date as Date, 1), Number(transaction.id));
 					} else {
-						// Update the existing transaction in the array
-						this.transactions[Number(index)] = transaction;
+						// Transaction date is within the boundaries of the fetched range (or we've fetched to the end)
+						if (isNaN(Number(index))) {
+							// Add new transaction to the end of the array
+							this.transactions.push(transaction);
+						} else {
+							// Update the existing transaction in the array
+							this.transactions[Number(index)] = transaction;
+						}
+
+						// Resort the array
+						this.transactions.sort(byTransactionDateAndId);
+
+						// Recalculate the running balances
+						this.updateRunningBalances();
+
+						// Refocus the transaction
+						this.focusTransaction(Number(transaction.id));
 					}
-
-					// Resort the array
-					this.transactions.sort(byTransactionDateAndId);
-
-					// Recalculate the running balances
-					this.updateRunningBalances();
-
-					// Refocus the transaction
-					this.focusTransaction(Number(transaction.id));
 				}
-			}
-		}).finally((): true => (this.ogTableNavigableService.enabled = true));
+			})
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	private contextChanged(transaction: Transaction): boolean {
@@ -489,7 +508,10 @@ export default class TransactionIndexController {
 			resolve: {
 				transaction: (): Transaction => this.transactions[index]
 			}
-		}).result.then((): void => this.removeTransaction(index)).finally((): true => (this.ogTableNavigableService.enabled = true));
+		}).result
+			.then((): void => this.removeTransaction(index))
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	// Removes a transaction from the list
@@ -502,7 +524,7 @@ export default class TransactionIndexController {
 
 		// If the transaction was focused, transition to the parent state
 		if (this.$state.includes("**.transaction")) {
-			this.$state.go("^");
+			this.$state.go("^").catch(this.showError);
 		}
 	}
 
@@ -570,14 +592,17 @@ export default class TransactionIndexController {
 					message
 				})
 			}
-		}).result.then((): void => {
-			// Switch to the other account
-			if ((transaction as TransferrableTransaction).account && ((transaction as TransferrableTransaction).account as Account).id) {
-				this.switchAccount(null, transaction as TransferrableTransaction);
-			} else {
-				this.switchPrimaryAccount(null, transaction as Transaction);
-			}
-		}).finally((): true => (this.ogTableNavigableService.enabled = true));
+		}).result
+			.then((): void => {
+				// Switch to the other account
+				if ((transaction as TransferrableTransaction).account && ((transaction as TransferrableTransaction).account as Account).id) {
+					this.switchAccount(null, transaction as TransferrableTransaction);
+				} else {
+					this.switchPrimaryAccount(null, transaction as Transaction);
+				}
+			})
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	// Processes a batch of transactions
@@ -635,7 +660,7 @@ export default class TransactionIndexController {
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay);
+			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
 		}
 
 		return targetIndex;
@@ -676,7 +701,7 @@ export default class TransactionIndexController {
 		this.$state.go(`root.${state}.transactions.transaction`, {
 			id,
 			transactionId: (transaction as SplitTransactionChild).parent_id || transaction.id
-		});
+		}).catch(this.showError);
 
 		if ($event) {
 			$event.stopPropagation();
@@ -698,30 +723,32 @@ export default class TransactionIndexController {
 			// Transaction was not found in the current set
 
 			// Get the transaction details from the server
-			this.transactionModel.find(transactionId).then((transaction: Transaction): void => {
-				let	fromDate: Date = transaction.transaction_date as Date,
-						direction: TransactionFetchDirection = "next";
+			this.transactionModel.find(transactionId)
+				.then((transaction: Transaction): void => {
+					let	fromDate: Date = transaction.transaction_date as Date,
+							direction: TransactionFetchDirection = "next";
 
-				if (!isAfter(transaction.transaction_date as Date, this.firstTransactionDate)) {
-					// Transaction date is earlier than the earliest fetched transaction
-					fromDate = subDays(transaction.transaction_date as Date, 1);
-					direction = "next";
-				} else if (!isBefore(transaction.transaction_date as Date, this.lastTransactionDate) && !this.atEnd) {
-					// Transaction date is later than the latest fetched transaction
-					fromDate = addDays(transaction.transaction_date as Date, 1);
-					direction = "prev";
-				}
+					if (!isAfter(transaction.transaction_date as Date, this.firstTransactionDate)) {
+						// Transaction date is earlier than the earliest fetched transaction
+						fromDate = subDays(transaction.transaction_date as Date, 1);
+						direction = "next";
+					} else if (!isBefore(transaction.transaction_date as Date, this.lastTransactionDate) && !this.atEnd) {
+						// Transaction date is later than the latest fetched transaction
+						fromDate = addDays(transaction.transaction_date as Date, 1);
+						direction = "prev";
+					}
 
-				if (this.unreconciledOnly) {
-					// If we're not already showing reconciled transactions, toggle the setting
-					this.toggleUnreconciledOnly(false, direction, fromDate, transactionId);
-				} else {
-					// Otherwise just get refresh the transactions from the new date
-					this.getTransactions(direction, fromDate, transactionId);
-				}
-			});
+					if (this.unreconciledOnly) {
+						// If we're not already showing reconciled transactions, toggle the setting
+						this.toggleUnreconciledOnly(false, direction, fromDate, transactionId);
+					} else {
+						// Otherwise just get refresh the transactions from the new date
+						this.getTransactions(direction, fromDate, transactionId);
+					}
+				})
+				.catch(this.showError);
 		}
 	}
 }
 
-TransactionIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "contextModel", "context", "transactionBatch"];
+TransactionIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$window", "$state", "transactionModel", "accountModel", "ogTableNavigableService", "ogViewScrollService", "ogModalErrorService", "contextModel", "context", "transactionBatch"];

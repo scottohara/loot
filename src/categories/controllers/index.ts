@@ -13,6 +13,7 @@ import CategoryEditView from "categories/views/edit.html";
 import CategoryModel from "categories/models/category";
 import { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 
@@ -21,12 +22,17 @@ export default class CategoryIndexController {
 
 	public readonly tableActions: OgTableActions;
 
-	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
+	private readonly showError: (message?: string) => void;
+
+	public constructor($scope: angular.IScope,
+						$transitions: angular.ui.IStateParamsService,
 						private readonly $uibModal: IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly categoryModel: CategoryModel,
-						private readonly ogTableNavigableService: OgTableNavigableService, categories: Category[]) {
+						private readonly ogTableNavigableService: OgTableNavigableService,
+						ogModalErrorService: OgModalErrorService,
+						categories: Category[]) {
 		const self: this = this;
 
 		this.categories = angular.copy(categories).reduce((flattened: Category[], category: Category): Category[] => {
@@ -36,9 +42,10 @@ export default class CategoryIndexController {
 
 			return flattened.concat(category, children || []);
 		}, []);
+
 		this.tableActions = {
 			selectAction(): void {
-				$state.go(".transactions");
+				$state.go(".transactions").catch(self.showError);
 			},
 			editAction(index: number): void {
 				self.editCategory(index);
@@ -50,9 +57,11 @@ export default class CategoryIndexController {
 				self.deleteCategory(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.category") ? "^" : ""}.category`, { id: self.categories[index].id });
+				$state.go(`${$state.includes("**.category") ? "^" : ""}.category`, { id: self.categories[index].id }).catch(self.showError);
 			}
 		};
+
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a category id, focus the specified row
 		if (Number($state.params.id)) {
@@ -103,56 +112,59 @@ export default class CategoryIndexController {
 					return category;
 				}
 			}
-		}).result.then((category: Category): void => {
-			let parentIndex: number;
+		}).result
+			.then((category: Category): void => {
+				let parentIndex: number;
 
-			if (isNaN(Number(index))) {
-				// Add new category to the end of the array
-				this.categories.push(category);
+				if (isNaN(Number(index))) {
+					// Add new category to the end of the array
+					this.categories.push(category);
 
-				// Add the category to the LRU cache
-				this.categoryModel.addRecent(category);
+					// Add the category to the LRU cache
+					this.categoryModel.addRecent(category);
 
-				// If the new category has a parent, increment the parent's children count
-				if (!isNaN(Number(category.parent_id))) {
-					// Find the parent category by it's id
-					parentIndex = this.categoryIndexById(category.parent_id);
-
-					// If found, increment the number of children
-					if (!isNaN(parentIndex)) {
-						this.categories[parentIndex].num_children++;
-					}
-				}
-			} else {
-				// If the edited category parent has changed, increment/decrement the parent(s) children count
-				if (category.parent_id !== this.categories[Number(index)].parent_id) {
-					// Decrement the original parent (if required)
-					if (!isNaN(Number(this.categories[Number(index)].parent_id))) {
-						parentIndex = this.categoryIndexById(this.categories[Number(index)].parent_id);
-						if (!isNaN(parentIndex)) {
-							this.categories[parentIndex].num_children--;
-						}
-					}
-
-					// Increment the new parent (if required)
+					// If the new category has a parent, increment the parent's children count
 					if (!isNaN(Number(category.parent_id))) {
+						// Find the parent category by it's id
 						parentIndex = this.categoryIndexById(category.parent_id);
+
+						// If found, increment the number of children
 						if (!isNaN(parentIndex)) {
-							this.categories[parentIndex].num_children++;
+							(this.categories[parentIndex].num_children as number)++;
 						}
 					}
+				} else {
+					// If the edited category parent has changed, increment/decrement the parent(s) children count
+					if (category.parent_id !== this.categories[Number(index)].parent_id) {
+						// Decrement the original parent (if required)
+						if (!isNaN(Number(this.categories[Number(index)].parent_id))) {
+							parentIndex = this.categoryIndexById(this.categories[Number(index)].parent_id);
+							if (!isNaN(parentIndex)) {
+								(this.categories[parentIndex].num_children as number)--;
+							}
+						}
+
+						// Increment the new parent (if required)
+						if (!isNaN(Number(category.parent_id))) {
+							parentIndex = this.categoryIndexById(category.parent_id);
+							if (!isNaN(parentIndex)) {
+								(this.categories[parentIndex].num_children as number)++;
+							}
+						}
+					}
+
+					// Update the existing category in the array
+					this.categories[Number(index)] = category;
 				}
 
-				// Update the existing category in the array
-				this.categories[Number(index)] = category;
-			}
+				// Resort the array
+				this.categories.sort(byDirectionAndName);
 
-			// Resort the array
-			this.categories.sort(byDirectionAndName);
-
-			// Refocus the category
-			this.focusCategory(category.id);
-		}).finally((): true => (this.ogTableNavigableService.enabled = true));
+				// Refocus the category
+				this.focusCategory(category.id);
+			})
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	public deleteCategory(index: number): void {
@@ -192,29 +204,34 @@ export default class CategoryIndexController {
 			}
 
 			// Show the modal
-			this.$uibModal.open(modalOptions).result.then((): void => {
-				// If the deleted category has a parent, decrement the parent's children count
-				if (!isNaN(Number(this.categories[index].parent_id))) {
-					// Find the parent category by it's id
-					const parentIndex = this.categoryIndexById(this.categories[index].parent_id);
+			this.$uibModal.open(modalOptions).result
+				.then((): void => {
+					// If the deleted category has a parent, decrement the parent's children count
+					if (!isNaN(Number(this.categories[index].parent_id))) {
+						// Find the parent category by it's id
+						const parentIndex = this.categoryIndexById(this.categories[index].parent_id);
 
-					// If found, decrement the number of children
-					if (!isNaN(parentIndex)) {
-						this.categories[parentIndex].num_children--;
+						// If found, decrement the number of children
+						if (!isNaN(parentIndex)) {
+							(this.categories[parentIndex].num_children as number)--;
+						}
 					}
-				}
 
-				// Remove the category (and any children) from the array
-				this.categories.splice(index, 1 + (this.categories[index].num_children || 0));
+					// Remove the category (and any children) from the array
+					this.categories.splice(index, 1 + (undefined === this.categories[index].num_children ? 0 : Number(this.categories[index].num_children)));
 
-				// Go back to the parent state
-				this.$state.go("root.categories");
-			}).finally((): true => (this.ogTableNavigableService.enabled = true));
-		});
+					// Go back to the parent state
+					this.$state.go("root.categories").catch(this.showError);
+				})
+				.finally((): true => (this.ogTableNavigableService.enabled = true))
+				.catch(this.showError);
+		}).catch(this.showError);
 	}
 
 	public toggleFavourite(index: number): void {
-		this.categoryModel.toggleFavourite(this.categories[index]).then((favourite: boolean): boolean => (this.categories[index].favourite = favourite));
+		this.categoryModel.toggleFavourite(this.categories[index])
+			.then((favourite: boolean): boolean => (this.categories[index].favourite = favourite))
+			.catch(this.showError);
 	}
 
 	// Finds a specific category and focusses that row in the table
@@ -225,7 +242,7 @@ export default class CategoryIndexController {
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay);
+			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
 		}
 
 		return targetIndex;
@@ -245,4 +262,4 @@ export default class CategoryIndexController {
 	}
 }
 
-CategoryIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "categories"];
+CategoryIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "ogModalErrorService", "categories"];

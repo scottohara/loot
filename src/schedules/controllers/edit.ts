@@ -36,6 +36,7 @@ import {
 import AccountModel from "accounts/models/account";
 import CategoryModel from "categories/models/category";
 import { IModalInstanceService } from "angular-ui-bootstrap";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 import ScheduleModel from "schedules/models/schedule";
@@ -61,6 +62,8 @@ export default class ScheduleEditController {
 
 	private readonly scheduleFrequencies: ScheduleFrequency[] = ["Weekly", "Fortnightly", "Monthly", "Bimonthly", "Quarterly", "Yearly"];
 
+	private readonly showError: (message?: string) => void;
+
 	public constructor($scope: angular.IScope,
 						private readonly $uibModalInstance: IModalInstanceService,
 						private readonly $timeout: angular.ITimeoutService,
@@ -72,7 +75,10 @@ export default class ScheduleEditController {
 						private readonly categoryModel: CategoryModel,
 						private readonly accountModel: AccountModel,
 						private readonly transactionModel: TransactionModel,
-						private readonly scheduleModel: ScheduleModel, schedule: ScheduledTransaction) {
+						private readonly scheduleModel: ScheduleModel,
+						ogModalErrorService: OgModalErrorService,
+						schedule: ScheduledTransaction) {
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 		this.transaction = angular.extend({ transaction_type: "Basic", next_due_date: startOfDay(new Date()) }, schedule);
 
 		// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
@@ -96,7 +102,7 @@ export default class ScheduleEditController {
 		}
 
 		// Prefetch the payees list so that the cache is populated
-		payeeModel.all();
+		payeeModel.all().catch(this.showError);
 
 		// Watch the subtransactions array and recalculate the total allocated
 		$scope.$watch((): SplitTransactionChild[] => (this.transaction as SplitTransaction).subtransactions, (newValue: SplitTransactionChild[], oldValue: SplitTransactionChild[]): void => {
@@ -186,7 +192,8 @@ export default class ScheduleEditController {
 			this.payeeModel.findLastTransaction(((this.transaction as PayeeCashTransaction).payee as Payee).id, this.transaction.primary_account.account_type as StoredAccountType)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
-				.then((): false => (this.loadingLastTransaction = false));
+				.then((): false => (this.loadingLastTransaction = false))
+				.catch(this.showError);
 		}
 	}
 
@@ -201,7 +208,8 @@ export default class ScheduleEditController {
 			this.securityModel.findLastTransaction(((this.transaction as SecurityTransaction).security as Security).id, this.transaction.primary_account.account_type as StoredAccountType)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
-				.then((): false => (this.loadingLastTransaction = false));
+				.then((): false => (this.loadingLastTransaction = false))
+				.catch(this.showError);
 		}
 	}
 
@@ -537,7 +545,7 @@ export default class ScheduleEditController {
 		// Depending on which field has focus, re-trigger the focus event handler to format/select the new value
 		angular.forEach(angular.element("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo"), (field: Element): void => {
 			if (field === document.activeElement) {
-				this.$timeout((): void => angular.element(field).triggerHandler("focus"));
+				this.$timeout((): void => angular.element(field).triggerHandler("focus")).catch(this.showError);
 			}
 		});
 	}
@@ -596,4 +604,4 @@ export default class ScheduleEditController {
 	}
 }
 
-ScheduleEditController.$inject = ["$scope", "$uibModalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"];
+ScheduleEditController.$inject = ["$scope", "$uibModalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "ogModalErrorService", "schedule"];

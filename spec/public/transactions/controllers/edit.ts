@@ -62,7 +62,7 @@ describe("TransactionEditController", (): void => {
 			transaction: Transaction;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "$q", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "$q", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "ogModalErrorService", "transaction"])));
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _$timeout_: angular.ITimeoutService, _payeeModel_: PayeeModelMock, _securityModel_: SecurityModelMock, _categoryModel_: CategoryModelMock, _accountModel_: AccountModelMock, _transactionModel_: TransactionModelMock, _transaction_: Transaction): void => {
@@ -230,7 +230,7 @@ describe("TransactionEditController", (): void => {
 		it("should return true if the object is a string and is not empty", (): Chai.Assertion => transactionEditController.isString("test").should.be.true);
 	});
 
-	describe("payeeSeleted", (): void => {
+	describe("payeeSelected", (): void => {
 		let	payee: Payee,
 				primaryAccount: Account;
 
@@ -820,8 +820,12 @@ describe("TransactionEditController", (): void => {
 			saved = angular.copy(original);
 
 			transactionModel.findSubtransactions = sinon.stub().returns({
-				then(callback: (subtransaction: SplitTransactionChild[]) => void): void {
+				then(callback: (subtransaction: SplitTransactionChild[]) => void): { catch: SinonStub; } {
 					callback([subtransaction]);
+
+					return {
+						catch: sinon.stub()
+					};
 				}
 			});
 
@@ -958,8 +962,12 @@ describe("TransactionEditController", (): void => {
 			(subtransaction as SubtransferTransaction).account = createAccount();
 
 			transactionModel.findSubtransactions = sinon.stub().returns({
-				then(callback: (subtransaction: SplitTransactionChild[]) => void): void {
+				then(callback: (subtransaction: SplitTransactionChild[]) => void): { catch: SinonStub; } {
 					callback([subtransaction]);
+
+					return {
+						catch: sinon.stub()
+					};
 				}
 			});
 		});

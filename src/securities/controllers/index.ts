@@ -9,6 +9,7 @@ import {
 } from "og-components/og-table-navigable/types";
 import { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import { Security } from "securities/types";
 import SecurityDeleteView from "securities/views/delete.html";
@@ -21,12 +22,16 @@ export default class SecurityIndexController {
 
 	public totalValue: number;
 
-	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
+	private readonly showError: (message?: string) => void;
+
+	public constructor($scope: angular.IScope,
+						$transitions: angular.ui.IStateParamsService,
 						private readonly $uibModal: IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly securityModel: SecurityModel,
 						private readonly ogTableNavigableService: OgTableNavigableService,
+						ogModalErrorService: OgModalErrorService,
 						public readonly securities: Security[]) {
 		const	self: this = this,
 					decimalPlaces = 2;
@@ -35,7 +40,7 @@ export default class SecurityIndexController {
 
 		this.tableActions = {
 			selectAction(): void {
-				$state.go(".transactions");
+				$state.go(".transactions").catch(self.showError);
 			},
 			editAction(index: number): void {
 				self.editSecurity(index);
@@ -47,10 +52,12 @@ export default class SecurityIndexController {
 				self.deleteSecurity(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.security") ? "^" : ""}.security`, { id: self.securities[index].id });
+				$state.go(`${$state.includes("**.security") ? "^" : ""}.security`, { id: self.securities[index].id }).catch(self.showError);
 			},
 			focusRow(): void {}
 		};
+
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a security id, focus the specified row
 		if (Number($state.params.id)) {
@@ -105,24 +112,27 @@ export default class SecurityIndexController {
 					return security;
 				}
 			}
-		}).result.then((security: Security): void => {
-			if (isNaN(Number(index))) {
-				// Add new security to the end of the array
-				this.securities.push(security);
+		}).result
+			.then((security: Security): void => {
+				if (isNaN(Number(index))) {
+					// Add new security to the end of the array
+					this.securities.push(security);
 
-				// Add the security to the LRU cache
-				this.securityModel.addRecent(security);
-			} else {
-				// Update the existing security in the array
-				this.securities[Number(index)] = security;
-			}
+					// Add the security to the LRU cache
+					this.securityModel.addRecent(security);
+				} else {
+					// Update the existing security in the array
+					this.securities[Number(index)] = security;
+				}
 
-			// Resort the array
-			this.securities.sort(byHoldingAndName);
+				// Resort the array
+				this.securities.sort(byHoldingAndName);
 
-			// Refocus the security
-			this.focusSecurity(security.id);
-		}).finally((): true => (this.ogTableNavigableService.enabled = true));
+				// Refocus the security
+				this.focusSecurity(security.id);
+			})
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	public deleteSecurity(index: number): void {
@@ -162,15 +172,18 @@ export default class SecurityIndexController {
 			}
 
 			// Show the modal
-			this.$uibModal.open(modalOptions).result.then((): void => {
-				this.securities.splice(index, 1);
-				this.$state.go("root.securities");
-			}).finally((): true => (this.ogTableNavigableService.enabled = true));
-		});
+			this.$uibModal.open(modalOptions).result
+				.then((): void => {
+					this.securities.splice(index, 1);
+					this.$state.go("root.securities").catch(this.showError);
+				})
+				.finally((): true => (this.ogTableNavigableService.enabled = true))
+				.catch(this.showError);
+		}).catch(this.showError);
 	}
 
 	public toggleFavourite(index: number): void {
-		this.securityModel.toggleFavourite(this.securities[index]).then((favourite: boolean): boolean => (this.securities[index].favourite = favourite));
+		this.securityModel.toggleFavourite(this.securities[index]).then((favourite: boolean): boolean => (this.securities[index].favourite = favourite)).catch(this.showError);
 	}
 
 	// Finds a specific security and focusses that row in the table
@@ -187,11 +200,11 @@ export default class SecurityIndexController {
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay);
+			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
 		}
 
 		return targetIndex;
 	}
 }
 
-SecurityIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "securities"];
+SecurityIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "securityModel", "ogTableNavigableService", "ogModalErrorService", "securities"];

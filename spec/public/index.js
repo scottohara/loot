@@ -35,6 +35,7 @@ import "./og-components/og-loading-spinner/directives/og-loading-spinner";
 import "./og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 import "./og-components/og-modal-alert/controllers/alert";
 import "./og-components/og-modal-confirm/controllers/confirm";
+import "./og-components/og-modal-error/services/og-modal-error";
 import "./og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
 import "./og-components/og-table-loading/directives/og-table-loading";
 import "./og-components/og-table-navigable/directives/og-table-navigable";

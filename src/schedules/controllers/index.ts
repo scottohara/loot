@@ -12,6 +12,7 @@ import {
 	startOfDay
 } from "date-fns/esm";
 import { IModalService } from "angular-ui-bootstrap";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import ScheduleDeleteView from "schedules/views/delete.html";
 import ScheduleEditView from "schedules/views/edit.html";
@@ -25,12 +26,16 @@ export default class ScheduleIndexController {
 	// Today's date (for checking if a schedule is overdue)
 	public readonly today: Date = startOfDay(new Date());
 
-	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
+	private readonly showError: (message?: string) => void;
+
+	public constructor($scope: angular.IScope,
+						$transitions: angular.ui.IStateParamsService,
 						private readonly $uibModal: IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly transactionModel: TransactionModel,
 						private readonly ogTableNavigableService: OgTableNavigableService,
+						ogModalErrorService: OgModalErrorService,
 						public readonly schedules: ScheduledTransaction[]) {
 		const self: this = this;
 
@@ -48,10 +53,12 @@ export default class ScheduleIndexController {
 				self.deleteSchedule(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, { id: self.schedules[index].id });
+				$state.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, { id: self.schedules[index].id }).catch(self.showError);
 			},
 			focusRow(): void {}
 		};
+
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a schedule id, focus the specified row
 		if (Number($state.params.id)) {
@@ -81,7 +88,7 @@ export default class ScheduleIndexController {
 
 				// Hide the loading indicator
 				schedule.loadingSubtransactions = false;
-			});
+			}).catch(this.showError);
 		}
 
 		$event.cancelBubble = true;
@@ -137,24 +144,27 @@ export default class ScheduleIndexController {
 					}
 				}
 			}
-		}).result.then((schedule: {data: ScheduledTransaction; skipped: boolean;}): void => {
-			if (isNaN(Number(index))) {
-				// Add new schedule to the end of the array
-				this.schedules.push(schedule.data);
-			} else {
-				// Update the existing schedule in the array
-				this.schedules[Number(index)] = schedule.data;
-			}
+		}).result
+			.then((schedule: {data: ScheduledTransaction; skipped: boolean;}): void => {
+				if (isNaN(Number(index))) {
+					// Add new schedule to the end of the array
+					this.schedules.push(schedule.data);
+				} else {
+					// Update the existing schedule in the array
+					this.schedules[Number(index)] = schedule.data;
+				}
 
-			// Resort the array
-			this.schedules.sort(byNextDueDateAndId);
+				// Resort the array
+				this.schedules.sort(byNextDueDateAndId);
 
-			/*
-			 * If we entered or skipped a transaction, refocus the schedule now at the original index,
-			 * otherwise refocus the schedule that was edited
-			 */
-			this.focusSchedule(Number(schedule.skipped ? this.schedules[Number(index)].id : schedule.data.id));
-		}).finally((): true => (this.ogTableNavigableService.enabled = true));
+				/*
+				 * If we entered or skipped a transaction, refocus the schedule now at the original index,
+				 * otherwise refocus the schedule that was edited
+				 */
+				this.focusSchedule(Number(schedule.skipped ? this.schedules[Number(index)].id : schedule.data.id));
+			})
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	private deleteSchedule(index: number): void {
@@ -170,10 +180,13 @@ export default class ScheduleIndexController {
 			resolve: {
 				schedule: (): ScheduledTransaction => this.schedules[index]
 			}
-		}).result.then((): void => {
-			this.schedules.splice(index, 1);
-			this.$state.go("root.schedules");
-		}).finally((): true => (this.ogTableNavigableService.enabled = true));
+		}).result
+			.then((): void => {
+				this.schedules.splice(index, 1);
+				this.$state.go("root.schedules").catch(this.showError);
+			})
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	// Finds a specific schedule and focusses that row in the table
@@ -190,11 +203,11 @@ export default class ScheduleIndexController {
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay);
+			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
 		}
 
 		return targetIndex;
 	}
 }
 
-ScheduleIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "transactionModel", "ogTableNavigableService", "schedules"];
+ScheduleIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "transactionModel", "ogTableNavigableService", "ogModalErrorService", "schedules"];

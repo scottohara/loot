@@ -29,6 +29,7 @@ import {
 import AccountModel from "accounts/models/account";
 import CategoryModel from "categories/models/category";
 import { IModalInstanceService } from "angular-ui-bootstrap";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 import { Security } from "securities/types";
@@ -47,6 +48,8 @@ export default class TransactionEditController {
 
 	public errorMessage: string | null = null;
 
+	private readonly showError: (message?: string) => void;
+
 	public constructor($scope: angular.IScope,
 						private readonly $uibModalInstance: IModalInstanceService,
 						private readonly $q: angular.IQService,
@@ -59,7 +62,9 @@ export default class TransactionEditController {
 						private readonly categoryModel: CategoryModel,
 						private readonly accountModel: AccountModel,
 						private readonly transactionModel: TransactionModel,
+						ogModalErrorService: OgModalErrorService,
 						private readonly originalTransaction: Transaction) {
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 		this.transaction = angular.extend({}, originalTransaction);
 		this.mode = originalTransaction.id ? "Edit" : "Add";
 
@@ -76,7 +81,7 @@ export default class TransactionEditController {
 		}, true);
 
 		// Prefetch the payees list so that the cache is populated
-		payeeModel.all();
+		payeeModel.all().catch(this.showError);
 	}
 
 	// List of payees for the typeahead
@@ -154,7 +159,8 @@ export default class TransactionEditController {
 			this.payeeModel.findLastTransaction(((this.transaction as PayeeCashTransaction).payee as Payee).id, this.transaction.primary_account.account_type as StoredAccountType)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
-				.then((): false => (this.loadingLastTransaction = false));
+				.then((): false => (this.loadingLastTransaction = false))
+				.catch(this.showError);
 		}
 	}
 
@@ -169,7 +175,8 @@ export default class TransactionEditController {
 			this.securityModel.findLastTransaction(((this.transaction as SecurityTransaction).security as Security).id, this.transaction.primary_account.account_type as StoredAccountType)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
-				.then((): false => (this.loadingLastTransaction = false));
+				.then((): false => (this.loadingLastTransaction = false))
+				.catch(this.showError);
 		}
 	}
 
@@ -458,7 +465,7 @@ export default class TransactionEditController {
 		// Depending on which field has focus, re-trigger the focus event handler to format/select the new value
 		angular.forEach(angular.element("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo"), (field: Element): void => {
 			if (field === document.activeElement) {
-				this.$timeout((): void => angular.element(field).triggerHandler("focus"));
+				this.$timeout((): void => angular.element(field).triggerHandler("focus")).catch(this.showError);
 			}
 		});
 	}
@@ -520,7 +527,7 @@ export default class TransactionEditController {
 
 					// Resolve the promise
 					q.resolve(savedTransaction);
-				});
+				}).catch(this.showError);
 				break;
 
 			// No default
@@ -593,7 +600,7 @@ export default class TransactionEditController {
 
 					// Resolve the promise
 					q.resolve(transaction);
-				});
+				}).catch(this.showError);
 				break;
 
 			// No default
@@ -609,4 +616,4 @@ export default class TransactionEditController {
 	}
 }
 
-TransactionEditController.$inject = ["$scope", "$uibModalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "transaction"];
+TransactionEditController.$inject = ["$scope", "$uibModalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "ogModalErrorService", "transaction"];

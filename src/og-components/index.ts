@@ -13,6 +13,7 @@ import OgLoadingSpinnerDirective from "./og-loading-spinner/directives/og-loadin
 import OgLruCacheFactory from "./og-lru-cache-factory/models/og-lru-cache-factory";
 import OgModalAlertController from "./og-modal-alert/controllers/alert";
 import OgModalConfirmController from "./og-modal-confirm/controllers/confirm";
+import OgModalErrorService from "./og-modal-error/services/og-modal-error";
 import OgNavigatorServiceWorkerService from "./og-navigator-serviceworker/services/og-navigator-serviceworker";
 import OgTableLoadingDirective from "./og-table-loading/directives/og-table-loading";
 import OgTableNavigableDirective from "./og-table-navigable/directives/og-table-navigable";
@@ -34,6 +35,7 @@ angular.module("ogComponents", [
 	.service("ogLruCacheFactory", OgLruCacheFactory)
 	.controller("OgModalAlertController", OgModalAlertController)
 	.controller("OgModalConfirmController", OgModalConfirmController)
+	.service("ogModalErrorService", OgModalErrorService)
 	.service("ogNavigatorServiceWorkerService", OgNavigatorServiceWorkerService)
 	.directive("ogTableLoading", OgTableLoadingDirective.factory)
 	.directive("ogTableNavigable", OgTableNavigableDirective.factory)

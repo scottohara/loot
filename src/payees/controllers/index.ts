@@ -8,6 +8,7 @@ import {
 } from "og-components/og-table-navigable/types";
 import { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import { Payee } from "payees/types";
 import PayeeDeleteView from "payees/views/delete.html";
@@ -18,18 +19,22 @@ import angular from "angular";
 export default class PayeeIndexController {
 	public readonly tableActions: OgTableActions;
 
-	public constructor($scope: angular.IScope, $transitions: angular.ui.IStateParamsService,
+	private readonly showError: (message?: string) => void;
+
+	public constructor($scope: angular.IScope,
+						$transitions: angular.ui.IStateParamsService,
 						private readonly $uibModal: IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly payeeModel: PayeeModel,
 						private readonly ogTableNavigableService: OgTableNavigableService,
+						ogModalErrorService: OgModalErrorService,
 						public readonly payees: Payee[]) {
 		const self: this = this;
 
 		this.tableActions = {
 			selectAction(): void {
-				$state.go(".transactions");
+				$state.go(".transactions").catch(self.showError);
 			},
 			editAction(index: number): void {
 				self.editPayee(index);
@@ -41,10 +46,11 @@ export default class PayeeIndexController {
 				self.deletePayee(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.payee") ? "^" : ""}.payee`, { id: self.payees[index].id });
-			},
-			focusRow(): void {}
+				$state.go(`${$state.includes("**.payee") ? "^" : ""}.payee`, { id: self.payees[index].id }).catch(self.showError);
+			}
 		};
+
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a payee id, focus the specified row
 		if (Number($state.params.id)) {
@@ -85,24 +91,27 @@ export default class PayeeIndexController {
 					return payee;
 				}
 			}
-		}).result.then((payee: Payee): void => {
-			if (isNaN(Number(index))) {
-				// Add new payee to the end of the array
-				this.payees.push(payee);
+		}).result
+			.then((payee: Payee): void => {
+				if (isNaN(Number(index))) {
+					// Add new payee to the end of the array
+					this.payees.push(payee);
 
-				// Add the payee to the LRU cache
-				this.payeeModel.addRecent(payee);
-			} else {
-				// Update the existing payee in the array
-				this.payees[Number(index)] = payee;
-			}
+					// Add the payee to the LRU cache
+					this.payeeModel.addRecent(payee);
+				} else {
+					// Update the existing payee in the array
+					this.payees[Number(index)] = payee;
+				}
 
-			// Resort the array
-			this.payees.sort(byName);
+				// Resort the array
+				this.payees.sort(byName);
 
-			// Refocus the payee
-			this.focusPayee(payee.id);
-		}).finally((): true => (this.ogTableNavigableService.enabled = true));
+				// Refocus the payee
+				this.focusPayee(payee.id);
+			})
+			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.catch(this.showError);
 	}
 
 	public deletePayee(index: number): void {
@@ -142,15 +151,20 @@ export default class PayeeIndexController {
 			}
 
 			// Show the modal
-			this.$uibModal.open(modalOptions).result.then((): void => {
-				this.payees.splice(index, 1);
-				this.$state.go("root.payees");
-			}).finally((): true => (this.ogTableNavigableService.enabled = true));
-		});
+			this.$uibModal.open(modalOptions).result
+				.then((): void => {
+					this.payees.splice(index, 1);
+					this.$state.go("root.payees").catch(this.showError);
+				})
+				.finally((): true => (this.ogTableNavigableService.enabled = true))
+				.catch(this.showError);
+		}).catch(this.showError);
 	}
 
 	public toggleFavourite(index: number): void {
-		this.payeeModel.toggleFavourite(this.payees[index]).then((favourite: boolean): boolean => (this.payees[index].favourite = favourite));
+		this.payeeModel.toggleFavourite(this.payees[index])
+			.then((favourite: boolean): boolean => (this.payees[index].favourite = favourite))
+			.catch(this.showError);
 	}
 
 	// Finds a specific payee and focusses that row in the table
@@ -167,11 +181,11 @@ export default class PayeeIndexController {
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay);
+			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
 		}
 
 		return targetIndex;
 	}
 }
 
-PayeeIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "payees"];
+PayeeIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "ogModalErrorService", "payees"];

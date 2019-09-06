@@ -8,8 +8,8 @@ export default class StateMockProvider implements Mock<StateMock> {
 		currentState(state): void {
 			this.includes.withArgs(state).returns(true);
 		},
-		reload: sinon.stub(),
-		go: sinon.stub(),
+		reload: sinon.stub().returns(Promise.resolve()),
+		go: sinon.stub().returns(Promise.resolve()),
 		includes: sinon.stub().returns(false),
 		params: {}
 	}) {}

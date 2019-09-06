@@ -57,9 +57,7 @@ export default class UibModalMockProvider implements Mock<UibModalMock> {
 			}
 		},
 		dismiss(): void {
-			if (this.catchCallback) {
-				this.callbackResult = this.catchCallback();
-			}
+			this.callbackResult = (this.catchCallback as UibModalMockResultCallback)();
 
 			if (this.finallyCallback) {
 				this.callbackResult = this.finallyCallback(this.callbackResult);

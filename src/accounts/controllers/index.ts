@@ -12,16 +12,22 @@ import AccountEditView from "accounts/views/edit.html";
 import AccountModel from "accounts/models/account";
 import { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
+import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import angular from "angular";
 
 export default class AccountIndexController {
 	private readonly keydownHandler: (event: KeyboardEvent) => void;
 
-	public constructor(private readonly $scope: angular.IScope, $window: angular.IWindowService,
+	private readonly showError: (message?: string) => void;
+
+	public constructor(private readonly $scope: angular.IScope,
+						$window: angular.IWindowService,
 						private readonly $uibModal: IModalService,
 						private readonly accountModel: AccountModel,
+						ogModalErrorService: OgModalErrorService,
 						public readonly accounts: Accounts) {
 		this.keydownHandler = (event: KeyboardEvent): void => this.keyHandler(event);
+		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// Handler is wrapped in a function to aid with unit testing
 		$window.$(document).on("keydown", this.keydownHandler);
@@ -85,7 +91,7 @@ export default class AccountIndexController {
 
 			// Recalculate the array total
 			this.calculateAccountTypeTotal(currentAccountType);
-		});
+		}).catch(this.showError);
 	}
 
 	public deleteAccount(accountType: string, index: number): void {
@@ -127,8 +133,8 @@ export default class AccountIndexController {
 
 				// Recalculate the array total
 				this.calculateAccountTypeTotal(accountType);
-			});
-		});
+			}).catch(this.showError);
+		}).catch(this.showError);
 	}
 
 	public get netWorth(): number {
@@ -138,7 +144,9 @@ export default class AccountIndexController {
 	public toggleFavourite(accountType: string, index: number): void {
 		const account = this.accounts[accountType].accounts[index];
 
-		this.accountModel.toggleFavourite(account).then((favourite: boolean): boolean => (account.favourite = favourite));
+		this.accountModel.toggleFavourite(account)
+			.then((favourite: boolean): boolean => (account.favourite = favourite))
+			.catch(this.showError);
 	}
 
 	// Declare key handler for inserting a new account
@@ -158,4 +166,4 @@ export default class AccountIndexController {
 	}
 }
 
-AccountIndexController.$inject = ["$scope", "$window", "$uibModal", "accountModel", "accounts"];
+AccountIndexController.$inject = ["$scope", "$window", "$uibModal", "accountModel", "ogModalErrorService", "accounts"];
