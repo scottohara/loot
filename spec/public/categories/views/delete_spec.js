@@ -48,10 +48,10 @@ describe("categoryDeleteView", () => {
 
 		it("should display the details of the category being deleted", () => {
 			categoryDeleteView.categoryName().should.eventually.equal(originalValues.categoryName);
-			if (originalValues.categoryParent) {
-				categoryDeleteView.categoryParent().should.eventually.equal(originalValues.categoryParent);
-			} else {
+			if (null === originalValues.categoryParent) {
 				categoryDeleteView.subcategoryAlert.isPresent().should.eventually.be.true;
+			} else {
+				categoryDeleteView.categoryParent().should.eventually.equal(originalValues.categoryParent);
 			}
 			categoryDeleteView.direction().should.eventually.equal("inflow" === originalValues.direction ? "Income" : "Expense");
 		});

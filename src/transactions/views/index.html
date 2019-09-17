@@ -36,7 +36,7 @@
 							</a>
 						</li>
 						<li ng-class="{'disabled': !vm.reconcilable || vm.reconciling}">
-							<a ng-click="vm.toggleUnreconciledOnly(!vm.unreconciledOnly)" ng-switch="vm.unreconciledOnly">
+							<a ng-click="vm.toggleUnreconciledOnly(!vm.unreconciledOnly, 'prev')" ng-switch="vm.unreconciledOnly">
 								<i ng-switch-when="true" class="glyphicon glyphicon-ok text-success"></i>
 								<i ng-switch-default class="glyphicon glyphicon-remove text-danger"></i>
 								 Unreconciled Only

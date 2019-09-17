@@ -319,7 +319,7 @@ describe("scheduleEditView", () => {
 		});
 
 		schedules.forEach(schedule => {
-			describe(schedule.type || schedule.memo, () => {
+			describe(undefined === schedule.type ? schedule.memo : schedule.type, () => {
 				beforeEach(() => {
 					expected = schedule;
 					scheduleEditView.enterScheduleDetails(expected);

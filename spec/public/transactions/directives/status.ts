@@ -66,7 +66,7 @@ describe("transactionStatus", (): void => {
 	}
 
 	scenarios.forEach((scenario: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}): void => {
-		if (!scenario.currentStatus) {
+		if ("" === scenario.currentStatus) {
 			it(`should set the current status to 'Unreconciled' when the transaction status is ${String(scenario.currentStatus)}`, (): void => {
 				setup(scenario);
 				isolateScope.currentStatus.should.equal("Unreconciled");

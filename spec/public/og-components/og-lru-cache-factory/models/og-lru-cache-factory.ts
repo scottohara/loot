@@ -64,10 +64,10 @@ describe("ogLruCacheFactory", (): void => {
 					it(`should ${scenario.description}`, (): void => {
 						const newList: OgCacheEntry[] = ogLruCache.put(scenario.item);
 
-						if (scenario.currentIndex) {
-							list.splice(scenario.currentIndex, 1);
-						} else {
+						if (undefined === scenario.currentIndex) {
 							list.pop();
+						} else {
+							list.splice(scenario.currentIndex, 1);
 						}
 						list.unshift(scenario.item);
 						newList.should.deep.equal(list);

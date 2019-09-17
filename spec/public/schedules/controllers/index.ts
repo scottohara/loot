@@ -142,7 +142,7 @@ describe("ScheduleIndexController", (): void => {
 
 			it("should open the edit schedule modal without a schedule", (): void => {
 				$uibModal.open.should.have.been.called;
-				(null === ($uibModal.resolves as UibModalMockResolves).schedule).should.be.true;
+				(undefined === ($uibModal.resolves as UibModalMockResolves).schedule).should.be.true;
 			});
 
 			it("should add the new schedule to the list of schedules when the modal is closed", (): void => {
@@ -284,7 +284,7 @@ describe("ScheduleIndexController", (): void => {
 		beforeEach((): SinonStub => (scheduleIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific schedule row could not be found", (): void => {
-			(!scheduleIndexController["focusSchedule"](999)).should.be.true;
+			scheduleIndexController["focusSchedule"](999).should.be.NaN;
 			(scheduleIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
 		});
 

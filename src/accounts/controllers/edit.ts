@@ -19,12 +19,13 @@ export default class AccountEditController {
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
 						private readonly filterFilter: angular.IFilterFilter,
 						private readonly limitToFilter: angular.IFilterLimitTo,
-						private readonly accountModel: AccountModel, account: Account) {
+						private readonly accountModel: AccountModel,
+						account: Account | undefined) {
 		this.account = angular.extend({ opening_balance: 0 }, account);
-		this.mode = account ? "Edit" : "Add";
+		this.mode = undefined === account ? "Add" : "Edit";
 
 		// Capitalise the account type and status
-		if (account) {
+		if (undefined !== account) {
 			this.account.account_type = `${this.account.account_type.charAt(0).toUpperCase()}${this.account.account_type.substr(1)}` as DisplayAccountType;
 			this.account.status = `${this.account.status.charAt(0).toUpperCase()}${this.account.status.substr(1)}` as DisplayAccountStatus;
 		}
@@ -34,7 +35,7 @@ export default class AccountEditController {
 	public accountTypes(filter?: string): DisplayAccountType[] {
 		const types: DisplayAccountType[] = ["Asset", "Bank", "Cash", "Credit", "Investment", "Liability", "Loan"];
 
-		return filter ? this.filterFilter(types, filter) : types;
+		return undefined === filter ? types : this.filterFilter(types, filter);
 	}
 
 	// Handler for account type changes

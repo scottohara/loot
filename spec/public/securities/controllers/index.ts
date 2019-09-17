@@ -112,7 +112,7 @@ describe("SecurityIndexController", (): void => {
 			it("should open the edit security modal without a security", (): void => {
 				$uibModal.open.should.have.been.called;
 				securityModel.addRecent.should.not.have.been.called;
-				(!($uibModal.resolves as UibModalMockResolves).security).should.be.true;
+				(undefined === ($uibModal.resolves as UibModalMockResolves).security).should.be.true;
 			});
 
 			it("should add the new security to the list of securities when the modal is closed", (): void => {
@@ -281,7 +281,7 @@ describe("SecurityIndexController", (): void => {
 		beforeEach((): SinonStub => (securityIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific security row could not be found", (): void => {
-			(!securityIndexController["focusSecurity"](999)).should.be.true;
+			securityIndexController["focusSecurity"](999).should.be.NaN;
 			(securityIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
 		});
 

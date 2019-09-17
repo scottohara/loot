@@ -44,7 +44,7 @@ export default class TransactionModel {
 
 	// Returns the API path
 	public path(id?: number): string {
-		return `/transactions${id ? `/${id}` : ""}`;
+		return `/transactions${undefined === id ? "" : `/${id}`}`;
 	}
 
 	// Returns the full API path including parent context
@@ -98,8 +98,8 @@ export default class TransactionModel {
 		this.invalidateCaches(transaction);
 
 		return this.$http({
-			method: transaction.id ? "PATCH" : "POST",
-			url: this.path(Number(transaction.id)),
+			method: null === transaction.id ? "POST" : "PATCH",
+			url: this.path(null === transaction.id ? undefined : Number(transaction.id)),
 			data: this.stringify(transaction)
 		}).then((response: angular.IHttpResponse<Transaction>): Transaction => {
 			this.lastUsedTransactionDate = transaction.transaction_date;
@@ -117,10 +117,10 @@ export default class TransactionModel {
 	}
 
 	// Updates the status of a transaction
-	public updateStatus(context: string, id: number, status: TransactionStatus): angular.IHttpPromise<void> {
+	public updateStatus(context: string, id: number, status: TransactionStatus = ""): angular.IHttpPromise<void> {
 		return this.$http({
 			method: "" === status ? "DELETE" : "PATCH",
-			url: `${this.fullPath(context, id)}/status${status ? `?${status}` : ""}`
+			url: `${this.fullPath(context, id)}/status${null === status || "" === status ? "" : `?${status}`}`
 		});
 	}
 
@@ -154,7 +154,9 @@ export default class TransactionModel {
 	// Performs post-processing after parsing from JSON
 	private parse(transaction: Transaction): Transaction {
 		// Convert the transaction date from a string ("YYYY-MM-DD") to a native JS date
-		transaction.transaction_date = transaction.transaction_date && startOfDay(transaction.transaction_date);
+		if (undefined !== transaction.transaction_date) {
+			transaction.transaction_date = startOfDay(transaction.transaction_date);
+		}
 
 		return transaction;
 	}
@@ -164,7 +166,9 @@ export default class TransactionModel {
 		// To avoid timezone issue, convert the native JS date back to a string ("YYYY-MM-DD") before saving
 		const transactionCopy: Transaction = angular.copy(transaction);
 
-		transactionCopy.transaction_date = transactionCopy.transaction_date && format(transactionCopy.transaction_date, "YYYY-MM-DD");
+		if (undefined !== transactionCopy.transaction_date) {
+			transactionCopy.transaction_date = format(transactionCopy.transaction_date, "YYYY-MM-DD");
+		}
 
 		return transactionCopy;
 	}
@@ -191,7 +195,7 @@ export default class TransactionModel {
 		if ("string" === typeof item && "" !== item) {
 			// Item is new; flush the corresponding $http cache
 			itemModel.flush();
-		} else if (item && item.id) {
+		} else if (undefined !== item && null !== item && "" !== item && item.id) {
 			// Item is existing; remove single item from the corresponding $http cache
 			itemModel.flush(item.id);
 		}

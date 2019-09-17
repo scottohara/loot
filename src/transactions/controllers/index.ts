@@ -52,7 +52,7 @@ export default class TransactionIndexController {
 
 	public readonly today: Date = startOfDay(new Date());
 
-	public readonly contextType: string;
+	public readonly contextType?: string;
 
 	public transactions: Transaction[] = [];
 
@@ -95,12 +95,12 @@ export default class TransactionIndexController {
 						private readonly ogTableNavigableService: OgTableNavigableService,
 						ogViewScrollService: OgViewScrollService,
 						ogModalErrorService: OgModalErrorService,
-						private readonly contextModel: EntityModel,
+						private readonly contextModel: EntityModel | null,
 						public readonly context: Entity | string,
 						public readonly transactionBatch: TransactionBatch) {
 		const self: this = this;
 
-		this.contextType = contextModel && contextModel.type;
+		this.contextType = null === contextModel ? undefined : contextModel.type;
 		this.firstTransactionDate = this.today;
 		this.lastTransactionDate = this.today;
 		this.reconcilable = "account" === this.contextType;
@@ -131,14 +131,13 @@ export default class TransactionIndexController {
 			},
 			focusAction(index: number): void {
 				$state.go(`${$state.includes("**.transaction") ? "^" : ""}.transaction`, { transactionId: self.transactions[index].id }).catch(self.showError);
-			},
-			focusRow(): void {}
+			}
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// Process the initial batch of transactions to display
-		this.processTransactions(transactionBatch, null, Number(this.$state.params.transactionId));
+		this.processTransactions(transactionBatch, undefined, Number(this.$state.params.transactionId));
 
 		// When the transaction id state parameter changes, focus the specified row
 		$scope.$on("$destroy", $transitions.onSuccess({ to: "**.transactions.transaction" }, (transition: angular.ui.IState): void => this.transitionSuccessHandler(Number(transition.params("to").transactionId))));
@@ -155,21 +154,21 @@ export default class TransactionIndexController {
 		// Show the loading spinner
 		this.loading[direction] = true;
 
-		if (!getFromDate) {
+		if (undefined === getFromDate) {
 			const fromIndex: number = "prev" === direction ? 0 : this.transactions.length - 1;
 
 			// Get the from date (depending on which direction we're fetching)
-			if (this.transactions[fromIndex]) {
+			if (undefined !== this.transactions[fromIndex]) {
 				getFromDate = this.transactions[fromIndex].transaction_date as Date;
 			}
 		}
 
-		if (this.contextType) {
-			// Get all transactions for the context
-			transactionFetch = this.transactionModel.all(this.contextModel.path((this.context as Entity).id), getFromDate as Date, direction, this.unreconciledOnly);
-		} else {
+		if (undefined === this.contextType) {
 			// Search for transactions matching the query
 			transactionFetch = this.transactionModel.query(this.context as string, getFromDate as Date, direction);
+		} else {
+			// Get all transactions for the context
+			transactionFetch = this.transactionModel.all((this.contextModel as EntityModel).path((this.context as Entity).id), getFromDate as Date, direction, this.unreconciledOnly);
 		}
 
 		transactionFetch.then((transactionBatch: TransactionBatch): void => {
@@ -189,13 +188,13 @@ export default class TransactionIndexController {
 	}
 
 	// Toggles the unreconciled only flag
-	public toggleUnreconciledOnly(unreconciledOnly: boolean, direction?: TransactionFetchDirection, fromDate?: Date, transactionIdToFocus?: number): void {
+	public toggleUnreconciledOnly(unreconciledOnly: boolean, direction: TransactionFetchDirection, fromDate?: Date, transactionIdToFocus?: number): void {
 		if (!this.reconciling) {
 			// Store the setting for the current account
 			this.accountModel.unreconciledOnly((this.context as Entity).id, unreconciledOnly);
 			this.unreconciledOnly = unreconciledOnly;
 			this.transactions = [];
-			this.getTransactions(direction || "prev", fromDate, transactionIdToFocus);
+			this.getTransactions(direction, fromDate, transactionIdToFocus);
 		}
 	}
 
@@ -241,7 +240,7 @@ export default class TransactionIndexController {
 					this.closingBalance = closingBalance;
 
 					// Refresh the list with only unreconciled transactions
-					this.toggleUnreconciledOnly(true);
+					this.toggleUnreconciledOnly(true, "prev");
 
 					// Switch to reconcile mode
 					this.reconciling = true;
@@ -253,7 +252,7 @@ export default class TransactionIndexController {
 
 	// Toggles a transaction as cleared
 	public toggleCleared(transaction: Transaction): void {
-		this.transactionModel.updateStatus(this.contextModel.path((this.context as Entity).id), Number(transaction.id), transaction.status)
+		this.transactionModel.updateStatus((this.contextModel as EntityModel).path((this.context as Entity).id), Number(transaction.id), transaction.status)
 			.then((): void => this.updateReconciledTotals())
 			.catch(this.showError);
 	}
@@ -394,8 +393,8 @@ export default class TransactionIndexController {
 								break;
 
 							case "category":
-								newTransaction.category = (this.context as Category).parent ? (this.context as Category).parent : this.context as Category;
-								newTransaction.subcategory = (this.context as Category).parent ? this.context as Category : null;
+								newTransaction.category = undefined === (this.context as Category).parent || null === (this.context as Category).parent ? this.context as Category : (this.context as Category).parent as Category;
+								newTransaction.subcategory = undefined === (this.context as Category).parent || null === (this.context as Category).parent ? null : this.context as Category;
 								break;
 
 							// No default
@@ -479,7 +478,7 @@ export default class TransactionIndexController {
 				break;
 
 			case "category":
-				currentContext = ((this.context as Category).parent ? (transaction as SubcategorisableTransaction).subcategory : transaction.category) as Category;
+				currentContext = (undefined === (this.context as Category).parent || null === (this.context as Category).parent ? transaction.category : (transaction as SubcategorisableTransaction).subcategory) as Category;
 				break;
 
 			// Search mode - check if the transaction memo still matches the search query
@@ -487,7 +486,7 @@ export default class TransactionIndexController {
 				return -1 === transaction.memo.toLowerCase().indexOf(String(this.context).toLowerCase());
 		}
 
-		return currentContext ? currentContext.id !== (this.context as Entity).id : false;
+		return undefined === currentContext || null === currentContext ? false : currentContext.id !== (this.context as Entity).id;
 	}
 
 	private deleteTransaction(index: number): void {
@@ -533,12 +532,12 @@ export default class TransactionIndexController {
 		// Only proceed if the context has a closing balance (ie. not in search mode)
 		if ("object" === typeof this.context && Object.getOwnPropertyDescriptor(this.context, "closing_balance")) {
 			// If there was an original transaction, exclude it's amount from the closing balance
-			if (originalTransaction) {
+			if (undefined !== originalTransaction) {
 				this.context.closing_balance = Number(this.context.closing_balance) - (Number((originalTransaction as CashTransaction).amount) * ("inflow" === originalTransaction.direction ? 1 : -1));
 			}
 
 			// If there is a new transaction, include it's amount in the closing balance
-			if (newTransaction) {
+			if (undefined !== newTransaction) {
 				this.context.closing_balance = Number(this.context.closing_balance) + (Number((newTransaction as CashTransaction).amount) * ("inflow" === newTransaction.direction ? 1 : -1));
 			}
 		}
@@ -595,7 +594,7 @@ export default class TransactionIndexController {
 		}).result
 			.then((): void => {
 				// Switch to the other account
-				if ((transaction as TransferrableTransaction).account && ((transaction as TransferrableTransaction).account as Account).id) {
+				if (null !== (transaction as TransferrableTransaction).account && ((transaction as TransferrableTransaction).account as Account).id) {
 					this.switchAccount(null, transaction as TransferrableTransaction);
 				} else {
 					this.switchPrimaryAccount(null, transaction as Transaction);
@@ -606,12 +605,12 @@ export default class TransactionIndexController {
 	}
 
 	// Processes a batch of transactions
-	private processTransactions(transactionBatch: TransactionBatch, fromDate?: Date | null, transactionIdToFocus?: number): void {
+	private processTransactions(transactionBatch: TransactionBatch, fromDate?: Date, transactionIdToFocus?: number): void {
 		if (transactionBatch.transactions.length > 0) {
 			// Store the opening balance & transactions
 			this.openingBalance = transactionBatch.openingBalance;
 			this.transactions = transactionBatch.transactions;
-			this.atEnd = transactionBatch.atEnd || !fromDate;
+			this.atEnd = transactionBatch.atEnd || undefined === fromDate;
 
 			// Get the boundaries of the current transaction date range
 			this.firstTransactionDate = transactionBatch.transactions[0].transaction_date as Date;
@@ -635,7 +634,7 @@ export default class TransactionIndexController {
 	// Updates the running balance of all transactions
 	private updateRunningBalances(): void {
 		// Do nothing for investment accounts
-		if ((this.context as Account).account_type && "investment" === (this.context as Account).account_type.toLowerCase()) {
+		if (undefined !== (this.context as Account).account_type && "investment" === (this.context as Account).account_type.toLowerCase()) {
 			return;
 		}
 
@@ -698,12 +697,14 @@ export default class TransactionIndexController {
 			(transaction as Subtransaction).parent_id = null;
 		}
 
+		const parentId = (transaction as SplitTransactionChild).parent_id;
+
 		this.$state.go(`root.${state}.transactions.transaction`, {
 			id,
-			transactionId: (transaction as SplitTransactionChild).parent_id || transaction.id
+			transactionId: undefined === parentId || null === parentId ? transaction.id : parentId
 		}).catch(this.showError);
 
-		if ($event) {
+		if (null !== $event) {
 			$event.stopPropagation();
 		}
 	}

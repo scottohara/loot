@@ -40,7 +40,7 @@ describe("securityIndexView", () => {
 
 		securityIndexView.table.rows.each((row, index) => {
 			// Security name
-			securityIndexView.securityName(row).should.eventually.equal(`${expected[index].name}${expected[index].unused ? "\nNo transactions" : ""}`);
+			securityIndexView.securityName(row).should.eventually.equal(`${expected[index].name}${true === expected[index].unused ? "\nNo transactions" : ""}`);
 
 			// Edit button
 			securityIndexView.editButton(row).isPresent().should.eventually.be.true;

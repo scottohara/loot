@@ -14,7 +14,7 @@ function *transactions(count: number): Iterable<BasicTransaction> {
 		yield createBasicTransaction({
 			id,
 			amount: id,
-			direction: id % 2 ? "outflow" : "inflow",
+			direction: 0 === id % 2 ? "inflow" : "outflow",
 			transaction_date: subDays(startOfDay(new Date()), daysAgo),
 			status: id < 5 ? "Cleared" : ""
 		});

@@ -113,7 +113,7 @@ describe("PayeeIndexController", (): void => {
 			it("should open the edit payee modal without a payee", (): void => {
 				$uibModal.open.should.have.been.called;
 				payeeModel.addRecent.should.not.have.been.called;
-				(!($uibModal.resolves as UibModalMockResolves).payee).should.be.true;
+				(undefined === ($uibModal.resolves as UibModalMockResolves).payee).should.be.true;
 			});
 
 			it("should add the new payee to the list of payees when the modal is closed", (): void => {
@@ -282,7 +282,7 @@ describe("PayeeIndexController", (): void => {
 		beforeEach((): SinonStub => (payeeIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific payee row could not be found", (): void => {
-			(!payeeIndexController["focusPayee"](999)).should.be.true;
+			payeeIndexController["focusPayee"](999).should.be.NaN;
 			(payeeIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
 		});
 

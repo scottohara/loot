@@ -13,7 +13,7 @@ class CategoryEditView {
 	}
 
 	directionRadioButton(direction, isActive) {
-		const selector = `label${isActive ? ".active" : ""}[name=direction]`,
+		const selector = `label${true === isActive ? ".active" : ""}[name=direction]`,
 					buttonText = "inflow" === direction ? "Income" : "Expense";
 
 		return element(by.cssContainingText(selector, buttonText));
@@ -34,7 +34,7 @@ class CategoryEditView {
 		this.categoryNameInput.click().sendKeys(details.categoryName);
 
 		// Parent
-		if (details.categoryParent) {
+		if (undefined !== details.categoryParent) {
 			this.categoryParentTypeahead.click().sendKeys(details.categoryParent);
 
 			// Wait for the typeahead $http promise to resolve
@@ -48,7 +48,7 @@ class CategoryEditView {
 		}
 
 		// Direction
-		if (!details.categoryParent && details.direction) {
+		if (undefined === details.categoryParent && details.direction) {
 			this.directionRadioButton(details.direction).click();
 		}
 	}

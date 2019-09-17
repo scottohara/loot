@@ -54,7 +54,7 @@ export default class LootStatesProvider {
 					contextModel: ["authenticated", `${parentContext}Model`, (authenticated: boolean, contextModel: EntityModel): EntityModel | false => authenticated && contextModel],
 					context: ["authenticated", "$stateParams", "contextModel", (authenticated: boolean, $stateParams: angular.ui.IStateParamsService, contextModel: EntityModel): angular.IPromise<Entity> | false => authenticated && contextModel.find(Number($stateParams.id))],
 					transactionBatch: ["authenticated", "transactionModel", "contextModel", "context", (authenticated: boolean, transactionModel: TransactionModel, contextModel: EntityModel, context: Entity): angular.IPromise<TransactionBatch> | false => {
-						const unreconciledOnly: boolean = (contextModel as AccountModel).isUnreconciledOnly ? (contextModel as AccountModel).isUnreconciledOnly(context.id) : false;
+						const unreconciledOnly: boolean = "function" === typeof (contextModel as AccountModel).isUnreconciledOnly && (contextModel as AccountModel).isUnreconciledOnly(context.id);
 
 						return authenticated && transactionModel.all(contextModel.path(context.id), null, "prev", unreconciledOnly);
 					}]
@@ -192,7 +192,7 @@ export default class LootStatesProvider {
 				},
 				views: transactionViews,
 				onEnter: ["$stateParams", "queryService", "previousState", ($stateParams: angular.ui.IStateParamsService, queryService: QueryService, previousState: angular.ui.IState): void => {
-					queryService.previousState = previousState || queryService.previousState;
+					queryService.previousState = null === previousState ? queryService.previousState : previousState;
 					queryService.query = $stateParams.query;
 				}],
 				onExit: ["queryService", (queryService: QueryService): void => {

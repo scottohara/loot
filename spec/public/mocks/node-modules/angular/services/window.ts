@@ -24,12 +24,12 @@ export default class WindowMockProvider implements Mock<WindowMock> {
 		// Mock $window object
 		this.$window = {
 			localStorage: {
-				getItem: sinon.stub(),
+				getItem: sinon.stub().returns(null),
 				removeItem: sinon.stub(),
 				setItem: sinon.stub()
 			},
 			sessionStorage: {
-				getItem: sinon.stub(),
+				getItem: sinon.stub().returns(null),
 				removeItem: sinon.stub(),
 				setItem: sinon.stub()
 			},

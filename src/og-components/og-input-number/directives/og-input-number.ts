@@ -15,7 +15,7 @@ export default class OgInputNumberDirective {
 				ngModel.$parsers.push(scope.vm.formattedToRaw.bind(scope.vm));
 
 				// Model to view
-				ngModel.$formatters.unshift((value: number): string => numberFilter((Boolean(value) && Number(value)) || 0));
+				ngModel.$formatters.unshift(scope.vm.rawToFormatted.bind(scope.vm));
 
 				function formattedToRaw(): void {
 					iElement.val(numberFilter(scope.vm.formattedToRaw(String(iElement.val()))));

@@ -32,7 +32,7 @@ describe("PayeeEditController", (): void => {
 	});
 
 	describe("when a payee is not provided", (): void => {
-		beforeEach((): PayeeEditController => (payeeEditController = controllerTest("PayeeEditController", { payee: null }) as PayeeEditController));
+		beforeEach((): PayeeEditController => (payeeEditController = controllerTest("PayeeEditController", { payee: undefined }) as PayeeEditController));
 
 		it("should make an empty payee object available to the view", (): void => {
 			payeeEditController.payee.should.be.an("object");

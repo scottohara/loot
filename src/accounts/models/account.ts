@@ -21,18 +21,26 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 
 	private readonly lruCache: OgLruCache;
 
-	public constructor(private readonly $http: angular.IHttpService, $cacheFactory: angular.ICacheFactoryService,
-						private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
+	public constructor(private readonly $http: angular.IHttpService,
+						$cacheFactory: angular.ICacheFactoryService,
+						private readonly $window: angular.IWindowService,
+						ogLruCacheFactory: OgLruCacheFactory) {
 		// Angular HTTP cache for accounts
 		this.cache = $cacheFactory("accounts");
 
 		// Create an LRU cache and populate with the recent account list from local storage
-		this.lruCache = ogLruCacheFactory.new(LRU_CAPACITY, JSON.parse(this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY) || "[]") as OgCacheEntry[]);
+		this.lruCache = ogLruCacheFactory.new(LRU_CAPACITY, this.recentAccounts);
 		this.recent = this.lruCache.list;
 	}
 
 	private get UNRECONCILED_ONLY_LOCAL_STORAGE_KEY(): string {
 		return "lootUnreconciledOnly-";
+	}
+
+	private get recentAccounts(): OgCacheEntry[] {
+		const recentAccounts: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
+
+		return JSON.parse(null === recentAccounts ? "[]" : recentAccounts) as OgCacheEntry[];
 	}
 
 	public get LRU_LOCAL_STORAGE_KEY(): string {
@@ -46,13 +54,13 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 
 	// Returns the API path
 	public path(id?: number): string {
-		return `/accounts${id ? `/${id}` : ""}`;
+		return `/accounts${undefined === id ? "" : `/${id}`}`;
 	}
 
 	// Retrieves the list of accounts
-	public all(includeBalances?: boolean): angular.IPromise<Account[] | Accounts> {
+	public all(includeBalances = false): angular.IPromise<Account[] | Accounts> {
 		return this.$http.get(`${this.path()}${includeBalances ? "?include_balances" : ""}`, {
-			cache: includeBalances ? false : this.cache
+			cache: !includeBalances && this.cache
 		}).then((response: angular.IHttpResponse<Account[] | Accounts>): Account[] | Accounts => response.data);
 	}
 
@@ -78,7 +86,7 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 		this.flush();
 
 		return this.$http({
-			method: account.id ? "PATCH" : "POST",
+			method: undefined === account.id ? "POST" : "PATCH",
 			url: this.path(account.id),
 			data: account
 		});
@@ -120,10 +128,10 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 
 	// Flush the cache
 	public flush(id?: number): void {
-		if (id) {
-			this.cache.remove(this.path(id));
-		} else {
+		if (undefined === id) {
 			this.cache.removeAll();
+		} else {
+			this.cache.remove(this.path(id));
 		}
 	}
 

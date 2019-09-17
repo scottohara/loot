@@ -49,12 +49,12 @@ class ScheduleEditView {
 		this.nextDueDateInput.click().sendKeys(details.nextDueDate);
 
 		// Payee
-		if (details.payeeName) {
+		if (undefined !== details.payeeName) {
 			this.enterTypeaheadValue(this.payeeTypeahead, details.payeeName);
 		}
 
 		// Security
-		if (details.securityName) {
+		if (undefined !== details.securityName) {
 			this.enterTypeaheadValue(this.securityTypeahead, details.securityName);
 		}
 
@@ -62,22 +62,22 @@ class ScheduleEditView {
 		this.enterTypeaheadValue(this.categoryTypeahead, details.categoryName);
 
 		// Amount
-		if (!details.quantity) {
+		if (undefined === details.quantity) {
 			this.amountInput.click().sendKeys(details.amount);
 		}
 
 		// Subcategory
-		if (details.subcategoryName) {
+		if (undefined !== details.subcategoryName) {
 			this.enterTypeaheadValue(this.subcategoryTypeahead, details.subcategoryName);
 		}
 
 		// Account
-		if (details.accountName) {
+		if (undefined !== details.accountName) {
 			this.enterTypeaheadValue(this.accountTypeahead, details.accountName);
 		}
 
 		// Splits
-		if (details.subtransactions) {
+		if (undefined !== details.subtransactions) {
 			for (let i = 0; i < details.subtransactions.length; i++) {
 				this.enterSplitDetails(i, details.subtransactions[i]);
 			}
@@ -86,28 +86,28 @@ class ScheduleEditView {
 		}
 
 		// Quantity
-		if (details.quantity) {
+		if (undefined !== details.quantity) {
 			this.quantityInput.click().sendKeys(details.quantity);
 		}
 
 		// Price
-		if (details.price) {
+		if (undefined !== details.price) {
 			this.priceInput.click().sendKeys(details.price);
 		}
 
 		// Commission
-		if (details.commission) {
+		if (undefined !== details.commission) {
 			this.commissionInput.click().sendKeys(details.commission);
 		}
 
 		// Memo
-		if (details.memo) {
+		if (undefined !== details.memo) {
 			this.memoInput.click().sendKeys(details.memo);
 		}
 
 		// Estimate
 		this.isEstimateCheckbox.isSelected().then(selected => {
-			if (!selected && details.isEstimate) {
+			if (false === selected && details.isEstimate) {
 				browser.executeScript(isEstimateCheckbox => isEstimateCheckbox.scrollIntoView(), this.isEstimateCheckbox.getWebElement());
 				this.isEstimateCheckbox.click();
 			}
@@ -115,7 +115,7 @@ class ScheduleEditView {
 
 		// Auto entered
 		this.autoEnteredCheckbox.isSelected().then(selected => {
-			if (!selected && details.isAutoEntered) {
+			if (false === selected && details.isAutoEntered) {
 				browser.executeScript(autoEnteredCheckbox => autoEnteredCheckbox.scrollIntoView(), this.autoEnteredCheckbox.getWebElement());
 				this.autoEnteredCheckbox.click();
 			}
@@ -137,12 +137,12 @@ class ScheduleEditView {
 		this.enterTypeaheadValue(row.element(by.model("subtransaction.category")), details.categoryName);
 
 		// Subcategory
-		if (details.subcategoryName) {
+		if (undefined !== details.subcategoryName) {
 			this.enterTypeaheadValue(row.element(by.model("subtransaction.subcategory")), details.subcategoryName);
 		}
 
 		// Account
-		if (details.accountName) {
+		if (undefined !== details.accountName) {
 			this.enterTypeaheadValue(row.element(by.model("subtransaction.account")), details.accountName);
 		}
 

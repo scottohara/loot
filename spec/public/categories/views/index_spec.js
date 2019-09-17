@@ -20,8 +20,8 @@ describe("categoryIndexView", () => {
 			let x, y;
 
 			if (a.direction === b.direction) {
-				x = a.parent ? `${a.parent}#${a.categoryName}` : a.categoryName;
-				y = b.parent ? `${b.parent}#${b.categoryName}` : b.categoryName;
+				x = undefined === a.parent ? a.categoryName : `${a.parent}#${a.categoryName}`;
+				y = undefined === b.parent ? b.categoryName : `${b.parent}#${b.categoryName}`;
 			} else {
 				x = a.direction;
 				y = b.direction;

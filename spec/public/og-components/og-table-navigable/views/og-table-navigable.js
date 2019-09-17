@@ -20,7 +20,7 @@ class OgTableNavigableView {
 	row(index, scrollIntoView) {
 		const row = this.rows.get(index);
 
-		if (scrollIntoView) {
+		if ("function" === typeof scrollIntoView) {
 			browser.executeScript(scrollToRow => scrollToRow.scrollIntoView(), row);
 		}
 

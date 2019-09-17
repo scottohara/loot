@@ -13,9 +13,10 @@ export default class CategoryEditController {
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
 						private readonly filterFilter: angular.IFilterFilter,
 						private readonly limitToFilter: angular.IFilterLimitTo,
-						private readonly categoryModel: CategoryModel, category: Category) {
+						private readonly categoryModel: CategoryModel,
+						category: Category | undefined) {
 		this.category = angular.extend({}, category);
-		this.mode = category ? "Edit" : "Add";
+		this.mode = undefined === category ? "Add" : "Edit";
 	}
 
 	// List of parent categories for the typeahead
@@ -26,11 +27,11 @@ export default class CategoryEditController {
 	// Save and close the modal
 	public save(): void {
 		// Copy the parent details
-		if (this.category.parent) {
+		if (undefined === this.category.parent || null === this.category.parent) {
+			this.category.parent_id = null;
+		} else {
 			this.category.direction = this.category.parent.direction;
 			this.category.parent_id = this.category.parent.id;
-		} else {
-			this.category.parent_id = null;
 		}
 
 		this.errorMessage = null;

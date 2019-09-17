@@ -12,6 +12,7 @@ import {
 } from "mocks/og-components/og-lru-cache-factory/types";
 import sinon, { SinonStub } from "sinon";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import angular from "angular";
@@ -58,6 +59,27 @@ describe("securityModel", (): void => {
 	it("should fetch the list of recent securities from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentSecurities"));
 
 	it("should have a list of recent securities", (): Chai.Assertion => securityModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
+
+	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
+		it("should be 'lootRecentSecurities'", (): Chai.Assertion => securityModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentSecurities"));
+	});
+
+	describe("recentSecurities", (): void => {
+		describe("when localStorage is not null", (): void => {
+			let recentSecurities: OgCacheEntry[];
+
+			beforeEach((): void => {
+				recentSecurities = [{ id: 1, name: "recent item" }];
+				$window.localStorage.getItem.withArgs("lootRecentSecurities").returns(JSON.stringify(recentSecurities));
+			});
+
+			it("should return an array of cache entries", (): Chai.Assertion => securityModel["recentSecurities"].should.deep.equal(recentSecurities));
+		});
+
+		describe("when localStorage is null", (): void => {
+			it("should return an empty array", (): Chai.Assertion => securityModel["recentSecurities"].should.deep.equal([]));
+		});
+	});
 
 	describe("type", (): void => {
 		it("should be 'security'", (): Chai.Assertion => securityModel.type.should.equal("security"));

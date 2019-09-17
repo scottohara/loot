@@ -162,7 +162,7 @@ describe("scheduleModel", (): void => {
 		it("should dispatch a POST request to /schedules when an id is not provided", (): void => {
 			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction();
 
-			delete schedule.id;
+			schedule.id = null;
 			$httpBackend.expectPOST(/schedules$/u, schedule);
 			scheduleModel.save(schedule);
 			$httpBackend.flush();

@@ -53,7 +53,7 @@ export default class PayeeIndexController {
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a payee id, focus the specified row
-		if (Number($state.params.id)) {
+		if (undefined !== $state.params.id) {
 			this.focusPayee(Number($state.params.id));
 		}
 
@@ -77,8 +77,8 @@ export default class PayeeIndexController {
 			controllerAs: "vm",
 			backdrop: "static",
 			resolve: {
-				payee: (): Payee | null => {
-					let payee: Payee | null = null;
+				payee: (): Payee | undefined => {
+					let payee: Payee | undefined;
 
 					// If we didn't get an index, we're adding a new payee so just return null
 					if (!isNaN(Number(index))) {

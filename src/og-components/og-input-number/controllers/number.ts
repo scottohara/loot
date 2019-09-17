@@ -1,13 +1,17 @@
 export default class OgInputNumberController {
+	public constructor(private readonly numberFilter: angular.IFilterNumber) {}
+
 	// Converts formatted value to raw value
 	public formattedToRaw(value: string): number {
-		return Number(value.replace(/[^0-9\-.]/gu, "")) || 0;
+		const rawValue = Number(value.replace(/[^0-9\-.]/gu, ""));
+
+		return isNaN(rawValue) ? 0 : rawValue;
 	}
 
 	// Converts raw value to formatted value
 	public rawToFormatted(value: number): string {
-		return String(value);
+		return this.numberFilter(isNaN(value) ? 0 : Number(value));
 	}
 }
 
-OgInputNumberController.$inject = [];
+OgInputNumberController.$inject = ["numberFilter"];

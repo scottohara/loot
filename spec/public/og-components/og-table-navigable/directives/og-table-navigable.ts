@@ -142,7 +142,7 @@ describe("ogTableNavigable", (): void => {
 
 		it("should do nothing if the specified row offset can't be determined", (): void => {
 			(row.offset as SinonStub).restore();
-			sinon.stub(row, "offset").returns(null);
+			sinon.stub(row, "offset").returns(undefined);
 			isolateScope.scrollToRow(row);
 			row[0].scrollIntoView.should.not.have.been.called;
 		});
@@ -335,10 +335,10 @@ describe("ogTableNavigable", (): void => {
 		});
 
 		TEST_ACTION_KEYS.forEach((key: {code: number; ctrl?: boolean; name: string; handler: string;}): void => {
-			it(`should do nothing when the ${key.name} key${key.ctrl ? "s are" : " is"} pressed and a ${key.handler} handler is not defined`, (): void => {
+			it(`should do nothing when the ${key.name} key${undefined === key.ctrl ? " is" : "s are"} pressed and a ${key.handler} handler is not defined`, (): void => {
 				event.keyCode = key.code;
 				event.ctrlKey = key.ctrl;
-				scope.model[key.handler] = null;
+				scope.model[key.handler] = undefined;
 				ogTableNavigable.compile({ "og-table-navigable": "model" });
 				ogTableNavigable.scope.$digest();
 				isolateScope = ogTableNavigable["element"].isolateScope();
@@ -348,7 +348,7 @@ describe("ogTableNavigable", (): void => {
 				(event.preventDefault as SinonStub).should.have.been.called;
 			});
 
-			it(`should invoke the defined ${key.handler} handler when the ${key.name} key${key.ctrl ? "s are" : " is"} pressed`, (): void => {
+			it(`should invoke the defined ${key.handler} handler when the ${key.name} key${undefined === key.ctrl ? " is" : "s are"} pressed`, (): void => {
 				event.keyCode = key.code;
 				event.ctrlKey = key.ctrl;
 				isolateScope.keyHandler(event as JQueryKeyEventObject);

@@ -4,7 +4,7 @@ import {
 } from "accounts/types";
 import {
 	ControllerTestFactory,
-	KeyboardEventMock
+	JQueryKeyEventObjectMock
 } from "mocks/types";
 import {
 	UibModalMock,
@@ -89,7 +89,7 @@ describe("AccountIndexController", (): void => {
 			it("should open the edit account modal without an account", (): void => {
 				$uibModal.open.should.have.been.called;
 				accountModel.addRecent.should.not.have.been.called;
-				(!($uibModal.resolves as UibModalMockResolves).account).should.be.true;
+				(undefined === ($uibModal.resolves as UibModalMockResolves).account).should.be.true;
 			});
 
 			it("should add the new account to the list of accounts when the modal is closed", (): void => {
@@ -168,7 +168,7 @@ describe("AccountIndexController", (): void => {
 		const INSERT_KEY = 45,
 					N_KEY = 78;
 
-		let	event: KeyboardEventMock;
+		let	event: JQueryKeyEventObjectMock;
 
 		beforeEach((): void => {
 			event = {
@@ -180,7 +180,7 @@ describe("AccountIndexController", (): void => {
 
 		it("should invoke editAccount() with no account when the Insert key is pressed", (): void => {
 			event.keyCode = INSERT_KEY;
-			accountIndexController["keyHandler"](event as KeyboardEvent);
+			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
 			accountIndexController.editAccount.should.have.been.called;
 			(event.preventDefault as SinonStub).should.have.been.called;
 		});
@@ -188,13 +188,13 @@ describe("AccountIndexController", (): void => {
 		it("should invoke editAccount() with no account when the CTRL+N keys are pressed", (): void => {
 			event.keyCode = N_KEY;
 			event.ctrlKey = true;
-			accountIndexController["keyHandler"](event as KeyboardEvent);
+			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
 			accountIndexController.editAccount.should.have.been.called;
 			(event.preventDefault as SinonStub).should.have.been.called;
 		});
 
 		it("should do nothing when any other keys are pressed", (): void => {
-			accountIndexController["keyHandler"](event as KeyboardEvent);
+			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
 			accountIndexController.editAccount.should.not.have.been.called;
 			(event.preventDefault as SinonStub).should.not.have.been.called;
 		});

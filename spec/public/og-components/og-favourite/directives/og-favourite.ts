@@ -27,7 +27,7 @@ describe("ogFavourite", (): void => {
 
 		it("should not be active", (): Chai.Assertion => ogFavourite["element"].hasClass("active").should.not.be.true);
 
-		it("should show the type in a tooltip", (): Chai.Assertion => (ogFavourite["element"].attr("uib-tooltip") as string).should.equal("Favourite test"));
+		it("should show the type in a tooltip", (): Chai.Assertion => String(ogFavourite["element"].attr("uib-tooltip")).should.equal("Favourite test"));
 	});
 
 	describe("favourite", (): void => {

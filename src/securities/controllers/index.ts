@@ -53,14 +53,13 @@ export default class SecurityIndexController {
 			},
 			focusAction(index: number): void {
 				$state.go(`${$state.includes("**.security") ? "^" : ""}.security`, { id: self.securities[index].id }).catch(self.showError);
-			},
-			focusRow(): void {}
+			}
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a security id, focus the specified row
-		if (Number($state.params.id)) {
+		if (!isNaN(Number($state.params.id))) {
 			this.focusSecurity(Number($state.params.id));
 		}
 
@@ -98,8 +97,8 @@ export default class SecurityIndexController {
 			controllerAs: "vm",
 			backdrop: "static",
 			resolve: {
-				security: (): Security | null => {
-					let security: Security | null = null;
+				security: (): Security | undefined => {
+					let security: Security | undefined;
 
 					// If we didn't get an index, we're adding a new security so just return null
 					if (!isNaN(Number(index))) {

@@ -40,7 +40,7 @@ export default class CategoryIndexController {
 
 			delete category.children;
 
-			return flattened.concat(category, children || []);
+			return flattened.concat(category, undefined === children ? [] : children);
 		}, []);
 
 		this.tableActions = {
@@ -64,7 +64,7 @@ export default class CategoryIndexController {
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a category id, focus the specified row
-		if (Number($state.params.id)) {
+		if (undefined !== $state.params.id) {
 			this.focusCategory(Number($state.params.id));
 		}
 
@@ -78,8 +78,8 @@ export default class CategoryIndexController {
 			let x: string, y: string;
 
 			if (a.direction === b.direction) {
-				x = a.parent ? `${a.parent.name}#${a.name}` : a.name;
-				y = b.parent ? `${b.parent.name}#${b.name}` : b.name;
+				x = undefined === a.parent || null === a.parent ? a.name : `${a.parent.name}#${a.name}`;
+				y = undefined === b.parent || null === b.parent ? b.name : `${b.parent.name}#${b.name}`;
 			} else {
 				x = a.direction;
 				y = b.direction;
@@ -98,8 +98,8 @@ export default class CategoryIndexController {
 			controllerAs: "vm",
 			backdrop: "static",
 			resolve: {
-				category: (): Category | null => {
-					let category: Category | null = null;
+				category: (): Category | undefined => {
+					let category: Category | undefined;
 
 					// If we didn't get an index, we're adding a new category so just return null
 					if (!isNaN(Number(index))) {

@@ -69,7 +69,7 @@ class TransactionIndexView {
 
 	subcategoryName(row) {
 		return row.evaluate("transaction.subcategory").then(subcategory => {
-			if (subcategory) {
+			if (undefined !== subcategory && null !== subcategory) {
 				return row.element(by.binding("::transaction.subcategory.name")).getText();
 			}
 
@@ -79,7 +79,7 @@ class TransactionIndexView {
 
 	accountName(row) {
 		return row.evaluate("transaction.account").then(account => {
-			if (account.id) {
+			if (undefined !== account.id && null !== account.id) {
 				return row.element(by.binding("::transaction.account.name")).getText();
 			}
 
@@ -121,7 +121,7 @@ class TransactionIndexView {
 
 	investmentDetails(row) {
 		return row.evaluate("(!transaction.memo) && transaction.transaction_type == 'SecurityInvestment'").then(quantity => {
-			if (quantity) {
+			if (true === quantity) {
 				return row.element(by.binding("::transaction.quantity")).getText();
 			}
 
@@ -131,7 +131,7 @@ class TransactionIndexView {
 
 	debitAmount(row) {
 		return row.evaluate("vm.context.account_type != 'investment' && transaction.direction == 'outflow' && transaction.amount").then(debit => {
-			if (debit) {
+			if (false !== debit && null !== debit && !isNaN(debit)) {
 				return row.element(by.binding("::transaction.amount")).getText();
 			}
 
@@ -141,7 +141,7 @@ class TransactionIndexView {
 
 	creditAmount(row) {
 		return row.evaluate("vm.context.account_type != 'investment' && transaction.direction == 'inflow' && transaction.amount").then(credit => {
-			if (credit) {
+			if (false !== credit && null !== credit && !isNaN(credit)) {
 				return row.element(by.binding("::transaction.amount")).getText();
 			}
 
@@ -161,7 +161,7 @@ class TransactionIndexView {
 
 	price(row) {
 		return row.evaluate("vm.context.account_type == 'investment' && transaction.transaction_type == 'SecurityInvestment'").then(securityInvestment => {
-			if (securityInvestment) {
+			if (true === securityInvestment) {
 				return row.element(by.binding("::transaction.price")).getText();
 			}
 
@@ -171,7 +171,7 @@ class TransactionIndexView {
 
 	commission(row) {
 		return row.evaluate("vm.context.account_type == 'investment' && transaction.transaction_type == 'SecurityInvestment'").then(securityInvestment => {
-			if (securityInvestment) {
+			if (true === securityInvestment) {
 				return row.element(by.binding("::transaction.commission")).getText();
 			}
 
@@ -248,46 +248,46 @@ class TransactionIndexView {
 	// Checks the values in a row against an expected set of values
 	checkRowValues(row, expected) {
 		this.transactionDate(row).should.eventually.equal(expected.transactionDate);
-		if (expected.primaryAccountName) {
+		if (undefined !== expected.primaryAccountName) {
 			this.primaryAccountName(row).should.eventually.equal(expected.primaryAccountName);
 		}
-		if (expected.payeeName) {
+		if (undefined !== expected.payeeName) {
 			this.payeeName(row).should.eventually.equal(expected.payeeName);
 		}
-		if (expected.securityName) {
+		if (undefined !== expected.securityName) {
 			this.securityName(row).should.eventually.equal(expected.securityName);
 		}
 		this.categoryName(row).should.eventually.equal(expected.categoryName);
-		if (expected.subcategoryName) {
+		if (undefined !== expected.subcategoryName) {
 			this.subcategoryName(row).should.eventually.equal(expected.subcategoryName);
 		}
-		if (expected.accountName) {
+		if (undefined !== expected.accountName) {
 			this.accountName(row).should.eventually.equal(expected.accountName);
 		}
-		if (expected.subtransactions && expected.subtransactions.length > 0) {
+		if (undefined !== expected.subtransactions && expected.subtransactions.length > 0) {
 			this.toggleSubtransactionsButton(row).isPresent().should.eventually.equal(Boolean(expected.subtransactions));
 		}
-		if (expected.memoFromInvestmentDetails) {
-			this.memo(row).should.eventually.equal(expected.memoFromInvestmentDetails);
-		} else {
+		if (undefined === expected.memoFromInvestmentDetails) {
 			this.memo(row).should.eventually.equal(expected.memo);
+		} else {
+			this.memo(row).should.eventually.equal(expected.memoFromInvestmentDetails);
 		}
-		if (expected.investmentDetails) {
+		if (undefined !== expected.investmentDetails) {
 			this.investmentDetails(row).should.eventually.equal(expected.investmentDetails);
 		}
-		if (expected.debitAmount) {
+		if (undefined !== expected.debitAmount && "" !== expected.debitAmount) {
 			this.debitAmount(row).should.eventually.equal(expected.debitAmount);
 		}
-		if (expected.creditAmount) {
+		if (undefined !== expected.creditAmount && "" !== expected.creditAmount) {
 			this.creditAmount(row).should.eventually.equal(expected.creditAmount);
 		}
-		if (expected.quantity) {
+		if (undefined !== expected.quantity) {
 			this.quantity(row).should.eventually.equal(expected.quantity);
 		}
-		if (expected.price) {
+		if (undefined !== expected.price) {
 			this.price(row).should.eventually.equal(expected.price);
 		}
-		if (expected.commission) {
+		if (undefined !== expected.commission) {
 			this.commission(row).should.eventually.equal(expected.commission);
 		}
 	}
@@ -295,10 +295,10 @@ class TransactionIndexView {
 	// Checks the values in a subtransaction row against an expected set of values
 	checkSubtransactionRowValues(row, expected) {
 		this.subtransactionCategoryName(row).should.eventually.equal(expected.categoryName);
-		if (expected.subcategoryName) {
+		if (undefined !== expected.subcategoryName) {
 			this.subtransactionSubcategoryName(row).should.eventually.equal(expected.subcategoryName);
 		}
-		if (expected.accountName) {
+		if (undefined !== expected.accountName) {
 			this.subtransactionAccountName(row).should.eventually.equal(expected.accountName);
 		}
 		this.subtransactionMemo(row).should.eventually.equal(expected.memo);

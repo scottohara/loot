@@ -161,7 +161,7 @@ describe("LayoutController", (): void => {
 
 			it("should transition to the previous state when the search field is cleared", (): Chai.Assertion => $state.go.should.have.been.calledWith(previousStateName, previousStateParams));
 
-			it("should clear the stored previous state", (): Chai.Assertion => (!layoutController.queryService.previousState).should.be.true);
+			it("should clear the stored previous state", (): Chai.Assertion => (null === layoutController.queryService.previousState).should.be.true);
 		});
 	});
 

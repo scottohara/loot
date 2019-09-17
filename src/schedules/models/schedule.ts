@@ -22,7 +22,7 @@ export default class ScheduleModel {
 
 	// Returns the API path
 	public path(id?: number): string {
-		return `/schedules${id ? `/${id}` : ""}`;
+		return `/schedules${undefined === id ? "" : `/${id}`}`;
 	}
 
 	// Retrieves all schedules
@@ -46,8 +46,8 @@ export default class ScheduleModel {
 		}
 
 		return this.$http({
-			method: schedule.id ? "PATCH" : "POST",
-			url: this.path(Number(schedule.id)),
+			method: null === schedule.id ? "POST" : "PATCH",
+			url: this.path(null === schedule.id ? undefined : Number(schedule.id)),
 			data: this.stringify(schedule)
 		}).then((response: angular.IHttpResponse<ScheduledTransaction>): ScheduledTransaction => this.parse(response.data));
 	}

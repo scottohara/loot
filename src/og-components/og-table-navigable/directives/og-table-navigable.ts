@@ -34,7 +34,7 @@ export default class OgTableNavigableDirective {
 					scope.focussedRow = rowIndex;
 
 					// If a focus action is defined, invoke it for the focussed row
-					if (scope.handlers.focusAction) {
+					if ("function" === typeof scope.handlers.focusAction) {
 						scope.handlers.focusAction(rowIndex);
 					}
 				};
@@ -55,7 +55,7 @@ export default class OgTableNavigableDirective {
 					// Get the top/bottom of the focussed row, and the top/bottom of the viewport
 					const	rowOffset: JQueryCoordinates | undefined = row.offset(),
 								viewTop: number = $window.$(document).scrollTop(),
-								rowTop: number = rowOffset ? rowOffset.top : viewTop,
+								rowTop: number = undefined === rowOffset ? viewTop : rowOffset.top,
 								rowBottom: number = rowTop + Number(row.height()),
 								viewBottom: number = viewTop + Number($window.$(window).height()),
 								scrollNeeded: boolean = rowTop < viewTop || rowBottom > viewBottom;
@@ -118,7 +118,7 @@ export default class OgTableNavigableDirective {
 				scope.doubleClickHandler = (event: JQueryMouseEventObject): void => {
 					if (ogTableNavigableService.enabled) {
 						// If a select action wasn't specified for the directive, do nothing
-						if (!scope.handlers.selectAction) {
+						if ("function" !== typeof scope.handlers.selectAction) {
 							return;
 						}
 
@@ -199,18 +199,18 @@ export default class OgTableNavigableDirective {
 				scope.keyHandler = (event: JQueryKeyEventObject): void => {
 					if (ogTableNavigableService.enabled) {
 						// Check if the key pressed was a movement key
-						if (Object.getOwnPropertyDescriptor(MOVEMENT_KEYS, event.keyCode)) {
+						if (undefined !== Object.getOwnPropertyDescriptor(MOVEMENT_KEYS, event.keyCode)) {
 							// Jump the specified number of rows for the key
 							scope.jumpToRow(MOVEMENT_KEYS[event.keyCode]);
 							event.preventDefault();
 						}
 
 						// Check if the key pressed was an action key
-						if (Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode)) {
+						if (undefined !== Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode)) {
 							const callback = ACTION_KEYS[event.keyCode];
 
 							// If an action is defined, invoke it for the focussed row
-							if (callback) {
+							if (undefined !== callback) {
 								callback(Number(scope.focussedRow));
 							}
 							event.preventDefault();
@@ -219,7 +219,7 @@ export default class OgTableNavigableDirective {
 						// Check if the key pressed was a CTRL action key
 						if (event.ctrlKey && Object.getOwnPropertyDescriptor(CTRL_ACTION_KEYS, event.keyCode)) {
 							// If an action is defined, invoke it for the focussed row
-							if (CTRL_ACTION_KEYS[event.keyCode]) {
+							if (undefined !== CTRL_ACTION_KEYS[event.keyCode]) {
 								CTRL_ACTION_KEYS[event.keyCode](Number(scope.focussedRow));
 							}
 							event.preventDefault();

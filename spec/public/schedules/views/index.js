@@ -59,7 +59,7 @@ class ScheduleIndexView {
 
 	subcategoryName(row) {
 		return row.evaluate("schedule.subcategory").then(subcategory => {
-			if (subcategory) {
+			if (undefined !== subcategory && null !== subcategory) {
 				return row.element(by.binding("::schedule.subcategory.name")).getText();
 			}
 
@@ -69,7 +69,7 @@ class ScheduleIndexView {
 
 	accountName(row) {
 		return row.evaluate("schedule.account").then(account => {
-			if (account.id) {
+			if (undefined !== account.id && null !== account.id) {
 				return row.element(by.binding("::schedule.account.name")).getText();
 			}
 
@@ -111,7 +111,7 @@ class ScheduleIndexView {
 
 	investmentDetails(row) {
 		return row.evaluate("(!schedule.memo) && schedule.transaction_type == 'SecurityInvestment'").then(quantity => {
-			if (quantity) {
+			if (true === quantity) {
 				return row.element(by.binding("::schedule.quantity")).getText();
 			}
 
@@ -121,7 +121,7 @@ class ScheduleIndexView {
 
 	commission(row) {
 		return row.evaluate("(!schedule.memo) && schedule.transaction_type == 'SecurityInvestment' && schedule.commission").then(commission => {
-			if (commission) {
+			if (true === commission) {
 				return row.element(by.binding("::schedule.commission")).getText();
 			}
 
@@ -135,7 +135,7 @@ class ScheduleIndexView {
 
 	debitAmount(row) {
 		return row.evaluate("schedule.direction == 'outflow' && schedule.amount").then(debit => {
-			if (debit) {
+			if (false !== debit && null !== debit && !isNaN(debit)) {
 				return row.element(by.binding("::schedule.amount")).getText();
 			}
 
@@ -145,7 +145,7 @@ class ScheduleIndexView {
 
 	creditAmount(row) {
 		return row.evaluate("schedule.direction == 'inflow' && schedule.amount").then(credit => {
-			if (credit) {
+			if (false !== credit && null !== credit && !isNaN(credit)) {
 				return row.element(by.binding("::schedule.amount")).getText();
 			}
 
@@ -220,38 +220,38 @@ class ScheduleIndexView {
 		this.nextDueDate(row).should.eventually.equal(expected.nextDueDate);
 		this.isAutoEntered(row).should.eventually.equal(Boolean(expected.isAutoEntered));
 		this.primaryAccountName(row).should.eventually.equal(expected.primaryAccountName);
-		if (expected.payeeName) {
+		if (undefined !== expected.payeeName) {
 			this.payeeName(row).should.eventually.equal(expected.payeeName);
 		}
-		if (expected.securityName) {
+		if (undefined !== expected.securityName) {
 			this.securityName(row).should.eventually.equal(expected.securityName);
 		}
 		this.categoryName(row).should.eventually.equal(expected.categoryName);
-		if (expected.subcategoryName) {
+		if (undefined !== expected.subcategoryName) {
 			this.subcategoryName(row).should.eventually.equal(expected.subcategoryName);
 		}
-		if (expected.accountName) {
+		if (undefined !== expected.accountName) {
 			this.accountName(row).should.eventually.equal(expected.accountName);
 		}
-		if (expected.subtransactions && expected.subtransactions.length > 0) {
+		if (undefined !== expected.subtransactions && expected.subtransactions.length > 0) {
 			this.toggleSubtransactionsButton(row).isPresent().should.eventually.equal(Boolean(expected.subtransactions));
 		}
-		if (expected.memoFromInvestmentDetails) {
-			this.memo(row).should.eventually.equal(expected.memoFromInvestmentDetails);
-		} else {
+		if (undefined === expected.memoFromInvestmentDetails) {
 			this.memo(row).should.eventually.equal(expected.memo);
+		} else {
+			this.memo(row).should.eventually.equal(expected.memoFromInvestmentDetails);
 		}
-		if (expected.investmentDetails) {
+		if (undefined !== expected.investmentDetails) {
 			this.investmentDetails(row).should.eventually.equal(expected.investmentDetails);
 		}
-		if (!expected.memoFromInvestmentDetails && !expected.memo && expected.commission) {
+		if (undefined === expected.memoFromInvestmentDetails && undefined === expected.memo && expected.commission) {
 			this.commission(row).should.eventually.equal(expected.commission);
 		}
 		this.frequency(row).should.eventually.equal(expected.frequency);
-		if (expected.debitAmount) {
+		if (undefined !== expected.debitAmount && "" !== expected.debitAmount) {
 			this.debitAmount(row).should.eventually.equal(expected.debitAmount);
 		}
-		if (expected.creditAmount) {
+		if (undefined !== expected.creditAmount && "" !== expected.creditAmount) {
 			this.creditAmount(row).should.eventually.equal(expected.creditAmount);
 		}
 	}
@@ -259,10 +259,10 @@ class ScheduleIndexView {
 	// Checks the values in a subtransaction row against an expected set of values
 	checkSubtransactionRowValues(row, expected) {
 		this.subtransactionCategoryName(row).should.eventually.equal(expected.categoryName);
-		if (expected.subcategoryName) {
+		if (undefined !== expected.subcategoryName) {
 			this.subtransactionSubcategoryName(row).should.eventually.equal(expected.subcategoryName);
 		}
-		if (expected.accountName) {
+		if (undefined !== expected.accountName) {
 			this.subtransactionAccountName(row).should.eventually.equal(expected.accountName);
 		}
 		this.subtransactionMemo(row).should.eventually.equal(expected.memo);

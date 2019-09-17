@@ -301,7 +301,7 @@ describe("transactionEditView", () => {
 				});
 
 				transactions[account].transactions.forEach(transaction => {
-					describe(transaction.type || transaction.memo, () => {
+					describe(undefined === transaction.type ? transaction.memo : transaction.type, () => {
 						beforeEach(() => {
 							expected = transaction;
 							transactionEditView.enterTransactionDetails("account", expected);

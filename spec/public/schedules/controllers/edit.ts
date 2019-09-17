@@ -23,6 +23,7 @@ import {
 	Subtransaction,
 	SubtransactionType,
 	TransactionDirection,
+	TransactionFlag,
 	TransactionType
 } from "transactions/types";
 import {
@@ -132,11 +133,12 @@ describe("ScheduleEditController", (): void => {
 
 		beforeEach((): void => {
 			transaction = {
+				id: null,
 				transaction_type: "Basic",
 				next_due_date: startOfDay(new Date()),
 				autoFlag: false
 			};
-			scheduleEditController = controllerTest("ScheduleEditController", { schedule: null }) as ScheduleEditController;
+			scheduleEditController = controllerTest("ScheduleEditController", { schedule: undefined }) as ScheduleEditController;
 		});
 
 		it("should make an empty transaction object available to the view", (): Chai.Assertion => scheduleEditController.transaction.should.deep.equal(transaction));
@@ -461,7 +463,7 @@ describe("ScheduleEditController", (): void => {
 		let	transaction: ScheduledTransferTransaction,
 				currentElement: Element | null,
 				mockAngularElement: {triggerHandler: SinonStub;},
-				realAngularElement: JQueryStatic<HTMLElement>;
+				realAngularElement: JQueryStatic;
 
 		beforeEach((): void => {
 			// The previous transaction to merge
@@ -493,13 +495,13 @@ describe("ScheduleEditController", (): void => {
 
 		it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & related status", (): void => {
 			scheduleEditController["useLastTransaction"](transaction);
-			(!transaction.id).should.be.true;
-			(!transaction.transaction_date).should.be.true;
-			(!transaction.next_due_date).should.be.true;
-			(!transaction.frequency).should.be.true;
-			(!transaction.primary_account).should.be.true;
-			(!transaction.status).should.be.true;
-			(!transaction.related_status).should.be.true;
+			(undefined === transaction.id).should.be.true;
+			(undefined === transaction.transaction_date).should.be.true;
+			(undefined === transaction.next_due_date).should.be.true;
+			(undefined === transaction.frequency).should.be.true;
+			(undefined === transaction.primary_account).should.be.true;
+			(undefined === transaction.status).should.be.true;
+			(undefined === transaction.related_status).should.be.true;
 		});
 
 		it("should preserve the schedule's flag", (): void => {
@@ -513,7 +515,7 @@ describe("ScheduleEditController", (): void => {
 		it("should ignore the previous transaction's flag", (): void => {
 			scheduleEditController.transaction.flag = null;
 			scheduleEditController["useLastTransaction"](transaction);
-			(null === scheduleEditController.transaction.flag).should.be.true;
+			(null === scheduleEditController.transaction.flag as TransactionFlag).should.be.true;
 		});
 
 		it("should merge the transaction details into vm.transaction", (): void => {
@@ -581,7 +583,7 @@ describe("ScheduleEditController", (): void => {
 					}
 				});
 
-				if (scenario.subtransactions) {
+				if (undefined !== scenario.subtransactions) {
 					it(`should not create any stub subtransactions for a ${scenario.id} if some already exist`, (): void => {
 						subtransactions = [
 							createSubtransferTransaction(),
@@ -702,6 +704,12 @@ describe("ScheduleEditController", (): void => {
 		it("should set the account type to the primary account type", (): void => {
 			scheduleEditController.primaryAccountSelected();
 			(scheduleEditController["account_type"] as AccountType).should.equal("bank");
+		});
+
+		it("should set the account type to null when there is no primary account", (): void => {
+			delete scheduleEditController.transaction.primary_account;
+			scheduleEditController.primaryAccountSelected();
+			(null === (scheduleEditController["account_type"] as AccountType)).should.be.true;
 		});
 
 		it("should clear the transfer account when the primary account matches", (): void => {
@@ -869,7 +877,7 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.totalAllocated = 80;
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [
 				createSubtransaction({ amount: 80 }),
-				createSubtransaction({ amount: 0 })
+				createSubtransaction({ amount: undefined })
 			];
 		});
 
@@ -878,7 +886,7 @@ describe("ScheduleEditController", (): void => {
 			((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].amount as number).should.equal(100);
 		});
 
-		it("should set a blank subtransacion amount to the unallocated amount", (): void => {
+		it("should set a blank subtransaction amount to the unallocated amount", (): void => {
 			scheduleEditController.addUnallocatedAmount(1);
 			((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[1].amount as number).should.equal(20);
 		});
@@ -1038,6 +1046,13 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.schedule.autoFlag = true;
 			scheduleEditController.save();
 			(scheduleEditController.schedule.flag as string).should.equal("(no memo)");
+		});
+
+		it("should preserve the flag memo if the auto-flag property is set", (): void => {
+			scheduleEditController.schedule.autoFlag = true;
+			scheduleEditController.schedule.flag = "Test flag";
+			scheduleEditController.save();
+			scheduleEditController.schedule.flag.should.equal("Test flag");
 		});
 
 		it("should set the flag to null if the auto-flag property is not set", (): void => {

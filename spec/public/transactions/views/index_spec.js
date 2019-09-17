@@ -233,10 +233,10 @@ describe("transactionIndexView", () => {
 		describe(account, () => {
 			beforeEach(() => {
 				// Go to the transaction index page
-				if (expected[account].cashAccountFor) {
-					accountIndexView.goToCashAccount(expected[account].cashAccountFor);
-				} else {
+				if (undefined === expected[account].cashAccountFor) {
 					accountIndexView.goToAccount(account);
+				} else {
+					accountIndexView.goToCashAccount(expected[account].cashAccountFor);
 				}
 
 				browser.wait(protractor.ExpectedConditions.presenceOf(transactionIndexView.table.row(0)), 3000, "Timeout waiting for view to render");
@@ -258,7 +258,7 @@ describe("transactionIndexView", () => {
 					splits = [];
 
 					transactionIndexView.table.rows.each((row, index) => {
-						if (expected[account].transactions[index].subtransactions) {
+						if (undefined !== expected[account].transactions[index].subtransactions) {
 							// Show subtransactions
 							transactionIndexView.toggleSubtransactionsButton(row).click();
 
@@ -285,7 +285,7 @@ describe("transactionIndexView", () => {
 
 			it("should display the closing balance", () => transactionIndexView.closingBalance().should.eventually.equal(expected[account].closingBalance));
 
-			if (expected[account].behavesLikeNavigableTable) {
+			if ("function" === typeof expected[account].behavesLikeNavigableTable) {
 				transactionIndexView.table.behavesLikeNavigableTable();
 			}
 		});

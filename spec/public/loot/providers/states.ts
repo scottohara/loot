@@ -10,6 +10,7 @@ import AccountModel from "accounts/models/account";
 import { AuthenticationModelMock } from "mocks/authentication/types";
 import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
+import { EntityModel } from "loot/types";
 import LootStatesProvider from "loot/providers/states";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import { Payee } from "payees/types";
@@ -660,9 +661,9 @@ describe("lootStatesProvider", (): void => {
 					},
 					params: {},
 					includes: sinon.stub().returns(false),
-					currentState(): void {},
-					reload(): void {},
-					go(): void {}
+					currentState: sinon.stub(),
+					reload: sinon.stub(),
+					go: sinon.stub()
 				};
 				$state.go(stateName, stateParams);
 				$rootScope.$digest();
@@ -679,10 +680,10 @@ describe("lootStatesProvider", (): void => {
 			it("should not resolve the previous state if transitioning from a different query", (): void => {
 				previousState.includes.withArgs("root.transactions").returns(true);
 				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, { $state: previousState });
-				(!resolvedPreviousState).should.be.true;
+				(null === resolvedPreviousState).should.be.true;
 			});
 
-			it("should resolve the context model", (): Chai.Assertion => (null === $injector.invoke(($state.current.resolve as {contextModel: () => null;}).contextModel)).should.be.true);
+			it("should resolve the context model", (): Chai.Assertion => (null === $injector.invoke(($state.current.resolve as {contextModel: () => EntityModel | null;}).contextModel)).should.be.true);
 
 			it("should resolve the context", (): Chai.Assertion => resolvedContext.should.equal(query));
 
@@ -704,7 +705,7 @@ describe("lootStatesProvider", (): void => {
 				$httpBackend.expectGET("accounts/views/index.html").respond(200);
 				$state.go("root.accounts");
 				$rootScope.$digest();
-				(!queryService.query).should.be.true;
+				(null === queryService.query).should.be.true;
 			});
 
 			describe("transaction state", (): void => {

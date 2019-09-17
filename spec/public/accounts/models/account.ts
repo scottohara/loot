@@ -10,6 +10,7 @@ import sinon, { SinonStub } from "sinon";
 import { Account } from "accounts/types";
 import AccountModel from "accounts/models/account";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import angular from "angular";
 
 describe("accountModel", (): void => {
@@ -62,6 +63,23 @@ describe("accountModel", (): void => {
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
 		it("should be 'lootRecentAccounts'", (): Chai.Assertion => accountModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentAccounts"));
+	});
+
+	describe("recentAccounts", (): void => {
+		describe("when localStorage is not null", (): void => {
+			let recentAccounts: OgCacheEntry[];
+
+			beforeEach((): void => {
+				recentAccounts = [{ id: 1, name: "recent item" }];
+				$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(JSON.stringify(recentAccounts));
+			});
+
+			it("should return an array of cache entries", (): Chai.Assertion => accountModel["recentAccounts"].should.deep.equal(recentAccounts));
+		});
+
+		describe("when localStorage is null", (): void => {
+			it("should return an empty array", (): Chai.Assertion => accountModel["recentAccounts"].should.deep.equal([]));
+		});
 	});
 
 	describe("type", (): void => {

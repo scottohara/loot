@@ -20,13 +20,21 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 
 	private readonly lruCache: OgLruCache;
 
-	public constructor(private readonly $http: angular.IHttpService, $cacheFactory: angular.ICacheFactoryService,
-						private readonly $window: angular.IWindowService, ogLruCacheFactory: OgLruCacheFactory) {
+	public constructor(private readonly $http: angular.IHttpService,
+						$cacheFactory: angular.ICacheFactoryService,
+						private readonly $window: angular.IWindowService,
+						ogLruCacheFactory: OgLruCacheFactory) {
 		this.cache = $cacheFactory("payees");
 
 		// Create an LRU cache and populate with the recent payee list from local storage
-		this.lruCache = ogLruCacheFactory.new(LRU_CAPACITY, JSON.parse(this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY) || "[]") as OgCacheEntry[]);
+		this.lruCache = ogLruCacheFactory.new(LRU_CAPACITY, this.recentPayees);
 		this.recent = this.lruCache.list;
+	}
+
+	private get recentPayees(): OgCacheEntry[] {
+		const recentPayees: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
+
+		return JSON.parse(null === recentPayees ? "[]" : recentPayees) as OgCacheEntry[];
 	}
 
 	public get LRU_LOCAL_STORAGE_KEY(): string {
@@ -40,11 +48,11 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 
 	// Returns the API path
 	public path(id?: number): string {
-		return `/payees${id ? `/${id}` : ""}`;
+		return `/payees${undefined === id ? "" : `/${id}`}`;
 	}
 
 	// Retrieves the list of payees
-	public all(list?: boolean): angular.IPromise<Payee[]> {
+	public all(list = false): angular.IPromise<Payee[]> {
 		return this.$http.get(`${this.path()}${list ? "?list" : ""}`, {
 			cache: list ? false : this.cache
 		}).then((response: angular.IHttpResponse<Payee[]>): Payee[] => response.data);
@@ -81,7 +89,7 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 		this.flush();
 
 		return this.$http({
-			method: payee.id ? "PATCH" : "POST",
+			method: undefined === payee.id ? "POST" : "PATCH",
 			url: this.path(payee.id),
 			data: payee
 		});
@@ -108,10 +116,10 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 
 	// Flush the cache
 	public flush(id?: number): void {
-		if (id) {
-			this.cache.remove(this.path(id));
-		} else {
+		if (undefined === id) {
 			this.cache.removeAll();
+		} else {
+			this.cache.remove(this.path(id));
 		}
 	}
 

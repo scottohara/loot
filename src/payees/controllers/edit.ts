@@ -11,9 +11,10 @@ export default class PayeeEditController {
 	public errorMessage: string | null = null;
 
 	public constructor(private readonly $uibModalInstance: IModalInstanceService,
-						private readonly payeeModel: PayeeModel, payee: Payee) {
+						private readonly payeeModel: PayeeModel,
+						payee: Payee | undefined) {
 		this.payee = angular.extend({}, payee);
-		this.mode = payee ? "Edit" : "Add";
+		this.mode = undefined === payee ? "Add" : "Edit";
 	}
 
 	// Save and close the modal

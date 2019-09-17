@@ -126,7 +126,7 @@ class CategoryIndexView {
 			this.numChildren(row)
 		]).then(values => ({
 			categoryName: values[0],
-			direction: values[1] ? "inflow" : values[2] ? "outflow" : null,
+			direction: true === values[1] ? "inflow" : true === values[2] ? "outflow" : null,
 			isSubcategory: values[3],
 			categoryParent: values[4],
 			numChildren: values[5]

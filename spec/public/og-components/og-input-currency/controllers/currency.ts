@@ -14,17 +14,7 @@ describe("OgInputCurrencyController", (): void => {
 	it("should default to 2 decimal places", (): Chai.Assertion => ogInputCurrencyController.decimalPlaces.should.equal(2));
 
 	describe("decimalPlaces", (): void => {
-		it("should default to 2 decimals if the value is null", (): void => {
-			ogInputCurrencyController.decimalPlaces = Number(null);
-			ogInputCurrencyController.decimalPlaces.should.equal(2);
-		});
-
-		it("should default to 2 decimals if the value is NaN", (): void => {
-			ogInputCurrencyController.decimalPlaces = Number("abc");
-			ogInputCurrencyController.decimalPlaces.should.equal(2);
-		});
-
-		it("should set the specified number of decimals if valid", (): void => {
+		it("should set the specified number of decimals", (): void => {
 			ogInputCurrencyController.decimalPlaces = 3;
 			ogInputCurrencyController.decimalPlaces.should.equal(3);
 		});

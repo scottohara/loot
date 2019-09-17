@@ -54,14 +54,13 @@ export default class ScheduleIndexController {
 			},
 			focusAction(index: number): void {
 				$state.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, { id: self.schedules[index].id }).catch(self.showError);
-			},
-			focusRow(): void {}
+			}
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// If we have a schedule id, focus the specified row
-		if (Number($state.params.id)) {
+		if (!isNaN(Number($state.params.id))) {
 			this.focusSchedule(Number($state.params.id));
 		}
 
@@ -121,10 +120,10 @@ export default class ScheduleIndexController {
 			backdrop: "static",
 			size: "lg",
 			resolve: {
-				schedule: (): angular.IPromise<ScheduledTransaction> | ScheduledTransaction | null => {
+				schedule: (): angular.IPromise<ScheduledTransaction> | ScheduledTransaction | undefined => {
 					// If we didn't get an index, we're adding a new schedule so just return null
 					if (isNaN(Number(index))) {
-						return null;
+						return undefined;
 					}
 
 					// If the selected schedule is a Split/Loan Repayment/Payslip; fetch the subtransactions first

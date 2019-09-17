@@ -78,24 +78,32 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("parse", (): void => {
-		let transaction: Transaction;
-
-		beforeEach((): Transaction => (transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: format(new Date(), "YYYY-MM-DD HH:mm:ss") }))));
-
 		it("should convert the transaction date from a string to a date", (): void => {
+			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: format(new Date(), "YYYY-MM-DD HH:mm:ss") }));
+
 			(transaction.transaction_date as Date).should.be.a("date");
 			(transaction.transaction_date as Date).should.deep.equal(startOfDay(new Date()));
+		});
+
+		it("should do nothing if the transaction date is undefined", (): void => {
+			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: undefined }));
+
+			(undefined === transaction.transaction_date).should.be.true;
 		});
 	});
 
 	describe("stringify", (): void => {
-		let transaction: Transaction;
-
-		beforeEach((): Transaction => (transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: startOfDay(new Date()) }))));
-
 		it("should convert the transaction date from a date to a string", (): void => {
+			const transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: startOfDay(new Date()) }));
+
 			(transaction.transaction_date as string).should.be.a("string");
 			(transaction.transaction_date as string).should.deep.equal(format(new Date(), "YYYY-MM-DD"));
+		});
+
+		it("should do nothing if the transaction date is undefined", (): void => {
+			const transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: undefined }));
+
+			(undefined === transaction.transaction_date).should.be.true;
 		});
 	});
 
@@ -212,7 +220,7 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should dispatch a POST request to /transactions when an id is not provided", (): void => {
-			delete transaction.id;
+			transaction.id = null;
 			$httpBackend.expectPOST(/transactions$/u, transaction);
 			transactionModel.save(transaction);
 			$httpBackend.flush();
@@ -343,9 +351,19 @@ describe("transactionModel", (): void => {
 			transactionModel.updateStatus("context", 1, "Cleared");
 		});
 
-		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a status is not provided", (): void => {
+		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a blank status is provided", (): void => {
 			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/u);
 			transactionModel.updateStatus("context", 1, "");
+		});
+
+		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a null status is provided", (): void => {
+			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/u);
+			transactionModel.updateStatus("context", 1);
+		});
+
+		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a status is not provided", (): void => {
+			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/u);
+			transactionModel.updateStatus("context", 1);
 		});
 
 		afterEach((): void => $httpBackend.flush());

@@ -7,18 +7,14 @@ import {
 	OgInputCalculatorOperator,
 	OgInputCalculatorScope
 } from "og-components/og-input-calculator/types";
-import {
-	OgInputCurrencyControllerMock,
-	OgInputCurrencyControllerType
-} from "mocks/og-components/og-input-currency/types";
-import {
-	OgInputNumberControllerMock,
-	OgInputNumberControllerType
-} from "mocks/og-components/og-input-number/types";
 import sinon, { SinonStub } from "sinon";
 import DirectiveTest from "mocks/loot/directivetest";
 import { ITooltipProvider } from "angular-ui-bootstrap";
+import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
+import { OgInputCurrencyControllerMock } from "mocks/og-components/og-input-currency/types";
 import OgInputCurrencyDirective from "og-components/og-input-currency/directives/og-input-currency";
+import OgInputNumberController from "og-components/og-input-number/controllers/number";
+import { OgInputNumberControllerMock } from "mocks/og-components/og-input-number/types";
 import OgInputNumberDirective from "og-components/og-input-number/directives/og-input-number";
 import angular from "angular";
 
@@ -48,7 +44,7 @@ describe("ogInputCalculator", (): void => {
 
 		ogInputCalculator = directiveTest;
 		ogInputCalculator.configure("og-input-calculator", "input");
-		ogInputCalculator.compile({ "og-input-currency": "" }, true);
+		ogInputCalculator.compile({ "og-input-currency": undefined }, true);
 		ogInputCalculator.scope.$digest();
 		ogInputCalculator["element"] = ogInputCalculator["element"].find("input");
 		scope = ogInputCalculator.scope as OgInputCalculatorScope;
@@ -63,12 +59,12 @@ describe("ogInputCalculator", (): void => {
 	});
 
 	describe("(formatting)", (): void => {
-		it("should use currency formatting if the element includes an og-input-currency directive", (): Chai.Assertion => (scope.ogInput as OgInputCurrencyControllerType).type.should.equal("ogInputCurrencyController"));
+		it("should use currency formatting if the element includes an og-input-currency directive", (): Chai.Assertion => (scope.ogInput as OgInputCurrencyController & { type: string; }).type.should.equal("ogInputCurrencyController"));
 
 		it("should use number formatting if the element includes an og-input-number directive", (): void => {
-			ogInputCalculator.compile({ "og-input-number": "" });
+			ogInputCalculator.compile({ "og-input-number": undefined });
 			scope.$digest();
-			(scope.ogInput as OgInputNumberControllerType).type.should.equal("ogInputNumberController");
+			(scope.ogInput as OgInputNumberController & { type: string; }).type.should.equal("ogInputNumberController");
 		});
 
 		it("should throw an error if the element includes both og-input-currency and og-input-number directives", (): Chai.Assertion => ogInputCalculator.compile.bind(ogInputCalculator, { "og-input-currency": "", "og-input-number": "" }).should.throw("[$compile:multidir]"));
@@ -83,7 +79,7 @@ describe("ogInputCalculator", (): void => {
 	describe("push", (): void => {
 		describe("(initial value)", (): void => {
 			let	mockAngularElement: {dispatchEvent: SinonStub;}[],
-					realAngularElement: JQueryStatic<HTMLElement>;
+					realAngularElement: JQueryStatic;
 
 			beforeEach((): void => {
 				mockAngularElement = [{
@@ -104,7 +100,7 @@ describe("ogInputCalculator", (): void => {
 
 			it("should set operator and operand as the display expression", (): Chai.Assertion => scope.expression.should.equal("\n+ 1"));
 
-			afterEach((): JQueryStatic<HTMLElement> => (angular.element = realAngularElement));
+			afterEach((): JQueryStatic => (angular.element = realAngularElement));
 		});
 
 		describe("(subsequent value)", (): void => {
@@ -309,7 +305,7 @@ describe("ogInputCalculator", (): void => {
 
 	describe("close", (): void => {
 		let	mockAngularElement: {dispatchEvent: SinonStub;}[],
-				realAngularElement: JQueryStatic<HTMLElement>;
+				realAngularElement: JQueryStatic;
 
 		beforeEach((): void => {
 			mockAngularElement = [{
@@ -325,7 +321,7 @@ describe("ogInputCalculator", (): void => {
 
 		it("should hide the popover", (): Chai.Assertion => mockAngularElement[0].dispatchEvent.should.have.been.calledWith(sinon.match((event: Event): boolean => "hideCalculator" === event.type)));
 
-		afterEach((): JQueryStatic<HTMLElement> => (angular.element = realAngularElement));
+		afterEach((): JQueryStatic => (angular.element = realAngularElement));
 	});
 
 	it("should start with a cleared calculator", (): void => {

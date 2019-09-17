@@ -12,6 +12,7 @@ import {
 } from "mocks/og-components/og-lru-cache-factory/types";
 import sinon, { SinonStub } from "sinon";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 import angular from "angular";
@@ -58,6 +59,27 @@ describe("payeeModel", (): void => {
 	it("should fetch the list of recent payees from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentPayees"));
 
 	it("should have a list of recent payees", (): Chai.Assertion => payeeModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
+
+	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
+		it("should be 'lootRecentPayees'", (): Chai.Assertion => payeeModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentPayees"));
+	});
+
+	describe("recentPayees", (): void => {
+		describe("when localStorage is not null", (): void => {
+			let recentPayees: OgCacheEntry[];
+
+			beforeEach((): void => {
+				recentPayees = [{ id: 1, name: "recent item" }];
+				$window.localStorage.getItem.withArgs("lootRecentPayees").returns(JSON.stringify(recentPayees));
+			});
+
+			it("should return an array of cache entries", (): Chai.Assertion => payeeModel["recentPayees"].should.deep.equal(recentPayees));
+		});
+
+		describe("when localStorage is null", (): void => {
+			it("should return an empty array", (): Chai.Assertion => payeeModel["recentPayees"].should.deep.equal([]));
+		});
+	});
 
 	describe("type", (): void => {
 		it("should be 'payee'", (): Chai.Assertion => payeeModel.type.should.equal("payee"));

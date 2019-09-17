@@ -10,17 +10,19 @@ export default class OgInputCurrencyController {
 	}
 
 	public set decimalPlaces(decimalPlaces: number) {
-		this.decimals = (Boolean(decimalPlaces) && Number(decimalPlaces)) || DEFAULT_DECIMAL_PLACES;
+		this.decimals = decimalPlaces;
 	}
 
 	// Converts formatted value to raw value
 	public formattedToRaw(value: string): number {
-		return Number(value.replace(/[^0-9\-.]/gu, "")) || 0;
+		const rawValue = Number(value.replace(/[^0-9\-.]/gu, ""));
+
+		return isNaN(rawValue) ? 0 : rawValue;
 	}
 
 	// Converts raw value to formatted value
 	public rawToFormatted(value: number): string {
-		const formatted: string = this.numberFilter((Boolean(value) && Number(value)) || 0, this.decimalPlaces);
+		const formatted: string = this.numberFilter(isNaN(value) ? 0 : Number(value), this.decimalPlaces);
 
 		if (0 === formatted.indexOf("-")) {
 			return `-$${formatted.substring(1)}`;

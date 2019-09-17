@@ -193,7 +193,7 @@ const	entry = {
 			};
 
 function extractCss(hashFilename) {
-	return new MiniCssExtractPlugin({ filename: hashFilename ? "[name]-[chunkhash:6].css" : "[name].css" });
+	return new MiniCssExtractPlugin({ filename: undefined === hashFilename ? "[name].css" : "[name]-[chunkhash:6].css" });
 }
 
 module.exports = {

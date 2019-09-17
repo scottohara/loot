@@ -21,7 +21,7 @@ describe("ogLoadingSpinner", (): void => {
 	});
 
 	it("should show the text 'Loading...' when a message was not specified", (): void => {
-		ogLoadingSpinner.scope.model = null;
+		ogLoadingSpinner.scope.model = "";
 		ogLoadingSpinner.scope.$digest();
 		ogLoadingSpinner["element"].text().should.equal(" Loading...\n");
 	});

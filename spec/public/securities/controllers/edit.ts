@@ -32,7 +32,7 @@ describe("SecurityEditController", (): void => {
 	});
 
 	describe("when a security is not provided", (): void => {
-		beforeEach((): SecurityEditController => (securityEditController = controllerTest("SecurityEditController", { security: null }) as SecurityEditController));
+		beforeEach((): SecurityEditController => (securityEditController = controllerTest("SecurityEditController", { security: undefined }) as SecurityEditController));
 
 		it("should make an empty security object available to the view", (): void => {
 			securityEditController.security.should.be.an("object");

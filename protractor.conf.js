@@ -45,15 +45,12 @@ module.exports.config = {
 		require("chai").use(require("chai-as-promised")).should();
 	},
 
-	/* eslint-disable no-process-env */
 	params: {
 		login: {
 			userName: process.env.LOOT_USERNAME,
 			password: process.env.LOOT_PASSWORD
 		}
 	},
-
-	/* eslint-enable no-process-env */
 
 	// Framework to use
 	framework: "mocha",

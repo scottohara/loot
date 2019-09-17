@@ -44,13 +44,13 @@ export default class DirectiveTest {
 	 * - the DOM element into which the directive was compiled
 	 * - the scope object that it was compiled with
 	 */
-	public compile(options: {[option: string]: string;} = {}, replace?: boolean): void {
+	public compile(options: {[option: string]: string | undefined;} = {}, replace = false): void {
 		// Configure the directive with any passed options
-		let directive = `${this.directive}${Object.getOwnPropertyDescriptor(options, this.directive) ? `="${options[this.directive]}"` : ""}`;
+		let directive = `${this.directive}${undefined === Object.getOwnPropertyDescriptor(options, this.directive) ? "" : `="${options[this.directive]}"`}`;
 
 		directive = Object.keys(options).reduce((memo: string, option: string): string => {
 			if (option !== this.directive) {
-				return `${memo} ${option}="${options[option]}"`;
+				return `${memo} ${option}${undefined === options[option] ? "" : `="${options[option]}"`}`;
 			}
 
 			return memo;

@@ -63,7 +63,7 @@ function ogTableNavigableViewSpec(table) {
 		describe("edit", () => {
 			beforeEach(() => (action = "edit"));
 
-			if (table.actions.edit.mouseAction) {
+			if (undefined !== table.actions.edit.mouseAction) {
 				it(`should display the ${table.actions.edit.heading} view when the ${table.actions.edit.mouseAction.name}`, () => table.actions.edit.mouseAction.perform(table.row(0)));
 			}
 
@@ -90,9 +90,9 @@ function ogTableNavigableViewSpec(table) {
 				table.clickRow(0);
 			});
 
-			it(`should display the ${table.actions.select.heading}${table.actions.select.heading2 || ""} view when the row is double clicked`, () => table.doubleClickRow(0));
+			it(`should display the ${table.actions.select.heading}${undefined === table.actions.select.heading2 ? "" : table.actions.select.heading2} view when the row is double clicked`, () => table.doubleClickRow(0));
 
-			it(`should display the ${table.actions.select.heading}${table.actions.select.heading2 || ""} view when the enter key is pressed`, () => table.enter());
+			it(`should display the ${table.actions.select.heading}${undefined === table.actions.select.heading2 ? "" : table.actions.select.heading2} view when the enter key is pressed`, () => table.enter());
 		});
 
 		afterEach(() => {

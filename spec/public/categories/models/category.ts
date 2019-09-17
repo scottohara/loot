@@ -10,6 +10,7 @@ import sinon, { SinonStub } from "sinon";
 import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
+import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import angular from "angular";
 import createCategory from "mocks/categories/factories";
 
@@ -56,6 +57,23 @@ describe("categoryModel", (): void => {
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
 		it("should be 'lootRecentCategories'", (): Chai.Assertion => categoryModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentCategories"));
+	});
+
+	describe("recentCategories", (): void => {
+		describe("when localStorage is not null", (): void => {
+			let recentCategories: OgCacheEntry[];
+
+			beforeEach((): void => {
+				recentCategories = [{ id: 1, name: "recent item" }];
+				$window.localStorage.getItem.withArgs("lootRecentCategories").returns(JSON.stringify(recentCategories));
+			});
+
+			it("should return an array of cache entries", (): Chai.Assertion => categoryModel["recentCategories"].should.deep.equal(recentCategories));
+		});
+
+		describe("when localStorage is null", (): void => {
+			it("should return an empty array", (): Chai.Assertion => categoryModel["recentCategories"].should.deep.equal([]));
+		});
 	});
 
 	describe("type", (): void => {

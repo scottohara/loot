@@ -14,7 +14,7 @@ export default class AuthenticationModel {
 		// Get the encoded credentials from sessionStorage
 		const authenticationKey: string | null = this.$window.sessionStorage.getItem(this.SESSION_STORAGE_KEY);
 
-		if (authenticationKey) {
+		if (null !== authenticationKey) {
 			// Set the Authorization header for all http requests
 			this.setAuthorisationHeader(authenticationKey);
 
@@ -67,9 +67,9 @@ export default class AuthenticationModel {
 
 	// Set the Authorization header for all http requests
 	private setAuthorisationHeader(authenticationKey: string): void {
-		const headers: angular.IHttpRequestConfigHeaders = this.$http.defaults.headers || {};
+		const headers: angular.IHttpRequestConfigHeaders = { ...this.$http.defaults.headers };
 
-		headers.common = headers.common || {};
+		headers.common = { ...headers.common };
 		headers.common.Authorization = this.authorisation(authenticationKey);
 		this.$http.defaults.headers = headers;
 	}

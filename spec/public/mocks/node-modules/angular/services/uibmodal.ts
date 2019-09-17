@@ -17,9 +17,9 @@ export default class UibModalMockProvider implements Mock<UibModalMock> {
 			const self: UibModalMock = this;
 
 			// If there are any resolves, resolve them
-			if (options.resolve) {
+			if (undefined !== options.resolve) {
 				this.resolves = Object.keys(options.resolve).reduce((resolves: UibModalMockResolves, resolve: string): UibModalMockResolves => {
-					resolves[resolve] = options.resolve && (options.resolve[resolve] as () => UibModalMockResolve)();
+					resolves[resolve] = ((options.resolve as { [key: string]: () => UibModalMockResolve; })[resolve] as () => UibModalMockResolve)();
 
 					return resolves;
 				}, {});
@@ -51,15 +51,16 @@ export default class UibModalMockProvider implements Mock<UibModalMock> {
 			};
 		},
 		close(value?: UibModalMockCloseResult): void {
-			this.callbackResult = this.closeCallback && this.closeCallback(value);
-			if (this.finallyCallback) {
+			this.callbackResult = (this.closeCallback as UibModalMockResultCallback)(value);
+
+			if (undefined !== this.finallyCallback) {
 				this.callbackResult = this.finallyCallback(this.callbackResult);
 			}
 		},
 		dismiss(): void {
 			this.callbackResult = (this.catchCallback as UibModalMockResultCallback)();
 
-			if (this.finallyCallback) {
+			if (undefined !== this.finallyCallback) {
 				this.callbackResult = this.finallyCallback(this.callbackResult);
 			}
 		}

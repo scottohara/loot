@@ -16,7 +16,7 @@ import OgModalErrorService from "og-components/og-modal-error/services/og-modal-
 import angular from "angular";
 
 export default class AccountIndexController {
-	private readonly keydownHandler: (event: KeyboardEvent) => void;
+	private readonly keydownHandler: (event: JQueryKeyEventObject) => void;
 
 	private readonly showError: (message?: string) => void;
 
@@ -26,7 +26,7 @@ export default class AccountIndexController {
 						private readonly accountModel: AccountModel,
 						ogModalErrorService: OgModalErrorService,
 						public readonly accounts: Accounts) {
-		this.keydownHandler = (event: KeyboardEvent): void => this.keyHandler(event);
+		this.keydownHandler = (event: JQueryKeyEventObject): void => this.keyHandler(event);
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// Handler is wrapped in a function to aid with unit testing
@@ -53,7 +53,7 @@ export default class AccountIndexController {
 					let account: Account | undefined;
 
 					// If we didn't get an index, we're adding a new account so just return null
-					if (accountType && index && !isNaN(index)) {
+					if (undefined !== accountType && undefined !== index && !isNaN(index)) {
 						account = this.accounts[accountType].accounts[index];
 
 						// Add the account to the LRU cache
@@ -66,7 +66,7 @@ export default class AccountIndexController {
 		}).result.then((account: Account): void => {
 			const currentAccountType = `${account.account_type.charAt(0).toUpperCase() + account.account_type.substring(1)} accounts`;
 
-			if (!accountType || !index || isNaN(index)) {
+			if (undefined === accountType || undefined === index || isNaN(index)) {
 				// Add new account to the end of the array
 				this.accounts[currentAccountType].accounts.push(account);
 
@@ -150,7 +150,7 @@ export default class AccountIndexController {
 	}
 
 	// Declare key handler for inserting a new account
-	private keyHandler(event: KeyboardEvent): void {
+	private keyHandler(event: JQueryKeyEventObject): void {
 		const	INSERT_KEY = 45,
 					N_KEY = 78;
 

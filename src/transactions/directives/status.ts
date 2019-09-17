@@ -19,8 +19,8 @@ export default class TransactionStatusDirective {
 						templateUrl: TransactionStatusView,
 						link(scope: TransactionStatusScope, iElement: JQuery<Element>): void {
 							// Set the current status & icon, calculate the next status
-							function setCurrentStatus(status: TransactionStatus): void {
-								scope.currentStatus = status;
+							function setCurrentStatus(status: TransactionStatus | null): void {
+								scope.currentStatus = null === status || "" === status ? "Unreconciled" : status;
 
 								switch (status) {
 									case "Reconciled":
@@ -52,7 +52,7 @@ export default class TransactionStatusDirective {
 							};
 
 							// Set the initial status
-							setCurrentStatus(scope.transactionStatus.transaction.status || "Unreconciled");
+							setCurrentStatus(scope.transactionStatus.transaction.status);
 
 							// Attach the event handlers
 							iElement.on("click", scope.clickHandler);

@@ -33,7 +33,7 @@ describe("CategoryEditController", (): void => {
 	});
 
 	describe("when a category is not provided", (): void => {
-		beforeEach((): CategoryEditController => (categoryEditController = controllerTest("CategoryEditController", { category: null }) as CategoryEditController));
+		beforeEach((): CategoryEditController => (categoryEditController = controllerTest("CategoryEditController", { category: undefined }) as CategoryEditController));
 
 		it("should make an empty category object available to the view", (): void => {
 			categoryEditController.category.should.be.an("object");

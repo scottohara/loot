@@ -20,6 +20,12 @@ describe("OgInputNumberController", (): void => {
 	});
 
 	describe("rawToFormatted", (): void => {
+		it("should return 0 if the value is undefined", (): Chai.Assertion => ogInputNumberController.rawToFormatted(Number("")).should.equal("0"));
+
+		it("should return 0 if the value is null", (): Chai.Assertion => ogInputNumberController.rawToFormatted(Number(null)).should.equal("0"));
+
+		it("should return 0 if the value is NaN", (): Chai.Assertion => ogInputNumberController.rawToFormatted(Number("abc")).should.equal("0"));
+
 		it("should return the passed value unchanged", (): Chai.Assertion => ogInputNumberController.rawToFormatted(1).should.equal("1"));
 	});
 });

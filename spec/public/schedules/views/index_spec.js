@@ -200,7 +200,7 @@ describe("scheduleIndexView", () => {
 			splits = [];
 
 			scheduleIndexView.table.rows.each((row, index) => {
-				if (expected[index].subtransactions) {
+				if (undefined !== expected[index].subtransactions) {
 					// Show subtransactions
 					scheduleIndexView.toggleSubtransactionsButton(row).click();
 					splits.push({ index, row });

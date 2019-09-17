@@ -89,7 +89,7 @@ describe("TransactionEditController", (): void => {
 
 		it("should make the passed transaction available to the view", (): void => {
 			transactionEditController.transaction.should.be.an("object");
-			transactionEditController.transaction.should.be.empty;
+			transactionEditController.transaction.should.deep.equal({ id: null });
 		});
 
 		it("should set the mode to Add", (): Chai.Assertion => transactionEditController.mode.should.equal("Add"));
@@ -378,7 +378,7 @@ describe("TransactionEditController", (): void => {
 		let	lastTransaction: TransferTransaction,
 				currentElement: Element | null,
 				mockAngularElement: {triggerHandler: SinonStub;},
-				realAngularElement: JQueryStatic<HTMLElement>;
+				realAngularElement: JQueryStatic;
 
 		beforeEach((): void => {
 			// The previous transaction to merge
@@ -410,12 +410,12 @@ describe("TransactionEditController", (): void => {
 
 		it("should strip the transaction of it's id, date, primary account, status, related status & flag", (): void => {
 			transactionEditController["useLastTransaction"](lastTransaction);
-			(!lastTransaction.id).should.be.true;
-			(!lastTransaction.transaction_date).should.be.true;
-			(!lastTransaction.primary_account).should.be.true;
-			(!lastTransaction.status).should.be.true;
-			(!lastTransaction.related_status).should.be.true;
-			(!lastTransaction.flag).should.be.true;
+			(undefined === lastTransaction.id).should.be.true;
+			(undefined === lastTransaction.transaction_date).should.be.true;
+			(undefined === lastTransaction.primary_account).should.be.true;
+			(undefined === lastTransaction.status).should.be.true;
+			(undefined === lastTransaction.related_status).should.be.true;
+			(undefined === lastTransaction.flag).should.be.true;
 		});
 
 		it("should merge the transaction details into vm.transaction", (): void => {
@@ -482,7 +482,7 @@ describe("TransactionEditController", (): void => {
 					}
 				});
 
-				if (scenario.subtransactions) {
+				if (undefined !== scenario.subtransactions) {
 					it(`should not create any stub subtransactions for a ${scenario.id} if some already exist`, (): void => {
 						subtransactions = [
 							createSubtransferTransaction(),
@@ -730,7 +730,7 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.totalAllocated = 80;
 			(transactionEditController.transaction as SplitTransaction).subtransactions = [
 				createSubtransaction({ amount: 80 }),
-				createSubtransaction({ amount: 0 })
+				createSubtransaction({ amount: undefined })
 			];
 		});
 

@@ -45,7 +45,7 @@ describe("AccountEditController", (): void => {
 	});
 
 	describe("when an account is not provided", (): void => {
-		beforeEach((): AccountEditController => (accountEditController = controllerTest("AccountEditController", { account: null }) as AccountEditController));
+		beforeEach((): AccountEditController => (accountEditController = controllerTest("AccountEditController", { account: undefined }) as AccountEditController));
 
 		it("should make an empty account object available to the view", (): Chai.Assertion => accountEditController.account.should.deep.equal({ opening_balance: 0 }));
 
@@ -79,12 +79,10 @@ describe("AccountEditController", (): void => {
 			accountModel.all.should.have.been.called;
 		});
 
-		it("should return a filtered & limited list of asset accounts", (): void => {
-			accountEditController.accounts("b", 2).should.eventually.deep.equal([
-				createAccount({ id: 4, name: "ba", account_type: "asset" }),
-				createAccount({ id: 5, name: "ab", account_type: "asset" })
-			]);
-		});
+		it("should return a filtered & limited list of asset accounts", (): Chai.PromisedAssertion => accountEditController.accounts("b", 2).should.eventually.deep.equal([
+			createAccount({ id: 4, name: "ba", account_type: "asset" }),
+			createAccount({ id: 5, name: "ab", account_type: "asset" })
+		]));
 	});
 
 	describe("save", (): void => {

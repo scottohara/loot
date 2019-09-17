@@ -22,7 +22,7 @@ export default class TransactionFlagController {
 	// Save and close the modal
 	public save(): void {
 		this.errorMessage = null;
-		this.transaction.flag = (this.flag && this.flag) || "(no memo)";
+		this.transaction.flag = undefined === this.flag || null === this.flag ? "(no memo)" : this.flag;
 		this.transactionModel.flag(this.transaction).then((): void => this.$uibModalInstance.close(this.transaction), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
 	}
 

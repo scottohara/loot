@@ -19,12 +19,12 @@ export default class QMockProvider implements Mock<QMock> {
 
 			function updateValueAndReturn(result: PromiseMock<T> | T, promise: PromiseMock<T>): PromiseMock<T> | T {
 				// If the callback yielded a promise, we'll simply return that
-				if (result && (result as PromiseMock<T>).then && angular.isFunction((result as PromiseMock<T>).then.bind(result))) {
+				if (undefined !== result && undefined !== (result as PromiseMock<T>).then && angular.isFunction((result as PromiseMock<T>).then.bind(result))) {
 					return result;
 				}
 
 				// Otherwise, update the promise value to the callback result; and return the existing promise
-				promiseValue = result || promiseValue;
+				promiseValue = undefined === result ? promiseValue : result;
 
 				return promise;
 			}
@@ -41,7 +41,7 @@ export default class QMockProvider implements Mock<QMock> {
 					then(successCallback: PromiseMockCallback<T>, errorCallback: PromiseMockCallback<T>): PromiseMock<T> | T {
 						if (isResolved) {
 							callbackResult = successCallback(promiseValue);
-						} else if (errorCallback) {
+						} else if (undefined !== errorCallback) {
 							callbackResult = errorCallback(promiseValue);
 						}
 
@@ -66,21 +66,21 @@ export default class QMockProvider implements Mock<QMock> {
 						stub: SinonStub = sinon.stub();
 
 			// Auto-resolve the success promise with the specified success response
-			qSuccess.resolve(success ? (success as PromiseMockConfig<T>).response : null);
+			qSuccess.resolve(undefined === success ? null : (success as PromiseMockConfig<T>).response);
 
 			// Auto-reject the error promise with the specified error response
-			qError.reject(error && (error as PromiseMockConfig<T>).response ? (error as PromiseMockConfig<T>).response : { data: "unsuccessful" });
+			qError.reject(undefined !== error && undefined !== (error as PromiseMockConfig<T>).response ? (error as PromiseMockConfig<T>).response : { data: "unsuccessful" });
 
 			// Configure the stub to return the appropriate promise based on the call arguments
-			if (!success || (angular.isObject(success) && !(success as PromiseMockConfig<T>).args)) {
+			if (undefined === success || (angular.isObject(success) && undefined === (success as PromiseMockConfig<T>).args)) {
 				// No success args specified, so default response is a success
 				stub.returns(qSuccess.promise);
 			} else {
-				stub.withArgs(sinon.match((success as PromiseMockConfig<T>).args || success)).returns(qSuccess.promise);
+				stub.withArgs(sinon.match(undefined === (success as PromiseMockConfig<T>).args ? success : (success as PromiseMockConfig<T>).args)).returns(qSuccess.promise);
 			}
 
-			if (error) {
-				stub.withArgs(sinon.match((error as PromiseMockConfig<T>).args || error)).returns(qError.promise);
+			if (undefined !== error) {
+				stub.withArgs(sinon.match(undefined === (error as PromiseMockConfig<T>).args ? error : (error as PromiseMockConfig<T>).args)).returns(qError.promise);
 			}
 
 			return stub;

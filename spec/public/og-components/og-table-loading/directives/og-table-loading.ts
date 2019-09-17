@@ -41,7 +41,7 @@ describe("ogTableLoading", (): void => {
 			const td: JQuery<Element> = ogTableLoading["element"].find("td");
 
 			td.should.not.be.empty;
-			(td.attr("colspan") as string).should.equal("3");
+			String(td.attr("colspan")).should.equal("3");
 		});
 	});
 });

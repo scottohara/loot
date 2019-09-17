@@ -111,11 +111,11 @@ describe("TransactionIndexController", (): void => {
 
 	it("should make the passed context available to the view", (): Chai.Assertion => transactionIndexController.context.should.deep.equal(context));
 
-	it("should make the passed context type available to the view", (): Chai.Assertion => transactionIndexController.contextType.should.equal(contextModel.type));
+	it("should make the passed context type available to the view", (): Chai.Assertion => String(transactionIndexController.contextType).should.equal(contextModel.type));
 
 	it("should not set a context type when a context model was not specified", (): void => {
 		transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null }) as TransactionIndexController;
-		(!transactionIndexController.contextType).should.be.true;
+		(undefined === transactionIndexController.contextType).should.be.true;
 	});
 
 	it("should fetch the show all details setting", (): Chai.Assertion => transactionModel.allDetailsShown.should.have.been.called);
@@ -529,7 +529,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(context has a closing balance property)", (): void => {
-			let	transaction: Transaction | null,
+			let	transaction: Transaction | undefined,
 					expected: number;
 
 			beforeEach((): void => {
@@ -539,7 +539,7 @@ describe("TransactionIndexController", (): void => {
 
 			describe("(original transaction)", (): void => {
 				it("should do nothing if undefined", (): void => {
-					transaction = null;
+					transaction = undefined;
 					expected = 0;
 				});
 
@@ -558,7 +558,7 @@ describe("TransactionIndexController", (): void => {
 
 			describe("(new transaction)", (): void => {
 				it("should do nothing if undefined", (): void => {
-					transaction = null;
+					transaction = undefined;
 					expected = 0;
 				});
 
@@ -623,16 +623,16 @@ describe("TransactionIndexController", (): void => {
 			];
 
 			angular.forEach(scenarios, (scenario: {action: "edit" | "delete"; type: TransactionType; account_type?: "investment";}): void => {
-				it(`should not prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction${scenario.account_type ? ` from an ${scenario.account_type} acount` : ""}`, (): void => {
+				it(`should not prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction${undefined === scenario.account_type ? "" : ` from an ${scenario.account_type} acount`}`, (): void => {
 					transaction.transaction_type = scenario.type;
-					(transaction.primary_account as Account).account_type = scenario.account_type || (transaction.primary_account as Account).account_type;
+					(transaction.primary_account as Account).account_type = undefined === scenario.account_type ? (transaction.primary_account as Account).account_type : scenario.account_type;
 					transactionIndexController["isAllowed"](scenario.action, transaction);
 					transactionIndexController["promptToSwitchAccounts"].should.not.have.been.called;
 				});
 
-				it(`should return true when attempting to ${scenario.action} a ${scenario.type} transaction${scenario.account_type ? ` from an ${scenario.account_type} acount` : ""}`, (): void => {
+				it(`should return true when attempting to ${scenario.action} a ${scenario.type} transaction${undefined === scenario.account_type ? "" : ` from an ${scenario.account_type} acount`}`, (): void => {
 					transaction.transaction_type = scenario.type;
-					(transaction.primary_account as Account).account_type = scenario.account_type || (transaction.primary_account as Account).account_type;
+					(transaction.primary_account as Account).account_type = undefined === scenario.account_type ? (transaction.primary_account as Account).account_type : scenario.account_type;
 					transactionIndexController["isAllowed"](scenario.action, transaction).should.be.true;
 				});
 			});
@@ -824,7 +824,7 @@ describe("TransactionIndexController", (): void => {
 		it("should do nothing if no transactions to process", (): void => {
 			transactionBatch.transactions = [];
 			transactionIndexController["processTransactions"](transactionBatch);
-			(!transactionIndexController["openingBalance"]).should.be.true;
+			(undefined === transactionIndexController["openingBalance"]).should.be.true;
 		});
 
 		it("should make the opening balance of the batch available to the view", (): void => {
@@ -868,7 +868,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		it("should focus the transaction row for a specified transaction", (): void => {
-			transactionIndexController["processTransactions"](transactionBatch, null, 1);
+			transactionIndexController["processTransactions"](transactionBatch, undefined, 1);
 			transactionIndexController["focusTransaction"].should.have.been.calledWith(1);
 		});
 
@@ -898,7 +898,7 @@ describe("TransactionIndexController", (): void => {
 		beforeEach((): SinonStub => (transactionIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific transaction row could not be found", (): void => {
-			(!transactionIndexController["focusTransaction"](999)).should.be.true;
+			transactionIndexController["focusTransaction"](999).should.be.NaN;
 			(transactionIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
 		});
 
@@ -951,22 +951,22 @@ describe("TransactionIndexController", (): void => {
 
 			it("should do nothing if we're currently reconciling", (): void => {
 				transactionIndexController.reconciling = true;
-				transactionIndexController.toggleUnreconciledOnly(true);
+				transactionIndexController.toggleUnreconciledOnly(true, "prev");
 				accountModel.unreconciledOnly.should.not.have.been.called;
 			});
 
 			it("should update the unreconciled only setting for the current account", (): void => {
-				transactionIndexController.toggleUnreconciledOnly(true);
+				transactionIndexController.toggleUnreconciledOnly(true, "prev");
 				accountModel.unreconciledOnly.should.have.been.calledWith((transactionIndexController.context as Entity).id, true);
 			});
 
 			it("should set a flag to indicate that we're showing unreconciled transactions only", (): void => {
-				transactionIndexController.toggleUnreconciledOnly(true);
+				transactionIndexController.toggleUnreconciledOnly(true, "prev");
 				transactionIndexController.unreconciledOnly.should.be.true;
 			});
 
 			it("should clear the list of transactions", (): void => {
-				transactionIndexController.toggleUnreconciledOnly(true);
+				transactionIndexController.toggleUnreconciledOnly(true, "prev");
 				transactionIndexController.transactions.should.be.empty;
 			});
 
@@ -977,7 +977,7 @@ describe("TransactionIndexController", (): void => {
 
 			it("should refetch a batch of transactions in the previous direction if a direction is not specified", (): void => {
 				direction = null;
-				transactionIndexController.toggleUnreconciledOnly(true);
+				transactionIndexController.toggleUnreconciledOnly(true, "prev");
 				transactionIndexController.getTransactions.should.have.been.calledWith("prev");
 			});
 		});

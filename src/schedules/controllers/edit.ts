@@ -77,17 +77,17 @@ export default class ScheduleEditController {
 						private readonly transactionModel: TransactionModel,
 						private readonly scheduleModel: ScheduleModel,
 						ogModalErrorService: OgModalErrorService,
-						schedule: ScheduledTransaction) {
+						schedule: ScheduledTransaction | undefined) {
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
-		this.transaction = angular.extend({ transaction_type: "Basic", next_due_date: startOfDay(new Date()) }, schedule);
+		this.transaction = angular.extend({ id: null, transaction_type: "Basic", next_due_date: startOfDay(new Date()) }, schedule);
 
 		// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
-		this.mode = schedule ? "Enter Transaction" : "Add Schedule";
+		this.mode = undefined === schedule ? "Add Schedule" : "Enter Transaction";
 
 		// When schedule is passed, schedule & transaction are different objects; otherwise same object
-		this.schedule = schedule ? angular.copy(this.transaction) : this.transaction;
+		this.schedule = undefined === schedule ? this.transaction : angular.copy(this.transaction);
 
-		if (schedule) {
+		if (undefined !== schedule) {
 			// Set the transaction id to null, so that on save a new transaction is created
 			this.transaction.id = null;
 
@@ -107,10 +107,10 @@ export default class ScheduleEditController {
 		// Watch the subtransactions array and recalculate the total allocated
 		$scope.$watch((): SplitTransactionChild[] => (this.transaction as SplitTransaction).subtransactions, (newValue: SplitTransactionChild[], oldValue: SplitTransactionChild[]): void => {
 			if (newValue !== oldValue && (this.transaction as SplitTransaction).subtransactions) {
-				this.totalAllocated = (this.transaction as SplitTransaction).subtransactions.reduce((total: number, subtransaction: SplitTransactionChild): number => total + (Number(Number(subtransaction.amount) * (subtransaction.direction === this.transaction.direction ? 1 : -1)) || 0), 0);
+				this.totalAllocated = (this.transaction as SplitTransaction).subtransactions.reduce((total: number, subtransaction: SplitTransactionChild): number => total + (isNaN(Number(subtransaction.amount)) ? 0 : Number(subtransaction.amount) * (subtransaction.direction === this.transaction.direction ? 1 : -1)), 0);
 
 				// If we're adding a new transaction, join the subtransaction memos and update the parent memo
-				if (!this.transaction.id) {
+				if (null === this.transaction.id) {
 					this.memoFromSubtransactions();
 				}
 			}
@@ -128,20 +128,20 @@ export default class ScheduleEditController {
 	}
 
 	// List of categories for the typeahead
-	public categories(filter: string, limit: number, parent?: Category | null, includeSplits?: boolean): angular.IPromise<DisplayCategory[]> | DisplayCategory[] {
+	public categories(filter: string, limit: number, parent?: Category | null, includeSplits = false): angular.IPromise<DisplayCategory[]> | DisplayCategory[] {
 		// If a parent was specified but it doesn't have an id, return an empty array
-		if (parent && isNaN(Number(parent.id))) {
+		if (undefined !== parent && null !== parent && isNaN(Number(parent.id))) {
 			return [];
 		}
 
 		// If the parent was specified, pass the parent's id
-		const parentId: number | null = parent ? parent.id : null;
+		const parentId: number | null = undefined === parent || null === parent ? null : parent.id;
 
 		return this.categoryModel.all(parentId).then((categories: Category[]): DisplayCategory[] => {
 			let psuedoCategories: DisplayCategory[] = categories;
 
 			// For the category dropdown, include psuedo-categories that change the transaction type
-			if (!parent) {
+			if (undefined === parent || null === parent) {
 				if (includeSplits) {
 					psuedoCategories = ([
 						{ id: "SplitTo", name: "Split To" },
@@ -173,7 +173,7 @@ export default class ScheduleEditController {
 			{ id: "TransferFrom", name: "Transfer From" }
 		];
 
-		return filter ? this.filterFilter(categories, { name: filter }) : categories;
+		return undefined === filter ? categories : this.filterFilter(categories, { name: filter });
 	}
 
 	// Returns true if the passed value is typeof string (and is not empty)
@@ -184,7 +184,7 @@ export default class ScheduleEditController {
 	// Handler for payee changes
 	public payeeSelected(): void {
 		// If we're adding a new schedule and an existing payee is selected
-		if (!this.transaction.id && (this.transaction as PayeeCashTransaction).payee && "object" === typeof (this.transaction as PayeeCashTransaction).payee && "Enter Transaction" !== this.mode) {
+		if (null === this.transaction.id && undefined !== (this.transaction as PayeeCashTransaction).payee && "object" === typeof (this.transaction as PayeeCashTransaction).payee && "Enter Transaction" !== this.mode) {
 			// Show the loading indicator
 			this.loadingLastTransaction = true;
 
@@ -200,7 +200,7 @@ export default class ScheduleEditController {
 	// Handler for security changes
 	public securitySelected(): void {
 		// If we're adding a new schedule and an existing security is selected
-		if (!this.transaction.id && (this.transaction as SecurityTransaction).security && "object" === typeof (this.transaction as SecurityTransaction).security && "Enter Transaction" !== this.mode) {
+		if (null === this.transaction.id && undefined !== (this.transaction as SecurityTransaction).security && "object" === typeof (this.transaction as SecurityTransaction).security && "Enter Transaction" !== this.mode) {
 			// Show the loading indicator
 			this.loadingLastTransaction = true;
 
@@ -216,12 +216,12 @@ export default class ScheduleEditController {
 	// Handler for category changes (`index` is the subtransaction index, or null for the main schedule)
 	public categorySelected(index?: number): void {
 		const transaction: Transaction | SplitTransactionChild = isNaN(Number(index)) ? this.transaction : (this.transaction as SplitTransaction).subtransactions[Number(index)];
-		let	type: TransactionType | SubtransactionType | null = null,
-				direction: TransactionDirection | null = null,
-				parentId: number | null = null;
+		let	type: TransactionType | SubtransactionType | undefined,
+				direction: TransactionDirection | undefined,
+				parentId: number | undefined;
 
 		// Check the category selection
-		if (transaction.category && "object" === typeof transaction.category) {
+		if (undefined !== transaction.category && "object" === typeof transaction.category) {
 			if (isNaN(Number(index))) {
 				switch (String(transaction.category.id)) {
 					case "TransferTo":
@@ -268,7 +268,7 @@ export default class ScheduleEditController {
 					case "Split":
 					case "Payslip":
 					case "LoanRepayment":
-						if (!(transaction as SplitTransaction).subtransactions) {
+						if (undefined === (transaction as SplitTransaction).subtransactions) {
 							(transaction as SplitTransaction).subtransactions = [
 								{
 									memo: transaction.memo,
@@ -306,11 +306,11 @@ export default class ScheduleEditController {
 		}
 
 		// Update the transaction type & direction
-		transaction.transaction_type = type || (isNaN(Number(index)) ? "Basic" : "Sub");
-		transaction.direction = direction || "outflow";
+		transaction.transaction_type = undefined === type ? isNaN(Number(index)) ? "Basic" : "Sub" : type;
+		transaction.direction = undefined === direction ? "outflow" : direction;
 
 		// Make sure the subcategory is still valid
-		if ((transaction as SubcategorisableTransaction).subcategory && ((transaction as SubcategorisableTransaction).subcategory as Category).parent_id !== parentId) {
+		if (undefined !== (transaction as SubcategorisableTransaction).subcategory && null !== (transaction as SubcategorisableTransaction).subcategory && ((transaction as SubcategorisableTransaction).subcategory as Category).parent_id !== parentId) {
 			(transaction as SubcategorisableTransaction).subcategory = null;
 		}
 	}
@@ -320,7 +320,7 @@ export default class ScheduleEditController {
 		let	{ transaction_type, direction } = this.transaction;
 
 		// Check the category selection
-		if (this.transaction.category && "object" === typeof this.transaction.category) {
+		if (undefined !== this.transaction.category && "object" === typeof this.transaction.category) {
 			switch (String(this.transaction.category.id)) {
 				case "TransferTo":
 					transaction_type = "SecurityTransfer";
@@ -368,15 +368,15 @@ export default class ScheduleEditController {
 
 	// Handler for primary account changes
 	public primaryAccountSelected(): void {
-		const selectedAccountType: AccountType = this.transaction.primary_account && this.transaction.primary_account.account_type;
+		const selectedAccountType: AccountType | null = undefined === this.transaction.primary_account ? null : this.transaction.primary_account.account_type;
 
-		if (this.account_type && this.account_type !== selectedAccountType) {
+		if (null !== this.account_type && this.account_type !== selectedAccountType) {
 			(this.transaction as CategorisableTransaction).category = null;
 			(this.transaction as SubcategorisableTransaction).subcategory = null;
 		}
 		this.account_type = selectedAccountType;
 
-		if ((this.transaction as TransferrableTransaction).account && this.transaction.primary_account && this.transaction.primary_account.id === ((this.transaction as TransferrableTransaction).account as Account).id) {
+		if (null !== (this.transaction as TransferrableTransaction).account && undefined !== this.transaction.primary_account && this.transaction.primary_account.id === ((this.transaction as TransferrableTransaction).account as Account).id) {
 			// Primary account and transfer account can't be the same, so clear the transfer account
 			(this.transaction as TransferrableTransaction).account = null;
 		}
@@ -384,7 +384,7 @@ export default class ScheduleEditController {
 
 	// Joins the subtransaction memos and updates the parent memo
 	public memoFromSubtransactions(): void {
-		this.transaction.memo = (this.transaction as SplitTransaction).subtransactions.reduce((memo: string, subtransaction: SplitTransactionChild): string => `${memo}${(subtransaction.memo ? `${"" === memo ? "" : "; "}${subtransaction.memo}` : "")}`, "");
+		this.transaction.memo = (this.transaction as SplitTransaction).subtransactions.reduce((memo: string, subtransaction: SplitTransactionChild): string => `${memo}${undefined === subtransaction.memo ? "" : `${"" === memo ? "" : "; "}${subtransaction.memo}`}`, "");
 	}
 
 	// List of primary accounts for the typeahead
@@ -404,7 +404,7 @@ export default class ScheduleEditController {
 			};
 
 			// Filter the primary account from the results (can't transfer to self)
-			if (this.transaction.primary_account) {
+			if (undefined !== this.transaction.primary_account) {
 				filteredAccounts = this.filterFilter(filteredAccounts, { name: `!${this.transaction.primary_account.name}` }, true);
 			}
 
@@ -419,7 +419,7 @@ export default class ScheduleEditController {
 
 	// List of frequencies for the typeahead
 	public frequencies(filter?: string): ScheduleFrequency[] {
-		return filter ? this.filterFilter(this.scheduleFrequencies, filter) : this.scheduleFrequencies;
+		return undefined === filter ? this.scheduleFrequencies : this.filterFilter(this.scheduleFrequencies, filter);
 	}
 
 	// Add a new subtransaction
@@ -434,25 +434,30 @@ export default class ScheduleEditController {
 
 	// Adds any unallocated amount to the specified subtransaction
 	public addUnallocatedAmount(index: number): void {
-		(this.transaction as SplitTransaction).subtransactions[index].amount = (Number((this.transaction as SplitTransaction).subtransactions[index].amount) || 0) + ((this.transaction as SplitTransaction).amount - Number(this.totalAllocated));
+		const amount: number | undefined = Number((this.transaction as SplitTransaction).subtransactions[index].amount);
+
+		(this.transaction as SplitTransaction).subtransactions[index].amount = (isNaN(amount) ? 0 : amount) + ((this.transaction as SplitTransaction).amount - Number(this.totalAllocated));
 	}
 
 	// Updates the transaction amount and memo when the quantity, price or commission change
 	public updateInvestmentDetails(): void {
 		if ("SecurityInvestment" === this.transaction.transaction_type) {
 			// Base amount is the quantity multiplied by the price
-			this.transaction.amount = (Number(this.transaction.quantity) || 0) * (Number(this.transaction.price) || 0);
+			const amount = Number(this.transaction.quantity) * Number(this.transaction.price),
+						commission = Number(this.transaction.commission);
+
+			this.transaction.amount = isNaN(amount) ? 0 : amount;
 
 			// For a purchase, commission is added to the cost; for a sale, commission is subtracted from the proceeds
 			if ("inflow" === this.transaction.direction) {
-				this.transaction.amount += Number(this.transaction.commission) || 0;
+				this.transaction.amount += isNaN(commission) ? 0 : commission;
 			} else {
-				this.transaction.amount -= Number(this.transaction.commission) || 0;
+				this.transaction.amount -= isNaN(commission) ? 0 : commission;
 			}
 		}
 
 		// If we're adding a new buy or sell transaction, update the memo with the details
-		if (!this.transaction.id && "SecurityInvestment" === this.transaction.transaction_type) {
+		if (null === this.transaction.id && "SecurityInvestment" === this.transaction.transaction_type) {
 			const	quantity: string = Number(this.transaction.quantity) > 0 ? String(this.transaction.quantity) : "",
 						price: string = Number(this.transaction.price) > 0 ? ` @ ${this.currencyFilter(this.transaction.price)}` : "",
 						commission: string = Number(this.transaction.commission) > 0 ? ` (${"inflow" === this.transaction.direction ? "plus" : "less"} ${this.currencyFilter(this.transaction.commission)} commission)` : "";
@@ -488,7 +493,7 @@ export default class ScheduleEditController {
 
 		// Ensure the flag is appropriately set or cleared
 		if (this.schedule.autoFlag) {
-			this.schedule.flag = this.schedule.flag || "(no memo)";
+			this.schedule.flag = undefined === this.schedule.flag || null === this.schedule.flag ? "(no memo)" : this.schedule.flag;
 		} else {
 			this.schedule.flag = null;
 		}

@@ -14,7 +14,9 @@ export default class OgInputCurrencyDirective {
 			bindToController: true,
 			link(scope: OgInputCurrencyScope, iElement: JQuery<Element>, _: angular.IAttributes, ngModel: angular.INgModelController): void {
 				// Set the decimal places
-				scope.vm.decimalPlaces = scope.vm.precision;
+				if ("" !== scope.vm.precision) {
+					scope.vm.decimalPlaces = Number(scope.vm.precision);
+				}
 
 				// View to model
 				ngModel.$parsers.push(scope.vm.formattedToRaw.bind(scope.vm));

@@ -12,7 +12,6 @@ export default function createCategory(props: Partial<Category> = {}): Category 
 		direction: "inflow" as "inflow",
 		parent_id: null,
 		favourite: false,
-		num_children: 0,
 		num_transactions: 0,
 		...props
 	};

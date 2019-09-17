@@ -109,13 +109,13 @@ describe("CategoryIndexController", (): void => {
 
 			it("should not change the parent's children count if the parent category has not changed", (): void => {
 				$uibModal.close(category);
-				categoryIndexController.categories[0].num_children.should.equal(2);
+				Number(categoryIndexController.categories[0].num_children).should.equal(2);
 			});
 
 			it("should decrement the original parent's children count when the parent category changes", (): void => {
 				category.parent_id = 2;
 				$uibModal.close(category);
-				categoryIndexController.categories[0].num_children.should.equal(1);
+				Number(categoryIndexController.categories[0].num_children).should.equal(1);
 			});
 
 			it("should not attempt to decrement original parent's children count if there was no original parent", (): void => {
@@ -148,7 +148,7 @@ describe("CategoryIndexController", (): void => {
 				category.parent_id = 3;
 				(category.parent as Category).name = "cc";
 				$uibModal.close(category);
-				categoryIndexController.categories[5].num_children.should.equal(3);
+				Number(categoryIndexController.categories[5].num_children).should.equal(3);
 			});
 
 			it("should not attempt to increment new parent's children count if there is no new parent", (): void => {
@@ -195,7 +195,7 @@ describe("CategoryIndexController", (): void => {
 			it("should open the edit category modal without a category", (): void => {
 				$uibModal.open.should.have.been.called;
 				categoryModel.addRecent.should.not.have.been.called;
-				(!($uibModal.resolves as UibModalMockResolves).category).should.be.true;
+				(undefined === ($uibModal.resolves as UibModalMockResolves).category).should.be.true;
 			});
 
 			it("should add the new category to the list of categories when the modal is closed", (): void => {
@@ -211,7 +211,7 @@ describe("CategoryIndexController", (): void => {
 			it("should increment the parent's children count for a subcategory", (): void => {
 				category.parent_id = 1;
 				$uibModal.close(category);
-				categoryIndexController.categories[0].num_children.should.equal(3);
+				Number(categoryIndexController.categories[0].num_children).should.equal(3);
 			});
 
 			it("should not attempt to increment parent's children count if there is no new parent", (): void => {
@@ -302,7 +302,7 @@ describe("CategoryIndexController", (): void => {
 		it("should decrement the parent's children count for a subcategory", (): void => {
 			categoryIndexController.deleteCategory(1);
 			$uibModal.close(category);
-			categoryIndexController.categories[0].num_children.should.equal(1);
+			Number(categoryIndexController.categories[0].num_children).should.equal(1);
 		});
 
 		it("should not attempt to decrement parent's children count if there was no parent", (): void => {
@@ -429,7 +429,7 @@ describe("CategoryIndexController", (): void => {
 		beforeEach((): SinonStub => (categoryIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific category row could not be found", (): void => {
-			(!categoryIndexController["focusCategory"](999)).should.be.true;
+			categoryIndexController["focusCategory"](999).should.be.NaN;
 			(categoryIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
 		});
 

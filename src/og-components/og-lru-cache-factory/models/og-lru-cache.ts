@@ -1,7 +1,7 @@
 import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 
 export default class OgLruCache {
-	public constructor(private capacity: number, private items: OgCacheEntry[]) {}
+	public constructor(private readonly capacity: number, private items: OgCacheEntry[]) {}
 
 	// Put an item into the cache
 	public put(item: OgCacheEntry): OgCacheEntry[] {

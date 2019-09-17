@@ -22,7 +22,7 @@
 		"sourceMap": true,
 		"strictPropertyInitialization": true,
 		"strictNullChecks": true,
-		"target": "ES2018",
+		"target": "ES2020",
 		"tsBuildInfoFile": ".tsbuildinfo"
 	},
 	"exclude": [
