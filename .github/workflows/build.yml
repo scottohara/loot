@@ -1,0 +1,148 @@
+name: Build
+
+on:
+  push:
+    tags: *
+
+env:
+  CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
+jobs:
+  setup:
+    name: Setup test coverage reporting
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download CodeClimate test reporter
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+
+    - name: Notify CodeClimate of a pending report
+      run: ./cc-test-reporter before-build
+
+  frontend:
+    name: Test and lint frontend
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Install nvm
+      shell: bash --login {0}
+      run: |
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+        echo "source $HOME/.nvm/nvm.sh --install" >> "$HOME/.bash_profile"
+
+    - name: Install dependencies
+      shell: bash --login {0}
+      run: npm ci
+
+    - name: Lint and test
+      shell: bash --login {0}
+      run: npm test
+
+    - name: Upload test coverage artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: lcov.info
+        path: coverage/frontend/lcov.info
+
+  backend:
+    name: Lint and test backend
+    needs: setup
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgresql://postgres@localhost
+
+    services:
+      postgres:
+        image: postgres:11.3
+        ports:
+        - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Install postgres libs
+      run: sudo apt-get install libpq-dev
+
+    - name: Install rvm
+      shell: bash --login {0}
+      run: |
+        gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+        curl -sSL https://get.rvm.io | bash -s stable
+        echo "export rvm_install_on_use_flag=1" >> "$HOME/.rvmrc"
+        echo "source $HOME/.rvm/scripts/rvm" >> "$HOME/.bash_profile"
+
+    - name: Update to latest rubygems and bundler
+      shell: bash --login {0}
+      run: |
+        echo "gem: --no-document" >> "$HOME/.gemrc"
+        gem update --system
+        gem install bundler
+
+    - name: Install dependencies
+      shell: bash --login {0}
+      run: bundle install --without production --path=vendor/bundle
+
+    - name: Setup database
+      shell: bash --login {0}
+      run: bundle exec rake db:create db:migrate
+
+    - name: Lint
+      shell: bash --login {0}
+      run: bundle exec rubocop -ESP
+
+    - name: Test
+      shell: bash --login {0}
+      run: bundle exec rake
+
+    - name: Upload test coverage artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: .resultset.json
+        path: coverage/backend/.resultset.json
+
+  report:
+    name: Send coverage report to CodeClimate
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Download CodeClimate test reporter
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+
+    - name: Download frontend test coverage artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: lcov.info
+        path: coverage/frontend
+
+    - name: Download backend test coverage artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: .resultset.json
+        path: coverage/backend
+
+    - name: Format backend coverage
+      run: ./cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.backend.json coverage/backend/.resultset.json
+
+    - name: Format frontend coverage
+      run: ./cc-test-reporter format-coverage --input-type lcov --output coverage/codeclimate.frontend.json coverage/frontend/lcov.info
+
+    - name: Merge backend and frontend coverage
+      run: ./cc-test-reporter sum-coverage --parts 2 coverage/codeclimate.*.json
+
+    - name: Upload coverage report
+      run: ./cc-test-reporter upload-coverage
