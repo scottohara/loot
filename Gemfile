@@ -16,9 +16,6 @@ group :development, :production do
 	gem 'puma'
 end
 
-# 12 factor gem for Heroku
-gem 'rails_12factor', group: :production
-
 # For JSON serialisation
 gem 'active_model_serializers'
 
