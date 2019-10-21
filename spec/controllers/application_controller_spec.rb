@@ -24,17 +24,19 @@ RSpec.describe ApplicationController, type: :controller do
 	let(:invalid_user_name) { 'invalid username' }
 	let(:invalid_password) { 'invalid password' }
 
-	before :each, :authenticated do
-		stub_const 'ENV', 'LOOT_USERNAME' => user_name, 'LOOT_PASSWORD' => password
-		request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials valid_user_name, valid_password
-	end
-
-	before :each do |example|
+	before do |example|
+		stub_const 'ENV', 'LOOT_USERNAME' => valid_user_name, 'LOOT_PASSWORD' => valid_password
+		request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials user_name, password if defined? user_name
 		get :index, params: {context: example.metadata[:example_group][:description]}
 	end
 
 	describe 'unauthenticated user' do
 		let(:expected_status) { :unauthorized }
+
+		after do
+			expect(response.media_type).to eq 'text/plain'
+			expect(response.body).to eq 'Invalid login and/or password'
+		end
 
 		context 'with no credentials' do
 			it('should respond with a text error message and a 401 Unauthorized status') {}
@@ -53,14 +55,9 @@ RSpec.describe ApplicationController, type: :controller do
 
 			it('should respond with a text error message and a 401 Unauthorized status') {}
 		end
-
-		after :each do
-			expect(response.content_type).to eq 'text/plain'
-			expect(response.body).to eq 'Invalid login and/or password'
-		end
 	end
 
-	context 'authenticated user', authenticated: true do
+	context 'authenticated user' do
 		let(:user_name) { valid_user_name }
 		let(:password) { valid_password }
 

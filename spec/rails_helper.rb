@@ -64,8 +64,8 @@ RSpec.configure do |config|
 		DatabaseCleaner.clean_with :truncation
 
 		# Do *transaction_header factories first, cleaning the database between each to avoid duplicate primary key errors
-		%w[payee_transaction_header security_transaction_header transaction_header].each do |factory|
-			FactoryBot.lint [FactoryBot.factory_by_name(factory)]
+		%i[payee_transaction_header security_transaction_header transaction_header].each do |header_factory|
+			FactoryBot.lint(FactoryBot.factories.select { |factory| factory.name.eql? header_factory })
 			DatabaseCleaner.clean_with :truncation
 		end
 
@@ -79,7 +79,7 @@ RSpec.configure do |config|
 		DatabaseCleaner.clean_with :truncation
 	end
 
-	config.around :each do |example|
+	config.around do |example|
 		DatabaseCleaner.cleaning { example.run }
 	end
 end
@@ -91,12 +91,12 @@ RSpec.shared_context 'JSON controller', type: :controller do
 		request.env['HTTP_ACCEPT'] = 'application/json'
 	end
 
-	after :each do
+	after do
 		expect(response).to have_http_status defined?(expected_status) && expected_status || 200
 	end
 
 	after :each, :json do
-		expect(response.content_type).to eq 'application/json'
+		expect(response.media_type).to eq 'application/json'
 		expect(response.body).to eq json
 	end
 end

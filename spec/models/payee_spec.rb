@@ -16,7 +16,7 @@ RSpec.describe Payee, type: :model do
 			let(:payee) { create :payee }
 
 			it 'should return the existing payee' do
-				expect(Payee.find_or_new 'id' => payee.id).to eq payee
+				expect(described_class.find_or_new 'id' => payee.id).to eq payee
 			end
 		end
 
@@ -24,35 +24,36 @@ RSpec.describe Payee, type: :model do
 			let(:payee_name) { 'New payee' }
 
 			it 'should return a newly created payee' do
-				expect(Payee.find_or_new(payee_name).name).to eq payee_name
+				expect(described_class.find_or_new(payee_name).name).to eq payee_name
 			end
 		end
 	end
 
 	describe '#opening_balance' do
-		subject { create :payee }
+		subject(:payee) { create :payee }
 
 		it 'should return zero' do
-			expect(subject.opening_balance).to eq 0
+			expect(payee.opening_balance).to eq 0
 		end
 	end
 
 	describe '#account_type' do
-		subject { create :payee }
+		subject(:payee) { create :payee }
 
 		it 'should return nil' do
-			expect(subject.account_type).to be_nil
+			expect(payee.account_type).to be_nil
 		end
 	end
 
 	describe '#as_json' do
-		subject { create :payee, name: 'Test Payee', transactions: 1 }
-		let(:json) { subject.as_json }
+		subject(:payee) { create :payee, name: 'Test Payee', transactions: 1 }
+
+		let(:json) { payee.as_json }
 
 		it 'should return a JSON representation' do
-			expect(json).to include id: subject.id
+			expect(json).to include id: payee.id
 			expect(json).to include name: 'Test Payee'
-			expect(json).to include closing_balance: subject.closing_balance
+			expect(json).to include closing_balance: payee.closing_balance
 			expect(json).to include num_transactions: 1
 			expect(json).to include favourite: false
 		end

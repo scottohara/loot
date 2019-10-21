@@ -22,24 +22,25 @@ RSpec.describe Account, type: :model do
 	end
 
 	describe 'before_destroy' do
-		subject { create :bank_account, account_type: account_type, related_account: related_account }
+		subject(:account) { create :bank_account, account_type: account_type, related_account: related_account }
+
 		let!(:related_account) { create :cash_account }
 
-		before :each do
+		before do
 			allow(related_account).to receive :destroy!
-			subject.destroy!
+			account.destroy!
 		end
 
 		context 'non-investment account' do
-			let!(:account_type) { 'bank' }
+			let(:account_type) { 'bank' }
 
 			it 'should not delete the related account' do
-				expect(related_account).to_not have_received :destroy!
+				expect(related_account).not_to have_received :destroy!
 			end
 		end
 
 		context 'investment account' do
-			let!(:account_type) { 'investment' }
+			let(:account_type) { 'investment' }
 
 			it 'should delete the related account' do
 				expect(related_account).to have_received :destroy!
@@ -48,7 +49,8 @@ RSpec.describe Account, type: :model do
 	end
 
 	describe '::list' do
-		subject { described_class }
+		subject(:account) { described_class }
+
 		# Accounts for non-investment transactions
 		let!(:bank_account) { create :bank_account }
 		let!(:another_bank_account) { create :bank_account, :favourite }
@@ -56,9 +58,6 @@ RSpec.describe Account, type: :model do
 		# Accounts for investment transactions
 		let!(:related_bank_account) { create :bank_account, opening_balance: 0 }
 		let!(:investment_account) { create :investment_account, related_account: related_bank_account }
-
-		# Second investment account with no related cash account (should be ignored)
-		let!(:another_investment_account) { create :investment_account, related_account: nil }
 
 		# Loan account with related asset
 		let!(:asset_account) { create :asset_account }
@@ -203,10 +202,13 @@ RSpec.describe Account, type: :model do
 			create :security_sale_transaction, cash_account: related_bank_account, investment_account: investment_account
 			create :dividend_transaction, cash_account: bank_account, investment_account: investment_account
 
+			# Second investment account with no related cash account (should be ignored)
+			create :investment_account, related_account: nil
+
 			# Scheduled transaction (should be ignored)
 			create :basic_expense_transaction, :scheduled, account: bank_account
 
-			expect(subject.list).to eq json
+			expect(account.list).to eq json
 		end
 	end
 
@@ -231,7 +233,7 @@ RSpec.describe Account, type: :model do
 	describe '::create_from_json' do
 		shared_examples 'create from json', :account_create_from_json do
 			it 'should create an account from a JSON representation' do
-				expect(Account.create_from_json json).to match_json json, related_account
+				expect(described_class.create_from_json json).to match_json json, related_account
 			end
 		end
 
@@ -249,15 +251,15 @@ RSpec.describe Account, type: :model do
 		context('standard account', account_create_from_json: true) {}
 
 		context 'investment account' do
-			let(:related_account) { Account.new name: 'Test account (Cash)', account_type: 'bank', opening_balance: 200, status: 'open', favourite: true }
+			let(:related_account) { described_class.new name: 'Test account (Cash)', account_type: 'bank', opening_balance: 200, status: 'open', favourite: true }
 
-			before :each do
+			before do
 				json['account_type'] = 'investment'
 				json['related_account'] = {'opening_balance' => 200}
 			end
 
 			it 'should create an account from a JSON representation' do
-				account = Account.create_from_json json
+				account = described_class.create_from_json json
 				related_account.id = account.related_account.id
 				related_account.related_account = account
 				expect(account).to match_json json, related_account
@@ -265,14 +267,14 @@ RSpec.describe Account, type: :model do
 		end
 
 		context 'loan account' do
-			before :each do
+			before do
 				json['account_type'] = 'loan'
 			end
 
 			context 'with asset', account_create_from_json: true do
 				let(:related_account) { create :asset_account, :favourite }
 
-				before :each do
+				before do
 					json['related_account'] = {'id' => related_account.id}
 				end
 			end
@@ -284,7 +286,7 @@ RSpec.describe Account, type: :model do
 	describe '::update_from_json' do
 		shared_examples 'update from json', :account_update_from_json do
 			it 'should update an account from a JSON representation' do
-				expect(Account.update_from_json json).to match_json json, related_account
+				expect(described_class.update_from_json json).to match_json json, related_account
 			end
 		end
 
@@ -300,14 +302,14 @@ RSpec.describe Account, type: :model do
 		end
 		let(:related_account) { nil }
 
-		before :each do
-			expect(Account).to receive_message_chain(:includes, :find).with(json[:id]).and_return account
+		before do
+			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return account
 		end
 
 		context 'investment account' do
 			let(:related_account) { create :bank_account, name: 'Test account (Cash)', opening_balance: 200, status: 'closed', favourite: true }
 
-			before :each do
+			before do
 				json['account_type'] = 'investment'
 				json['related_account'] = {'opening_balance' => 200}
 			end
@@ -324,22 +326,22 @@ RSpec.describe Account, type: :model do
 		context 'non-investment account' do
 			let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
 
-			before :each do
+			before do
 				expect(account.related_account).to receive :destroy!
 			end
 
 			context 'loan account' do
-				before :each do
+				before do
 					json['account_type'] = 'loan'
 				end
 
 				context 'with asset', account_update_from_json: true do
 					let(:related_account) { create :asset_account, :favourite }
 
-					before :each do
+					before do
 						json['related_account'] = {'id' => related_account.id}
 
-						expect(Account).to receive(:find).with(related_account.id).and_return related_account
+						expect(described_class).to receive(:find).with(related_account.id).and_return related_account
 					end
 				end
 
@@ -359,10 +361,10 @@ RSpec.describe Account, type: :model do
 		end
 
 		context 'when unreconciled parameter is passed' do
-			subject { create :account, transactions: 2, reconciled: 1 }
+			subject(:account) { create :account, transactions: 2, reconciled: 1 }
 
 			it 'should include only unreconciled transactions' do
-				_, transactions = subject.ledger unreconciled: 'true'
+				_, transactions = account.ledger unreconciled: 'true'
 
 				expect(transactions.size).to eq 2
 				expect(transactions).to all_be_unreconciled
@@ -371,27 +373,36 @@ RSpec.describe Account, type: :model do
 	end
 
 	describe '#reconcile' do
-		subject { create :account, transactions: 2, reconciled: 1 }
+		subject(:account) { create :account, transactions: 2, reconciled: 1 }
 
 		it 'should mark all cleared transactions as reconciled' do
-			trx = subject.transaction_accounts.where(status: nil).first
+			trx = account.transaction_accounts.where(status: nil).first
 			trx.update! status: 'Cleared'
 
-			subject.reconcile
+			account.reconcile
 
-			expect(subject.transaction_accounts.where(status: 'Cleared').size).to eq 0
-			expect(subject.transaction_accounts.where(status: 'Reconciled').size).to eq 2
+			expect(account.transaction_accounts.where(status: 'Cleared').size).to eq 0
+			expect(account.transaction_accounts.where(status: 'Reconciled').size).to eq 2
 		end
 	end
 
 	describe '#as_json' do
-		subject { create :account, name: 'Test Account', transactions: 1 }
+		subject(:account) { create :account, name: 'Test Account', transactions: 1 }
+
+		after do
+			expect(json).to include id: account.id
+			expect(json).to include name: 'Test Account'
+			expect(json).to include account_type: 'bank'
+			expect(json).to include opening_balance: 1000
+			expect(json).to include status: 'open'
+			expect(json).to include favourite: false
+		end
 
 		context 'with default options' do
-			let(:json) { subject.as_json }
+			let(:json) { account.as_json }
 
-			before :each do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i[id name account_type opening_balance status favourite]).and_call_original
+			before do
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(account, fields: %i[id name account_type opening_balance status favourite]).and_call_original
 			end
 
 			it('should return a JSON representation') do
@@ -400,10 +411,15 @@ RSpec.describe Account, type: :model do
 		end
 
 		context 'with empty options' do
-			let(:json) { subject.as_json({}) }
+			let(:json) { account.as_json({}) }
 
-			before :each do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, {}).and_call_original
+			before do
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(account, {}).and_call_original
+			end
+
+			after do
+				expect(json).to include closing_balance: account.closing_balance
+				expect(json).to include num_transactions: 1
 			end
 
 			context 'without related account' do
@@ -415,33 +431,19 @@ RSpec.describe Account, type: :model do
 			context 'with related account' do
 				let(:related_account) { json[:related_account] }
 
-				before :each do
-					subject.related_account = create :account, name: 'Related Account'
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.related_account, fields: %i[id name account_type opening_balance status]).and_call_original
+				before do
+					account.related_account = create :account, name: 'Related Account'
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(account.related_account, fields: %i[id name account_type opening_balance status]).and_call_original
 				end
 
 				it 'should return a JSON representation including related account' do
-					expect(related_account).to include id: subject.related_account.id
+					expect(related_account).to include id: account.related_account.id
 					expect(related_account).to include name: 'Related Account'
 					expect(related_account).to include account_type: 'bank'
 					expect(related_account).to include opening_balance: 1000
 					expect(related_account).to include status: 'open'
 				end
 			end
-
-			after :each do
-				expect(json).to include closing_balance: subject.closing_balance
-				expect(json).to include num_transactions: 1
-			end
-		end
-
-		after :each do
-			expect(json).to include id: subject.id
-			expect(json).to include name: 'Test Account'
-			expect(json).to include account_type: 'bank'
-			expect(json).to include opening_balance: 1000
-			expect(json).to include status: 'open'
-			expect(json).to include favourite: false
 		end
 	end
 end

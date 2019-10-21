@@ -24,50 +24,50 @@ RSpec.describe Transaction, type: :model do
 	end
 
 	describe '::class_for' do
-		subject { described_class }
+		subject(:transaction) { described_class }
 
 		it 'should return the transaction class for a given type' do
-			expect(subject.class_for 'Basic').to be BasicTransaction
+			expect(transaction.class_for 'Basic').to be BasicTransaction
 		end
 	end
 
 	describe '::types_for' do
-		subject { described_class }
+		subject(:transaction) { described_class }
 
 		context 'non-investment accounts' do
 			it 'should return the set of non-investment transactions' do
-				expect(subject.types_for 'bank').to eq %w[Basic Split Transfer Payslip LoanRepayment]
+				expect(transaction.types_for 'bank').to eq %w[Basic Split Transfer Payslip LoanRepayment]
 			end
 		end
 
 		context 'investment accounts' do
 			it 'should return the set of investment transactions' do
-				expect(subject.types_for 'investment').to eq %w[SecurityTransfer SecurityHolding SecurityInvestment Dividend]
+				expect(transaction.types_for 'investment').to eq %w[SecurityTransfer SecurityHolding SecurityInvestment Dividend]
 			end
 		end
 	end
 
 	describe '::transactions' do
-		subject { described_class }
+		subject(:transaction) { described_class }
 
 		it 'should return self' do
-			expect(subject.transactions).to eql subject
+			expect(transaction.transactions).to eql transaction
 		end
 	end
 
 	describe '::opening_balance' do
-		subject { described_class }
+		subject(:transaction) { described_class }
 
 		it 'should return zero' do
-			expect(subject.opening_balance).to eq 0
+			expect(transaction.opening_balance).to eq 0
 		end
 	end
 
 	describe '::account_type' do
-		subject { described_class }
+		subject(:transaction) { described_class }
 
 		it 'should return nil' do
-			expect(subject.account_type).to be_nil
+			expect(transaction.account_type).to be_nil
 		end
 	end
 
@@ -80,6 +80,10 @@ RSpec.describe Transaction, type: :model do
 		end
 		let(:flag) { 'test flag' }
 
+		after do
+			expect(described_class.create_from_json json).to match_json json
+		end
+
 		context 'unflagged' do
 			it('should create a transaction from a JSON representation') {}
 		end
@@ -89,31 +93,31 @@ RSpec.describe Transaction, type: :model do
 				json['flag'] = flag
 			end
 		end
-
-		after :each do
-			expect(Transaction.create_from_json json).to match_json json
-		end
 	end
 
 	describe '#as_subclass' do
-		subject { create :transaction }
+		subject(:transaction) { create :transaction }
 
 		it 'should become an instance matching the transaction type' do
-			expect(subject.as_subclass.class).to be BasicTransaction
+			expect(transaction.as_subclass.class).to be BasicTransaction
 		end
 	end
 
 	describe '#update_from_json' do
 		let(:json) do
 			{
-				id: subject.id,
+				id: transaction.id,
 				'memo' => 'Test json'
 			}
 		end
 		let(:flag) { 'test flag' }
 
+		after do
+			expect(transaction.update_from_json json).to match_json json
+		end
+
 		context 'when initially unflagged' do
-			subject { create :transaction }
+			subject(:transaction) { create :transaction }
 
 			context 'and the update does not include a flag' do
 				it('should update a transaction from a JSON representation and remain unflagged') {}
@@ -127,7 +131,7 @@ RSpec.describe Transaction, type: :model do
 		end
 
 		context 'when initially flagged' do
-			subject { create :transaction, :flagged }
+			subject(:transaction) { create :transaction, :flagged }
 
 			context 'and the update does not include a flag' do
 				it('should update a transaction from a JSON representation and clear the flag') {}
@@ -136,21 +140,23 @@ RSpec.describe Transaction, type: :model do
 			context 'and the update includes a flag' do
 				it 'should update a transaction from a JSON representation and remain flagged' do
 					json['flag'] = flag
-					expect(subject.flag).not_to receive :destroy
+					expect(transaction.flag).not_to receive :destroy
 				end
 			end
-		end
-
-		after :each do
-			expect(subject.update_from_json json).to match_json json
 		end
 	end
 
 	describe '#as_json' do
-		let(:json) { subject.as_json }
+		let(:json) { transaction.as_json }
+
+		after do
+			expect(json).to include id: transaction.id
+			expect(json).to include transaction_type: 'Basic'
+			expect(json).to include memo: 'Basic transaction'
+		end
 
 		context 'unflagged' do
-			subject { create :basic_transaction }
+			subject(:transaction) { create :basic_transaction }
 
 			it 'should return a JSON representation' do
 				expect(json).to include flag: nil
@@ -158,17 +164,11 @@ RSpec.describe Transaction, type: :model do
 		end
 
 		context 'flagged' do
-			subject { create :basic_transaction, :flagged }
+			subject(:transaction) { create :basic_transaction, :flagged }
 
 			it 'should return a JSON representation' do
 				expect(json).to include flag: 'Transaction flag'
 			end
-		end
-
-		after :each do
-			expect(json).to include id: subject.id
-			expect(json).to include transaction_type: 'Basic'
-			expect(json).to include memo: 'Basic transaction'
 		end
 	end
 end

@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'securities routes' do
+describe 'securities routes', type: :routing do
 	# Collection routes
 	it 'should route GET /securities to securities#index' do
 		expect(get: '/securities').to route_to controller: 'securities', action: 'index'
@@ -53,15 +53,15 @@ describe 'securities routes' do
 	end
 
 	it 'should not route PATCH /securities/:security_id/transactions/:id' do
-		expect(patch: '/securities/1/transactions/2').to_not be_routable
+		expect(patch: '/securities/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route PUT /securities/:security_id/transactions/:id' do
-		expect(put: '/securities/1/transactions/2').to_not be_routable
+		expect(put: '/securities/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route DELETE /securities/:security_id/transactions/:id' do
-		expect(delete: '/securities/1/transactions/2').to_not be_routable
+		expect(delete: '/securities/1/transactions/2').not_to be_routable
 	end
 
 	# Defaultable routes

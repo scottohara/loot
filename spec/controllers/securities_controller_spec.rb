@@ -8,7 +8,7 @@ RSpec.describe SecuritiesController, type: :controller do
 		context 'for security list' do
 			let(:json) { 'security list with balances' }
 
-			before :each do
+			before do
 				expect(Security).to receive(:list).and_return json
 				get :index, params: {include_balances: true}
 			end
@@ -21,13 +21,13 @@ RSpec.describe SecuritiesController, type: :controller do
 		context 'for security typeahead' do
 			let(:json) { 'security list without balances' }
 
-			before :each do
+			before do
 				expect(Security).to receive(:order).with({favourite: :desc}, :name).and_return json
 				get :index
 			end
 
 			it 'should return the security list without balances' do
-				expect(controller.params).to_not include :include_balances
+				expect(controller.params).not_to include :include_balances
 			end
 		end
 	end
@@ -52,7 +52,7 @@ RSpec.describe SecuritiesController, type: :controller do
 	end
 
 	describe 'PATCH update', request: true, json: true do
-		let(:security) { double 'security' }
+		let(:security) { instance_double 'security' }
 		let(:request_body) { {name: 'Updated security', code: 'ABC'} }
 		let(:raw_json) { 'updated security' }
 		let(:json) { JSON.dump raw_json }

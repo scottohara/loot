@@ -8,7 +8,7 @@ RSpec.describe PayeesController, type: :controller do
 		let(:json) { 'payee list' }
 
 		context 'for payee list' do
-			before :each do
+			before do
 				expect(Payee).to receive(:order).with(:name).and_return json
 				get :index, params: {list: true}
 			end
@@ -17,7 +17,7 @@ RSpec.describe PayeesController, type: :controller do
 		end
 
 		context 'for payee typeahead' do
-			before :each do
+			before do
 				expect(Payee).to receive(:order).with({favourite: :desc}, :name).and_return json
 				get :index
 			end
@@ -46,7 +46,7 @@ RSpec.describe PayeesController, type: :controller do
 	end
 
 	describe 'PATCH update', request: true, json: true do
-		let(:payee) { double 'payee' }
+		let(:payee) { instance_double 'payee' }
 		let(:request_body) { {name: 'Updated payee'} }
 		let(:raw_json) { 'updated payee' }
 		let(:json) { JSON.dump raw_json }

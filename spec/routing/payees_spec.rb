@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'payees routes' do
+describe 'payees routes', type: :routing do
 	# Collection routes
 	it 'should route GET /payees to payees#index' do
 		expect(get: '/payees').to route_to controller: 'payees', action: 'index'
@@ -53,15 +53,15 @@ describe 'payees routes' do
 	end
 
 	it 'should not route PATCH /payees/:payee_id/transactions/:id' do
-		expect(patch: '/payees/1/transactions/2').to_not be_routable
+		expect(patch: '/payees/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route PUT /payees/:payee_id/transactions/:id' do
-		expect(put: '/payees/1/transactions/2').to_not be_routable
+		expect(put: '/payees/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route DELETE /payees/:payee_id/transactions/:id' do
-		expect(delete: '/payees/1/transactions/2').to_not be_routable
+		expect(delete: '/payees/1/transactions/2').not_to be_routable
 	end
 
 	# Defaultable routes

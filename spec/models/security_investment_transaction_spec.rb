@@ -42,7 +42,7 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 			}
 		end
 
-		before :each do
+		before do
 			expect(Security).to receive(:find_or_new).with(json['security']).and_return security
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
@@ -52,8 +52,12 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with 'commission'
 		end
 
+		after do
+			expect(described_class.create_from_json json).to match_json json, investment_account, cash_account
+		end
+
 		shared_examples 'create from json', :security_investment_transaction_create_from_json do
-			before :each do |example|
+			before do |example|
 				json['direction'] = example.metadata[:direction]
 			end
 
@@ -68,7 +72,7 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 				it 'should create a transaction from a JSON representation' do
 					json['next_due_date'] = Time.zone.today.to_s
 					json['frequency'] = 'Monthly'
-					expect(security).to_not receive :update_price!
+					expect(security).not_to receive :update_price!
 				end
 			end
 		end
@@ -79,10 +83,6 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 
 		context 'inflow', security_investment_transaction_create_from_json: true, direction: 'inflow' do
 			let(:amount) { 25 }
-		end
-
-		after :each do
-			expect(SecurityInvestmentTransaction.create_from_json json).to match_json json, investment_account, cash_account
 		end
 	end
 
@@ -108,16 +108,20 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 			}
 		end
 
-		before :each do
-			expect(SecurityInvestmentTransaction).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+		before do
+			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
 			expect(Security).to receive(:find_or_new).with(json['security']).and_return security
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
 			expect(transaction.header).to receive(:update_from_json).with(json).and_call_original
 		end
 
+		after do
+			expect(described_class.update_from_json json).to match_json json, investment_account, cash_account
+		end
+
 		shared_examples 'update from json', :security_investment_transaction_update_from_json do
-			before :each do |example|
+			before do |example|
 				json['direction'] = example.metadata[:direction]
 			end
 
@@ -132,7 +136,7 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 				it 'should update a transaction from a JSON representation' do
 					json['next_due_date'] = Time.zone.today.to_s
 					json['frequency'] = 'Monthly'
-					expect(security).to_not receive :update_price!
+					expect(security).not_to receive :update_price!
 				end
 			end
 		end
@@ -144,34 +148,30 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 		context 'inflow', security_investment_transaction_update_from_json: true, direction: 'inflow' do
 			let(:amount) { 25 }
 		end
-
-		after :each do
-			expect(SecurityInvestmentTransaction.update_from_json json).to match_json json, investment_account, cash_account
-		end
 	end
 
 	describe '#validate_amount_matches_investment_details' do
-		subject { SecurityInvestmentTransaction.new }
+		subject(:transaction) { described_class.new }
 
-		before :each do |example|
-			subject.build_header price: 2, quantity: 10, commission: 5
-			subject.transaction_accounts.build(direction: example.metadata[:direction]).account = create :investment_account
+		before do |example|
+			transaction.build_header price: 2, quantity: 10, commission: 5
+			transaction.transaction_accounts.build(direction: example.metadata[:direction]).account = create :investment_account
 		end
 
 		shared_examples 'validate amount', :validate_amount do
 			context "when amount doesn't match the investment details" do
 				it 'should be an error' do
-					subject.amount = 1
-					subject.validate_amount_matches_investment_details
-					expect(subject.errors[:base]).to include error_message
+					transaction.amount = 1
+					transaction.validate_amount_matches_investment_details
+					expect(transaction.errors[:base]).to include error_message
 				end
 			end
 
 			context 'when amount matches the investment details' do
 				it 'should not be an error' do
-					subject.amount = valid_amount
-					subject.validate_amount_matches_investment_details
-					expect(subject.errors[:base]).to_not include error_message
+					transaction.amount = valid_amount
+					transaction.validate_amount_matches_investment_details
+					expect(transaction.errors[:base]).not_to include error_message
 				end
 			end
 		end
@@ -188,15 +188,22 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 	end
 
 	describe '#as_json' do
-		subject { create :security_investment_transaction, status: 'Reconciled' }
+		subject(:transaction) { create :security_investment_transaction, status: 'Reconciled' }
 
-		before :each do
-			expect(subject.investment_account.account).to receive(:as_json).and_return 'investment account json'
-			expect(subject.cash_account.account).to receive(:as_json).and_return 'cash account json'
+		before do
+			expect(transaction.investment_account.account).to receive(:as_json).and_return 'investment account json'
+			expect(transaction.cash_account.account).to receive(:as_json).and_return 'cash account json'
+		end
+
+		after do
+			expect(json).to include amount: 2
+			expect(json).to include quantity: 1
+			expect(json).to include price: 1
+			expect(json).to include commission: 1
 		end
 
 		context 'for investment account' do
-			let(:json) { subject.as_json }
+			let(:json) { transaction.as_json }
 
 			it 'should return a JSON representation' do
 				expect(json).to include primary_account: 'investment account json'
@@ -209,7 +216,7 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 		end
 
 		context 'for cash account' do
-			let(:json) { subject.as_json primary_account: subject.cash_account.account_id }
+			let(:json) { transaction.as_json primary_account: transaction.cash_account.account_id }
 
 			it 'should return a JSON representation' do
 				expect(json).to include primary_account: 'cash account json'
@@ -220,30 +227,25 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 				expect(json).to include related_status: 'Reconciled'
 			end
 		end
-
-		after :each do
-			expect(json).to include amount: 2
-			expect(json).to include quantity: 1
-			expect(json).to include price: 1
-			expect(json).to include commission: 1
-		end
 	end
 
 	describe '#investment_account' do
+		subject(:transaction) { create :security_investment_transaction, investment_account: account }
+
 		let(:account) { create :investment_account }
-		subject { create :security_investment_transaction, investment_account: account }
 
 		it "should return the first account of type 'investment'" do
-			expect(subject.investment_account.account).to eq account
+			expect(transaction.investment_account.account).to eq account
 		end
 	end
 
 	describe '#cash_account' do
+		subject(:transaction) { create :security_investment_transaction, cash_account: account }
+
 		let(:account) { create :bank_account }
-		subject { create :security_investment_transaction, cash_account: account }
 
 		it "should return the first account of type 'bank'" do
-			expect(subject.cash_account.account).to eq account
+			expect(transaction.cash_account.account).to eq account
 		end
 	end
 end

@@ -7,122 +7,126 @@ RSpec.describe SecurityTransaction, type: :model do
 	describe '::create_from_json' do
 		let(:json) { {} }
 
-		before :each do
+		before do
 			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
 		end
 
 		it 'should create a transaction from a JSON representation' do
-			SecurityTransaction.create_from_json json
+			described_class.create_from_json json
 		end
 	end
 
 	describe '#update_from_json' do
-		subject { SecurityTransaction.new }
+		subject(:transaction) { described_class.new }
+
 		let(:json) { {} }
 
-		before :each do
-			subject.build_header
-			expect(subject.header).to receive(:update_from_json).with json
+		before do
+			transaction.build_header
+			expect(transaction.header).to receive(:update_from_json).with json
 		end
 
 		it 'should update a transaction from a JSON representation' do
-			subject.update_from_json json
+			transaction.update_from_json json
 		end
 	end
 
 	describe '#method_missing' do
-		subject { SecurityTransaction.new }
+		subject(:transaction) { described_class.new }
 
 		context 'validate presence' do
 			it 'should call #validate_presence' do
-				expect(subject).to receive(:validate_presence).with 'foo'
-				subject.validate_foo_presence
+				expect(transaction).to receive(:validate_presence).with 'foo'
+				transaction.validate_foo_presence
 			end
 		end
 
 		context 'validate absence' do
 			it 'should call #validate_absence' do
-				expect(subject).to receive(:validate_absence).with 'foo'
-				subject.validate_foo_absence
+				expect(transaction).to receive(:validate_absence).with 'foo'
+				transaction.validate_foo_absence
 			end
 		end
 
 		context 'unknown method' do
 			it 'should call super' do
 				expect_any_instance_of(Transaction).to receive(:method_missing).with :unknown_method
-				subject.unknown_method
+				transaction.unknown_method
 			end
 		end
 	end
 
 	describe '#respond_to_missing?' do
-		subject { SecurityTransaction.new }
+		subject(:transaction) { described_class.new }
 
 		context 'validate presence' do
 			it 'should respond' do
-				expect(subject.respond_to? :validate_foo_presence).to be true
+				expect(transaction.respond_to? :validate_foo_presence).to be true
 			end
 		end
 
 		context 'validate absence' do
 			it 'should respond' do
-				expect(subject.respond_to? :validate_foo_absence).to be true
+				expect(transaction.respond_to? :validate_foo_absence).to be true
 			end
 		end
 
 		context 'unknown method' do
 			it 'should call super' do
-				expect(subject.respond_to? :unknown_method).to be false
+				expect(transaction.respond_to? :unknown_method).to be false
 			end
 		end
 	end
 
 	describe '#validate_presence' do
-		subject { SecurityTransaction.new }
+		subject(:transaction) { described_class.new }
+
 		let(:error_message) { "Price can't be blank" }
 
-		before :each do
-			subject.build_header
+		before do
+			transaction.build_header
 		end
 
 		it 'should be an error if the attribute is blank' do
-			subject.validate_presence 'price'
-			expect(subject.errors[:base]).to include error_message
+			transaction.validate_presence 'price'
+			expect(transaction.errors[:base]).to include error_message
 		end
 
 		it 'should not be an error if the attribute is not blank' do
-			subject.header.price = 1
-			subject.validate_presence 'price'
-			expect(subject.errors[:base]).to_not include error_message
+			transaction.header.price = 1
+			transaction.validate_presence 'price'
+			expect(transaction.errors[:base]).not_to include error_message
 		end
 	end
 
 	describe '#validate_absence' do
-		subject { SecurityTransaction.new }
+		subject(:transaction) { described_class.new }
+
 		let(:error_message) { 'Price must be blank' }
 
-		before :each do
-			subject.build_header
+		before do
+			transaction.build_header
 		end
 
 		it 'should be an error if the attribute is not blank' do
-			subject.header.price = 1
-			subject.validate_absence 'price'
-			expect(subject.errors[:base]).to include error_message
+			transaction.header.price = 1
+			transaction.validate_absence 'price'
+			expect(transaction.errors[:base]).to include error_message
 		end
 
 		it 'should not be an error if the attribute is blank' do
-			subject.validate_absence 'price'
-			expect(subject.errors[:base]).to_not include error_message
+			transaction.validate_absence 'price'
+			expect(transaction.errors[:base]).not_to include error_message
 		end
 	end
 
 	describe '#as_json' do
-		subject { create :security_holding_transaction }
-		let(:json) { subject.as_json }
+		subject(:transaction) { create :security_holding_transaction }
 
-		before :each do
-			expect(subject.header).to receive(:as_json).and_return header: 'header json'
+		let(:json) { transaction.as_json }
+
+		before do
+			expect(transaction.header).to receive(:as_json).and_return header: 'header json'
 		end
 
 		it 'should return a JSON representation' do
@@ -131,11 +135,11 @@ RSpec.describe SecurityTransaction, type: :model do
 	end
 
 	describe '#validate_method?' do
-		subject { SecurityTransaction.new }
+		subject(:transaction) { described_class.new }
 
 		shared_examples 'a match' do
 			it 'should return the match' do
-				match = subject.validate_method? "validate_foo_#{type}".to_sym
+				match = transaction.validate_method? "validate_foo_#{type}".to_sym
 				expect(match).to be_a MatchData
 				expect(match[1]).to eql 'foo'
 				expect(match[2]).to eql type
@@ -144,17 +148,19 @@ RSpec.describe SecurityTransaction, type: :model do
 
 		context 'validate presence' do
 			let(:type) { 'presence' }
+
 			it_behaves_like 'a match'
 		end
 
 		context 'validate absence' do
 			let(:type) { 'absence' }
+
 			it_behaves_like 'a match'
 		end
 
 		context 'unknown method' do
 			it 'should be false' do
-				expect(subject.validate_method? :unknown_method).to be nil
+				expect(transaction.validate_method? :unknown_method).to be nil
 			end
 		end
 	end

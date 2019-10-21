@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'transactions routes' do
+describe 'transactions routes', type: :routing do
 	# Collection routes
 	it 'should route GET /transactions to transactions#index' do
 		expect(get: '/transactions').to route_to controller: 'transactions', action: 'index'
@@ -57,7 +57,7 @@ describe 'transactions routes' do
 	end
 
 	it 'should not route POST /transactions/:transaction_id/subtransactions' do
-		expect(post: '/transactions/1/subtransactions').to_not be_routable
+		expect(post: '/transactions/1/subtransactions').not_to be_routable
 	end
 
 	it 'should not route GET /transactions/:transaction_id/subtransactions/:subtransaction_id' do
@@ -69,14 +69,14 @@ describe 'transactions routes' do
 	end
 
 	it 'should not route PATCH /transactions/:transaction_id/subtransactions/:subtransaction_id' do
-		expect(patch: '/transactions/1/subtransactions/2').to_not be_routable
+		expect(patch: '/transactions/1/subtransactions/2').not_to be_routable
 	end
 
 	it 'should not route PUT /transactions/:transaction_id/subtransactions/:subtransaction_id' do
-		expect(put: '/transactions/1/subtransactions/2').to_not be_routable
+		expect(put: '/transactions/1/subtransactions/2').not_to be_routable
 	end
 
 	it 'should not route DELETE /transactions/:transaction_id/subtransactions/:subtransaction_id' do
-		expect(delete: '/transactions/1/subtransactions/2').to_not be_routable
+		expect(delete: '/transactions/1/subtransactions/2').not_to be_routable
 	end
 end

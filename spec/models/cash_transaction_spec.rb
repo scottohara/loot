@@ -14,22 +14,24 @@ RSpec.describe CashTransaction, type: :model do
 		let(:json) { {'amount' => 1} }
 
 		it 'should create a transaction from a JSON representation' do
-			expect(CashTransaction.create_from_json json).to match_json json
+			expect(described_class.create_from_json json).to match_json json
 		end
 	end
 
 	describe '#update_from_json' do
-		subject { CashTransaction.new amount: 1 }
+		subject(:transaction) { described_class.new amount: 1 }
+
 		let(:json) { {'amount' => 2} }
 
 		it 'should update a transaction from a JSON representation' do
-			expect(subject.update_from_json json).to match_json json
+			expect(transaction.update_from_json json).to match_json json
 		end
 	end
 
 	describe '#as_json' do
-		subject { create :basic_transaction }
-		let(:json) { subject.as_json }
+		subject(:transaction) { create :basic_transaction }
+
+		let(:json) { transaction.as_json }
 
 		it 'should return a JSON representation' do
 			expect(json).to include amount: 1

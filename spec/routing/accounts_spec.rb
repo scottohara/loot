@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'accounts routes' do
+describe 'accounts routes', type: :routing do
 	# Collection routes
 	it 'should route GET /accounts to accounts#index' do
 		expect(get: '/accounts').to route_to controller: 'accounts', action: 'index'
@@ -57,15 +57,15 @@ describe 'accounts routes' do
 	end
 
 	it 'should not route PATCH /accounts/:account_id/transactions/:id' do
-		expect(patch: '/accounts/1/transactions/2').to_not be_routable
+		expect(patch: '/accounts/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route PUT /accounts/:account_id/transactions/:id' do
-		expect(put: '/accounts/1/transactions/2').to_not be_routable
+		expect(put: '/accounts/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route DELETE /accounts/:account_id/transactions/:id' do
-		expect(delete: '/accounts/1/transactions/2').to_not be_routable
+		expect(delete: '/accounts/1/transactions/2').not_to be_routable
 	end
 
 	# Reconcilable routes

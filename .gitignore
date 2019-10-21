@@ -15,7 +15,11 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+.byebug_history
 npm-debug.log
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
 
 # Ignore coverage results
 /coverage

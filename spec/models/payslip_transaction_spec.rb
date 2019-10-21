@@ -6,6 +6,7 @@ require 'rails_helper'
 RSpec.describe PayslipTransaction, type: :model do
 	describe '#as_json' do
 		subject { create :payslip_transaction }
+
 		let(:json) { subject.as_json }
 
 		it 'should return a JSON representation' do

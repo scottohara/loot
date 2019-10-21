@@ -7,8 +7,12 @@ RSpec.describe FlagsController, type: :controller do
 	describe 'PATCH update', request: true do
 		let(:memo) { 'Test flag' }
 
-		before :each do
+		before do
 			expect(Transaction).to receive(:find).with('1').and_return transaction
+		end
+
+		after do
+			patch :update, params: {transaction_id: '1', memo: memo}
 		end
 
 		context "when a flag doesn't already exist" do
@@ -23,12 +27,8 @@ RSpec.describe FlagsController, type: :controller do
 			let(:transaction) { create :transaction, :flagged }
 
 			it 'should update the existing flag' do
-				expect(transaction).to_not receive :build_flag
+				expect(transaction).not_to receive :build_flag
 			end
-		end
-
-		after :each do
-			patch :update, params: {transaction_id: '1', memo: memo}
 		end
 	end
 

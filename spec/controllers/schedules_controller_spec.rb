@@ -27,9 +27,13 @@ RSpec.describe SchedulesController, type: :controller do
 		let(:schedule) { create :basic_transaction, :scheduled }
 		let(:json) { 'updated schedule' }
 
-		before :each do
+		before do
 			expect(controller).to receive(:clean).and_call_original
 			expect(Transaction).to receive(:find).with('1').and_return schedule
+		end
+
+		after do
+			patch :update, params: request_body
 		end
 
 		context "when transaction type hasn't changed" do
@@ -50,10 +54,6 @@ RSpec.describe SchedulesController, type: :controller do
 				expect(schedule).to receive :destroy!
 				expect(controller).to receive(:create_schedule).and_return json
 			end
-		end
-
-		after :each do
-			patch :update, params: request_body
 		end
 	end
 

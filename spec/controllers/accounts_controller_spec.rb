@@ -8,7 +8,7 @@ RSpec.describe AccountsController, type: :controller do
 		context 'for account list' do
 			let(:json) { 'account list with balances' }
 
-			before :each do
+			before do
 				expect(Account).to receive(:list).and_return json
 				get :index, params: {include_balances: true}
 			end
@@ -21,13 +21,13 @@ RSpec.describe AccountsController, type: :controller do
 		context 'for account typeahead' do
 			let(:json) { 'account list without balances' }
 
-			before :each do
+			before do
 				expect(Account).to receive_message_chain(:all, :order).with({favourite: :desc}, :account_type, :name).and_return json
 				get :index
 			end
 
 			it 'should return the account list without balances' do
-				expect(controller.params).to_not include :include_balances
+				expect(controller.params).not_to include :include_balances
 			end
 		end
 	end
@@ -52,7 +52,6 @@ RSpec.describe AccountsController, type: :controller do
 	end
 
 	describe 'PATCH update', request: true, json: true do
-		let(:account) { double 'account' }
 		let(:request_body) { {id: '1', name: 'Updated account', account_type: 'credit', opening_balance: '2000.00', status: 'closed', related_account_id: '2', controller: 'accounts', action: 'update'} }
 		let(:json) { 'updated account' }
 

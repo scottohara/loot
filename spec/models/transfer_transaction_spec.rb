@@ -44,10 +44,14 @@ RSpec.describe TransferTransaction, type: :model do
 			}
 		end
 
-		before :each do
+		before do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return account
 			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+		end
+
+		after do
+			expect(described_class.create_from_json json).to match_json json, primary_account, account, header
 		end
 
 		context 'outflow' do
@@ -60,10 +64,6 @@ RSpec.describe TransferTransaction, type: :model do
 			it 'should create a transaction from a JSON representation' do
 				json['direction'] = 'inflow'
 			end
-		end
-
-		after :each do
-			expect(TransferTransaction.create_from_json json).to match_json json, primary_account, account, header
 		end
 	end
 
@@ -85,11 +85,15 @@ RSpec.describe TransferTransaction, type: :model do
 			}
 		end
 
-		before :each do
-			expect(TransferTransaction).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+		before do
+			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
 			expect(Account).to receive(:find).with(json['account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
+		end
+
+		after do
+			expect(described_class.update_from_json json).to match_json json, primary_account, account, transaction.header
 		end
 
 		context 'outflow' do
@@ -103,28 +107,25 @@ RSpec.describe TransferTransaction, type: :model do
 				json['direction'] = 'inflow'
 			end
 		end
-
-		after :each do
-			expect(TransferTransaction.update_from_json json).to match_json json, primary_account, account, transaction.header
-		end
 	end
 
 	describe '#validate_account_uniqueness' do
-		subject { TransferTransaction.new }
+		subject(:transaction) { described_class.new }
+
 		let(:source_account) { create :account }
 		let(:error_message) { "Source and destination account can't be the same" }
 
-		before :each do
-			subject.build_source_transaction_account(direction: 'outflow').account = source_account
-			subject.build_destination_transaction_account(direction: 'inflow').account = destination_account
-			subject.validate_account_uniqueness
+		before do
+			transaction.build_source_transaction_account(direction: 'outflow').account = source_account
+			transaction.build_destination_transaction_account(direction: 'inflow').account = destination_account
+			transaction.validate_account_uniqueness
 		end
 
 		context 'when the source and destination accounts are the same' do
 			let(:destination_account) { source_account }
 
 			it 'should be an error' do
-				expect(subject.errors[:base]).to include error_message
+				expect(transaction.errors[:base]).to include error_message
 			end
 		end
 
@@ -132,21 +133,21 @@ RSpec.describe TransferTransaction, type: :model do
 			let(:destination_account) { create :account }
 
 			it 'should not be an error' do
-				expect(subject.errors[:base]).to_not include error_message
+				expect(transaction.errors[:base]).not_to include error_message
 			end
 		end
 	end
 
 	describe '#as_json' do
-		subject { create :transfer_transaction, status: 'Reconciled' }
+		subject(:transaction) { create :transfer_transaction, status: 'Reconciled' }
 
-		before :each do
-			expect(subject.source_account).to receive(:as_json).and_return 'source account json'
-			expect(subject.destination_account).to receive(:as_json).and_return 'destination account json'
+		before do
+			expect(transaction.source_account).to receive(:as_json).and_return 'source account json'
+			expect(transaction.destination_account).to receive(:as_json).and_return 'destination account json'
 		end
 
 		context 'outflow' do
-			let(:json) { subject.as_json direction: 'outflow' }
+			let(:json) { transaction.as_json direction: 'outflow' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include primary_account: 'source account json'
@@ -159,7 +160,7 @@ RSpec.describe TransferTransaction, type: :model do
 		end
 
 		context 'inflow' do
-			let(:json) { subject.as_json direction: 'inflow' }
+			let(:json) { transaction.as_json direction: 'inflow' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include primary_account: 'destination account json'

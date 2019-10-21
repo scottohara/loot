@@ -27,7 +27,7 @@ RSpec.describe SecurityTransactionHeader, type: :model do
 			}
 		end
 
-		before :each do
+		before do
 			expect(Security).to receive(:find_or_new).and_return security
 		end
 
@@ -37,11 +37,12 @@ RSpec.describe SecurityTransactionHeader, type: :model do
 	end
 
 	describe '#as_json' do
-		subject { create :security_transaction_header }
-		let(:json) { subject.as_json }
+		subject(:transaction_header) { create :security_transaction_header }
 
-		before :each do
-			expect(subject.security).to receive(:as_json).and_return 'security json'
+		let(:json) { transaction_header.as_json }
+
+		before do
+			expect(transaction_header.security).to receive(:as_json).and_return 'security json'
 		end
 
 		it 'should return a JSON representation' do

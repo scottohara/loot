@@ -1,12 +1,12 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-ruby '2.6.3'
+ruby '2.6.5'
 
 source 'https://rubygems.org'
 
 # Web application framework
-gem 'rails', '5.2.3'
+gem 'rails', '6.0.0'
 
 # Postgres
 gem 'pg'
@@ -21,6 +21,9 @@ gem 'rails_12factor', group: :production
 
 # For JSON serialisation
 gem 'active_model_serializers'
+
+# Reduces boot times through caching
+gem 'bootsnap', require: false
 
 group :development, :test do
 	# Cleans database on each test run
@@ -41,6 +44,15 @@ group :development, :test do
 	# Code style checker
 	gem 'rubocop', require: false
 
+	# Rubocop Rails cops
+	gem 'rubocop-rails'
+
+	# Rubocop Performance cops
+	gem 'rubocop-performance'
+
+	# Rubocop RSpec cops
+	gem 'rubocop-rspec'
+
 	# Shared Rubocop config
 	gem 'rubocop-config-oharagroup', require: false
 end
@@ -49,9 +61,6 @@ group :development do
 	# File watcher
 	gem 'listen'
 
-	# Step/next commands for pry
-	gem 'pry-nav'
-
-	# Use pry instead of IRB
-	gem 'pry-rails'
+	# Use byebug instead of IRB
+	gem 'byebug'
 end

@@ -15,7 +15,7 @@ RSpec.describe PayeeTransactionHeader, type: :model do
 			}
 		end
 
-		before :each do
+		before do
 			expect(Payee).to receive(:find_or_new).and_return payee
 		end
 
@@ -25,11 +25,12 @@ RSpec.describe PayeeTransactionHeader, type: :model do
 	end
 
 	describe '#as_json' do
-		subject { create :payee_transaction_header }
-		let(:json) { subject.as_json }
+		subject(:transaction_header) { create :payee_transaction_header }
 
-		before :each do
-			expect(subject.payee).to receive(:as_json).and_return 'payee json'
+		let(:json) { transaction_header.as_json }
+
+		before do
+			expect(transaction_header.payee).to receive(:as_json).and_return 'payee json'
 		end
 
 		it 'should return a JSON representation' do

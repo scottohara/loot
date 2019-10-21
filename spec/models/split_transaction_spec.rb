@@ -46,8 +46,8 @@ RSpec.describe SplitTransaction, type: :model do
 		it 'should create a transaction from a JSON representation' do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
-			expect_any_instance_of(SplitTransaction).to receive(:create_children).with json['subtransactions']
-			expect(SplitTransaction.create_from_json json).to match_json json, account, header
+			expect_any_instance_of(described_class).to receive(:create_children).with json['subtransactions']
+			expect(described_class.create_from_json json).to match_json json, account, header
 		end
 	end
 
@@ -68,10 +68,10 @@ RSpec.describe SplitTransaction, type: :model do
 		end
 
 		it 'should update a transaction from a JSON representation' do
-			expect(SplitTransaction).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
-			expect(SplitTransaction.update_from_json json).to match_json json, account, transaction.header
+			expect(described_class.update_from_json json).to match_json json, account, transaction.header
 		end
 	end
 
@@ -108,24 +108,24 @@ RSpec.describe SplitTransaction, type: :model do
 			]
 		end
 
-		before :each do
-			subject.create_children children
-			subject.save!
+		before do
+			transaction.create_children children
+			transaction.save!
 
-			subtransaction = subject.subtransactions.first
-			subtransfer = subject.subtransfers.first
+			subtransaction = transaction.subtransactions.first
+			subtransfer = transaction.subtransfers.first
 
-			expect(subject.subtransactions.size).to eq 1
-			expect(subtransaction.id).to_not eq children.first[:id]
+			expect(transaction.subtransactions.size).to eq 1
+			expect(subtransaction.id).not_to eq children.first[:id]
 			expect(subtransaction.amount).to eq children.first[:amount]
 			expect(subtransaction.memo).to eq children.first[:memo]
 			expect(subtransaction.transaction_type).to eq children.first[:transaction_type]
 			expect(subtransaction.flag.memo).to eq children.first[:flag]
 			expect(subtransaction.category).to eq subcategory
 
-			expect(subject.subtransfers.size).to eq 1
-			expect(subtransfer.id).to_not eq children.last['id']
-			expect(subtransfer.header.payee).to eq subject.header.payee
+			expect(transaction.subtransfers.size).to eq 1
+			expect(subtransfer.id).not_to eq children.last['id']
+			expect(subtransfer.header.payee).to eq transaction.header.payee
 			expect(subtransfer.amount).to eq children.last['amount']
 			expect(subtransfer.memo).to eq children.last['memo']
 			expect(subtransfer.transaction_type).to eq children.last['transaction_type']
@@ -134,34 +134,39 @@ RSpec.describe SplitTransaction, type: :model do
 		end
 
 		context 'unscheduled' do
-			subject { create :split_transaction }
+			subject(:transaction) { create :split_transaction }
 
 			it 'should build child transactions of the appropriate types' do
-				expect(subject.subtransfers.first.header.transaction_date).to eq subject.header.transaction_date
-				expect(subject.subtransfers.first.header.schedule).to be_nil
+				expect(transaction.subtransfers.first.header.transaction_date).to eq transaction.header.transaction_date
+				expect(transaction.subtransfers.first.header.schedule).to be_nil
 			end
 		end
 
 		context 'scheduled' do
-			subject { create :split_transaction, :scheduled }
+			subject(:transaction) { create :split_transaction, :scheduled }
 
 			it 'should build child transactions of the appropriate types' do
-				expect(subject.subtransfers.first.header.transaction_date).to be_nil
-				expect(subject.subtransfers.first.header.schedule.next_due_date).to eq subject.header.schedule.next_due_date
-				expect(subject.subtransfers.first.header.schedule.frequency).to eq subject.header.schedule.frequency
+				expect(transaction.subtransfers.first.header.transaction_date).to be_nil
+				expect(transaction.subtransfers.first.header.schedule.next_due_date).to eq transaction.header.schedule.next_due_date
+				expect(transaction.subtransfers.first.header.schedule.frequency).to eq transaction.header.schedule.frequency
 			end
 		end
 	end
 
 	describe '#as_json' do
-		let(:json) { subject.as_json }
+		let(:json) { transaction.as_json }
 
-		before :each do
-			expect(subject.account).to receive(:as_json).and_return 'account json'
+		before do
+			expect(transaction.account).to receive(:as_json).and_return 'account json'
+		end
+
+		after do
+			expect(json).to include primary_account: 'account json'
+			expect(json).to include status: 'Reconciled'
 		end
 
 		context 'outflow' do
-			subject { create :split_to_transaction, status: 'Reconciled' }
+			subject(:transaction) { create :split_to_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'SplitTo', name: 'Split To'}
@@ -170,17 +175,12 @@ RSpec.describe SplitTransaction, type: :model do
 		end
 
 		context 'inflow' do
-			subject { create :split_from_transaction, status: 'Reconciled' }
+			subject(:transaction) { create :split_from_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'SplitFrom', name: 'Split From'}
 				expect(json).to include direction: 'inflow'
 			end
-		end
-
-		after :each do
-			expect(json).to include primary_account: 'account json'
-			expect(json).to include status: 'Reconciled'
 		end
 	end
 
@@ -208,27 +208,28 @@ RSpec.describe SplitTransaction, type: :model do
 		end
 
 		context 'split transaction' do
-			subject { create :split_transaction }
+			subject(:transaction) { create :split_transaction }
+
 			let!(:expected_children) do
 				[
-					create(:sub_expense_transaction, :flagged, parent: subject).as_json,
-					create(:subtransfer_to_transaction, parent: subject).as_json,
-					create(:sub_income_transaction, parent: subject).as_json,
-					create(:subtransfer_from_transaction, parent: subject).as_json,
-					create(:sub_transaction, parent: subject, category: create(:subcategory)).as_json
+					create(:sub_expense_transaction, :flagged, parent: transaction).as_json,
+					create(:subtransfer_to_transaction, parent: transaction).as_json,
+					create(:sub_income_transaction, parent: transaction).as_json,
+					create(:subtransfer_from_transaction, parent: transaction).as_json,
+					create(:sub_transaction, parent: transaction, category: create(:subcategory)).as_json
 				]
 			end
 
 			it 'should return a JSON representation of all child transactions' do
-				expect(subject.children).to match_json expected_children, subject.transaction_account.direction # Should the children always match the parent direction?
+				expect(transaction.children).to match_json expected_children, transaction.transaction_account.direction # Should the children always match the parent direction?
 			end
 		end
 
 		context 'payslip transaction' do
-			subject { create :payslip_transaction, subtransfers: 1 }
+			subject(:transaction) { create :payslip_transaction, subtransfers: 1 }
 
 			it "should set any subtransfer directions to 'outflow'" do
-				expect(subject.children.first[:direction]).to eq 'outflow'
+				expect(transaction.children.first[:direction]).to eq 'outflow'
 			end
 		end
 	end

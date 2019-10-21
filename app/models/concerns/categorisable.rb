@@ -27,7 +27,7 @@ module Categorisable
 				when 'Split', 'Dividend' then psuedo_category trx['transaction_type'], trx['direction']
 				when 'LoanRepayment' then [trx['transaction_type'], 'Loan Repayment']
 				when 'SecurityHolding' then trx['direction'].eql?('outflow') && ['RemoveShares', 'Remove Shares'] || ['AddShares', 'Add Shares']
-				when 'SecurityInvestment' then
+				when 'SecurityInvestment'
 					if account_type.eql? 'investment'
 						trx['direction'].eql?('outflow') && %w[Sell Sell] || %w[Buy Buy]
 					else

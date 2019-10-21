@@ -5,35 +5,37 @@ require 'rails_helper'
 
 RSpec.describe TransactionSplit, type: :model do
 	describe '#validate_transaction_type_inclusion' do
-		subject { TransactionSplit.new }
-		let(:error_message) { "Transaction type #{subject.trx.transaction_type} is not valid in a split transaction" }
+		subject(:split) { described_class.new }
+
+		let(:error_message) { "Transaction type #{split.trx.transaction_type} is not valid in a split transaction" }
 
 		it "should not be an error if the transaction type is 'Sub'" do
-			subject.trx = build :sub_transaction
-			subject.validate_transaction_type_inclusion
-			expect(subject.errors[:base]).to_not include error_message
+			split.trx = build :sub_transaction
+			split.validate_transaction_type_inclusion
+			expect(split.errors[:base]).not_to include error_message
 		end
 
 		it "should not be an error if the transaction type is 'Subtransfer'" do
-			subject.trx = build :subtransfer_transaction
-			subject.validate_transaction_type_inclusion
-			expect(subject.errors[:base]).to_not include error_message
+			split.trx = build :subtransfer_transaction
+			split.validate_transaction_type_inclusion
+			expect(split.errors[:base]).not_to include error_message
 		end
 
 		it "should be an error if the transaction type is neither 'Sub' nor 'Subtransfer'" do
-			subject.trx = build :basic_transaction
-			subject.validate_transaction_type_inclusion
-			expect(subject.errors[:base]).to include error_message
+			split.trx = build :basic_transaction
+			split.validate_transaction_type_inclusion
+			expect(split.errors[:base]).to include error_message
 		end
 	end
 
 	describe '#destroy_transaction' do
+		subject(:split) { parent.transaction_splits.first }
+
 		let(:parent) { create :split_transaction, subtransactions: 1 }
-		subject { parent.transaction_splits.first }
 
 		it 'should destroy the transaction' do
-			subject.destroy_transaction
-			expect(Transaction.exists? subject.transaction_id).to be false
+			split.destroy_transaction
+			expect(Transaction.exists? split.transaction_id).to be false
 		end
 	end
 end

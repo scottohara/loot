@@ -26,7 +26,7 @@ RSpec.describe Category, type: :model do
 			let(:category) { create :category }
 
 			it 'should return the existing category' do
-				expect(Category.find_or_new 'id' => category.id).to eq category
+				expect(described_class.find_or_new 'id' => category.id).to eq category
 			end
 		end
 
@@ -34,7 +34,7 @@ RSpec.describe Category, type: :model do
 			let(:category_name) { 'New category' }
 
 			it 'should return a newly created category' do
-				category = Category.find_or_new category_name
+				category = described_class.find_or_new category_name
 				expect(category.name).to eq category_name
 				expect(category.direction).to eq 'outflow'
 				expect(category.parent).to be_nil
@@ -44,7 +44,7 @@ RSpec.describe Category, type: :model do
 				let(:parent) { create :inflow_category }
 
 				it 'should return a newly created category' do
-					category = Category.find_or_new category_name, parent
+					category = described_class.find_or_new category_name, parent
 					expect(category.name).to eq category_name
 					expect(category.direction).to eq 'inflow'
 					expect(category.parent).to eq parent
@@ -54,31 +54,46 @@ RSpec.describe Category, type: :model do
 	end
 
 	describe '#opening_balance' do
-		subject { create :category }
+		subject(:category) { create :category }
 
 		it 'should return zero' do
-			expect(subject.opening_balance).to eq 0
+			expect(category.opening_balance).to eq 0
 		end
 	end
 
 	describe '#account_type' do
-		subject { create :category }
+		subject(:category) { create :category }
 
 		it 'should return nil' do
-			expect(subject.account_type).to be_nil
+			expect(category.account_type).to be_nil
 		end
 	end
 
 	describe '#as_json' do
-		context 'with default options' do
-			let(:json) { subject.as_json }
+		after do
+			expect(json).to include id: category.id
+			expect(json).to include name: 'Test Category'
+			expect(json).to include direction: 'outflow'
+			expect(json).to include favourite: false
+		end
 
-			before :each do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i[id name direction parent_id favourite]).and_call_original
+		context 'with default options' do
+			let(:json) { category.as_json }
+
+			before do
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction parent_id favourite]).and_call_original
+			end
+
+			after do
+				expect(json).not_to include :num_children
+				expect(json).not_to include :parent
+				expect(json).not_to include :closing_balance
+				expect(json).not_to include :num_transactions
+				expect(json).not_to include :children
 			end
 
 			context 'category' do
-				subject { create :category, name: 'Test Category', children: 1, transactions: 1 }
+				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
 
 				it 'should return a JSON representation excluding children' do
 					expect(json).to include parent_id: nil
@@ -86,39 +101,37 @@ RSpec.describe Category, type: :model do
 			end
 
 			context 'subcategory' do
-				subject { create :subcategory, name: 'Test Category', transactions: 1 }
+				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
 
 				it 'should return a JSON representation excluding parent' do
-					expect(json).to include parent_id: subject.parent.id
+					expect(json).to include parent_id: category.parent.id
 				end
-			end
-
-			after :each do
-				expect(json).not_to include :num_children
-				expect(json).not_to include :parent
-				expect(json).not_to include :closing_balance
-				expect(json).not_to include :num_transactions
-				expect(json).not_to include :children
 			end
 		end
 
 		context 'with empty options' do
-			let(:json) { subject.as_json({}) }
+			let(:json) { category.as_json({}) }
 
-			before :each do
+			before do
 				# Access the children association to ensure it is loaded
-				subject.children.length
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, {}).and_call_original
+				category.children.length
+				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {}).and_call_original
+			end
+
+			after do
+				expect(json).to include closing_balance: category.closing_balance
+				expect(json).to include num_transactions: 1
 			end
 
 			context 'category' do
-				subject { create :category, name: 'Test Category', children: 1, transactions: 1 }
+				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
+
 				let(:child) { json[:children].first }
 				let(:child_parent) { child[:parent] }
 
-				before :each do
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.children.first, fields: %i[id name direction parent_id parent num_transactions favourite]).and_call_original
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject, fields: %i[id name direction]).and_call_original
+				before do
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category.children.first, fields: %i[id name direction parent_id parent num_transactions favourite]).and_call_original
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction]).and_call_original
 				end
 
 				it 'should return a JSON representation including children' do
@@ -126,17 +139,17 @@ RSpec.describe Category, type: :model do
 					expect(json).to include num_children: 1
 					expect(json).to include parent: nil
 
-					expect(child).to include id: subject.children.first.id
-					expect(child).to include name: subject.children.first.name
+					expect(child).to include id: category.children.first.id
+					expect(child).to include name: category.children.first.name
 					expect(child).to include direction: 'outflow'
 					expect(child).to include favourite: false
-					expect(child).to include parent_id: subject.id
+					expect(child).to include parent_id: category.id
 					expect(child).to include num_transactions: 0
 					expect(child).not_to include :children
 
-					expect(child_parent).to include id: subject.id
-					expect(child_parent).to include name: subject.name
-					expect(child_parent).to include direction: subject.direction
+					expect(child_parent).to include id: category.id
+					expect(child_parent).to include name: category.name
+					expect(child_parent).to include direction: category.direction
 					expect(child_parent).not_to include :num_children
 					expect(child_parent).not_to include :parent
 					expect(child_parent).not_to include :closing_balance
@@ -146,33 +159,22 @@ RSpec.describe Category, type: :model do
 			end
 
 			context 'subcategory' do
-				subject { create :subcategory, name: 'Test Category', transactions: 1 }
+				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
+
 				let(:parent) { json[:parent] }
 
-				before :each do
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(subject.parent, fields: %i[id name direction]).and_call_original
+				before do
+					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category.parent, fields: %i[id name direction]).and_call_original
 				end
 
 				it 'should return a JSON representation including parent' do
-					expect(json).to include parent_id: subject.parent.id
+					expect(json).to include parent_id: category.parent.id
 					expect(json).not_to include :children
-					expect(parent).to include id: subject.parent.id
-					expect(parent).to include name: subject.parent.name
+					expect(parent).to include id: category.parent.id
+					expect(parent).to include name: category.parent.name
 					expect(parent).to include direction: 'outflow'
 				end
 			end
-
-			after :each do
-				expect(json).to include closing_balance: subject.closing_balance
-				expect(json).to include num_transactions: 1
-			end
-		end
-
-		after :each do
-			expect(json).to include id: subject.id
-			expect(json).to include name: 'Test Category'
-			expect(json).to include direction: 'outflow'
-			expect(json).to include favourite: false
 		end
 	end
 end

@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'logins routes' do
+describe 'logins routes', type: :routing do
 	# Collection routes
 	it 'should route POST /logins to logins#create' do
 		expect(post: '/logins').to route_to controller: 'logins', action: 'create'
@@ -23,14 +23,14 @@ describe 'logins routes' do
 	end
 
 	it 'should not route PATCH /logins/:id' do
-		expect(patch: '/logins/1').to_not be_routable
+		expect(patch: '/logins/1').not_to be_routable
 	end
 
 	it 'should not route PUT /logins/:id' do
-		expect(put: '/logins/1').to_not be_routable
+		expect(put: '/logins/1').not_to be_routable
 	end
 
 	it 'should not route DELETE /logins/:id' do
-		expect(delete: '/logins/1').to_not be_routable
+		expect(delete: '/logins/1').not_to be_routable
 	end
 end

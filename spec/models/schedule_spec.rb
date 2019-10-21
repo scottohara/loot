@@ -11,9 +11,9 @@ RSpec.describe Schedule, type: :model do
 
 	# Custom matcher that compares a set of transactions against another set
 	matcher :match_ledger_transactions do |expected|
-		match do |actual|
-			@diffs = []
+		diffs = []
 
+		match do |actual|
 			# Make sure the array lengths match
 			return false unless expected.uniq(&:id).size.eql? actual.uniq { |t| t[:id] }.size
 
@@ -32,7 +32,7 @@ RSpec.describe Schedule, type: :model do
 				return true if expected_json.hash.eql? actual_json.hash
 
 				# Track the differences
-				@diffs << {
+				diffs << {
 					id: trx.id,
 					type: trx.transaction_type,
 					expected: expected_json.delete_if { |key, value| actual_json[key].eql? value },
@@ -45,12 +45,12 @@ RSpec.describe Schedule, type: :model do
 		end
 
 		failure_message do
-			if @diffs.empty?
+			if diffs.empty?
 				# Size mismatch
 				"expected #{expected.uniq(&:id).size} #{'transaction'.pluralize} but got #{actual.uniq(&:id).size}"
 			else
 				# Content mismatch
-				@diffs.reduce('') do |message, diff|
+				diffs.reduce('') do |message, diff|
 					message += "Transaction #:\t#{diff[:id]} (#{diff[:type]})\n"
 					message += "Expected:\t#{diff[:expected]}\n"
 					message + "Actual:\t\t#{diff[:actual]}\n\n"
@@ -109,11 +109,11 @@ RSpec.describe Schedule, type: :model do
 			]
 		end
 
-		# Non-scheduled transaction (should be ignored)
-		let!(:non_scheduled_transaction) { create :basic_transaction }
-
 		it 'should handle all types of scheduled transactions and ignore non-scheduled ones' do
-			transactions = Schedule.ledger
+			# Non-scheduled transaction (should be ignored)
+			create :basic_transaction
+
+			transactions = described_class.ledger
 
 			expect(transactions).to match_ledger_transactions scheduled_transactions
 		end
@@ -152,7 +152,7 @@ RSpec.describe Schedule, type: :model do
 			expect(SecurityTransferTransaction).to be_created_from security_transfer_transaction.as_subclass.as_json(direction: 'outflow'), security_transfer_transaction.source_account.id, security_transfer_transaction.header.schedule.next_due_date
 			expect(DividendTransaction).to be_created_from dividend_transaction.as_subclass.as_json, dividend_transaction.investment_account.id, dividend_transaction.header.schedule.next_due_date
 
-			Schedule.auto_enter_overdue
+			described_class.auto_enter_overdue
 		end
 
 		it 'should ignore non-scheduled, non-overdue or non-auto-enter transactions' do
@@ -160,9 +160,9 @@ RSpec.describe Schedule, type: :model do
 			create :basic_transaction, :scheduled, next_due_date: Time.zone.tomorrow # Non-overdue
 			create :basic_transaction, :scheduled, auto_enter: false # Non-auto-enter
 
-			expect(BasicTransaction).to_not receive :create_from_json
+			expect(BasicTransaction).not_to receive :create_from_json
 
-			Schedule.auto_enter_overdue
+			described_class.auto_enter_overdue
 		end
 
 		it 'should handle all types of frequencies and set the next due date to a future date' do
@@ -192,13 +192,13 @@ RSpec.describe Schedule, type: :model do
 			expect(BasicTransaction).to be_created_from quarterly.as_json, quarterly.account.id, quarterly.header.schedule.next_due_date
 			expect(BasicTransaction).to be_created_from yearly.as_json, yearly.account.id, yearly.header.schedule.next_due_date
 
-			Schedule.auto_enter_overdue
+			described_class.auto_enter_overdue
 
-			expect(Schedule.find(fortnightly.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
-			expect(Schedule.find(monthly.header.schedule.id).next_due_date).to eq next_due_date(1)
-			expect(Schedule.find(bimonthly.header.schedule.id).next_due_date).to eq next_due_date(2)
-			expect(Schedule.find(quarterly.header.schedule.id).next_due_date).to eq next_due_date(3)
-			expect(Schedule.find(yearly.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
+			expect(described_class.find(fortnightly.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
+			expect(described_class.find(monthly.header.schedule.id).next_due_date).to eq next_due_date(1)
+			expect(described_class.find(bimonthly.header.schedule.id).next_due_date).to eq next_due_date(2)
+			expect(described_class.find(quarterly.header.schedule.id).next_due_date).to eq next_due_date(3)
+			expect(described_class.find(yearly.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
 		end
 
 		it 'should create as many transactions as are overdue' do
@@ -208,14 +208,15 @@ RSpec.describe Schedule, type: :model do
 			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.tomorrow.advance(weeks: -4)
 			expect(BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, Time.zone.tomorrow.advance(weeks: -2)
 
-			Schedule.auto_enter_overdue
+			described_class.auto_enter_overdue
 
-			expect(Schedule.find(three_overdue.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
+			expect(described_class.find(three_overdue.header.schedule.id).next_due_date).to eq Time.zone.tomorrow
 		end
 	end
 
 	describe '#as_json' do
 		subject { create :schedule, next_due_date: Time.zone.today.to_s, frequency: 'Yearly', estimate: false, auto_enter: false }
+
 		let(:json) { subject.as_json }
 
 		it 'should return a JSON representation' do

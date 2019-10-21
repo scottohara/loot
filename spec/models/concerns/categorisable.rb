@@ -4,11 +4,25 @@
 RSpec.shared_examples Categorisable do
 	describe '::transaction_category' do
 		subject { described_class }
+
 		let(:trx) { {} }
 		let(:account) { {type: 'cash'} }
 		let(:expected) { {} }
 
+		after do
+			actual = subject.transaction_category trx, account[:type]
+
+			expect(actual[:id]).to eq expected[:id]
+			expect(actual[:name]).to eql expected[:name]
+		end
+
 		context 'basic types' do
+			after do
+				expect(subject).to receive(:basic_category).with(trx).and_return %w[basic basic]
+				expected[:id] = 'basic'
+				expected[:name] = 'basic'
+			end
+
 			it 'should handle a Basic transaction' do
 				trx['transaction_type'] = 'Basic'
 			end
@@ -16,15 +30,18 @@ RSpec.shared_examples Categorisable do
 			it 'should handle a Sub transaction' do
 				trx['transaction_type'] = 'Sub'
 			end
-
-			after :each do
-				expect(subject).to receive(:basic_category).with(trx).and_return %w[basic basic]
-				expected[:id] = 'basic'
-				expected[:name] = 'basic'
-			end
 		end
 
 		context 'transfer types' do
+			after do
+				trx['direction'] = 'outflow'
+				trx['parent_transaction_type'] = 'parent_type'
+
+				expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction'], trx['parent_transaction_type']).and_return %w[transfer transfer]
+				expected[:id] = 'transfer'
+				expected[:name] = 'transfer'
+			end
+
 			it 'should handle a Transfer transaction' do
 				trx['transaction_type'] = 'Transfer'
 			end
@@ -36,32 +53,23 @@ RSpec.shared_examples Categorisable do
 			it 'should handle a SecurityTransfer transaction' do
 				trx['transaction_type'] = 'SecurityTransfer'
 			end
-
-			after :each do
-				trx['direction'] = 'outflow'
-				trx['parent_transaction_type'] = 'parent_type'
-
-				expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction'], trx['parent_transaction_type']).and_return %w[transfer transfer]
-				expected[:id] = 'transfer'
-				expected[:name] = 'transfer'
-			end
 		end
 
 		context 'splits and dividends' do
+			after do
+				trx['direction'] = 'outflow'
+
+				expect(subject).to receive(:psuedo_category).with(*trx.values).and_return %w[split split]
+				expected[:id] = 'split'
+				expected[:name] = 'split'
+			end
+
 			it 'should handle a Split transaction' do
 				trx['transaction_type'] = 'Split'
 			end
 
 			it 'should handle a Dividend transaction' do
 				trx['transaction_type'] = 'Dividend'
-			end
-
-			after :each do
-				trx['direction'] = 'outflow'
-
-				expect(subject).to receive(:psuedo_category).with(*trx.values).and_return %w[split split]
-				expected[:id] = 'split'
-				expected[:name] = 'split'
 			end
 		end
 
@@ -134,17 +142,11 @@ RSpec.shared_examples Categorisable do
 				expected[:name] = trx['transaction_type']
 			end
 		end
-
-		after :each do
-			actual = subject.transaction_category trx, account[:type]
-
-			expect(actual[:id]).to eq expected[:id]
-			expect(actual[:name]).to eql expected[:name]
-		end
 	end
 
 	describe '::basic_category' do
 		subject { described_class }
+
 		let(:trx) { {'category_id' => 1, 'category_name' => 'name'} }
 
 		context 'category' do
@@ -171,6 +173,7 @@ RSpec.shared_examples Categorisable do
 
 	describe '::basic_subcategory' do
 		subject { described_class }
+
 		let(:trx) { {'category_id' => 1, 'category_name' => 'name'} }
 
 		context 'category' do

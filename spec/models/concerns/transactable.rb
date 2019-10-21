@@ -9,9 +9,9 @@ RSpec.shared_examples Transactable do
 	describe '#ledger' do
 		# Custom matcher that compares a set of transactions against another set
 		matcher :match_ledger_transactions do |expected|
-			match do |actual|
-				@diffs = []
+			differences = []
 
+			match do |actual|
 				# Make sure the array lengths match
 				return false unless expected.distinct { |t| t[:id] }.size.eql? actual.uniq { |t| t[:id] }.size
 
@@ -23,7 +23,7 @@ RSpec.shared_examples Transactable do
 					diffs = []
 
 					# If none of the actual transactions match, add the mismatch
-					@diffs += diffs if actual_trxes.none? do |actual_trx|
+					differences += diffs if actual_trxes.none? do |actual_trx|
 						# Convert the expected transaction to JSON and compact
 						expected_json = compact trx.as_subclass.as_json(direction: actual_trx[:direction], primary_account: actual_trx[:primary_account][:id])
 
@@ -44,17 +44,17 @@ RSpec.shared_examples Transactable do
 						false
 					end
 
-					@diffs.empty?
+					differences.empty?
 				end
 			end
 
 			failure_message do
-				if @diffs.empty?
+				if differences.empty?
 					# Size mismatch
 					"expected #{expected.distinct { |t| t[:id] }.size} #{'transaction'.pluralize} but got #{actual.uniq { |t| t[:id] }.size}"
 				else
 					# Content mismatch
-					@diffs.reduce('') do |message, diff|
+					differences.reduce('') do |message, diff|
 						message += "Transaction #:\t#{diff[:id]} (#{diff[:type]})\n"
 						message += "Expected:\t#{diff[:expected]}\n"
 						message + "Actual:\t\t#{diff[:actual]}\n\n"
@@ -109,6 +109,25 @@ RSpec.shared_examples Transactable do
 			end
 		end
 
+		after :each, spec_type: :range do
+			FactoryBot.reload
+
+			# Create the context with 15 basic transactions
+			context = create context_factory, transactions: 15
+			subject = defined?(as_class_method) && described_class || context
+
+			# Change the size of the result set
+			stub_const 'Transactable::NUM_RESULTS', 9
+
+			# Get the ledger
+			_, transactions, at_end = subject.ledger as_at: (Date.parse('2014-01-01') + as_at).to_s, direction: direction, query: 'Transaction'
+
+			expect(transactions.uniq { |t| t[:id] }.size).to eq range.size
+			expect(transactions.first[:transaction_date]).to eq(Date.parse('2014-01-01') + range.first)
+			expect(transactions.last[:transaction_date]).to eq(Date.parse('2014-01-01') + range.last)
+			expect(at_end).to be expected_at_end
+		end
+
 		it 'should handle all types of transactions and ignore scheduled transactions' do
 			context = create context_factory, :with_all_transaction_types, scheduled: 1
 			subject = defined?(as_class_method) && described_class || context
@@ -138,6 +157,7 @@ RSpec.shared_examples Transactable do
 
 		context 'when fetching backwards', spec_type: :range do
 			let(:direction) { :prev }
+			let(:as_at) { range.last + 1 }
 
 			context 'when the date is near the start of the range' do
 				let(:range) { 0..4 }
@@ -152,14 +172,11 @@ RSpec.shared_examples Transactable do
 
 				it('should return an earlier set of transactions') {}
 			end
-
-			after :each do
-				@as_at = range.last + 1
-			end
 		end
 
 		context 'when fetching forwards', spec_type: :range do
 			let(:direction) { :next }
+			let(:as_at) { range.first - 1 }
 
 			context 'when the date is not near the end of the range' do
 				let(:range) { 2..10 }
@@ -174,37 +191,15 @@ RSpec.shared_examples Transactable do
 
 				it('should return the last set of transactions') {}
 			end
-
-			after :each do
-				@as_at = range.first - 1
-			end
-		end
-
-		after :each, spec_type: :range do
-			FactoryBot.reload
-
-			# Create the context with 15 basic transactions
-			context = create context_factory, transactions: 15
-			subject = defined?(as_class_method) && described_class || context
-
-			# Change the size of the result set
-			stub_const 'Transactable::NUM_RESULTS', 9
-
-			# Get the ledger
-			_, transactions, at_end = subject.ledger as_at: (Date.parse('2014-01-01') + @as_at).to_s, direction: direction, query: 'Transaction'
-
-			expect(transactions.uniq { |t| t[:id] }.size).to eq range.size
-			expect(transactions.first[:transaction_date]).to eq(Date.parse('2014-01-01') + range.first)
-			expect(transactions.last[:transaction_date]).to eq(Date.parse('2014-01-01') + range.last)
-			expect(at_end).to be expected_at_end
 		end
 	end
 
 	describe '#closing_balance' do
-		let(:context) { create context_factory, :with_all_transaction_types, scheduled: 1 }
 		subject { defined?(as_class_method) && described_class || context }
 
-		before :each do
+		let(:context) { create context_factory, :with_all_transaction_types, scheduled: 1 }
+
+		before do
 			FactoryBot.reload
 
 			if defined? as_class_method
@@ -306,7 +301,7 @@ RSpec.shared_examples Transactable do
 
 			context 'when not at end' do
 				it "should return the context's closing balance at the closing date" do
-					expect(subject).to receive(:closing_balance) { '2014-01-01' }
+					expect(subject).to receive(:closing_balance).and_return '2014-01-01'
 
 					subject.ledger_opening_balance opts, false, '2014-01-01'
 				end
@@ -317,7 +312,7 @@ RSpec.shared_examples Transactable do
 			let(:opts) { {direction: :next, as_at: '2014-01-02'} }
 
 			it "should return the context's closing balance at the passed date" do
-				expect(subject).to receive(:closing_balance) { '2014-01-02' }
+				expect(subject).to receive(:closing_balance).and_return '2014-01-02'
 
 				subject.ledger_opening_balance opts, nil, nil
 			end
@@ -327,22 +322,28 @@ RSpec.shared_examples Transactable do
 	describe '#exclude_reconciled' do
 		subject { defined?(as_class_method) && described_class || described_class.new }
 
-		before :each do
-			@opening_balance, @transactions = subject.exclude_reconciled 100, [
-				{'status' => 'Reconciled', 'amount' => 10, 'direction' => 'inflow'}, # +$10 inflow
-				{'status' => 'Reconciled', 'amount' => 5, 'direction' => 'outflow'}, # -$5	outflow
-				{'status' => 'Reconciled', 'amount' => nil, 'direction' => 'inflow'}, # ignore, amount is nil
-				{'status' => nil, 'amount' => 10, 'direction' => 'inflow'} # ignore, unreconciled
-			]
+		opening_balance = nil
+		transactions = []
+
+		before do
+			opening_balance, transactions = subject.exclude_reconciled(
+				100,
+				[
+					{'status' => 'Reconciled', 'amount' => 10, 'direction' => 'inflow'}, # +$10 inflow
+					{'status' => 'Reconciled', 'amount' => 5, 'direction' => 'outflow'}, # -$5	outflow
+					{'status' => 'Reconciled', 'amount' => nil, 'direction' => 'inflow'}, # ignore, amount is nil
+					{'status' => nil, 'amount' => 10, 'direction' => 'inflow'} # ignore, unreconciled
+				]
+			)
 		end
 
 		it 'should update the opening balance with the amounts of any reconciled transactions' do
-			expect(@opening_balance).to eq 105
+			expect(opening_balance).to eq 105
 		end
 
 		it 'should remove any reconciled transactions' do
-			expect(@transactions.size).to eq 1
-			expect(@transactions.first).to include('status' => nil, 'amount' => 10, 'direction' => 'inflow')
+			expect(transactions.size).to eq 1
+			expect(transactions.first).to include('status' => nil, 'amount' => 10, 'direction' => 'inflow')
 		end
 	end
 end

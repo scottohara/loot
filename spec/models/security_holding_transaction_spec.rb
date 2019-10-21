@@ -39,12 +39,16 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 			}
 		end
 
-		before :each do
+		before do
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with 'quantity'
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with 'price'
 			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with 'commission'
+		end
+
+		after do
+			expect(described_class.create_from_json json).to match_json json, account, header
 		end
 
 		context 'add shares' do
@@ -57,10 +61,6 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 			it 'should create a transaction from a JSON representation' do
 				json['direction'] = 'outflow'
 			end
-		end
-
-		after :each do
-			expect(SecurityHoldingTransaction.create_from_json json).to match_json json, account, header
 		end
 	end
 
@@ -77,10 +77,14 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 			}
 		end
 
-		before :each do
-			expect(SecurityHoldingTransaction).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+		before do
+			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
 			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
+		end
+
+		after do
+			expect(described_class.update_from_json json).to match_json json, account, transaction.header
 		end
 
 		context 'add shares' do
@@ -94,21 +98,23 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 				json['direction'] = 'outflow'
 			end
 		end
-
-		after :each do
-			expect(SecurityHoldingTransaction.update_from_json json).to match_json json, account, transaction.header
-		end
 	end
 
 	describe '#as_json' do
-		let(:json) { subject.as_json }
+		let(:json) { transaction.as_json }
 
-		before :each do
-			expect(subject.account).to receive(:as_json).and_return 'account json'
+		before do
+			expect(transaction.account).to receive(:as_json).and_return 'account json'
+		end
+
+		after do
+			expect(json).to include primary_account: 'account json'
+			expect(json).to include status: 'Reconciled'
+			expect(json).to include quantity: 10
 		end
 
 		context 'add shares' do
-			subject { create :security_add_transaction, status: 'Reconciled' }
+			subject(:transaction) { create :security_add_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'AddShares', name: 'Add Shares'}
@@ -117,18 +123,12 @@ RSpec.describe SecurityHoldingTransaction, type: :model do
 		end
 
 		context 'remove shares' do
-			subject { create :security_remove_transaction, status: 'Reconciled' }
+			subject(:transaction) { create :security_remove_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'RemoveShares', name: 'Remove Shares'}
 				expect(json).to include direction: 'outflow'
 			end
-		end
-
-		after :each do
-			expect(json).to include primary_account: 'account json'
-			expect(json).to include status: 'Reconciled'
-			expect(json).to include quantity: 10
 		end
 	end
 end

@@ -58,10 +58,10 @@ class DividendTransaction < SecurityTransaction
 	end
 
 	def investment_account
-		transaction_accounts.select { |trx_account| trx_account.account.account_type.eql? 'investment' }.first
+		transaction_accounts.find { |trx_account| trx_account.account.account_type.eql? 'investment' }
 	end
 
 	def cash_account
-		transaction_accounts.select { |trx_account| trx_account.account.account_type.eql? 'bank' }.first
+		transaction_accounts.find { |trx_account| trx_account.account.account_type.eql? 'bank' }
 	end
 end

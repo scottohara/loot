@@ -8,7 +8,7 @@ RSpec.describe CategoriesController, type: :controller do
 		context 'for category list' do
 			let(:json) { 'category list with children' }
 
-			before :each do
+			before do
 				expect(Category).to receive_message_chain(:where, :includes, :order).with(:direction, :name).and_return json
 				get :index, params: {include_children: true}
 			end
@@ -21,13 +21,13 @@ RSpec.describe CategoriesController, type: :controller do
 		context 'for category typeahead' do
 			let(:json) { 'category list without children' }
 
-			before :each do
+			before do
 				expect(Category).to receive_message_chain(:where, :order).with({favourite: :desc}, :direction, :name).and_return json
 				get :index
 			end
 
 			it 'should return the category list without children' do
-				expect(controller.params).to_not include :include_children
+				expect(controller.params).not_to include :include_children
 			end
 		end
 	end
@@ -52,7 +52,7 @@ RSpec.describe CategoriesController, type: :controller do
 	end
 
 	describe 'PATCH update', request: true, json: true do
-		let(:category) { double 'category' }
+		let(:category) { instance_double 'category' }
 		let(:request_body) { {name: 'Updated category', direction: 'outflow', parent_id: '1'} }
 		let(:raw_json) { 'updated category' }
 		let(:json) { JSON.dump raw_json }

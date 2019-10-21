@@ -26,13 +26,13 @@ RSpec.describe SubTransaction, type: :model do
 			}
 		end
 
-		before :each do
+		before do
 			expect(Category).to receive(:find_or_new).with(json['category']).and_return category
 		end
 
 		context 'with category' do
 			it 'should create a transaction from a JSON representation' do
-				expect(SubTransaction.create_from_json json).to match_json json, category
+				expect(described_class.create_from_json json).to match_json json, category
 			end
 		end
 
@@ -40,7 +40,7 @@ RSpec.describe SubTransaction, type: :model do
 			it 'should create a transaction from a JSON representation' do
 				json['subcategory'] = {'id' => subcategory.id}
 				expect(Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
-				expect(SubTransaction.create_from_json json).to match_json json, subcategory
+				expect(described_class.create_from_json json).to match_json json, subcategory
 			end
 		end
 	end
@@ -48,17 +48,23 @@ RSpec.describe SubTransaction, type: :model do
 	describe('::update_from_json') {}
 
 	describe '#as_json' do
-		let(:json) { subject.as_json }
+		let(:json) { transaction.as_json }
 
-		before :each do
-			expect(subject.parent.account).to receive(:as_json).and_return 'parent account json'
+		before do
+			expect(transaction.parent.account).to receive(:as_json).and_return 'parent account json'
+		end
+
+		after do
+			expect(json).to include primary_account: 'parent account json'
+			expect(json).to include direction: 'outflow'
+			expect(json).to include parent_id: transaction.parent.id
 		end
 
 		context 'with category' do
-			subject { create :sub_transaction }
+			subject(:transaction) { create :sub_transaction }
 
-			before :each do
-				expect(subject.category).to receive(:as_json).and_return 'category json'
+			before do
+				expect(transaction.category).to receive(:as_json).and_return 'category json'
 			end
 
 			it 'should return a JSON representation' do
@@ -68,23 +74,17 @@ RSpec.describe SubTransaction, type: :model do
 		end
 
 		context 'with subcategory' do
-			subject { create :sub_transaction, category: FactoryBot.create(:subcategory) }
+			subject(:transaction) { create :sub_transaction, category: FactoryBot.create(:subcategory) }
 
-			before :each do
-				expect(subject.category.parent).to receive(:as_json).and_return 'category json'
-				expect(subject.category).to receive(:as_json).and_return 'subcategory json'
+			before do
+				expect(transaction.category.parent).to receive(:as_json).and_return 'category json'
+				expect(transaction.category).to receive(:as_json).and_return 'subcategory json'
 			end
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: 'category json'
 				expect(json).to include subcategory: 'subcategory json'
 			end
-		end
-
-		after :each do
-			expect(json).to include primary_account: 'parent account json'
-			expect(json).to include direction: 'outflow'
-			expect(json).to include parent_id: subject.parent.id
 		end
 	end
 end

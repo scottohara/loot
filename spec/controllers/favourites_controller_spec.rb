@@ -24,7 +24,7 @@ RSpec.describe FavouritesController, type: :controller do
 		let(:request_params) { {'security_id' => '1'} }
 	end
 
-	before :each do
+	before do
 		expect(context.class).to receive(:find).with('1').and_return context
 		expect(context).to receive(:update!).with favourite: favourite
 	end
@@ -32,7 +32,7 @@ RSpec.describe FavouritesController, type: :controller do
 	describe 'PATCH update', request: true do
 		let(:favourite) { true }
 
-		before :each do
+		before do
 			patch :update, params: request_params
 		end
 
@@ -45,7 +45,7 @@ RSpec.describe FavouritesController, type: :controller do
 	describe 'DELETE destroy', request: true do
 		let(:favourite) { false }
 
-		before :each do
+		before do
 			delete :destroy, params: request_params
 		end
 

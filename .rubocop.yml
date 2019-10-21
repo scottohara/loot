@@ -1,7 +1,14 @@
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
 inherit_gem:
   rubocop-config-oharagroup:
     - default.yml
+    - performance.yml
     - rails.yml
+    - rspec.yml
 
 AllCops:
   Exclude:

@@ -28,9 +28,13 @@ RSpec.describe SubtransferTransaction, type: :model do
 			}
 		end
 
-		before :each do
+		before do
 			expect(Account).to receive(:find).with(json['account']['id']).and_return account
 			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with json
+		end
+
+		after do
+			expect(described_class.create_from_json json).to match_json json, direction, account
 		end
 
 		context 'outflow' do
@@ -48,23 +52,28 @@ RSpec.describe SubtransferTransaction, type: :model do
 				json['direction'] = 'inflow'
 			end
 		end
-
-		after :each do
-			expect(SubtransferTransaction.create_from_json json).to match_json json, direction, account
-		end
 	end
 
 	describe('::update_from_json') {}
 
 	describe '#as_json' do
-		before :each do
-			expect(subject.account).to receive(:as_json).and_return 'account json'
-			expect(subject.parent.account).to receive(:as_json).and_return 'parent account json'
+		before do
+			expect(transaction.account).to receive(:as_json).and_return 'account json'
+			expect(transaction.parent.account).to receive(:as_json).and_return 'parent account json'
+		end
+
+		after do
+			expect(json).to include primary_account: 'account json'
+			expect(json).to include account: 'parent account json'
+			expect(json).to include status: 'Reconciled'
+			expect(json).to include related_status: nil
+			expect(json).to include parent_id: transaction.parent.id
 		end
 
 		context 'outflow' do
-			subject { create :subtransfer_to_transaction, status: 'Reconciled' }
-			let(:json) { subject.as_json direction: 'outflow' }
+			subject(:transaction) { create :subtransfer_to_transaction, status: 'Reconciled' }
+
+			let(:json) { transaction.as_json direction: 'outflow' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'TransferTo', name: 'Transfer To'}
@@ -73,21 +82,14 @@ RSpec.describe SubtransferTransaction, type: :model do
 		end
 
 		context 'inflow' do
-			subject { create :subtransfer_from_transaction, status: 'Reconciled' }
-			let(:json) { subject.as_json direction: 'inflow' }
+			subject(:transaction) { create :subtransfer_from_transaction, status: 'Reconciled' }
+
+			let(:json) { transaction.as_json direction: 'inflow' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'TransferFrom', name: 'Transfer From'}
 				expect(json).to include direction: 'inflow'
 			end
-		end
-
-		after :each do
-			expect(json).to include primary_account: 'account json'
-			expect(json).to include account: 'parent account json'
-			expect(json).to include status: 'Reconciled'
-			expect(json).to include related_status: nil
-			expect(json).to include parent_id: subject.parent.id
 		end
 	end
 end

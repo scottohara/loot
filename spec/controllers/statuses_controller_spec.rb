@@ -4,12 +4,12 @@
 require 'rails_helper'
 
 RSpec.describe StatusesController, type: :controller do
-	before :each do
+	before do
 		expect(TransactionAccount).to receive_message_chain(:where, :where, :update_all).with status: status
 	end
 
 	describe 'PATCH update', request: true do
-		before :each do
+		before do
 			patch :update, params: {account_id: '1', transaction_id: '1', (status || request_status) => true}
 		end
 

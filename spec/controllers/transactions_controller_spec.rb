@@ -20,6 +20,13 @@ RSpec.describe TransactionsController, type: :controller do
 			expect(context.class).to receive(:find).with('1').and_return context
 		end
 
+		after do
+			request_params.merge!('controller' => 'transactions', 'action' => 'index')
+			expect(controller).to receive(:context).and_call_original
+			expect(context).to receive(:ledger).with(ActionController::Parameters.new request_params).and_return [opening_balance, transactions, at_end]
+			get :index, params: request_params
+		end
+
 		context 'for account', instance: true do
 			let(:context) { Account.new }
 			let(:request_params) { {'account_id' => '1'} }
@@ -54,13 +61,6 @@ RSpec.describe TransactionsController, type: :controller do
 
 			it('should return the transaction ledger for the search query') {}
 		end
-
-		after :each do
-			request_params.merge!('controller' => 'transactions', 'action' => 'index')
-			expect(controller).to receive(:context).and_call_original
-			expect(context).to receive(:ledger).with(ActionController::Parameters.new request_params).and_return [opening_balance, transactions, at_end]
-			get :index, params: request_params
-		end
 	end
 
 	describe 'GET show', request: true, json: true do
@@ -88,9 +88,13 @@ RSpec.describe TransactionsController, type: :controller do
 		let(:transaction) { create :basic_transaction }
 		let(:json) { 'updated transaction' }
 
-		before :each do
+		before do
 			expect(controller).to receive(:clean).and_call_original
 			expect(Transaction).to receive(:find).with('1').and_return transaction
+		end
+
+		after do
+			patch :update, params: request_body
 		end
 
 		context "when transaction type hasn't changed" do
@@ -109,10 +113,6 @@ RSpec.describe TransactionsController, type: :controller do
 				expect(transaction).to receive :destroy!
 				expect(controller).to receive(:create_transaction).and_return json
 			end
-		end
-
-		after :each do
-			patch :update, params: request_body
 		end
 	end
 
@@ -144,6 +144,14 @@ RSpec.describe TransactionsController, type: :controller do
 			expect(context.class).to receive(:find).with('1').and_return context
 		end
 
+		after do
+			expect(controller).to receive(:context).and_call_original
+			expect(Transaction).to receive(:types_for).with(account_type).and_return transaction_types
+			expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
+			expect(last_transaction).to receive(:as_subclass).and_return last_transaction
+			get :last, params: request_params.merge(account_type: account_type)
+		end
+
 		context 'for account', instance: true do
 			let(:context) { Account.new }
 			let(:request_params) { {'account_id' => '1'} }
@@ -170,14 +178,6 @@ RSpec.describe TransactionsController, type: :controller do
 			let(:request_params) { {'security_id' => '1'} }
 
 			it('should return the transaction ledger for the security') {}
-		end
-
-		after :each do
-			expect(controller).to receive(:context).and_call_original
-			expect(Transaction).to receive(:types_for).with(account_type).and_return transaction_types
-			expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
-			expect(last_transaction).to receive(:as_subclass).and_return last_transaction
-			get :last, params: request_params.merge(account_type: account_type)
 		end
 	end
 

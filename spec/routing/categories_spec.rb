@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'categories routes' do
+describe 'categories routes', type: :routing do
 	# Collection routes
 	it 'should route GET /categories to categories#index' do
 		expect(get: '/categories').to route_to controller: 'categories', action: 'index'
@@ -53,15 +53,15 @@ describe 'categories routes' do
 	end
 
 	it 'should not route PATCH /categories/:category_id/transactions/:id' do
-		expect(patch: '/categories/1/transactions/2').to_not be_routable
+		expect(patch: '/categories/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route PUT /categories/:category_id/transactions/:id' do
-		expect(put: '/categories/1/transactions/2').to_not be_routable
+		expect(put: '/categories/1/transactions/2').not_to be_routable
 	end
 
 	it 'should not route DELETE /categories/:category_id/transactions/:id' do
-		expect(delete: '/categories/1/transactions/2').to_not be_routable
+		expect(delete: '/categories/1/transactions/2').not_to be_routable
 	end
 
 	# Defaultable routes

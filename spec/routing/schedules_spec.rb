@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'schedules routes' do
+describe 'schedules routes', type: :routing do
 	# Collection routes
 	it 'should route GET /schedules to schedules#index' do
 		expect(get: '/schedules').to route_to controller: 'schedules', action: 'index'

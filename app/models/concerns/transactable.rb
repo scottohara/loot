@@ -9,6 +9,7 @@ module Transactable
 
 	# Maximum number of transactions to return
 	NUM_RESULTS = 150
+	private_constant :NUM_RESULTS
 
 	LEDGER_QUERY_OPTS = {
 		prev: {
@@ -20,6 +21,8 @@ module Transactable
 			order: 'ASC'
 		}
 	}.freeze
+
+	private_constant :LEDGER_QUERY_OPTS
 
 	def ledger(opts = {})
 		# Check the options and set defaults where required
