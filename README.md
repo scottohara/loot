@@ -1,6 +1,6 @@
 | Service					| Status																																																																																					|
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Travis CI				| [![Build Status](https://travis-ci.org/scottohara/loot.svg?branch=master)](https://travis-ci.org/scottohara/loot)																																|
+| GitHub  				| [![Build Status](https://github.com/scottohara/loot/workflows/Build/badge.svg)](https://github.com/scottohara/loot/actions?workflow=Build)																																|
 | Code Climate		| [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)																								|
 | Code Climate		| [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)																					|
 | Snyk (npm)			| [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg)](https://snyk.io/test/github/scottohara/loot)																									|
