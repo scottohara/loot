@@ -1,3 +1,3 @@
-web: bundle exec unicorn
+web: bundle exec rails server
 db: postgres -D /usr/local/var/postgres
 watch: npm run watch

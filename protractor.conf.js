@@ -33,7 +33,7 @@ module.exports.config = {
 	},
 
 	// Base server URL
-	baseUrl: "http://localhost:8080/index.html",
+	baseUrl: "http://localhost:5000/index.html",
 
 	// Timeouts
 	allScriptsTimeout: 11000,

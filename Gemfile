@@ -12,8 +12,8 @@ gem 'rails', '6.0.0'
 gem 'pg'
 
 group :development, :production do
-	# Use unicorn as the app server
-	gem 'unicorn'
+	# Use Puma as the app server
+	gem 'puma'
 end
 
 # 12 factor gem for Heroku
