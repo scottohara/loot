@@ -9,7 +9,6 @@ spec
 .gitignore
 .rspec
 .rubocop.yml
-.travis.yml
 karma.conf.js
 karma-bdd.conf.js
 LICENCE
