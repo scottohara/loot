@@ -24,6 +24,10 @@ npm-debug.log
 # Ignore coverage results
 /coverage
 
+# Ignore cypress screenshots and videos
+/cypress/screenshots
+/cypress/videos
+
 # Ignore node_modules
 /node_modules
 

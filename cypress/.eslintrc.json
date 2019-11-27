@@ -1,0 +1,16 @@
+{
+	"parserOptions": {
+		"project": "./cypress/tsconfig.json"
+	},
+	"globals": {
+		"cy": "readonly",
+		"Cypress": "readonly"
+	},
+	"rules": {
+		"@typescript-eslint/no-magic-numbers": "off",			// Disable due to lots of numbers used in assertions
+		"@typescript-eslint/no-namespace": ["error", {
+			"allowDeclarations": false,
+			"allowDefinitionFiles": true										// Needed for extending Cypress.Chainable inteface for custom commands
+		}]
+	}
+}

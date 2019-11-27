@@ -52,6 +52,7 @@ FactoryBot.define do
 		factory :inflow_category, traits: [:inflow]
 		factory :subcategory, traits: [:parent_category]
 		factory :inflow_subcategory, traits: %i[inflow parent_category]
+		factory :outflow_subcategory, traits: %i[outflow parent_category]
 		factory :category_with_children, traits: [:with_children]
 		factory :favourite_category, traits: [:favourite]
 	end

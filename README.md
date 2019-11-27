@@ -57,11 +57,10 @@ Backend specs are implemented using [RSpec](http://rspec.info/):
 1. Ensure the database server is running (e.g. `npm start:db`)
 2. Run the RSpec rake task (`rake spec`). To run specific specs, use RSpec filtering (`fdescribe`, `fit`, `xdescribe`, `xit`)
 
-Integration tests are implemented using [Protractor](http://www.protractortest.org/#/):
+Integration tests are implemented using [Cypress](http://cypress.io/):
 
 1. Start the database server and app server in test mode (`npm run test:e2e`)
-2. Prepare the test data fixtures (`rake db:e2e:prepare`)
-3. Run the test suite (`protractor`). To run specific suites, use the `--suite` argument (e.g. `protractor --suite authentication,accounts`)
+2. Launch Cypress (`cypress open`) to run visually, or run in headless mode (`cypress run --browser chrome`)
 
 Code Quality
 ============

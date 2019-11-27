@@ -1,8 +1,7 @@
 {
 	"extends": "oharagroup",
 	"env": {
-		"mocha": true,
-		"protractor": true
+		"mocha": true
 	},
 	"rules": {
 		"camelcase": "off",															// Disabled for camelcase in Typescript interfaces

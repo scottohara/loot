@@ -26,6 +26,7 @@
     "jquery": "3.3.1"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "4.1.1",
     "@types/angular": "1.6.43",
     "@types/angular-mocks": "1.5.11",
     "@types/angular-ui-bootstrap": "0.13.46",
@@ -44,6 +45,7 @@
     "clean-webpack-plugin": "1.0.0",
     "copy-webpack-plugin": "4.6.0",
     "css-loader": "2.1.0",
+    "cypress": "3.7.0",
     "eslint": "6.7.2",
     "eslint-config-oharagroup": "3.6.0",
     "file-loader": "3.0.1",
@@ -68,7 +70,6 @@
     "mocha": "5.0.4",
     "ngtemplate-loader": "2.0.1",
     "open-browser-webpack-plugin": "0.0.5",
-    "protractor": "5.4.2",
     "sinon": "4.4.2",
     "sinon-chai": "2.14.0",
     "ts-loader": "5.3.2",
@@ -86,14 +87,14 @@
     "start:db": "postgres -D /usr/local/var/postgres",
     "build": "webpack --progress --config webpack.prod.js",
     "watch": "webpack --watch --config webpack.dev.js",
-    "lint": "eslint 'src/**/*.{ts,js}' 'spec/public/**/*.{ts,js}' '*.{ts,js}'",
+    "lint": "eslint 'src/**/*.{ts,js}' 'spec/public/**/*.{ts,js}' 'cypress/**/*.{ts,js}' '*.{ts,js}'",
     "test": "npm run lint && npm run test:coverage",
     "test:bdd": "karma start karma-bdd.conf.js",
     "test:coverage": "karma start",
     "test:e2e": "npm run build && npm run start:test"
   },
   "engines": {
-    "node": "12.12.0",
-    "npm": "6.12.0"
+    "node": "13.5.0",
+    "npm": "6.13.4"
   }
 }

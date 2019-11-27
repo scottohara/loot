@@ -1,0 +1,16 @@
+{
+	"extends": "../tsconfig.eslint.json",
+	"compilerOptions": {
+		"paths": {
+			"*": [
+				"cypress/support/*"
+			]
+		},
+		"types": [
+			"cypress"
+		]
+	},
+	"exclude": [
+		"node_modules"
+	]
+}
