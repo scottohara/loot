@@ -812,7 +812,7 @@ describe("TransactionIndexController", (): void => {
 
 	describe("processTransactions", (): void => {
 		beforeEach((): void => {
-			delete transactionIndexController["openingBalance"];
+			transactionIndexController["openingBalance"] = 0;
 			delete transactionIndexController.transactions;
 			transactionIndexController["atEnd"] = false;
 			delete transactionIndexController.firstTransactionDate;
@@ -824,7 +824,7 @@ describe("TransactionIndexController", (): void => {
 		it("should do nothing if no transactions to process", (): void => {
 			transactionBatch.transactions = [];
 			transactionIndexController["processTransactions"](transactionBatch);
-			(undefined === transactionIndexController["openingBalance"]).should.be.true;
+			transactionIndexController["openingBalance"].should.equal(0);
 		});
 
 		it("should make the opening balance of the batch available to the view", (): void => {
