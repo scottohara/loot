@@ -57,6 +57,8 @@ describe("LayoutController", (): void => {
 
 	it("should make the authentication status available to the view", (): Chai.Assertion => layoutController.authenticated.should.equal(authenticated));
 
+	it("should make the navigation collapsed state available to the view", (): Chai.Assertion => layoutController.navCollapsed.should.be.true);
+
 	it("should make the scrollTo function available to the view", (): Chai.Assertion => layoutController.scrollTo.should.be.a("function"));
 
 	it("should hide the state loading spinner by default", (): Chai.Assertion => layoutController.loadingState.should.be.false);
@@ -189,7 +191,7 @@ describe("LayoutController", (): void => {
 
 		describe("on transition start", (): void => {
 			it("should set the loading state", (): Chai.Assertion => layoutController.loadingState.should.be.true);
-
+			it("should collapse the navigation", (): Chai.Assertion => layoutController.navCollapsed.should.be.true);
 			it("should register a callback for when the transition ends", (): Chai.Assertion => mockTransition.promise.finally.should.have.been.calledWith(sinon.match.func));
 		});
 

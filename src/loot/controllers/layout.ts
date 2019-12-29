@@ -14,6 +14,8 @@ import SecurityModel from "securities/models/security";
 export default class LayoutController {
 	public readonly scrollTo: (anchor: string) => void;
 
+	public navCollapsed = true;
+
 	private readonly showError: (message?: string) => void;
 
 	private isLoadingState = false;
@@ -40,6 +42,7 @@ export default class LayoutController {
 		// Show/hide spinner on all transitions
 		$scope.$on("$destroy", $transitions.onStart({}, (transition: angular.ui.IStateParamsService): void => {
 			this.loadingState = true;
+			this.navCollapsed = true;
 			transition.promise.finally((): false => (this.loadingState = false));
 		}));
 
