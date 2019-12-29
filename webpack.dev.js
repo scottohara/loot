@@ -62,6 +62,6 @@ module.exports = merge(config, {
 		}),
 
 		// Open a browser automatically
-		new OpenBrowserPlugin()
+		new OpenBrowserPlugin({ url: "http://localhost:5000" })
 	]
 });
