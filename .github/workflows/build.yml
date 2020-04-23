@@ -33,6 +33,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v1
 
+    - name: Setup dependency cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles("**/package-lock.json") }}
+
     - name: Delete npm prefix
       run: npm config delete prefix
 
@@ -87,9 +93,15 @@ jobs:
         gem update --system
         gem install bundler
 
+    - name: Setup dependency cache
+      uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles("**/Gemfile.lock") }}
+
     - name: Install dependencies
       shell: bash --login {0}
-      run: bundle install --without production --path=vendor/bundle
+      run: bundle install --without production --path=vendor/bundle --jobs 4 --retry 3
 
     - name: Setup database
       shell: bash --login {0}
