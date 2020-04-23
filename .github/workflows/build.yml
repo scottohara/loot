@@ -33,19 +33,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v1
 
-    - name: Install nvm
-      shell: bash --login {0}
-      run: |
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
-        echo "source $HOME/.nvm/nvm.sh --install" >> "$HOME/.bash_profile"
+    - name: Delete npm prefix
+      run: npm config delete prefix
 
     - name: Install dependencies
       shell: bash --login {0}
-      run: npm ci
+      run: nvm install && nvm use && npm ci
 
     - name: Lint and test
       shell: bash --login {0}
-      run: npm test
+      run: nvm use && npm test
 
     - name: Upload test coverage artifact
       uses: actions/upload-artifact@v1
