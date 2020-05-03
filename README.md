@@ -70,7 +70,7 @@ Frontend checks are implemented using [eslint](http://eslint.org):
 
 Backend checks are implemented using [rubocop](http://batsov.com/rubocop/):
 
-1. `bundle exec rubocop`
+1. `bundle exec rubocop -ESP`
 
 Deployment (Staging/Production)
 ===============================
