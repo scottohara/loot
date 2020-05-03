@@ -102,7 +102,10 @@ jobs:
 
     - name: Install dependencies
       shell: bash --login {0}
-      run: bundle install --without production --path=vendor/bundle --jobs 4 --retry 3
+      env:
+        BUNDLE_PATH: vendor/bundle
+        BUNDLE_WITHOUT: production
+      run: bundle install --jobs 4 --retry 3
 
     - name: Setup database
       shell: bash --login {0}
