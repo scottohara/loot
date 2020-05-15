@@ -79,13 +79,13 @@ RSpec.describe SplitTransaction, type: :model do
 		let(:subcategory) { create :subcategory }
 		let(:account) { create :account }
 
-		# Examples include keys that are both symbols and strings
+		# Examples include keys that are both symbols and strings, and both hash and ActionController::Parameters
 		let(:children) do
 			[
 				{
 					id: 'child 1',
 					amount: 1,
-					memo: 'Test subtransaction',
+					memo: 'Test subtransaction 1',
 					transaction_type: 'Sub',
 					flag: 'Test flag',
 					category: {
@@ -95,6 +95,15 @@ RSpec.describe SplitTransaction, type: :model do
 						id: subcategory.id
 					}
 				},
+				ActionController::Parameters.new({
+					id: 'child 3',
+					amount: 1,
+					memo: 'Test subtransaction 2',
+					transaction_type: 'Sub',
+					category: {
+						id: subcategory.parent.id
+					}
+				}),
 				{
 					'id' => 'child 2',
 					'amount' => 1,
@@ -112,16 +121,23 @@ RSpec.describe SplitTransaction, type: :model do
 			transaction.create_children children
 			transaction.save!
 
-			subtransaction = transaction.subtransactions.first
+			first_subtransaction = transaction.subtransactions.first
+			second_subtransaction = transaction.subtransactions.second
 			subtransfer = transaction.subtransfers.first
 
-			expect(transaction.subtransactions.size).to eq 1
-			expect(subtransaction.id).not_to eq children.first[:id]
-			expect(subtransaction.amount).to eq children.first[:amount]
-			expect(subtransaction.memo).to eq children.first[:memo]
-			expect(subtransaction.transaction_type).to eq children.first[:transaction_type]
-			expect(subtransaction.flag.memo).to eq children.first[:flag]
-			expect(subtransaction.category).to eq subcategory
+			expect(transaction.subtransactions.size).to eq 2
+			expect(first_subtransaction.id).not_to eq children.first[:id]
+			expect(first_subtransaction.amount).to eq children.first[:amount]
+			expect(first_subtransaction.memo).to eq children.first[:memo]
+			expect(first_subtransaction.transaction_type).to eq children.first[:transaction_type]
+			expect(first_subtransaction.flag.memo).to eq children.first[:flag]
+			expect(first_subtransaction.category).to eq subcategory
+
+			expect(second_subtransaction.id).not_to eq children.second[:id]
+			expect(second_subtransaction.amount).to eq children.second[:amount]
+			expect(second_subtransaction.memo).to eq children.second[:memo]
+			expect(second_subtransaction.transaction_type).to eq children.second[:transaction_type]
+			expect(second_subtransaction.category).to eq subcategory.parent
 
 			expect(transaction.subtransfers.size).to eq 1
 			expect(subtransfer.id).not_to eq children.last['id']

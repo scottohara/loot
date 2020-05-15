@@ -2,7 +2,12 @@
 # frozen_string_literal: true
 
 require 'simplecov'
-SimpleCov.start('rails') { coverage_dir 'coverage/backend' }
+SimpleCov.start 'rails' do
+	coverage_dir 'coverage/backend'
+	enable_coverage :branch
+	add_group 'Serializers', 'app/serializers'
+	minimum_coverage line: 100, branch: 100
+end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'

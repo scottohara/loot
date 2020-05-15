@@ -142,12 +142,14 @@ RSpec.describe Schedule, type: :model do
 		it 'should handle all types of overdue, auto-enter scheduled transactions' do
 			basic_transaction = create :basic_transaction, :scheduled
 			transfer_transaction = create :transfer_transaction, :scheduled
+			split_transaction = create :split_transaction, :scheduled, subtransactions: 1
 			security_investment_transaction = create :security_investment_transaction, :scheduled
 			security_transfer_transaction = create :security_transfer_transaction, :scheduled
 			dividend_transaction = create :dividend_transaction, :scheduled
 
 			expect(BasicTransaction).to be_created_from basic_transaction.as_json, basic_transaction.account.id, basic_transaction.header.schedule.next_due_date
 			expect(TransferTransaction).to be_created_from transfer_transaction.as_subclass.as_json(direction: 'outflow'), transfer_transaction.source_account.id, transfer_transaction.header.schedule.next_due_date
+			expect(SplitTransaction).to be_created_from split_transaction.as_subclass.as_json.merge(subtransactions: split_transaction.children), split_transaction.account.id, split_transaction.header.schedule.next_due_date
 			expect(SecurityInvestmentTransaction).to be_created_from security_investment_transaction.as_subclass.as_json, security_investment_transaction.investment_account.id, security_investment_transaction.header.schedule.next_due_date
 			expect(SecurityTransferTransaction).to be_created_from security_transfer_transaction.as_subclass.as_json(direction: 'outflow'), security_transfer_transaction.source_account.id, security_transfer_transaction.header.schedule.next_due_date
 			expect(DividendTransaction).to be_created_from dividend_transaction.as_subclass.as_json, dividend_transaction.investment_account.id, dividend_transaction.header.schedule.next_due_date

@@ -1,12 +1,25 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-# Favouritable
+# Measurable
 module Measurable
 	extend ActiveSupport::Concern
 
+	Frequency = Struct.new :advance_by, :periods_since
+
+	FREQUENCIES = {
+		Weekly: Frequency.new({weeks: 1}, :weeks_since),
+		Fortnightly: Frequency.new({weeks: 2}, :fortnights_since),
+		Monthly: Frequency.new({months: 1}, :months_since),
+		Bimonthly: Frequency.new({months: 2}, :bimonths_since),
+		Quarterly: Frequency.new({months: 3}, :quarters_since),
+		Yearly: Frequency.new({years: 1}, :years_since)
+	}.freeze
+
+	private_constant :FREQUENCIES
+
 	# Methods for measuring things, in particular date periods
-	module ClassMethods
+	class_methods do
 		# Weeks since a given date
 		def weeks_since(date)
 			((Time.zone.today - date) / 7).to_i
@@ -40,14 +53,11 @@ module Measurable
 		end
 
 		def periods_since(frequency, date)
-			case frequency
-			when 'Weekly' then weeks_since date
-			when 'Fortnightly' then fortnights_since date
-			when 'Monthly' then months_since date
-			when 'Bimonthly' then bimonths_since date
-			when 'Quarterly' then quarters_since date
-			when 'Yearly' then years_since date
-			end
+			send FREQUENCIES[frequency.to_sym].periods_since, date
+		end
+
+		def advance_by(frequency, date)
+			date.advance FREQUENCIES[frequency.to_sym].advance_by
 		end
 	end
 end

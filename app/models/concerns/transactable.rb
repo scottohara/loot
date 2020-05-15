@@ -164,7 +164,9 @@ module Transactable
 		end
 	end
 
+	# :nocov:
 	private unless Rails.env.eql? 'test'
+	# :nocov:
 
 	def ledger_options(opts = {})
 		# Default as_at if not specified or invalid

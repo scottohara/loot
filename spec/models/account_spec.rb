@@ -324,31 +324,37 @@ RSpec.describe Account, type: :model do
 		end
 
 		context 'non-investment account' do
-			let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
+			context 'from investment account', account_update_from_json: true do
+			  let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
 
-			before do
-				expect(account.related_account).to receive :destroy!
-			end
-
-			context 'loan account' do
 				before do
-					json['account_type'] = 'loan'
+					expect(account.related_account).to receive :destroy!
 				end
-
-				context 'with asset', account_update_from_json: true do
-					let(:related_account) { create :asset_account, :favourite }
-
-					before do
-						json['related_account'] = {'id' => related_account.id}
-
-						expect(described_class).to receive(:find).with(related_account.id).and_return related_account
-					end
-				end
-
-				context('without asset', account_update_from_json: true) {}
 			end
 
-			context('standard account', account_update_from_json: true) {}
+			context 'from non-investment account' do
+				let(:account) { create :bank_account, :favourite }
+
+				context 'loan account' do
+					before do
+						json['account_type'] = 'loan'
+					end
+
+					context 'with asset', account_update_from_json: true do
+						let(:related_account) { create :asset_account, :favourite }
+
+						before do
+							json['related_account'] = {'id' => related_account.id}
+
+							expect(described_class).to receive(:find).with(related_account.id).and_return related_account
+						end
+					end
+
+					context('without asset', account_update_from_json: true) {}
+				end
+
+				context('standard account', account_update_from_json: true) {}
+			end
 		end
 	end
 

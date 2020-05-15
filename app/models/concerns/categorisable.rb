@@ -18,7 +18,7 @@ module Categorisable
 	# }
 
 	# Class methods
-	module ClassMethods
+	class_methods do
 		def transaction_category(trx, account_type = nil)
 			id, name =
 				case trx['transaction_type']

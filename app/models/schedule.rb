@@ -150,7 +150,7 @@ class Schedule < ApplicationRecord
 
 				# The 'json' is actually a hash, with symbols for keys
 				# The models are expecting string-based keys
-				transaction_json = transaction_json.with_indifferent_access if transaction_json.is_a?(Hash)
+				transaction_json = transaction_json.with_indifferent_access
 
 				# Create new instances of the transaction until the next due date is in the future
 				create_overdue_transaction schedule, transaction_class, transaction_json until schedule.next_due_date.future?
@@ -170,16 +170,7 @@ class Schedule < ApplicationRecord
 			transaction_class.create_from_json transaction_json
 
 			# Update the schedule's next due date
-			schedule.next_due_date = schedule.next_due_date.advance(
-				case schedule.frequency
-				when 'Weekly' then {weeks: 1}
-				when 'Fortnightly' then {weeks: 2}
-				when 'Monthly' then {months: 1}
-				when 'Bimonthly' then {months: 2}
-				when 'Quarterly' then {months: 3}
-				when 'Yearly' then {years: 1}
-				end
-			)
+			schedule.next_due_date = advance_by schedule.frequency, schedule.next_due_date
 		end
 	end
 

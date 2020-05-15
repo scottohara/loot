@@ -42,7 +42,9 @@ class SecurityTransaction < Transaction
 		super.merge header.as_json
 	end
 
+	# :nocov:
 	private unless Rails.env.eql? 'test'
+	# :nocov:
 
 	def validate_method?(method, &block)
 		/^validate_(.+)_(presence|absence)$/.match method.to_s, &block

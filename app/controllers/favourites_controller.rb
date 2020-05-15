@@ -19,16 +19,18 @@ class FavouritesController < ApplicationController
 	end
 
 	def context
-		# Instantiate the parent resource based on what params were passed
-		@context =
-			if params[:account_id]
-				Account.find params[:account_id]
-			elsif params[:payee_id]
-				Payee.find params[:payee_id]
-			elsif params[:category_id]
-				Category.find params[:category_id]
-			elsif params[:security_id]
-				Security.find params[:security_id]
-			end
+		# Map param names to models
+		contexts = {
+			account_id: Account,
+			payee_id: Payee,
+			category_id: Category,
+			security_id: Security
+		}.with_indifferent_access
+
+		# Get the first pair that matches a param name
+		type, id = params.permit(contexts.keys).to_h.first
+
+		# Instantiate the parent resource based on the matched param
+		@context = contexts[type].find id
 	end
 end

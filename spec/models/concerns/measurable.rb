@@ -119,4 +119,34 @@ RSpec.shared_examples Measurable do
 			subject.periods_since 'Yearly', date
 		end
 	end
+
+	describe '::advance_by' do
+		subject { described_class }
+
+		let(:date) { Time.zone.today }
+
+		it 'should advance the given date by a week' do
+			expect(subject.advance_by 'Weekly', date).to eq date.advance({weeks: 1})
+		end
+
+		it 'should advance the given date by a fortnight' do
+			expect(subject.advance_by 'Fortnightly', date).to eq date.advance({weeks: 2})
+		end
+
+		it 'should advance the given date by a month' do
+			expect(subject.advance_by 'Monthly', date).to eq date.advance({months: 1})
+		end
+
+		it 'should advance the given date by 2 months' do
+			expect(subject.advance_by 'Bimonthly', date).to eq date.advance({months: 2})
+		end
+
+		it 'should advance the given date by a quarter' do
+			expect(subject.advance_by 'Quarterly', date).to eq date.advance({months: 3})
+		end
+
+		it 'should advance the given date by a year' do
+			expect(subject.advance_by 'Yearly', date).to eq date.advance({years: 1})
+		end
+	end
 end
