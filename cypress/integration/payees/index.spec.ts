@@ -19,7 +19,7 @@ import {
 import { Payee } from "payees/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
-describe("payeeIndexView", (): void => {
+describe("Payee Index", (): void => {
 	let expected: Payee[];
 
 	before((): void => {

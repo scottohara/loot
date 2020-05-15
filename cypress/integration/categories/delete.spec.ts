@@ -23,7 +23,7 @@ import {
 } from "categories/index";
 import { Category } from "categories/types";
 
-describe("categoryDeleteView", (): void => {
+describe("Category Delete", (): void => {
 	let originalRowCount: number;
 
 	function commonBehaviour(targetRow: string, targetRowAfter: string, isSubcategory = false, hasChildren = false): void {

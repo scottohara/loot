@@ -21,7 +21,7 @@ import {
 import { Category } from "categories/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
-describe("categoryIndexView", (): void => {
+describe("Category Index", (): void => {
 	let expected: Category[];
 
 	before((): void => {

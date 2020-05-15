@@ -21,7 +21,7 @@ import {
 import { Schedule } from "schedules/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
-describe("scheduleIndexView", (): void => {
+describe("Schedule Index", (): void => {
 	let expected: Schedule[];
 
 	before((): void => {

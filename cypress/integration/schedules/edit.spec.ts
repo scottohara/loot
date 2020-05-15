@@ -24,7 +24,7 @@ import {
 	schedulesTableRows
 } from "schedules/index";
 
-describe("scheduleEditView", (): void => {
+describe("Schedule Edit", (): void => {
 	let	expected: ScheduleEdit,
 			originalRowCount: number,
 			lastSchedule: Schedule;

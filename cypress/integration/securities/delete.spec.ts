@@ -13,7 +13,7 @@ import {
 } from "securities/index";
 import { Security } from "securities/types";
 
-describe("securityDeleteView", (): void => {
+describe("Security Delete", (): void => {
 	let	originalRowCount: number,
 			lastSecurity: Security,
 			secondLastSecurity: Security;

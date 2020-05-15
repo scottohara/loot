@@ -14,7 +14,7 @@ import {
 } from "payees/index";
 import { Payee } from "payees/types";
 
-describe("payeeEditView", (): void => {
+describe("Payee Edit", (): void => {
 	let	expected: Payee,
 			originalRowCount: number,
 			firstPayee: Payee,

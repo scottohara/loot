@@ -14,7 +14,7 @@ import {
 } from "securities/index";
 import { Security } from "securities/types";
 
-describe("securityEditView", (): void => {
+describe("Security Edit", (): void => {
 	let	expected: Security,
 			originalRowCount: number,
 			firstSecurity: Security,

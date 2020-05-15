@@ -20,7 +20,7 @@ import {
 } from "categories/edit";
 import { Category } from "categories/types";
 
-describe("categoryEditView", (): void => {
+describe("Category Edit", (): void => {
 	let	expected: Category,
 			originalRowCount: number;
 

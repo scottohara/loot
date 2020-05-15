@@ -18,7 +18,7 @@ import {
 import { TransactionsContext } from "transactions/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
-describe("transactionIndexView", (): void => {
+describe("Transaction Index", (): void => {
 	const expected: TransactionsContext[] = [
 		{
 			id: "1",

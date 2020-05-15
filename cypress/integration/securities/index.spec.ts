@@ -23,7 +23,7 @@ import {
 import { Security } from "securities/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
-describe("securityIndexView", (): void => {
+describe("Security Index", (): void => {
 	let expected: Security[],
 			expectedTotal: string;
 

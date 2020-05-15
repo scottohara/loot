@@ -12,7 +12,7 @@ import {
 } from "payees/index";
 import { Payee } from "payees/types";
 
-describe("payeeDeleteView", (): void => {
+describe("Payee Delete", (): void => {
 	let	originalRowCount: number,
 			lastPayee: Payee,
 			secondLastPayee: Payee;

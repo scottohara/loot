@@ -33,7 +33,7 @@ import {
 	transactionsTable
 } from "transactions";
 
-describe("accountIndexView", (): void => {
+describe("Account Index", (): void => {
 	let expected: { accountTypes: AccountType[]; total: string; },
 			allAccounts: Account[];
 

@@ -7,7 +7,7 @@ import {
 	populateFormWith
 } from "authentication/edit";
 
-describe("authenticationEditView", (): void => {
+describe("Authentication Edit", (): void => {
 	beforeEach((): void => {
 		cy.visit("/");
 
