@@ -6,7 +6,7 @@ ruby '2.7.1'
 source 'https://rubygems.org'
 
 # Web application framework
-gem 'rails', '6.0.0'
+gem 'rails', '6.0.3'
 
 # Postgres
 gem 'pg'
@@ -33,7 +33,7 @@ group :development, :test do
 	gem 'rspec-rails'
 
 	# Code coverage
-	gem 'simplecov'
+	gem 'simplecov', require: false
 
 	# Required by RSpec in Rails >= 5 for 'assigns'
 	gem 'rails-controller-testing'
