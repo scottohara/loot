@@ -113,7 +113,7 @@ jobs:
 
     - name: Lint
       shell: bash --login {0}
-      run: bundle exec rubocop --extra-details --display-style-guide --parallel
+      run: bundle exec rubocop --parallel
 
     - name: Test
       shell: bash --login {0}

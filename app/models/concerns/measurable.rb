@@ -6,6 +6,7 @@ module Measurable
 	extend ActiveSupport::Concern
 
 	Frequency = Struct.new :advance_by, :periods_since
+	private_constant :Frequency
 
 	FREQUENCIES = {
 		Weekly: Frequency.new({weeks: 1}, :weeks_since),
@@ -53,7 +54,7 @@ module Measurable
 		end
 
 		def periods_since(frequency, date)
-			send FREQUENCIES[frequency.to_sym].periods_since, date
+			public_send FREQUENCIES[frequency.to_sym].periods_since, date
 		end
 
 		def advance_by(frequency, date)

@@ -40,7 +40,7 @@ FactoryBot.define do
 		end
 
 		factory :split_from_transaction, traits: [:inflow]
-		factory :payslip_transaction, class: PayslipTransaction, traits: [:inflow]
-		factory :loan_repayment_transaction, class: LoanRepaymentTransaction
+		factory :payslip_transaction, class: 'PayslipTransaction', traits: [:inflow]
+		factory :loan_repayment_transaction, class: 'LoanRepaymentTransaction'
 	end
 end

@@ -154,7 +154,7 @@ class Account < ApplicationRecord
 			QUERY
 
 			# Convert the array of accounts to a hash
-			account_list = other_accounts.each_with_object({}) { |account, hash| hash[account['id']] = account }
+			account_list = other_accounts.index_by { |account| account['id'] }
 
 			# Overlay the investment holding balances on top of the related cash account closing balances
 			investment_accounts.each do |account|
@@ -165,8 +165,8 @@ class Account < ApplicationRecord
 				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + cash_account['total_value'].to_f || 0
 			end
 
-			account_list.values.sort_by { |a| a['account_type'] }.group_by { |a| "#{a['account_type'].capitalize} account".pluralize }.each_with_object({}) do |(type, accounts), hash|
-				hash[type] = {
+			account_list.values.sort_by { |a| a['account_type'] }.group_by { |a| "#{a['account_type'].capitalize} account".pluralize }.transform_values do |accounts|
+				{
 					accounts: accounts.sort_by { |a| a['name'] }.map do |a|
 						{
 							id: a['id'].to_i,
@@ -177,10 +177,10 @@ class Account < ApplicationRecord
 							opening_balance: a['opening_balance'].to_f,
 							closing_balance: a['closing_balance'].to_f,
 							related_account: {
-								id: a['related_account_id'] && a['related_account_id'].to_i,
+								id: a['related_account_id']&.to_i,
 								name: a['related_account_name'],
 								account_type: a['related_account_type'],
-								opening_balance: a['related_account_opening_balance'] && a['related_account_opening_balance'].to_f,
+								opening_balance: a['related_account_opening_balance']&.to_f,
 								status: a['related_account_status']
 							}
 						}

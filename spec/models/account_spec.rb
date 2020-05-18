@@ -325,7 +325,7 @@ RSpec.describe Account, type: :model do
 
 		context 'non-investment account' do
 			context 'from investment account', account_update_from_json: true do
-			  let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
+				let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
 
 				before do
 					expect(account.related_account).to receive :destroy!

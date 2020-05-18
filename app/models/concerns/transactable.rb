@@ -24,9 +24,9 @@ module Transactable
 
 	private_constant :LEDGER_QUERY_OPTS
 
-	def ledger(opts = {})
+	def ledger(ledger_opts = {})
 		# Check the options and set defaults where required
-		opts = ledger_options opts
+		opts = ledger_options ledger_opts
 
 		# Query the database for transactions
 		transactions = ledger_query opts
@@ -53,10 +53,10 @@ module Transactable
 		[opening_balance, transactions, at_end]
 	end
 
-	def closing_balance(opts = {})
+	def closing_balance(balance_opts = {})
 		as_at =
 			begin
-				Date.parse(opts[:as_at]).to_s
+				Date.parse(balance_opts[:as_at]).to_s
 			rescue TypeError, ArgumentError
 				'2400-12-31'
 			end
@@ -65,7 +65,7 @@ module Transactable
 			# Get the total quantity of security inflows
 			security_quantities =
 				transactions
-				.for_closing_balance(opts)
+				.for_closing_balance(balance_opts)
 				.select(
 					[
 						'transaction_headers.security_id',
@@ -91,7 +91,7 @@ module Transactable
 			total_security_value = securities.map { |(security, qty)| Security.find(security).price(as_at) * qty }.reduce(:+) || 0
 
 			# Add the balance from the associated cash account
-			total_security_value += related_account.closing_balance opts unless related_account.nil?
+			total_security_value += related_account.closing_balance balance_opts unless related_account.nil?
 
 			total_security_value
 		else
@@ -100,7 +100,7 @@ module Transactable
 			# Get the total Basic transactions
 			totals +=
 				transactions
-				.for_basic_closing_balance(opts)
+				.for_basic_closing_balance(balance_opts)
 				.select(
 					[
 						'categories.direction',
@@ -116,7 +116,7 @@ module Transactable
 			# Get the total Subtransfer transactions
 			totals +=
 				transactions
-				.for_closing_balance(opts)
+				.for_closing_balance(balance_opts)
 				.select(
 					[
 						'transaction_accounts.direction',
@@ -138,7 +138,7 @@ module Transactable
 			# Get the total other inflows
 			total_inflows =
 				transactions
-				.for_closing_balance(opts)
+				.for_closing_balance(balance_opts)
 				.where(transaction_type: %w[Split Payslip Transfer Dividend SecurityInvestment])
 				.where('transaction_headers.transaction_date <= ?', as_at)
 				.where('transaction_headers.transaction_date IS NOT NULL')
@@ -148,7 +148,7 @@ module Transactable
 			# Get the total other outflows
 			total_outflows =
 				transactions
-				.for_closing_balance(opts)
+				.for_closing_balance(balance_opts)
 				.where(transaction_type: %w[Split LoanRepayment Transfer SecurityInvestment])
 				.where('transaction_headers.transaction_date <= ?', as_at)
 				.where('transaction_headers.transaction_date IS NOT NULL')
@@ -168,23 +168,23 @@ module Transactable
 	private unless Rails.env.eql? 'test'
 	# :nocov:
 
-	def ledger_options(opts = {})
+	def ledger_options(ledger_opts = {})
 		# Default as_at if not specified or invalid
-		opts[:as_at] =
+		ledger_opts[:as_at] =
 			begin
-				Date.parse(opts[:as_at]).to_s
+				Date.parse(ledger_opts[:as_at]).to_s
 			rescue TypeError, ArgumentError
 				'2400-12-31'
 			end
 
 		# Default direction if not specified or invalid
-		opts[:direction] = opts[:direction].present? && opts[:direction].to_sym || :prev
-		opts[:direction] = :prev unless LEDGER_QUERY_OPTS.key? opts[:direction]
+		ledger_opts[:direction] = ledger_opts[:direction].present? && ledger_opts[:direction].to_sym || :prev
+		ledger_opts[:direction] = :prev unless LEDGER_QUERY_OPTS.key? ledger_opts[:direction]
 
 		# Default unreconciled if not specified or invalid
-		opts[:unreconciled] = opts[:unreconciled].eql? 'true'
+		ledger_opts[:unreconciled] = ledger_opts[:unreconciled].eql? 'true'
 
-		opts
+		ledger_opts
 	end
 
 	def ledger_query(opts)

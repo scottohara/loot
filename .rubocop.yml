@@ -19,20 +19,6 @@ AllCops:
     - 'node_modules/**/*'
     - 'vendor/**/*'
 
-# ------------------------------------------------------------
-# Cops that rubocop disables by default, but we want to enable
-# ------------------------------------------------------------
-
-# Required for as_json methods
-Style/OptionHash:
-  Enabled: false
-
-# ------------------------------------------------------------
-# END disabled by default cops
-# ------------------------------------------------------------
-# Cops that rubocop enables by default, but we want to disable
-# ------------------------------------------------------------
-
 # Can't use :inverse_of due to self-referential and polymorphic associations
 Rails/InverseOf:
   Enabled: false
@@ -40,17 +26,3 @@ Rails/InverseOf:
 # Needed for update_all and update_column used in a few places
 Rails/SkipsModelValidations:
   Enabled: false
-
-# ------------------------------------------------------------
-# END enabled by default cops
-# ------------------------------------------------------------
-# Cops that we want to reconfigure
-# ------------------------------------------------------------
-
-# Indent arrays consistently
-Layout/IndentFirstArrayElement:
-  EnforcedStyle: consistent
-
-# ------------------------------------------------------------
-# END reconfigured cops
-# ------------------------------------------------------------
