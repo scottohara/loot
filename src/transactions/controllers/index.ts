@@ -28,7 +28,7 @@ import {
 	isEqual,
 	startOfDay,
 	subDays
-} from "date-fns/esm";
+} from "date-fns";
 import { Account } from "accounts/types";
 import AccountModel from "accounts/models/account";
 import AccountReconcileView from "accounts/views/reconcile.html";

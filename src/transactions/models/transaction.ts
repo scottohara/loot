@@ -16,9 +16,10 @@ import {
 	NewOrExistingEntity
 } from "loot/types";
 import {
-	format,
+	lightFormat,
+	parseISO,
 	startOfDay
-} from "date-fns/esm";
+} from "date-fns";
 import AccountModel from "accounts/models/account";
 import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
@@ -153,9 +154,9 @@ export default class TransactionModel {
 
 	// Performs post-processing after parsing from JSON
 	private parse(transaction: Transaction): Transaction {
-		// Convert the transaction date from a string ("YYYY-MM-DD") to a native JS date
+		// Convert the transaction date from a string ("yyyy-MM-dd") to a native JS date
 		if (undefined !== transaction.transaction_date) {
-			transaction.transaction_date = startOfDay(transaction.transaction_date);
+			transaction.transaction_date = startOfDay(parseISO(transaction.transaction_date as string));
 		}
 
 		return transaction;
@@ -163,11 +164,11 @@ export default class TransactionModel {
 
 	// Performs pre-processing before stringifying from JSON
 	private stringify(transaction: Transaction): Transaction {
-		// To avoid timezone issue, convert the native JS date back to a string ("YYYY-MM-DD") before saving
+		// To avoid timezone issue, convert the native JS date back to a string ("yyyy-MM-dd") before saving
 		const transactionCopy: Transaction = angular.copy(transaction);
 
 		if (undefined !== transactionCopy.transaction_date) {
-			transactionCopy.transaction_date = format(transactionCopy.transaction_date, "YYYY-MM-DD");
+			transactionCopy.transaction_date = lightFormat(transactionCopy.transaction_date as Date, "yyyy-MM-dd");
 		}
 
 		return transactionCopy;

@@ -32,7 +32,7 @@ import {
 	addWeeks,
 	addYears,
 	startOfDay
-} from "date-fns/esm";
+} from "date-fns";
 import {
 	createScheduledBasicTransaction,
 	createScheduledSplitTransaction,

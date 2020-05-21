@@ -1,6 +1,6 @@
 import {
 	addDays,
-	format,
+	lightFormat,
 	startOfDay
 } from "date-fns";
 import {
@@ -25,7 +25,7 @@ describe("Schedule Index", (): void => {
 	let expected: Schedule[];
 
 	before((): void => {
-		const tomorrow = format(addDays(startOfDay(new Date()), 1), "DD/MM/YYYY");
+		const tomorrow = lightFormat(addDays(startOfDay(new Date()), 1), "dd/MM/yyyy");
 
 		expected = [
 			{

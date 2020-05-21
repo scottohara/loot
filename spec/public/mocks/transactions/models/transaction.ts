@@ -13,7 +13,7 @@ import TransactionBatchMockProvider from "mocks/transactions/providers/transacti
 import TransactionMockProvider from "mocks/transactions/providers/transaction";
 import { TransactionModelMock } from "mocks/transactions/types";
 import sinon from "sinon";
-import { startOfDay } from "date-fns/esm";
+import { startOfDay } from "date-fns";
 
 export default class TransactionModelMockProvider implements Mock<TransactionModelMock> {
 	private readonly transactionModel: TransactionModelMock;

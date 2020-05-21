@@ -5,9 +5,10 @@ import {
 	SubcategorisableTransaction
 } from "transactions/types";
 import {
-	format,
+	lightFormat,
+	parseISO,
 	startOfDay
-} from "date-fns/esm";
+} from "date-fns";
 import CategoryModel from "categories/models/category";
 import PayeeModel from "payees/models/payee";
 import { ScheduledTransaction } from "schedules/types";
@@ -59,18 +60,18 @@ export default class ScheduleModel {
 
 	// Performs post-processing after parsing from JSON
 	private parse(schedule: ScheduledTransaction): ScheduledTransaction {
-		// Convert the next due date from a string ("YYYY-MM-DD") to a native JS date
-		schedule.next_due_date = startOfDay(schedule.next_due_date);
+		// Convert the next due date from a string ("yyyy-MM-dd") to a native JS date
+		schedule.next_due_date = startOfDay(parseISO(schedule.next_due_date as string));
 
 		return schedule;
 	}
 
 	// Performs pre-processing before stringifying from JSON
 	private stringify(schedule: ScheduledTransaction): ScheduledTransaction {
-		// To avoid timezone issue, convert the native JS date back to a string ("YYYY-MM-DD") before saving
-		const scheduleCopy = angular.copy(schedule);
+		// To avoid timezone issue, convert the native JS date back to a string ("yyyy-MM-dd") before saving
+		const scheduleCopy: ScheduledTransaction = angular.copy(schedule);
 
-		scheduleCopy.next_due_date = format(scheduleCopy.next_due_date, "YYYY-MM-DD");
+		scheduleCopy.next_due_date = lightFormat(scheduleCopy.next_due_date as Date, "yyyy-MM-dd");
 
 		return scheduleCopy;
 	}

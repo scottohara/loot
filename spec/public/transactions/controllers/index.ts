@@ -34,7 +34,7 @@ import {
 	addDays,
 	startOfDay,
 	subDays
-} from "date-fns/esm";
+} from "date-fns";
 import {
 	createBasicTransaction,
 	createSecurityHoldingTransaction,

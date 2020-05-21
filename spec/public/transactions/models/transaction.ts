@@ -15,10 +15,10 @@ import {
 	createSubtransferTransaction
 } from "mocks/transactions/factories";
 import {
-	format,
-	parse,
+	lightFormat,
+	parseISO,
 	startOfDay
-} from "date-fns/esm";
+} from "date-fns";
 import { AccountModelMock } from "mocks/accounts/types";
 import { CategoryModelMock } from "mocks/categories/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
@@ -79,7 +79,7 @@ describe("transactionModel", (): void => {
 
 	describe("parse", (): void => {
 		it("should convert the transaction date from a string to a date", (): void => {
-			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: format(new Date(), "YYYY-MM-DD HH:mm:ss") }));
+			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss") }));
 
 			(transaction.transaction_date as Date).should.be.a("date");
 			(transaction.transaction_date as Date).should.deep.equal(startOfDay(new Date()));
@@ -97,7 +97,7 @@ describe("transactionModel", (): void => {
 			const transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: startOfDay(new Date()) }));
 
 			(transaction.transaction_date as string).should.be.a("string");
-			(transaction.transaction_date as string).should.deep.equal(format(new Date(), "YYYY-MM-DD"));
+			(transaction.transaction_date as string).should.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
 		});
 
 		it("should do nothing if the transaction date is undefined", (): void => {
@@ -233,7 +233,7 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should save the transaction date", (): void => {
-			transaction.transaction_date = parse("2000-01-01", "YYYY-MM-DD", new Date());
+			transaction.transaction_date = parseISO("2000-01-01");
 			transactionModel.save(transaction);
 			$httpBackend.flush();
 			(transactionModel.lastTransactionDate as Date).should.deep.equal(transaction.transaction_date);

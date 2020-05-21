@@ -27,7 +27,7 @@ import sinon, { SinonStub } from "sinon";
 import {
 	startOfDay,
 	subDays
-} from "date-fns/esm";
+} from "date-fns";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";

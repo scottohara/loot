@@ -10,7 +10,7 @@ import {
 import {
 	isEqual,
 	startOfDay
-} from "date-fns/esm";
+} from "date-fns";
 import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import ScheduleDeleteView from "schedules/views/delete.html";
@@ -97,7 +97,7 @@ export default class ScheduleIndexController {
 		function byNextDueDateAndId(a: ScheduledTransaction, b: ScheduledTransaction): number {
 			let x: number | Date | string, y: number | Date | string;
 
-			if (isEqual(a.next_due_date, b.next_due_date)) {
+			if (isEqual(a.next_due_date as Date, b.next_due_date as Date)) {
 				x = Number(a.id);
 				y = Number(b.id);
 			} else {

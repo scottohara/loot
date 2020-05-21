@@ -4,7 +4,7 @@ import {
 } from "schedules/types";
 import {
 	addDays,
-	format,
+	lightFormat,
 	startOfDay
 } from "date-fns";
 import {
@@ -69,8 +69,8 @@ describe("Schedule Edit", (): void => {
 
 	describe("adding a schedule", (): void => {
 		const tomorrow: Date = addDays(startOfDay(new Date()), 1),
-					nextDueDate: string = format(tomorrow, "DD/MM/YYYY"),
-					rawNextDueDate: string = format(tomorrow, "YYYY-MM-DD"),
+					nextDueDate: string = lightFormat(tomorrow, "dd/MM/yyyy"),
+					rawNextDueDate: string = lightFormat(tomorrow, "yyyy-MM-dd"),
 					schedules: ScheduleEdit[] = [
 						{
 							nextDueDate,

@@ -5,7 +5,7 @@ import {
 import {
 	startOfDay,
 	subDays
-} from "date-fns/esm";
+} from "date-fns";
 import { Mock } from "mocks/types";
 import { createBasicTransaction } from "mocks/transactions/factories";
 

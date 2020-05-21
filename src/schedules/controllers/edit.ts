@@ -32,7 +32,7 @@ import {
 	addWeeks,
 	addYears,
 	startOfDay
-} from "date-fns/esm";
+} from "date-fns";
 import AccountModel from "accounts/models/account";
 import CategoryModel from "categories/models/category";
 import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
@@ -563,7 +563,7 @@ export default class ScheduleEditController {
 					QUARTER = 1,
 					YEAR = 1;
 
-		let addFn: (nextDue: Date | string, amount: number) => Date = addWeeks,
+		let addFn: (nextDue: Date, amount: number) => Date = addWeeks,
 				amount = 0;
 
 		switch (this.schedule.frequency) {
@@ -600,7 +600,7 @@ export default class ScheduleEditController {
 			// No default
 		}
 
-		this.schedule.next_due_date = addFn(this.schedule.next_due_date, amount);
+		this.schedule.next_due_date = addFn(this.schedule.next_due_date as Date, amount);
 
 		if (this.schedule.overdue_count > 0) {
 			this.schedule.overdue_count--;

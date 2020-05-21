@@ -21,14 +21,14 @@ import {
 	transactionsTableRows
 } from "transactions/index";
 import {
-	format,
+	lightFormat,
 	startOfDay
 } from "date-fns";
 
 describe("Transaction Edit", (): void => {
 	const today: Date = startOfDay(new Date()),
-				transactionDate = format(today, "DD/MM/YYYY"),
-				rawTransactionDate = format(today, "YYYY-MM-DD"),
+				transactionDate = lightFormat(today, "dd/MM/yyyy"),
+				rawTransactionDate = lightFormat(today, "yyyy-MM-dd"),
 				contexts: TransactionsContext[] = [
 					{
 						id: "1",

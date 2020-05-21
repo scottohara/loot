@@ -1,7 +1,7 @@
 import {
 	startOfDay,
 	subDays
-} from "date-fns/esm";
+} from "date-fns";
 import { Mock } from "mocks/types";
 import { ScheduledBasicTransaction } from "schedules/types";
 import { createScheduledBasicTransaction } from "mocks/schedules/factories";

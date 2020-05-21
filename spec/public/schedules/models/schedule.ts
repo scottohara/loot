@@ -7,9 +7,9 @@ import {
 	createScheduledSecurityHoldingTransaction
 } from "mocks/schedules/factories";
 import {
-	format,
+	lightFormat,
 	startOfDay
-} from "date-fns/esm";
+} from "date-fns";
 import { CategoryModelMock } from "mocks/categories/types";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import { PayeeModelMock } from "mocks/payees/types";
@@ -54,7 +54,7 @@ describe("scheduleModel", (): void => {
 	describe("parse", (): void => {
 		let schedule: ScheduledTransaction;
 
-		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["parse"](createScheduledBasicTransaction({ next_due_date: format(new Date(), "YYYY-MM-DD HH:mm:ss") }))));
+		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["parse"](createScheduledBasicTransaction({ next_due_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss") }))));
 
 		it("should convert the next due date from a string to a date", (): void => {
 			schedule.next_due_date.should.be.a("date");
@@ -69,7 +69,7 @@ describe("scheduleModel", (): void => {
 
 		it("should convert the next due date from a date to a string", (): void => {
 			schedule.next_due_date.should.be.a("string");
-			schedule.next_due_date.should.deep.equal(format(new Date(), "YYYY-MM-DD"));
+			schedule.next_due_date.should.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
 		});
 	});
 
