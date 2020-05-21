@@ -1,5 +1,7 @@
-export default class EstimateFilter {
+export default class EstimateFilter extends Function {
 	public constructor() {
+		super();
+
 		return (value: string, isEstimate: boolean): string => `${isEstimate ? "~" : ""}${value}`;
 	}
 

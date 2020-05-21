@@ -9,7 +9,6 @@ import {
 } from "og-components/og-input-calculator/types";
 import sinon, { SinonStub } from "sinon";
 import DirectiveTest from "mocks/loot/directivetest";
-import { ITooltipProvider } from "angular-ui-bootstrap";
 import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
 import { OgInputCurrencyControllerMock } from "mocks/og-components/og-input-currency/types";
 import OgInputCurrencyDirective from "og-components/og-input-currency/directives/og-input-currency";
@@ -20,13 +19,13 @@ import angular from "angular";
 
 describe("ogInputCalculator", (): void => {
 	let	ogInputCalculator: DirectiveTest,
-			$uibTooltipProvider: ITooltipProvider,
+			$uibTooltipProvider: angular.ui.bootstrap.ITooltipProvider,
 			$window: angular.IWindowService,
 			$timeout: angular.ITimeoutService,
 			scope: OgInputCalculatorScope;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ui.bootstrap", (_$uibTooltipProvider_: ITooltipProvider): void => {
+	beforeEach(angular.mock.module("lootMocks", "ui.bootstrap", (_$uibTooltipProvider_: angular.ui.bootstrap.ITooltipProvider): void => {
 		$uibTooltipProvider = _$uibTooltipProvider_;
 		sinon.stub($uibTooltipProvider, "setTriggers");
 	}));

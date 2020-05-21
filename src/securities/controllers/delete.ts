@@ -1,11 +1,10 @@
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 
 export default class SecurityDeleteController {
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly securityModel: SecurityModel,
 						public readonly security: Security) {}
 

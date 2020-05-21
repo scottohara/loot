@@ -3,10 +3,6 @@ import {
 	Account,
 	Accounts
 } from "accounts/types";
-import {
-	IModalService,
-	IModalSettings
-} from "angular-ui-bootstrap";
 import AccountDeleteView from "accounts/views/delete.html";
 import AccountEditView from "accounts/views/edit.html";
 import AccountModel from "accounts/models/account";
@@ -22,7 +18,7 @@ export default class AccountIndexController {
 
 	public constructor(private readonly $scope: angular.IScope,
 						$window: angular.IWindowService,
-						private readonly $uibModal: IModalService,
+						private readonly $uibModal: angular.ui.bootstrap.IModalService,
 						private readonly accountModel: AccountModel,
 						ogModalErrorService: OgModalErrorService,
 						public readonly accounts: Accounts) {
@@ -97,7 +93,7 @@ export default class AccountIndexController {
 	public deleteAccount(accountType: string, index: number): void {
 		// Check if the account can be deleted
 		this.accountModel.find(this.accounts[accountType].accounts[index].id).then((account: Account): void => {
-			let modalOptions: IModalSettings = {
+			let modalOptions: angular.ui.bootstrap.IModalSettings = {
 				backdrop: "static"
 			};
 

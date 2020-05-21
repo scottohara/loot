@@ -35,7 +35,6 @@ import {
 } from "date-fns/esm";
 import AccountModel from "accounts/models/account";
 import CategoryModel from "categories/models/category";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
@@ -65,7 +64,7 @@ export default class ScheduleEditController {
 	private readonly showError: (message?: string) => void;
 
 	public constructor($scope: angular.IScope,
-						private readonly $uibModalInstance: IModalInstanceService,
+						private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly filterFilter: angular.IFilterFilter,
 						private readonly limitToFilter: angular.IFilterLimitTo,

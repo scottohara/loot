@@ -6,14 +6,13 @@ import {
 	UibModalMockResult,
 	UibModalMockResultCallback
 } from "mocks/node-modules/angular/types";
-import { IModalSettings } from "angular-ui-bootstrap";
 import { Mock } from "mocks/types";
 import sinon from "sinon";
 
 export default class UibModalMockProvider implements Mock<UibModalMock> {
 	// Mock $uibModal object
 	public constructor(private readonly $uibModal: UibModalMock = {
-		open(options: IModalSettings): {result: UibModalMockResult;} {
+		open(options: angular.ui.bootstrap.IModalSettings): {result: UibModalMockResult;} {
 			const self: UibModalMock = this;
 
 			// If there are any resolves, resolve them

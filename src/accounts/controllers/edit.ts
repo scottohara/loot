@@ -6,7 +6,6 @@ import {
 	StoredAccountType
 } from "accounts/types";
 import AccountModel from "accounts/models/account";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import angular from "angular";
 
 export default class AccountEditController {
@@ -16,7 +15,7 @@ export default class AccountEditController {
 
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly filterFilter: angular.IFilterFilter,
 						private readonly limitToFilter: angular.IFilterLimitTo,
 						private readonly accountModel: AccountModel,

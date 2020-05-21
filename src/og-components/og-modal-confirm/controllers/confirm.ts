@@ -1,11 +1,10 @@
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import { OgModalConfirm } from "og-components/og-modal-confirm/types";
 import angular from "angular";
 
 export default class OgModalConfirmController {
 	public readonly confirm: OgModalConfirm;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService, confirm: OgModalConfirm) {
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService, confirm: OgModalConfirm) {
 		this.confirm = angular.extend({ noButtonStyle: "default", yesButtonStyle: "primary" }, confirm);
 	}
 

@@ -1,11 +1,10 @@
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 
 export default class PayeeDeleteController {
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly payeeModel: PayeeModel,
 						public readonly payee: Payee) {}
 

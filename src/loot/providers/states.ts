@@ -10,7 +10,6 @@ import AuthenticationModel from "authentication/models/authentication";
 import { Category } from "categories/types";
 import CategoryIndexView from "categories/views/index.html";
 import CategoryModel from "categories/models/category";
-import { IModalService } from "angular-ui-bootstrap";
 import LootLayoutView from "loot/views/layout.html";
 import { Payee } from "payees/types";
 import PayeeIndexView from "payees/views/index.html";
@@ -79,7 +78,7 @@ export default class LootStatesProvider {
 					title: "Welcome"
 				},
 				resolve: {
-					authenticated: ["$uibModal", "authenticationModel",	($uibModal: IModalService, authenticationModel: AuthenticationModel): angular.IPromise<boolean> | boolean => {
+					authenticated: ["$uibModal", "authenticationModel",	($uibModal: angular.ui.bootstrap.IModalService, authenticationModel: AuthenticationModel): angular.IPromise<boolean> | boolean => {
 						// Check if the user is authenticated
 						if (!authenticationModel.isAuthenticated) {
 							// Not authenticated, show the login modal

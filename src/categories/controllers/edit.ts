@@ -1,6 +1,5 @@
 import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import angular from "angular";
 
 export default class CategoryEditController {
@@ -10,7 +9,7 @@ export default class CategoryEditController {
 
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly filterFilter: angular.IFilterFilter,
 						private readonly limitToFilter: angular.IFilterLimitTo,
 						private readonly categoryModel: CategoryModel,

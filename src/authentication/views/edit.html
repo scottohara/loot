@@ -18,7 +18,7 @@
 	</div>
 	<div class="modal-footer">
 		<div ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</div>
-		<span ng-if="vm.loginInProgress" class="pull-left text-muted" og-loading-spinner/>
+		<span ng-if="vm.loginInProgress" class="pull-left text-muted" og-loading-spinner></span>
 		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
 		<button class="btn btn-primary" type="submit" ng-disabled="loginForm.$invalid || vm.loginInProgress" ng-click="vm.login()"><i class="glyphicon glyphicon-log-in"></i> Login</button>
 	</div>

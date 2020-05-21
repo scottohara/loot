@@ -1,11 +1,10 @@
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import { Transaction } from "transactions/types";
 import TransactionModel from "transactions/models/transaction";
 
 export default class TransactionDeleteController {
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly transactionModel: TransactionModel,
 						private readonly transaction: Transaction) {}
 

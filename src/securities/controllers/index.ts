@@ -1,9 +1,5 @@
 import "../css/index.less";
 import {
-	IModalService,
-	IModalSettings
-} from "angular-ui-bootstrap";
-import {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
@@ -26,7 +22,7 @@ export default class SecurityIndexController {
 
 	public constructor($scope: angular.IScope,
 						$transitions: angular.ui.IStateParamsService,
-						private readonly $uibModal: IModalService,
+						private readonly $uibModal: angular.ui.bootstrap.IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly securityModel: SecurityModel,
@@ -140,7 +136,7 @@ export default class SecurityIndexController {
 			// Disable navigation on the table
 			this.ogTableNavigableService.enabled = false;
 
-			let modalOptions: IModalSettings = {
+			let modalOptions: angular.ui.bootstrap.IModalSettings = {
 				backdrop: "static"
 			};
 

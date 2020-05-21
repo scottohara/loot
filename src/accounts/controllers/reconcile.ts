@@ -1,5 +1,4 @@
 import { Account } from "accounts/types";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class AccountReconcileController {
 	public readonly closingBalance: number;
@@ -8,7 +7,7 @@ export default class AccountReconcileController {
 
 	private readonly LOCAL_STORAGE_KEY: string;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly $window: angular.IWindowService,
 						account: Account) {
 		this.LOCAL_STORAGE_KEY = `lootClosingBalance-${account.id}`;

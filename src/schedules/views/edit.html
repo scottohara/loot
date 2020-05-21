@@ -202,7 +202,7 @@
 	</div>
 	<div class="modal-footer" ng-switch="vm.mode">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<span ng-if="vm.loadingLastTransaction" class="pull-left text-muted" og-loading-spinner="'Finding last transaction for ' + (vm.transaction.payee.name || vm.transaction.security.name)"/>
+		<span ng-if="vm.loadingLastTransaction" class="pull-left text-muted" og-loading-spinner="'Finding last transaction for ' + (vm.transaction.payee.name || vm.transaction.security.name)"></span>
 		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
 		<button ng-switch-when="Enter Transaction" class="btn btn-primary" type="button" ng-click="vm.edit()"><i class="glyphicon glyphicon-calendar"></i> Schedule</button>
 		<button ng-switch-when="Enter Transaction" class="btn btn-warning" type="button" ng-click="vm.skip()"><i class="glyphicon glyphicon-repeat"></i> Skip</button>

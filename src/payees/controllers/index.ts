@@ -1,8 +1,4 @@
 import {
-	IModalService,
-	IModalSettings
-} from "angular-ui-bootstrap";
-import {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
@@ -23,7 +19,7 @@ export default class PayeeIndexController {
 
 	public constructor($scope: angular.IScope,
 						$transitions: angular.ui.IStateParamsService,
-						private readonly $uibModal: IModalService,
+						private readonly $uibModal: angular.ui.bootstrap.IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly payeeModel: PayeeModel,
@@ -120,7 +116,7 @@ export default class PayeeIndexController {
 			// Disable navigation on the table
 			this.ogTableNavigableService.enabled = false;
 
-			let modalOptions: IModalSettings = {
+			let modalOptions: angular.ui.bootstrap.IModalSettings = {
 				backdrop: "static"
 			};
 

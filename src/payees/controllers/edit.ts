@@ -1,4 +1,3 @@
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import { Payee } from "payees/types";
 import PayeeModel from "payees/models/payee";
 import angular from "angular";
@@ -10,7 +9,7 @@ export default class PayeeEditController {
 
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly payeeModel: PayeeModel,
 						payee: Payee | undefined) {
 		this.payee = angular.extend({}, payee);

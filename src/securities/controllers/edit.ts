@@ -1,4 +1,3 @@
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
 import angular from "angular";
@@ -10,7 +9,7 @@ export default class SecurityEditController {
 
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly securityModel: SecurityModel,
 						security: Security | undefined) {
 		this.security = angular.extend({}, security);

@@ -33,7 +33,6 @@ import { Account } from "accounts/types";
 import AccountModel from "accounts/models/account";
 import AccountReconcileView from "accounts/views/reconcile.html";
 import { Category } from "categories/types";
-import { IModalService } from "angular-ui-bootstrap";
 import { OgModalConfirm } from "og-components/og-modal-confirm/types";
 import OgModalConfirmView from "og-components/og-modal-confirm/views/confirm.html";
 import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
@@ -86,7 +85,7 @@ export default class TransactionIndexController {
 
 	public constructor($scope: angular.IScope,
 						$transitions: angular.ui.IStateParamsService,
-						private readonly $uibModal: IModalService,
+						private readonly $uibModal: angular.ui.bootstrap.IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $window: angular.IWindowService,
 						private readonly $state: angular.ui.IStateService,

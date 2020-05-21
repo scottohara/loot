@@ -1,11 +1,10 @@
 import { Category } from "categories/types";
 import CategoryModel from "categories/models/category";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class CategoryDeleteController {
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly categoryModel: CategoryModel,
 						public readonly category: Category) {}
 

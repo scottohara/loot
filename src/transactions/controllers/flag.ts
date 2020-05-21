@@ -2,7 +2,6 @@ import {
 	Transaction,
 	TransactionFlag
 } from "transactions/types";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 import TransactionModel from "transactions/models/transaction";
 
 export default class TransactionFlagController {
@@ -12,7 +11,7 @@ export default class TransactionFlagController {
 
 	public readonly flagged: boolean;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly transactionModel: TransactionModel,
 						private readonly transaction: Transaction) {
 		this.flag = "(no memo)" === String(transaction.flag) ? null : transaction.flag;

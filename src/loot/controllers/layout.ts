@@ -2,7 +2,6 @@ import AccountModel from "accounts/models/account";
 import AuthenticationEditView from "authentication/views/edit.html";
 import AuthenticationModel from "authentication/models/authentication";
 import CategoryModel from "categories/models/category";
-import { IModalService } from "angular-ui-bootstrap";
 import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
@@ -24,7 +23,7 @@ export default class LayoutController {
 						$window: angular.IWindowService,
 						$transitions: angular.ui.IStateParamsService,
 						private readonly $state: angular.ui.IStateService,
-						private readonly $uibModal: IModalService,
+						private readonly $uibModal: angular.ui.bootstrap.IModalService,
 						private readonly authenticationModel: AuthenticationModel,
 						private readonly accountModel: AccountModel,
 						private readonly payeeModel: PayeeModel,

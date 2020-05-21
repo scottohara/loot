@@ -1,5 +1,4 @@
 import AuthenticationModel from "authentication/models/authentication";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class AuthenticationEditController {
 	public userName: string | null = null;
@@ -10,7 +9,7 @@ export default class AuthenticationEditController {
 
 	public loginInProgress = false;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly authenticationModel: AuthenticationModel) {}
 
 	// Login and close the modal

@@ -4,12 +4,11 @@ import {
 	DisplayAccountType
 } from "accounts/types";
 import AccountModel from "accounts/models/account";
-import { IModalInstanceService } from "angular-ui-bootstrap";
 
 export default class AccountDeleteController {
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: IModalInstanceService,
+	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly accountModel: AccountModel,
 						public readonly account: Account) {
 		// Capitalise the account type and status

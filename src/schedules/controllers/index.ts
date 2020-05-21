@@ -11,7 +11,6 @@ import {
 	isEqual,
 	startOfDay
 } from "date-fns/esm";
-import { IModalService } from "angular-ui-bootstrap";
 import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import ScheduleDeleteView from "schedules/views/delete.html";
@@ -30,7 +29,7 @@ export default class ScheduleIndexController {
 
 	public constructor($scope: angular.IScope,
 						$transitions: angular.ui.IStateParamsService,
-						private readonly $uibModal: IModalService,
+						private readonly $uibModal: angular.ui.bootstrap.IModalService,
 						private readonly $timeout: angular.ITimeoutService,
 						private readonly $state: angular.ui.IStateService,
 						private readonly transactionModel: TransactionModel,
