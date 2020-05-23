@@ -86,7 +86,7 @@ describe("ogInputCalculator", (): void => {
 				}];
 
 				realAngularElement = angular.element;
-				sinon.stub(angular, "element").withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputCalculator["element"][0])).returns(mockAngularElement);
+				(sinon.stub(angular, "element") as SinonStub).withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputCalculator["element"][0])).returns(mockAngularElement);
 
 				scope.push(1, "+");
 				$timeout.flush();
@@ -312,7 +312,7 @@ describe("ogInputCalculator", (): void => {
 			}];
 
 			realAngularElement = angular.element;
-			sinon.stub(angular, "element").withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputCalculator["element"][0])).returns(mockAngularElement);
+			(sinon.stub(angular, "element") as SinonStub).withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputCalculator["element"][0])).returns(mockAngularElement);
 
 			scope.close();
 			$timeout.flush();

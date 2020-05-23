@@ -1,5 +1,4 @@
 import { Entity } from "loot/types";
-import { IModalSettings } from "angular-ui-bootstrap";
 import { OgModalAlert } from "og-components/og-modal-alert/types";
 import { OgModalConfirm } from "og-components/og-modal-confirm/types";
 import { ScheduledTransaction } from "schedules/types";
@@ -51,13 +50,13 @@ export interface StateMock {
 	go(): void;
 }
 
-export type UibModalMockResolve = Entity | ScheduledTransaction | Transaction | OgModalAlert | OgModalConfirm | undefined;
+export type UibModalMockResolve = Entity | ScheduledTransaction | angular.IPromise<ScheduledTransaction> | Transaction | angular.IPromise<Transaction> | OgModalAlert | OgModalConfirm | undefined;
 
 export interface UibModalMockResolves {
 	[key: string]: UibModalMockResolve;
 }
 
-export type UibModalMockCloseResult = Entity | ScheduledTransaction | Transaction | number | {data: ScheduledTransaction; skipped?: boolean;};
+export type UibModalMockCloseResult = Entity | ScheduledTransaction | Transaction | number | boolean | {data: ScheduledTransaction; skipped?: boolean;};
 
 export type UibModalMockResultCallback = (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
 
@@ -73,7 +72,7 @@ export interface UibModalMock {
 	closeCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
 	catchCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
 	finallyCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
-	open(options: IModalSettings): {result: UibModalMockResult;};
+	open(options: angular.ui.bootstrap.IModalSettings): {result: UibModalMockResult;};
 	close(value?: UibModalMockCloseResult): void;
 	dismiss(): void;
 }

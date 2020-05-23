@@ -113,23 +113,28 @@ describe("transactionModel", (): void => {
 			openingBalance: 0,
 			atEnd: false
 		};
-		let actualResponse: angular.IPromise<TransactionBatch>;
+		let fromDate: Date;
 
 		beforeEach((): void => {
-			const fromDate = new Date();
-
+			fromDate = new Date();
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
 			$httpBackend.expectGET(new RegExp(`context/transactions\\?as_at=${fromDate.toISOString()}&direction=prev&unreconciled=true`, "u")).respond(200, expectedResponse);
-			actualResponse = transactionModel.all("context", fromDate, "prev", true);
+		});
+
+		it("should dispatch a GET request to /{context}/transactions?as_at={fromDate}&direction={direction}&unreconciled={unreconciledOnly}", (): void => {
+			transactionModel.all("context", fromDate, "prev", true);
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /{context}/transactions?as_at={fromDate}&direction={direction}&unreconciled={unreconciledOnly}", (): null => null);
-
-		it("should parse each transaction returned", (): Chai.Assertion => transactionModel["parse"].should.have.been.calledTwice);
+		it("should parse each transaction returned", (): void => {
+			transactionModel.all("context", fromDate, "prev", true);
+			$httpBackend.flush();
+			transactionModel["parse"].should.have.been.calledTwice;
+		});
 
 		it("should return a list of transactions", (): void => {
-			actualResponse.should.eventually.deep.equal(expectedResponse);
+			transactionModel.all("context", fromDate, "prev", true).then((transactionBatch: TransactionBatch): Chai.Assertion => transactionBatch.should.deep.equal(expectedResponse));
+			$httpBackend.flush();
 		});
 	});
 
@@ -139,71 +144,82 @@ describe("transactionModel", (): void => {
 			openingBalance: 0,
 			atEnd: false
 		};
-		let actualResponse: angular.IPromise<TransactionBatch>;
 
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
 			$httpBackend.expectGET(/transactions\?direction=prev&query=query/u).respond(200, expectedResponse);
-			actualResponse = transactionModel.query("query", null, "prev");
+		});
+
+		it("should dispatch a GET request to /transactions?direction={direction}&query={query}", (): void => {
+			transactionModel.query("query", null, "prev");
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /transactions?as_at={fromDate}&direction={direction}&query={query}", (): null => null);
-
-		it("should parse each transaction returned", (): Chai.Assertion => transactionModel["parse"].should.have.been.calledTwice);
+		it("should parse each transaction returned", (): void => {
+			transactionModel.query("query", null, "prev");
+			$httpBackend.flush();
+			transactionModel["parse"].should.have.been.calledTwice;
+		});
 
 		it("should return a list of transactions", (): void => {
-			actualResponse.should.eventually.deep.equal(expectedResponse);
+			transactionModel.query("query", null, "prev").then((transactionBatch: TransactionBatch): Chai.Assertion => transactionBatch.should.deep.equal(expectedResponse));
+			$httpBackend.flush();
 		});
 	});
 
 	describe("findSubtransactions", (): void => {
 		const expectedResponse = "subtransactions";
-		let actualResponse: angular.IPromise<SplitTransactionChild[]>;
 
-		beforeEach((): void => {
-			$httpBackend.expectGET(/transactions\/123\/subtransactions/u).respond(200, expectedResponse);
-			actualResponse = transactionModel.findSubtransactions(123);
+		beforeEach((): angular.mock.IRequestHandler => $httpBackend.expectGET(/transactions\/123\/subtransactions/u).respond(200, expectedResponse));
+
+		it("should dispatch a GET request to /transactions/123/subtransactions", (): void => {
+			transactionModel.findSubtransactions(123);
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /transactions/123/subtransactions", (): null => null);
-
 		it("should return a list of subtransactions", (): void => {
-			actualResponse.should.eventually.equal(expectedResponse);
+			transactionModel.findSubtransactions(123).then((subtransactions: SplitTransactionChild[]): Chai.Assertion => subtransactions.should.equal(expectedResponse));
+			$httpBackend.flush();
 		});
 	});
 
 	describe("find", (): void => {
 		const expectedResponse = "transaction";
-		let actualResponse: angular.IPromise<Transaction>;
 
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
 			$httpBackend.expectGET(/transactions\/123/u).respond(200, expectedResponse);
-			actualResponse = transactionModel.find(123);
+		});
+
+		it("should dispatch a GET request to /transactions/123", (): void => {
+			transactionModel.find(123);
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /transactions/123", (): null => null);
-
-		it("should parse the transaction", (): Chai.Assertion => transactionModel["parse"].should.have.been.calledWith(expectedResponse));
+		it("should parse the transaction", (): void => {
+			transactionModel.find(123);
+			$httpBackend.flush();
+			transactionModel["parse"].should.have.been.calledWith(expectedResponse);
+		});
 
 		it("should return the transaction", (): void => {
-			actualResponse.should.eventually.equal(expectedResponse);
+			transactionModel.find(123).then((transaction: Transaction): Chai.Assertion => transaction.should.equal(expectedResponse));
+			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
-		const expectedResponse = "transaction";
+		const expectedResponse = "transaction",
+					expectedPostUrl = /transactions$/u,
+					expectedPatchUrl = /transactions\/1$/u;
 		let transaction: Transaction;
 
 		beforeEach((): void => {
 			transactionModel["invalidateCaches"] = sinon.stub();
 			transactionModel["stringify"] = sinon.stub().returnsArg(0);
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.whenPOST(/transactions$/u).respond(200, expectedResponse);
-			$httpBackend.whenPATCH(/transactions\/1$/u).respond(200, expectedResponse);
+			$httpBackend.whenPOST(expectedPostUrl).respond(200, expectedResponse);
+			$httpBackend.whenPATCH(expectedPatchUrl).respond(200, expectedResponse);
 			transaction = createBasicTransaction({ id: 1 });
 		});
 
@@ -221,13 +237,13 @@ describe("transactionModel", (): void => {
 
 		it("should dispatch a POST request to /transactions when an id is not provided", (): void => {
 			transaction.id = null;
-			$httpBackend.expectPOST(/transactions$/u, transaction);
+			$httpBackend.expectPOST(expectedPostUrl, transaction);
 			transactionModel.save(transaction);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /transactions/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/transactions\/1$/u, transaction);
+			$httpBackend.expectPATCH(expectedPatchUrl, transaction);
 			transactionModel.save(transaction);
 			$httpBackend.flush();
 		});
@@ -246,19 +262,18 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should return the transaction", (): void => {
-			const actualResponse = transactionModel.save(transaction);
-
+			transactionModel.save(transaction).then((savedTransaction: Transaction): Chai.Assertion => savedTransaction.should.equal(expectedResponse));
 			$httpBackend.flush();
-			actualResponse.should.eventually.equal(expectedResponse);
 		});
 	});
 
 	describe("destroy", (): void => {
+		const expectedUrl = /transactions\/1$/u;
 		let transaction: Transaction;
 
 		beforeEach((): void => {
 			transactionModel["invalidateCaches"] = sinon.stub();
-			$httpBackend.whenDELETE(/transactions\/1$/u).respond(200);
+			$httpBackend.whenDELETE(expectedUrl).respond(200);
 			transaction = createBasicTransaction({ id: 1 });
 		});
 
@@ -269,7 +284,7 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /transactions/{id}", (): void => {
-			$httpBackend.expectDELETE(/transactions\/1$/u);
+			$httpBackend.expectDELETE(expectedUrl);
 			transactionModel.destroy(transaction);
 			$httpBackend.flush();
 		});
@@ -341,28 +356,31 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("updateStatus", (): void => {
+		const expectedPatchUrl = /context\/transactions\/1\/status\?Cleared$/u,
+					expectedDeleteUrl = /context\/transactions\/1\/status$/u;
+
 		beforeEach((): void => {
-			$httpBackend.whenPATCH(/context\/transactions\/1\/status\?Cleared$/u).respond(200);
-			$httpBackend.whenDELETE(/context\/transactions\/1\/status$/u).respond(200);
+			$httpBackend.whenPATCH(expectedPatchUrl).respond(200);
+			$httpBackend.whenDELETE(expectedDeleteUrl).respond(200);
 		});
 
 		it("should dispatch a PATCH request to /{context}/transactions/{id}/status?{status} when a status is provided", (): void => {
-			$httpBackend.expectPATCH(/context\/transactions\/1\/status\?Cleared$/u);
+			$httpBackend.expectPATCH(expectedPatchUrl);
 			transactionModel.updateStatus("context", 1, "Cleared");
 		});
 
 		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a blank status is provided", (): void => {
-			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/u);
+			$httpBackend.expectDELETE(expectedDeleteUrl);
 			transactionModel.updateStatus("context", 1, "");
 		});
 
 		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a null status is provided", (): void => {
-			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/u);
+			$httpBackend.expectDELETE(expectedDeleteUrl);
 			transactionModel.updateStatus("context", 1);
 		});
 
 		it("should dispatch a DELETE request to /{context}/transactions/{id}/status when a status is not provided", (): void => {
-			$httpBackend.expectDELETE(/context\/transactions\/1\/status$/u);
+			$httpBackend.expectDELETE(expectedDeleteUrl);
 			transactionModel.updateStatus("context", 1);
 		});
 

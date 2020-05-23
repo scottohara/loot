@@ -1,6 +1,8 @@
 // Components
 import AnchorScrollMockProvider from "./services/anchorscroll";
 import CacheFactoryMockProvider from "./services/cachefactory";
+import IHttpPromiseMockProvider from "./providers/ihttppromise";
+import IPromiseMockProvider from "./providers/ipromise";
 import QMockProvider from "./services/q";
 import StateMockProvider from "./services/state";
 import UibModalInstanceMockProvider from "./services/uibmodalinstance";
@@ -15,4 +17,6 @@ angular.module("ogAngularMocks", [])
 	.provider("$stateMock", StateMockProvider)
 	.provider("$uibModalMock", UibModalMockProvider)
 	.provider("$uibModalInstanceMock", UibModalInstanceMockProvider)
-	.provider("$windowMock", WindowMockProvider);
+	.provider("$windowMock", WindowMockProvider)
+	.provider("iHttpPromiseMock", IHttpPromiseMockProvider)
+	.provider("iPromiseMock", IPromiseMockProvider);

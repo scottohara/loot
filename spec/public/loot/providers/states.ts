@@ -85,7 +85,7 @@ describe("lootStatesProvider", (): void => {
 	}));
 
 	describe("root state", (): void => {
-		let resolvedAuthenticated: boolean;
+		let resolvedAuthenticated: Promise<boolean> | boolean;
 
 		beforeEach((): void => {
 			stateName = "root";
@@ -104,7 +104,7 @@ describe("lootStatesProvider", (): void => {
 		describe("(non-logged in user)", (): void => {
 			beforeEach((): void => {
 				authenticationModel.isAuthenticated = false;
-				resolvedAuthenticated = $injector.invoke((stateConfig.resolve as {authenticated: () => boolean;}).authenticated);
+				$injector.invoke((stateConfig.resolve as {authenticated: () => Promise<boolean>;}).authenticated);
 			});
 
 			it("should show the login modal", (): Chai.Assertion => $uibModal.open.should.have.been.called);
@@ -112,12 +112,12 @@ describe("lootStatesProvider", (): void => {
 			it("should resolve the authentication status of a logged in user when the login modal is closed", (): void => {
 				authenticationModel.isAuthenticated = true;
 				$uibModal.close();
-				resolvedAuthenticated.should.eventually.be.true;
+				($uibModal.callbackResult as boolean).should.be.true;
 			});
 
 			it("should resolve the authentication status of a non-logged in user when the login modal is dismissed", (): void => {
 				$uibModal.dismiss();
-				resolvedAuthenticated.should.eventually.be.false;
+				($uibModal.callbackResult as boolean).should.be.false;
 			});
 		});
 	});
@@ -141,7 +141,7 @@ describe("lootStatesProvider", (): void => {
 		});
 
 		describe("(on transition)", (): void => {
-			let resolvedAccounts: Accounts;
+			let resolvedAccounts: Promise<Accounts> | Accounts;
 
 			beforeEach((): void => {
 				$state.go(stateName);
@@ -153,7 +153,7 @@ describe("lootStatesProvider", (): void => {
 
 			it("should resolve the accounts", (): void => {
 				accountModel.allWithBalances.should.have.been.called;
-				resolvedAccounts.should.eventually.deep.equal(accountsWithBalances);
+				(resolvedAccounts as Promise<Accounts>).then((accounts: Accounts): Chai.Assertion => accounts.should.deep.equal(accountsWithBalances));
 			});
 
 			describe("account state", (): void => {
@@ -191,7 +191,7 @@ describe("lootStatesProvider", (): void => {
 					describe("(on transition)", (): void => {
 						let	resolvedContextModel: AccountModel,
 								resolvedContext: Account,
-								resolvedTransactionBatch: TransactionBatch;
+								resolvedTransactionBatch: Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -213,7 +213,7 @@ describe("lootStatesProvider", (): void => {
 						it("should resolve the transaction batch", (): void => {
 							resolvedContextModel.isUnreconciledOnly.should.have.been.calledWith(resolvedContext.id);
 							transactionModel.all.should.have.been.calledWith("/accounts/1", null, "prev", true);
-							resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
 						});
 
 						describe("account transaction state", (): void => {
@@ -306,7 +306,7 @@ describe("lootStatesProvider", (): void => {
 		});
 
 		describe("(on transition)", (): void => {
-			let resolvedPayees: Payee[];
+			let resolvedPayees: Promise<Payee[]> | Payee[];
 
 			beforeEach((): void => {
 				$state.go(stateName);
@@ -318,7 +318,7 @@ describe("lootStatesProvider", (): void => {
 
 			it("should resolve the payees", (): void => {
 				payeeModel.allList.should.have.been.called;
-				resolvedPayees.should.eventually.deep.equal(payees);
+				(resolvedPayees as Promise<Payee[]>).then((actualPayees: Payee[]): Chai.Assertion => actualPayees.should.deep.equal(payees));
 			});
 
 			describe("payee state", (): void => {
@@ -356,7 +356,7 @@ describe("lootStatesProvider", (): void => {
 					describe("(on transition)", (): void => {
 						let	resolvedContextModel: PayeeModel,
 								resolvedContext: angular.IPromise<Payee>,
-								resolvedTransactionBatch: TransactionBatch;
+								resolvedTransactionBatch: Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -372,12 +372,12 @@ describe("lootStatesProvider", (): void => {
 
 						it("should resolve the parent context", (): void => {
 							payeeModel.find.should.have.been.calledWith(1);
-							resolvedContext.should.eventually.deep.equal(payee);
+							resolvedContext.then((context: Payee): Chai.Assertion => context.should.deep.equal(payee));
 						});
 
 						it("should resolve the transaction batch", (): void => {
 							transactionModel.all.should.have.been.calledWith("/payees/1", null, "prev", false);
-							resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
 						});
 
 						describe("payee transaction state", (): void => {
@@ -469,7 +469,7 @@ describe("lootStatesProvider", (): void => {
 					describe("(on transition)", (): void => {
 						let	resolvedContextModel: CategoryModel,
 								resolvedContext: angular.IPromise<Category>,
-								resolvedTransactionBatch: TransactionBatch;
+								resolvedTransactionBatch: Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -485,12 +485,12 @@ describe("lootStatesProvider", (): void => {
 
 						it("should resolve the parent context", (): void => {
 							categoryModel.find.should.have.been.calledWith(1);
-							resolvedContext.should.eventually.deep.equal(category);
+							resolvedContext.then((context: Category): Chai.Assertion => context.should.deep.equal(category));
 						});
 
 						it("should resolve the transaction batch", (): void => {
 							transactionModel.all.should.have.been.calledWith("/categories/1", null, "prev", false);
-							resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
 						});
 
 						describe("category transaction state", (): void => {
@@ -582,7 +582,7 @@ describe("lootStatesProvider", (): void => {
 					describe("(on transition)", (): void => {
 						let	resolvedContextModel: SecurityModel,
 								resolvedContext: angular.IPromise<Security>,
-								resolvedTransactionBatch: TransactionBatch;
+								resolvedTransactionBatch: Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -598,12 +598,12 @@ describe("lootStatesProvider", (): void => {
 
 						it("should resolve the parent context", (): void => {
 							securityModel.find.should.have.been.calledWith(1);
-							resolvedContext.should.eventually.deep.equal(security);
+							resolvedContext.then((context: Security): Chai.Assertion => context.should.deep.equal(security));
 						});
 
 						it("should resolve the transaction batch", (): void => {
 							transactionModel.all.should.have.been.calledWith("/securities/1", null, "prev", false);
-							resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
 						});
 
 						describe("security transaction state", (): void => {
@@ -652,7 +652,7 @@ describe("lootStatesProvider", (): void => {
 			let	previousState: StateMock,
 					resolvedPreviousState: angular.ui.IState,
 					resolvedContext: string,
-					resolvedTransactionBatch: TransactionBatch;
+					resolvedTransactionBatch: Promise<TransactionBatch> | TransactionBatch;
 
 			beforeEach((): void => {
 				previousState = {
@@ -689,7 +689,7 @@ describe("lootStatesProvider", (): void => {
 
 			it("should resolve the transaction batch", (): void => {
 				transactionModel.query.should.have.been.calledWith(query, null, "prev");
-				resolvedTransactionBatch.should.eventually.deep.equal(transactionBatch);
+				(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
 			});
 
 			it("should set the previous state property on the query service on enter", (): Chai.Assertion => (queryService.previousState as angular.ui.IState).should.deep.equal(resolvedPreviousState));

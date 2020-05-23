@@ -76,11 +76,11 @@ export default class QMockProvider implements Mock<QMock> {
 				// No success args specified, so default response is a success
 				stub.returns(qSuccess.promise);
 			} else {
-				stub.withArgs(sinon.match(undefined === (success as PromiseMockConfig<T>).args ? success : (success as PromiseMockConfig<T>).args)).returns(qSuccess.promise);
+				stub.withArgs(sinon.match((undefined === (success as PromiseMockConfig<T>).args ? success : (success as PromiseMockConfig<T>).args) as object)).returns(qSuccess.promise);
 			}
 
 			if (undefined !== error) {
-				stub.withArgs(sinon.match(undefined === (error as PromiseMockConfig<T>).args ? error : (error as PromiseMockConfig<T>).args)).returns(qError.promise);
+				stub.withArgs(sinon.match((undefined === (error as PromiseMockConfig<T>).args ? error : (error as PromiseMockConfig<T>).args) as object)).returns(qError.promise);
 			}
 
 			return stub;

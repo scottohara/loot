@@ -26,10 +26,12 @@ describe("payeeModel", (): void => {
 			$cache: angular.ICacheObject,
 			$window: WindowMock,
 			ogLruCache: OgLruCacheMock,
-			payee: Payee;
+			payee: Payee,
+			iPromise: angular.IPromise<never>,
+			iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
+	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "iPromise", "iHttpPromise"])));
 
 	// Inject any dependencies that need to be configured first
 	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
@@ -38,7 +40,7 @@ describe("payeeModel", (): void => {
 	}));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(angular.mock.inject((_payeeModel_: PayeeModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock): void => {
+	beforeEach(angular.mock.inject((_payeeModel_: PayeeModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock, _iPromise_: angular.IPromise<never>, _iHttpPromise_: angular.IHttpPromise<unknown>): void => {
 		payeeModel = _payeeModel_;
 
 		$httpBackend = _$httpBackend_;
@@ -46,6 +48,8 @@ describe("payeeModel", (): void => {
 
 		$cache = $cacheFactory();
 		ogLruCache = ogLruCacheFactory.new();
+		iPromise = _iPromise_;
+		iHttpPromise = _iHttpPromise_;
 
 		payee = createPayee({ id: 1 });
 	}));
@@ -96,25 +100,21 @@ describe("payeeModel", (): void => {
 				expectedResponse = "payees";
 
 		it("should dispatch a GET request to /payees", (): void => {
-			$httpBackend.expect("GET", expectedUrl).respond(200);
+			$httpBackend.expectGET(expectedUrl).respond(200);
 			payeeModel.all();
 			$httpBackend.flush();
 		});
 
 		it("should cache the response in the $http cache", (): void => {
-			const httpGet: SinonStub = sinon.stub($http, "get").returns({
-				then(): void {
-					// Do nothing
-				}
-			});
+			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			payeeModel.all();
-			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
 		});
 
 		it("should return a list of all payees", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-			payeeModel.all().should.eventually.equal(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
+			payeeModel.all().then((payees: Payee[]): Chai.Assertion => payees.should.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 
@@ -125,57 +125,50 @@ describe("payeeModel", (): void => {
 			});
 
 			it("should dispatch a GET request to /payees?list", (): void => {
-				$httpBackend.expect("GET", expectedUrl).respond(200);
+				$httpBackend.expectGET(expectedUrl).respond(200);
 				payeeModel.all(true);
 				$httpBackend.flush();
 			});
 
 			it("should not cache the response in the $http cache", (): void => {
-				const httpGet: SinonStub = sinon.stub($http, "get").returns({
-					then(): void {
-						// Do nothing
-					}
-				});
+				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 				payeeModel.all(true);
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.false;
+				httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.false;
 			});
 
 			it("should return a list of all payees for the index list", (): void => {
-				$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-				payeeModel.all(true).should.eventually.equal(expectedResponse);
+				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
+				payeeModel.all(true).then((payees: Payee[]): Chai.Assertion => payees.should.equal(expectedResponse));
 				$httpBackend.flush();
 			});
 		});
 	});
 
 	describe("allList", (): void => {
-		const expected = "payees list";
-
-		beforeEach((): SinonStub => sinon.stub(payeeModel, "all").returns(expected));
+		beforeEach((): SinonStub => sinon.stub(payeeModel, "all").returns(iPromise));
 
 		it("should call payeeModel.all(true)", (): void => {
 			payeeModel.allList();
 			payeeModel.all.should.have.been.calledWith(true);
 		});
 
-		it("should return a list of all payees for the index list", (): Chai.Assertion => payeeModel.allList().should.equal(expected));
+		it("should return a list of all payees for the index list", (): Chai.Assertion => payeeModel.allList().should.equal(iPromise));
 	});
 
 	describe("findLastTransaction", (): void => {
 		const expectedResponse: BasicTransaction = createBasicTransaction();
-		let actualResponse: angular.IPromise<Transaction>;
 
-		beforeEach((): void => {
-			$httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u).respond(200, expectedResponse);
-			actualResponse = payeeModel.findLastTransaction(1, "bank");
+		beforeEach((): angular.mock.IRequestHandler => $httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u).respond(200, expectedResponse));
+
+		it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", (): void => {
+			payeeModel.findLastTransaction(1, "bank");
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", (): null => null);
-
 		it("should return the last transaction for the payee", (): void => {
-			actualResponse.should.eventually.deep.equal(expectedResponse);
+			payeeModel.findLastTransaction(1, "bank").then((transaction: Transaction): Chai.Assertion => transaction.should.deep.equal(expectedResponse));
+			$httpBackend.flush();
 		});
 	});
 
@@ -186,45 +179,44 @@ describe("payeeModel", (): void => {
 		beforeEach((): SinonStub => sinon.stub(payeeModel, "addRecent"));
 
 		it("should dispatch a GET request to /payees/{id}", (): void => {
-			$httpBackend.expect("GET", expectedUrl).respond(200);
+			$httpBackend.expectGET(expectedUrl).respond(200);
 			payeeModel.find(123);
 			$httpBackend.flush();
 		});
 
 		it("should cache the response in the $http cache", (): void => {
-			const httpGet: SinonStub = sinon.stub($http, "get").returns({
-				then(): void {
-					// Do nothing
-				}
-			});
+			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			payeeModel.find(123);
-			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
 		});
 
 		it("should add the payee to the recent list", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			payeeModel.find(123);
 			$httpBackend.flush();
 			payeeModel.addRecent.should.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the payee", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
-			payeeModel.find(123).should.eventually.equal(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
+			payeeModel.find(123).then((foundPayee: Payee): Chai.Assertion => foundPayee.should.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
+		const expectedPostUrl = /payees$/u,
+					expectedPatchUrl = /payees\/1$/u;
+
 		beforeEach((): void => {
 			sinon.stub(payeeModel, "flush");
-			$httpBackend.whenPOST(/payees$/u, payee).respond(200);
-			$httpBackend.whenPATCH(/payees\/1$/u, payee).respond(200);
+			$httpBackend.whenPOST(expectedPostUrl, payee).respond(200);
+			$httpBackend.whenPATCH(expectedPatchUrl, payee).respond(200);
 		});
 
 		it("should flush the payee cache", (): void => {
-			$httpBackend.expectPATCH(/payees\/1$/u);
+			$httpBackend.expectPATCH(expectedPatchUrl);
 			payeeModel.save(payee);
 			payeeModel.flush.should.have.been.called;
 			$httpBackend.flush();
@@ -232,13 +224,13 @@ describe("payeeModel", (): void => {
 
 		it("should dispatch a POST request to /payees when an id is not provided", (): void => {
 			delete payee.id;
-			$httpBackend.expectPOST(/payees$/u);
+			$httpBackend.expectPOST(expectedPostUrl);
 			payeeModel.save(payee);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /payees/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/payees\/1$/u);
+			$httpBackend.expectPATCH(expectedPatchUrl);
 			payeeModel.save(payee);
 			$httpBackend.flush();
 		});
@@ -261,10 +253,12 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("toggleFavourite", (): void => {
+		const expectedUrl = /payees\/1\/favourite$/u;
+
 		beforeEach((): void => {
 			sinon.stub(payeeModel, "flush");
-			$httpBackend.whenDELETE(/payees\/1\/favourite$/u).respond(200);
-			$httpBackend.whenPUT(/payees\/1\/favourite$/u).respond(200);
+			$httpBackend.whenDELETE(expectedUrl).respond(200);
+			$httpBackend.whenPUT(expectedUrl).respond(200);
 		});
 
 		it("should flush the payee cache", (): void => {
@@ -274,15 +268,15 @@ describe("payeeModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /payees/{id}/favourite when the payee is unfavourited", (): void => {
-			$httpBackend.expectDELETE(/payees\/1\/favourite$/u);
+			$httpBackend.expectDELETE(expectedUrl);
 			payee.favourite = true;
-			payeeModel.toggleFavourite(payee).should.eventually.equal(false);
+			payeeModel.toggleFavourite(payee).then((favourite: boolean): Chai.Assertion => favourite.should.be.false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /payees/{id}/favourite when the payee is favourited", (): void => {
-			$httpBackend.expectPUT(/payees\/1\/favourite$/u);
-			payeeModel.toggleFavourite(payee).should.eventually.equal(true);
+			$httpBackend.expectPUT(expectedUrl);
+			payeeModel.toggleFavourite(payee).then((favourite: boolean): Chai.Assertion => favourite.should.be.true);
 			$httpBackend.flush();
 		});
 	});

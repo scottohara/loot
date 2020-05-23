@@ -1,4 +1,8 @@
 import {
+	Account,
+	Accounts
+} from "accounts/types";
+import {
 	CacheFactoryMock,
 	WindowMock
 } from "mocks/node-modules/angular/types";
@@ -7,7 +11,6 @@ import {
 	OgLruCacheMock
 } from "mocks/og-components/og-lru-cache-factory/types";
 import sinon, { SinonStub } from "sinon";
-import { Account } from "accounts/types";
 import AccountModel from "accounts/models/account";
 import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
@@ -20,10 +23,12 @@ describe("accountModel", (): void => {
 			$cache: angular.ICacheObject,
 			$window: WindowMock,
 			ogLruCache: OgLruCacheMock,
-			account: Account;
+			account: Account,
+			iPromise: angular.IPromise<never>,
+			iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "account"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "account", "iPromise", "iHttpPromise"])));
 
 	// Inject any dependencies that need to be configured first
 	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
@@ -34,11 +39,13 @@ describe("accountModel", (): void => {
 	}));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(angular.mock.inject((_accountModel_: AccountModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _ogLruCacheFactory_: OgLruCacheFactoryMock, _account_: Account): void => {
+	beforeEach(angular.mock.inject((_accountModel_: AccountModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _ogLruCacheFactory_: OgLruCacheFactoryMock, _account_: Account, _iPromise_: angular.IPromise<never>, _iHttpPromise_: angular.IHttpPromise<unknown>): void => {
 		accountModel = _accountModel_;
 		$httpBackend = _$httpBackend_;
 		$http = _$http_;
 		account = _account_;
+		iPromise = _iPromise_;
+		iHttpPromise = _iHttpPromise_;
 
 		const	$cacheFactory: CacheFactoryMock = _$cacheFactory_,
 					ogLruCacheFactory: OgLruCacheFactoryMock = _ogLruCacheFactory_;
@@ -97,25 +104,21 @@ describe("accountModel", (): void => {
 				expectedResponse = "accounts without balances";
 
 		it("should dispatch a GET request to /accounts", (): void => {
-			$httpBackend.expect("GET", expectedUrl).respond(200);
+			$httpBackend.expectGET(expectedUrl).respond(200);
 			accountModel.all();
 			$httpBackend.flush();
 		});
 
 		it("should cache the response in the $http cache", (): void => {
-			const httpGet: SinonStub = sinon.stub($http, "get").returns({
-				then(): void {
-					// Do nothing
-				}
-			});
+			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			accountModel.all();
-			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
 		});
 
 		it("should return a list of all accounts without their balances", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-			accountModel.all().should.eventually.equal(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
+			accountModel.all().then((accounts: Account[] | Accounts): Chai.Assertion => accounts.should.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 
@@ -126,34 +129,28 @@ describe("accountModel", (): void => {
 			});
 
 			it("should dispatch a GET request to /accounts?include_balances", (): void => {
-				$httpBackend.expect("GET", expectedUrl).respond(200);
+				$httpBackend.expectGET(expectedUrl).respond(200);
 				accountModel.all(true);
 				$httpBackend.flush();
 			});
 
 			it("should not cache the response in the $http cache", (): void => {
-				const httpGet: SinonStub = sinon.stub($http, "get").returns({
-					then(): void {
-						// Do nothing
-					}
-				});
+				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 				accountModel.all(true);
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.false;
+				httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.false;
 			});
 
 			it("should return a list of all accounts including their balances", (): void => {
-				$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-				accountModel.all(true).should.eventually.equal(expectedResponse);
+				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
+				accountModel.all(true).then((accounts: Account[] | Accounts): Chai.Assertion => accounts.should.equal(expectedResponse));
 				$httpBackend.flush();
 			});
 		});
 	});
 
 	describe("allWithBalances", (): void => {
-		const expected = "accounts with balances";
-
-		beforeEach((): SinonStub => sinon.stub(accountModel, "all").returns(expected));
+		beforeEach((): SinonStub => sinon.stub(accountModel, "all").returns(iPromise));
 
 		it("should call accountModel.all(true)", (): void => {
 			accountModel.allWithBalances();
@@ -161,7 +158,7 @@ describe("accountModel", (): void => {
 		});
 
 		it("should return a list of all accounts including their balances", (): void => {
-			accountModel.allWithBalances().should.equal(expected);
+			accountModel.allWithBalances().should.equal(iPromise);
 		});
 	});
 
@@ -172,41 +169,40 @@ describe("accountModel", (): void => {
 		beforeEach((): SinonStub => sinon.stub(accountModel, "addRecent"));
 
 		it("should dispatch a GET request to /accounts/{id}", (): void => {
-			$httpBackend.expect("GET", expectedUrl).respond(200);
+			$httpBackend.expectGET(expectedUrl).respond(200);
 			accountModel.find(123);
 			$httpBackend.flush();
 		});
 
 		it("should cache the response in the $http cache", (): void => {
-			const httpGet: SinonStub = sinon.stub($http, "get").returns({
-				then(): void {
-					// Do nothing
-				}
-			});
+			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			accountModel.find(123);
-			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
 		});
 
 		it("should add the account to the recent list", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			accountModel.find(123);
 			$httpBackend.flush();
 			accountModel.addRecent.should.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the account", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
-			accountModel.find(123).should.eventually.equal(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
+			accountModel.find(123).then((foundAccount: Account): Chai.Assertion => foundAccount.should.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
+		const expectedPostUrl = /accounts$/u,
+					expectedPatchUrl = /accounts\/1$/u;
+
 		beforeEach((): void => {
 			sinon.stub(accountModel, "flush");
-			$httpBackend.whenPOST(/accounts$/u, account).respond(200);
-			$httpBackend.whenPATCH(/accounts\/1$/u, account).respond(200);
+			$httpBackend.whenPOST(expectedPostUrl, account).respond(200);
+			$httpBackend.whenPATCH(expectedPatchUrl, account).respond(200);
 		});
 
 		it("should flush the account cache", (): void => {
@@ -217,13 +213,13 @@ describe("accountModel", (): void => {
 
 		it("should dispatch a POST request to /accounts when an id is not provided", (): void => {
 			delete account.id;
-			$httpBackend.expectPOST(/accounts$/u);
+			$httpBackend.expectPOST(expectedPostUrl);
 			accountModel.save(account);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /accounts/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/accounts\/1$/u);
+			$httpBackend.expectPATCH(expectedPatchUrl);
 			accountModel.save(account);
 			$httpBackend.flush();
 		});
@@ -249,17 +245,19 @@ describe("accountModel", (): void => {
 		const expectedUrl = /accounts\/123\/reconcile/u;
 
 		it("should dispatch a PUT request to /account/{id}/reconcile", (): void => {
-			$httpBackend.expect("PUT", expectedUrl).respond(200);
+			$httpBackend.expectPUT(expectedUrl).respond(200);
 			accountModel.reconcile(123);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("toggleFavourite", (): void => {
+		const expectedUrl = /accounts\/1\/favourite$/u;
+
 		beforeEach((): void => {
 			sinon.stub(accountModel, "flush");
-			$httpBackend.whenDELETE(/accounts\/1\/favourite$/u).respond(200);
-			$httpBackend.whenPUT(/accounts\/1\/favourite$/u).respond(200);
+			$httpBackend.whenDELETE(expectedUrl).respond(200);
+			$httpBackend.whenPUT(expectedUrl).respond(200);
 		});
 
 		it("should flush the account cache", (): void => {
@@ -269,15 +267,15 @@ describe("accountModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /accounts/{id}/favourite when the account is unfavourited", (): void => {
-			$httpBackend.expectDELETE(/accounts\/1\/favourite$/u);
+			$httpBackend.expectDELETE(expectedUrl);
 			account.favourite = true;
-			accountModel.toggleFavourite(account).should.eventually.equal(false);
+			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => favourite.should.be.false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /accounts/{id}/favourite when the account is favourited", (): void => {
-			$httpBackend.expectPUT(/accounts\/1\/favourite$/u);
-			accountModel.toggleFavourite(account).should.eventually.equal(true);
+			$httpBackend.expectPUT(expectedUrl);
+			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => favourite.should.be.true);
 			$httpBackend.flush();
 		});
 	});

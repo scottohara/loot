@@ -122,7 +122,7 @@ describe("ScheduleIndexController", (): void => {
 					scheduleIndexController.schedules[1].transaction_type = scenario;
 					scheduleIndexController["editSchedule"](1);
 					transactionModel.findSubtransactions.should.have.been.calledWith(schedule.id);
-					(($uibModal.resolves as UibModalMockResolves).schedule as ScheduledTransaction).should.eventually.have.property("subtransactions");
+					(($uibModal.resolves as UibModalMockResolves).schedule as angular.IPromise<ScheduledTransaction>).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion => scheduledTransaction.should.have.property("subtransactions"));
 				});
 			});
 

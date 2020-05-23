@@ -74,33 +74,42 @@ describe("scheduleModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		const expectedResponse: string[] = ["schedule 1", "schedule 2"];
-		let actualResponse: angular.IPromise<ScheduledTransaction[]>;
+		const expectedUrl = /schedules/u,
+					expectedResponse: string[] = ["schedule 1", "schedule 2"];
 
 		beforeEach((): void => {
 			scheduleModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(/schedules/u).respond(200, expectedResponse);
-			actualResponse = scheduleModel.all();
+			$httpBackend.expectGET(expectedUrl).respond(200, expectedResponse);
+		});
+
+		it("should dispatch a GET request to /schedules", (): void => {
+			scheduleModel.all();
 			$httpBackend.flush();
 		});
 
-		it("should dispatch a GET request to /schedules", (): null => null);
-
-		it("should parse each schedule returned", (): Chai.Assertion => scheduleModel["parse"].should.have.been.calledTwice);
+		it("should parse each schedule returned", (): void => {
+			scheduleModel["parse"] = sinon.stub().returnsArg(0);
+			scheduleModel.all();
+			$httpBackend.flush();
+			scheduleModel["parse"].should.have.been.calledTwice;
+		});
 
 		it("should return a list of all schedules", (): void => {
-			actualResponse.should.eventually.deep.equal(expectedResponse);
+			scheduleModel.all().then((scheduledTransactions: ScheduledTransaction[]): Chai.Assertion => scheduledTransactions.should.deep.equal(expectedResponse));
+			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
-		const expectedResponse = "schedule";
+		const expectedResponse = "schedule",
+					expectedPostUrl = /schedules$/u,
+					expectedPatchUrl = /schedules\/1$/u;
 
 		beforeEach((): void => {
 			scheduleModel["stringify"] = sinon.stub().returnsArg(0);
 			scheduleModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.whenPOST(/schedules$/u).respond(200, expectedResponse);
-			$httpBackend.whenPATCH(/schedules\/1$/u).respond(200, expectedResponse);
+			$httpBackend.whenPOST(expectedPostUrl).respond(200, expectedResponse);
+			$httpBackend.whenPATCH(expectedPatchUrl).respond(200, expectedResponse);
 		});
 
 		it("should flush the payee cache when the schedule payee is new", (): void => {
@@ -163,7 +172,7 @@ describe("scheduleModel", (): void => {
 			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction();
 
 			schedule.id = null;
-			$httpBackend.expectPOST(/schedules$/u, schedule);
+			$httpBackend.expectPOST(expectedPostUrl, schedule);
 			scheduleModel.save(schedule);
 			$httpBackend.flush();
 		});
@@ -171,7 +180,7 @@ describe("scheduleModel", (): void => {
 		it("should dispatch a PATCH request to /schedules/{id} when an id is provided", (): void => {
 			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({ id: 1 });
 
-			$httpBackend.expectPATCH(/schedules\/1$/u, schedule);
+			$httpBackend.expectPATCH(expectedPatchUrl, schedule);
 			scheduleModel.save(schedule);
 			$httpBackend.flush();
 		});
@@ -183,10 +192,8 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should return the schedule", (): void => {
-			const actualResponse: angular.IPromise<ScheduledTransaction> = scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
-
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1 })).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion => scheduledTransaction.should.equal(expectedResponse));
 			$httpBackend.flush();
-			actualResponse.should.eventually.equal(expectedResponse);
 		});
 	});
 

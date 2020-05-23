@@ -104,7 +104,7 @@ describe("TransactionEditController", (): void => {
 
 		it("should fetch the list of payees", (): Chai.Assertion => payeeModel.all.should.have.been.called);
 
-		it("should return a filtered & limited list of payees", (): Chai.PromisedAssertion => payees.should.eventually.deep.equal([
+		it("should return a filtered & limited list of payees", async (): Promise<Chai.Assertion> => (await payees).should.deep.equal([
 			{ id: 1, name: "aa", closing_balance: 0, favourite: false, num_transactions: 0 },
 			{ id: 4, name: "ba", closing_balance: 0, favourite: false, num_transactions: 0 },
 			{ id: 5, name: "ab", closing_balance: 0, favourite: false, num_transactions: 0 }
@@ -118,7 +118,7 @@ describe("TransactionEditController", (): void => {
 
 		it("should fetch the list of securities", (): Chai.Assertion => securityModel.all.should.have.been.called);
 
-		it("should return a filtered & limited list of securities", (): Chai.PromisedAssertion => securities.should.eventually.deep.equal([
+		it("should return a filtered & limited list of securities", async (): Promise<Chai.Assertion> => (await securities).should.deep.equal([
 			{ id: 1, name: "aa", closing_balance: 1.006, code: "A", current_holding: 1, favourite: false, unused: false, num_transactions: 0 },
 			{ id: 4, name: "ba", closing_balance: 4, code: "D", current_holding: 1, favourite: false, unused: false, num_transactions: 0 },
 			{ id: 5, name: "ab", closing_balance: 5, code: "E", current_holding: 1, favourite: false, unused: false, num_transactions: 0 }
@@ -126,80 +126,70 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("categories", (): void => {
-		let categories: angular.IPromise<DisplayCategory[]> | DisplayCategory[];
-
 		it("should return an empty array if the parent category is new", (): void => {
-			categories = transactionEditController.categories("a", 3, {} as Category);
+			const categories: angular.IPromise<DisplayCategory[]> | DisplayCategory[] = transactionEditController.categories("a", 3, {} as Category);
+
 			categories.should.be.an("array");
 			categories.should.be.empty;
 		});
 
 		describe("(parent categories)", (): void => {
 			it("should fetch the list of parent categories", (): void => {
-				categories = transactionEditController.categories("a", 3);
+				transactionEditController.categories("a", 3);
 				categoryModel.all.should.have.been.calledWith(null);
 			});
 
-			it("should include transfer categories", (): void => {
-				categories = transactionEditController.categories("a", 5);
-				categories.should.eventually.deep.equal([
-					{ id: "TransferTo", name: "Transfer To" },
-					{ id: "TransferFrom", name: "Transfer From" },
-					createCategory({ id: 1, name: "aa", num_children: 2, children: [
-						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({ id: 1, name: "aa", num_children: 2 })
-						}),
-						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({ id: 1, name: "aa", num_children: 2 })
-						})
-					] }),
-					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
-					createCategory({ id: 5, name: "ab", children: [] })
-				]);
-			});
+			it("should include transfer categories", async (): Promise<Chai.Assertion> => (await transactionEditController.categories("a", 5)).should.deep.equal([
+				{ id: "TransferTo", name: "Transfer To" },
+				{ id: "TransferFrom", name: "Transfer From" },
+				createCategory({ id: 1, name: "aa", num_children: 2, children: [
+					createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+						createCategory({ id: 1, name: "aa", num_children: 2 })
+					}),
+					createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+						createCategory({ id: 1, name: "aa", num_children: 2 })
+					})
+				] }),
+				createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+				createCategory({ id: 5, name: "ab", children: [] })
+			]));
 
-			it("should include split categories if requested", (): void => {
-				categories = transactionEditController.categories("a", 7, null, true);
-				categories.should.eventually.deep.equal([
-					{ id: "TransferTo", name: "Transfer To" },
-					{ id: "TransferFrom", name: "Transfer From" },
-					{ id: "Payslip", name: "Payslip" },
-					{ id: "LoanRepayment", name: "Loan Repayment" },
-					createCategory({ id: 1, name: "aa", num_children: 2, children: [
-						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({ id: 1, name: "aa", num_children: 2 })
-						}),
-						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({ id: 1, name: "aa", num_children: 2 })
-						})
-					] }),
-					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
-					createCategory({ id: 5, name: "ab", children: [] })
-				]);
-			});
+			it("should include split categories if requested", async (): Promise<Chai.Assertion> => (await transactionEditController.categories("a", 7, null, true)).should.deep.equal([
+				{ id: "TransferTo", name: "Transfer To" },
+				{ id: "TransferFrom", name: "Transfer From" },
+				{ id: "Payslip", name: "Payslip" },
+				{ id: "LoanRepayment", name: "Loan Repayment" },
+				createCategory({ id: 1, name: "aa", num_children: 2, children: [
+					createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+						createCategory({ id: 1, name: "aa", num_children: 2 })
+					}),
+					createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+						createCategory({ id: 1, name: "aa", num_children: 2 })
+					})
+				] }),
+				createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+				createCategory({ id: 5, name: "ab", children: [] })
+			]));
 		});
 
 		describe("(subcategories)", (): void => {
 			it("should fetch the subcategories for the specified parent category", (): void => {
-				categories = transactionEditController.categories("a", 3, createCategory({ id: 1 }));
+				transactionEditController.categories("a", 3, createCategory({ id: 1 }));
 				categoryModel.all.should.have.been.calledWith(1);
 			});
 
-			it("should eventually return a filtered & limited list of subcategories", (): void => {
-				categories = transactionEditController.categories("a", 3, createCategory({ id: 1 }));
-				categories.should.eventually.deep.equal([
-					createCategory({ id: 1, name: "aa", num_children: 2, children: [
-						createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
-							createCategory({ id: 1, name: "aa", num_children: 2 })
-						}),
-						createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
-							createCategory({ id: 1, name: "aa", num_children: 2 })
-						})
-					] }),
-					createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
-					createCategory({ id: 5, name: "ab", children: [] })
-				]);
-			});
+			it("should eventually return a filtered & limited list of subcategories", async (): Promise<Chai.Assertion> => (await transactionEditController.categories("a", 3, createCategory({ id: 1 }))).should.deep.equal([
+				createCategory({ id: 1, name: "aa", num_children: 2, children: [
+					createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
+						createCategory({ id: 1, name: "aa", num_children: 2 })
+					}),
+					createCategory({ id: 11, name: "aa_2", parent_id: 1, parent:
+						createCategory({ id: 1, name: "aa", num_children: 2 })
+					})
+				] }),
+				createCategory({ id: 4, name: "ba", direction: "outflow", children: [] }),
+				createCategory({ id: 5, name: "ab", children: [] })
+			]));
 		});
 	});
 
@@ -360,7 +350,7 @@ describe("TransactionEditController", (): void => {
 			});
 		});
 
-		it("should eventually return a list of subtransactions stripped of their ids", (): void => {
+		it("should eventually return a list of subtransactions stripped of their ids", async (): Promise<void> => {
 			const expected: SplitTransaction = angular.copy(splitTransaction);
 
 			expected.subtransactions = [
@@ -369,8 +359,7 @@ describe("TransactionEditController", (): void => {
 				createSubtransaction({ id: null })
 			];
 
-			splitTransaction = transactionEditController["getSubtransactions"](splitTransaction) as SplitTransaction;
-			splitTransaction.should.eventually.deep.equal(expected);
+			(await transactionEditController["getSubtransactions"](splitTransaction) as SplitTransaction).should.deep.equal(expected);
 		});
 	});
 
@@ -399,7 +388,7 @@ describe("TransactionEditController", (): void => {
 
 			currentElement = null;
 			realAngularElement = angular.element;
-			sinon.stub(angular, "element").callsFake((selector: string): (Element | null)[] | {triggerHandler: SinonStub;} => {
+			(sinon.stub(angular, "element") as SinonStub).callsFake((selector: string): (Element | null)[] | {triggerHandler: SinonStub;} => {
 				if ("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo" === selector) {
 					return [currentElement];
 				}
@@ -650,8 +639,6 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("accounts", (): void => {
-		let accounts: angular.IPromise<Account[]>;
-
 		beforeEach((): boolean => delete transactionEditController.transaction.primary_account);
 
 		it("should fetch the list of accounts", (): void => {
@@ -659,27 +646,22 @@ describe("TransactionEditController", (): void => {
 			accountModel.all.should.have.been.called;
 		});
 
-		it("should remove the current account from the list", (): void => {
+		it("should remove the current account from the list", async (): Promise<void> => {
 			transactionEditController.transaction.primary_account = createAccount({ name: "aa" });
-			accounts = transactionEditController.accounts("a", 2);
-			accounts.should.eventually.deep.equal([
+			(await transactionEditController.accounts("a", 2)).should.deep.equal([
 				createAccount({ id: 4, name: "ba", account_type: "asset" }),
 				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
 		});
 
-		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", (): void => {
-			accounts = transactionEditController.accounts("b", 2);
-			accounts.should.eventually.deep.equal([
-				createAccount({ id: 4, name: "ba", account_type: "asset" }),
-				createAccount({ id: 5, name: "ab", account_type: "asset" })
-			]);
-		});
+		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", async (): Promise<Chai.Assertion> => (await transactionEditController.accounts("b", 2)).should.deep.equal([
+			createAccount({ id: 4, name: "ba", account_type: "asset" }),
+			createAccount({ id: 5, name: "ab", account_type: "asset" })
+		]));
 
-		it("should return a filtered & limited list of investment accounts when the transaction type is Security Transfer", (): void => {
+		it("should return a filtered & limited list of investment accounts when the transaction type is Security Transfer", async (): Promise<void> => {
 			transactionEditController.transaction.transaction_type = "SecurityTransfer";
-			accounts = transactionEditController.accounts("b", 2);
-			accounts.should.eventually.deep.equal([
+			(await transactionEditController.accounts("b", 2)).should.deep.equal([
 				createAccount({ id: 2, name: "bb", account_type: "investment" }),
 				createAccount({ id: 6, name: "bc", account_type: "investment" })
 			]);
@@ -945,7 +927,7 @@ describe("TransactionEditController", (): void => {
 			});
 		});
 
-		it("should eventually be fulfilled", (): Chai.PromisedAssertion => transactionEditController["invalidateCaches"](saved).should.be.fulfilled);
+		it("should resolve with the saved transaction", async (): Promise<Chai.Assertion> => (await transactionEditController["invalidateCaches"](saved)).should.deep.equal(saved));
 	});
 
 	describe("updateLruCaches", (): void => {
@@ -1049,7 +1031,7 @@ describe("TransactionEditController", (): void => {
 			});
 		});
 
-		it("should eventually be fulfilled", (): Chai.PromisedAssertion => transactionEditController["updateLruCaches"](data).should.be.fulfilled);
+		it("should resolve with the saved transaction", async (): Promise<Chai.Assertion> => (await transactionEditController["updateLruCaches"](data)).should.deep.equal(data));
 	});
 
 	describe("save", (): void => {

@@ -111,7 +111,7 @@ describe("ogTableNavigable", (): void => {
 			top = 110;
 			row = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first();
 			sinon.stub(row[0], "scrollIntoView");
-			sinon.stub(row, "offset").callsFake((): {top: number;} => ({ top }));
+			sinon.stub(row, "offset").callsFake((): JQuery.Coordinates => ({ top, left: 0 }));
 			sinon.stub(row, "height").returns(40);
 
 			mockJQueryInstance = {
@@ -163,7 +163,7 @@ describe("ogTableNavigable", (): void => {
 		});
 
 		it("should do nothing if the target row could not be determined", (): void => {
-			sinon.stub(isolateScope, "getRows").callsFake((): {length: number;} => {
+			(sinon.stub(isolateScope, "getRows") as SinonStub).callsFake((): {length: number;} => {
 				(isolateScope.getRows as SinonStub).restore();
 
 				return {

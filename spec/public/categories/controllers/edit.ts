@@ -49,7 +49,7 @@ describe("CategoryEditController", (): void => {
 			categoryModel.all.should.have.been.called;
 		});
 
-		it("should return a filtered & limited list of parent categories", (): Chai.PromisedAssertion => categoryEditController.parentCategories("a", 3).should.eventually.deep.equal([
+		it("should return a filtered & limited list of parent categories", async (): Promise<Chai.Assertion> => (await categoryEditController.parentCategories("a", 3)).should.deep.equal([
 			createCategory({ id: 1, name: "aa", num_children: 2, children: [
 				createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
 					createCategory({ id: 1, name: "aa", num_children: 2 })

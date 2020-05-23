@@ -203,7 +203,7 @@ describe("TransactionIndexController", (): void => {
 					transactionIndexController.transactions[1].transaction_type = scenario;
 					transactionIndexController["editTransaction"](1);
 					transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
-					(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).should.eventually.have.property("subtransactions");
+					(($uibModal.resolves as UibModalMockResolves).transaction as angular.IPromise<Transaction>).then((resolvedTransaction: Transaction): Chai.Assertion => resolvedTransaction.should.have.property("subtransactions"));
 				});
 			});
 

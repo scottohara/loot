@@ -21,10 +21,12 @@ describe("categoryModel", (): void => {
 			$cache: angular.ICacheObject,
 			$window: WindowMock,
 			ogLruCache: OgLruCacheMock,
-			category: Category;
+			category: Category,
+			iPromise: angular.IPromise<never>,
+			iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "iPromise", "iHttpPromise"])));
 
 	// Inject any dependencies that need to be configured first
 	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
@@ -33,7 +35,7 @@ describe("categoryModel", (): void => {
 	}));
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(angular.mock.inject((_categoryModel_: CategoryModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock): void => {
+	beforeEach(angular.mock.inject((_categoryModel_: CategoryModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock, _iPromise_: angular.IPromise<never>, _iHttpPromise_: angular.IHttpPromise<unknown>): void => {
 		categoryModel = _categoryModel_;
 
 		$httpBackend = _$httpBackend_;
@@ -41,6 +43,8 @@ describe("categoryModel", (): void => {
 
 		$cache = $cacheFactory();
 		ogLruCache = ogLruCacheFactory.new();
+		iPromise = _iPromise_;
+		iHttpPromise = _iHttpPromise_;
 
 		category = createCategory({ id: 1 });
 	}));
@@ -91,25 +95,21 @@ describe("categoryModel", (): void => {
 				expectedResponse = "categories without children";
 
 		it("should dispatch a GET request to /categories?parent={parent}", (): void => {
-			$httpBackend.expect("GET", expectedUrl).respond(200);
+			$httpBackend.expectGET(expectedUrl).respond(200);
 			categoryModel.all(1);
 			$httpBackend.flush();
 		});
 
 		it("should cache the response in the $http cache", (): void => {
-			const httpGet: SinonStub = sinon.stub($http, "get").returns({
-				then(): void {
-					// Do nothing
-				}
-			});
+			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			categoryModel.all();
-			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
 		});
 
 		it("should return a list of all categories without their children", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-			categoryModel.all(1).should.eventually.equal(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
+			categoryModel.all(1).then((categories: Category[]): Chai.Assertion => categories.should.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 
@@ -120,41 +120,35 @@ describe("categoryModel", (): void => {
 			});
 
 			it("should dispatch a GET request to /categories?include_children&parent={parent}", (): void => {
-				$httpBackend.expect("GET", expectedUrl).respond(200);
+				$httpBackend.expectGET(expectedUrl).respond(200);
 				categoryModel.all(1, true);
 				$httpBackend.flush();
 			});
 
 			it("should not cache the response in the $http cache", (): void => {
-				const httpGet = sinon.stub($http, "get").returns({
-					then(): void {
-						// Do nothing
-					}
-				});
+				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 				categoryModel.all(1, true);
-				httpGet.firstCall.args[1].should.have.a.property("cache").that.is.false;
+				httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.false;
 			});
 
 			it("should return a list of all categories including their children", (): void => {
-				$httpBackend.when("GET", expectedUrl).respond(200, expectedResponse);
-				categoryModel.all(1, true).should.eventually.equal(expectedResponse);
+				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
+				categoryModel.all(1, true).then((categories: Category[]): Chai.Assertion => categories.should.equal(expectedResponse));
 				$httpBackend.flush();
 			});
 		});
 	});
 
 	describe("allWithChildren", (): void => {
-		const expected = "categories with children";
-
-		beforeEach((): SinonStub => sinon.stub(categoryModel, "all").returns(expected));
+		beforeEach((): SinonStub => sinon.stub(categoryModel, "all").returns(iPromise));
 
 		it("should fetch the list of categories with children", (): void => {
 			categoryModel.allWithChildren(1);
 			categoryModel.all.should.have.been.calledWith(1, true);
 		});
 
-		it("should return a list of all categories including their children", (): Chai.Assertion => categoryModel.allWithChildren(1).should.equal(expected));
+		it("should return a list of all categories including their children", (): Chai.Assertion => categoryModel.allWithChildren(1).should.equal(iPromise));
 	});
 
 	describe("find", (): void => {
@@ -164,45 +158,44 @@ describe("categoryModel", (): void => {
 		beforeEach((): SinonStub => sinon.stub(categoryModel, "addRecent"));
 
 		it("should dispatch a GET request to /categories/{id}", (): void => {
-			$httpBackend.expect("GET", expectedUrl).respond(200);
+			$httpBackend.expectGET(expectedUrl).respond(200);
 			categoryModel.find(123);
 			$httpBackend.flush();
 		});
 
 		it("should cache the response in the $http cache", (): void => {
-			const httpGet: SinonStub = sinon.stub($http, "get").returns({
-				then(): void {
-					// Do nothing
-				}
-			});
+			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			categoryModel.find(123);
-			httpGet.firstCall.args[1].should.have.a.property("cache").that.is.not.false;
+			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
 		});
 
 		it("should add the category to the recent list", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			categoryModel.find(123);
 			$httpBackend.flush();
 			categoryModel.addRecent.should.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the category", (): void => {
-			$httpBackend.when("GET", expectedUrl).respond(expectedResponse);
-			categoryModel.find(123).should.eventually.equal(expectedResponse);
+			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
+			categoryModel.find(123).then((foundCategory: Category): Chai.Assertion => foundCategory.should.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
+		const expectedPostUrl = /categories$/u,
+					expectedPatchUrl = /categories\/1$/u;
+
 		beforeEach((): void => {
 			sinon.stub(categoryModel, "flush");
-			$httpBackend.whenPOST(/categories$/u, category).respond(200);
-			$httpBackend.whenPATCH(/categories\/1$/u, category).respond(200);
+			$httpBackend.whenPOST(expectedPostUrl, category).respond(200);
+			$httpBackend.whenPATCH(expectedPatchUrl, category).respond(200);
 		});
 
 		it("should flush the category cache", (): void => {
-			$httpBackend.expectPATCH(/categories\/1$/u);
+			$httpBackend.expectPATCH(expectedPatchUrl);
 			categoryModel.save(category);
 			categoryModel.flush.should.have.been.called;
 			$httpBackend.flush();
@@ -210,13 +203,13 @@ describe("categoryModel", (): void => {
 
 		it("should dispatch a POST request to /categories when an id is not provided", (): void => {
 			delete category.id;
-			$httpBackend.expectPOST(/categories$/u);
+			$httpBackend.expectPOST(expectedPostUrl);
 			categoryModel.save(category);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PATCH request to /categories/{id} when an id is provided", (): void => {
-			$httpBackend.expectPATCH(/categories\/1$/u);
+			$httpBackend.expectPATCH(expectedPatchUrl);
 			categoryModel.save(category);
 			$httpBackend.flush();
 		});
@@ -239,10 +232,12 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("toggleFavourite", (): void => {
+		const expectedUrl = /categories\/1\/favourite$/u;
+
 		beforeEach((): void => {
 			sinon.stub(categoryModel, "flush");
-			$httpBackend.whenDELETE(/categories\/1\/favourite$/u).respond(200);
-			$httpBackend.whenPUT(/categories\/1\/favourite$/u).respond(200);
+			$httpBackend.whenDELETE(expectedUrl).respond(200);
+			$httpBackend.whenPUT(expectedUrl).respond(200);
 		});
 
 		it("should flush the category cache", (): void => {
@@ -252,15 +247,15 @@ describe("categoryModel", (): void => {
 		});
 
 		it("should dispatch a DELETE request to /categories/{id}/favourite when the category is unfavourited", (): void => {
-			$httpBackend.expectDELETE(/categories\/1\/favourite$/u);
+			$httpBackend.expectDELETE(expectedUrl);
 			category.favourite = true;
-			categoryModel.toggleFavourite(category).should.eventually.equal(false);
+			categoryModel.toggleFavourite(category).then((favourite: boolean): Chai.Assertion => favourite.should.be.false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /categories/{id}/favourite when the category is favourited", (): void => {
-			$httpBackend.expectPUT(/categories\/1\/favourite$/u);
-			categoryModel.toggleFavourite(category).should.eventually.equal(true);
+			$httpBackend.expectPUT(expectedUrl);
+			categoryModel.toggleFavourite(category).then((favourite: boolean): Chai.Assertion => favourite.should.be.true);
 			$httpBackend.flush();
 		});
 	});

@@ -79,7 +79,7 @@ describe("AccountEditController", (): void => {
 			accountModel.all.should.have.been.called;
 		});
 
-		it("should return a filtered & limited list of asset accounts", (): Chai.PromisedAssertion => accountEditController.accounts("b", 2).should.eventually.deep.equal([
+		it("should return a filtered & limited list of asset accounts", async (): Promise<Chai.Assertion> => (await accountEditController.accounts("b", 2)).should.deep.equal([
 			createAccount({ id: 4, name: "ba", account_type: "asset" }),
 			createAccount({ id: 5, name: "ab", account_type: "asset" })
 		]));
