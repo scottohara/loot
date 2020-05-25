@@ -1,4 +1,4 @@
-import { Account } from "accounts/types";
+import { Account } from "./types";
 
 export const accountTypeTables = "table.accounts.table.table-striped";
 export const accountType = `${accountTypeTables} > thead > tr > th`;

@@ -2,7 +2,7 @@ import {
 	CategoryDirection,
 	CategoryDirectionLabel
 } from "./types";
-import { DIRECTION_INFLOW } from "categories";
+import { DIRECTION_INFLOW } from "./index";
 
 export const categoryDeleteForm = "form[name=categoryForm]";
 export const categoryDeleteHeading = `${categoryDeleteForm} > div.modal-header > h4`;

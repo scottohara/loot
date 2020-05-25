@@ -5,7 +5,7 @@ import {
 	loginForm,
 	notLoggedInMessage,
 	populateFormWith
-} from "authentication/edit";
+} from "../../support/authentication/edit";
 
 describe("Authentication Edit", (): void => {
 	beforeEach((): void => {

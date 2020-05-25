@@ -1,10 +1,10 @@
-import "accounts/commands";
-import "authentication/commands";
-import "categories/commands";
-import "payees/commands";
-import "schedules/commands";
-import "securities/commands";
-import "transactions/commands";
+import "./accounts/commands";
+import "./authentication/commands";
+import "./categories/commands";
+import "./payees/commands";
+import "./schedules/commands";
+import "./securities/commands";
+import "./transactions/commands";
 
 // Clear the login state
 beforeEach((): Cypress.Chainable<Window> => cy.window().then((win: Window): void => win.sessionStorage.clear()));

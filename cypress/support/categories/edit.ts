@@ -1,7 +1,7 @@
 import {
 	DIRECTION_INFLOW,
 	DIRECTION_OUTFLOW
-} from "categories/index";
+} from "./index";
 import { Category } from "./types";
 
 export const categoryEditForm = "form[name=categoryForm]";

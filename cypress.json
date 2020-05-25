@@ -1,7 +1,9 @@
 {
 	"baseUrl": "http://localhost:5000",
+	"pluginsFile": "cypress/plugins/index.ts",
 	"supportFile": "cypress/support/index.ts",
 	"nodeVersion": "system",
 	"viewportHeight": 800,
-	"viewportWidth": 1200
+	"viewportWidth": 1200,
+	"chromeWebSecurity": false
 }

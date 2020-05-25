@@ -9,17 +9,17 @@ import {
 	scheduleSubtransactionsTableRows,
 	scheduleSubtransactionsToggleButton,
 	schedulesTableRows
-} from "schedules/index";
+} from "../../support/schedules/index";
 import {
 	scheduleDeleteForm,
 	scheduleDeleteHeading
-} from "schedules/delete";
+} from "../../support/schedules/delete";
 import {
 	scheduleEditForm,
 	scheduleEditHeading
-} from "schedules/edit";
-import { Schedule } from "schedules/types";
-import { testNavigableTable } from "og-components/og-table-navigable";
+} from "../../support/schedules/edit";
+import { Schedule } from "../../support/schedules/types";
+import { testNavigableTable } from "../../support/og-components/og-table-navigable";
 
 describe("Schedule Index", (): void => {
 	let expected: Schedule[];

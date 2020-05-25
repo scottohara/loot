@@ -8,7 +8,7 @@ import {
 	getValuesFrom,
 	lastParentCategory,
 	lastSubcategory
-} from "categories/index";
+} from "../../support/categories/index";
 import {
 	cancelButton,
 	categoryEditForm,
@@ -17,8 +17,8 @@ import {
 	invalidateForm,
 	populateFormWith,
 	saveButton
-} from "categories/edit";
-import { Category } from "categories/types";
+} from "../../support/categories/edit";
+import { Category } from "../../support/categories/types";
 
 describe("Category Edit", (): void => {
 	let	expected: Category,

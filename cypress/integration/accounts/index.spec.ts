@@ -1,15 +1,15 @@
 import {
 	Account,
 	AccountType
-} from "accounts/types";
+} from "../../support/accounts/types";
 import {
 	accountDeleteForm,
 	accountDeleteHeading
-} from "accounts/delete";
+} from "../../support/accounts/delete";
 import {
 	accountEditForm,
 	accountEditHeading
-} from "accounts/edit";
+} from "../../support/accounts/edit";
 import {
 	accountName,
 	accountType,
@@ -27,11 +27,11 @@ import {
 	negativeBalanceTableRows,
 	negativeTableTotals,
 	negativeTotal
-} from "accounts/index";
+} from "../../support/accounts/index";
 import {
 	transactionsIndexHeading,
 	transactionsTable
-} from "transactions";
+} from "../../support/transactions";
 
 describe("Account Index", (): void => {
 	let expected: { accountTypes: AccountType[]; total: string; },

@@ -2,7 +2,7 @@ import {
 	Transaction,
 	TransactionEdit,
 	TransactionsContext
-} from "transactions/types";
+} from "../../support/transactions/types";
 import {
 	cancelButton,
 	invalidateForm,
@@ -10,7 +10,7 @@ import {
 	saveButton,
 	transactionEditForm,
 	transactionEditHeading
-} from "transactions/edit";
+} from "../../support/transactions/edit";
 import {
 	checkRowMatches,
 	checkSubtransactionRowValues,
@@ -19,7 +19,7 @@ import {
 	transactionSubtransactionsToggleButton,
 	transactionsClosingBalance,
 	transactionsTableRows
-} from "transactions/index";
+} from "../../support/transactions/index";
 import {
 	lightFormat,
 	startOfDay

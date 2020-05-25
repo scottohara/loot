@@ -1,7 +1,7 @@
 import {
 	Schedule,
 	ScheduleEdit
-} from "schedules/types";
+} from "../../support/schedules/types";
 import {
 	addDays,
 	lightFormat,
@@ -14,7 +14,7 @@ import {
 	saveButton,
 	scheduleEditForm,
 	scheduleEditHeading
-} from "schedules/edit";
+} from "../../support/schedules/edit";
 import {
 	checkRowMatches,
 	checkSubtransactionRowValues,
@@ -22,7 +22,7 @@ import {
 	scheduleSubtransactionsTableRows,
 	scheduleSubtransactionsToggleButton,
 	schedulesTableRows
-} from "schedules/index";
+} from "../../support/schedules/index";
 
 describe("Schedule Edit", (): void => {
 	let	expected: ScheduleEdit,

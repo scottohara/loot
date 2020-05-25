@@ -8,7 +8,7 @@ import {
 	deleteButton,
 	getDirectionLabel,
 	warningMessage
-} from "categories/delete";
+} from "../../support/categories/delete";
 import {
 	categoriesTableRows,
 	checkRowMatches,
@@ -20,8 +20,8 @@ import {
 	lastSubcategory,
 	secondLastSubcategory,
 	secondSubcategory
-} from "categories/index";
-import { Category } from "categories/types";
+} from "../../support/categories/index";
+import { Category } from "../../support/categories/types";
 
 describe("Category Delete", (): void => {
 	let originalRowCount: number;

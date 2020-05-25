@@ -3,21 +3,21 @@ import {
 	editButton,
 	favouriteButton,
 	payeesTableRows
-} from "payees/index";
+} from "../../support/payees/index";
 import {
 	payeeDeleteForm,
 	payeeDeleteHeading
-} from "payees/delete";
+} from "../../support/payees/delete";
 import {
 	payeeEditForm,
 	payeeEditHeading
-} from "payees/edit";
+} from "../../support/payees/edit";
 import {
 	transactionsIndexHeading,
 	transactionsTable
-} from "transactions/index";
-import { Payee } from "payees/types";
-import { testNavigableTable } from "og-components/og-table-navigable";
+} from "../../support/transactions/index";
+import { Payee } from "../../support/payees/types";
+import { testNavigableTable } from "../../support/og-components/og-table-navigable";
 
 describe("Payee Index", (): void => {
 	let expected: Payee[];

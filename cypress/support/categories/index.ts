@@ -1,7 +1,7 @@
 import {
 	Category,
 	CategoryDirection
-} from "categories/types";
+} from "./types";
 
 const subcategory = ":has(> td.subcategory)",
 			categoryDirection = "td.direction > i",

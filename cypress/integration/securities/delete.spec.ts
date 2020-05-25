@@ -5,13 +5,13 @@ import {
 	securityDeleteHeading,
 	securityToDeleteCode,
 	securityToDeleteName
-} from "securities/delete";
+} from "../../support/securities/delete";
 import {
 	checkRowMatches,
 	getValuesFrom,
 	securitiesTableRows
-} from "securities/index";
-import { Security } from "securities/types";
+} from "../../support/securities/index";
+import { Security } from "../../support/securities/types";
 
 describe("Security Delete", (): void => {
 	let	originalRowCount: number,

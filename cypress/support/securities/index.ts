@@ -1,4 +1,4 @@
-import { Security } from "securities/types";
+import { Security } from "./types";
 
 const securityName = "td:nth-of-type(1)",
 			securityCode = "td:nth-of-type(2)",

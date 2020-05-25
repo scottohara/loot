@@ -1,7 +1,7 @@
 import {
 	Action,
 	OgTableNavigable
-} from "og-components/types";
+} from "./types";
 
 export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 	describe("table navigation", (): void => {
