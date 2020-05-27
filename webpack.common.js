@@ -124,22 +124,22 @@ const	entry = {
 			}),
 
 			// Creates index.html with the bundled resources
-			createIndexHtml = new HtmlWebpackPlugin({ template: "./src/index.html" }),
+			createIndexHtml = new HtmlWebpackPlugin({ scriptLoading: "defer" }),
 
 			// Copies static resources to the build directory
-			copyStaticAssets = new CopyWebpackPlugin([
-				"*.html",
-				"robots.txt"
-			], {
-				context: "./src",
-				ignore: ["index.html"]
+			copyStaticAssets = new CopyWebpackPlugin({
+				patterns: [
+					{ from: "*.html", context: "./src", globOptions: { ignore: ["index.html"] } },
+					{ from: "robots.txt", context: "./src" }
+				]
 			}),
 
 			// Generate a service worker to precache static assets
 			generateServiceWorker = new GenerateSW({
 				cacheId: packageJson.name,
 				skipWaiting: true,
-				clientsClaim: true
+				clientsClaim: true,
+				dontCacheBustURLsMatching: /.+-[a-f0-9]{6}\..+/u
 			}),
 
 			// Default config
