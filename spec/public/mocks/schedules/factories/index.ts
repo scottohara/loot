@@ -19,7 +19,6 @@ import {
 
 function createSchedule(props: Partial<Schedule> & {transaction_date: Date;} = { transaction_date: new Date() }): Schedule & {transaction_date: Date;} {
 	return {
-		transaction_date: new Date(),
 		frequency: "Monthly" as ScheduleFrequency,
 		next_due_date: addDays(startOfDay(new Date()), 3),
 		auto_enter: false,
