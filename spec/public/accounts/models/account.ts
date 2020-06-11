@@ -317,7 +317,7 @@ describe("accountModel", (): void => {
 	});
 
 	describe("removeRecent", (): void => {
-		beforeEach((): void => accountModel.removeRecent(account.id));
+		beforeEach((): void => accountModel.removeRecent(Number(account.id)));
 
 		it("should remove the account from the recent list", (): void => {
 			ogLruCache.remove.should.have.been.calledWith(account.id);

@@ -16,6 +16,10 @@ const LRU_CAPACITY = 10;
 export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>, Persistable<Payee> {
 	public recent: OgCacheEntry[];
 
+	public readonly LRU_LOCAL_STORAGE_KEY = "lootRecentPayees";
+
+	public readonly type = "payee";
+
 	private readonly cache: angular.ICacheObject;
 
 	private readonly lruCache: OgLruCache;
@@ -35,15 +39,6 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 		const recentPayees: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
 		return JSON.parse(null === recentPayees ? "[]" : recentPayees) as OgCacheEntry[];
-	}
-
-	public get LRU_LOCAL_STORAGE_KEY(): string {
-		return "lootRecentPayees";
-	}
-
-	// Returns the model type
-	public get type(): string {
-		return "payee";
 	}
 
 	// Returns the API path
@@ -100,7 +95,7 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 		// Flush the $http cache
 		this.flush();
 
-		return this.$http.delete(this.path(payee.id)).then((): void => this.removeRecent(payee.id));
+		return this.$http.delete(this.path(payee.id)).then((): void => this.removeRecent(Number(payee.id)));
 	}
 
 	// Favourites/unfavourites a payee

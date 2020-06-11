@@ -128,7 +128,7 @@ export function populateFormWith(schedule: ScheduleEdit): void {
 		cy.get(estimateCheckbox).check();
 	}
 
-	if (true === isAutoEntered) {
+	if (isAutoEntered) {
 		cy.get(autoEnteredCheckbox).check();
 	}
 }

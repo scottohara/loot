@@ -7,7 +7,7 @@ import { Payee } from "payees/types";
 import { Security } from "securities/types";
 
 export type TransactionFetchDirection = "prev" | "next";
-export type TransactionStatus = "" | "Unreconciled" | "Cleared" | "Reconciled";
+export type TransactionStatus = "" | "Unreconciled" | "Cleared" | "Reconciled" | null;
 export type TransactionDirection = "inflow" | "outflow";
 export type TransactionFlag = string | null | undefined;
 

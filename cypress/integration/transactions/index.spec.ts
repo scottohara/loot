@@ -265,21 +265,21 @@ describe("Transaction Index", (): void => {
 			it("should display the context name", (): Cypress.Chainable<JQuery> => cy.get(transactionsIndexHeading).should("have.text", heading));
 
 			it("should display a row for each transaction", (): void => {
-				if (0 === transactions.length) {
-					cy.get(transactionsTableRows).should("not.exist");
-				} else {
+				if (transactions.length) {
 					// Number of rows
 					cy.get(transactionsTableRows).should("have.length", transactions.length);
 
 					cy.get(transactionsTableRows).each((row: HTMLTableRowElement, transactionsIndex: number): void => {
 						cy.wrap(row).within((): void => checkRowMatches(transactions[transactionsIndex]));
 					});
+				} else {
+					cy.get(transactionsTableRows).should("not.exist");
 				}
 			});
 
 			describe("subtransactions", (): void => {
 				it("should display the subtransactions", (): void => {
-					if (transactions.length > 0) {
+					if (transactions.length) {
 						cy.get(transactionsTableRows).each((row: HTMLTableRowElement, transactionsIndex: number): void => {
 							const { subtransactions } = transactions[transactionsIndex];
 
@@ -300,7 +300,7 @@ describe("Transaction Index", (): void => {
 				});
 
 				it("should hide the subtransactions", (): void => {
-					if (transactions.length > 0) {
+					if (transactions.length) {
 						cy.get(transactionsTableRows).each((row: HTMLTableRowElement, transactionIndex: number): void => {
 							const { subtransactions } = transactions[transactionIndex];
 
@@ -320,7 +320,7 @@ describe("Transaction Index", (): void => {
 
 			it("should display the closing balance", (): Cypress.Chainable<JQuery> => cy.get(transactionsClosingBalance).should("contain.text", closingBalance));
 
-			if (0 === index) {
+			if (!index) {
 				testNavigableTable({
 					rows: transactionsTableRows,
 					actions: {

@@ -4,7 +4,7 @@ import PayeeModel from "payees/models/payee";
 import SecurityModel from "securities/models/security";
 
 export interface Entity {
-	id: number;
+	id?: number;
 	name: string;
 	closing_balance: number;
 }
@@ -14,14 +14,14 @@ export type NewOrExistingEntity = Entity | string | undefined;
 export type EntityModel = AccountModel | PayeeModel | CategoryModel | SecurityModel;
 
 export interface Cacheable<T> {
-	LRU_LOCAL_STORAGE_KEY: string;
+	readonly LRU_LOCAL_STORAGE_KEY: string;
 	flush: (id?: number) => void;
 	addRecent: (entity: T) => void;
 	removeRecent: (id: number) => void;
 }
 
 export interface Favouritable<T> {
-	toggleFavourite(entity: T): angular.IPromise<boolean>;
+	toggleFavourite: (entity: T) => angular.IPromise<boolean>;
 }
 
 export interface Persistable<T> {

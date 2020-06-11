@@ -47,7 +47,7 @@ describe("TransactionFlagController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionFlagController.errorMessage = "error message";
 			transactionFlagController.save();
-			(null === transactionFlagController.errorMessage).should.be.true;
+			(null === transactionFlagController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should flag the transaction", (): void => {
@@ -78,7 +78,7 @@ describe("TransactionFlagController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionFlagController.errorMessage = "error message";
 			transactionFlagController.deleteFlag();
-			(null === transactionFlagController.errorMessage).should.be.true;
+			(null === transactionFlagController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should unflag the transaction", (): void => {

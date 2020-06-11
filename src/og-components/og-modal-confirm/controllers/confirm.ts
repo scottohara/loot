@@ -5,7 +5,7 @@ export default class OgModalConfirmController {
 	public readonly confirm: OgModalConfirm;
 
 	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService, confirm: OgModalConfirm) {
-		this.confirm = angular.extend({ noButtonStyle: "default", yesButtonStyle: "primary" }, confirm);
+		this.confirm = angular.extend({ noButtonStyle: "default", yesButtonStyle: "primary" }, confirm) as OgModalConfirm;
 	}
 
 	// Yes response

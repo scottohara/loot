@@ -17,9 +17,15 @@ const LRU_CAPACITY = 10;
 export default class AccountModel implements Cacheable<Account>, Favouritable<Account>, Persistable<Account> {
 	public recent: OgCacheEntry[];
 
+	public readonly LRU_LOCAL_STORAGE_KEY = "lootRecentAccounts";
+
+	public readonly type = "account";
+
 	private readonly cache: angular.ICacheObject;
 
 	private readonly lruCache: OgLruCache;
+
+	private readonly UNRECONCILED_ONLY_LOCAL_STORAGE_KEY = "lootUnreconciledOnly-";
 
 	public constructor(private readonly $http: angular.IHttpService,
 						$cacheFactory: angular.ICacheFactoryService,
@@ -33,23 +39,10 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 		this.recent = this.lruCache.list;
 	}
 
-	private get UNRECONCILED_ONLY_LOCAL_STORAGE_KEY(): string {
-		return "lootUnreconciledOnly-";
-	}
-
 	private get recentAccounts(): OgCacheEntry[] {
 		const recentAccounts: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
 		return JSON.parse(null === recentAccounts ? "[]" : recentAccounts) as OgCacheEntry[];
-	}
-
-	public get LRU_LOCAL_STORAGE_KEY(): string {
-		return "lootRecentAccounts";
-	}
-
-	// Returns the model type
-	public get type(): string {
-		return "account";
 	}
 
 	// Returns the API path
@@ -97,7 +90,7 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 		// Flush the $http cache
 		this.flush();
 
-		return this.$http.delete(this.path(account.id)).then((): void => this.removeRecent(account.id));
+		return this.$http.delete(this.path(account.id)).then((): void => this.removeRecent(Number(account.id)));
 	}
 
 	// Updates all pending transactions for an account to cleared

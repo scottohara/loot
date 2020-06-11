@@ -87,7 +87,7 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 			beforeEach((): Action => (action = "edit"));
 
 			if (undefined !== mouseAction) {
-				it(`should display the ${headingText} view when the ${mouseAction.name}`, (): void => mouseAction?.perform(0));
+				it(`should display the ${headingText} view when the ${mouseAction.name}`, (): void => mouseAction.perform(0));
 			}
 
 			it(`should display the ${headingText} view when the CTRL+E keys are pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{ctrl}e"));

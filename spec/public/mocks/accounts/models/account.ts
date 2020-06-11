@@ -51,13 +51,13 @@ export default class AccountModelMockProvider implements Mock<AccountModelMock> 
 				const account: Account = accountsMockProvider.$get()[id - 1];
 
 				// Return a promise-like object that resolves with the account
-				return $q.promisify({ response: account })();
+				return $q.promisify({ response: account })() as SinonStub;
 			},
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
 			reconcile: $q.promisify(),
 			toggleFavourite(account: Account): SinonStub {
-				return $q.promisify({ response: !account.favourite })();
+				return $q.promisify({ response: !account.favourite })() as SinonStub;
 			},
 			isUnreconciledOnly: sinon.stub().returns(true),
 			unreconciledOnly: sinon.stub(),

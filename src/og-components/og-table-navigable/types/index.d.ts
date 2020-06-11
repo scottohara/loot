@@ -5,13 +5,13 @@ export type OgTableRowAction = (row: JQuery<Element>) => void;
 export type OgTableMovementKeys = -10 | 10 | -1 | 1;
 
 export interface OgTableActions {
+	[action: string]: OgTableActionCallback | undefined | null;
 	selectAction: OgTableActionCallback;
 	editAction: OgTableActionCallback;
 	insertAction: OgTableActionCallback;
 	deleteAction: OgTableActionCallback;
 	cancelAction?: OgTableActionCallback;
 	focusAction: OgTableActionCallback;
-	[action: string]: OgTableActionCallback | undefined | null;
 }
 
 export type OgTableActionHandlers = OgTableActions & {focusRow: OgTableActionCallback;};

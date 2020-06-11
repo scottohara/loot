@@ -94,7 +94,7 @@ describe("lootStatesProvider", (): void => {
 
 		it("should be abstract", (): Chai.Assertion => (stateConfig.abstract as boolean).should.be.true);
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Welcome"));
+		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Welcome") as Chai.Assertion);
 
 		it("should resolve the authentication status of a logged in user", (): void => {
 			resolvedAuthenticated = $injector.invoke((stateConfig.resolve as {authenticated: () => boolean;}).authenticated);
@@ -129,7 +129,7 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("accounts/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Accounts"));
+		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Accounts") as Chai.Assertion);
 
 		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/accounts"));
 
@@ -177,7 +177,7 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Account Transactions"));
+					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Account Transactions") as Chai.Assertion);
 
 					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/accounts/1/transactions"));
 
@@ -243,7 +243,7 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("schedules/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Schedules"));
+		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Schedules") as Chai.Assertion);
 
 		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/schedules"));
 
@@ -294,7 +294,7 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("payees/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Payees"));
+		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Payees") as Chai.Assertion);
 
 		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/payees"));
 
@@ -342,7 +342,7 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Payee Transactions"));
+					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Payee Transactions") as Chai.Assertion);
 
 					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/payees/1/transactions"));
 
@@ -407,7 +407,7 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("categories/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Categories"));
+		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Categories") as Chai.Assertion);
 
 		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/categories"));
 
@@ -455,7 +455,7 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Category Transactions"));
+					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Category Transactions") as Chai.Assertion);
 
 					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/categories/1/transactions"));
 
@@ -520,7 +520,7 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("securities/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Securities"));
+		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Securities") as Chai.Assertion);
 
 		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/securities"));
 
@@ -568,7 +568,7 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Security Transactions"));
+					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Security Transactions") as Chai.Assertion);
 
 					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/securities/1/transactions"));
 
@@ -637,7 +637,7 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("transactions/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Search Transactions"));
+		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Search Transactions") as Chai.Assertion);
 
 		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal(`#!/transactions?query=${query}`));
 
@@ -670,7 +670,7 @@ describe("lootStatesProvider", (): void => {
 				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, { $state: previousState });
 				resolvedContext = $injector.invoke(($state.current.resolve as {context: () => string;}).context);
 				resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { context: resolvedContext });
-				$injector.invoke($state.current.onEnter as Function, null, { previousState: resolvedPreviousState });
+				$injector.invoke($state.current.onEnter as () => void, null, { previousState: resolvedPreviousState });
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -680,7 +680,7 @@ describe("lootStatesProvider", (): void => {
 			it("should not resolve the previous state if transitioning from a different query", (): void => {
 				previousState.includes.withArgs("root.transactions").returns(true);
 				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, { $state: previousState });
-				(null === resolvedPreviousState).should.be.true;
+				(null === resolvedPreviousState as angular.ui.IState | null).should.be.true;
 			});
 
 			it("should resolve the context model", (): Chai.Assertion => (null === $injector.invoke(($state.current.resolve as {contextModel: () => EntityModel | null;}).contextModel)).should.be.true);
@@ -695,7 +695,7 @@ describe("lootStatesProvider", (): void => {
 			it("should set the previous state property on the query service on enter", (): Chai.Assertion => (queryService.previousState as angular.ui.IState).should.deep.equal(resolvedPreviousState));
 
 			it("should not update the previous state property on the query service on enter if the previous state did not resolve", (): void => {
-				$injector.invoke($state.current.onEnter as Function, null, { previousState: null });
+				$injector.invoke($state.current.onEnter as () => void, null, { previousState: null });
 				(queryService.previousState as angular.ui.IState).should.deep.equal(resolvedPreviousState);
 			});
 

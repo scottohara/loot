@@ -20,8 +20,8 @@ describe("LayoutController", (): void => {
 			authenticationModel: AuthenticationModelMock,
 			ogTableNavigableService: OgTableNavigableService,
 			authenticated: boolean,
-			mockJQueryInstance: MockJQueryInstance,
-			realJQueryInstance: JQuery;
+			mockJqueryInstance: MockJQueryInstance,
+			realJqueryInstance: JQuery;
 
 	class MockJQueryInstance {
 		private readonly events: {[event: string]: () => void;} = {};
@@ -45,15 +45,15 @@ describe("LayoutController", (): void => {
 		ogTableNavigableService = _ogTableNavigableService_;
 		authenticated = _authenticated_;
 
-		mockJQueryInstance = new MockJQueryInstance();
-		realJQueryInstance = $window.$;
+		mockJqueryInstance = new MockJQueryInstance();
+		realJqueryInstance = $window.$ as JQuery;
 		$window.$ = sinon.stub();
-		$window.$.withArgs("#transactionSearch").returns(mockJQueryInstance);
+		$window.$.withArgs("#transactionSearch").returns(mockJqueryInstance);
 
 		layoutController = controllerTest("LayoutController") as LayoutController;
 	}));
 
-	afterEach((): JQuery => ($window.$ = realJQueryInstance));
+	afterEach((): JQuery => ($window.$ = realJqueryInstance));
 
 	it("should make the authentication status available to the view", (): Chai.Assertion => layoutController.authenticated.should.equal(authenticated));
 
@@ -182,7 +182,7 @@ describe("LayoutController", (): void => {
 			layoutController = controllerTest("LayoutController") as LayoutController;
 		});
 
-		it("should register a start transition hook", (): Chai.Assertion => $transitions.onStart.should.have.been.calledWith({}, sinon.match.func));
+		it("should register a start transition hook", (): Chai.Assertion => $transitions.onStart.should.have.been.calledWith({}, sinon.match.func) as Chai.Assertion);
 
 		it("should deregister the start transition hook when the scope is destroyed", (): void => {
 			(layoutController as angular.IController).$scope.$emit("$destroy");
@@ -209,7 +209,7 @@ describe("LayoutController", (): void => {
 		beforeEach((): SinonStub => sinon.stub(layoutController, "checkIfSearchCleared" as keyof LayoutController));
 
 		it("should check if the search field was cleared", (): void => {
-			mockJQueryInstance["events"].search();
+			mockJqueryInstance["events"].search();
 			layoutController["checkIfSearchCleared"].should.have.been.called;
 		});
 	});

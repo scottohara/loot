@@ -1,4 +1,4 @@
 export interface OgCacheEntry {
-	id: number;
+	id?: number;
 	name: string;
 }

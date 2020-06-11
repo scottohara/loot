@@ -15,7 +15,7 @@ export default class OgTableNavigableDirective {
 			},
 			link(scope: OgTableNavigableScope, iElement: JQuery<Element>): void {
 				// Helper function to return all TR elements in the table body
-				scope.getRows = (): JQuery<Element> => $window.$(iElement).children("tbody").children("tr");
+				scope.getRows = (): JQuery<Element> => $window.$(iElement).children("tbody").children("tr") as JQuery<Element>;
 
 				// Helper function to return the TR element for the specified index
 				scope.getRowAtIndex = (index: number): JQuery<Element> => scope.getRows().eq(index);
@@ -41,7 +41,7 @@ export default class OgTableNavigableDirective {
 
 				// Highlight the focussed row in the table
 				scope.highlightRow = (row: JQuery<Element>): void => {
-					const	focusClass: "warning" = "warning";
+					const	focusClass = "warning";
 
 					// Clear highlighting on any previously focussed row
 					scope.getRows().removeClass(focusClass);
@@ -54,7 +54,7 @@ export default class OgTableNavigableDirective {
 				scope.scrollToRow = (row: JQuery<Element>): void => {
 					// Get the top/bottom of the focussed row, and the top/bottom of the viewport
 					const	rowOffset: JQueryCoordinates | undefined = row.offset(),
-								viewTop: number = $window.$(document).scrollTop(),
+								viewTop = Number($window.$(document).scrollTop()),
 								rowTop: number = undefined === rowOffset ? viewTop : rowOffset.top,
 								rowBottom: number = rowTop + Number(row.height()),
 								viewBottom: number = viewTop + Number($window.$(window).height()),
@@ -91,14 +91,14 @@ export default class OgTableNavigableDirective {
 								targetIndex: number = checkTargetIndex(scope.focussedRow + offset, totalRows),
 								targetRow: JQuery<Element> = scope.getRowAtIndex(targetIndex);
 
-					if (targetRow.length > 0) {
+					if (targetRow.length) {
 						scope.focusRow(targetRow);
 					}
 				};
 
 				// Helper function to determine the parent TR element (that is a direct descendent of the element for this directive) where an event occurred
 				function closestRow(target: EventTarget): JQuery<Element> {
-					return $window.$(target).closest("[og-table-navigable] > tbody > tr");
+					return $window.$(target).closest("[og-table-navigable] > tbody > tr") as JQuery<Element>;
 				}
 
 				// Declare a click handler to focus a row by clicking it
@@ -107,7 +107,7 @@ export default class OgTableNavigableDirective {
 						// The event target could be any element in the table (including nested tables), so we need the closest row
 						const clickedRow: JQuery<Element> = closestRow(event.target);
 
-						if (clickedRow.length > 0) {
+						if (clickedRow.length) {
 							// Focus the clicked row
 							scope.focusRow(clickedRow);
 						}
@@ -130,7 +130,7 @@ export default class OgTableNavigableDirective {
 						// The event target could be any element in the table (including nested tables), so we need the closest row
 						const clickedRow: JQuery<Element> = closestRow(event.target);
 
-						if (clickedRow.length > 0) {
+						if (clickedRow.length) {
 							// Invoke the select action for the clicked row
 							scope.handlers.selectAction(angular.element(clickedRow).scope<angular.IRepeatScope>().$index);
 						}
@@ -142,7 +142,7 @@ export default class OgTableNavigableDirective {
 					// Focus the target row (if not already focussed)
 					const targetRow: JQuery<Element> = scope.getRowAtIndex(index);
 
-					if (targetRow.length > 0) {
+					if (targetRow.length) {
 						if (scope.focussedRow === index) {
 							// Row is already focussed, just ensure it's highlighted
 							scope.highlightRow(targetRow);
@@ -219,7 +219,7 @@ export default class OgTableNavigableDirective {
 						// Check if the key pressed was a CTRL action key
 						if (event.ctrlKey && Object.getOwnPropertyDescriptor(CTRL_ACTION_KEYS, event.keyCode)) {
 							// If an action is defined, invoke it for the focussed row
-							if (undefined !== CTRL_ACTION_KEYS[event.keyCode]) {
+							if (undefined !== CTRL_ACTION_KEYS[event.keyCode] as OgTableActionCallback | undefined) {
 								CTRL_ACTION_KEYS[event.keyCode](Number(scope.focussedRow));
 							}
 							event.preventDefault();

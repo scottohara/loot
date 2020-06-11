@@ -29,7 +29,7 @@ describe("CategoryDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			categoryDeleteController.errorMessage = "error message";
 			categoryDeleteController.deleteCategory();
-			(null === categoryDeleteController.errorMessage).should.be.true;
+			(null === categoryDeleteController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should delete the category", (): void => {

@@ -20,6 +20,7 @@
 			]
 		},
 		"sourceMap": true,
+		"strictBindCallApply": true,
 		"strictPropertyInitialization": true,
 		"strictNullChecks": true,
 		"target": "ES2020",

@@ -10,7 +10,7 @@ export interface CategoryModelMock {
 	destroy: SinonStub;
 	flush: SinonStub;
 	addRecent: SinonStub;
-	path(id: number): string;
-	find(id: number): SinonStub;
-	toggleFavourite(category: Category): SinonStub;
+	path: (id: number) => string;
+	find: (id: number) => SinonStub;
+	toggleFavourite: (category: Category) => SinonStub;
 }

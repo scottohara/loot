@@ -138,7 +138,7 @@ describe("Account Index", (): void => {
 		let view: string,
 				heading: string,
 				headingText: string,
-				url: RegExp;
+				url: RegExp | undefined;
 
 		describe("insert", (): void => {
 			beforeEach((): void => {

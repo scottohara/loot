@@ -20,7 +20,7 @@ export default class AccountEditController {
 						private readonly limitToFilter: angular.IFilterLimitTo,
 						private readonly accountModel: AccountModel,
 						account: Account | undefined) {
-		this.account = angular.extend({ opening_balance: 0 }, account);
+		this.account = angular.extend({ opening_balance: 0 }, account) as Account;
 		this.mode = undefined === account ? "Add" : "Edit";
 
 		// Capitalise the account type and status

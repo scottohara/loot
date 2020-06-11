@@ -29,7 +29,7 @@ describe("SecurityDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			securityDeleteController.errorMessage = "error message";
 			securityDeleteController.deleteSecurity();
-			(null === securityDeleteController.errorMessage).should.be.true;
+			(null === securityDeleteController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should delete the security", (): void => {

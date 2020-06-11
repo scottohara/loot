@@ -34,8 +34,8 @@ export function getValuesFrom(row: JQuery<HTMLTableRowElement>): Schedule {
 		primaryAccountName: row.find(schedulePrimaryAccountName).text().trim(),
 		payeeOrSecurityName: row.find(schedulePayeeOrSecurityName).text().trim(),
 		categoryName: row.find(scheduleCategoryName).text().trim(),
-		subcategoryOrAccountName: subcategoryOrAccount.length > 0 ? subcategoryOrAccount.text().trim() : undefined,
-		subtransactions: row.find(scheduleSubtransactionsToggleButton).length > 0 ? [] : undefined,
+		subcategoryOrAccountName: subcategoryOrAccount.length ? subcategoryOrAccount.text().trim() : undefined,
+		subtransactions: row.find(scheduleSubtransactionsToggleButton).length ? [] : undefined,
 		memo: row.find(scheduleMemo).text().trim(),
 		frequency: row.find(scheduleFrequency).text().trim(),
 		creditAmount: row.find(scheduleCreditAmount).text().trim(),
@@ -68,7 +68,7 @@ export function checkRowMatches(expectedValues: Schedule | ScheduleEdit): void {
 	} = expectedValues;
 
 	cy.get(scheduleNextDueDate).should("contain.text", nextDueDate);
-	cy.get(scheduleIsAutoEntered).should(`${true === isAutoEntered ? "" : "not."}be.visible`);
+	cy.get(scheduleIsAutoEntered).should(`${isAutoEntered ? "" : "not."}be.visible`);
 	cy.get(schedulePrimaryAccountName).should("have.text", primaryAccountName);
 	cy.get(schedulePayeeOrSecurityName).should("have.text", payeeOrSecurityName);
 	cy.get(scheduleCategoryName).should("have.text", categoryName);

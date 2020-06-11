@@ -20,7 +20,7 @@ export default class OgInputCalculatorDirective {
 						templateUrl: OgInputCalculatorView,
 						link(scope: OgInputCalculatorScope, iElement: JQuery<Element>, iAttrs: angular.IAttributes, controllers: angular.IController[]): void {
 							// Get the position of the popover, or default to left if unspecified
-							scope.position = undefined === iAttrs.ogInputCalculator || "" === iAttrs.ogInputCalculator ? "left" : iAttrs.ogInputCalculator;
+							scope.position = undefined === iAttrs.ogInputCalculator || "" === iAttrs.ogInputCalculator ? "left" : String(iAttrs.ogInputCalculator);
 
 							const [ngModel] = controllers,
 										ogInputCurrency = 1,
@@ -40,18 +40,18 @@ export default class OgInputCalculatorDirective {
 											}
 										};
 
-							scope.ogInput = null === controllers[ogInputCurrency] ? controllers[ogInputNumber] as OgInputNumberController : controllers[ogInputCurrency] as OgInputCurrencyController;
+							scope.ogInput = null === controllers[ogInputCurrency] as angular.IController | null ? controllers[ogInputNumber] as OgInputNumberController : controllers[ogInputCurrency] as OgInputCurrencyController;
 
 							// Push an operation onto the stack
 							scope.push = (operand: number, operator: OgInputCalculatorOperator): void => {
 								// Push the operand on the stack
-								if (0 === scope.stack.length) {
+								if (scope.stack.length) {
+									scope.stack[scope.stack.length - 1].operand = operand;
+								} else {
 									scope.stack.push({ operand });
 
 									// Show the popover
 									$timeout((): boolean => angular.element(iElement)[0].dispatchEvent(new Event("showCalculator"))).catch(showError);
-								} else {
-									scope.stack[scope.stack.length - 1].operand = operand;
 								}
 
 								// Push the operator onto the stack
@@ -69,7 +69,7 @@ export default class OgInputCalculatorDirective {
 								// Make the current view value available on the scope
 								scope.current = scope.ogInput.rawToFormatted(Number(scope.result));
 
-								if (undefined !== scope.stack && scope.stack.length > 1) {
+								if (scope.stack.length > 1) {
 									scope.result = Number(scope.stack.reduce((memo: OgInputCalculatorOperation, operation: OgInputCalculatorOperation, index: number): OgInputCalculatorOperation => {
 										const result: OgInputCalculatorOperation & {operand: number;} = { operand: 0, ...memo };
 
@@ -95,7 +95,7 @@ export default class OgInputCalculatorDirective {
 												result.operand /= Number(operation.operand);
 												break;
 
-											// No default
+											default:
 										}
 
 										return result;
@@ -167,7 +167,7 @@ export default class OgInputCalculatorDirective {
 							}
 
 							function update(): void {
-								if (scope.stack.length > 0) {
+								if (scope.stack.length) {
 									scope.update();
 								}
 							}
@@ -175,12 +175,12 @@ export default class OgInputCalculatorDirective {
 							// Declare key handler to detect operators and actions
 							scope.keyHandler = (event: JQueryKeyEventObject): void => {
 								// Check if the key pressed was an action key, and there is a pending calculation (otherwise, let the event propagate)
-								if (!event.shiftKey && undefined !== Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length > 0) {
+								if (!event.shiftKey && undefined !== Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) && scope.stack.length) {
 									// Invoke the action
 									ACTION_KEYS[event.keyCode]();
 
 									// Select the new input value
-									$timeout((): void => $window.$(iElement).select()).catch(showError);
+									$timeout((): unknown => $window.$(iElement).select() as unknown).catch(showError);
 
 									// Swallow the event
 									event.preventDefault();

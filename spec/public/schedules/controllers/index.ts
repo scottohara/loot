@@ -79,7 +79,7 @@ describe("ScheduleIndexController", (): void => {
 
 	it("should not focus the schedule when a schedule id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.schedules.schedule" }, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.schedules.schedule" }, sinon.match.func) as Chai.Assertion);
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(scheduleIndexController as angular.IController).$scope.$emit("$destroy");

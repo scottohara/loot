@@ -157,7 +157,7 @@ export default class CategoryIndexController {
 				this.categories.sort(byDirectionAndName);
 
 				// Refocus the category
-				this.focusCategory(category.id);
+				this.focusCategory(Number(category.id));
 			})
 			.finally((): true => (this.ogTableNavigableService.enabled = true))
 			.catch(this.showError);
@@ -165,7 +165,7 @@ export default class CategoryIndexController {
 
 	public deleteCategory(index: number): void {
 		// Check if the category can be deleted
-		this.categoryModel.find(this.categories[index].id).then((category: Category): void => {
+		this.categoryModel.find(Number(this.categories[index].id)).then((category: Category): void => {
 			// Disable navigation on the table
 			this.ogTableNavigableService.enabled = false;
 
@@ -186,7 +186,7 @@ export default class CategoryIndexController {
 							message: "You must first delete these transactions, or reassign to another category before attempting to delete this category."
 						})
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			} else {
 				// Show the delete category modal
 				modalOptions = angular.extend({
@@ -196,7 +196,7 @@ export default class CategoryIndexController {
 					resolve: {
 						category: (): Category => this.categories[index]
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			}
 
 			// Show the modal

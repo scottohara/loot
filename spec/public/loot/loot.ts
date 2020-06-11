@@ -35,7 +35,7 @@ describe("loot", (): void => {
 	});
 
 	describe("run", (): void => {
-		it("should make jQuery available on the $window", (): Chai.Assertion => $window.$.should.deep.equal($));
+		it("should make jQuery available on the $window", (): Chai.Assertion => $window.$.should.deep.equal($) as Chai.Assertion);
 
 		it("should make the state configuration available on the $rootScope", (): Chai.Assertion => $rootScope.$state.should.deep.equal($state));
 

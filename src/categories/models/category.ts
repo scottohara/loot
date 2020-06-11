@@ -14,6 +14,10 @@ const LRU_CAPACITY = 10;
 export default class CategoryModel implements Cacheable<Category>, Favouritable<Category>, Persistable<Category> {
 	public recent: OgCacheEntry[];
 
+	public readonly LRU_LOCAL_STORAGE_KEY = "lootRecentCategories";
+
+	public readonly type = "category";
+
 	private readonly cache: angular.ICacheObject;
 
 	private readonly lruCache: OgLruCache;
@@ -33,15 +37,6 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 		const recentCategories: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
 		return JSON.parse(null === recentCategories ? "[]" : recentCategories) as OgCacheEntry[];
-	}
-
-	public get LRU_LOCAL_STORAGE_KEY(): string {
-		return "lootRecentCategories";
-	}
-
-	// Returns the model type
-	public get type(): string {
-		return "category";
 	}
 
 	// Returns the API path
@@ -92,7 +87,7 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 		// Flush the $http cache
 		this.flush();
 
-		return this.$http.delete(this.path(category.id)).then((): void => this.removeRecent(category.id));
+		return this.$http.delete(this.path(category.id)).then((): void => this.removeRecent(Number(category.id)));
 	}
 
 	// Favourites/unfavourites a category

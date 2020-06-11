@@ -46,7 +46,7 @@ describe("SecurityEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			securityEditController.errorMessage = "error message";
 			securityEditController.save();
-			(null === securityEditController.errorMessage).should.be.true;
+			(null === securityEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should save the security", (): void => {

@@ -11,7 +11,7 @@ export interface PayeeModelMock {
 	destroy: SinonStub;
 	flush: SinonStub;
 	addRecent: SinonStub;
-	path(id: number): string;
-	find(id: number): SinonStub;
-	toggleFavourite(payee: Payee): SinonStub;
+	path: (id: number) => string;
+	find: (id: number) => SinonStub;
+	toggleFavourite: (payee: Payee) => SinonStub;
 }

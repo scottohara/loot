@@ -19,7 +19,7 @@ export default class TransactionStatusDirective {
 						templateUrl: TransactionStatusView,
 						link(scope: TransactionStatusScope, iElement: JQuery<Element>): void {
 							// Set the current status & icon, calculate the next status
-							function setCurrentStatus(status: TransactionStatus | null): void {
+							function setCurrentStatus(status: TransactionStatus): void {
 								scope.currentStatus = null === status || "" === status ? "Unreconciled" : status;
 
 								switch (status) {
@@ -39,7 +39,7 @@ export default class TransactionStatusDirective {
 										break;
 								}
 
-								scope.tooltip = $sce.trustAsHtml(`Status: <strong class="${scope.currentStatus.toLowerCase()}">${scope.currentStatus}</strong><br/>Click to mark as <strong class="${scope.nextStatus.toLowerCase()}">${scope.nextStatus}</strong>`);
+								scope.tooltip = $sce.trustAsHtml(`Status: <strong class="${scope.currentStatus.toLowerCase()}">${scope.currentStatus}</strong><br/>Click to mark as <strong class="${scope.nextStatus.toLowerCase()}">${scope.nextStatus}</strong>`) as string;
 							}
 
 							// Declare a click handler to toggle the status

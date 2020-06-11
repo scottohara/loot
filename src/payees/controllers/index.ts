@@ -104,7 +104,7 @@ export default class PayeeIndexController {
 				this.payees.sort(byName);
 
 				// Refocus the payee
-				this.focusPayee(payee.id);
+				this.focusPayee(Number(payee.id));
 			})
 			.finally((): true => (this.ogTableNavigableService.enabled = true))
 			.catch(this.showError);
@@ -112,7 +112,7 @@ export default class PayeeIndexController {
 
 	public deletePayee(index: number): void {
 		// Check if the payee can be deleted
-		this.payeeModel.find(this.payees[index].id).then((payee: Payee): void => {
+		this.payeeModel.find(Number(this.payees[index].id)).then((payee: Payee): void => {
 			// Disable navigation on the table
 			this.ogTableNavigableService.enabled = false;
 
@@ -133,7 +133,7 @@ export default class PayeeIndexController {
 							message: "You must first delete these transactions, or reassign to another payee before attempting to delete this payee."
 						})
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			} else {
 				// Show the delete payee modal
 				modalOptions = angular.extend({
@@ -143,7 +143,7 @@ export default class PayeeIndexController {
 					resolve: {
 						payee: (): Payee => this.payees[index]
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			}
 
 			// Show the modal

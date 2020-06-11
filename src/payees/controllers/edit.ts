@@ -12,7 +12,7 @@ export default class PayeeEditController {
 	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly payeeModel: PayeeModel,
 						payee: Payee | undefined) {
-		this.payee = angular.extend({}, payee);
+		this.payee = angular.extend({}, payee) as Payee;
 		this.mode = undefined === payee ? "Add" : "Edit";
 	}
 

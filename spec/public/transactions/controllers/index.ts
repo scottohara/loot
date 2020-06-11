@@ -143,7 +143,7 @@ describe("TransactionIndexController", (): void => {
 		transactionIndexController.loading.next.should.be.false;
 	});
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "**.transactions.transaction" }, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "**.transactions.transaction" }, sinon.match.func) as Chai.Assertion);
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(transactionIndexController as angular.IController).$scope.$emit("$destroy");
@@ -267,6 +267,10 @@ describe("TransactionIndexController", (): void => {
 						transactionIndexController = controllerTest("TransactionIndexController", { contextModel: categoryModel as EntityModel, context: createCategory({ parent: (newTransaction as CategorisableTransaction).category as Category }) as Entity }) as TransactionIndexController;
 						(newTransaction as SubcategorisableTransaction).subcategory = transactionIndexController.context as Category;
 					});
+				});
+
+				describe("(context type is unknown)", (): void => {
+					it("should not set any context", (): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null }) as TransactionIndexController));
 				});
 
 				afterEach((): void => {

@@ -69,13 +69,13 @@ describe("transactionStatus", (): void => {
 		if ("" === scenario.currentStatus) {
 			it(`should set the current status to 'Unreconciled' when the transaction status is ${String(scenario.currentStatus)}`, (): void => {
 				setup(scenario);
-				isolateScope.currentStatus.should.equal("Unreconciled");
+				String(isolateScope.currentStatus).should.equal("Unreconciled");
 			});
 		}
 
 		it(`should set the next status to ${scenario.nextStatus} when the current status is ${String(scenario.currentStatus)}`, (): void => {
 			setup(scenario);
-			isolateScope.nextStatus.should.equal(scenario.nextStatus);
+			String(isolateScope.nextStatus).should.equal(scenario.nextStatus);
 		});
 
 		it(`should set the icon to ${scenario.icon} when the current status is ${String(scenario.currentStatus)}`, (): void => {

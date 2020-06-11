@@ -57,7 +57,7 @@ describe("PayeeIndexController", (): void => {
 
 	it("should not focus the payee when a payee id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.payees.payee" }, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.payees.payee" }, sinon.match.func) as Chai.Assertion);
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(payeeIndexController as angular.IController).$scope.$emit("$destroy");

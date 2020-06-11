@@ -14,7 +14,7 @@ export default class CategoryEditController {
 						private readonly limitToFilter: angular.IFilterLimitTo,
 						private readonly categoryModel: CategoryModel,
 						category: Category | undefined) {
-		this.category = angular.extend({}, category);
+		this.category = angular.extend({}, category) as Category;
 		this.mode = undefined === category ? "Add" : "Edit";
 	}
 
@@ -30,7 +30,7 @@ export default class CategoryEditController {
 			this.category.parent_id = null;
 		} else {
 			this.category.direction = this.category.parent.direction;
-			this.category.parent_id = this.category.parent.id;
+			this.category.parent_id = Number(this.category.parent.id);
 		}
 
 		this.errorMessage = null;

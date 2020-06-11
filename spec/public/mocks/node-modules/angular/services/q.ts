@@ -3,6 +3,7 @@ import {
 	PromiseMock,
 	PromiseMockCallback,
 	PromiseMockConfig,
+	PromiseMockThen,
 	QMock
 } from "mocks/node-modules/angular/types";
 import sinon, { SinonStub } from "sinon";
@@ -17,10 +18,10 @@ export default class QMockProvider implements Mock<QMock> {
 					promiseValue: T | PromiseMock<T> | undefined,
 					callbackResult: T | PromiseMock<T>;
 
-			function updateValueAndReturn(result: PromiseMock<T> | T, promise: PromiseMock<T>): PromiseMock<T> | T {
+			function updateValueAndReturn(result: PromiseMock<T> | T | undefined, promise: PromiseMock<T>): PromiseMock<T> | T {
 				// If the callback yielded a promise, we'll simply return that
-				if (undefined !== result && undefined !== (result as PromiseMock<T>).then && angular.isFunction((result as PromiseMock<T>).then.bind(result))) {
-					return result;
+				if (undefined !== result && undefined !== (result as PromiseMock<T>).then && angular.isFunction(((result as PromiseMock<T>).then as PromiseMockThen<T>).bind(result))) {
+					return result as PromiseMock<T>;
 				}
 
 				// Otherwise, update the promise value to the callback result; and return the existing promise
@@ -38,7 +39,7 @@ export default class QMockProvider implements Mock<QMock> {
 					promiseValue = value;
 				},
 				promise: {
-					then(successCallback: PromiseMockCallback<T>, errorCallback: PromiseMockCallback<T>): PromiseMock<T> | T {
+					then(successCallback: PromiseMockCallback<T>, errorCallback?: PromiseMockCallback<T>): PromiseMock<T> | T {
 						if (isResolved) {
 							callbackResult = successCallback(promiseValue);
 						} else if (undefined !== errorCallback) {
@@ -76,11 +77,11 @@ export default class QMockProvider implements Mock<QMock> {
 				// No success args specified, so default response is a success
 				stub.returns(qSuccess.promise);
 			} else {
-				stub.withArgs(sinon.match((undefined === (success as PromiseMockConfig<T>).args ? success : (success as PromiseMockConfig<T>).args) as object)).returns(qSuccess.promise);
+				stub.withArgs(sinon.match((undefined === (success as PromiseMockConfig<T>).args ? success : (success as PromiseMockConfig<T>).args) as Record<string, unknown>)).returns(qSuccess.promise);
 			}
 
 			if (undefined !== error) {
-				stub.withArgs(sinon.match((undefined === (error as PromiseMockConfig<T>).args ? error : (error as PromiseMockConfig<T>).args) as object)).returns(qError.promise);
+				stub.withArgs(sinon.match((undefined === (error as PromiseMockConfig<T>).args ? error : (error as PromiseMockConfig<T>).args) as Record<string, unknown>)).returns(qError.promise);
 			}
 
 			return stub;

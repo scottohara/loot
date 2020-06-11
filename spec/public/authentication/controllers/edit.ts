@@ -34,7 +34,7 @@ describe("AuthenticationEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			authenticationEditController.errorMessage = "error message";
 			authenticationEditController.login();
-			(null === authenticationEditController.errorMessage).should.be.true;
+			(null === authenticationEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should attempt to login with the username & password", (): void => {

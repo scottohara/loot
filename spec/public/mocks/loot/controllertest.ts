@@ -6,7 +6,7 @@ import {
 export default class ControllerTest {
 	public constructor($rootScope: angular.IRootScopeService, $controller: angular.IControllerService) {
 		// Loads the controller and returns a scope object
-		return ((controller: string, locals: ControllerTestLocals = {}, bindings: {} = {}): angular.IController => {
+		return ((controller: string, locals: ControllerTestLocals = {}, bindings: Record<string, unknown> = {}): angular.IController => {
 			// Create a new scope
 			locals.$scope = $rootScope.$new();
 

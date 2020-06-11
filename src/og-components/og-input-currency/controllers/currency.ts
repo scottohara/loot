@@ -24,7 +24,7 @@ export default class OgInputCurrencyController {
 	public rawToFormatted(value: number): string {
 		const formatted: string = this.numberFilter(isNaN(value) ? 0 : Number(value), this.decimalPlaces);
 
-		if (0 === formatted.indexOf("-")) {
+		if (!formatted.indexOf("-")) {
 			return `-$${formatted.substring(1)}`;
 		}
 

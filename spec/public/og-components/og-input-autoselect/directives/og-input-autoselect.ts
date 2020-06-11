@@ -7,8 +7,8 @@ describe("ogInputAutoselect", (): void => {
 	let	ogInputAutoselect: DirectiveTest,
 			$window: angular.IWindowService,
 			$timeout: angular.ITimeoutService,
-			mockJQueryInstance: {select: SinonStub;},
-			realJQueryInstance: JQuery,
+			mockJqueryInstance: {select: SinonStub;},
+			realJqueryInstance: JQuery,
 			scope: OgInputAutoSelectScope;
 
 	// Load the modules
@@ -23,13 +23,13 @@ describe("ogInputAutoselect", (): void => {
 		ogInputAutoselect.compile();
 		scope = ogInputAutoselect.scope as OgInputAutoSelectScope;
 
-		mockJQueryInstance = {
+		mockJqueryInstance = {
 			select: sinon.stub()
 		};
 
-		realJQueryInstance = $window.$;
+		realJqueryInstance = $window.$ as JQuery;
 		$window.$ = sinon.stub();
-		$window.$.withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputAutoselect["element"][0])).returns(mockJQueryInstance);
+		$window.$.withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputAutoselect["element"][0])).returns(mockJqueryInstance);
 	}));
 
 	describe("isFocussed", (): void => {
@@ -45,14 +45,14 @@ describe("ogInputAutoselect", (): void => {
 			sinon.stub(scope, "isFocussed").returns(true);
 			ogInputAutoselect["element"].triggerHandler("focus");
 			$timeout.flush();
-			mockJQueryInstance.select.should.have.been.called;
+			mockJqueryInstance.select.should.have.been.called;
 		});
 
 		it("should not select the input value if the element does not have focus", (): void => {
 			sinon.stub(scope, "isFocussed").returns(false);
 			ogInputAutoselect["element"].triggerHandler("focus");
 			$timeout.flush();
-			mockJQueryInstance.select.should.not.have.been.called;
+			mockJqueryInstance.select.should.not.have.been.called;
 		});
 	});
 
@@ -66,12 +66,12 @@ describe("ogInputAutoselect", (): void => {
 			sinon.stub(scope, "isFocussed").returns(true);
 			ogInputAutoselect["element"].triggerHandler("focus");
 			$timeout.flush();
-			mockJQueryInstance.select.should.not.have.been.called;
+			mockJqueryInstance.select.should.not.have.been.called;
 		});
 	});
 
 	afterEach((): void => {
 		$timeout.verifyNoPendingTasks();
-		$window.$ = realJQueryInstance;
+		$window.$ = realJqueryInstance;
 	});
 });

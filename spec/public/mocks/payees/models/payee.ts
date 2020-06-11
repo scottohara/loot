@@ -38,13 +38,13 @@ export default class PayeeModelMockProvider implements Mock<PayeeModelMock> {
 				const payee: Payee = payeesMockProvider.$get()[id - 1];
 
 				// Return a promise-like object that resolves with the payee
-				return $q.promisify({ response: payee })();
+				return $q.promisify({ response: payee })() as SinonStub;
 			},
 			findLastTransaction: $q.promisify({ response: {} }, { args: -1 }),
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
 			toggleFavourite(payee: Payee): SinonStub {
-				return $q.promisify({ response: !payee.favourite })();
+				return $q.promisify({ response: !payee.favourite })() as SinonStub;
 			},
 			flush: sinon.stub(),
 			addRecent: sinon.stub()

@@ -65,7 +65,7 @@ describe("CategoryIndexController", (): void => {
 
 	it("should not focus the category when a category id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.categories.category" }, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.categories.category" }, sinon.match.func) as Chai.Assertion);
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(categoryIndexController as angular.IController).$scope.$emit("$destroy");
@@ -85,7 +85,7 @@ describe("CategoryIndexController", (): void => {
 
 		// Helper function to resort the categories array by id
 		function byId(a: Category, b: Category): number {
-			return a.id < b.id ? -1 : 1;
+			return Number(a.id) < Number(b.id) ? -1 : 1;
 		}
 
 		beforeEach((): void => {

@@ -71,7 +71,7 @@ describe("ogInputCalculator", (): void => {
 		it("should use no formatting if the element includes neither og-input-currency or og-input-number directives", (): void => {
 			ogInputCalculator.compile({});
 			scope.$digest();
-			(null === scope.ogInput).should.be.true;
+			(null === scope.ogInput as angular.IController | null).should.be.true;
 		});
 	});
 
@@ -154,7 +154,8 @@ describe("ogInputCalculator", (): void => {
 					{ operator: "+", operand: 4 },
 					{ operator: "-", operand: 3 },
 					{ operator: "*", operand: 2 },
-					{ operator: "/" }
+					{ operator: "/", operand: 1 },
+					{ operator: undefined }
 				];
 				scope.calculate("1");
 			});
@@ -337,8 +338,8 @@ describe("ogInputCalculator", (): void => {
 		];
 
 		let	event: JQueryKeyEventObjectMock,
-				mockJQueryInstance: {select: SinonStub;},
-				realJQueryInstance: JQuery,
+				mockJqueryInstance: {select: SinonStub;},
+				realJqueryInstance: JQuery,
 				actionHandler: () => void;
 
 		beforeEach((): void => {
@@ -351,13 +352,13 @@ describe("ogInputCalculator", (): void => {
 			scope.$digest();
 			(ogInputCalculator["element"].val() as string).should.equal("1");
 
-			mockJQueryInstance = {
+			mockJqueryInstance = {
 				select: sinon.stub()
 			};
 
-			realJQueryInstance = $window.$;
+			realJqueryInstance = $window.$ as JQuery;
 			$window.$ = sinon.stub();
-			$window.$.withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputCalculator["element"][0])).returns(mockJQueryInstance);
+			$window.$.withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputCalculator["element"][0])).returns(mockJqueryInstance);
 		});
 
 		TEST_ACTION_KEYS.forEach((key: {code: number; name: string; handler: string;}): void => {
@@ -369,7 +370,7 @@ describe("ogInputCalculator", (): void => {
 				scope.keyHandler(event as JQueryKeyEventObject);
 				$timeout.flush();
 				actionHandler.should.not.have.been.called;
-				mockJQueryInstance.select.should.not.have.been.called;
+				mockJqueryInstance.select.should.not.have.been.called;
 				(event.stopPropagation as SinonStub).should.not.have.been.called;
 			});
 
@@ -379,7 +380,7 @@ describe("ogInputCalculator", (): void => {
 				scope.keyHandler(event as JQueryKeyEventObject);
 				$timeout.flush();
 				actionHandler.should.not.have.been.called;
-				mockJQueryInstance.select.should.not.have.been.called;
+				mockJqueryInstance.select.should.not.have.been.called;
 				(event.preventDefault as SinonStub).should.not.have.been.called;
 				(event.stopPropagation as SinonStub).should.not.have.been.called;
 			});
@@ -391,13 +392,13 @@ describe("ogInputCalculator", (): void => {
 				scope.keyHandler(event as JQueryKeyEventObject);
 				$timeout.flush();
 				actionHandler.should.have.been.called;
-				mockJQueryInstance.select.should.have.been.called;
+				mockJqueryInstance.select.should.have.been.called;
 				(event.preventDefault as SinonStub).should.have.been.called;
 				(event.stopPropagation as SinonStub).should.have.been.called;
 			});
 		});
 
-		afterEach((): JQuery => ($window.$ = realJQueryInstance));
+		afterEach((): JQuery => ($window.$ = realJqueryInstance));
 	});
 
 	describe("on keydown", (): void => {

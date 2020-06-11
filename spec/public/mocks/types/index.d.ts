@@ -13,15 +13,15 @@ import {
 import { StateMock } from "mocks/node-modules/angular/types";
 
 export interface Mock<T> {
-	$get(): T;
+	$get: () => T;
 }
 
 export interface ControllerTestLocals {
-	$scope?: angular.IScope;
 	[key: string]: angular.IScope | Accounts | Account | StateMock | Transaction | TransactionBatch | EntityModel | Entity | string | null | undefined;
+	$scope?: angular.IScope;
 }
 
-export type ControllerTestFactory = (controller: string, locals?: ControllerTestLocals, bindings?: {}) => angular.IController;
+export type ControllerTestFactory = (controller: string, locals?: ControllerTestLocals, bindings?: Record<string, unknown>) => angular.IController;
 
 export interface DirectiveTestModel {
 	context?: boolean;
@@ -55,17 +55,17 @@ interface EventMock {
 	timeStamp?: number;
 	type?: string;
 	view?: Window;
-	AT_TARGET?: number;
-	BUBBLING_PHASE?: number;
-	CAPTURING_PHASE?: number;
-	NONE?: number;
-	composedPath?(): EventTarget[];
-	deepPath?(): EventTarget[];
-	initEvent?(eventTypeArg: string, canBubbleArg: boolean, cancelableArg: boolean): void;
-	initUIEvent?(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number): void;
-	preventDefault?(): void;
-	stopImmediatePropagation?(): void;
-	stopPropagation?(): void;
+	readonly AT_TARGET?: number;
+	readonly BUBBLING_PHASE?: number;
+	readonly CAPTURING_PHASE?: number;
+	readonly NONE?: number;
+	composedPath?: () => EventTarget[];
+	deepPath?: () => EventTarget[];
+	initEvent?: (eventTypeArg: string, canBubbleArg: boolean, cancelableArg: boolean) => void;
+	initUIEvent?: (typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number) => void;
+	preventDefault?: () => void;
+	stopImmediatePropagation?: () => void;
+	stopPropagation?: () => void;
 }
 
 export interface KeyboardEventMock extends EventMock {
@@ -78,14 +78,14 @@ export interface KeyboardEventMock extends EventMock {
 	location?: number;
 	repeat?: boolean;
 	which?: number;
-	DOM_KEY_LOCATION_JOYSTICK?: number;
-	DOM_KEY_LOCATION_LEFT?: number;
-	DOM_KEY_LOCATION_MOBILE?: number;
-	DOM_KEY_LOCATION_NUMPAD?: number;
-	DOM_KEY_LOCATION_RIGHT?: number;
-	DOM_KEY_LOCATION_STANDARD?: number;
-	getModifierState?(keyArg: string): boolean;
-	initKeyboardEvent?(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, keyArg: string, locationArg: number, modifiersListArg: string, repeat: boolean, locale: string): void;
+	readonly DOM_KEY_LOCATION_JOYSTICK?: number;
+	readonly DOM_KEY_LOCATION_LEFT?: number;
+	readonly DOM_KEY_LOCATION_MOBILE?: number;
+	readonly DOM_KEY_LOCATION_NUMPAD?: number;
+	readonly DOM_KEY_LOCATION_RIGHT?: number;
+	readonly DOM_KEY_LOCATION_STANDARD?: number;
+	getModifierState?: (keyArg: string) => boolean;
+	initKeyboardEvent?: (typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, keyArg: string, locationArg: number, modifiersListArg: string, repeat: boolean, locale: string) => void;
 }
 
 interface JQueryEventMock extends EventMock {
@@ -97,9 +97,9 @@ interface JQueryEventMock extends EventMock {
 	result?: undefined;
 	pageX?: number;
 	pageY?: number;
-	isDefaultPrevented?(): boolean;
-	isImmediatePropagationStopped?(): boolean;
-	isPropagationStopped?(): boolean;
+	isDefaultPrevented?: () => boolean;
+	isImmediatePropagationStopped?: () => boolean;
+	isPropagationStopped?: () => boolean;
 }
 
 export interface JQueryKeyEventObjectMock extends KeyboardEventMock, JQueryEventMock {

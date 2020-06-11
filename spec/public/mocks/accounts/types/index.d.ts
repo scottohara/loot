@@ -17,7 +17,7 @@ export interface AccountModelMock {
 	flush: SinonStub;
 	addRecent: SinonStub;
 	accounts: Accounts;
-	path(id: number): string;
-	find(id: number): SinonStub;
-	toggleFavourite(account: Account): SinonStub;
+	path: (id: number) => string;
+	find: (id: number) => SinonStub;
+	toggleFavourite: (account: Account) => SinonStub;
 }

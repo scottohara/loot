@@ -86,7 +86,7 @@ describe("authenticationModel", (): void => {
 
 		it("should save the authentication key to sessionStorage", (): Chai.Assertion => $window.sessionStorage.setItem.should.have.been.calledWith("lootAuthenticationKey", "base64 encoded"));
 
-		it("should set the default $http Authorization header", (): Chai.Assertion => ($http.defaults.headers as angular.IHttpRequestConfigHeaders).common.Authorization.should.equal("Basic base64 encoded"));
+		it("should set the default $http Authorization header", (): Chai.Assertion => ($http.defaults.headers as angular.IHttpRequestConfigHeaders).common.Authorization.should.equal("Basic base64 encoded") as Chai.Assertion);
 	});
 
 	describe("logout", (): void => {
@@ -94,7 +94,7 @@ describe("authenticationModel", (): void => {
 
 		it("should remove the authentication key from sessionStorage", (): Chai.Assertion => $window.sessionStorage.removeItem.should.have.been.calledWith("lootAuthenticationKey"));
 
-		it("should clear the default $http Authorization header", (): Chai.Assertion => ($http.defaults.headers as angular.IHttpRequestConfigHeaders).common.Authorization.should.equal("Basic "));
+		it("should clear the default $http Authorization header", (): Chai.Assertion => ($http.defaults.headers as angular.IHttpRequestConfigHeaders).common.Authorization.should.equal("Basic ") as Chai.Assertion);
 
 		it("should clear all $http caches except the template cache", (): void => {
 			$cache.removeAll.should.have.been.called;

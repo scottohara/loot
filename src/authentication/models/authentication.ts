@@ -1,13 +1,11 @@
 import angular from "angular";
 
 export default class AuthenticationModel {
+	private readonly SESSION_STORAGE_KEY = "lootAuthenticationKey";
+
 	public constructor(private readonly $window: angular.IWindowService,
 						private readonly $http: angular.IHttpService,
 						private readonly $cacheFactory: angular.ICacheFactoryService) {}
-
-	private get SESSION_STORAGE_KEY(): string {
-		return "lootAuthenticationKey";
-	}
 
 	// Checks if the API authorisation header is set
 	public get isAuthenticated(): boolean {
@@ -69,7 +67,7 @@ export default class AuthenticationModel {
 	private setAuthorisationHeader(authenticationKey: string): void {
 		const headers: angular.IHttpRequestConfigHeaders = { ...this.$http.defaults.headers };
 
-		headers.common = { ...headers.common };
+		headers.common = { ...headers.common as Record<string, unknown> };
 		headers.common.Authorization = this.authorisation(authenticationKey);
 		this.$http.defaults.headers = headers;
 	}

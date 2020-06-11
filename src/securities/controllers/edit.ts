@@ -12,7 +12,7 @@ export default class SecurityEditController {
 	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly securityModel: SecurityModel,
 						security: Security | undefined) {
-		this.security = angular.extend({}, security);
+		this.security = angular.extend({}, security) as Security;
 		this.mode = undefined === security ? "Add" : "Edit";
 	}
 

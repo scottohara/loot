@@ -11,7 +11,7 @@ export default class OgInputAutoSelectDirective {
 
 							function select(): void {
 								// Select the value only if the element still has focus
-								$timeout((): void => scope.isFocussed(iElement[0]) && $window.$(iElement).select()).catch(showError);
+								$timeout((): unknown => scope.isFocussed(iElement[0]) && $window.$(iElement).select() as unknown).catch(showError);
 							}
 
 							// Select the input value on focus

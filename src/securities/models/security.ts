@@ -16,6 +16,10 @@ const LRU_CAPACITY = 10;
 export default class SecurityModel implements Cacheable<Security>, Favouritable<Security>, Persistable<Security> {
 	public recent: OgCacheEntry[];
 
+	public readonly LRU_LOCAL_STORAGE_KEY = "lootRecentSecurities";
+
+	public readonly type = "security";
+
 	private readonly cache: angular.ICacheObject;
 
 	private readonly lruCache: OgLruCache;
@@ -35,15 +39,6 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 		const recentSecurities: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
 		return JSON.parse(null === recentSecurities ? "[]" : recentSecurities) as OgCacheEntry[];
-	}
-
-	public get LRU_LOCAL_STORAGE_KEY(): string {
-		return "lootRecentSecurities";
-	}
-
-	// Returns the model type
-	public get type(): string {
-		return "security";
 	}
 
 	// Returns the API path
@@ -100,7 +95,7 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 		// Flush the $http cache
 		this.flush();
 
-		return this.$http.delete(this.path(security.id)).then((): void => this.removeRecent(security.id));
+		return this.$http.delete(this.path(security.id)).then((): void => this.removeRecent(Number(security.id)));
 	}
 
 	// Favourites/unfavourites a security

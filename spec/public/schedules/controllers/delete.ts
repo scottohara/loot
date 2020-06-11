@@ -29,7 +29,7 @@ describe("ScheduleDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleDeleteController.errorMessage = "error message";
 			scheduleDeleteController.deleteSchedule();
-			(null === scheduleDeleteController.errorMessage).should.be.true;
+			(null === scheduleDeleteController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should delete the schedule", (): void => {

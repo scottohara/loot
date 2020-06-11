@@ -59,7 +59,7 @@ describe("SecurityIndexController", (): void => {
 
 	it("should not focus the security when a security id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.securities.security" }, sinon.match.func));
+	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.securities.security" }, sinon.match.func) as Chai.Assertion);
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(securityIndexController as angular.IController).$scope.$emit("$destroy");

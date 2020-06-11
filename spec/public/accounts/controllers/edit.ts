@@ -89,7 +89,7 @@ describe("AccountEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			accountEditController.errorMessage = "error message";
 			accountEditController.save();
-			(null === accountEditController.errorMessage).should.be.true;
+			(null === accountEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should convert the account type to lower case", (): void => {

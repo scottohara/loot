@@ -29,7 +29,7 @@ describe("TransactionDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionDeleteController.errorMessage = "error message";
 			transactionDeleteController.deleteTransaction();
-			(null === transactionDeleteController.errorMessage).should.be.true;
+			(null === transactionDeleteController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should delete the transaction", (): void => {

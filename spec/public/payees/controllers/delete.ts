@@ -29,7 +29,7 @@ describe("PayeeDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			payeeDeleteController.errorMessage = "error message";
 			payeeDeleteController.deletePayee();
-			(null === payeeDeleteController.errorMessage).should.be.true;
+			(null === payeeDeleteController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should delete the payee", (): void => {

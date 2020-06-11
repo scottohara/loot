@@ -83,7 +83,7 @@ describe("CategoryEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			categoryEditController.errorMessage = "error message";
 			categoryEditController.save();
-			(null === categoryEditController.errorMessage).should.be.true;
+			(null === categoryEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should save the category", (): void => {

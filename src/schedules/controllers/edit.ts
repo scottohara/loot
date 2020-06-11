@@ -78,7 +78,7 @@ export default class ScheduleEditController {
 						ogModalErrorService: OgModalErrorService,
 						schedule: ScheduledTransaction | undefined) {
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
-		this.transaction = angular.extend({ id: null, transaction_type: "Basic", next_due_date: startOfDay(new Date()) }, schedule);
+		this.transaction = angular.extend({ id: null, transaction_type: "Basic", next_due_date: startOfDay(new Date()) }, schedule) as ScheduledTransaction;
 
 		// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
 		this.mode = undefined === schedule ? "Add Schedule" : "Enter Transaction";
@@ -105,7 +105,7 @@ export default class ScheduleEditController {
 
 		// Watch the subtransactions array and recalculate the total allocated
 		$scope.$watch((): SplitTransactionChild[] => (this.transaction as SplitTransaction).subtransactions, (newValue: SplitTransactionChild[], oldValue: SplitTransactionChild[]): void => {
-			if (newValue !== oldValue && (this.transaction as SplitTransaction).subtransactions) {
+			if (newValue !== oldValue && (this.transaction as SplitTransaction).subtransactions as SplitTransactionChild[] | undefined) {
 				this.totalAllocated = (this.transaction as SplitTransaction).subtransactions.reduce((total: number, subtransaction: SplitTransactionChild): number => total + (isNaN(Number(subtransaction.amount)) ? 0 : Number(subtransaction.amount) * (subtransaction.direction === this.transaction.direction ? 1 : -1)), 0);
 
 				// If we're adding a new transaction, join the subtransaction memos and update the parent memo
@@ -134,7 +134,7 @@ export default class ScheduleEditController {
 		}
 
 		// If the parent was specified, pass the parent's id
-		const parentId: number | null = undefined === parent || null === parent ? null : parent.id;
+		const parentId: number | null = undefined === parent || null === parent ? null : Number(parent.id);
 
 		return this.categoryModel.all(parentId).then((categories: Category[]): DisplayCategory[] => {
 			let psuedoCategories: DisplayCategory[] = categories;
@@ -176,19 +176,19 @@ export default class ScheduleEditController {
 	}
 
 	// Returns true if the passed value is typeof string (and is not empty)
-	public isString(object: string | object): boolean {
+	public isString(object: string | Record<string, unknown>): boolean {
 		return "string" === typeof object && object.length > 0;
 	}
 
 	// Handler for payee changes
 	public payeeSelected(): void {
 		// If we're adding a new schedule and an existing payee is selected
-		if (null === this.transaction.id && undefined !== (this.transaction as PayeeCashTransaction).payee && "object" === typeof (this.transaction as PayeeCashTransaction).payee && "Enter Transaction" !== this.mode) {
+		if (null === this.transaction.id && "object" === typeof (this.transaction as PayeeCashTransaction).payee && "Enter Transaction" !== this.mode) {
 			// Show the loading indicator
 			this.loadingLastTransaction = true;
 
 			// Get the previous transaction for the payee
-			this.payeeModel.findLastTransaction(((this.transaction as PayeeCashTransaction).payee as Payee).id, this.transaction.primary_account.account_type as StoredAccountType)
+			this.payeeModel.findLastTransaction(Number(((this.transaction as PayeeCashTransaction).payee as Payee).id), this.transaction.primary_account.account_type as StoredAccountType)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
 				.then((): false => (this.loadingLastTransaction = false))
@@ -199,12 +199,12 @@ export default class ScheduleEditController {
 	// Handler for security changes
 	public securitySelected(): void {
 		// If we're adding a new schedule and an existing security is selected
-		if (null === this.transaction.id && undefined !== (this.transaction as SecurityTransaction).security && "object" === typeof (this.transaction as SecurityTransaction).security && "Enter Transaction" !== this.mode) {
+		if (null === this.transaction.id && "object" === typeof (this.transaction as SecurityTransaction).security && "Enter Transaction" !== this.mode) {
 			// Show the loading indicator
 			this.loadingLastTransaction = true;
 
 			// Get the previous transaction for the security
-			this.securityModel.findLastTransaction(((this.transaction as SecurityTransaction).security as Security).id, this.transaction.primary_account.account_type as StoredAccountType)
+			this.securityModel.findLastTransaction(Number(((this.transaction as SecurityTransaction).security as Security).id), this.transaction.primary_account.account_type as StoredAccountType)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
 				.then((): false => (this.loadingLastTransaction = false))
@@ -267,7 +267,7 @@ export default class ScheduleEditController {
 					case "Split":
 					case "Payslip":
 					case "LoanRepayment":
-						if (undefined === (transaction as SplitTransaction).subtransactions) {
+						if (undefined === (transaction as SplitTransaction).subtransactions as SplitTransactionChild[] | undefined) {
 							(transaction as SplitTransaction).subtransactions = [
 								{
 									memo: transaction.memo,
@@ -280,7 +280,7 @@ export default class ScheduleEditController {
 						}
 						break;
 
-					// No default
+					default:
 				}
 			} else {
 				switch (String(transaction.category.id)) {
@@ -319,7 +319,7 @@ export default class ScheduleEditController {
 		let	{ transaction_type, direction } = this.transaction;
 
 		// Check the category selection
-		if (undefined !== this.transaction.category && "object" === typeof this.transaction.category) {
+		if ("object" === typeof this.transaction.category) {
 			switch (String(this.transaction.category.id)) {
 				case "TransferTo":
 					transaction_type = "SecurityTransfer";
@@ -367,7 +367,7 @@ export default class ScheduleEditController {
 
 	// Handler for primary account changes
 	public primaryAccountSelected(): void {
-		const selectedAccountType: AccountType | null = undefined === this.transaction.primary_account ? null : this.transaction.primary_account.account_type;
+		const selectedAccountType: AccountType | null = undefined === this.transaction.primary_account as Account | undefined ? null : this.transaction.primary_account.account_type;
 
 		if (null !== this.account_type && this.account_type !== selectedAccountType) {
 			(this.transaction as CategorisableTransaction).category = null;
@@ -375,7 +375,7 @@ export default class ScheduleEditController {
 		}
 		this.account_type = selectedAccountType;
 
-		if (null !== (this.transaction as TransferrableTransaction).account && undefined !== this.transaction.primary_account && this.transaction.primary_account.id === ((this.transaction as TransferrableTransaction).account as Account).id) {
+		if (null !== (this.transaction as TransferrableTransaction).account && undefined !== this.transaction.primary_account as Account | undefined && this.transaction.primary_account.id === ((this.transaction as TransferrableTransaction).account as Account).id) {
 			// Primary account and transfer account can't be the same, so clear the transfer account
 			(this.transaction as TransferrableTransaction).account = null;
 		}
@@ -383,7 +383,7 @@ export default class ScheduleEditController {
 
 	// Joins the subtransaction memos and updates the parent memo
 	public memoFromSubtransactions(): void {
-		this.transaction.memo = (this.transaction as SplitTransaction).subtransactions.reduce((memo: string, subtransaction: SplitTransactionChild): string => `${memo}${undefined === subtransaction.memo ? "" : `${"" === memo ? "" : "; "}${subtransaction.memo}`}`, "");
+		this.transaction.memo = (this.transaction as SplitTransaction).subtransactions.reduce((memo: string, subtransaction: SplitTransactionChild): string => `${memo}${undefined === subtransaction.memo ? "" : `${memo ? "; " : ""}${subtransaction.memo}`}`, "");
 	}
 
 	// List of primary accounts for the typeahead
@@ -403,7 +403,7 @@ export default class ScheduleEditController {
 			};
 
 			// Filter the primary account from the results (can't transfer to self)
-			if (undefined !== this.transaction.primary_account) {
+			if (undefined !== this.transaction.primary_account as Account | undefined) {
 				filteredAccounts = this.filterFilter(filteredAccounts, { name: `!${this.transaction.primary_account.name}` }, true);
 			}
 
@@ -544,7 +544,7 @@ export default class ScheduleEditController {
 		transaction.flag = this.transaction.flag;
 
 		// Merge the last transaction details into the transaction on the scope
-		this.transaction = angular.extend(this.transaction, transaction);
+		this.transaction = angular.extend(this.transaction, transaction) as ScheduledTransaction;
 
 		// Depending on which field has focus, re-trigger the focus event handler to format/select the new value
 		angular.forEach(angular.element("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo"), (field: Element): void => {

@@ -3,6 +3,19 @@ import {
 	AccountType
 } from "accounts/types";
 import {
+	CategorisableTransaction,
+	SecurityTransactionType,
+	SplitTransactionChild,
+	SplitTransactionType,
+	SubcategorisableTransaction,
+	Subtransaction,
+	SubtransactionType,
+	TransactionDirection,
+	TransactionFlag,
+	TransactionStatus,
+	TransactionType
+} from "transactions/types";
+import {
 	Category,
 	DisplayCategory,
 	PsuedoCategory
@@ -16,16 +29,6 @@ import {
 	ScheduledTransaction,
 	ScheduledTransferTransaction
 } from "schedules/types";
-import {
-	SecurityTransactionType,
-	SplitTransactionChild,
-	SplitTransactionType,
-	Subtransaction,
-	SubtransactionType,
-	TransactionDirection,
-	TransactionFlag,
-	TransactionType
-} from "transactions/types";
 import {
 	addMonths,
 	addQuarters,
@@ -485,13 +488,13 @@ describe("ScheduleEditController", (): void => {
 
 		it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & related status", (): void => {
 			scheduleEditController["useLastTransaction"](transaction);
-			(undefined === transaction.id).should.be.true;
-			(undefined === transaction.transaction_date).should.be.true;
-			(undefined === transaction.next_due_date).should.be.true;
-			(undefined === transaction.frequency).should.be.true;
-			(undefined === transaction.primary_account).should.be.true;
-			(undefined === transaction.status).should.be.true;
-			(undefined === transaction.related_status).should.be.true;
+			(undefined === transaction.id as number | undefined).should.be.true;
+			(undefined === transaction.transaction_date as Date | undefined).should.be.true;
+			(undefined === transaction.next_due_date as Date | undefined).should.be.true;
+			(undefined === transaction.frequency as ScheduleFrequency | undefined).should.be.true;
+			(undefined === transaction.primary_account as Account | undefined).should.be.true;
+			(undefined === transaction.status as TransactionStatus | undefined).should.be.true;
+			(undefined === transaction.related_status as TransactionStatus | undefined).should.be.true;
 		});
 
 		it("should preserve the schedule's flag", (): void => {
@@ -687,8 +690,8 @@ describe("ScheduleEditController", (): void => {
 		it("should clear the category and subcategory if the account type no longer matches the primary account type", (): void => {
 			scheduleEditController["account_type"] = "cash";
 			scheduleEditController.primaryAccountSelected();
-			(null === (scheduleEditController.transaction as ScheduledBasicTransaction).category).should.be.true;
-			(null === (scheduleEditController.transaction as ScheduledBasicTransaction).subcategory).should.be.true;
+			(null === (scheduleEditController.transaction as CategorisableTransaction).category).should.be.true;
+			(null === (scheduleEditController.transaction as SubcategorisableTransaction).subcategory).should.be.true;
 		});
 
 		it("should set the account type to the primary account type", (): void => {
@@ -699,7 +702,7 @@ describe("ScheduleEditController", (): void => {
 		it("should set the account type to null when there is no primary account", (): void => {
 			delete scheduleEditController.transaction.primary_account;
 			scheduleEditController.primaryAccountSelected();
-			(null === (scheduleEditController["account_type"] as AccountType)).should.be.true;
+			(null === scheduleEditController["account_type"]).should.be.true;
 		});
 
 		it("should clear the transfer account when the primary account matches", (): void => {
@@ -985,7 +988,7 @@ describe("ScheduleEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleEditController.errorMessage = "error message";
 			scheduleEditController.enter();
-			(null === scheduleEditController.errorMessage).should.be.true;
+			(null === scheduleEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should save the schedule", (): void => {
@@ -1021,7 +1024,7 @@ describe("ScheduleEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleEditController.errorMessage = "error message";
 			scheduleEditController.save();
-			(null === scheduleEditController.errorMessage).should.be.true;
+			(null === scheduleEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should set the flag memo to '(no memo)' if the auto-flag property is set and the memo is blank", (): void => {
@@ -1040,7 +1043,7 @@ describe("ScheduleEditController", (): void => {
 		it("should set the flag to null if the auto-flag property is not set", (): void => {
 			scheduleEditController.schedule.flag = "Test flag";
 			scheduleEditController.save();
-			(null === scheduleEditController.schedule.flag).should.be.true;
+			(null === scheduleEditController.schedule.flag as string | null).should.be.true;
 		});
 
 		it("should save the schedule", (): void => {

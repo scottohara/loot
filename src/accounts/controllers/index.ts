@@ -29,7 +29,7 @@ export default class AccountIndexController {
 		$window.$(document).on("keydown", this.keydownHandler);
 
 		// When the controller scope is destroyed, remove they keydown event handler
-		this.$scope.$on("$destroy", (): void => $window.$(document).off("keydown", this.keydownHandler));
+		this.$scope.$on("$destroy", (): unknown => $window.$(document).off("keydown", this.keydownHandler) as unknown);
 	}
 
 	public editAccount(accountType?: string, index?: number): void {
@@ -92,7 +92,7 @@ export default class AccountIndexController {
 
 	public deleteAccount(accountType: string, index: number): void {
 		// Check if the account can be deleted
-		this.accountModel.find(this.accounts[accountType].accounts[index].id).then((account: Account): void => {
+		this.accountModel.find(Number(this.accounts[accountType].accounts[index].id)).then((account: Account): void => {
 			let modalOptions: angular.ui.bootstrap.IModalSettings = {
 				backdrop: "static"
 			};
@@ -110,7 +110,7 @@ export default class AccountIndexController {
 							message: "You must first delete these transactions, or reassign to another account before attempting to delete this account."
 						})
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			} else {
 				// Show the delete account modal
 				modalOptions = angular.extend({
@@ -120,7 +120,7 @@ export default class AccountIndexController {
 					resolve: {
 						account: (): Account => this.accounts[accountType].accounts[index]
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			}
 
 			// Show the modal

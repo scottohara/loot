@@ -49,12 +49,12 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 				}
 
 				// Return a promise-like object that resolves with the category
-				return $q.promisify({ response: category })();
+				return $q.promisify({ response: category })() as SinonStub;
 			},
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
 			toggleFavourite(category: Category): SinonStub {
-				return $q.promisify({ response: !category.favourite })();
+				return $q.promisify({ response: !category.favourite })() as SinonStub;
 			},
 			flush: sinon.stub(),
 			addRecent: sinon.stub()

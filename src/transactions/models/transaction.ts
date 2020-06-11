@@ -32,16 +32,14 @@ import angular from "angular";
 export default class TransactionModel {
 	private lastUsedTransactionDate: Date | string | undefined = startOfDay(new Date());
 
+	private readonly SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY = "lootShowAllTransactionDetails";
+
 	public constructor(private readonly $http: angular.IHttpService,
 						private readonly $window: angular.IWindowService,
 						private readonly accountModel: AccountModel,
 						private readonly payeeModel: PayeeModel,
 						private readonly categoryModel: CategoryModel,
 						private readonly securityModel: SecurityModel) {}
-
-	private get SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY(): string {
-		return "lootShowAllTransactionDetails";
-	}
 
 	// Returns the API path
 	public path(id?: number): string {
@@ -120,7 +118,7 @@ export default class TransactionModel {
 	// Updates the status of a transaction
 	public updateStatus(context: string, id: number, status: TransactionStatus = ""): angular.IHttpPromise<void> {
 		return this.$http({
-			method: "" === status ? "DELETE" : "PATCH",
+			method: null === status || "" === status ? "DELETE" : "PATCH",
 			url: `${this.fullPath(context, id)}/status${null === status || "" === status ? "" : `?${status}`}`
 		});
 	}
@@ -196,7 +194,7 @@ export default class TransactionModel {
 		if ("string" === typeof item && "" !== item) {
 			// Item is new; flush the corresponding $http cache
 			itemModel.flush();
-		} else if (undefined !== item && null !== item && "" !== item && item.id) {
+		} else if (undefined !== item && null !== item && "" !== item && undefined !== item.id) {
 			// Item is existing; remove single item from the corresponding $http cache
 			itemModel.flush(item.id);
 		}

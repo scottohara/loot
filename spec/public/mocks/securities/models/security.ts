@@ -40,13 +40,13 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 				const security: Security = securitiesMockProvider.$get()[id - 1];
 
 				// Return a promise-like object that resolves with the security
-				return $q.promisify({ response: security })();
+				return $q.promisify({ response: security })() as SinonStub;
 			},
 			findLastTransaction: $q.promisify({ response: {} }, { args: -1 }),
 			save: $q.promisify(success, error),
 			destroy: $q.promisify(success, error),
 			toggleFavourite(security: Security): SinonStub {
-				return $q.promisify({ response: !security.favourite })();
+				return $q.promisify({ response: !security.favourite })() as SinonStub;
 			},
 			flush: sinon.stub(),
 			addRecent: sinon.stub()

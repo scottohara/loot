@@ -41,7 +41,7 @@ describe("AccountDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			accountDeleteController.errorMessage = "error message";
 			accountDeleteController.deleteAccount();
-			(null === accountDeleteController.errorMessage).should.be.true;
+			(null === accountDeleteController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should delete the account", (): void => {

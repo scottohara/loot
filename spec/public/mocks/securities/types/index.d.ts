@@ -11,7 +11,7 @@ export interface SecurityModelMock {
 	destroy: SinonStub;
 	flush: SinonStub;
 	addRecent: SinonStub;
-	path(id: number): string;
-	find(id: number): SinonStub;
-	toggleFavourite(security: Security): SinonStub;
+	path: (id: number) => string;
+	find: (id: number) => SinonStub;
+	toggleFavourite: (security: Security) => SinonStub;
 }

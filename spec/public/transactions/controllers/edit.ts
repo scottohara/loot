@@ -14,6 +14,7 @@ import {
 	SubtransferTransaction,
 	Transaction,
 	TransactionDirection,
+	TransactionStatus,
 	TransactionType,
 	TransferTransaction,
 	TransferrableTransaction
@@ -399,11 +400,11 @@ describe("TransactionEditController", (): void => {
 
 		it("should strip the transaction of it's id, date, primary account, status, related status & flag", (): void => {
 			transactionEditController["useLastTransaction"](lastTransaction);
-			(undefined === lastTransaction.id).should.be.true;
-			(undefined === lastTransaction.transaction_date).should.be.true;
-			(undefined === lastTransaction.primary_account).should.be.true;
-			(undefined === lastTransaction.status).should.be.true;
-			(undefined === lastTransaction.related_status).should.be.true;
+			(undefined === lastTransaction.id as number | undefined).should.be.true;
+			(undefined === lastTransaction.transaction_date as Date | undefined).should.be.true;
+			(undefined === lastTransaction.primary_account as Account | undefined).should.be.true;
+			(undefined === lastTransaction.status as TransactionStatus | undefined).should.be.true;
+			(undefined === lastTransaction.related_status as TransactionStatus | undefined).should.be.true;
 			(undefined === lastTransaction.flag).should.be.true;
 		});
 
@@ -1031,6 +1032,16 @@ describe("TransactionEditController", (): void => {
 			});
 		});
 
+		it("should do nothing for other transaction types", (): void => {
+			data.transaction_type = "SecurityHolding";
+			transactionEditController["updateLruCaches"](data);
+			accountModel.addRecent.should.have.been.calledOnce;
+			categoryModel.addRecent.should.not.have.been.called;
+			payeeModel.addRecent.should.have.been.calledOnce;
+			securityModel.addRecent.should.not.have.been.called;
+			transactionModel.findSubtransactions.should.not.have.been.called;
+		});
+
 		it("should resolve with the saved transaction", async (): Promise<Chai.Assertion> => (await transactionEditController["updateLruCaches"](data)).should.deep.equal(data));
 	});
 
@@ -1043,7 +1054,7 @@ describe("TransactionEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionEditController.errorMessage = "error message";
 			transactionEditController.save();
-			(null === transactionEditController.errorMessage).should.be.true;
+			(null === transactionEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should save the transaction", (): void => {

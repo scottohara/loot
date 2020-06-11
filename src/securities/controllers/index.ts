@@ -124,7 +124,7 @@ export default class SecurityIndexController {
 				this.securities.sort(byHoldingAndName);
 
 				// Refocus the security
-				this.focusSecurity(security.id);
+				this.focusSecurity(Number(security.id));
 			})
 			.finally((): true => (this.ogTableNavigableService.enabled = true))
 			.catch(this.showError);
@@ -132,7 +132,7 @@ export default class SecurityIndexController {
 
 	public deleteSecurity(index: number): void {
 		// Check if the security can be deleted
-		this.securityModel.find(this.securities[index].id).then((security: Security): void => {
+		this.securityModel.find(Number(this.securities[index].id)).then((security: Security): void => {
 			// Disable navigation on the table
 			this.ogTableNavigableService.enabled = false;
 
@@ -153,7 +153,7 @@ export default class SecurityIndexController {
 							message: "You must first delete these transactions, or reassign to another security before attempting to delete this security."
 						})
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			} else {
 				// Show the delete security modal
 				modalOptions = angular.extend({
@@ -163,7 +163,7 @@ export default class SecurityIndexController {
 					resolve: {
 						security: (): Security => this.securities[index]
 					}
-				}, modalOptions);
+				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
 			}
 
 			// Show the modal

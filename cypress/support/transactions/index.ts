@@ -44,15 +44,15 @@ export function getValuesFrom(row: JQuery<HTMLTableRowElement>): Transaction {
 		transactionDate: row.find(transactionTransactionDate).text().trim(),
 		payeeOrSecurityName: row.find(transactionPayeeOrSecurityName).text().trim(),
 		categoryName: row.find(transactionCategoryName).text().trim(),
-		subcategoryOrAccountName: subcategoryOrAccountName.length > 0 ? subcategoryOrAccountName.text().trim() : undefined,
-		subtransactions: row.find(transactionSubtransactionsToggleButton).length > 0 ? [] : undefined,
+		subcategoryOrAccountName: subcategoryOrAccountName.length ? subcategoryOrAccountName.text().trim() : undefined,
+		subtransactions: row.find(transactionSubtransactionsToggleButton).length ? [] : undefined,
 		memo: row.find(transactionMemo).text().trim(),
-		creditAmount: creditAmount.length > 0 ? creditAmount.text().trim() : undefined,
-		debitAmount: debitAmount.length > 0 ? debitAmount.text().trim() : undefined,
-		price: price.length > 0 ? price.text().trim() : undefined,
-		quantity: quantity.length > 0 ? quantity.text().trim() : undefined,
-		commission: commission.length > 0 ? commission.text().trim() : undefined,
-		balanceOrAmount: balanceOrAmount.length > 0 ? balanceOrAmount.text().trim() : undefined
+		creditAmount: creditAmount.length ? creditAmount.text().trim() : undefined,
+		debitAmount: debitAmount.length ? debitAmount.text().trim() : undefined,
+		price: price.length ? price.text().trim() : undefined,
+		quantity: quantity.length ? quantity.text().trim() : undefined,
+		commission: commission.length ? commission.text().trim() : undefined,
+		balanceOrAmount: balanceOrAmount.length ? balanceOrAmount.text().trim() : undefined
 	};
 }
 

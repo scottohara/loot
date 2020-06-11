@@ -46,7 +46,7 @@ describe("PayeeEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			payeeEditController.errorMessage = "error message";
 			payeeEditController.save();
-			(null === payeeEditController.errorMessage).should.be.true;
+			(null === payeeEditController.errorMessage as string | null).should.be.true;
 		});
 
 		it("should save the payee", (): void => {

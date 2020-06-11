@@ -19,7 +19,7 @@ describe("ogTableNavigable", (): void => {
 	let	ogTableNavigable: DirectiveTest,
 			ogTableNavigableService: OgTableNavigableService,
 			$window: angular.IWindowService,
-			scope: OgTableNavigableScope & {rows: {}[]; model: OgTableActions;},
+			scope: OgTableNavigableScope & {rows: Record<string, unknown>[]; model: OgTableActions;},
 			isolateScope: OgTableNavigableScope;
 
 	// Load the modules
@@ -31,7 +31,7 @@ describe("ogTableNavigable", (): void => {
 		ogTableNavigableService = _ogTableNavigableService_;
 		ogTableNavigable = directiveTest;
 		ogTableNavigable.configure("og-table-navigable", "table", "<tbody><tr ng-repeat=\"row in rows\"><td></td></tr></tbody>");
-		scope = ogTableNavigable.scope as OgTableNavigableScope & {rows: {}[]; model: OgTableActions;};
+		scope = ogTableNavigable.scope as OgTableNavigableScope & {rows: Record<string, unknown>[]; model: OgTableActions;};
 		scope.rows = [{}, {}];
 		scope.model = {
 			selectAction: sinon.stub(),
@@ -54,7 +54,7 @@ describe("ogTableNavigable", (): void => {
 		beforeEach((): void => {
 			sinon.stub(isolateScope, "highlightRow");
 			sinon.stub(isolateScope, "scrollToRow");
-			row = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last();
+			row = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last() as JQuery<Element>;
 		});
 
 		it("should highlight the row", (): void => {
@@ -90,9 +90,9 @@ describe("ogTableNavigable", (): void => {
 				newRow: JQuery<Element>;
 
 		beforeEach((): void => {
-			oldRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first();
+			oldRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first() as JQuery<Element>;
 			oldRow.addClass("warning");
-			newRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last();
+			newRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last() as JQuery<Element>;
 			isolateScope.highlightRow(newRow);
 		});
 
@@ -102,25 +102,25 @@ describe("ogTableNavigable", (): void => {
 	});
 
 	describe("scrollToRow", (): void => {
-		let	mockJQueryInstance: {scrollTop: SinonStub; height: SinonStub;},
-				realJQueryInstance: JQuery,
+		let	mockJqueryInstance: {scrollTop: SinonStub; height: SinonStub;},
+				realJqueryInstance: JQuery,
 				row: JQuery<Element>,
 				top: number;
 
 		beforeEach((): void => {
 			top = 110;
-			row = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first();
+			row = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first() as JQuery<Element>;
 			sinon.stub(row[0], "scrollIntoView");
 			sinon.stub(row, "offset").callsFake((): JQuery.Coordinates => ({ top, left: 0 }));
 			sinon.stub(row, "height").returns(40);
 
-			mockJQueryInstance = {
+			mockJqueryInstance = {
 				scrollTop: sinon.stub().returns(100),
 				height: sinon.stub().returns(200)
 			};
 
-			realJQueryInstance = $window.$;
-			$window.$ = sinon.stub().returns(mockJQueryInstance);
+			realJqueryInstance = $window.$ as JQuery;
+			$window.$ = sinon.stub().returns(mockJqueryInstance);
 		});
 
 		it("should scroll the page up if the specified row is off the top of the screen", (): void => {
@@ -147,7 +147,7 @@ describe("ogTableNavigable", (): void => {
 			row[0].scrollIntoView.should.not.have.been.called;
 		});
 
-		afterEach((): JQuery => ($window.$ = realJQueryInstance));
+		afterEach((): JQuery => ($window.$ = realJqueryInstance));
 	});
 
 	describe("jumpToRow", (): void => {
@@ -178,21 +178,21 @@ describe("ogTableNavigable", (): void => {
 		it("should focus the first row if currently focussed row + offset is less than zero", (): void => {
 			isolateScope.focussedRow = 0;
 			isolateScope.jumpToRow(-10);
-			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first();
+			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first() as JQuery<Element>;
 			isolateScope.focusRow.should.have.been.calledWith(matchTargetRow);
 		});
 
 		it("should focus the last row if the currently focussed row + offset is greater than the number of rows", (): void => {
 			isolateScope.focussedRow = 1;
 			isolateScope.jumpToRow(10);
-			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last();
+			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last() as JQuery<Element>;
 			isolateScope.focusRow.should.have.been.calledWith(matchTargetRow);
 		});
 
 		it("should focus the currently focussed row + offset if within the bounds of the table", (): void => {
 			isolateScope.focussedRow = 1;
 			isolateScope.jumpToRow(-1);
-			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first();
+			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first() as JQuery<Element>;
 			isolateScope.focusRow.should.have.been.calledWith(matchTargetRow);
 		});
 	});
@@ -214,8 +214,8 @@ describe("ogTableNavigable", (): void => {
 		});
 
 		it("should focus the closest parent TR element to where the event occurred", (): void => {
-			const cellInLastRow: Element = $window.$(ogTableNavigable["element"]).find("tbody > tr > td").last(),
-						lastRow: JQuery<Element> = $window.$(cellInLastRow).closest("[og-table-navigable] > tbody > tr");
+			const cellInLastRow: Element = $window.$(ogTableNavigable["element"]).find("tbody > tr > td").last() as Element,
+						lastRow: JQuery<Element> = $window.$(cellInLastRow).closest("[og-table-navigable] > tbody > tr") as JQuery<Element>;
 
 			event.target = cellInLastRow;
 			isolateScope.clickHandler(event as JQueryMouseEventObject);
@@ -252,7 +252,7 @@ describe("ogTableNavigable", (): void => {
 		});
 
 		it("should invoke the selectAction handler for the closest parent TR element to where the event occurred", (): void => {
-			event.target = $window.$(ogTableNavigable["element"]).find("tbody > tr > td").last();
+			event.target = $window.$(ogTableNavigable["element"]).find("tbody > tr > td").last() as Element;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
 			scope.model.selectAction.should.have.been.calledWith(1);
 		});
@@ -266,7 +266,7 @@ describe("ogTableNavigable", (): void => {
 			sinon.stub(isolateScope, "focusRow");
 			sinon.stub(isolateScope, "highlightRow");
 			isolateScope.focussedRow = 0;
-			lastRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last();
+			lastRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last() as JQuery<Element>;
 		});
 
 		it("should do nothing if the target row could not be determined", (): void => {

@@ -9,7 +9,7 @@ export default function createCategory(props: Partial<Category> = {}): Category 
 		id,
 		name: `Category ${id}`,
 		closing_balance: 0,
-		direction: "inflow" as "inflow",
+		direction: "inflow" as const,
 		parent_id: null,
 		favourite: false,
 		num_transactions: 0,
