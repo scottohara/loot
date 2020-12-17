@@ -3,13 +3,13 @@
 
 require 'rails_helper'
 
-RSpec.describe CategoriesController, type: :controller do
+::RSpec.describe ::CategoriesController, type: :controller do
 	describe 'GET index ', request: true, json: true do
 		context 'for category list' do
 			let(:json) { 'category list with children' }
 
 			before do
-				expect(Category).to receive_message_chain(:where, :includes, :order).with(:direction, :name).and_return json
+				expect(::Category).to receive_message_chain(:where, :includes, :order).with(:direction, :name).and_return json
 				get :index, params: {include_children: true}
 			end
 
@@ -22,7 +22,7 @@ RSpec.describe CategoriesController, type: :controller do
 			let(:json) { 'category list without children' }
 
 			before do
-				expect(Category).to receive_message_chain(:where, :order).with({favourite: :desc}, :direction, :name).and_return json
+				expect(::Category).to receive_message_chain(:where, :order).with({favourite: :desc}, :direction, :name).and_return json
 				get :index
 			end
 
@@ -36,7 +36,7 @@ RSpec.describe CategoriesController, type: :controller do
 		let(:json) { 'category details' }
 
 		it 'should return the details of the specified category' do
-			expect(Category).to receive(:find).with('1').and_return json
+			expect(::Category).to receive(:find).with('1').and_return json
 			get :show, params: {id: '1'}
 		end
 	end
@@ -46,7 +46,7 @@ RSpec.describe CategoriesController, type: :controller do
 		let(:json) { 'created category' }
 
 		it 'should create a new category and return the details' do
-			expect(Category).to receive(:create!).with(request_body).and_return json
+			expect(::Category).to receive(:create!).with(request_body).and_return json
 			post :create, params: request_body
 		end
 	end
@@ -55,10 +55,10 @@ RSpec.describe CategoriesController, type: :controller do
 		let(:category) { instance_double 'category' }
 		let(:request_body) { {name: 'Updated category', direction: 'outflow', parent_id: '1'} }
 		let(:raw_json) { 'updated category' }
-		let(:json) { JSON.dump raw_json }
+		let(:json) { ::JSON.dump raw_json }
 
 		it 'should update an existing category and return the details' do
-			expect(Category).to receive(:find).with('1').and_return category
+			expect(::Category).to receive(:find).with('1').and_return category
 			expect(category).to receive(:update!).with request_body
 			expect(category).to receive(:as_json).and_return raw_json
 			patch :update, params: request_body.merge(id: '1')
@@ -66,10 +66,10 @@ RSpec.describe CategoriesController, type: :controller do
 	end
 
 	describe 'DELETE destroy', request: true do
-		let(:category) { Category.new }
+		let(:category) { ::Category.new }
 
 		it 'should delete an existing category' do
-			expect(Category).to receive(:find).with('1').and_return category
+			expect(::Category).to receive(:find).with('1').and_return category
 			expect(category).to receive :destroy!
 			delete :destroy, params: {id: '1'}
 		end

@@ -3,12 +3,12 @@
 
 require 'rails_helper'
 
-RSpec.describe SecurityTransaction, type: :model do
+::RSpec.describe ::SecurityTransaction, type: :model do
 	describe '::create_from_json' do
 		let(:json) { {} }
 
 		before do
-			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with json
 		end
 
 		it 'should create a transaction from a JSON representation' do
@@ -50,7 +50,7 @@ RSpec.describe SecurityTransaction, type: :model do
 
 		context 'unknown method' do
 			it 'should call super' do
-				expect_any_instance_of(Transaction).to receive(:method_missing).with :unknown_method
+				expect_any_instance_of(::Transaction).to receive(:method_missing).with :unknown_method
 				transaction.unknown_method
 			end
 		end
@@ -140,7 +140,7 @@ RSpec.describe SecurityTransaction, type: :model do
 		shared_examples 'a match' do
 			it 'should return the match' do
 				match = transaction.validate_method? "validate_foo_#{type}".to_sym
-				expect(match).to be_a MatchData
+				expect(match).to be_a ::MatchData
 				expect(match[1]).to eql 'foo'
 				expect(match[2]).to eql type
 			end

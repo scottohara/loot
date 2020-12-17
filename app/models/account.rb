@@ -6,7 +6,7 @@ class Account < ApplicationRecord
 	validates :name, :opening_balance, presence: true
 	validates :account_type, presence: true, inclusion: {in: %w[bank credit cash asset liability investment loan]}
 	validates :status, inclusion: {in: %w[open closed]}
-	belongs_to :related_account, class_name: 'Account', foreign_key: 'related_account_id', autosave: true, optional: true
+	belongs_to :related_account, class_name: 'Account', autosave: true, optional: true
 	has_many :transaction_accounts, dependent: :restrict_with_error
 	has_many :transactions, through: :transaction_accounts, source: :trx do
 		def for_ledger(_opts)
@@ -34,13 +34,13 @@ class Account < ApplicationRecord
 		related_account.destroy! if account_type.eql?('investment') && related_account.present?
 	end
 
-	include Transactable
-	include Favouritable
+	include ::Transactable
+	include ::Favouritable
 
 	class << self
 		def list
 			# Get the current holding balance of all investment accounts
-			investment_accounts = ActiveRecord::Base.connection.execute <<-QUERY
+			investment_accounts = ::ActiveRecord::Base.connection.execute <<-QUERY
 				SELECT					accounts.id,
 												accounts.name,
 												accounts.status,
@@ -84,7 +84,7 @@ class Account < ApplicationRecord
 			QUERY
 
 			# Get the current closing balance of all non-investment accounts
-			other_accounts = ActiveRecord::Base.connection.execute <<-QUERY
+			other_accounts = ::ActiveRecord::Base.connection.execute <<-QUERY
 				SELECT					accounts.id,
 												accounts.name,
 												accounts.status,
@@ -185,15 +185,15 @@ class Account < ApplicationRecord
 							}
 						}
 					end,
-					total: accounts.map { |a| a['closing_balance'].to_f }.reduce(:+)
+					total: accounts.sum { |a| a['closing_balance'].to_f }
 				}
 			end
 		end
 
 		def create_from_json(json)
-			account = Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true)
+			account = ::Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true)
 			account.related_account_id = json['related_account']['id'] if account.account_type.eql?('loan') && !json['related_account'].nil?
-			account.related_account = Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: account if account.account_type.eql? 'investment'
+			account.related_account = ::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: account if account.account_type.eql? 'investment'
 			account.save!
 			account
 		end
@@ -224,14 +224,14 @@ class Account < ApplicationRecord
 				related_account.favourite = json['favourite'].eql?(true)
 			else
 				# Create a new cash account
-				self.related_account = Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: self
+				self.related_account = ::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: self
 			end
 		else
 			# If changing from an investment account, delete the related cash account
 			related_account.destroy! if original_account_type.eql? 'investment'
 
 			# If changing to a loan account, set the related asset account
-			self.related_account = account_type.eql?('loan') && json.dig('related_account', 'id') && Account.find(json['related_account']['id']) || nil
+			self.related_account = account_type.eql?('loan') && json.dig('related_account', 'id') && ::Account.find(json['related_account']['id']) || nil
 		end
 
 		save!
@@ -246,6 +246,6 @@ class Account < ApplicationRecord
 
 	def as_json(options = {fields: %i[id name account_type opening_balance status favourite]})
 		# Defer to serializer
-		ActiveModelSerializers::SerializableResource.new(self, options).as_json
+		::ActiveModelSerializers::SerializableResource.new(self, options).as_json
 	end
 end

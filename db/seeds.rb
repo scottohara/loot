@@ -6,11 +6,11 @@ require 'json'
 
 # Seed Loot database
 module Loot
-	@logger = Logger.new STDOUT
+	@logger = ::Logger.new $stdout
 	@logger.formatter = proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
 
 	# Location of the exported sunriise files
-	@export_dir = File.join Dir.home, 'Documents', 'sunriise'
+	@export_dir = ::File.join ::Dir.home, 'Documents', 'sunriise'
 
 	# Temporary hashes for lookups etc. during load
 	@tmp_account_types = {
@@ -51,19 +51,19 @@ module Loot
 	end
 
 	def csv_file_path(table)
-		File.join @export_dir, 'csv', table, "#{table}-rows.csv"
+		::File.join @export_dir, 'csv', table, "#{table}-rows.csv"
 	end
 
 	# Accounts
 	def load_accounts
 		@logger.info 'Deleting existing accounts...'
-		Account.destroy_all
+		::Account.destroy_all
 		@logger.info 'done'
 
 		related_accounts = {}
 
-		CSV.foreach csv_file_path('ACCT'), headers: true do |row|
-			a = Account.create!(name: row['szFull'], account_type: @tmp_account_types[row['at']], opening_balance: row['amtOpen'].to_f, status: (row['fClosed'].eql?('false') && 'open') || 'closed').id
+		::CSV.foreach csv_file_path('ACCT'), headers: true do |row|
+			a = ::Account.create!(name: row['szFull'], account_type: @tmp_account_types[row['at']], opening_balance: row['amtOpen'].to_f, status: (row['fClosed'].eql?('false') && 'open') || 'closed').id
 			@tmp_accounts[row['hacct']] = a
 			related_accounts[a] = row['hacctRel'] unless row['hacctRel'].nil?
 			progress 'Loaded', $INPUT_LINE_NUMBER, 'account' if ($INPUT_LINE_NUMBER % 10).zero?
@@ -72,8 +72,8 @@ module Loot
 		@logger.info
 
 		related_accounts.each_with_index do |(account, related_account), index|
-			a = Account.find account
-			a.related_account = Account.find @tmp_accounts[related_account]
+			a = ::Account.find account
+			a.related_account = ::Account.find @tmp_accounts[related_account]
 			a.save!
 			progress 'Loaded', index, 'related account'
 		end
@@ -84,11 +84,11 @@ module Loot
 	# Payees
 	def load_payees
 		@logger.info 'Deleting existing payees...'
-		Payee.destroy_all
+		::Payee.destroy_all
 		@logger.info 'done'
 
-		CSV.foreach csv_file_path('PAY'), headers: true do |row|
-			@tmp_payees[row['hpay']] = Payee.create!(name: row['szFull']).id
+		::CSV.foreach csv_file_path('PAY'), headers: true do |row|
+			@tmp_payees[row['hpay']] = ::Payee.create!(name: row['szFull']).id
 			progress 'Loaded', $INPUT_LINE_NUMBER, 'payee' if ($INPUT_LINE_NUMBER % 10).zero?
 		end
 		progress 'Loaded', $INPUT_LINE_NUMBER, 'payee'
@@ -98,10 +98,10 @@ module Loot
 	# Categories
 	def load_categories
 		@logger.info 'Deleting existing categories...'
-		Category.destroy_all
+		::Category.destroy_all
 		@logger.info 'done'
 
-		CSV.foreach csv_file_path('CAT'), headers: true do |row|
+		::CSV.foreach csv_file_path('CAT'), headers: true do |row|
 			@tmp_categories[row['hcat']] = {type: row['hct'], name: row['szFull'], level: row['nLevel'], parent: row['hcatParent']}
 		end
 
@@ -137,7 +137,7 @@ module Loot
 
 	def create_category(id, name, direction)
 		# Create the new category
-		c = Category.new name: name, direction: direction
+		c = ::Category.new name: name, direction: direction
 
 		# Get the list of categories that have this parent
 		subcats = subcategories id
@@ -156,11 +156,11 @@ module Loot
 	# Securities
 	def load_securities
 		@logger.info 'Deleting existing securities...'
-		Security.destroy_all
+		::Security.destroy_all
 		@logger.info 'done'
 
-		CSV.foreach csv_file_path('SEC'), headers: true do |row|
-			@tmp_securities[row['hsec']] = {id: Security.create!(name: row['szFull'], code: row['szSymbol']).id, prices: []}
+		::CSV.foreach csv_file_path('SEC'), headers: true do |row|
+			@tmp_securities[row['hsec']] = {id: ::Security.create!(name: row['szFull'], code: row['szSymbol']).id, prices: []}
 			progress 'Loaded', $INPUT_LINE_NUMBER, 'security' if ($INPUT_LINE_NUMBER % 10).zero?
 		end
 		progress 'Loaded', $INPUT_LINE_NUMBER, 'security'
@@ -170,10 +170,10 @@ module Loot
 	# Security Prices
 	def load_security_prices
 		@logger.info 'Deleting existing security prices...'
-		SecurityPrice.delete_all
+		::SecurityPrice.delete_all
 		@logger.info 'done'
 
-		CSV.foreach csv_file_path('SP'), headers: true do |row|
+		::CSV.foreach csv_file_path('SP'), headers: true do |row|
 			@tmp_securities[row['hsec']][:prices] << {price: row['dPrice'].to_f, as_at_date: row['dt']}
 			progress 'Prepared', $INPUT_LINE_NUMBER, 'security price' if ($INPUT_LINE_NUMBER % 10).zero?
 		end
@@ -182,9 +182,9 @@ module Loot
 
 		loaded = 0
 		@tmp_securities.each_value do |sec|
-			s = Security.find sec[:id]
+			s = ::Security.find sec[:id]
 			last_price = nil
-			sec[:prices].sort_by { |price| Date.parse price[:as_at_date] }.each do |price|
+			sec[:prices].sort_by { |price| ::Date.parse price[:as_at_date] }.each do |price|
 				s.prices.build(price: price[:price], as_at_date: price[:as_at_date]) unless price[:price].eql? last_price
 				last_price = price[:price]
 				loaded += 1
@@ -199,25 +199,25 @@ module Loot
 	# Transactions
 	def load_transactions
 		@logger.info 'Deleting existing transactions...'
-		Transaction.destroy_all
+		::Transaction.destroy_all
 		@logger.info 'done'
 		@logger.info 'Deleting existing transaction accounts...'
-		TransactionAccount.delete_all
+		::TransactionAccount.delete_all
 		@logger.info 'done'
 		@logger.info 'Deleting existing transaction headers...'
-		TransactionHeader.delete_all
+		::TransactionHeader.delete_all
 		@logger.info 'done'
 		@logger.info 'Deleting existing transaction categories...'
-		TransactionCategory.delete_all
+		::TransactionCategory.delete_all
 		@logger.info 'done'
 		@logger.info 'Deleting existing transaction splits...'
-		TransactionSplit.delete_all
+		::TransactionSplit.delete_all
 		@logger.info 'done'
 		@logger.info 'Deleting existing transaction flags...'
-		TransactionFlag.delete_all
+		::TransactionFlag.delete_all
 		@logger.info 'done'
 
-		CSV.foreach csv_file_path('TRN_SPLIT'), headers: true do |row|
+		::CSV.foreach csv_file_path('TRN_SPLIT'), headers: true do |row|
 			@tmp_splits[row['htrnParent']] = [] unless @tmp_splits.key? row['htrnParent']
 			@tmp_splits[row['htrnParent']] << row['htrn']
 			@tmp_subtransactions << row['htrn']
@@ -226,14 +226,14 @@ module Loot
 		progress 'Prepared', $INPUT_LINE_NUMBER, 'split'
 		@logger.info
 
-		CSV.foreach csv_file_path('TRN_XFER'), headers: true do |row|
+		::CSV.foreach csv_file_path('TRN_XFER'), headers: true do |row|
 			@tmp_transfers[row['htrnLink']] = row['htrnFrom']
 			progress 'Prepared', $INPUT_LINE_NUMBER, 'transfer' if ($INPUT_LINE_NUMBER % 10).zero?
 		end
 		progress 'Prepared', $INPUT_LINE_NUMBER, 'transfer'
 		@logger.info
 
-		CSV.foreach csv_file_path('TRN_INV'), headers: true do |row|
+		::CSV.foreach csv_file_path('TRN_INV'), headers: true do |row|
 			@tmp_investments[row['htrn']] = {
 				price: row['dPrice'].to_f,
 				qty: row['qty'].to_f,
@@ -244,7 +244,7 @@ module Loot
 		progress 'Prepared', $INPUT_LINE_NUMBER, 'investment'
 		@logger.info
 
-		CSV.foreach csv_file_path('LOT'), headers: true do |row|
+		::CSV.foreach csv_file_path('LOT'), headers: true do |row|
 			@tmp_buys[row['htrnBuy']] = '' unless row['htrnBuy'].nil?
 			@tmp_sells[row['htrnSell']] = '' unless row['htrnSell'].nil?
 			progress 'Prepared', $INPUT_LINE_NUMBER, 'investment lot' if ($INPUT_LINE_NUMBER % 10).zero?
@@ -252,14 +252,14 @@ module Loot
 		progress 'Prepared', $INPUT_LINE_NUMBER, 'investment lot'
 		@logger.info
 
-		CSV.foreach csv_file_path('XBAG'), headers: true do |row|
+		::CSV.foreach csv_file_path('XBAG'), headers: true do |row|
 			@tmp_flags[row['lHobj']] = row['szMemo'] if row['bt'].eql? '0'
 			progress 'Prepared', $INPUT_LINE_NUMBER, 'flag' if ($INPUT_LINE_NUMBER % 10).zero?
 		end
 		progress 'Prepared', $INPUT_LINE_NUMBER, 'flag'
 		@logger.info
 
-		CSV.foreach csv_file_path('TRN'), headers: true, encoding: 'ISO-8859-1:UTF-8' do |row|
+		::CSV.foreach csv_file_path('TRN'), headers: true, encoding: 'ISO-8859-1:UTF-8' do |row|
 			@tmp_transactions[row['htrn']] = {
 				id: row['htrn'],
 				account: @tmp_accounts[row['hacct']],
@@ -285,10 +285,10 @@ module Loot
 				elsif (row['ps'].eql?('0') || row['ps'].eql?('2')) && (@tmp_transfers.key?(row['htrn']) || @tmp_transfers.value?(row['htrn'])) && @tmp_subtransactions.include?(row['htrn'])
 					# Subtransfers are any rows where 'ps' is 0 or 2, and the row is both part of a transfer and a child of a split
 					'subtransfer'
-				elsif row['ps'].eql?('0') && @tmp_transfers.key?(row['htrn']) && !@tmp_subtransactions.include?(@tmp_transfers[row['htrn']]) && row['amt'].to_f.negative?
+				elsif row['ps'].eql?('0') && @tmp_transfers.key?(row['htrn']) && @tmp_subtransactions.exclude?(@tmp_transfers[row['htrn']]) && row['amt'].to_f.negative?
 					# Transfers out are any rows where 'ps' is 0 and the row is part of a transfer and the other side is not a child of a split and the amount is negative
 					'transfer_out'
-				elsif row['ps'].eql?('0') && @tmp_transfers.key?(row['htrn']) && !@tmp_subtransactions.include?(@tmp_transfers[row['htrn']]) && row['amt'].to_f >= 0
+				elsif row['ps'].eql?('0') && @tmp_transfers.key?(row['htrn']) && @tmp_subtransactions.exclude?(@tmp_transfers[row['htrn']]) && row['amt'].to_f >= 0
 					# Transfers in are any rows where 'ps' is 0 and the row is part of a transfer and the other side is not a child of a split and the amount is positive
 					'transfer_in'
 				elsif row['ps'].eql?('2') || (row['ps'].eql?('0') && @tmp_subtransactions.include?(row['htrn']))
@@ -315,7 +315,7 @@ module Loot
 				elsif !row['hsec'].nil? && !@tmp_transfers.key?(row['htrn']) && !@tmp_transfers.value?(row['htrn']) && @tmp_buys.key?(row['htrn'])
 					# Security Holding in is any row that has a security and is not part of a transfer and is a buy
 					'securityholding_in'
-				elsif row['ps'].eql?('0') && !@tmp_splits.key?(row['htrn']) && !@tmp_subtransactions.include?(row['htrn']) && !@tmp_transfers.key?(row['htrn']) && !@tmp_transfers.value?(row['htrn'])
+				elsif row['ps'].eql?('0') && !@tmp_splits.key?(row['htrn']) && @tmp_subtransactions.exclude?(row['htrn']) && !@tmp_transfers.key?(row['htrn']) && !@tmp_transfers.value?(row['htrn'])
 					# Basic is any row where 'ps' is 0 and the row is not part of a split or a transfer
 					'basic'
 				end
@@ -326,11 +326,12 @@ module Loot
 		@logger.info
 
 		# For any transfers, check if one or both sides of the transfer have a security
+		transfer_types = %w[transfer_in transfer_out]
 		@tmp_transfers.each_with_index do |(this_side, other_side), index|
 			trx = @tmp_transactions[this_side]
 
 			# Only interested in transfers in/out
-			next unless %w[transfer_in transfer_out].include? trx[:type]
+			next unless transfer_types.include? trx[:type]
 
 			this_security = @tmp_transactions[this_side][:security]
 			other_security = @tmp_transactions[other_side][:security]
@@ -342,7 +343,7 @@ module Loot
 				elsif (this_security.nil? ^ other_security.nil?) && (@tmp_investments.include?(this_side) || @tmp_investments.include?(other_side))
 					# Investment is where only one side has a security and is in investments
 					this_security.nil? ? 'securityinvestment_out' : 'securityinvestment_in'
-				elsif (this_security.nil? ^ other_security.nil?) && !@tmp_investments.include?(this_side) && !@tmp_investments.include?(other_side)
+				elsif (this_security.nil? ^ other_security.nil?) && @tmp_investments.exclude?(this_side) && @tmp_investments.exclude?(other_side)
 					# Dividend is where only one side has a security and neither is in investments
 					this_security.nil? ? 'dividend_in' : 'dividend_out'
 				end
@@ -353,11 +354,11 @@ module Loot
 		progress 'Prepared', @tmp_transfers.length, 'security transaction'
 		@logger.info
 
-		@tmp_transactions.sort_by { |_k, v| Date.parse v[:transaction_date] }.each_value do |trx|
+		@tmp_transactions.sort_by { |_k, v| ::Date.parse v[:transaction_date] }.each_value do |trx|
 			# Only create transaction if the type and account are known, and it is not a void transaction
 			public_send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil? || trx[:account].nil? || void?(trx)
 			progress 'Loaded', index, 'transaction'
-		rescue StandardError
+		rescue ::StandardError
 			@logger.info trx
 			raise
 		end
@@ -368,10 +369,10 @@ module Loot
 	# Bills
 	def load_bills
 		@logger.info 'Deleting existing bills...'
-		Schedule.destroy_all
+		::Schedule.destroy_all
 		@logger.info 'done'
 
-		CSV.foreach csv_file_path('BILL'), headers: true do |row|
+		::CSV.foreach csv_file_path('BILL'), headers: true do |row|
 			@tmp_head_bills[row['hbillHead']] = {next_unpaid_instance: row['iinstNextUnpaid'].to_i} if row['hbill'].to_i.eql?(row['hbillHead'].to_i) && row['cInstMax'].to_i.eql?(-1)
 
 			unless @tmp_bills.key?(row['hbillHead']) && row['iinst'].to_i <= @tmp_bills[row['hbillHead']][:instance]
@@ -399,7 +400,7 @@ module Loot
 		loaded = 0
 		@tmp_head_bills.each do |id, bill|
 			bill[:next_date] =
-				Date.parse(@tmp_bills[id][:last_date]) +
+				::Date.parse(@tmp_bills[id][:last_date]) +
 				case @tmp_bills[id][:frequency]
 				when 'Fortnightly' then ((bill[:next_unpaid_instance] - @tmp_bills[id][:instance]) * 2).weeks
 				when 'Monthly' then (bill[:next_unpaid_instance] - @tmp_bills[id][:instance]).months
@@ -429,7 +430,7 @@ module Loot
 
 			loaded += 1
 			progress 'Loaded', loaded, 'bill'
-		rescue StandardError
+		rescue ::StandardError
 			@logger.info id, bill, trx, @tmp_bills[id]
 			raise
 		end
@@ -438,9 +439,9 @@ module Loot
 	end
 
 	def create_basic_transaction(trx)
-		category = Category.find trx[:category] unless trx[:category].nil?
+		category = ::Category.find trx[:category] unless trx[:category].nil?
 
-		BasicTransaction.create_from_json({
+		::BasicTransaction.create_from_json({
 			'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
 			'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
 			'amount' => trx[:amount],
@@ -466,7 +467,7 @@ module Loot
 				subtrx = @tmp_transactions[trxid]
 
 				if subtrx[:type].eql? 'subtransaction'
-					category = subtrx[:category] && Category.find(subtrx[:category]) || nil
+					category = subtrx[:category] && ::Category.find(subtrx[:category]) || nil
 				else
 					subaccount = subtrx[:account]
 					substatus = subtrx[:status]
@@ -491,7 +492,7 @@ module Loot
 				}
 			end
 
-		SplitTransaction.create_from_json({
+		::SplitTransaction.create_from_json({
 			'amount' => trx[:amount],
 			'memo' => trx[:memo],
 			'primary_account' => {'id' => trx[:account]},
@@ -514,7 +515,7 @@ module Loot
 	def create_transfer_transaction(trx, direction)
 		other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 
-		TransferTransaction.create_from_json({
+		::TransferTransaction.create_from_json({
 			'primary_account' => {'id' => trx[:account]},
 			'account' => {'id' => other_side[:account]},
 			'status' => trx[:status],
@@ -528,12 +529,13 @@ module Loot
 	end
 
 	def create_payslip_transaction(trx)
+		categorisable_types = %w[subtransaction payslip_before_tax payslip_tax]
 		subtransactions =
 			@tmp_splits[trx[:id]].map do |trxid|
 				subtrx = @tmp_transactions[trxid]
 
-				if %w[subtransaction payslip_before_tax payslip_tax].include? subtrx[:type]
-					category = subtrx[:category] && Category.find(subtrx[:category]) || nil
+				if categorisable_types.include? subtrx[:type]
+					category = subtrx[:category] && ::Category.find(subtrx[:category]) || nil
 				else
 					subaccount = subtrx[:account]
 					substatus = subtrx[:status]
@@ -549,7 +551,7 @@ module Loot
 				{
 					'amount' => subtrx[:amount],
 					'memo' => subtrx[:memo],
-					'transaction_type' => %w[subtransaction payslip_before_tax payslip_tax].include?(subtrx[:type]) ? 'Sub' : 'Subtransfer',
+					'transaction_type' => categorisable_types.include?(subtrx[:type]) ? 'Sub' : 'Subtransfer',
 					'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
 					'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
 					'direction' => 'outflow',
@@ -558,7 +560,7 @@ module Loot
 				}
 			end
 
-		PayslipTransaction.create_from_json({
+		::PayslipTransaction.create_from_json({
 			'amount' => trx[:amount],
 			'memo' => trx[:memo],
 			'primary_account' => {'id' => trx[:account]},
@@ -576,7 +578,7 @@ module Loot
 				subtrx = @tmp_transactions[trxid]
 
 				if subtrx[:type].eql? 'subtransaction'
-					category = subtrx[:category] && Category.find(subtrx[:category]) || nil
+					category = subtrx[:category] && ::Category.find(subtrx[:category]) || nil
 				else
 					subaccount = subtrx[:account]
 					substatus = subtrx[:status]
@@ -601,7 +603,7 @@ module Loot
 				}
 			end
 
-		LoanRepaymentTransaction.create_from_json({
+		::LoanRepaymentTransaction.create_from_json({
 			'amount' => trx[:amount],
 			'memo' => trx[:memo],
 			'primary_account' => {'id' => trx[:account]},
@@ -624,7 +626,7 @@ module Loot
 	def create_securitytransfer_transaction(trx, direction)
 		other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 
-		SecurityTransferTransaction.create_from_json({
+		::SecurityTransferTransaction.create_from_json({
 			'primary_account' => {'id' => trx[:account]},
 			'account' => {'id' => other_side[:account]},
 			'status' => trx[:status],
@@ -646,7 +648,7 @@ module Loot
 	end
 
 	def create_securityholding_transaction(trx, direction)
-		SecurityHoldingTransaction.create_from_json({
+		::SecurityHoldingTransaction.create_from_json({
 			'memo' => trx[:memo],
 			'direction' => direction,
 			'status' => trx[:status],
@@ -691,7 +693,7 @@ module Loot
 			investment_direction = trx[:orig_amount].to_f.positive? ? 'outflow' : 'inflow'
 		end
 
-		SecurityInvestmentTransaction.create_from_json({
+		::SecurityInvestmentTransaction.create_from_json({
 			'amount' => trx[:amount],
 			'memo' => trx[:memo],
 			'direction' => investment_direction,
@@ -722,7 +724,7 @@ module Loot
 
 		investment_trx, cash_trx = cash_trx, investment_trx if direction.eql? 'inflow'
 
-		DividendTransaction.create_from_json({
+		::DividendTransaction.create_from_json({
 			'amount' => trx[:amount],
 			'memo' => trx[:memo],
 			'primary_account' => {'id' => investment_trx[:account]},
@@ -755,13 +757,13 @@ module Loot
 	end
 
 	def verify_balances
-		include ActionView::Helpers::NumberHelper
+		include ::ActionView::Helpers::NumberHelper
 		balance_mismatches = []
 
 		# Process each account.json file
-		Dir[File.join @export_dir, 'json', '**', 'account.json'].each_with_index do |file, index|
+		::Dir[::File.join @export_dir, 'json', '**', 'account.json'].each_with_index do |file, index|
 			# Load the JSON data
-			account_json = JSON.parse IO.read file
+			account_json = ::JSON.parse ::IO.read file
 
 			# Skip if we can't find the matching account
 			next unless @tmp_accounts[account_json['id'].to_s]
@@ -770,12 +772,12 @@ module Loot
 			next if @tmp_account_types[account_json['type'].to_s].eql? 'loan'
 
 			# Calculate the loaded account's closing balance
-			closing_balance = Account.find(@tmp_accounts[account_json['id'].to_s]).closing_balance
+			closing_balance = ::Account.find(@tmp_accounts[account_json['id'].to_s]).closing_balance
 
 			# Check that it matches
 			balance_mismatches << [account_json['name'], number_to_currency(account_json['currentBalance']), number_to_currency(closing_balance)] unless number_to_currency(account_json['currentBalance']).eql? number_to_currency(closing_balance)
 			progress 'Checked', index, 'closing balance'
-		rescue StandardError => e
+		rescue ::StandardError => e
 			@logger.info account_json, e
 			@logger.info "Failed on Source ID: #{account_json['id']}, Target ID: #{@tmp_accounts[account_json['id'].to_s]}, OK: #{@tmp_accounts[account_json['id'].to_s]}"
 		end
@@ -791,11 +793,11 @@ module Loot
 	end
 end
 
-Loot.load_accounts
-Loot.load_payees
-Loot.load_categories
-Loot.load_securities
-Loot.load_security_prices
-Loot.load_transactions
-Loot.load_bills
-Loot.verify_balances
+::Loot.load_accounts
+::Loot.load_payees
+::Loot.load_categories
+::Loot.load_securities
+::Loot.load_security_prices
+::Loot.load_transactions
+::Loot.load_bills
+::Loot.verify_balances

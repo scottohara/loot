@@ -3,24 +3,24 @@
 
 require 'rails_helper'
 
-RSpec.describe FavouritesController, type: :controller do
+::RSpec.describe ::FavouritesController, type: :controller do
 	shared_context 'for account', :account do
 		let(:context) { create :account }
 		let(:request_params) { {'account_id' => '1'} }
 	end
 
 	shared_context 'for payee', :payee do
-		let(:context) { Payee.new }
+		let(:context) { ::Payee.new }
 		let(:request_params) { {'payee_id' => '1'} }
 	end
 
 	shared_context 'for category', :category do
-		let(:context) { Category.new }
+		let(:context) { ::Category.new }
 		let(:request_params) { {'category_id' => '1'} }
 	end
 
 	shared_context 'for security', :security do
-		let(:context) { Security.new }
+		let(:context) { ::Security.new }
 		let(:request_params) { {'security_id' => '1'} }
 	end
 
@@ -36,10 +36,10 @@ RSpec.describe FavouritesController, type: :controller do
 			patch :update, params: request_params
 		end
 
-		it('should favourite an account', account: true) {}
-		it('should favourite a payee', payee: true) {}
-		it('should favourite a category', category: true) {}
-		it('should favourite a security', security: true) {}
+		it('should favourite an account', account: true) {} # Empty block
+		it('should favourite a payee', payee: true) {} # Empty block
+		it('should favourite a category', category: true) {} # Empty block
+		it('should favourite a security', security: true) {} # Empty block
 	end
 
 	describe 'DELETE destroy', request: true do
@@ -49,9 +49,9 @@ RSpec.describe FavouritesController, type: :controller do
 			delete :destroy, params: request_params
 		end
 
-		it('should unfavourite an account', account: true) {}
-		it('should favourite a payee', payee: true) {}
-		it('should favourite a category', category: true) {}
-		it('should favourite a security', security: true) {}
+		it('should unfavourite an account', account: true) {} # Empty block
+		it('should favourite a payee', payee: true) {} # Empty block
+		it('should favourite a category', category: true) {} # Empty block
+		it('should favourite a security', security: true) {} # Empty block
 	end
 end

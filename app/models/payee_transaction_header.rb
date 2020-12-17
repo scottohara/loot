@@ -8,7 +8,7 @@ class PayeeTransactionHeader < TransactionHeader
 
 	def update_from_json(json)
 		super
-		self.payee = Payee.find_or_new json['payee']
+		self.payee = ::Payee.find_or_new json['payee']
 		self
 	end
 

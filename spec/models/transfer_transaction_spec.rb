@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TransferTransaction, type: :model do
+::RSpec.describe ::TransferTransaction, type: :model do
 	matcher :match_json do |expected, source_account, destination_account, header|
 		match do |actual|
 			actual[:transaction_type].eql?('Transfer') &&
@@ -45,9 +45,9 @@ RSpec.describe TransferTransaction, type: :model do
 		end
 
 		before do
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
-			expect(Account).to receive(:find).with(json['account']['id']).and_return account
-			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
+			expect(::Account).to receive(:find).with(json['account']['id']).and_return account
+			expect_any_instance_of(::PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 		end
 
 		after do
@@ -87,8 +87,8 @@ RSpec.describe TransferTransaction, type: :model do
 
 		before do
 			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
-			expect(Account).to receive(:find).with(json['account']['id']).and_return account
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return primary_account
+			expect(::Account).to receive(:find).with(json['account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
 		end
 

@@ -7,13 +7,13 @@ class Schedule < ApplicationRecord
 	validates :estimate, :auto_enter, inclusion: {in: [true, false]}
 	has_one :transaction_header, dependent: :destroy
 
-	include Categorisable
-	include Measurable
+	include ::Categorisable
+	include ::Measurable
 
 	class << self
 		def ledger
 			schedules =
-				Schedule
+				::Schedule
 				.select(
 					'transactions.id',
 					'transactions.transaction_type',
@@ -116,14 +116,15 @@ class Schedule < ApplicationRecord
 		end
 
 		def auto_enter_overdue
-			overdue = where(auto_enter: true).where 'next_due_date <= ?', Time.zone.today.to_s
+			split_transaction_types = %w[Split Payslip LoanRepayment]
+			overdue = where(auto_enter: true).where 'next_due_date <= ?', ::Time.zone.today.to_s
 
 			overdue.each do |schedule|
 				# Find the associated transaction header
-				header = TransactionHeader.includes(:trx).find_by(schedule_id: schedule.id)
+				header = ::TransactionHeader.includes(:trx).find_by(schedule_id: schedule.id)
 
 				# What type of transaction is it?
-				transaction_class = Transaction.class_for header.trx.transaction_type
+				transaction_class = ::Transaction.class_for header.trx.transaction_type
 
 				# Find the transaction
 				transaction = transaction_class.includes(header: [:schedule]).find header.trx.id
@@ -143,7 +144,7 @@ class Schedule < ApplicationRecord
 					end
 
 				# For Splits, we need to get the subtransactions as well
-				transaction_json['subtransactions'] = transaction.children if %w[Split Payslip LoanRepayment].include? transaction.transaction_type
+				transaction_json['subtransactions'] = transaction.children if split_transaction_types.include? transaction.transaction_type
 
 				# Clear the id
 				transaction_json[:id] = nil

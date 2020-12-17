@@ -3,12 +3,12 @@
 
 require 'rails_helper'
 
-RSpec.describe SchedulesController, type: :controller do
+::RSpec.describe ::SchedulesController, type: :controller do
 	describe 'GET index', request: true, json: true do
 		let(:json) { 'schedule ledger' }
 
 		it 'should return the schedule ledger' do
-			expect(Schedule).to receive(:ledger).and_return json
+			expect(::Schedule).to receive(:ledger).and_return json
 			get :index
 		end
 	end
@@ -29,7 +29,7 @@ RSpec.describe SchedulesController, type: :controller do
 
 		before do
 			expect(controller).to receive(:clean).and_call_original
-			expect(Transaction).to receive(:find).with('1').and_return schedule
+			expect(::Transaction).to receive(:find).with('1').and_return schedule
 		end
 
 		after do
@@ -38,11 +38,11 @@ RSpec.describe SchedulesController, type: :controller do
 
 		context "when transaction type hasn't changed" do
 			let(:request_body) { {id: '1', transaction_type: 'Basic', transaction_date: nil, account_id: '1', primary_account: {id: '1'}, controller: 'schedules', action: 'update'} }
-			let(:request_params) { ActionController::Parameters.new request_body }
+			let(:request_params) { ::ActionController::Parameters.new request_body }
 
 			it 'should update the existing transaction' do
-				request_params['primary_account'] = ActionController::Parameters.new request_body[:primary_account]
-				expect(BasicTransaction).to receive(:update_from_json).with(request_params).and_return json
+				request_params['primary_account'] = ::ActionController::Parameters.new request_body[:primary_account]
+				expect(::BasicTransaction).to receive(:update_from_json).with(request_params).and_return json
 			end
 		end
 
@@ -61,7 +61,7 @@ RSpec.describe SchedulesController, type: :controller do
 		let(:schedule) { create :basic_transaction, :scheduled }
 
 		it 'should delete an existing schedule' do
-			expect(Transaction).to receive(:find).with('1').and_return schedule
+			expect(::Transaction).to receive(:find).with('1').and_return schedule
 			expect(schedule).to receive(:as_subclass).and_return schedule
 			expect(schedule).to receive :destroy!
 			delete :destroy, params: {id: '1'}
@@ -70,11 +70,11 @@ RSpec.describe SchedulesController, type: :controller do
 
 	describe '#clean' do
 		it 'should remove any empty or nil values from the passed parameters, clear the transaction date and copy the account id' do
-			controller.params = ActionController::Parameters.new(
+			controller.params = ::ActionController::Parameters.new(
 				a: 'a',
 				b: '',
 				c: nil,
-				'transaction_date' => Time.zone.today.to_s,
+				'transaction_date' => ::Time.zone.today.to_s,
 				'primary_account' => {'id' => 1}
 			)
 
@@ -90,8 +90,8 @@ RSpec.describe SchedulesController, type: :controller do
 
 	describe '#create_schedule' do
 		it 'should create a schedule from the JSON in the request body' do
-			controller.params = ActionController::Parameters.new('transaction_type' => 'Basic', 'primary_account' => {'id' => 1})
-			expect(BasicTransaction).to receive(:create_from_json).with controller.params
+			controller.params = ::ActionController::Parameters.new('transaction_type' => 'Basic', 'primary_account' => {'id' => 1})
+			expect(::BasicTransaction).to receive(:create_from_json).with controller.params.merge(transaction_date: nil, account_id: 1)
 
 			controller.clean
 			controller.create_schedule

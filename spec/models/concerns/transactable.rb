@@ -3,8 +3,8 @@
 
 require 'models/concerns/categorisable'
 
-RSpec.shared_examples Transactable do
-	it_behaves_like Categorisable
+::RSpec.shared_examples ::Transactable do
+	it_behaves_like ::Categorisable
 
 	describe '#ledger' do
 		# Custom matcher that compares a set of transactions against another set
@@ -110,7 +110,7 @@ RSpec.shared_examples Transactable do
 		end
 
 		after :each, spec_type: :range do
-			FactoryBot.reload
+			::FactoryBot.reload
 
 			# Create the context with 15 basic transactions
 			context = create context_factory, transactions: 15
@@ -120,11 +120,11 @@ RSpec.shared_examples Transactable do
 			stub_const 'Transactable::NUM_RESULTS', 9
 
 			# Get the ledger
-			_, transactions, at_end = subject.ledger as_at: (Date.parse('2014-01-01') + as_at).to_s, direction: direction, query: 'Transaction'
+			_, transactions, at_end = subject.ledger as_at: (::Date.parse('2014-01-01') + as_at).to_s, direction: direction, query: 'Transaction'
 
 			expect(transactions.uniq { |t| t[:id] }.size).to eq range.size
-			expect(transactions.first[:transaction_date]).to eq(Date.parse('2014-01-01') + range.first)
-			expect(transactions.last[:transaction_date]).to eq(Date.parse('2014-01-01') + range.last)
+			expect(transactions.first[:transaction_date]).to eq(::Date.parse('2014-01-01') + range.first)
+			expect(transactions.last[:transaction_date]).to eq(::Date.parse('2014-01-01') + range.last)
 			expect(at_end).to be expected_at_end
 		end
 
@@ -133,7 +133,7 @@ RSpec.shared_examples Transactable do
 			subject = defined?(as_class_method) && described_class || context
 
 			_, transactions = subject.ledger query: 'Transaction'
-			expected_transactions = subject.transactions.for_ledger(query: 'Transaction').where 'transaction_headers.transaction_date IS NOT NULL'
+			expected_transactions = subject.transactions.for_ledger(query: 'Transaction').where.not('transaction_headers.transaction_date': nil)
 
 			expect(transactions).to match_ledger_transactions expected_transactions
 		end
@@ -163,14 +163,14 @@ RSpec.shared_examples Transactable do
 				let(:range) { 0..4 }
 				let(:expected_at_end) { true }
 
-				it('should return the earliest set of transactions') {}
+				it('should return the earliest set of transactions') {} # Empty block
 			end
 
 			context 'when the date is not near the start of the range' do
 				let(:range) { 2..9 }
 				let(:expected_at_end) { false }
 
-				it('should return an earlier set of transactions') {}
+				it('should return an earlier set of transactions') {} # Empty block
 			end
 		end
 
@@ -182,14 +182,14 @@ RSpec.shared_examples Transactable do
 				let(:range) { 2..10 }
 				let(:expected_at_end) { false }
 
-				it('should return a later set of transactions') {}
+				it('should return a later set of transactions') {} # Empty block
 			end
 
 			context 'when the date is near the end of the range' do
 				let(:range) { 10..14 }
 				let(:expected_at_end) { true }
 
-				it('should return the last set of transactions') {}
+				it('should return the last set of transactions') {} # Empty block
 			end
 		end
 	end
@@ -200,7 +200,7 @@ RSpec.shared_examples Transactable do
 		let(:context) { create context_factory, :with_all_transaction_types, scheduled: 1 }
 
 		before do
-			FactoryBot.reload
+			::FactoryBot.reload
 
 			if defined? as_class_method
 				context # Needs reference here because context is lazy-loaded (otherwise transactions are never created)

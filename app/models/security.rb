@@ -30,7 +30,7 @@ class Security < ApplicationRecord
 				)
 				.where('accounts.account_type = \'investment\'')
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
-				.where('transaction_headers.transaction_date IS NOT NULL')
+				.where.not('transaction_headers.transaction_date': nil)
 				.group 'transaction_accounts.direction'
 		end
 
@@ -45,16 +45,16 @@ class Security < ApplicationRecord
 		end
 	end
 
-	include Transactable
-	include Favouritable
+	include ::Transactable
+	include ::Favouritable
 
 	class << self
 		def find_or_new(security)
-			!security.is_a?(String) && security['id'].present? ? find(security['id']) : new(name: security)
+			!security.is_a?(::String) && security['id'].present? ? find(security['id']) : new(name: security)
 		end
 
 		def list
-			securities = ActiveRecord::Base.connection.execute <<-QUERY
+			securities = ::ActiveRecord::Base.connection.execute <<-QUERY
 				SELECT		securities.id,
 									securities.name,
 									securities.code,
@@ -117,7 +117,7 @@ class Security < ApplicationRecord
 		end
 	end
 
-	def price(as_at = Time.zone.today.to_s)
+	def price(as_at = ::Time.zone.today.to_s)
 		latest =
 			prices
 			.select('price')
@@ -135,7 +135,7 @@ class Security < ApplicationRecord
 
 		if security_price.present?
 			# Update the existing price if the transaction_id is highest of all for this security/date (best guess at this being the 'most recent' price)
-			security_price.update_column(:price, price) unless security_transaction_headers.where(transaction_date: as_at_date).where('transaction_id > ?', transaction_id).exists?
+			security_price.update_column(:price, price) unless security_transaction_headers.where(transaction_date: as_at_date).exists?(['transaction_id > ?', transaction_id])
 		else
 			# No existing price for this date, so create one
 			prices.create! price: price, as_at_date: as_at_date
@@ -156,6 +156,6 @@ class Security < ApplicationRecord
 
 	def as_json
 		# Defer to serializer
-		ActiveModelSerializers::SerializableResource.new(self).as_json
+		::ActiveModelSerializers::SerializableResource.new(self).as_json
 	end
 end

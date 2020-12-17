@@ -11,7 +11,7 @@ class SecurityTransactionHeader < TransactionHeader
 		self.quantity = json['quantity']
 		self.price = json['price']
 		self.commission = json['commission']
-		self.security = Security.find_or_new json['security']
+		self.security = ::Security.find_or_new json['security']
 		self
 	end
 

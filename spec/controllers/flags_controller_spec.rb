@@ -3,12 +3,12 @@
 
 require 'rails_helper'
 
-RSpec.describe FlagsController, type: :controller do
+::RSpec.describe ::FlagsController, type: :controller do
 	describe 'PATCH update', request: true do
 		let(:memo) { 'Test flag' }
 
 		before do
-			expect(Transaction).to receive(:find).with('1').and_return transaction
+			expect(::Transaction).to receive(:find).with('1').and_return transaction
 		end
 
 		after do
@@ -36,7 +36,7 @@ RSpec.describe FlagsController, type: :controller do
 		let(:transaction) { create :transaction, :flagged }
 
 		it 'should delete an existing flag' do
-			expect(Transaction).to receive(:find).with('1').and_return transaction
+			expect(::Transaction).to receive(:find).with('1').and_return transaction
 			expect(transaction.flag).to receive :destroy!
 			delete :destroy, params: {transaction_id: '1'}
 		end

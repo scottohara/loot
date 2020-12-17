@@ -3,13 +3,13 @@
 
 require 'rails_helper'
 
-RSpec.describe AccountsController, type: :controller do
+::RSpec.describe ::AccountsController, type: :controller do
 	describe 'GET index', request: true, json: true do
 		context 'for account list' do
 			let(:json) { 'account list with balances' }
 
 			before do
-				expect(Account).to receive(:list).and_return json
+				expect(::Account).to receive(:list).and_return json
 				get :index, params: {include_balances: true}
 			end
 
@@ -22,7 +22,7 @@ RSpec.describe AccountsController, type: :controller do
 			let(:json) { 'account list without balances' }
 
 			before do
-				expect(Account).to receive_message_chain(:all, :order).with({favourite: :desc}, :account_type, :name).and_return json
+				expect(::Account).to receive_message_chain(:all, :order).with({favourite: :desc}, :account_type, :name).and_return json
 				get :index
 			end
 
@@ -36,7 +36,7 @@ RSpec.describe AccountsController, type: :controller do
 		let(:json) { 'account details' }
 
 		it 'should return the details of the specified account' do
-			expect(Account).to receive(:find).with('1').and_return json
+			expect(::Account).to receive(:find).with('1').and_return json
 			get :show, params: {id: '1'}
 		end
 	end
@@ -46,7 +46,7 @@ RSpec.describe AccountsController, type: :controller do
 		let(:json) { 'created account' }
 
 		it 'should create a new account and return the details' do
-			expect(Account).to receive(:create_from_json).with(ActionController::Parameters.new request_body).and_return json
+			expect(::Account).to receive(:create_from_json).with(::ActionController::Parameters.new request_body).and_return json
 			post :create, params: request_body
 		end
 	end
@@ -56,26 +56,26 @@ RSpec.describe AccountsController, type: :controller do
 		let(:json) { 'updated account' }
 
 		it 'should update an existing account and return the details' do
-			expect(Account).to receive(:update_from_json).with(ActionController::Parameters.new request_body).and_return json
+			expect(::Account).to receive(:update_from_json).with(::ActionController::Parameters.new request_body).and_return json
 			patch :update, params: request_body
 		end
 	end
 
 	describe 'DELETE destroy', request: true do
-		let(:account) { Account.new }
+		let(:account) { ::Account.new }
 
 		it 'should delete an existing account' do
-			expect(Account).to receive(:find).with('1').and_return account
+			expect(::Account).to receive(:find).with('1').and_return account
 			expect(account).to receive :destroy!
 			delete :destroy, params: {id: '1'}
 		end
 	end
 
 	describe 'PUT reconcile', request: true do
-		let(:account) { Account.new }
+		let(:account) { ::Account.new }
 
 		it 'should return the details of the specified account' do
-			expect(Account).to receive(:find).with('1').and_return account
+			expect(::Account).to receive(:find).with('1').and_return account
 			expect(account).to receive :reconcile
 			put :reconcile, params: {id: '1'}
 		end

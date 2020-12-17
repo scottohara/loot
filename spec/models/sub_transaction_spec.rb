@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SubTransaction, type: :model do
+::RSpec.describe ::SubTransaction, type: :model do
 	matcher :match_json do |expected, category|
 		match do |actual|
 			actual.transaction_type.eql?('Sub') &&
@@ -27,7 +27,7 @@ RSpec.describe SubTransaction, type: :model do
 		end
 
 		before do
-			expect(Category).to receive(:find_or_new).with(json['category']).and_return category
+			expect(::Category).to receive(:find_or_new).with(json['category']).and_return category
 		end
 
 		context 'with category' do
@@ -39,13 +39,13 @@ RSpec.describe SubTransaction, type: :model do
 		context 'with subcategory' do
 			it 'should create a transaction from a JSON representation' do
 				json['subcategory'] = {'id' => subcategory.id}
-				expect(Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
+				expect(::Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
 				expect(described_class.create_from_json json).to match_json json, subcategory
 			end
 		end
 	end
 
-	describe('::update_from_json') {}
+	describe('::update_from_json') {} # Empty block
 
 	describe '#as_json' do
 		let(:json) { transaction.as_json }
@@ -74,7 +74,7 @@ RSpec.describe SubTransaction, type: :model do
 		end
 
 		context 'with subcategory' do
-			subject(:transaction) { create :sub_transaction, category: FactoryBot.create(:subcategory) }
+			subject(:transaction) { create :sub_transaction, category: ::FactoryBot.create(:subcategory) }
 
 			before do
 				expect(transaction.category.parent).to receive(:as_json).and_return 'category json'

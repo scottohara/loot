@@ -3,7 +3,7 @@
 
 # Categorisable
 module Categorisable
-	extend ActiveSupport::Concern
+	extend ::ActiveSupport::Concern
 
 	# Methods for determining how to display the category of a transaction
 	# All methods expect a hash in the following structure:

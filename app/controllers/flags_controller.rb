@@ -4,7 +4,7 @@
 # Flags controller
 class FlagsController < ApplicationController
 	def update
-		transaction = Transaction.find(params[:transaction_id])
+		transaction = ::Transaction.find(params[:transaction_id])
 		if transaction.flag.nil?
 			transaction.build_flag(memo: params[:memo])
 		else
@@ -15,7 +15,7 @@ class FlagsController < ApplicationController
 	end
 
 	def destroy
-		Transaction.find(params[:transaction_id]).flag.destroy!
+		::Transaction.find(params[:transaction_id]).flag.destroy!
 		head :ok
 	end
 end

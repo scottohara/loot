@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # Account serializer
-class AccountSerializer < ActiveModel::Serializer
+class AccountSerializer < ::ActiveModel::Serializer
 	attributes :id, :name, :account_type, :status, :num_transactions, :favourite
 	attribute(:opening_balance) { object.opening_balance.to_f }
 	attribute(:closing_balance) { object.closing_balance.to_f }

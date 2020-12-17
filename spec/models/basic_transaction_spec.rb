@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BasicTransaction, type: :model do
+::RSpec.describe ::BasicTransaction, type: :model do
 	matcher :match_json do |expected, account, category, header|
 		match do |actual|
 			actual.transaction_type.eql?('Basic') &&
@@ -44,9 +44,9 @@ RSpec.describe BasicTransaction, type: :model do
 		end
 
 		before do
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
-			expect(Category).to receive(:find_or_new).with(json['category']).and_return category
-			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
+			expect(::Category).to receive(:find_or_new).with(json['category']).and_return category
+			expect_any_instance_of(::PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 		end
 
 		context 'with category' do
@@ -58,7 +58,7 @@ RSpec.describe BasicTransaction, type: :model do
 		context 'with subcategory' do
 			it 'should create a transaction from a JSON representation' do
 				json['subcategory'] = {'id' => subcategory.id}
-				expect(Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
+				expect(::Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
 				expect(described_class.create_from_json json).to match_json json, account, subcategory, header
 			end
 		end
@@ -85,8 +85,8 @@ RSpec.describe BasicTransaction, type: :model do
 
 		before do
 			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
-			expect(Category).to receive(:find_or_new).with(json['category']).and_return category
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
+			expect(::Category).to receive(:find_or_new).with(json['category']).and_return category
 			expect(transaction.header).to receive(:update_from_json).with json
 		end
 
@@ -99,7 +99,7 @@ RSpec.describe BasicTransaction, type: :model do
 		context 'with subcategory' do
 			it 'should update a transaction from a JSON representation' do
 				json['subcategory'] = {'id' => subcategory.id}
-				expect(Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
+				expect(::Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
 				expect(described_class.update_from_json json).to match_json json, account, subcategory, transaction.header
 			end
 		end
@@ -132,7 +132,7 @@ RSpec.describe BasicTransaction, type: :model do
 		end
 
 		context 'with subcategory' do
-			subject(:transaction) { create :basic_transaction, category: FactoryBot.create(:subcategory), status: 'Reconciled' }
+			subject(:transaction) { create :basic_transaction, category: ::FactoryBot.create(:subcategory), status: 'Reconciled' }
 
 			before do
 				expect(transaction.category.parent).to receive(:as_json).and_return 'category json'

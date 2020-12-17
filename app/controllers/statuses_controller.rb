@@ -13,7 +13,7 @@ class StatusesController < ApplicationController
 	end
 
 	def update_status(status = nil)
-		TransactionAccount
+		::TransactionAccount
 			.where(account_id: params[:account_id])
 			.where(transaction_id: params[:transaction_id])
 			.update_all(status: status)

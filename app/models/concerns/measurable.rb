@@ -3,9 +3,9 @@
 
 # Measurable
 module Measurable
-	extend ActiveSupport::Concern
+	extend ::ActiveSupport::Concern
 
-	Frequency = Struct.new :advance_by, :periods_since
+	Frequency = ::Struct.new :advance_by, :periods_since
 	private_constant :Frequency
 
 	FREQUENCIES = {
@@ -23,18 +23,18 @@ module Measurable
 	class_methods do
 		# Weeks since a given date
 		def weeks_since(date)
-			((Time.zone.today - date) / 7).to_i
+			((::Time.zone.today - date) / 7).to_i
 		end
 
 		# Fortnights since a given date
 		def fortnights_since(date)
-			((Time.zone.today - date) / 14).to_i
+			((::Time.zone.today - date) / 14).to_i
 		end
 
 		# Months since a given date
 		def months_since(date)
-			months = ((Time.zone.today.year - date.year) * 12) + (Time.zone.today.month - date.month)
-			months -= 1 if Time.zone.today.day < date.day
+			months = ((::Time.zone.today.year - date.year) * 12) + (::Time.zone.today.month - date.month)
+			months -= 1 if ::Time.zone.today.day < date.day
 			months
 		end
 

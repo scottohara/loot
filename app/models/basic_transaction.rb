@@ -13,11 +13,11 @@ class BasicTransaction < PayeeCashTransaction
 
 	class << self
 		def create_from_json(json)
-			category = Category.find_or_new json['category']
-			category = Category.find_or_new(json['subcategory'], category) if json['subcategory'].present?
+			category = ::Category.find_or_new json['category']
+			category = ::Category.find_or_new(json['subcategory'], category) if json['subcategory'].present?
 
 			s = super
-			s.build_transaction_account(direction: category.direction, status: json['status']).account = Account.find json['primary_account']['id']
+			s.build_transaction_account(direction: category.direction, status: json['status']).account = ::Account.find json['primary_account']['id']
 			s.build_transaction_category.category = category
 			s.save!
 			s
@@ -31,12 +31,12 @@ class BasicTransaction < PayeeCashTransaction
 	end
 
 	def update_from_json(json)
-		category = Category.find_or_new json['category']
-		category = Category.find_or_new(json['subcategory'], category) if json['subcategory'].present?
+		category = ::Category.find_or_new json['category']
+		category = ::Category.find_or_new(json['subcategory'], category) if json['subcategory'].present?
 
 		super
 		transaction_account.direction = category.direction
-		self.account = Account.find json['primary_account']['id']
+		self.account = ::Account.find json['primary_account']['id']
 		self.category = category
 		save!
 	end

@@ -3,12 +3,12 @@
 
 require 'rails_helper'
 
-RSpec.describe PayeeCashTransaction, type: :model do
+::RSpec.describe ::PayeeCashTransaction, type: :model do
 	describe '::create_from_json' do
 		let(:json) { {} }
 
 		before do
-			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with json
+			expect_any_instance_of(::PayeeTransactionHeader).to receive(:update_from_json).with json
 		end
 
 		it 'should create a transaction from a JSON representation' do

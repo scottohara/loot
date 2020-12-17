@@ -31,11 +31,11 @@ class SecurityTransaction < Transaction
 	end
 
 	def validate_presence(attr)
-		errors[:base] << "#{attr.capitalize} can't be blank" if instance_eval "header.#{attr}.blank?", __FILE__, __LINE__
+		errors.add :base, "#{attr.capitalize} can't be blank" if instance_eval "header.#{attr}.blank?", __FILE__, __LINE__ # e.g. header.quantity.blank?
 	end
 
 	def validate_absence(attr)
-		errors[:base] << "#{attr.capitalize} must be blank" unless instance_eval "header.#{attr}.blank?", __FILE__, __LINE__
+		errors.add :base, "#{attr.capitalize} must be blank" unless instance_eval "header.#{attr}.blank?", __FILE__, __LINE__ # e.g. header.quantity.blank?
 	end
 
 	def as_json(options = {})
@@ -43,7 +43,9 @@ class SecurityTransaction < Transaction
 	end
 
 	# :nocov:
-	private unless Rails.env.eql? 'test'
+
+	private unless ::Rails.env.eql? 'test'
+
 	# :nocov:
 
 	def validate_method?(method, &block)

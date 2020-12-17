@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe PayeeTransactionHeader, type: :model do
+::RSpec.describe ::PayeeTransactionHeader, type: :model do
 	describe '#update_from_json' do
 		let(:payee) { create :payee }
 		let(:header) { create :payee_transaction_header }
@@ -16,7 +16,7 @@ RSpec.describe PayeeTransactionHeader, type: :model do
 		end
 
 		before do
-			expect(Payee).to receive(:find_or_new).and_return payee
+			expect(::Payee).to receive(:find_or_new).and_return payee
 		end
 
 		it 'should update a transaction header from a JSON representation' do

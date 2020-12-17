@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SecurityTransactionHeader, type: :model do
+::RSpec.describe ::SecurityTransactionHeader, type: :model do
 	matcher :match_json do |expected, security|
 		match do |actual|
 			actual.quantity.eql?(expected['quantity']) &&
@@ -28,7 +28,7 @@ RSpec.describe SecurityTransactionHeader, type: :model do
 		end
 
 		before do
-			expect(Security).to receive(:find_or_new).and_return security
+			expect(::Security).to receive(:find_or_new).and_return security
 		end
 
 		it 'should update a transaction header from a JSON representation' do

@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-FactoryBot.define do
+::FactoryBot.define do
 	trait :amount do
 		amount { 1 }
 	end
@@ -12,7 +12,7 @@ FactoryBot.define do
 
 	trait :flagged do
 		after :build do |trx|
-			trx.flag = FactoryBot.build :transaction_flag, memo: 'Transaction flag'
+			trx.flag = ::FactoryBot.build :transaction_flag, memo: 'Transaction flag'
 		end
 	end
 

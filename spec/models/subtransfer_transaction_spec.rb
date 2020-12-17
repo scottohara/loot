@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SubtransferTransaction, type: :model do
+::RSpec.describe ::SubtransferTransaction, type: :model do
 	matcher :match_json do |expected, direction, account|
 		match do |actual|
 			actual.transaction_type.eql?('Subtransfer') &&
@@ -29,8 +29,8 @@ RSpec.describe SubtransferTransaction, type: :model do
 		end
 
 		before do
-			expect(Account).to receive(:find).with(json['account']['id']).and_return account
-			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with json
+			expect(::Account).to receive(:find).with(json['account']['id']).and_return account
+			expect_any_instance_of(::PayeeTransactionHeader).to receive(:update_from_json).with json
 		end
 
 		after do
@@ -54,7 +54,7 @@ RSpec.describe SubtransferTransaction, type: :model do
 		end
 	end
 
-	describe('::update_from_json') {}
+	describe('::update_from_json') {} # Empty block
 
 	describe '#as_json' do
 		before do

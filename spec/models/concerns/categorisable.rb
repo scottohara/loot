@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-RSpec.shared_examples Categorisable do
+::RSpec.shared_examples ::Categorisable do
 	describe '::transaction_category' do
 		subject { described_class }
 

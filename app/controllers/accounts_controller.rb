@@ -5,31 +5,31 @@
 class AccountsController < ApplicationController
 	def index
 		if params.key? :include_balances
-			render json: Account.list
+			render json: ::Account.list
 		else
-			render json: Account.all.order({favourite: :desc}, :account_type, :name), fields: %i[id name account_type opening_balance status favourite]
+			render json: ::Account.all.order({favourite: :desc}, :account_type, :name), fields: %i[id name account_type opening_balance status favourite]
 		end
 	end
 
 	def show
-		render json: Account.find(params[:id])
+		render json: ::Account.find(params[:id])
 	end
 
 	def create
-		render json: Account.create_from_json(params)
+		render json: ::Account.create_from_json(params)
 	end
 
 	def update
-		render json: Account.update_from_json(params)
+		render json: ::Account.update_from_json(params)
 	end
 
 	def destroy
-		Account.find(params[:id]).destroy!
+		::Account.find(params[:id]).destroy!
 		head :ok
 	end
 
 	def reconcile
-		Account.find(params[:id]).reconcile
+		::Account.find(params[:id]).reconcile
 		head :ok
 	end
 end

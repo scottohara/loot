@@ -21,10 +21,10 @@ class FavouritesController < ApplicationController
 	def context
 		# Map param names to models
 		contexts = {
-			account_id: Account,
-			payee_id: Payee,
-			category_id: Category,
-			security_id: Security
+			account_id: ::Account,
+			payee_id: ::Payee,
+			category_id: ::Category,
+			security_id: ::Security
 		}.with_indifferent_access
 
 		# Get the first pair that matches a param name

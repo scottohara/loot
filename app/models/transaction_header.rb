@@ -10,11 +10,11 @@ class TransactionHeader < ApplicationRecord
 	self.primary_key = 'transaction_id'
 
 	def validate_transaction_date_or_schedule_presence
-		errors[:base] << "Either transaction date or schedule can't be blank" if transaction_date.blank? && schedule.blank?
+		errors.add :base, "Either transaction date or schedule can't be blank" if transaction_date.blank? && schedule.blank?
 	end
 
 	def validate_transaction_date_or_schedule_absence
-		errors[:base] << 'Either transaction date or schedule must be blank' unless transaction_date.blank? || schedule.blank?
+		errors.add :base, 'Either transaction date or schedule must be blank' unless transaction_date.blank? || schedule.blank?
 	end
 
 	def update_from_json(json)

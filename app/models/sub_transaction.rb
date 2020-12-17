@@ -13,8 +13,8 @@ class SubTransaction < CashTransaction
 
 	class << self
 		def create_from_json(json)
-			category = Category.find_or_new json['category']
-			category = Category.find_or_new json['subcategory'], category if json['subcategory'].present?
+			category = ::Category.find_or_new json['category']
+			category = ::Category.find_or_new json['subcategory'], category if json['subcategory'].present?
 
 			s = super
 			s.build_transaction_category.category = category

@@ -4,8 +4,8 @@
 require 'rails_helper'
 require 'models/concerns/categorisable'
 
-RSpec.describe SplitTransaction, type: :model do
-	it_behaves_like Categorisable
+::RSpec.describe ::SplitTransaction, type: :model do
+	it_behaves_like ::Categorisable
 
 	matcher :match_json do |expected, account, header|
 		match do |actual|
@@ -44,8 +44,8 @@ RSpec.describe SplitTransaction, type: :model do
 		end
 
 		it 'should create a transaction from a JSON representation' do
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
-			expect_any_instance_of(PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
+			expect_any_instance_of(::PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
 			expect_any_instance_of(described_class).to receive(:create_children).with json['subtransactions']
 			expect(described_class.create_from_json json).to match_json json, account, header
 		end
@@ -69,7 +69,7 @@ RSpec.describe SplitTransaction, type: :model do
 
 		it 'should update a transaction from a JSON representation' do
 			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return account
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
 			expect(described_class.update_from_json json).to match_json json, account, transaction.header
 		end
@@ -95,7 +95,7 @@ RSpec.describe SplitTransaction, type: :model do
 						id: subcategory.id
 					}
 				},
-				ActionController::Parameters.new({
+				::ActionController::Parameters.new({
 					id: 'child 3',
 					amount: 1,
 					memo: 'Test subtransaction 2',

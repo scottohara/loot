@@ -1,20 +1,20 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'factory_bot' unless ENV[:RACK_ENV.to_s].eql? 'production'
+require 'factory_bot' unless ::ENV[:RACK_ENV.to_s].eql? 'production'
 
 namespace :db do
 	namespace :e2e do
 		desc 'Load accounts for e2e tests'
 		task accounts: :environment do
 			# Mixin factory bot syntax
-			include FactoryBot::Syntax::Methods
+			include ::FactoryBot::Syntax::Methods
 
 			# Connect to the test database
-			ActiveRecord::Base.establish_connection :test
+			::ActiveRecord::Base.establish_connection :test
 
 			# Truncate any existing data
-			DatabaseCleaner.clean_with :truncation
+			::DatabaseCleaner.clean_with :truncation
 
 			# Create accounts of all types (1 favourite)
 			create :bank_account, opening_balance: 500
@@ -26,7 +26,7 @@ namespace :db do
 			create :loan_account, opening_balance: -1000
 
 			# Reset the database connection
-			ActiveRecord::Base.establish_connection ENV['RAILS_ENV']
+			::ActiveRecord::Base.establish_connection ::ENV['RAILS_ENV']
 		end
 	end
 end

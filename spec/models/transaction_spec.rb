@@ -5,7 +5,7 @@ require 'rails_helper'
 require 'models/concerns/transactable'
 require 'models/concerns/categorisable'
 
-RSpec.describe Transaction, type: :model do
+::RSpec.describe ::Transaction, type: :model do
 	matcher :match_json do |expected|
 		match do |actual|
 			actual.id.eql?(expected[:id]) &&
@@ -14,9 +14,9 @@ RSpec.describe Transaction, type: :model do
 		end
 	end
 
-	it_behaves_like Categorisable
+	it_behaves_like ::Categorisable
 
-	it_behaves_like Transactable do
+	it_behaves_like ::Transactable do
 		let(:as_class_method) { true }
 		let(:context_factory) { :bank_account }
 		let(:ledger_json_key) { :memo }
@@ -27,7 +27,7 @@ RSpec.describe Transaction, type: :model do
 		subject(:transaction) { described_class }
 
 		it 'should return the transaction class for a given type' do
-			expect(transaction.class_for 'Basic').to be BasicTransaction
+			expect(transaction.class_for 'Basic').to be ::BasicTransaction
 		end
 	end
 
@@ -85,7 +85,7 @@ RSpec.describe Transaction, type: :model do
 		end
 
 		context 'unflagged' do
-			it('should create a transaction from a JSON representation') {}
+			it('should create a transaction from a JSON representation') {} # Empty block
 		end
 
 		context 'flagged' do
@@ -99,7 +99,7 @@ RSpec.describe Transaction, type: :model do
 		subject(:transaction) { create :transaction }
 
 		it 'should become an instance matching the transaction type' do
-			expect(transaction.as_subclass.class).to be BasicTransaction
+			expect(transaction.as_subclass.class).to be ::BasicTransaction
 		end
 	end
 
@@ -120,7 +120,7 @@ RSpec.describe Transaction, type: :model do
 			subject(:transaction) { create :transaction }
 
 			context 'and the update does not include a flag' do
-				it('should update a transaction from a JSON representation and remain unflagged') {}
+				it('should update a transaction from a JSON representation and remain unflagged') {} # Empty block
 			end
 
 			context 'and the update includes a flag' do
@@ -134,7 +134,7 @@ RSpec.describe Transaction, type: :model do
 			subject(:transaction) { create :transaction, :flagged }
 
 			context 'and the update does not include a flag' do
-				it('should update a transaction from a JSON representation and clear the flag') {}
+				it('should update a transaction from a JSON representation and clear the flag') {} # Empty block
 			end
 
 			context 'and the update includes a flag' do

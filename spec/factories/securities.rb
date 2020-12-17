@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-FactoryBot.define do
+::FactoryBot.define do
 	factory :security do
 		sequence(:name) { |n| "Security #{n}" }
 		sequence(:code, 'A') { |n| n }

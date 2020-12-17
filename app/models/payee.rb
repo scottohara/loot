@@ -27,12 +27,12 @@ class Payee < ApplicationRecord
 		end
 	end
 
-	include Transactable
-	include Favouritable
+	include ::Transactable
+	include ::Favouritable
 
 	class << self
 		def find_or_new(payee)
-			!payee.is_a?(String) && payee['id'].present? ? find(payee['id']) : new(name: payee)
+			!payee.is_a?(::String) && payee['id'].present? ? find(payee['id']) : new(name: payee)
 		end
 	end
 
@@ -46,6 +46,6 @@ class Payee < ApplicationRecord
 
 	def as_json
 		# Defer to serializer
-		ActiveModelSerializers::SerializableResource.new(self).as_json
+		::ActiveModelSerializers::SerializableResource.new(self).as_json
 	end
 end

@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TransactionHeader, type: :model do
+::RSpec.describe ::TransactionHeader, type: :model do
 	describe '#validate_transaction_date_or_schedule_presence' do
 		subject(:transaction_header) { described_class.new }
 
@@ -15,7 +15,7 @@ RSpec.describe TransactionHeader, type: :model do
 		end
 
 		it 'should not be an error if transaction date is not blank' do
-			transaction_header.transaction_date = Time.zone.today
+			transaction_header.transaction_date = ::Time.zone.today
 			transaction_header.validate_transaction_date_or_schedule_presence
 			expect(transaction_header.errors[:base]).not_to include error_message
 		end
@@ -27,7 +27,7 @@ RSpec.describe TransactionHeader, type: :model do
 		end
 
 		it 'should not be an error if both transaction date and schedule are not blank' do
-			transaction_header.transaction_date = Time.zone.today
+			transaction_header.transaction_date = ::Time.zone.today
 			transaction_header.schedule = build :schedule
 			transaction_header.validate_transaction_date_or_schedule_presence
 			expect(transaction_header.errors[:base]).not_to include error_message
@@ -40,7 +40,7 @@ RSpec.describe TransactionHeader, type: :model do
 		let(:error_message) { 'Either transaction date or schedule must be blank' }
 
 		it 'should be an error if both transaction date and schedule are not blank' do
-			transaction_header.transaction_date = Time.zone.today
+			transaction_header.transaction_date = ::Time.zone.today
 			transaction_header.schedule = build :schedule
 			transaction_header.validate_transaction_date_or_schedule_absence
 			expect(transaction_header.errors[:base]).to include error_message
@@ -53,7 +53,7 @@ RSpec.describe TransactionHeader, type: :model do
 		end
 
 		it 'should not be an error if schedule is blank' do
-			transaction_header.transaction_date = Time.zone.today
+			transaction_header.transaction_date = ::Time.zone.today
 			transaction_header.validate_transaction_date_or_schedule_absence
 			expect(transaction_header.errors[:base]).not_to include error_message
 		end
@@ -74,7 +74,7 @@ RSpec.describe TransactionHeader, type: :model do
 		let(:header) { create :transaction_header }
 		let(:json) do
 			{
-				'next_due_date' => Time.zone.today,
+				'next_due_date' => ::Time.zone.today,
 				'frequency' => 'Weekly',
 				'estimate' => true,
 				'auto_enter' => true
@@ -87,10 +87,10 @@ RSpec.describe TransactionHeader, type: :model do
 
 		context 'unscheduled' do
 			before do
-				json['transaction_date'] = Time.zone.today
+				json['transaction_date'] = ::Time.zone.today
 			end
 
-			it('should update a transaction header from a JSON representation') {}
+			it('should update a transaction header from a JSON representation') {} # Empty block
 
 			context 'when previously scheduled' do
 				let(:header) { create :transaction_header, :scheduled }
@@ -132,7 +132,7 @@ RSpec.describe TransactionHeader, type: :model do
 		context 'unscheduled' do
 			subject(:transaction_header) { create :transaction_header }
 
-			it('should return a JSON representation') {}
+			it('should return a JSON representation') {} # Empty block
 		end
 
 		context 'scheduled' do

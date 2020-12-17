@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe CashTransaction, type: :model do
+::RSpec.describe ::CashTransaction, type: :model do
 	matcher :match_json do |expected|
 		match do |actual|
 			actual.amount.eql? expected['amount']

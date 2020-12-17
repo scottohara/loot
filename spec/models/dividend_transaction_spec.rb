@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DividendTransaction, type: :model do
+::RSpec.describe ::DividendTransaction, type: :model do
 	matcher :match_json do |expected, investment_account, cash_account, header|
 		match do |actual|
 			actual.transaction_type.eql?('Dividend') &&
@@ -52,12 +52,12 @@ RSpec.describe DividendTransaction, type: :model do
 		end
 
 		before do
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
-			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
-			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
-			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with 'quantity'
-			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with 'price'
-			expect_any_instance_of(SecurityTransaction).to receive(:validate_absence).with 'commission'
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
+			expect(::Account).to receive(:find).with(json['account']['id']).and_return cash_account
+			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+			expect_any_instance_of(::SecurityTransaction).to receive(:validate_absence).with 'quantity'
+			expect_any_instance_of(::SecurityTransaction).to receive(:validate_absence).with 'price'
+			expect_any_instance_of(::SecurityTransaction).to receive(:validate_absence).with 'commission'
 		end
 
 		it 'should create a transaction from a JSON representation' do
@@ -85,8 +85,8 @@ RSpec.describe DividendTransaction, type: :model do
 
 		before do
 			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
-			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
+			expect(::Account).to receive(:find).with(json['account']['id']).and_return cash_account
 			expect(transaction.header).to receive(:update_from_json).with json
 		end
 

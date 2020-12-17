@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SecurityInvestmentTransaction, type: :model do
+::RSpec.describe ::SecurityInvestmentTransaction, type: :model do
 	matcher :match_json do |expected, investment_account, cash_account|
 		match do |actual|
 			actual.transaction_type.eql?('SecurityInvestment') &&
@@ -43,13 +43,13 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 		end
 
 		before do
-			expect(Security).to receive(:find_or_new).with(json['security']).and_return security
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
-			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
-			expect_any_instance_of(SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
-			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with 'quantity'
-			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with 'price'
-			expect_any_instance_of(SecurityTransaction).to receive(:validate_presence).with 'commission'
+			expect(::Security).to receive(:find_or_new).with(json['security']).and_return security
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
+			expect(::Account).to receive(:find).with(json['account']['id']).and_return cash_account
+			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+			expect_any_instance_of(::SecurityTransaction).to receive(:validate_presence).with 'quantity'
+			expect_any_instance_of(::SecurityTransaction).to receive(:validate_presence).with 'price'
+			expect_any_instance_of(::SecurityTransaction).to receive(:validate_presence).with 'commission'
 		end
 
 		after do
@@ -63,14 +63,14 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 
 			context 'unscheduled' do
 				it 'should create a transaction from a JSON representation' do
-					json['transaction_date'] = Time.zone.today.to_s
+					json['transaction_date'] = ::Time.zone.today.to_s
 					expect(security).to receive(:update_price!).with json['price'], json['transaction_date'], json[:id]
 				end
 			end
 
 			context 'scheduled' do
 				it 'should create a transaction from a JSON representation' do
-					json['next_due_date'] = Time.zone.today.to_s
+					json['next_due_date'] = ::Time.zone.today.to_s
 					json['frequency'] = 'Monthly'
 					expect(security).not_to receive :update_price!
 				end
@@ -110,9 +110,9 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 
 		before do
 			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
-			expect(Security).to receive(:find_or_new).with(json['security']).and_return security
-			expect(Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
-			expect(Account).to receive(:find).with(json['account']['id']).and_return cash_account
+			expect(::Security).to receive(:find_or_new).with(json['security']).and_return security
+			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
+			expect(::Account).to receive(:find).with(json['account']['id']).and_return cash_account
 			expect(transaction.header).to receive(:update_from_json).with(json).and_call_original
 		end
 
@@ -127,14 +127,14 @@ RSpec.describe SecurityInvestmentTransaction, type: :model do
 
 			context 'unscheduled' do
 				it 'should update a transaction from a JSON representation' do
-					json['transaction_date'] = Time.zone.today.to_s
+					json['transaction_date'] = ::Time.zone.today.to_s
 					expect(security).to receive(:update_price!).with json['price'], json['transaction_date'], json[:id]
 				end
 			end
 
 			context 'scheduled' do
 				it 'should update a transaction from a JSON representation' do
-					json['next_due_date'] = Time.zone.today.to_s
+					json['next_due_date'] = ::Time.zone.today.to_s
 					json['frequency'] = 'Monthly'
 					expect(security).not_to receive :update_price!
 				end

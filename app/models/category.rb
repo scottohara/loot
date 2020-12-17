@@ -5,9 +5,9 @@
 class Category < ApplicationRecord
 	validates :name, presence: true
 	validates :direction, presence: true, inclusion: {in: %w[inflow outflow]}
-	belongs_to :parent, class_name: 'Category', foreign_key: 'parent_id', optional: true
+	belongs_to :parent, class_name: 'Category', optional: true
 	has_many :children, -> { order :name }, class_name: 'Category', foreign_key: 'parent_id', dependent: :destroy
-	has_many :transaction_categories, ->(object) { rewhere(category_id: object.children.pluck(:id).unshift(object.id)) }, dependent: :restrict_with_error
+	has_many :transaction_categories, ->(object) { rewhere(category_id: object.children.ids.unshift(object.id)) }, dependent: :restrict_with_error
 	has_many :transactions, through: :transaction_categories, source: :trx do
 		def for_ledger(_opts)
 			joins([
@@ -33,12 +33,12 @@ class Category < ApplicationRecord
 		end
 	end
 
-	include Transactable
-	include Favouritable
+	include ::Transactable
+	include ::Favouritable
 
 	class << self
 		def find_or_new(category, parent = nil)
-			!category.is_a?(String) && category['id'].present? ? find(category['id']) : new(name: category, direction: parent&.direction || 'outflow', parent: parent)
+			!category.is_a?(::String) && category['id'].present? ? find(category['id']) : new(name: category, direction: parent&.direction || 'outflow', parent: parent)
 		end
 	end
 
@@ -52,6 +52,6 @@ class Category < ApplicationRecord
 
 	def as_json(options = {fields: %i[id name direction parent_id favourite]})
 		# Defer to serializer
-		ActiveModelSerializers::SerializableResource.new(self, options).as_json
+		::ActiveModelSerializers::SerializableResource.new(self, options).as_json
 	end
 end

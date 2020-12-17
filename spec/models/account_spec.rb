@@ -4,9 +4,9 @@
 require 'rails_helper'
 require 'models/concerns/transactable'
 
-RSpec.describe Account, type: :model do
+::RSpec.describe ::Account, type: :model do
 	context 'non-investment account' do
-		it_behaves_like Transactable do
+		it_behaves_like ::Transactable do
 			let(:context_factory) { :bank_account }
 			let(:ledger_json_key) { :primary_account }
 			let(:expected_closing_balances) { {with_date: 999, without_date: 999} }
@@ -14,7 +14,7 @@ RSpec.describe Account, type: :model do
 	end
 
 	context 'investment account' do
-		it_behaves_like Transactable do
+		it_behaves_like ::Transactable do
 			let(:context_factory) { :investment_account }
 			let(:ledger_json_key) { :primary_account }
 			let(:expected_closing_balances) { {with_date: 999, without_date: 999} }
@@ -248,7 +248,7 @@ RSpec.describe Account, type: :model do
 		end
 		let(:related_account) { nil }
 
-		context('standard account', account_create_from_json: true) {}
+		context('standard account', account_create_from_json: true) {} # Empty block
 
 		context 'investment account' do
 			let(:related_account) { described_class.new name: 'Test account (Cash)', account_type: 'bank', opening_balance: 200, status: 'open', favourite: true }
@@ -279,7 +279,7 @@ RSpec.describe Account, type: :model do
 				end
 			end
 
-			context('without asset', account_create_from_json: true) {}
+			context('without asset', account_create_from_json: true) {} # Empty block
 		end
 	end
 
@@ -350,10 +350,10 @@ RSpec.describe Account, type: :model do
 						end
 					end
 
-					context('without asset', account_update_from_json: true) {}
+					context('without asset', account_update_from_json: true) {} # Empty block
 				end
 
-				context('standard account', account_update_from_json: true) {}
+				context('standard account', account_update_from_json: true) {} # Empty block
 			end
 		end
 	end
@@ -408,7 +408,7 @@ RSpec.describe Account, type: :model do
 			let(:json) { account.as_json }
 
 			before do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(account, fields: %i[id name account_type opening_balance status favourite]).and_call_original
+				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account, fields: %i[id name account_type opening_balance status favourite]).and_call_original
 			end
 
 			it('should return a JSON representation') do
@@ -420,7 +420,7 @@ RSpec.describe Account, type: :model do
 			let(:json) { account.as_json({}) }
 
 			before do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(account, {}).and_call_original
+				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account, {}).and_call_original
 			end
 
 			after do
@@ -439,7 +439,7 @@ RSpec.describe Account, type: :model do
 
 				before do
 					account.related_account = create :account, name: 'Related Account'
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(account.related_account, fields: %i[id name account_type opening_balance status]).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account.related_account, fields: %i[id name account_type opening_balance status]).and_call_original
 				end
 
 				it 'should return a JSON representation including related account' do

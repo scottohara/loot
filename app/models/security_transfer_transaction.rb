@@ -15,8 +15,8 @@ class SecurityTransferTransaction < SecurityTransaction
 
 	class << self
 		def create_from_json(json)
-			source = Account.find json['primary_account']['id']
-			destination = Account.find json['account']['id']
+			source = ::Account.find json['primary_account']['id']
+			destination = ::Account.find json['account']['id']
 			source_status = json['status']
 			destination_status = json['related_status']
 
@@ -41,12 +41,12 @@ class SecurityTransferTransaction < SecurityTransaction
 	end
 
 	def validate_account_uniqueness
-		errors[:base] << "Source and destination account can't be the same" if (source_transaction_account || destination_transaction_account) && source_transaction_account.account.eql?(destination_transaction_account.account)
+		errors.add :base, "Source and destination account can't be the same" if (source_transaction_account || destination_transaction_account) && source_transaction_account.account.eql?(destination_transaction_account.account)
 	end
 
 	def update_from_json(json)
-		source = Account.find json['primary_account']['id']
-		destination = Account.find json['account']['id']
+		source = ::Account.find json['primary_account']['id']
+		destination = ::Account.find json['account']['id']
 
 		source, destination = destination, source if json['direction'].eql? 'inflow'
 

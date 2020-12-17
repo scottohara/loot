@@ -4,9 +4,9 @@
 require 'rails_helper'
 require 'models/concerns/transactable'
 
-RSpec.describe Category, type: :model do
+::RSpec.describe ::Category, type: :model do
 	context 'category' do
-		it_behaves_like Transactable do
+		it_behaves_like ::Transactable do
 			let(:context_factory) { :category_with_children }
 			let(:ledger_json_key) { :category }
 			let(:expected_closing_balances) { {with_date: -1, without_date: -2} }
@@ -14,7 +14,7 @@ RSpec.describe Category, type: :model do
 	end
 
 	context 'subcategory' do
-		it_behaves_like Transactable do
+		it_behaves_like ::Transactable do
 			let(:context_factory) { :subcategory }
 			let(:ledger_json_key) { :subcategory }
 			let(:expected_closing_balances) { {with_date: -1, without_date: -2} }
@@ -81,7 +81,7 @@ RSpec.describe Category, type: :model do
 			let(:json) { category.as_json }
 
 			before do
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction parent_id favourite]).and_call_original
+				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction parent_id favourite]).and_call_original
 			end
 
 			after do
@@ -115,7 +115,7 @@ RSpec.describe Category, type: :model do
 			before do
 				# Access the children association to ensure it is loaded
 				category.children.length
-				expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {}).and_call_original
+				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {}).and_call_original
 			end
 
 			after do
@@ -130,8 +130,8 @@ RSpec.describe Category, type: :model do
 				let(:child_parent) { child[:parent] }
 
 				before do
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category.children.first, fields: %i[id name direction parent_id parent num_transactions favourite]).and_call_original
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction]).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.children.first, fields: %i[id name direction parent_id parent num_transactions favourite]).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction]).and_call_original
 				end
 
 				it 'should return a JSON representation including children' do
@@ -164,7 +164,7 @@ RSpec.describe Category, type: :model do
 				let(:parent) { json[:parent] }
 
 				before do
-					expect(ActiveModelSerializers::SerializableResource).to receive(:new).with(category.parent, fields: %i[id name direction]).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.parent, fields: %i[id name direction]).and_call_original
 				end
 
 				it 'should return a JSON representation including parent' do

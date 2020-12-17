@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe PayslipTransaction, type: :model do
+::RSpec.describe ::PayslipTransaction, type: :model do
 	describe '#as_json' do
 		subject { create :payslip_transaction }
 

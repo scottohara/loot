@@ -3,9 +3,9 @@
 
 require 'rails_helper'
 
-RSpec.describe StatusesController, type: :controller do
+::RSpec.describe ::StatusesController, type: :controller do
 	before do
-		expect(TransactionAccount).to receive_message_chain(:where, :where, :update_all).with status: status
+		expect(::TransactionAccount).to receive_message_chain(:where, :where, :update_all).with status: status
 	end
 
 	describe 'PATCH update', request: true do
@@ -16,20 +16,20 @@ RSpec.describe StatusesController, type: :controller do
 		context 'Cleared' do
 			let(:status) { 'Cleared' }
 
-			it('should update the status') {}
+			it('should update the status') {} # Empty block
 		end
 
 		context 'Reconciled' do
 			let(:status) { 'Reconciled' }
 
-			it('should update the status') {}
+			it('should update the status') {} # Empty block
 		end
 
 		context 'invalid status' do
 			let(:request_status) { 'invalid' }
 			let(:status) { nil }
 
-			it('should set the status to nil') {}
+			it('should set the status to nil') {} # Empty block
 		end
 	end
 

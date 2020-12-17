@@ -4,12 +4,12 @@
 require 'rails_helper'
 require 'models/concerns/transactable'
 
-RSpec.describe Security, type: :model do
+::RSpec.describe ::Security, type: :model do
 	before do
-		FactoryBot.reload
+		::FactoryBot.reload
 	end
 
-	it_behaves_like Transactable do
+	it_behaves_like ::Transactable do
 		let(:context_factory) { :security }
 		let(:ledger_json_key) { :security }
 		let(:expected_closing_balances) { {with_date: 1, without_date: 0} }
@@ -48,8 +48,8 @@ RSpec.describe Security, type: :model do
 					name: another_security.name,
 					code: another_security.code,
 					favourite: another_security.favourite,
-					current_holding: '10.000',
-					closing_balance: '10.00',
+					current_holding: 10,
+					closing_balance: 10,
 					unused: false
 				},
 				{
@@ -57,8 +57,8 @@ RSpec.describe Security, type: :model do
 					name: security_with_prices.name,
 					code: security_with_prices.code,
 					favourite: security_with_prices.favourite,
-					current_holding: '20.000',
-					closing_balance: '40.00',
+					current_holding: 20,
+					closing_balance: 40,
 					unused: false
 				},
 				{
@@ -84,7 +84,7 @@ RSpec.describe Security, type: :model do
 
 		before do
 			# Set the price to $2 as at today
-			security_with_prices.update_price! 2, Time.zone.today, nil
+			security_with_prices.update_price! 2, ::Time.zone.today, nil
 		end
 
 		it 'should return the list of securities and their balances' do
@@ -104,7 +104,7 @@ RSpec.describe Security, type: :model do
 		end
 
 		context 'when a date is passed' do
-			let(:as_at) { Date.parse '2014-01-01' }
+			let(:as_at) { ::Date.parse '2014-01-01' }
 
 			context 'and prices exist before or on that date' do
 				let(:earlier_prices) { true }
@@ -122,7 +122,7 @@ RSpec.describe Security, type: :model do
 		end
 
 		context 'when a date is not passed' do
-			let(:as_at) { Time.zone.today }
+			let(:as_at) { ::Time.zone.today }
 
 			context 'and prices exist before or on the current date' do
 				let(:earlier_prices) { true }
@@ -144,7 +144,7 @@ RSpec.describe Security, type: :model do
 		subject(:security) { create :security }
 
 		let(:price) { 100 }
-		let(:as_at) { Date.parse '2014-01-01' }
+		let(:as_at) { ::Date.parse '2014-01-01' }
 
 		before do
 			security.update_price! price, as_at, nil

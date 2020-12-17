@@ -18,8 +18,8 @@ class SecurityInvestmentTransaction < SecurityTransaction
 
 			s = super
 			s.amount = json['amount']
-			s.transaction_accounts.build(direction: json['direction'], status: json['status']).account = Account.find json['primary_account']['id']
-			s.transaction_accounts.build(direction: cash_direction, status: json['related_status']).account = Account.find json['account']['id']
+			s.transaction_accounts.build(direction: json['direction'], status: json['status']).account = ::Account.find json['primary_account']['id']
+			s.transaction_accounts.build(direction: cash_direction, status: json['related_status']).account = ::Account.find json['account']['id']
 			s.save!
 			s.header.security.update_price! json['price'], json['transaction_date'], json[:id] unless json['transaction_date'].nil?
 			s
@@ -33,7 +33,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	end
 
 	def validate_amount_matches_investment_details
-		errors[:base] << "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.round(2).eql?((header.price * header.quantity + header.commission * (investment_account.direction.eql?('inflow') ? 1 : -1)).round 2)
+		errors.add :base, "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.round(2).eql?((header.price * header.quantity + header.commission * (investment_account.direction.eql?('inflow') ? 1 : -1)).round 2)
 	end
 
 	def update_from_json(json)
@@ -42,9 +42,9 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		super
 		self.amount = json['amount']
 		investment_account.direction = json['direction']
-		investment_account.account = Account.find json['primary_account']['id']
+		investment_account.account = ::Account.find json['primary_account']['id']
 		cash_account.direction = cash_direction
-		cash_account.account = Account.find json['account']['id']
+		cash_account.account = ::Account.find json['account']['id']
 		save!
 		header.security.update_price! json['price'], json['transaction_date'], json[:id] unless json['transaction_date'].nil?
 	end

@@ -6,7 +6,7 @@ ruby '2.7.2'
 source 'https://rubygems.org'
 
 # Web application framework
-gem 'rails', '6.0.3'
+gem 'rails'
 
 # Postgres
 gem 'pg'
@@ -49,6 +49,9 @@ group :development, :test do
 
 	# Rubocop RSpec cops
 	gem 'rubocop-rspec'
+
+	# Rubocop Rake cops
+	gem 'rubocop-rake'
 
 	# Shared Rubocop config
 	gem 'rubocop-config-oharagroup', require: false

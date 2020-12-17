@@ -18,7 +18,7 @@ class SecurityHoldingTransaction < SecurityTransaction
 			json['commission'] = nil
 
 			s = super
-			s.build_transaction_account(direction: json['direction'], status: json['status']).account = Account.find json['primary_account']['id']
+			s.build_transaction_account(direction: json['direction'], status: json['status']).account = ::Account.find json['primary_account']['id']
 			s.save!
 			s
 		end
@@ -33,7 +33,7 @@ class SecurityHoldingTransaction < SecurityTransaction
 	def update_from_json(json)
 		super
 		transaction_account.direction = json['direction']
-		self.account = Account.find json['primary_account']['id']
+		self.account = ::Account.find json['primary_account']['id']
 		save!
 	end
 

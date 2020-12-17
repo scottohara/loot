@@ -12,12 +12,12 @@ class SplitTransaction < PayeeCashTransaction
 		t.transaction_type = 'Split'
 	end
 
-	include Categorisable
+	include ::Categorisable
 
 	class << self
 		def create_from_json(json)
 			s = super
-			s.build_transaction_account(direction: json['direction'], status: json['status']).account = Account.find json['primary_account']['id']
+			s.build_transaction_account(direction: json['direction'], status: json['status']).account = ::Account.find json['primary_account']['id']
 			s.create_children json['subtransactions']
 			s.save!
 			s
@@ -33,7 +33,7 @@ class SplitTransaction < PayeeCashTransaction
 	def create_children(children)
 		children.each do |child|
 			# Keys could be symbols or strings
-			child = child.with_indifferent_access if child.is_a?(Hash)
+			child = child.with_indifferent_access if child.is_a?(::Hash)
 
 			# Clear the id and copy the header details from the parent
 			child['id'] = nil
@@ -45,14 +45,14 @@ class SplitTransaction < PayeeCashTransaction
 				child['frequency'] = header.schedule.frequency
 			end
 
-			transaction_splits.build.trx = Transaction.class_for(child['transaction_type']).create_from_json child
+			transaction_splits.build.trx = ::Transaction.class_for(child['transaction_type']).create_from_json child
 		end
 	end
 
 	def update_from_json(json)
 		super
 		transaction_account.direction = json['direction']
-		self.account = Account.find json['primary_account']['id']
+		self.account = ::Account.find json['primary_account']['id']
 		subtransactions.each(&:destroy)
 		subtransfers.each(&:destroy)
 		create_children json['subtransactions']
@@ -74,7 +74,7 @@ class SplitTransaction < PayeeCashTransaction
 	def children
 		# Get the child transactions
 		transactions =
-			TransactionSplit
+			::TransactionSplit
 			.select(
 				'transactions.id',
 				'transactions.transaction_type',
@@ -104,7 +104,7 @@ class SplitTransaction < PayeeCashTransaction
 					'LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id'
 				]
 			)
-			.where 'transaction_splits.parent_id = ?', id
+			.where transaction_splits: {parent_id: id}
 
 		# Remap to the desired output format
 		transactions.map do |trx|

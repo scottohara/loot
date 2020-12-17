@@ -1,6 +1,7 @@
 require:
   - rubocop-performance
   - rubocop-rails
+  - rubocop-rake
   - rubocop-rspec
 
 inherit_gem:
@@ -8,6 +9,7 @@ inherit_gem:
     - default.yml
     - performance.yml
     - rails.yml
+    - rake.yml
     - rspec.yml
 
 AllCops:
@@ -18,6 +20,14 @@ AllCops:
     - 'db/schema.rb'
     - 'node_modules/**/*'
     - 'vendor/**/*'
+
+# Can't fully qualify a private_constant
+Lint/ConstantResolution:
+  Ignore:
+    - Frequency
+    - FREQUENCIES
+    - NUM_RESULTS
+    - LEDGER_QUERY_OPTS
 
 # Can't use :inverse_of due to self-referential and polymorphic associations
 Rails/InverseOf:

@@ -3,9 +3,9 @@
 
 # Transactable
 module Transactable
-	extend ActiveSupport::Concern
+	extend ::ActiveSupport::Concern
 
-	include Categorisable
+	include ::Categorisable
 
 	# Maximum number of transactions to return
 	NUM_RESULTS = 150
@@ -48,7 +48,7 @@ module Transactable
 		opening_balance, transactions = exclude_reconciled opening_balance, transactions if opts[:unreconciled]
 
 		# Remap to the desired output format
-		transactions.map!(&method(:to_ledger_json))
+		transactions.map! { |trx| to_ledger_json trx }
 
 		[opening_balance, transactions, at_end]
 	end
@@ -56,8 +56,8 @@ module Transactable
 	def closing_balance(balance_opts = {})
 		as_at =
 			begin
-				Date.parse(balance_opts[:as_at]).to_s
-			rescue TypeError, ArgumentError
+				::Date.parse(balance_opts[:as_at]).to_s
+			rescue ::TypeError, ::ArgumentError
 				'2400-12-31'
 			end
 
@@ -75,7 +75,7 @@ module Transactable
 				)
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
 				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where('transaction_headers.transaction_date IS NOT NULL')
+				.where.not('transaction_headers.transaction_date': nil)
 				.group(
 					'transaction_headers.security_id',
 					'transaction_accounts.direction'
@@ -83,12 +83,12 @@ module Transactable
 
 			# Reduce to a unique set of securities with the current quantity held
 			securities =
-				security_quantities.each_with_object(Hash.new(0)) do |s, secs|
+				security_quantities.each_with_object(::Hash.new(0)) do |s, secs|
 					secs[s.security_id] += s.total_quantity * (s.direction.eql?('inflow') ? 1 : -1)
 				end
 
 			# Calculate the current value of the securities held
-			total_security_value = securities.map { |(security, qty)| Security.find(security).price(as_at) * qty }.reduce(:+) || 0
+			total_security_value = securities.sum { |(security, qty)| ::Security.find(security).price(as_at) * qty }
 
 			# Add the balance from the associated cash account
 			total_security_value += related_account.closing_balance balance_opts unless related_account.nil?
@@ -110,7 +110,7 @@ module Transactable
 				.joins('JOIN categories ON transaction_categories.category_id = categories.id')
 				.where(transaction_type: %w[Basic Sub])
 				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where('transaction_headers.transaction_date IS NOT NULL')
+				.where.not('transaction_headers.transaction_date': nil)
 				.group 'categories.direction'
 
 			# Get the total Subtransfer transactions
@@ -131,7 +131,7 @@ module Transactable
 				)
 				.where(transaction_type: 'Subtransfer')
 				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where('transaction_headers.transaction_date IS NOT NULL')
+				.where.not('transaction_headers.transaction_date': nil)
 				.where('parent_transactions.transaction_type = \'Split\' or parent_transactions.transaction_type = \'LoanRepayment\' or parent_transactions.transaction_type = \'Payslip\'')
 				.group 'transaction_accounts.direction'
 
@@ -141,7 +141,7 @@ module Transactable
 				.for_closing_balance(balance_opts)
 				.where(transaction_type: %w[Split Payslip Transfer Dividend SecurityInvestment])
 				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where('transaction_headers.transaction_date IS NOT NULL')
+				.where.not('transaction_headers.transaction_date': nil)
 				.where(transaction_accounts: {direction: 'inflow'})
 				.sum 'amount'
 
@@ -151,7 +151,7 @@ module Transactable
 				.for_closing_balance(balance_opts)
 				.where(transaction_type: %w[Split LoanRepayment Transfer SecurityInvestment])
 				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where('transaction_headers.transaction_date IS NOT NULL')
+				.where.not('transaction_headers.transaction_date': nil)
 				.where(transaction_accounts: {direction: 'outflow'})
 				.sum 'amount'
 
@@ -165,15 +165,17 @@ module Transactable
 	end
 
 	# :nocov:
-	private unless Rails.env.eql? 'test'
+
+	private unless ::Rails.env.eql? 'test'
+
 	# :nocov:
 
 	def ledger_options(ledger_opts = {})
 		# Default as_at if not specified or invalid
 		ledger_opts[:as_at] =
 			begin
-				Date.parse(ledger_opts[:as_at]).to_s
-			rescue TypeError, ArgumentError
+				::Date.parse(ledger_opts[:as_at]).to_s
+			rescue ::TypeError, ::ArgumentError
 				'2400-12-31'
 			end
 
@@ -296,8 +298,8 @@ module Transactable
 				id: trx['security_id'],
 				name: trx['security_name']
 			},
-			category: (is_a?(Class) && self || self.class).transaction_category(trx, account_type),
-			subcategory: (is_a?(Class) && self || self.class).basic_subcategory(trx),
+			category: (is_a?(::Class) && self || self.class).transaction_category(trx, account_type),
+			subcategory: (is_a?(::Class) && self || self.class).basic_subcategory(trx),
 			account: {
 				id: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
 				name: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])

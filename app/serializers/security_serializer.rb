@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # Security serializer
-class SecuritySerializer < ActiveModel::Serializer
+class SecuritySerializer < ::ActiveModel::Serializer
 	attributes :id, :name, :code, :current_holding, :closing_balance, :num_transactions, :unused, :favourite
 
 	def current_holding

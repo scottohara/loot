@@ -16,7 +16,7 @@ class TransactionsController < ApplicationController
 	end
 
 	def show
-		render json: Transaction.find(params[:id]).as_subclass
+		render json: ::Transaction.find(params[:id]).as_subclass
 	end
 
 	def create
@@ -24,10 +24,10 @@ class TransactionsController < ApplicationController
 	end
 
 	def update
-		transaction = Transaction.find params[:id]
+		transaction = ::Transaction.find params[:id]
 		if transaction.transaction_type.eql? params['transaction_type']
 			# Type hasn't changed, so just update
-			render json: Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
+			render json: ::Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			transaction.as_subclass.destroy!
@@ -36,36 +36,36 @@ class TransactionsController < ApplicationController
 	end
 
 	def destroy
-		Transaction.find(params[:id]).as_subclass.destroy!
+		::Transaction.find(params[:id]).as_subclass.destroy!
 		head :ok
 	end
 
 	def last
-		render json: @context.transactions.where(transaction_type: Transaction.types_for(params[:account_type])).last.as_subclass
+		render json: @context.transactions.where(transaction_type: ::Transaction.types_for(params[:account_type])).last.as_subclass
 	end
 
 	def clean
 		# Remove any blank values
-		@transaction = params.delete_if { |_k, v| v.blank? }
+		@transaction = params.compact_blank
 	end
 
 	def context
 		# Instantiate the parent resource based on what params were passed
 		@context =
 			if params[:account_id]
-				Account.find params[:account_id]
+				::Account.find params[:account_id]
 			elsif params[:payee_id]
-				Payee.find params[:payee_id]
+				::Payee.find params[:payee_id]
 			elsif params[:category_id]
-				Category.find params[:category_id]
+				::Category.find params[:category_id]
 			elsif params[:security_id]
-				Security.find params[:security_id]
+				::Security.find params[:security_id]
 			else
-				Transaction
+				::Transaction
 			end
 	end
 
 	def create_transaction
-		Transaction.class_for(params['transaction_type']).create_from_json @transaction
+		::Transaction.class_for(params['transaction_type']).create_from_json @transaction
 	end
 end

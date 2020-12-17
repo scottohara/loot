@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TransactionSplit, type: :model do
+::RSpec.describe ::TransactionSplit, type: :model do
 	describe '#validate_transaction_type_inclusion' do
 		subject(:split) { described_class.new }
 
@@ -35,7 +35,7 @@ RSpec.describe TransactionSplit, type: :model do
 
 		it 'should destroy the transaction' do
 			split.destroy_transaction
-			expect(Transaction.exists? split.transaction_id).to be false
+			expect(::Transaction.exists? split.transaction_id).to be false
 		end
 	end
 end

@@ -2,17 +2,17 @@
 # frozen_string_literal: true
 
 # Application controller
-class ApplicationController < ActionController::API
+class ApplicationController < ::ActionController::API
 	before_action :authenticate_user, except: [:routing_error]
-	rescue_from StandardError, with: :internal_error
-	rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
-	rescue_from ActiveRecord::RecordNotDestroyed, with: :record_not_destroyed
-	rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
-	include ActionController::HttpAuthentication::Basic::ControllerMethods
+	rescue_from ::StandardError, with: :internal_error
+	rescue_from ::ActiveRecord::RecordInvalid, with: :record_invalid
+	rescue_from ::ActiveRecord::RecordNotDestroyed, with: :record_not_destroyed
+	rescue_from ::ActiveRecord::RecordNotFound, with: :record_not_found
+	include ::ActionController::HttpAuthentication::Basic::ControllerMethods
 
 	def authenticate_user
 		render plain: 'Invalid login and/or password', status: :unauthorized unless authenticate_with_http_basic do |username, password|
-			username.eql?(ENV[:LOOT_USERNAME.to_s]) && password.eql?(ENV[:LOOT_PASSWORD.to_s])
+			username.eql?(::ENV[:LOOT_USERNAME.to_s]) && password.eql?(::ENV[:LOOT_PASSWORD.to_s])
 		end
 	end
 
