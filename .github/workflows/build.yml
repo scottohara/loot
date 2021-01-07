@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    tags: "*"
+    branches: master
 
 env:
   # CodeClimate only shows coverage for the default branch
