@@ -1,5 +1,5 @@
 const webpack = require("webpack"),
-			merge = require("webpack-merge"),
+			{ merge } = require("webpack-merge"),
 			{
 				entry,
 				output,

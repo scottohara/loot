@@ -32,19 +32,10 @@ const	entry = {
 						loader: "css-loader",
 						options: {
 							// Apply the next loader (less-loader) to any @imports
-							importLoaders: 1,
-
-							// Generate sourcemaps
-							sourceMap: true
+							importLoaders: 1
 						}
 					},
-					{
-						loader: "less-loader",
-						options: {
-							// Generate sourcemaps
-							sourceMap: true
-						}
-					}
+					"less-loader"
 				]
 			},
 
@@ -53,13 +44,7 @@ const	entry = {
 				test: /\.css$/u,
 				use: [
 					MiniCssExtractPlugin.loader,
-					{
-						loader: "css-loader",
-						options: {
-							// Generate sourcemaps
-							sourceMap: true
-						}
-					}
+					"css-loader"
 				]
 			},
 
@@ -104,7 +89,12 @@ const	entry = {
 					{
 						loader: "html-loader",
 						options: {
-							attrs: [":typeahead-template-url"]
+							attributes: {
+								list: [
+									"...",
+									{ attribute: "typeahead-template-url", type: "src" }
+								]
+							}
 						}
 					}
 				]
@@ -138,8 +128,7 @@ const	entry = {
 			generateServiceWorker = new GenerateSW({
 				cacheId: packageJson.name,
 				skipWaiting: true,
-				clientsClaim: true,
-				dontCacheBustURLsMatching: /.+-[a-f0-9]{6}\..+/u
+				clientsClaim: true
 			}),
 
 			// Default config

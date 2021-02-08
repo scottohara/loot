@@ -1,4 +1,4 @@
-const merge = require("webpack-merge"),
+const { merge } = require("webpack-merge"),
 			LiveReloadPlugin = require("webpack-livereload-plugin"),
 			OpenBrowserPlugin = require("open-browser-webpack-plugin"),
 			{
