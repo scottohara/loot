@@ -23,7 +23,9 @@ Getting Started
 6. Initialise the database (`rake db:setup`, or if you have no data to import `rake db:create && rake db:migrate`)
 7. Configure environment variables for the username and password to login as (`export LOOT_USERNAME=user && export LOOT_PASSWORD=pass`)
 8. Start the database server and app server in dev mode (`npm start`)
-9. Browse to http://localhost:5000/index.html and login using the credentials configured at step #8
+9. Browse to http://localhost:8080/index.html and login using the credentials configured at step #8
+
+(Tip: In Chrome DevTools > Application > Service Workers, enable the "Update on reload" option so that all changes appear immediately on reload)
 
 Exporting MS Money data
 =======================

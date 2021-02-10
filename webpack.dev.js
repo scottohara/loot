@@ -1,6 +1,4 @@
 const { merge } = require("webpack-merge"),
-			LiveReloadPlugin = require("webpack-livereload-plugin"),
-			OpenBrowserPlugin = require("open-browser-webpack-plugin"),
 			{
 				entry,
 				output,
@@ -48,20 +46,20 @@ module.exports = merge(config, {
 	// Eval source maps
 	devtool: "eval-source-map",
 
+	devServer: {
+		open: true,
+		overlay: true,
+		proxy: {
+			"/": "http://localhost:5000"
+		}
+	},
+
 	plugins: [
 		providejQuery,
 		cleanBuildDirectory,
 		extractCss(),
 		createIndexHtml,
 		copyStaticAssets,
-		generateServiceWorker,
-
-		// Live reload when in watch mode
-		new LiveReloadPlugin({
-			appendScriptTag: true
-		}),
-
-		// Open a browser automatically
-		new OpenBrowserPlugin({ url: "http://localhost:5000" })
+		generateServiceWorker
 	]
 });
