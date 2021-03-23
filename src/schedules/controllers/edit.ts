@@ -375,7 +375,7 @@ export default class ScheduleEditController {
 		}
 		this.account_type = selectedAccountType;
 
-		if (null !== (this.transaction as TransferrableTransaction).account && undefined !== this.transaction.primary_account as Account | undefined && this.transaction.primary_account.id === ((this.transaction as TransferrableTransaction).account as Account).id) {
+		if (null !== (this.transaction as TransferrableTransaction).account && (undefined !== (this.transaction as TransferrableTransaction).account as Account | undefined) && undefined !== this.transaction.primary_account as Account | undefined && this.transaction.primary_account.id === ((this.transaction as TransferrableTransaction).account as Account).id) {
 			// Primary account and transfer account can't be the same, so clear the transfer account
 			(this.transaction as TransferrableTransaction).account = null;
 		}

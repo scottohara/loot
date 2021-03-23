@@ -705,6 +705,18 @@ describe("ScheduleEditController", (): void => {
 			(null === scheduleEditController["account_type"]).should.be.true;
 		});
 
+		it("should do nothing when the transfer account is null", (): void => {
+			(scheduleEditController.transaction as ScheduledTransferTransaction).account = null;
+			scheduleEditController.primaryAccountSelected();
+			(null === (scheduleEditController.transaction as ScheduledTransferTransaction).account).should.be.true;
+		});
+
+		it("should do nothing when the transfer account is undefined", (): void => {
+			delete (scheduleEditController.transaction as ScheduledTransferTransaction).account;
+			scheduleEditController.primaryAccountSelected();
+			scheduleEditController.transaction.should.not.have.property("account");
+		});
+
 		it("should clear the transfer account when the primary account matches", (): void => {
 			(scheduleEditController.transaction as ScheduledTransferTransaction).account = createAccount({ id: 1 });
 			scheduleEditController.primaryAccountSelected();

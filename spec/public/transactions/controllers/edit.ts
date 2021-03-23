@@ -676,6 +676,11 @@ describe("TransactionEditController", (): void => {
 			(null === (transactionEditController.transaction as TransferrableTransaction).account).should.be.true;
 		});
 
+		it("should do nothing when the transfer account is undefined", (): void => {
+			transactionEditController.primaryAccountSelected();
+			transactionEditController.transaction.should.not.have.property("account");
+		});
+
 		it("should clear the transfer account when the primary account matches", (): void => {
 			(transactionEditController.transaction as TransferrableTransaction).account = createAccount({ id: 1 });
 			transactionEditController.transaction.primary_account = createAccount({ id: 1 });
