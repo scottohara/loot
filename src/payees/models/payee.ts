@@ -59,12 +59,24 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 	}
 
 	// Retrieves the most recent transaction for a payee
-	public findLastTransaction(payeeId: number, accountType: StoredAccountType): angular.IPromise<Transaction> {
+	public findLastTransaction(payeeId: number, accountType: StoredAccountType): angular.IPromise<Transaction | undefined> {
+		const NOT_FOUND = 404;
+
 		return this.$http.get(`${this.path(payeeId)}/transactions/last`, {
 			params: {
 				account_type: accountType
 			}
-		}).then((response: angular.IHttpResponse<Transaction>): Transaction => response.data);
+		}).then((response: angular.IHttpResponse<Transaction>): Transaction => response.data)
+			.catch((error: angular.IHttpResponse<string>): undefined => {
+				const { status, statusText, data } = error;
+
+				// Ignore if no last transaction
+				if (NOT_FOUND === status) {
+					return;
+				}
+
+				throw new Error(`${status} ${statusText}: ${data}`);
+			});
 	}
 
 	// Retrieves a single payee

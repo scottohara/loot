@@ -330,44 +330,50 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("getSubtransactions", (): void => {
-		let splitTransaction: SplitTransaction;
-
-		beforeEach((): SplitTransaction => (splitTransaction = createSplitTransaction()));
-
-		it("should return the transaction if it is not a split, loan repayment or payslip", (): void => {
-			const basicTransaction: BasicTransaction = createBasicTransaction();
-
-			transactionEditController["getSubtransactions"](basicTransaction).should.deep.equal(basicTransaction);
+		describe("when a transaction is not provided", (): void => {
+			it("should return undefined", (): Chai.Assertion => (undefined === transactionEditController["getSubtransactions"]()).should.be.true);
 		});
 
-		const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
+		describe("when a transaction is provided", (): void => {
+			let splitTransaction: SplitTransaction;
 
-		scenarios.forEach((scenario: SplitTransactionType): void => {
-			it("should fetch the subtransactions for the transaction", (): void => {
-				splitTransaction.transaction_type = scenario;
-				transactionEditController["getSubtransactions"](splitTransaction);
-				splitTransaction.subtransactions.should.be.an("array");
-				transactionModel.findSubtransactions.should.have.been.calledWith(splitTransaction.id);
+			beforeEach((): SplitTransaction => (splitTransaction = createSplitTransaction()));
+
+			it("should return the transaction if it is not a split, loan repayment or payslip", (): void => {
+				const basicTransaction: BasicTransaction = createBasicTransaction();
+
+				(transactionEditController["getSubtransactions"](basicTransaction) as BasicTransaction).should.deep.equal(basicTransaction);
 			});
-		});
 
-		it("should eventually return a list of subtransactions stripped of their ids", async (): Promise<void> => {
-			const expected: SplitTransaction = angular.copy(splitTransaction);
+			const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
 
-			expected.subtransactions = [
-				createSubtransferTransaction({ id: null }),
-				createSubtransaction({ id: null }),
-				createSubtransaction({ id: null })
-			];
+			scenarios.forEach((scenario: SplitTransactionType): void => {
+				it("should fetch the subtransactions for the transaction", (): void => {
+					splitTransaction.transaction_type = scenario;
+					transactionEditController["getSubtransactions"](splitTransaction);
+					splitTransaction.subtransactions.should.be.an("array");
+					transactionModel.findSubtransactions.should.have.been.calledWith(splitTransaction.id);
+				});
+			});
 
-			(await transactionEditController["getSubtransactions"](splitTransaction) as SplitTransaction).should.deep.equal(expected);
+			it("should eventually return a list of subtransactions stripped of their ids", async (): Promise<void> => {
+				const expected: SplitTransaction = angular.copy(splitTransaction);
+
+				expected.subtransactions = [
+					createSubtransferTransaction({ id: null }),
+					createSubtransaction({ id: null }),
+					createSubtransaction({ id: null })
+				];
+
+				(await transactionEditController["getSubtransactions"](splitTransaction) as SplitTransaction).should.deep.equal(expected);
+			});
 		});
 	});
 
 	describe("useLastTransaction", (): void => {
-		let	lastTransaction: TransferTransaction,
+		let lastTransaction: TransferTransaction,
 				currentElement: Element | null,
-				mockAngularElement: {triggerHandler: SinonStub;},
+				mockAngularElement: { triggerHandler: SinonStub; },
 				realAngularElement: JQueryStatic;
 
 		beforeEach((): void => {
@@ -389,13 +395,18 @@ describe("TransactionEditController", (): void => {
 
 			currentElement = null;
 			realAngularElement = angular.element;
-			(sinon.stub(angular, "element") as SinonStub).callsFake((selector: string): (Element | null)[] | {triggerHandler: SinonStub;} => {
+			(sinon.stub(angular, "element") as SinonStub).callsFake((selector: string): (Element | null)[] | { triggerHandler: SinonStub; } => {
 				if ("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo" === selector) {
 					return [currentElement];
 				}
 
 				return mockAngularElement;
 			});
+		});
+
+		it("should do nothing when a transaction is not provided", (): void => {
+			transactionEditController["useLastTransaction"]();
+			(undefined === lastTransaction.id as number | undefined).should.be.false;
 		});
 
 		it("should strip the transaction of it's id, date, primary account, status, related status & flag", (): void => {

@@ -506,7 +506,11 @@ export default class ScheduleEditController {
 	}
 
 	// Fetches the subtransactions for a transaction
-	private getSubtransactions(transaction: Transaction): angular.IPromise<SplitTransaction> | Transaction {
+	private getSubtransactions(transaction?: Transaction): angular.IPromise<SplitTransaction> | Transaction | undefined {
+		if (undefined === transaction) {
+			return undefined;
+		}
+
 		// If the last transaction was a Split/Loan Repayment/Payslip; fetch the subtransactions
 		switch (transaction.transaction_type) {
 			case "Split":
@@ -530,7 +534,11 @@ export default class ScheduleEditController {
 	}
 
 	// Merges the details of a previous transaction into the current one
-	private useLastTransaction(transaction: ScheduledTransaction): void {
+	private useLastTransaction(transaction?: ScheduledTransaction): void {
+		if (undefined === transaction) {
+			return;
+		}
+
 		// Strip the id, primary account, next due date, transaction date, frequency and status
 		delete transaction.id;
 		delete transaction.primary_account;

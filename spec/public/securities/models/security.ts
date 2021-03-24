@@ -1,8 +1,4 @@
 import {
-	BasicTransaction,
-	Transaction
-} from "transactions/types";
-import {
 	CacheFactoryMock,
 	WindowMock
 } from "mocks/node-modules/angular/types";
@@ -15,6 +11,7 @@ import MockDependenciesProvider from "mocks/loot/mockdependencies";
 import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 import { Security } from "securities/types";
 import SecurityModel from "securities/models/security";
+import { Transaction } from "transactions/types";
 import angular from "angular";
 import { createBasicTransaction } from "mocks/transactions/factories";
 import createSecurity from "mocks/securities/factories";
@@ -157,17 +154,29 @@ describe("securityModel", (): void => {
 	});
 
 	describe("findLastTransaction", (): void => {
-		const expectedResponse: BasicTransaction = createBasicTransaction();
-
-		beforeEach((): angular.mock.IRequestHandler => $httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(200, expectedResponse));
-
 		it("should dispatch a GET request to /securities/{id}/transactions/last?account_type={accountType}", (): void => {
+			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(200, {});
 			securityModel.findLastTransaction(1, "bank");
 			$httpBackend.flush();
 		});
 
-		it("should return the last transaction for the security", (): void => {
-			securityModel.findLastTransaction(1, "bank").then((transaction: Transaction): Chai.Assertion => transaction.should.deep.equal(expectedResponse));
+		it("should return the last transaction when there are transactions", (): void => {
+			const lastTransaction = createBasicTransaction();
+
+			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(200, lastTransaction);
+			securityModel.findLastTransaction(1, "bank").then((transaction: Transaction): Chai.Assertion => transaction.should.deep.equal(lastTransaction));
+			$httpBackend.flush();
+		});
+
+		it("should return undefined when there are no transactions", (): void => {
+			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(404, "");
+			securityModel.findLastTransaction(1, "bank").then((transaction?: Transaction): Chai.Assertion => (undefined === transaction).should.be.true);
+			$httpBackend.flush();
+		});
+
+		it("should throw an error when the GET request fails", (): void => {
+			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(500, "Forced error", {}, "Internal Server Error");
+			securityModel.findLastTransaction(1, "bank").catch((error: Error): Chai.Assertion => error.message.should.equal("500 Internal Server Error: Forced error"));
 			$httpBackend.flush();
 		});
 	});

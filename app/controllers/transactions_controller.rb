@@ -41,7 +41,12 @@ class TransactionsController < ApplicationController
 	end
 
 	def last
-		render json: @context.transactions.where(transaction_type: ::Transaction.types_for(params[:account_type])).last.as_subclass
+		transaction = @context.transactions.where(transaction_type: ::Transaction.types_for(params[:account_type])).last&.as_subclass
+		if transaction.nil?
+			head :not_found
+		else
+			render json: transaction
+		end
 	end
 
 	def clean

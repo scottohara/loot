@@ -130,54 +130,99 @@ require 'rails_helper'
 	describe 'GET last', request: true, json: true do
 		let(:account_type) { 'account type' }
 		let(:transaction_types) { 'transaction types' }
-		let(:last_transaction) { create :basic_transaction }
-		let(:transactions) do
-			[
-				create(:transaction),
-				create(:transaction),
-				last_transaction
-			]
-		end
-		let(:json) { ::JSON.dump last_transaction.as_json }
 
 		before :each, :instance do
 			expect(context.class).to receive(:find).with('1').and_return context
 		end
 
-		after do
-			expect(controller).to receive(:context).and_call_original
-			expect(::Transaction).to receive(:types_for).with(account_type).and_return transaction_types
-			expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
-			expect(last_transaction).to receive(:as_subclass).and_return last_transaction
-			get :last, params: request_params.merge(account_type: account_type)
+		context 'when there are transactions' do
+			let(:last_transaction) { create :basic_transaction }
+			let(:transactions) do
+				[
+					create(:transaction),
+					create(:transaction),
+					last_transaction
+				]
+			end
+			let(:json) { ::JSON.dump last_transaction.as_json }
+
+			after do
+				expect(controller).to receive(:context).and_call_original
+				expect(::Transaction).to receive(:types_for).with(account_type).and_return transaction_types
+				expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
+				expect(last_transaction).to receive(:as_subclass).and_return last_transaction
+				get :last, params: request_params.merge(account_type: account_type)
+			end
+
+			context 'for account', instance: true do
+				let(:context) { ::Account.new }
+				let(:request_params) { {'account_id' => '1'} }
+
+				it('should return the last transaction for the account') {} # Empty block
+			end
+
+			context 'for payee', instance: true do
+				let(:context) { ::Payee.new }
+				let(:request_params) { {'payee_id' => '1'} }
+
+				it('should return the last transaction for the payee') {} # Empty block
+			end
+
+			context 'for category', instance: true do
+				let(:context) { ::Category.new }
+				let(:request_params) { {'category_id' => '1'} }
+
+				it('should return the last transaction for the category') {} # Empty block
+			end
+
+			context 'for security', instance: true do
+				let(:context) { ::Security.new }
+				let(:request_params) { {'security_id' => '1'} }
+
+				it('should return the last transaction for the security') {} # Empty block
+			end
 		end
 
-		context 'for account', instance: true do
-			let(:context) { ::Account.new }
-			let(:request_params) { {'account_id' => '1'} }
+		context 'when there are no transactions' do
+			let(:expected_status) { :not_found }
+			let(:last_transaction) { nil }
+			let(:transactions) { [] }
+			let(:json) { '' }
 
-			it('should return the transaction ledger for the account') {} # Empty block
-		end
+			after do
+				expect(controller).to receive(:context).and_call_original
+				expect(::Transaction).to receive(:types_for).with(account_type).and_return transaction_types
+				expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
+				get :last, params: request_params.merge(account_type: account_type)
+			end
 
-		context 'for payee', instance: true do
-			let(:context) { ::Payee.new }
-			let(:request_params) { {'payee_id' => '1'} }
+			context 'for account', instance: true do
+				let(:context) { ::Account.new }
+				let(:request_params) { {'account_id' => '1'} }
 
-			it('should return the transaction ledger for the payee') {} # Empty block
-		end
+				it('should respond with a 404 Not Found') {} # Empty block
+			end
 
-		context 'for category', instance: true do
-			let(:context) { ::Category.new }
-			let(:request_params) { {'category_id' => '1'} }
+			context 'for payee', instance: true do
+				let(:context) { ::Payee.new }
+				let(:request_params) { {'payee_id' => '1'} }
 
-			it('should return the transaction ledger for the category') {} # Empty block
-		end
+				it('should respond with a 404 Not Found') {} # Empty block
+			end
 
-		context 'for security', instance: true do
-			let(:context) { ::Security.new }
-			let(:request_params) { {'security_id' => '1'} }
+			context 'for category', instance: true do
+				let(:context) { ::Category.new }
+				let(:request_params) { {'category_id' => '1'} }
 
-			it('should return the transaction ledger for the security') {} # Empty block
+				it('should respond with a 404 Not Found') {} # Empty block
+			end
+
+			context 'for security', instance: true do
+				let(:context) { ::Security.new }
+				let(:request_params) { {'security_id' => '1'} }
+
+				it('should respond with a 404 Not Found') {} # Empty block
+			end
 		end
 	end
 

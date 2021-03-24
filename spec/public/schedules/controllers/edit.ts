@@ -418,37 +418,43 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("getSubtransactions", (): void => {
-		let transaction: ScheduledSplitTransaction;
-
-		beforeEach((): ScheduledSplitTransaction => (transaction = createScheduledSplitTransaction()));
-
-		it("should return the transaction if it is not a split, loan repayment or payslip", (): void => {
-			const basicTransaction: ScheduledBasicTransaction = createScheduledBasicTransaction();
-
-			scheduleEditController["getSubtransactions"](basicTransaction).should.deep.equal(basicTransaction);
+		describe("when a transaction is not provided", (): void => {
+			it("should return undefined", (): Chai.Assertion => (undefined === scheduleEditController["getSubtransactions"]()).should.be.true);
 		});
 
-		const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
+		describe("when a transaction is provided", (): void => {
+			let transaction: ScheduledSplitTransaction;
 
-		scenarios.forEach((scenario: SplitTransactionType): void => {
-			it(`should fetch the subtransactions for a ${scenario} transaction`, (): void => {
-				transaction.transaction_type = scenario;
-				scheduleEditController["getSubtransactions"](transaction);
-				transaction.subtransactions.should.be.an("array");
-				transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
+			beforeEach((): ScheduledSplitTransaction => (transaction = createScheduledSplitTransaction()));
+
+			it("should return the transaction if it is not a split, loan repayment or payslip", (): void => {
+				const basicTransaction: ScheduledBasicTransaction = createScheduledBasicTransaction();
+
+				(scheduleEditController["getSubtransactions"](basicTransaction) as ScheduledBasicTransaction).should.deep.equal(basicTransaction);
 			});
-		});
 
-		it("should eventually return a list of subtransactions stripped of their ids", async (): Promise<void> => {
-			const expected: ScheduledSplitTransaction = angular.copy(transaction);
+			const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
 
-			expected.subtransactions = [
-				createSubtransferTransaction({ id: null }),
-				createSubtransaction({ id: null }),
-				createSubtransaction({ id: null })
-			] as SplitTransactionChild[];
+			scenarios.forEach((scenario: SplitTransactionType): void => {
+				it(`should fetch the subtransactions for a ${scenario} transaction`, (): void => {
+					transaction.transaction_type = scenario;
+					scheduleEditController["getSubtransactions"](transaction);
+					transaction.subtransactions.should.be.an("array");
+					transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
+				});
+			});
 
-			(await scheduleEditController["getSubtransactions"](transaction) as ScheduledSplitTransaction).should.deep.equal(expected);
+			it("should eventually return a list of subtransactions stripped of their ids", async (): Promise<void> => {
+				const expected: ScheduledSplitTransaction = angular.copy(transaction);
+
+				expected.subtransactions = [
+					createSubtransferTransaction({ id: null }),
+					createSubtransaction({ id: null }),
+					createSubtransaction({ id: null })
+				] as SplitTransactionChild[];
+
+				(await scheduleEditController["getSubtransactions"](transaction) as ScheduledSplitTransaction).should.deep.equal(expected);
+			});
 		});
 	});
 
@@ -484,6 +490,11 @@ describe("ScheduleEditController", (): void => {
 
 				return mockAngularElement;
 			});
+		});
+
+		it("should do nothing when a transaction is not provided", (): void => {
+			scheduleEditController["useLastTransaction"]();
+			(undefined === transaction.id as number | undefined).should.be.false;
 		});
 
 		it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & related status", (): void => {

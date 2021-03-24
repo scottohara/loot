@@ -430,7 +430,11 @@ export default class TransactionEditController {
 	}
 
 	// Fetches the subtransactions for a transaction
-	private getSubtransactions(transaction: Transaction): angular.IPromise<Transaction> | Transaction {
+	private getSubtransactions(transaction?: Transaction): angular.IPromise<Transaction> | Transaction | undefined {
+		if (undefined === transaction) {
+			return undefined;
+		}
+
 		// If the last transaction was a Split/Loan Repayment/Payslip; fetch the subtransactions
 		switch (transaction.transaction_type) {
 			case "Split":
@@ -454,7 +458,11 @@ export default class TransactionEditController {
 	}
 
 	// Merges the details of a previous transaction into the current one
-	private useLastTransaction(transaction: Transaction): void {
+	private useLastTransaction(transaction?: Transaction): void {
+		if (undefined === transaction) {
+			return;
+		}
+
 		// Strip the id, transaction date, primary account, status & flag
 		delete transaction.id;
 		delete transaction.transaction_date;
