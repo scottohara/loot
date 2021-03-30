@@ -2,7 +2,7 @@ import {
 	Transaction,
 	TransactionEdit,
 	TransactionsContext
-} from "../../support/transactions/types";
+} from "transactions/types";
 import {
 	cancelButton,
 	invalidateForm,
@@ -10,7 +10,7 @@ import {
 	saveButton,
 	transactionEditForm,
 	transactionEditHeading
-} from "../../support/transactions/edit";
+} from "transactions/edit";
 import {
 	checkRowMatches,
 	checkSubtransactionRowValues,
@@ -19,7 +19,7 @@ import {
 	transactionSubtransactionsToggleButton,
 	transactionsClosingBalance,
 	transactionsTableRows
-} from "../../support/transactions/index";
+} from "transactions/index";
 import {
 	lightFormat,
 	startOfDay
@@ -270,7 +270,7 @@ describe("Transaction Edit", (): void => {
 	function commonBehaviour(): void {
 		it("should not save changes when the cancel button is clicked", (): void => {
 			cy.get(cancelButton).click();
-			cy.get(transactionEditForm).should("not.be.visible");
+			cy.get(transactionEditForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(transactionsTableRows).should("have.length", originalRowCount);
@@ -330,7 +330,7 @@ describe("Transaction Edit", (): void => {
 
 						it("should insert a new transaction when the save button is clicked", (): void => {
 							cy.get(saveButton).click();
-							cy.get(transactionEditForm).should("not.be.visible");
+							cy.get(transactionEditForm).should("not.exist");
 
 							// Row count should have incremented by one
 							cy.get(transactionsTableRows).should("have.length", originalRowCount + 1);

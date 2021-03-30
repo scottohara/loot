@@ -1,5 +1,5 @@
 import { ScheduleEdit } from "./types";
-import { Subtransaction } from "../transactions/types";
+import { Subtransaction } from "transactions/types";
 
 export const scheduleEditForm = "form[name=scheduleForm]";
 export const scheduleEditHeading = `${scheduleEditForm} > div.modal-header > h4`;
@@ -85,7 +85,7 @@ export function populateFormWith(schedule: ScheduleEdit): void {
 
 	// Wait for last transaction details to finish auto-populating
 	cy.get(memoInput).click();
-	cy.contains("Finding last transaction for ").should("not.be.visible");
+	cy.contains("Finding last transaction for ").should("not.exist");
 
 	cy.typeahead(categoryTypeahead, categoryName);
 

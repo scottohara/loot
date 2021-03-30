@@ -6,17 +6,17 @@ import {
 	transactionsClosingBalance,
 	transactionsIndexHeading,
 	transactionsTableRows
-} from "../../support/transactions/index";
+} from "transactions/index";
 import {
 	transactionDeleteForm,
 	transactionDeleteHeading
-} from "../../support/transactions/delete";
+} from "transactions/delete";
 import {
 	transactionEditForm,
 	transactionEditHeading
-} from "../../support/transactions/edit";
-import { TransactionsContext } from "../../support/transactions/types";
-import { testNavigableTable } from "../../support/og-components/og-table-navigable";
+} from "transactions/edit";
+import { TransactionsContext } from "transactions/types";
+import { testNavigableTable } from "og-components/og-table-navigable";
 
 describe("Transaction Index", (): void => {
 	const expected: TransactionsContext[] = [
@@ -306,7 +306,7 @@ describe("Transaction Index", (): void => {
 
 							if (undefined !== subtransactions) {
 								cy.wrap(row).within((): void => {
-									cy.get(transactionSubtransactionsTableRows).should("not.be.visible");
+									cy.get(transactionSubtransactionsTableRows).should("not.exist");
 									cy.get(transactionSubtransactionsToggleButton).click();
 									cy.get(transactionSubtransactionsTableRows).should("be.visible");
 									cy.get(transactionSubtransactionsToggleButton).click();

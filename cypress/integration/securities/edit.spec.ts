@@ -6,13 +6,13 @@ import {
 	saveButton,
 	securityEditForm,
 	securityEditHeading
-} from "../../support/securities/edit";
+} from "securities/edit";
 import {
 	checkRowMatches,
 	getValuesFrom,
 	securitiesTableRows
-} from "../../support/securities/index";
-import { Security } from "../../support/securities/types";
+} from "securities/index";
+import { Security } from "securities/types";
 
 describe("Security Edit", (): void => {
 	let	expected: Security,
@@ -23,7 +23,7 @@ describe("Security Edit", (): void => {
 	function commonBehaviour(): void {
 		it("should not save changes when the cancel button is clicked", (): void => {
 			cy.get(cancelButton).click();
-			cy.get(securityEditForm).should("not.be.visible");
+			cy.get(securityEditForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(securitiesTableRows).should("have.length", originalRowCount);
@@ -71,7 +71,7 @@ describe("Security Edit", (): void => {
 
 		it("should insert a new security when the save button is clicked", (): void => {
 			cy.get(saveButton).click();
-			cy.get(securityEditForm).should("not.be.visible");
+			cy.get(securityEditForm).should("not.exist");
 
 			// Row count should have incremented by one
 			cy.get(securitiesTableRows).should("have.length", originalRowCount + 1);
@@ -95,7 +95,7 @@ describe("Security Edit", (): void => {
 
 		it("should update an existing security when the save button is clicked", (): void => {
 			cy.get(saveButton).click();
-			cy.get(securityEditForm).should("not.be.visible");
+			cy.get(securityEditForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(securitiesTableRows).should("have.length", originalRowCount);

@@ -9,7 +9,8 @@
 		"types": [
 			"cypress",
 			"node"
-		]
+		],
+		"target": "ES2019"
 	},
 	"exclude": [
 		"node_modules"

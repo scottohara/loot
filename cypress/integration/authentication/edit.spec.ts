@@ -5,7 +5,7 @@ import {
 	loginForm,
 	notLoggedInMessage,
 	populateFormWith
-} from "../../support/authentication/edit";
+} from "authentication/edit";
 
 describe("Authentication Edit", (): void => {
 	beforeEach((): void => {
@@ -18,9 +18,9 @@ describe("Authentication Edit", (): void => {
 	it("should login if the credentials are valid", (): void => {
 		populateFormWith(Cypress.env("LOOT_USERNAME"), Cypress.env("LOOT_PASSWORD"));
 		cy.get(loginButton).click();
-		cy.contains(errorMessage).should("not.be.visible");
-		cy.contains(notLoggedInMessage).should("not.be.visible");
-		cy.get(loginForm).should("not.be.visible");
+		cy.contains(errorMessage).should("not.exist");
+		cy.contains(notLoggedInMessage).should("not.exist");
+		cy.get(loginForm).should("not.exist");
 	});
 
 	it("should not login if the credentials are invalid", (): void => {
@@ -33,6 +33,6 @@ describe("Authentication Edit", (): void => {
 	it("should not login when the cancel button is clicked", (): void => {
 		cy.get(cancelButton).click();
 		cy.contains(notLoggedInMessage).should("be.visible");
-		cy.get(loginForm).should("not.be.visible");
+		cy.get(loginForm).should("not.exist");
 	});
 });

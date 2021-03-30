@@ -8,7 +8,7 @@ import {
 	deleteButton,
 	getDirectionLabel,
 	warningMessage
-} from "../../support/categories/delete";
+} from "categories/delete";
 import {
 	categoriesTableRows,
 	checkRowMatches,
@@ -20,8 +20,8 @@ import {
 	lastSubcategory,
 	secondLastSubcategory,
 	secondSubcategory
-} from "../../support/categories/index";
-import { Category } from "../../support/categories/types";
+} from "categories/index";
+import { Category } from "categories/types";
 
 describe("Category Delete", (): void => {
 	let originalRowCount: number;
@@ -39,7 +39,7 @@ describe("Category Delete", (): void => {
 		});
 
 		it("should display the details of the category being deleted", (): void => {
-			cy.contains(warningMessage).should(`${hasChildren ? "" : "not."}be.visible`);
+			cy.contains(warningMessage).should(hasChildren ? "be.visible" : "not.exist");
 			cy.get(categoryToDeleteName).should("have.text", categoryToDelete.name);
 			if (isSubcategory) {
 				cy.get(categoryToDeleteParent).should("have.text", categoryToDelete.parent);
@@ -49,7 +49,7 @@ describe("Category Delete", (): void => {
 
 		it("should not save changes when the cancel button is clicked", (): void => {
 			cy.get(cancelButton).click();
-			cy.get(categoryDeleteForm).should("not.be.visible");
+			cy.get(categoryDeleteForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(categoriesTableRows).should("have.length", originalRowCount);
@@ -60,7 +60,7 @@ describe("Category Delete", (): void => {
 
 		it("should delete an existing category when the delete button is clicked", (): void => {
 			cy.get(deleteButton).click();
-			cy.get(categoryDeleteForm).should("not.be.visible");
+			cy.get(categoryDeleteForm).should("not.exist");
 
 			// Row count should have decremented by one + the number of children
 			cy.get(categoriesTableRows).should("have.length", originalRowCount - (hasChildren ? 3 : 1));

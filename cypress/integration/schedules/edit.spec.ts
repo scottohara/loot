@@ -1,7 +1,7 @@
 import {
 	Schedule,
 	ScheduleEdit
-} from "../../support/schedules/types";
+} from "schedules/types";
 import {
 	addDays,
 	lightFormat,
@@ -14,7 +14,7 @@ import {
 	saveButton,
 	scheduleEditForm,
 	scheduleEditHeading
-} from "../../support/schedules/edit";
+} from "schedules/edit";
 import {
 	checkRowMatches,
 	checkSubtransactionRowValues,
@@ -22,7 +22,7 @@ import {
 	scheduleSubtransactionsTableRows,
 	scheduleSubtransactionsToggleButton,
 	schedulesTableRows
-} from "../../support/schedules/index";
+} from "schedules/index";
 
 describe("Schedule Edit", (): void => {
 	let	expected: ScheduleEdit,
@@ -32,7 +32,7 @@ describe("Schedule Edit", (): void => {
 	function commonBehaviour(): void {
 		it("should not save changes when the cancel button is clicked", (): void => {
 			cy.get(cancelButton).click();
-			cy.get(scheduleEditForm).should("not.be.visible");
+			cy.get(scheduleEditForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(schedulesTableRows).should("have.length", originalRowCount);
@@ -341,7 +341,7 @@ describe("Schedule Edit", (): void => {
 
 				it("should insert a new schedule when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(scheduleEditForm).should("not.be.visible");
+					cy.get(scheduleEditForm).should("not.exist");
 
 					// Row count should have incremented by one
 					cy.get(schedulesTableRows).should("have.length", originalRowCount + 1);

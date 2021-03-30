@@ -4,13 +4,13 @@ import {
 	payeeDeleteForm,
 	payeeDeleteHeading,
 	payeeToDelete
-} from "../../support/payees/delete";
+} from "payees/delete";
 import {
 	checkRowMatches,
 	getValuesFrom,
 	payeesTableRows
-} from "../../support/payees/index";
-import { Payee } from "../../support/payees/types";
+} from "payees/index";
+import { Payee } from "payees/types";
 
 describe("Payee Delete", (): void => {
 	let	originalRowCount: number,
@@ -40,7 +40,7 @@ describe("Payee Delete", (): void => {
 
 		it("should not save changes when the cancel button is clicked", (): void => {
 			cy.get(cancelButton).click();
-			cy.get(payeeDeleteForm).should("not.be.visible");
+			cy.get(payeeDeleteForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(payeesTableRows).should("have.length", originalRowCount);
@@ -51,7 +51,7 @@ describe("Payee Delete", (): void => {
 
 		it("should delete an existing payee when the delete button is clicked", (): void => {
 			cy.get(deleteButton).click();
-			cy.get(payeeDeleteForm).should("not.be.visible");
+			cy.get(payeeDeleteForm).should("not.exist");
 
 			// Row count should have decremented by one
 			cy.get(payeesTableRows).should("have.length", originalRowCount - 1);

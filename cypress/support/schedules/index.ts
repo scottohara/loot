@@ -2,7 +2,7 @@ import {
 	Schedule,
 	ScheduleEdit
 } from "./types";
-import { Subtransaction } from "../transactions/types";
+import { Subtransaction } from "transactions/types";
 
 export const schedulesTableRows = "#transactions > tbody > tr";
 
@@ -68,7 +68,7 @@ export function checkRowMatches(expectedValues: Schedule | ScheduleEdit): void {
 	} = expectedValues;
 
 	cy.get(scheduleNextDueDate).should("contain.text", nextDueDate);
-	cy.get(scheduleIsAutoEntered).should(`${isAutoEntered ? "" : "not."}be.visible`);
+	cy.get(scheduleIsAutoEntered).should(isAutoEntered ? "be.visible" : "not.exist");
 	cy.get(schedulePrimaryAccountName).should("have.text", primaryAccountName);
 	cy.get(schedulePayeeOrSecurityName).should("have.text", payeeOrSecurityName);
 	cy.get(scheduleCategoryName).should("have.text", categoryName);
@@ -77,8 +77,8 @@ export function checkRowMatches(expectedValues: Schedule | ScheduleEdit): void {
 		cy.get(scheduleSubcategoryOrAccountName).should("have.text", subcategoryOrAccountName);
 	}
 
-	cy.get(scheduleSubtransactionsToggleButton).should(`${undefined === subtransactions ? "not." : ""}be.visible`);
-	cy.get(scheduleSubtransactionsTableRows).should("not.be.visible");
+	cy.get(scheduleSubtransactionsToggleButton).should(undefined === subtransactions ? "not.exist" : "be.visible");
+	cy.get(scheduleSubtransactionsTableRows).should("not.exist");
 	cy.get(scheduleMemo).should("contain.text", memo);
 	cy.get(scheduleFrequency).should("have.text", frequency);
 	cy.get(scheduleDebitAmount).should("contain.text", debitAmount ?? "");

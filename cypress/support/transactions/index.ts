@@ -89,8 +89,8 @@ export function checkRowMatches(expectedValues: Transaction | TransactionEdit): 
 		cy.get(transactionSubcategoryOrAccountName).should("contain.text", subcategoryOrAccountName);
 	}
 
-	cy.get(transactionSubtransactionsToggleButton).should(`${undefined === subtransactions ? "not." : ""}be.visible`);
-	cy.get(transactionSubtransactionsTableRows).should("not.be.visible");
+	cy.get(transactionSubtransactionsToggleButton).should(undefined === subtransactions ? "not.exist" : "be.visible");
+	cy.get(transactionSubtransactionsTableRows).should("not.exist");
 	cy.get(transactionMemo).should("contain.text", memo);
 
 	if (undefined !== debitAmount) {

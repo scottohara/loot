@@ -8,7 +8,7 @@ import {
 	getValuesFrom,
 	lastParentCategory,
 	lastSubcategory
-} from "../../support/categories/index";
+} from "categories/index";
 import {
 	cancelButton,
 	categoryEditForm,
@@ -17,8 +17,8 @@ import {
 	invalidateForm,
 	populateFormWith,
 	saveButton
-} from "../../support/categories/edit";
-import { Category } from "../../support/categories/types";
+} from "categories/edit";
+import { Category } from "categories/types";
 
 describe("Category Edit", (): void => {
 	let	expected: Category,
@@ -27,7 +27,7 @@ describe("Category Edit", (): void => {
 	function commonBehaviour(targetRow: string): void {
 		it("should not save changes when the cancel button is clicked", (): void => {
 			cy.get(cancelButton).click();
-			cy.get(categoryEditForm).should("not.be.visible");
+			cy.get(categoryEditForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(categoriesTableRows).should("have.length", originalRowCount);
@@ -78,7 +78,7 @@ describe("Category Edit", (): void => {
 
 				it("should insert a new category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should have incremented by one
 					cy.get(categoriesTableRows).should("have.length", originalRowCount + 1);
@@ -98,7 +98,7 @@ describe("Category Edit", (): void => {
 
 				it("should insert a new category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should have incremented by one
 					cy.get(categoriesTableRows).should("have.length", originalRowCount + 1);
@@ -122,7 +122,7 @@ describe("Category Edit", (): void => {
 
 				it("should insert a new category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should have incremented by one
 					cy.get(categoriesTableRows).should("have.length", originalRowCount + 1);
@@ -144,7 +144,7 @@ describe("Category Edit", (): void => {
 
 				it("should insert a new category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should have incremented by one
 					cy.get(categoriesTableRows).should("have.length", originalRowCount + 1);
@@ -178,7 +178,7 @@ describe("Category Edit", (): void => {
 
 				it("should update an existing category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should not have changed
 					cy.get(categoriesTableRows).should("have.length", originalRowCount);
@@ -199,7 +199,7 @@ describe("Category Edit", (): void => {
 
 				it("should update an existing category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should not have changed
 					cy.get(categoriesTableRows).should("have.length", originalRowCount);
@@ -224,7 +224,7 @@ describe("Category Edit", (): void => {
 
 				it("should update an existing category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should not have changed
 					cy.get(categoriesTableRows).should("have.length", originalRowCount);
@@ -247,7 +247,7 @@ describe("Category Edit", (): void => {
 
 				it("should update an existing category when the save button is clicked", (): void => {
 					cy.get(saveButton).click();
-					cy.get(categoryEditForm).should("not.be.visible");
+					cy.get(categoryEditForm).should("not.exist");
 
 					// Row count should not have changed
 					cy.get(categoriesTableRows).should("have.length", originalRowCount);

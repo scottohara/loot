@@ -9,17 +9,17 @@ import {
 	scheduleSubtransactionsTableRows,
 	scheduleSubtransactionsToggleButton,
 	schedulesTableRows
-} from "../../support/schedules/index";
+} from "schedules/index";
 import {
 	scheduleDeleteForm,
 	scheduleDeleteHeading
-} from "../../support/schedules/delete";
+} from "schedules/delete";
 import {
 	scheduleEditForm,
 	scheduleEditHeading
-} from "../../support/schedules/edit";
-import { Schedule } from "../../support/schedules/types";
-import { testNavigableTable } from "../../support/og-components/og-table-navigable";
+} from "schedules/edit";
+import { Schedule } from "schedules/types";
+import { testNavigableTable } from "og-components/og-table-navigable";
 
 describe("Schedule Index", (): void => {
 	let expected: Schedule[];
@@ -242,7 +242,7 @@ describe("Schedule Index", (): void => {
 
 				if (undefined !== subtransactions) {
 					cy.wrap(row).within((): void => {
-						cy.get(scheduleSubtransactionsTableRows).should("not.be.visible");
+						cy.get(scheduleSubtransactionsTableRows).should("not.exist");
 						cy.get(scheduleSubtransactionsToggleButton).click();
 						cy.get(scheduleSubtransactionsTableRows).should("be.visible");
 						cy.get(scheduleSubtransactionsToggleButton).click();

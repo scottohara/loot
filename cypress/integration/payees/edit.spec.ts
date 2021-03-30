@@ -6,13 +6,13 @@ import {
 	payeeEditHeading,
 	populateFormWith,
 	saveButton
-} from "../../support/payees/edit";
+} from "payees/edit";
 import {
 	checkRowMatches,
 	getValuesFrom,
 	payeesTableRows
-} from "../../support/payees/index";
-import { Payee } from "../../support/payees/types";
+} from "payees/index";
+import { Payee } from "payees/types";
 
 describe("Payee Edit", (): void => {
 	let	expected: Payee,
@@ -23,7 +23,7 @@ describe("Payee Edit", (): void => {
 	function commonBehaviour(): void {
 		it("should not save changes when the cancel button is clicked", (): void => {
 			cy.get(cancelButton).click();
-			cy.get(payeeEditForm).should("not.be.visible");
+			cy.get(payeeEditForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(payeesTableRows).should("have.length", originalRowCount);
@@ -71,7 +71,7 @@ describe("Payee Edit", (): void => {
 
 		it("should insert a new payee when the save button is clicked", (): void => {
 			cy.get(saveButton).click();
-			cy.get(payeeEditForm).should("not.be.visible");
+			cy.get(payeeEditForm).should("not.exist");
 
 			// Row count should have incremented by one
 			cy.get(payeesTableRows).should("have.length", originalRowCount + 1);
@@ -95,7 +95,7 @@ describe("Payee Edit", (): void => {
 
 		it("should update an existing payee when the save button is clicked", (): void => {
 			cy.get(saveButton).click();
-			cy.get(payeeEditForm).should("not.be.visible");
+			cy.get(payeeEditForm).should("not.exist");
 
 			// Row count should not have changed
 			cy.get(payeesTableRows).should("have.length", originalRowCount);

@@ -1,4 +1,4 @@
-import { Subtransaction } from "../transactions/types";
+import { Subtransaction } from "transactions/types";
 
 export interface Schedule {
 	nextDueDate: string;
