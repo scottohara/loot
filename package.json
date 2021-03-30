@@ -78,7 +78,6 @@
   },
   "scripts": {
     "start": "heroku local --procfile Procfile.dev",
-    "start:test": "heroku local --procfile Procfile.test",
     "start:db": "postgres -D /usr/local/var/postgres",
     "build": "webpack --progress --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
@@ -86,7 +85,7 @@
     "test": "npm run lint && npm run test:coverage",
     "test:bdd": "karma start karma-bdd.conf.js",
     "test:coverage": "karma start",
-    "test:e2e": "npm run build && npm run start:test"
+		"test:e2e": "npm run build && heroku local --procfile Procfile.test"
   },
   "engines": {
     "node": "15.8.0",

@@ -1,2 +1,3 @@
 web: bundle exec rails server --environment=test
 db: postgres -D /usr/local/var/postgres
+cypress: cypress open

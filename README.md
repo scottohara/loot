@@ -61,8 +61,8 @@ Backend specs are implemented using [RSpec](http://rspec.info/):
 
 Integration tests are implemented using [Cypress](http://cypress.io/):
 
-1. Start the database server and app server in test mode (`npm run test:e2e`)
-2. Launch Cypress (`cypress open`) to run visually, or run in headless mode (`cypress run --browser chrome`)
+1. Start the database server and app server in test mode, and launch Cypress (`npm run test:e2e`)
+2. Optionally run Cypress in headless mode (`cypress run --browser chrome`)
 
 Code Quality
 ============
