@@ -63,6 +63,7 @@ jobs:
     env:
       RAILS_ENV: test
       DATABASE_URL: postgresql://postgres@localhost
+      BUNDLE_WITHOUT: production
 
     services:
       postgres:
@@ -78,45 +79,18 @@ jobs:
     - name: Install postgres libs
       run: sudo apt-get install libpq-dev
 
-    - name: Install rvm
-      shell: bash --login {0}
-      run: |
-        curl -sSL https://rvm.io/mpapis.asc | gpg --import -
-        curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
-        curl -sSL https://get.rvm.io | bash -s stable
-        echo "export rvm_install_on_use_flag=1" >> "$HOME/.rvmrc"
-        echo "source $HOME/.rvm/scripts/rvm" >> "$HOME/.bash_profile"
-
-    - name: Update to latest rubygems and bundler
-      shell: bash --login {0}
-      run: |
-        echo "gem: --no-document" >> "$HOME/.gemrc"
-        gem update --system
-        gem install bundler
-
-    - name: Setup dependency cache
-      uses: actions/cache@v1
+    - name: Install ruby and gem dependencies
+      uses: ruby/setup-ruby@v1
       with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-
-    - name: Install dependencies
-      shell: bash --login {0}
-      env:
-        BUNDLE_PATH: vendor/bundle
-        BUNDLE_WITHOUT: production
-      run: bundle install --jobs 4 --retry 3
+        bundler-cache: true
 
     - name: Setup database
-      shell: bash --login {0}
       run: bundle exec rake db:create db:migrate
 
     - name: Lint
-      shell: bash --login {0}
       run: bundle exec rubocop --parallel
 
     - name: Test
-      shell: bash --login {0}
       run: bundle exec rake
 
     - name: Upload test coverage artifact
