@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-ruby '3.0.0'
+ruby '3.0.1'
 
 source 'https://rubygems.org'
 
