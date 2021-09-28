@@ -1,4 +1,4 @@
-import {
+import type {
 	ScheduledBasicTransaction,
 	ScheduledTransaction
 } from "schedules/types";
@@ -10,11 +10,11 @@ import {
 	lightFormat,
 	startOfDay
 } from "date-fns";
-import { CategoryModelMock } from "mocks/categories/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { PayeeModelMock } from "mocks/payees/types";
-import ScheduleModel from "schedules/models/schedule";
-import { SecurityModelMock } from "mocks/securities/types";
+import type { CategoryModelMock } from "mocks/categories/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { PayeeModelMock } from "mocks/payees/types";
+import type ScheduleModel from "schedules/models/schedule";
+import type { SecurityModelMock } from "mocks/securities/types";
 import angular from "angular";
 import sinon from "sinon";
 
@@ -26,7 +26,7 @@ describe("scheduleModel", (): void => {
 			securityModel: SecurityModelMock;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["payeeModel", "categoryModel", "securityModel"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["payeeModel", "categoryModel", "securityModel"])) as Mocha.HookFunction);
 
 	// Inject the object under test and it's remaining dependencies
 	beforeEach(angular.mock.inject((_scheduleModel_: ScheduleModel, _$httpBackend_: angular.IHttpBackendService, _payeeModel_: PayeeModelMock, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
@@ -37,7 +37,7 @@ describe("scheduleModel", (): void => {
 		payeeModel = _payeeModel_;
 		categoryModel = _categoryModel_;
 		securityModel = _securityModel_;
-	}));
+	}) as Mocha.HookFunction);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {

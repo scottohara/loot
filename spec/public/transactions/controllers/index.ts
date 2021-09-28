@@ -1,4 +1,4 @@
-import {
+import type {
 	BaseTransaction,
 	BasicTransaction,
 	CategorisableTransaction,
@@ -16,16 +16,16 @@ import {
 	TransferTransaction,
 	TransferrableTransaction
 } from "transactions/types";
-import {
+import type {
 	ControllerTestFactory,
 	EventMock,
 	JQueryMouseEventObjectMock
 } from "mocks/types";
-import {
+import type {
 	Entity,
 	EntityModel
 } from "loot/types";
-import {
+import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
@@ -43,26 +43,27 @@ import {
 	createSubtransferTransaction,
 	createTransferTransaction
 } from "mocks/transactions/factories";
-import sinon, { SinonStub } from "sinon";
-import { Account } from "accounts/types";
-import AccountModel from "accounts/models/account";
-import { Category } from "categories/types";
-import CategoryModel from "categories/models/category";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgModalConfirm } from "og-components/og-modal-confirm/types";
-import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import { Payee } from "payees/types";
-import { Security } from "securities/types";
-import SecurityModel from "securities/models/security";
-import TransactionIndexController from "transactions/controllers";
-import { TransactionModelMock } from "mocks/transactions/types";
+import type { Account } from "accounts/types";
+import type AccountModel from "accounts/models/account";
+import type { Category } from "categories/types";
+import type CategoryModel from "categories/models/category";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
+import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
+import type { Payee } from "payees/types";
+import type { Security } from "securities/types";
+import type SecurityModel from "securities/models/security";
+import type { SinonStub } from "sinon";
+import type TransactionIndexController from "transactions/controllers";
+import type { TransactionModelMock } from "mocks/transactions/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import createCategory from "mocks/categories/factories";
 import createPayee from "mocks/payees/factories";
 import createSecurity from "mocks/securities/factories";
+import sinon from "sinon";
 
 describe("TransactionIndexController", (): void => {
 	let	transactionIndexController: TransactionIndexController,
@@ -79,12 +80,12 @@ describe("TransactionIndexController", (): void => {
 			ogTableNavigableService: OgTableNavigableService,
 			ogViewScrollService: OgViewScrollService,
 			contextModel: EntityModel,
-			context: Entity,
+			context: Entity | string,
 			transactionBatch: TransactionBatch,
 			deregisterTransitionSuccessHook: SinonStub;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$window", "$state", "transactionModel", "accountModel", "categoryModel", "securityModel", "contextModel", "context", "transactionBatch"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$window", "$state", "transactionModel", "accountModel", "categoryModel", "securityModel", "contextModel", "context", "transactionBatch"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$uibModal_: UibModalMock, _$timeout_: angular.ITimeoutService, _$window_: angular.IWindowService, _$state_: StateMock, _transactionModel_: TransactionModelMock, _accountModel_: AccountModel, _categoryModel_: CategoryModel, _securityModel_: SecurityModel, _ogTableNavigableService_: OgTableNavigableService, _ogViewScrollService_: OgViewScrollService, _contextModel_: EntityModel, _context_: Entity, _transactionBatch_: TransactionBatch): void => {
@@ -107,7 +108,7 @@ describe("TransactionIndexController", (): void => {
 		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		sinon.stub(ogViewScrollService, "scrollTo");
 		transactionIndexController = controllerTest("TransactionIndexController") as TransactionIndexController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed context available to the view", (): Chai.Assertion => transactionIndexController.context.should.deep.equal(context));
 
@@ -394,9 +395,9 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("contextChanged", (): void => {
-		let transaction: Transaction & {[contextField: string]: Entity;};
+		let transaction: Record<string, Entity> & Transaction;
 
-		beforeEach((): Transaction => (transaction = angular.copy(transactionIndexController.transactions[1]) as Transaction & {[contextField: string]: Entity;}));
+		beforeEach((): Transaction => (transaction = angular.copy(transactionIndexController.transactions[1]) as Record<string, Entity> & Transaction));
 
 		describe("(search mode)", (): void => {
 			beforeEach((): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null, context: "Search" }) as TransactionIndexController));
@@ -413,14 +414,14 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(context mode)", (): void => {
-			const scenarios: {type: "payee" | "account" | "security" | "category"; field: (keyof BasicTransaction | keyof SecurityTransaction); contextFactory: () => Entity;}[] = [
+			const scenarios: { type: "account" | "category" | "payee" | "security"; field: (keyof BasicTransaction | keyof SecurityTransaction); contextFactory: () => Entity; }[] = [
 				{ type: "account", field: "primary_account", contextFactory: createAccount },
 				{ type: "payee", field: "payee", contextFactory: createPayee },
 				{ type: "security", field: "security", contextFactory: createSecurity },
 				{ type: "category", field: "category", contextFactory: createCategory },
 				{ type: "category", field: "subcategory", contextFactory: (): Entity => createCategory({ parent: createCategory() }) }
 			];
-			let contextModels: {[type: string]: EntityModel;};
+			let contextModels: Record<string, EntityModel>;
 
 			beforeEach((): void => {
 				contextModels = {
@@ -431,7 +432,7 @@ describe("TransactionIndexController", (): void => {
 				};
 			});
 
-			angular.forEach(scenarios, (scenario: {type: "payee" | "account" | "security" | "category"; field: string; contextFactory: () => Entity;}): void => {
+			angular.forEach(scenarios, (scenario: { type: "account" | "category" | "payee" | "security"; field: string; contextFactory: () => Entity; }): void => {
 				it(`should return true when the context type is ${scenario.type} and the transaction ${scenario.field} no longer matches the context`, (): void => {
 					transactionIndexController = controllerTest("TransactionIndexController", { contextModel: contextModels[scenario.type], context: scenario.contextFactory() }) as TransactionIndexController;
 					transaction[scenario.field] = scenario.contextFactory();
@@ -448,7 +449,7 @@ describe("TransactionIndexController", (): void => {
 
 			it("should return false when the transaction field is undefined", (): void => {
 				transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel as EntityModel }) as TransactionIndexController;
-				delete transaction.primary_account;
+				delete (transaction as Partial<Transaction>).primary_account;
 				transactionIndexController["contextChanged"](transaction).should.be.false;
 			});
 		});
@@ -526,7 +527,7 @@ describe("TransactionIndexController", (): void => {
 
 	describe("updateClosingBalance", (): void => {
 		it("should do nothing if the context doesn't have a closing balance property", (): void => {
-			delete context.closing_balance;
+			context = "";
 			transactionIndexController = controllerTest("TransactionIndexController", { context }) as TransactionIndexController;
 			transactionIndexController["updateClosingBalance"](createBasicTransaction({ amount: 1 }));
 			transactionIndexController.should.not.have.property("closing_balance");
@@ -584,7 +585,7 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("isAllowed", (): void => {
-		let transaction: Transaction | SplitTransactionChild;
+		let transaction: SplitTransactionChild | Transaction;
 
 		beforeEach((): void => {
 			sinon.stub(transactionIndexController, "promptToSwitchAccounts" as keyof TransactionIndexController);
@@ -593,7 +594,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(not allowed)", (): void => {
-			const scenarios: {action: "edit" | "delete"; type: TransactionType; message: string;}[] = [
+			const scenarios: { action: "delete" | "edit"; type: TransactionType; message: string; }[] = [
 				{ action: "edit", type: "Sub", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?" },
 				{ action: "delete", type: "Sub", message: "This transaction is part of a split transaction. You can only delete it from the parent account. Would you like to switch to the parent account now?" },
 				{ action: "edit", type: "Subtransfer", message: "This transaction is part of a split transaction. You can only edit it from the parent account. Would you like to switch to the parent account now?" },
@@ -602,7 +603,7 @@ describe("TransactionIndexController", (): void => {
 				{ action: "edit", type: "SecurityInvestment", message: "This is an investment transaction. You can only edit it from the investment account. Would you like to switch to the investment account now?" }
 			];
 
-			angular.forEach(scenarios, (scenario: {action: "edit" | "delete"; type: TransactionType; message: string;}): void => {
+			angular.forEach(scenarios, (scenario: { action: "delete" | "edit"; type: TransactionType; message: string; }): void => {
 				it(`should prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction`, (): void => {
 					transaction.transaction_type = scenario.type;
 					transactionIndexController["isAllowed"](scenario.action, transaction);
@@ -617,7 +618,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(allowed)", (): void => {
-			const scenarios: {action: "edit" | "delete"; type: TransactionType; account_type?: "investment";}[] = [
+			const scenarios: { action: "delete" | "edit"; type: TransactionType; account_type?: "investment"; }[] = [
 				{ action: "edit", type: "Basic" },
 				{ action: "delete", type: "Basic" },
 				{ action: "edit", type: "Dividend", account_type: "investment" },
@@ -626,7 +627,7 @@ describe("TransactionIndexController", (): void => {
 				{ action: "delete", type: "SecurityInvestment" }
 			];
 
-			angular.forEach(scenarios, (scenario: {action: "edit" | "delete"; type: TransactionType; account_type?: "investment";}): void => {
+			angular.forEach(scenarios, (scenario: { action: "delete" | "edit"; type: TransactionType; account_type?: "investment"; }): void => {
 				it(`should not prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction${undefined === scenario.account_type ? "" : ` from an ${scenario.account_type} acount`}`, (): void => {
 					transaction.transaction_type = scenario.type;
 					(transaction.primary_account as Account).account_type = undefined === scenario.account_type ? (transaction.primary_account as Account).account_type : scenario.account_type;
@@ -817,10 +818,8 @@ describe("TransactionIndexController", (): void => {
 	describe("processTransactions", (): void => {
 		beforeEach((): void => {
 			transactionIndexController["openingBalance"] = 0;
-			delete transactionIndexController.transactions;
+			transactionIndexController.transactions = [];
 			transactionIndexController["atEnd"] = false;
-			delete transactionIndexController.firstTransactionDate;
-			delete transactionIndexController.lastTransactionDate;
 			sinon.stub(transactionIndexController, "updateRunningBalances" as keyof TransactionIndexController);
 			sinon.stub(transactionIndexController, "focusTransaction" as keyof TransactionIndexController);
 		});
@@ -1121,7 +1120,7 @@ describe("TransactionIndexController", (): void => {
 			beforeEach((): void => {
 				transaction.showSubtransactions = false;
 				transaction.loadingSubtransactions = false;
-				delete transaction.subtransactions;
+				transaction.subtransactions = [createSubtransaction({ id: 1 })];
 			});
 
 			it("should show a loading indicator", (): void => {
@@ -1201,7 +1200,7 @@ describe("TransactionIndexController", (): void => {
 
 	describe("switchTo", (): void => {
 		let	transaction: SplitTransactionChild,
-				stateParams: {id: number; transactionId?: number | null;},
+				stateParams: { id: number; transactionId?: number | null; },
 				$event: EventMock;
 
 		beforeEach((): void => {

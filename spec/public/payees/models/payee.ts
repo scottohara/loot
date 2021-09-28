@@ -1,20 +1,21 @@
-import {
+import type {
 	CacheFactoryMock,
 	WindowMock
 } from "mocks/node-modules/angular/types";
-import {
+import type {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
 } from "mocks/og-components/og-lru-cache-factory/types";
-import sinon, { SinonStub } from "sinon";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
-import { Transaction } from "transactions/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
+import type { SinonStub } from "sinon";
+import type { Transaction } from "transactions/types";
 import angular from "angular";
 import { createBasicTransaction } from "mocks/transactions/factories";
 import createPayee from "mocks/payees/factories";
+import sinon from "sinon";
 
 describe("payeeModel", (): void => {
 	let	payeeModel: PayeeModel,
@@ -28,13 +29,13 @@ describe("payeeModel", (): void => {
 			iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "iPromise", "iHttpPromise"])));
+	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "iPromise", "iHttpPromise"])) as Mocha.HookFunction);
 
 	// Inject any dependencies that need to be configured first
 	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
 		$window = _$window_;
 		$window.localStorage.getItem.withArgs("lootRecentPayees").returns(null);
-	}));
+	}) as Mocha.HookFunction);
 
 	// Inject the object under test and it's remaining dependencies
 	beforeEach(angular.mock.inject((_payeeModel_: PayeeModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock, _iPromise_: angular.IPromise<never>, _iHttpPromise_: angular.IHttpPromise<unknown>): void => {
@@ -49,7 +50,7 @@ describe("payeeModel", (): void => {
 		iHttpPromise = _iHttpPromise_;
 
 		payee = createPayee({ id: 1 });
-	}));
+	}) as Mocha.HookFunction);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {

@@ -1,9 +1,9 @@
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import ScheduleDeleteController from "schedules/controllers/delete";
-import { ScheduleModelMock } from "mocks/schedules/types";
-import { ScheduledTransaction } from "schedules/types";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type ScheduleDeleteController from "schedules/controllers/delete";
+import type { ScheduleModelMock } from "mocks/schedules/types";
+import type { ScheduledTransaction } from "schedules/types";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("ScheduleDeleteController", (): void => {
@@ -13,7 +13,7 @@ describe("ScheduleDeleteController", (): void => {
 			schedule: ScheduledTransaction;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "scheduleModel", "schedule"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "scheduleModel", "schedule"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _scheduleModel_: ScheduleModelMock, _schedule_: ScheduledTransaction): void => {
@@ -21,7 +21,7 @@ describe("ScheduleDeleteController", (): void => {
 		scheduleModel = _scheduleModel_;
 		schedule = _schedule_;
 		scheduleDeleteController = controllerTest("ScheduleDeleteController") as ScheduleDeleteController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed schedule available to the view", (): Chai.Assertion => scheduleDeleteController.schedule.should.deep.equal(schedule));
 

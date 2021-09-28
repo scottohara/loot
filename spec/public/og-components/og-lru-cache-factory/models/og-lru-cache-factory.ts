@@ -1,16 +1,16 @@
-import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
-import OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
-import OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
+import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+import type OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
+import type OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 import angular from "angular";
 
 describe("ogLruCacheFactory", (): void => {
 	let ogLruCacheFactory: OgLruCacheFactory;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Inject the object under test
-	beforeEach(angular.mock.inject((_ogLruCacheFactory_: OgLruCacheFactory): OgLruCacheFactory => (ogLruCacheFactory = _ogLruCacheFactory_)));
+	beforeEach(angular.mock.inject((_ogLruCacheFactory_: OgLruCacheFactory): OgLruCacheFactory => (ogLruCacheFactory = _ogLruCacheFactory_)) as Mocha.HookFunction);
 
 	describe("new", (): void => {
 		let ogLruCache: OgLruCache;
@@ -44,7 +44,7 @@ describe("ogLruCacheFactory", (): void => {
 			describe("put", (): void => {
 				it("should leave the list unchanged if the item is already the current head", (): Chai.Assertion => ogLruCache.put({ id: capacity, name: `item ${capacity}` }).should.deep.equal(list));
 
-				const scenarios: {description: string; item: OgCacheEntry; currentIndex?: number;}[] = [
+				const scenarios: { description: string; item: OgCacheEntry; currentIndex?: number; }[] = [
 					{
 						description: "move an existing item from the tail of the list to the head of the list",
 						item: { id: 1, name: "item 1" }
@@ -60,7 +60,7 @@ describe("ogLruCacheFactory", (): void => {
 					}
 				];
 
-				scenarios.forEach((scenario: {description: string; item: OgCacheEntry; currentIndex?: number;}): void => {
+				scenarios.forEach((scenario: { description: string; item: OgCacheEntry; currentIndex?: number; }): void => {
 					it(`should ${scenario.description}`, (): void => {
 						const newList: OgCacheEntry[] = ogLruCache.put(scenario.item);
 

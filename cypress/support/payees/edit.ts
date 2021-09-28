@@ -1,4 +1,4 @@
-import { Payee } from "./types";
+import type { Payee } from "./types";
 
 export const payeeEditForm = "form[name=payeeForm]";
 export const payeeEditHeading = `${payeeEditForm} > div.modal-header > h4`;

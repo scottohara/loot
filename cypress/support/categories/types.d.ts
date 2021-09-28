@@ -1,5 +1,5 @@
-export type CategoryDirection = "glyphicon-plus-sign" | "glyphicon-minus-sign";
-export type CategoryDirectionLabel = "Income" | "Expense";
+export type CategoryDirection = "glyphicon-minus-sign" | "glyphicon-plus-sign";
+export type CategoryDirectionLabel = "Expense" | "Income";
 
 export interface Category {
 	name: string;

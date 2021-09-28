@@ -1,4 +1,4 @@
-import {
+import type {
 	UibModalMock,
 	UibModalMockCloseResult,
 	UibModalMockResolve,
@@ -6,19 +6,19 @@ import {
 	UibModalMockResult,
 	UibModalMockResultCallback
 } from "mocks/node-modules/angular/types";
-import { Mock } from "mocks/types";
+import type { Mock } from "mocks/types";
 import sinon from "sinon";
 
 export default class UibModalMockProvider implements Mock<UibModalMock> {
 	// Mock $uibModal object
 	public constructor(private readonly $uibModal: UibModalMock = {
-		open(options: angular.ui.bootstrap.IModalSettings): {result: UibModalMockResult;} {
+		open(options: angular.ui.bootstrap.IModalSettings): { result: UibModalMockResult; } {
 			const self: UibModalMock = this;
 
 			// If there are any resolves, resolve them
 			if (undefined !== options.resolve) {
 				this.resolves = Object.keys(options.resolve).reduce((resolves: UibModalMockResolves, resolve: string): UibModalMockResolves => {
-					resolves[resolve] = ((options.resolve as { [key: string]: () => UibModalMockResolve; })[resolve] as () => UibModalMockResolve)();
+					resolves[resolve] = ((options.resolve as Record<string, () => UibModalMockResolve>)[resolve] as () => UibModalMockResolve)();
 
 					return resolves;
 				}, {});

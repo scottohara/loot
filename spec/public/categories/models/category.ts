@@ -1,18 +1,19 @@
-import {
+import type {
 	CacheFactoryMock,
 	WindowMock
 } from "mocks/node-modules/angular/types";
-import {
+import type {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
 } from "mocks/og-components/og-lru-cache-factory/types";
-import sinon, { SinonStub } from "sinon";
-import { Category } from "categories/types";
-import CategoryModel from "categories/models/category";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+import type { Category } from "categories/types";
+import type CategoryModel from "categories/models/category";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+import type { SinonStub } from "sinon";
 import angular from "angular";
 import createCategory from "mocks/categories/factories";
+import sinon from "sinon";
 
 describe("categoryModel", (): void => {
 	let	categoryModel: CategoryModel,
@@ -26,13 +27,13 @@ describe("categoryModel", (): void => {
 			iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "iPromise", "iHttpPromise"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "iPromise", "iHttpPromise"])) as Mocha.HookFunction);
 
 	// Inject any dependencies that need to be configured first
 	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
 		$window = _$window_;
 		$window.localStorage.getItem.withArgs("lootRecentCategories").returns(null);
-	}));
+	}) as Mocha.HookFunction);
 
 	// Inject the object under test and it's remaining dependencies
 	beforeEach(angular.mock.inject((_categoryModel_: CategoryModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock, _iPromise_: angular.IPromise<never>, _iHttpPromise_: angular.IHttpPromise<unknown>): void => {
@@ -47,7 +48,7 @@ describe("categoryModel", (): void => {
 		iHttpPromise = _iHttpPromise_;
 
 		category = createCategory({ id: 1 });
-	}));
+	}) as Mocha.HookFunction);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {

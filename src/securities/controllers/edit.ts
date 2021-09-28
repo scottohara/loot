@@ -1,11 +1,11 @@
-import { Security } from "securities/types";
-import SecurityModel from "securities/models/security";
+import type { Security } from "securities/types";
+import type SecurityModel from "securities/models/security";
 import angular from "angular";
 
 export default class SecurityEditController {
 	public readonly security: Security;
 
-	public readonly mode: "Edit" | "Add";
+	public readonly mode: "Add" | "Edit";
 
 	public errorMessage: string | null = null;
 

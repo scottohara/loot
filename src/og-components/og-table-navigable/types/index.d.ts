@@ -2,10 +2,10 @@ export type OgTableActionCallback = (index?: number) => void;
 export type OgTableMouseEventCallback = (event: JQueryMouseEventObject) => void;
 export type OgTableKeyEventCallback = (event: JQueryKeyEventObject) => void;
 export type OgTableRowAction = (row: JQuery<Element>) => void;
-export type OgTableMovementKeys = -10 | 10 | -1 | 1;
+export type OgTableMovementKeys = -1 | -10 | 1 | 10;
 
 export interface OgTableActions {
-	[action: string]: OgTableActionCallback | undefined | null;
+	[action: string]: OgTableActionCallback | null | undefined;
 	selectAction: OgTableActionCallback;
 	editAction: OgTableActionCallback;
 	insertAction: OgTableActionCallback;
@@ -14,7 +14,7 @@ export interface OgTableActions {
 	focusAction: OgTableActionCallback;
 }
 
-export type OgTableActionHandlers = OgTableActions & {focusRow: OgTableActionCallback;};
+export type OgTableActionHandlers = OgTableActions & { focusRow: OgTableActionCallback; };
 
 export interface OgTableNavigableScope extends angular.IScope {
 	focussedRow: number | null;

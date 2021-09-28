@@ -1,16 +1,25 @@
-import {
+import type {
 	StateMock,
 	UibModalMock
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import { AuthenticationModelMock } from "mocks/authentication/types";
-import { ControllerTestFactory } from "mocks/types";
-import LayoutController from "loot/controllers/layout";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { AuthenticationModelMock } from "mocks/authentication/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type LayoutController from "loot/controllers/layout";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { SinonStub } from "sinon";
 import angular from "angular";
+import sinon from "sinon";
 
 describe("LayoutController", (): void => {
+	class MockJQueryInstance {
+		private readonly events: Record<string, () => void> = {};
+
+		public on(event: string, handler: () => void): void {
+			this.events[event] = handler;
+		}
+	}
+
 	let	layoutController: LayoutController,
 			controllerTest: ControllerTestFactory,
 			$window: angular.IWindowService,
@@ -23,16 +32,8 @@ describe("LayoutController", (): void => {
 			mockJqueryInstance: MockJQueryInstance,
 			realJqueryInstance: JQuery;
 
-	class MockJQueryInstance {
-		private readonly events: {[event: string]: () => void;} = {};
-
-		public on(event: string, handler: () => void): void {
-			this.events[event] = handler;
-		}
-	}
-
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootApp", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$state", "$uibModal", "ogNavigatorServiceWorkerService", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])));
+	beforeEach(angular.mock.module("lootMocks", "lootApp", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$state", "$uibModal", "ogNavigatorServiceWorkerService", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "authenticated"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$window_: angular.IWindowService, _$transitions_: angular.ui.IStateParamsService, _$state_: StateMock, _$uibModal_: UibModalMock, _authenticationModel_: AuthenticationModelMock, _ogTableNavigableService_: OgTableNavigableService, _authenticated_: boolean): void => {
@@ -51,7 +52,7 @@ describe("LayoutController", (): void => {
 		$window.$.withArgs("#transactionSearch").returns(mockJqueryInstance);
 
 		layoutController = controllerTest("LayoutController") as LayoutController;
-	}));
+	}) as Mocha.HookFunction);
 
 	afterEach((): JQuery => ($window.$ = realJqueryInstance));
 
@@ -168,7 +169,7 @@ describe("LayoutController", (): void => {
 	});
 
 	describe("state transitions", (): void => {
-		let mockTransition: {promise: {finally: SinonStub;};},
+		let mockTransition: { promise: { finally: SinonStub; }; },
 				deregisterTransitionStartHook: SinonStub;
 
 		beforeEach((): void => {

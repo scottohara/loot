@@ -1,4 +1,4 @@
-import {
+import type {
 	BasicTransaction,
 	SecurityHoldingTransaction,
 	SecurityInvestmentTransaction,
@@ -7,7 +7,7 @@ import {
 	TransferTransaction
 } from "transactions/types";
 
-export type ScheduleFrequency = "Weekly" | "Fortnightly" | "Monthly" | "Bimonthly" | "Quarterly" | "Yearly";
+export type ScheduleFrequency = "Bimonthly" | "Fortnightly" | "Monthly" | "Quarterly" | "Weekly" | "Yearly";
 
 export interface Schedule {
 	next_due_date: Date | string;
@@ -19,7 +19,7 @@ export interface Schedule {
 }
 
 export type ScheduledTransaction = Schedule & Transaction;
-export type ScheduledBasicTransaction = Schedule & BasicTransaction;
+export type ScheduledBasicTransaction = BasicTransaction & Schedule;
 export type ScheduledTransferTransaction = Schedule & TransferTransaction;
 export type ScheduledSecurityHoldingTransaction = Schedule & SecurityHoldingTransaction;
 export type ScheduledSecurityInvestmentTransaction = Schedule & SecurityInvestmentTransaction;

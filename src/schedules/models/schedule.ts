@@ -1,4 +1,4 @@
-import {
+import type {
 	CategorisableTransaction,
 	PayeeCashTransaction,
 	SecurityTransaction,
@@ -9,10 +9,10 @@ import {
 	parseISO,
 	startOfDay
 } from "date-fns";
-import CategoryModel from "categories/models/category";
-import PayeeModel from "payees/models/payee";
-import { ScheduledTransaction } from "schedules/types";
-import SecurityModel from "securities/models/security";
+import type CategoryModel from "categories/models/category";
+import type PayeeModel from "payees/models/payee";
+import type { ScheduledTransaction } from "schedules/types";
+import type SecurityModel from "securities/models/security";
 import angular from "angular";
 
 export default class ScheduleModel {

@@ -1,8 +1,8 @@
-import {
+import type {
 	Account,
 	AccountType
 } from "accounts/types";
-import {
+import type {
 	CategorisableTransaction,
 	SecurityTransactionType,
 	SplitTransactionChild,
@@ -15,12 +15,12 @@ import {
 	TransactionStatus,
 	TransactionType
 } from "transactions/types";
-import {
+import type {
 	Category,
 	DisplayCategory,
 	PsuedoCategory
 } from "categories/types";
-import {
+import type {
 	ScheduleFrequency,
 	ScheduledBasicTransaction,
 	ScheduledSecurityHoldingTransaction,
@@ -45,25 +45,26 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction
 } from "mocks/transactions/factories";
-import sinon, { SinonStub } from "sinon";
-import { AccountModelMock } from "mocks/accounts/types";
-import { CategoryModelMock } from "mocks/categories/types";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { NewOrExistingEntity } from "loot/types";
-import { Payee } from "payees/types";
-import { PayeeModelMock } from "mocks/payees/types";
-import ScheduleEditController from "schedules/controllers/edit";
-import { ScheduleModelMock } from "mocks/schedules/types";
-import { Security } from "securities/types";
-import { SecurityModelMock } from "mocks/securities/types";
-import { TransactionModelMock } from "mocks/transactions/types";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { AccountModelMock } from "mocks/accounts/types";
+import type { CategoryModelMock } from "mocks/categories/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { NewOrExistingEntity } from "loot/types";
+import type { Payee } from "payees/types";
+import type { PayeeModelMock } from "mocks/payees/types";
+import type ScheduleEditController from "schedules/controllers/edit";
+import type { ScheduleModelMock } from "mocks/schedules/types";
+import type { Security } from "securities/types";
+import type { SecurityModelMock } from "mocks/securities/types";
+import type { SinonStub } from "sinon";
+import type { TransactionModelMock } from "mocks/transactions/types";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import createCategory from "mocks/categories/factories";
 import createPayee from "mocks/payees/factories";
 import createSecurity from "mocks/securities/factories";
+import sinon from "sinon";
 
 describe("ScheduleEditController", (): void => {
 	let	scheduleEditController: ScheduleEditController,
@@ -79,7 +80,7 @@ describe("ScheduleEditController", (): void => {
 			schedule: ScheduledTransaction;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "schedule"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _$timeout_: angular.ITimeoutService, _payeeModel_: PayeeModelMock, _securityModel_: SecurityModelMock, _categoryModel_: CategoryModelMock, _accountModel_: AccountModelMock, _transactionModel_: TransactionModelMock, _scheduleModel_: ScheduleModelMock, _schedule_: ScheduledTransaction): void => {
@@ -94,7 +95,7 @@ describe("ScheduleEditController", (): void => {
 		scheduleModel = _scheduleModel_;
 		schedule = _schedule_;
 		scheduleEditController = controllerTest("ScheduleEditController") as ScheduleEditController;
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("when a schedule is provided", (): void => {
 		let originalSchedule: ScheduledTransaction;
@@ -106,18 +107,6 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should make the passed schedule available to the view", (): Chai.Assertion => scheduleEditController.transaction.should.deep.equal(schedule));
-
-		it("should default the transaction type to Basic if not specified", (): void => {
-			delete schedule.transaction_type;
-			scheduleEditController = controllerTest("ScheduleEditController") as ScheduleEditController;
-			scheduleEditController.transaction.transaction_type.should.equal("Basic");
-		});
-
-		it("should default the next due date to the current day if not specified", (): void => {
-			delete schedule.next_due_date;
-			scheduleEditController = controllerTest("ScheduleEditController") as ScheduleEditController;
-			scheduleEditController.transaction.next_due_date.should.deep.equal(startOfDay(new Date()));
-		});
 
 		it("should set the mode to Enter Transaction", (): Chai.Assertion => scheduleEditController.mode.should.equal("Enter Transaction"));
 
@@ -461,7 +450,7 @@ describe("ScheduleEditController", (): void => {
 	describe("useLastTransaction", (): void => {
 		let	transaction: ScheduledTransferTransaction,
 				currentElement: Element | null,
-				mockAngularElement: {triggerHandler: SinonStub;},
+				mockAngularElement: { triggerHandler: SinonStub; },
 				realAngularElement: JQueryStatic;
 
 		beforeEach((): void => {
@@ -483,7 +472,7 @@ describe("ScheduleEditController", (): void => {
 
 			currentElement = null;
 			realAngularElement = angular.element;
-			(sinon.stub(angular, "element") as SinonStub).callsFake((selector: string): (Element | null)[] | {triggerHandler: SinonStub;} => {
+			(sinon.stub(angular, "element") as SinonStub).callsFake((selector: string): (Element | null)[] | { triggerHandler: SinonStub; } => {
 				if ("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo" === selector) {
 					return [currentElement];
 				}
@@ -560,7 +549,7 @@ describe("ScheduleEditController", (): void => {
 		describe("(main transaction)", (): void => {
 			beforeEach((): Category => (scheduleEditController.transaction.category = createCategory()));
 
-			const scenarios: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}[] = [
+			const scenarios: { id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean; }[] = [
 				{ id: "TransferTo", type: "Transfer", direction: "outflow" },
 				{ id: "TransferFrom", type: "Transfer", direction: "inflow" },
 				{ id: "SplitTo", type: "Split", direction: "outflow", subtransactions: true },
@@ -570,7 +559,7 @@ describe("ScheduleEditController", (): void => {
 				{ id: "anything else", type: "Basic", direction: "the category direction" }
 			];
 
-			scenarios.forEach((scenario: {id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean;}): void => {
+			scenarios.forEach((scenario: { id: string; type: TransactionType; direction: TransactionDirection | "the category direction"; subtransactions?: boolean; }): void => {
 				let	subtransactions: SplitTransactionChild[];
 				const	memo = "test memo",
 							amount = 123;
@@ -602,7 +591,7 @@ describe("ScheduleEditController", (): void => {
 					it(`should create four stub subtransactions for a ${scenario.id} if none exist`, (): void => {
 						subtransactions = [{ memo, amount }, {}, {}, {}];
 						(scheduleEditController.transaction.category as PsuedoCategory).id = scenario.id;
-						delete (scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions;
+						delete (scheduleEditController.transaction as Partial<ScheduledSplitTransaction>).subtransactions;
 						scheduleEditController.transaction.memo = memo;
 						(scheduleEditController.transaction as ScheduledSplitTransaction).amount = amount;
 						scheduleEditController.categorySelected();
@@ -621,13 +610,13 @@ describe("ScheduleEditController", (): void => {
 		describe("(subtransaction)", (): void => {
 			beforeEach((): SplitTransactionChild[] => ((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [createSubtransaction()]));
 
-			const scenarios: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}[] = [
+			const scenarios: { id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction"; }[] = [
 				{ id: "TransferTo", type: "Subtransfer", direction: "outflow" },
 				{ id: "TransferFrom", type: "Subtransfer", direction: "inflow" },
 				{ id: "anything else", type: "Sub", direction: "the category direction" }
 			];
 
-			scenarios.forEach((scenario: {id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction";}): void => {
+			scenarios.forEach((scenario: { id: string; type: SubtransactionType; direction: TransactionDirection | "the category direction"; }): void => {
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 					((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].category as PsuedoCategory).id = scenario.id;
 					scheduleEditController.categorySelected(0);
@@ -675,7 +664,7 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.direction.should.equal(direction);
 		});
 
-		const scenarios: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}[] = [
+		const scenarios: { id: string; type: SecurityTransactionType; direction: TransactionDirection; }[] = [
 			{ id: "TransferTo", type: "SecurityTransfer", direction: "outflow" },
 			{ id: "TransferFrom", type: "SecurityTransfer", direction: "inflow" },
 			{ id: "RemoveShares", type: "SecurityHolding", direction: "outflow" },
@@ -685,7 +674,7 @@ describe("ScheduleEditController", (): void => {
 			{ id: "DividendTo", type: "Dividend", direction: "outflow" }
 		];
 
-		scenarios.forEach((scenario: {id: string; type: SecurityTransactionType; direction: TransactionDirection;}): void => {
+		scenarios.forEach((scenario: { id: string; type: SecurityTransactionType; direction: TransactionDirection; }): void => {
 			it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 				(scheduleEditController.transaction.category as PsuedoCategory).id = scenario.id;
 				scheduleEditController.investmentCategorySelected();
@@ -711,7 +700,7 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should set the account type to null when there is no primary account", (): void => {
-			delete scheduleEditController.transaction.primary_account;
+			delete (scheduleEditController.transaction as Partial<ScheduledTransaction>).primary_account;
 			scheduleEditController.primaryAccountSelected();
 			(null === scheduleEditController["account_type"]).should.be.true;
 		});
@@ -723,7 +712,7 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should do nothing when the transfer account is undefined", (): void => {
-			delete (scheduleEditController.transaction as ScheduledTransferTransaction).account;
+			delete (scheduleEditController.transaction as Partial<ScheduledTransferTransaction>).account;
 			scheduleEditController.primaryAccountSelected();
 			scheduleEditController.transaction.should.not.have.property("account");
 		});
@@ -757,7 +746,7 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should do nothing if there are no subtransactions", (): void => {
-			delete (scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions;
+			delete (scheduleEditController.transaction as Partial<ScheduledSplitTransaction>).subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
 			(null === scheduleEditController.totalAllocated).should.be.true;
 		});
@@ -829,7 +818,7 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should not filter the list if there is no current account", async (): Promise<void> => {
-			delete scheduleEditController.transaction.primary_account;
+			delete (scheduleEditController.transaction as Partial<ScheduledTransaction>).primary_account;
 			(await scheduleEditController.accounts("a", 2)).should.deep.equal([
 				createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100 }),
 				createAccount({ id: 4, name: "ba", account_type: "asset" })
@@ -901,7 +890,7 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("calculateNextDue", (): void => {
-		const scenarios: {frequency: ScheduleFrequency; period: string; amount: number; addFn: (date: Date, amount: number) => Date;}[] = [
+		const scenarios: { frequency: ScheduleFrequency; period: string; amount: number; addFn: (date: Date, amount: number) => Date; }[] = [
 			{ frequency: "Weekly", period: "weeks", amount: 1, addFn: addWeeks },
 			{ frequency: "Fortnightly", period: "weeks", amount: 2, addFn: addWeeks },
 			{ frequency: "Monthly", period: "month", amount: 1, addFn: addMonths },
@@ -910,7 +899,7 @@ describe("ScheduleEditController", (): void => {
 			{ frequency: "Yearly", period: "year", amount: 1, addFn: addYears }
 		];
 
-		scenarios.forEach((scenario: {frequency: ScheduleFrequency; period: string; amount: number; addFn: (date: Date, amount: number) => Date;}): void => {
+		scenarios.forEach((scenario: { frequency: ScheduleFrequency; period: string; amount: number; addFn: (date: Date, amount: number) => Date; }): void => {
 			it(`should add ${scenario.amount} ${scenario.period} to the next due date when the frequency is ${scenario.frequency}`, (): void => {
 				const nextDueDate: Date = scheduleEditController.schedule.next_due_date as Date;
 
@@ -964,17 +953,17 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.memo.should.equal(memo);
 		});
 
-		const scenarios: {direction: TransactionDirection; amount: number; memo: string;}[] = [
+		const scenarios: { direction: TransactionDirection; amount: number; memo: string; }[] = [
 			{ direction: "outflow", amount: 19, memo: "less" },
 			{ direction: "inflow", amount: 21, memo: "plus" }
 		];
 
-		scenarios.forEach((scenario: {direction: TransactionDirection; amount: number; memo: string;}): void => {
+		scenarios.forEach((scenario: { direction: TransactionDirection; amount: number; memo: string; }): void => {
 			it(`should set the transaction amount to zero and the memo to an empty string if the price, quantity and commission are not specified for a Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				scheduleEditController.transaction.direction = scenario.direction;
-				delete (scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).quantity;
-				delete (scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).price;
-				delete (scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).commission;
+				delete (scheduleEditController.transaction as Partial<ScheduledSecurityInvestmentTransaction>).quantity;
+				delete (scheduleEditController.transaction as Partial<ScheduledSecurityInvestmentTransaction>).price;
+				delete (scheduleEditController.transaction as Partial<ScheduledSecurityInvestmentTransaction>).commission;
 				scheduleEditController.updateInvestmentDetails();
 				(scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).amount.should.equal(0);
 				scheduleEditController.transaction.memo.should.be.empty;

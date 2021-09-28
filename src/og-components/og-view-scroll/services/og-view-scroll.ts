@@ -1,7 +1,7 @@
 export default class OgViewScrollService {
 	public constructor(private readonly $anchorScroll: angular.IAnchorScrollService) {}
 
-	public scrollTo(anchor: "top" | "bottom"): void {
+	public scrollTo(anchor: "bottom" | "top"): void {
 		this.$anchorScroll(anchor);
 	}
 }

@@ -1,11 +1,11 @@
-import DirectiveTest from "mocks/loot/directivetest";
+import type DirectiveTest from "mocks/loot/directivetest";
 import angular from "angular";
 
 describe("ogLoadingSpinner", (): void => {
 	let	ogLoadingSpinner: DirectiveTest;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
@@ -13,7 +13,7 @@ describe("ogLoadingSpinner", (): void => {
 		ogLoadingSpinner.configure("og-loading-spinner");
 		ogLoadingSpinner.scope.model = "test message";
 		ogLoadingSpinner.compile({ "og-loading-spinner": "model" });
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should show the specified message", (): void => {
 		ogLoadingSpinner.scope.$digest();

@@ -1,8 +1,8 @@
-import {
+import type {
 	OgInputNumberControllerMock,
 	OgInputNumberControllerType
 } from "mocks/og-components/og-input-number/types";
-import { Mock } from "mocks/types";
+import type { Mock } from "mocks/types";
 import sinon from "sinon";
 
 export default class OgInputNumberControllerMockProvider implements Mock<OgInputNumberControllerMock> {

@@ -16,7 +16,7 @@ import {
 	transactionsIndexHeading,
 	transactionsTable
 } from "transactions/index";
-import { Payee } from "payees/types";
+import type { Payee } from "payees/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
 describe("Payee Index", (): void => {

@@ -1,13 +1,13 @@
-import {
+import type {
 	Account,
 	AccountStatus,
 	AccountType
 } from "accounts/types";
-import AccountEditController from "accounts/controllers/edit";
-import { AccountModelMock } from "mocks/accounts/types";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type AccountEditController from "accounts/controllers/edit";
+import type { AccountModelMock } from "mocks/accounts/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 
@@ -19,7 +19,7 @@ describe("AccountEditController", (): void => {
 			account: Account;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _accountModel_: AccountModelMock, _account_: Account): void => {
@@ -28,7 +28,7 @@ describe("AccountEditController", (): void => {
 		accountModel = _accountModel_;
 		account = _account_;
 		accountEditController = controllerTest("AccountEditController") as AccountEditController;
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("when an account is provided", (): void => {
 		it("should make the passed account available to the view", (): void => {

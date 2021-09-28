@@ -1,9 +1,9 @@
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { Security } from "securities/types";
-import SecurityEditController from "securities/controllers/edit";
-import { SecurityModelMock } from "mocks/securities/types";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { Security } from "securities/types";
+import type SecurityEditController from "securities/controllers/edit";
+import type { SecurityModelMock } from "mocks/securities/types";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("SecurityEditController", (): void => {
@@ -14,7 +14,7 @@ describe("SecurityEditController", (): void => {
 			security: Security;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _securityModel_: SecurityModelMock, _security_: Security): void => {
@@ -23,7 +23,7 @@ describe("SecurityEditController", (): void => {
 		securityModel = _securityModel_;
 		security = _security_;
 		securityEditController = controllerTest("SecurityEditController") as SecurityEditController;
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("when a security is provided", (): void => {
 		it("should make the passed security available to the view", (): Chai.Assertion => securityEditController.security.should.deep.equal(security));

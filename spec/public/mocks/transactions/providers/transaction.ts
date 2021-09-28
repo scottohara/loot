@@ -1,5 +1,5 @@
-import { BasicTransaction } from "transactions/types";
-import { Mock } from "mocks/types";
+import type { BasicTransaction } from "transactions/types";
+import type { Mock } from "mocks/types";
 import { createBasicTransaction } from "mocks/transactions/factories";
 
 export default class TransactionMockProvider implements Mock<BasicTransaction> {

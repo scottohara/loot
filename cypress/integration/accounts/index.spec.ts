@@ -1,4 +1,4 @@
-import {
+import type {
 	Account,
 	AccountType
 } from "accounts/types";

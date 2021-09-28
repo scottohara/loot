@@ -1,9 +1,9 @@
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { Security } from "securities/types";
-import SecurityDeleteController from "securities/controllers/delete";
-import { SecurityModelMock } from "mocks/securities/types";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { Security } from "securities/types";
+import type SecurityDeleteController from "securities/controllers/delete";
+import type { SecurityModelMock } from "mocks/securities/types";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("SecurityDeleteController", (): void => {
@@ -13,7 +13,7 @@ describe("SecurityDeleteController", (): void => {
 			security: Security;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _securityModel_: SecurityModelMock, _security_: Security): void => {
@@ -21,7 +21,7 @@ describe("SecurityDeleteController", (): void => {
 		securityModel = _securityModel_;
 		security = _security_;
 		securityDeleteController = controllerTest("SecurityDeleteController") as SecurityDeleteController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed security available to the view", (): Chai.Assertion => securityDeleteController.security.should.deep.equal(security));
 

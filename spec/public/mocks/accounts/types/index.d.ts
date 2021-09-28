@@ -1,8 +1,8 @@
-import {
+import type {
 	Account,
 	Accounts
 } from "accounts/types";
-import { SinonStub } from "sinon";
+import type { SinonStub } from "sinon";
 
 export interface AccountModelMock {
 	recent: string;

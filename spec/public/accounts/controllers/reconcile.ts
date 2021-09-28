@@ -1,11 +1,11 @@
-import {
+import type {
 	Account,
 	AccountType
 } from "accounts/types";
-import AccountReconcileController from "accounts/controllers/reconcile";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type AccountReconcileController from "accounts/controllers/reconcile";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AccountReconcileController", (): void => {
@@ -16,7 +16,7 @@ describe("AccountReconcileController", (): void => {
 			account: Account;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "$window", "account"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "$window", "account"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _$window_: angular.IWindowService, _account_: Account): void => {
@@ -25,7 +25,7 @@ describe("AccountReconcileController", (): void => {
 		$window = _$window_;
 		account = _account_;
 		accountReconcileController = controllerTest("AccountReconcileController") as AccountReconcileController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should fetch the closing balance from localStorage and make it available to the view", (): void => {
 		$window.localStorage.getItem.should.have.been.calledWith("lootClosingBalance-1");

@@ -1,4 +1,4 @@
-import {
+import type {
 	DeferredMock,
 	PromiseMock,
 	PromiseMockCallback,
@@ -6,17 +6,18 @@ import {
 	PromiseMockThen,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import { Mock } from "mocks/types";
+import type { Mock } from "mocks/types";
+import type { SinonStub } from "sinon";
 import angular from "angular";
+import sinon from "sinon";
 
 export default class QMockProvider implements Mock<QMock> {
 	// Mock $q object
 	public constructor(private readonly $q: QMock = {
 		defer<T>(): DeferredMock<T> {
 			let	isResolved = false,
-					promiseValue: T | PromiseMock<T> | undefined,
-					callbackResult: T | PromiseMock<T>;
+					promiseValue: PromiseMock<T> | T | undefined,
+					callbackResult: PromiseMock<T> | T;
 
 			function updateValueAndReturn(result: PromiseMock<T> | T | undefined, promise: PromiseMock<T>): PromiseMock<T> | T {
 				// If the callback yielded a promise, we'll simply return that
@@ -58,7 +59,7 @@ export default class QMockProvider implements Mock<QMock> {
 				}
 			};
 		},
-		promisify<T, U>(success?: PromiseMockConfig<T> | string | number, error?: PromiseMockConfig<U> | string | number): SinonStub {
+		promisify<T, U>(success?: PromiseMockConfig<T> | number | string, error?: PromiseMockConfig<U> | number | string): SinonStub {
 			// Helper function to promise-ify a stub with success and error responses
 
 			// Create two new promises, one for a success and one for an error

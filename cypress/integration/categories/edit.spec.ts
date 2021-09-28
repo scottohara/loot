@@ -18,7 +18,7 @@ import {
 	populateFormWith,
 	saveButton
 } from "categories/edit";
-import { Category } from "categories/types";
+import type { Category } from "categories/types";
 
 describe("Category Edit", (): void => {
 	let	expected: Category,

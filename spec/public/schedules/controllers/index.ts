@@ -1,16 +1,16 @@
-import {
+import type {
 	ControllerTestFactory,
 	JQueryMouseEventObjectMock
 } from "mocks/types";
-import {
+import type {
 	ScheduledSplitTransaction,
 	ScheduledTransaction
 } from "schedules/types";
-import {
+import type {
 	SplitTransactionChild,
 	SplitTransactionType
 } from "transactions/types";
-import {
+import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
@@ -23,17 +23,18 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction
 } from "mocks/transactions/factories";
-import sinon, { SinonStub } from "sinon";
 import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import ScheduleIndexController from "schedules/controllers";
-import { TransactionModelMock } from "mocks/transactions/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type ScheduleIndexController from "schedules/controllers";
+import type { SinonStub } from "sinon";
+import type { TransactionModelMock } from "mocks/transactions/types";
 import angular from "angular";
+import sinon from "sinon";
 
 describe("ScheduleIndexController", (): void => {
 	let	scheduleIndexController: ScheduleIndexController,
@@ -48,7 +49,7 @@ describe("ScheduleIndexController", (): void => {
 			deregisterTransitionSuccessHook: SinonStub;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "scheduleModel", "transactionModel", "schedules"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "scheduleModel", "transactionModel", "schedules"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$uibModal_: UibModalMock, _$timeout_: angular.ITimeoutService, _$state_: StateMock, _transactionModel_: TransactionModelMock, _ogTableNavigableService_: OgTableNavigableService, _schedules_: ScheduledTransaction[]): void => {
@@ -63,7 +64,7 @@ describe("ScheduleIndexController", (): void => {
 		deregisterTransitionSuccessHook = sinon.stub();
 		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		scheduleIndexController = controllerTest("ScheduleIndexController") as ScheduleIndexController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed schedules available to the view", (): Chai.Assertion => scheduleIndexController.schedules.should.deep.equal(schedules));
 
@@ -87,7 +88,7 @@ describe("ScheduleIndexController", (): void => {
 	});
 
 	it("should ensure the schedule is focussed when the schedule id state param changes", (): void => {
-		const toParams: {id: string;} = { id: "1" };
+		const toParams: { id: string; } = { id: "1" };
 
 		sinon.stub(scheduleIndexController, "focusSchedule" as keyof ScheduleIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
@@ -325,7 +326,7 @@ describe("ScheduleIndexController", (): void => {
 			beforeEach((): void => {
 				schedule.showSubtransactions = false;
 				schedule.loadingSubtransactions = false;
-				delete schedule.subtransactions;
+				schedule.subtransactions = [createSubtransaction({ id: 1 })];
 			});
 
 			it("should show a loading indicator", (): void => {

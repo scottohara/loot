@@ -1,4 +1,4 @@
-import { Account } from "accounts/types";
+import type { Account } from "accounts/types";
 
 export default class AccountReconcileController {
 	public readonly closingBalance: number;

@@ -1,8 +1,8 @@
-import {
+import type {
 	Transaction,
 	TransactionFlag
 } from "transactions/types";
-import TransactionModel from "transactions/models/transaction";
+import type TransactionModel from "transactions/models/transaction";
 
 export default class TransactionFlagController {
 	public errorMessage: string | null = null;

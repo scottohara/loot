@@ -1,5 +1,5 @@
-import { Payee } from "payees/types";
-import { SinonStub } from "sinon";
+import type { Payee } from "payees/types";
+import type { SinonStub } from "sinon";
 
 export interface PayeeModelMock {
 	recent: string;

@@ -1,19 +1,20 @@
-import {
+import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import { Category } from "categories/types";
-import CategoryIndexController from "categories/controllers";
-import { CategoryModelMock } from "mocks/categories/types";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
-import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { Category } from "categories/types";
+import type CategoryIndexController from "categories/controllers";
+import type { CategoryModelMock } from "mocks/categories/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { SinonStub } from "sinon";
 import angular from "angular";
 import createCategory from "mocks/categories/factories";
+import sinon from "sinon";
 
 describe("CategoryIndexController", (): void => {
 	let	categoryIndexController: CategoryIndexController,
@@ -28,7 +29,7 @@ describe("CategoryIndexController", (): void => {
 			deregisterTransitionSuccessHook: SinonStub;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "categoryModel", "categories"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "categoryModel", "categories"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$timeout_: angular.ITimeoutService, _$uibModal_: UibModalMock, _$state_: StateMock, _categoryModel_: CategoryModelMock, _ogTableNavigableService_: OgTableNavigableService, _categories_: Category[]): void => {
@@ -43,7 +44,7 @@ describe("CategoryIndexController", (): void => {
 		deregisterTransitionSuccessHook = sinon.stub();
 		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		categoryIndexController = controllerTest("CategoryIndexController") as CategoryIndexController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should flatten the passed categories & subcategories and make them available to the view", (): void => {
 		const firstParent: Category = angular.copy(categories[0]),
@@ -73,7 +74,7 @@ describe("CategoryIndexController", (): void => {
 	});
 
 	it("should ensure the category is focussed when the category id state param changes", (): void => {
-		const toParams: {id: string;} = { id: "1" };
+		const toParams: { id: string; } = { id: "1" };
 
 		sinon.stub(categoryIndexController, "focusCategory" as keyof CategoryIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
@@ -119,7 +120,7 @@ describe("CategoryIndexController", (): void => {
 			});
 
 			it("should not attempt to decrement original parent's children count if there was no original parent", (): void => {
-				delete categoryIndexController.categories[1].parent_id;
+				categoryIndexController.categories[1].parent_id = null;
 				const originalCategories: Category[] = angular.copy(categoryIndexController.categories);
 
 				originalCategories[1].parent_id = 2;
@@ -154,9 +155,9 @@ describe("CategoryIndexController", (): void => {
 			it("should not attempt to increment new parent's children count if there is no new parent", (): void => {
 				const originalCategories: Category[] = angular.copy(categoryIndexController.categories);
 
-				delete originalCategories[1].parent_id;
+				originalCategories[1].parent_id = null;
 				originalCategories[0].num_children = 1;
-				delete category.parent_id;
+				category.parent_id = null;
 				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
@@ -217,7 +218,7 @@ describe("CategoryIndexController", (): void => {
 			it("should not attempt to increment parent's children count if there is no new parent", (): void => {
 				const originalCategories: Category[] = angular.copy(categoryIndexController.categories);
 
-				delete category.parent_id;
+				category.parent_id = null;
 				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
@@ -306,7 +307,7 @@ describe("CategoryIndexController", (): void => {
 		});
 
 		it("should not attempt to decrement parent's children count if there was no parent", (): void => {
-			delete categoryIndexController.categories[9].parent_id;
+			categoryIndexController.categories[9].parent_id = null;
 			const originalCategories: Category[] = angular.copy(categoryIndexController.categories);
 
 			originalCategories.splice(9, 1);

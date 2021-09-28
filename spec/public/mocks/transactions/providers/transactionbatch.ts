@@ -1,4 +1,4 @@
-import {
+import type {
 	BasicTransaction,
 	TransactionBatch
 } from "transactions/types";
@@ -6,7 +6,7 @@ import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import { Mock } from "mocks/types";
+import type { Mock } from "mocks/types";
 import { createBasicTransaction } from "mocks/transactions/factories";
 
 function *transactions(count: number): Iterable<BasicTransaction> {

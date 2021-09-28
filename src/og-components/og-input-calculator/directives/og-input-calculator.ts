@@ -1,13 +1,13 @@
 import "../css/og-input-calculator.less";
-import {
+import type {
 	OgInputCalculatorOperation,
 	OgInputCalculatorOperator,
 	OgInputCalculatorScope
 } from "og-components/og-input-calculator/types";
 import OgInputCalculatorView from "og-components/og-input-calculator/views/calculator.html";
-import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
-import OgInputNumberController from "og-components/og-input-number/controllers/number";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
+import type OgInputNumberController from "og-components/og-input-number/controllers/number";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import angular from "angular";
 
 export default class OgInputCalculatorDirective {
@@ -25,7 +25,7 @@ export default class OgInputCalculatorDirective {
 							const [ngModel] = controllers,
 										ogInputCurrency = 1,
 										ogInputNumber = 2,
-										ACTION_KEYS: {[keyCode: string]: () => void;} = {
+										ACTION_KEYS: Record<string, () => void> = {
 											13(): void {
 												// Enter
 												scope.update();
@@ -71,7 +71,7 @@ export default class OgInputCalculatorDirective {
 
 								if (scope.stack.length > 1) {
 									scope.result = Number(scope.stack.reduce((memo: OgInputCalculatorOperation, operation: OgInputCalculatorOperation, index: number): OgInputCalculatorOperation => {
-										const result: OgInputCalculatorOperation & {operand: number;} = { operand: 0, ...memo };
+										const result: OgInputCalculatorOperation & { operand: number; } = { operand: 0, ...memo };
 
 										// Last time through, use the view value for the operand
 										if (index === scope.stack.length - 1) {

@@ -1,4 +1,4 @@
-import {
+import type {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
@@ -6,12 +6,12 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction
 } from "mocks/transactions/factories";
-import { BasicTransaction } from "transactions/types";
-import { Mock } from "mocks/types";
-import QMockProvider from "mocks/node-modules/angular/services/q";
-import TransactionBatchMockProvider from "mocks/transactions/providers/transactionbatch";
-import TransactionMockProvider from "mocks/transactions/providers/transaction";
-import { TransactionModelMock } from "mocks/transactions/types";
+import type { BasicTransaction } from "transactions/types";
+import type { Mock } from "mocks/types";
+import type QMockProvider from "mocks/node-modules/angular/services/q";
+import type TransactionBatchMockProvider from "mocks/transactions/providers/transactionbatch";
+import type TransactionMockProvider from "mocks/transactions/providers/transaction";
+import type { TransactionModelMock } from "mocks/transactions/types";
 import sinon from "sinon";
 import { startOfDay } from "date-fns";
 

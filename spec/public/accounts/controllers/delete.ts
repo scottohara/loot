@@ -1,13 +1,13 @@
-import {
+import type {
 	Account,
 	AccountStatus,
 	AccountType
 } from "accounts/types";
-import AccountDeleteController from "accounts/controllers/delete";
-import { AccountModelMock } from "mocks/accounts/types";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type AccountDeleteController from "accounts/controllers/delete";
+import type { AccountModelMock } from "mocks/accounts/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AccountDeleteController", (): void => {
@@ -17,7 +17,7 @@ describe("AccountDeleteController", (): void => {
 			account: Account;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "accountModel", "account"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _accountModel_: AccountModelMock, _account_: Account): void => {
@@ -25,7 +25,7 @@ describe("AccountDeleteController", (): void => {
 		accountModel = _accountModel_;
 		account = _account_;
 		accountDeleteController = controllerTest("AccountDeleteController") as AccountDeleteController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed account available to the view", (): void => {
 		account.account_type = `${account.account_type.charAt(0).toUpperCase()}${account.account_type.substr(1)}` as AccountType;

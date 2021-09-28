@@ -1,4 +1,4 @@
-import { Mock } from "mocks/types";
+import type { Mock } from "mocks/types";
 import angular from "angular";
 
 export default class MockDependenciesProvider {
@@ -24,10 +24,10 @@ describe("mockDependenciesProvider", (): void => {
 	let mockDependenciesProvider: MockDependenciesProvider;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks"));
+	beforeEach(angular.mock.module("lootMocks") as Mocha.HookFunction);
 
 	// Inject the object under test
-	beforeEach(angular.mock.inject((_mockDependencies_: MockDependenciesProvider): MockDependenciesProvider => (mockDependenciesProvider = _mockDependencies_)));
+	beforeEach(angular.mock.inject((_mockDependencies_: MockDependenciesProvider): MockDependenciesProvider => (mockDependenciesProvider = _mockDependencies_)) as Mocha.HookFunction);
 
 	describe("$get", (): void => {
 		it("should return the mockDependencies provider", (): Chai.Assertion => mockDependenciesProvider.should.have.property("load"));

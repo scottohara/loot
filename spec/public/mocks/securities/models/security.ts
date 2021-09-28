@@ -1,14 +1,15 @@
-import {
+import type {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import { Mock } from "mocks/types";
-import QMockProvider from "mocks/node-modules/angular/services/q";
-import SecuritiesMockProvider from "mocks/securities/providers/securities";
-import { Security } from "securities/types";
-import SecurityMockProvider from "mocks/securities/providers/security";
-import { SecurityModelMock } from "mocks/securities/types";
+import type { Mock } from "mocks/types";
+import type QMockProvider from "mocks/node-modules/angular/services/q";
+import type SecuritiesMockProvider from "mocks/securities/providers/securities";
+import type { Security } from "securities/types";
+import type SecurityMockProvider from "mocks/securities/providers/security";
+import type { SecurityModelMock } from "mocks/securities/types";
+import type { SinonStub } from "sinon";
+import sinon from "sinon";
 
 export default class SecurityModelMockProvider implements Mock<SecurityModelMock> {
 	private readonly securityModel: SecurityModelMock;
@@ -16,7 +17,7 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 	public constructor(securityMockProvider: SecurityMockProvider, securitiesMockProvider: SecuritiesMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
 		const	$q: QMock = $qMockProvider.$get(),
-					success: PromiseMockConfig<{data: Security;}> = {
+					success: PromiseMockConfig<{ data: Security; }> = {
 						args: { id: 1 },
 						response: { data: securityMockProvider.$get() }
 					},

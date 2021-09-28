@@ -1,14 +1,14 @@
 import "../css/index.less";
-import {
+import type {
 	Account,
 	Accounts
 } from "accounts/types";
 import AccountDeleteView from "accounts/views/delete.html";
 import AccountEditView from "accounts/views/edit.html";
-import AccountModel from "accounts/models/account";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
+import type AccountModel from "accounts/models/account";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
 import angular from "angular";
 
 export default class AccountIndexController {

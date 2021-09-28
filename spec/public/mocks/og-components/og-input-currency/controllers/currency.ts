@@ -1,9 +1,9 @@
-import {
+import type {
 	OgInputCurrencyControllerMock,
 	OgInputCurrencyControllerType
 } from "mocks/og-components/og-input-currency/types";
-import { Mock } from "mocks/types";
-import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
+import type { Mock } from "mocks/types";
+import type OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
 import sinon from "sinon";
 
 export default class OgInputCurrencyControllerMockProvider implements Mock<OgInputCurrencyControllerMock> {

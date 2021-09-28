@@ -1,4 +1,4 @@
-import { Category } from "categories/types";
+import type { Category } from "categories/types";
 
 let id = 1;
 

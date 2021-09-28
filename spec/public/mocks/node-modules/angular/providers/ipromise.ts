@@ -1,4 +1,4 @@
-import { Mock } from "mocks/types";
+import type { Mock } from "mocks/types";
 import angular from "angular";
 
 export default class IPromiseMockProvider implements Mock<angular.IPromise<never>> {
@@ -26,10 +26,10 @@ describe("iPromiseMock", (): void => {
 	let iPromiseMock: angular.IPromise<never>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks"));
+	beforeEach(angular.mock.module("lootMocks") as Mocha.HookFunction);
 
 	// Inject the object under test
-	beforeEach(angular.mock.inject((_iPromiseMock_: angular.IPromise<never>): angular.IPromise<never> => (iPromiseMock = _iPromiseMock_)));
+	beforeEach(angular.mock.inject((_iPromiseMock_: angular.IPromise<never>): angular.IPromise<never> => (iPromiseMock = _iPromiseMock_)) as Mocha.HookFunction);
 
 	describe("then", (): void => {
 		it("should return itself", (): Chai.Assertion => iPromiseMock.then().should.equal(iPromiseMock));

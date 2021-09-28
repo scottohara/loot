@@ -1,27 +1,27 @@
-import {
+import type {
 	Account,
 	Accounts
 } from "accounts/types";
-import {
+import type {
 	StateMock,
 	UibModalMock
 } from "mocks/node-modules/angular/types";
-import AccountModel from "accounts/models/account";
-import { AuthenticationModelMock } from "mocks/authentication/types";
-import { Category } from "categories/types";
-import CategoryModel from "categories/models/category";
-import { EntityModel } from "loot/types";
-import LootStatesProvider from "loot/providers/states";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
-import QueryService from "transactions/services/query";
-import { Schedule } from "schedules/types";
-import ScheduleModel from "schedules/models/schedule";
-import { Security } from "securities/types";
-import SecurityModel from "securities/models/security";
-import { TransactionBatch } from "transactions/types";
-import TransactionModel from "transactions/models/transaction";
+import type AccountModel from "accounts/models/account";
+import type { AuthenticationModelMock } from "mocks/authentication/types";
+import type { Category } from "categories/types";
+import type CategoryModel from "categories/models/category";
+import type { EntityModel } from "loot/types";
+import type LootStatesProvider from "loot/providers/states";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
+import type QueryService from "transactions/services/query";
+import type { Schedule } from "schedules/types";
+import type ScheduleModel from "schedules/models/schedule";
+import type { Security } from "securities/types";
+import type SecurityModel from "securities/models/security";
+import type { TransactionBatch } from "transactions/types";
+import type TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 import sinon from "sinon";
 
@@ -50,11 +50,11 @@ describe("lootStatesProvider", (): void => {
 			transactionBatch: TransactionBatch,
 			queryService: QueryService,
 			stateName: string,
-			stateParams: {id?: number; transactionId?: number; query?: string;},
+			stateParams: { id?: number; transactionId?: number; query?: string; },
 			stateConfig: angular.ui.IState;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootStates", "lootMocks", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"])));
+	beforeEach(angular.mock.module("lootStates", "lootMocks", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "authenticationModel", "authenticated", "accountModel", "accountsWithBalances", "account", "scheduleModel", "schedules", "payeeModel", "payees", "payee", "categoryModel", "categories", "category", "securityModel", "securities", "security", "transactionModel", "transactionBatch"])) as Mocha.HookFunction);
 
 	// Inject the object under test and it's dependencies
 	beforeEach(angular.mock.inject((_lootStates_: LootStatesProvider, _$rootScope_: angular.IRootScopeService, _$state_: angular.ui.IStateService, _$injector_: angular.auto.IInjectorService, _$httpBackend_: angular.IHttpBackendService, _$uibModal_: UibModalMock, _authenticationModel_: AuthenticationModelMock, _accountModel_: AccountModel, _accountsWithBalances_: Accounts, _account_: Account, _scheduleModel_: ScheduleModel, _schedules_: Schedule[], _payeeModel_: PayeeModel, _payees_: Payee[], _payee_: Payee, _categoryModel_: CategoryModel, _categories_: Category[], _category_: Category, _securityModel_: SecurityModel, _securities_: Security[], _security_: Security, _transactionModel_: TransactionModel, _transactionBatch_: TransactionBatch, _queryService_: QueryService): void => {
@@ -82,7 +82,7 @@ describe("lootStatesProvider", (): void => {
 		transactionBatch = _transactionBatch_;
 		queryService = _queryService_;
 		$httpBackend.expectGET("loot/views/layout.html").respond(200);
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("root state", (): void => {
 		let resolvedAuthenticated: Promise<boolean> | boolean;
@@ -97,14 +97,14 @@ describe("lootStatesProvider", (): void => {
 		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Welcome") as Chai.Assertion);
 
 		it("should resolve the authentication status of a logged in user", (): void => {
-			resolvedAuthenticated = $injector.invoke((stateConfig.resolve as {authenticated: () => boolean;}).authenticated);
+			resolvedAuthenticated = $injector.invoke((stateConfig.resolve as { authenticated: () => boolean; }).authenticated);
 			resolvedAuthenticated.should.be.true;
 		});
 
 		describe("(non-logged in user)", (): void => {
 			beforeEach((): void => {
 				authenticationModel.isAuthenticated = false;
-				$injector.invoke((stateConfig.resolve as {authenticated: () => Promise<boolean>;}).authenticated);
+				$injector.invoke((stateConfig.resolve as { authenticated: () => Promise<boolean>; }).authenticated);
 			});
 
 			it("should show the login modal", (): Chai.Assertion => $uibModal.open.should.have.been.called);
@@ -141,12 +141,12 @@ describe("lootStatesProvider", (): void => {
 		});
 
 		describe("(on transition)", (): void => {
-			let resolvedAccounts: Promise<Accounts> | Accounts;
+			let resolvedAccounts: Accounts | Promise<Accounts>;
 
 			beforeEach((): void => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				resolvedAccounts = $injector.invoke(($state.current.resolve as {accounts: () => Accounts;}).accounts);
+				resolvedAccounts = $injector.invoke(($state.current.resolve as { accounts: () => Accounts; }).accounts);
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -196,9 +196,9 @@ describe("lootStatesProvider", (): void => {
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => AccountModel;}).contextModel);
-							$injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Account>;}).context, null, { contextModel: resolvedContextModel }).then((context: Account): Account => (resolvedContext = context));
-							resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context: resolvedContext });
+							resolvedContextModel = $injector.invoke(($state.current.resolve as { contextModel: () => AccountModel; }).contextModel);
+							$injector.invoke(($state.current.resolve as { context: () => angular.IPromise<Account>; }).context, null, { contextModel: resolvedContextModel }).then((context: Account): Account => (resolvedContext = context));
+							resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context: resolvedContext });
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -260,7 +260,7 @@ describe("lootStatesProvider", (): void => {
 			beforeEach((): void => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				resolvedSchedules = $injector.invoke(($state.current.resolve as {schedules: () => Schedule[];}).schedules);
+				resolvedSchedules = $injector.invoke(($state.current.resolve as { schedules: () => Schedule[]; }).schedules);
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -306,12 +306,12 @@ describe("lootStatesProvider", (): void => {
 		});
 
 		describe("(on transition)", (): void => {
-			let resolvedPayees: Promise<Payee[]> | Payee[];
+			let resolvedPayees: Payee[] | Promise<Payee[]>;
 
 			beforeEach((): void => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				resolvedPayees = $injector.invoke(($state.current.resolve as {payees: () => Payee[];}).payees);
+				resolvedPayees = $injector.invoke(($state.current.resolve as { payees: () => Payee[]; }).payees);
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -361,9 +361,9 @@ describe("lootStatesProvider", (): void => {
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => PayeeModel;}).contextModel);
-							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Payee>;}).context, null, { contextModel: resolvedContextModel });
-							resolvedContext.then((context: Payee): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context })));
+							resolvedContextModel = $injector.invoke(($state.current.resolve as { contextModel: () => PayeeModel; }).contextModel);
+							resolvedContext = $injector.invoke(($state.current.resolve as { context: () => angular.IPromise<Payee>; }).context, null, { contextModel: resolvedContextModel });
+							resolvedContext.then((context: Payee): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -424,7 +424,7 @@ describe("lootStatesProvider", (): void => {
 			beforeEach((): void => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				resolvedCategories = $injector.invoke(($state.current.resolve as {categories: () => Category[];}).categories);
+				resolvedCategories = $injector.invoke(($state.current.resolve as { categories: () => Category[]; }).categories);
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -474,9 +474,9 @@ describe("lootStatesProvider", (): void => {
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => CategoryModel;}).contextModel);
-							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Category>;}).context, null, { contextModel: resolvedContextModel });
-							resolvedContext.then((context: Category): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context })));
+							resolvedContextModel = $injector.invoke(($state.current.resolve as { contextModel: () => CategoryModel; }).contextModel);
+							resolvedContext = $injector.invoke(($state.current.resolve as { context: () => angular.IPromise<Category>; }).context, null, { contextModel: resolvedContextModel });
+							resolvedContext.then((context: Category): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -537,7 +537,7 @@ describe("lootStatesProvider", (): void => {
 			beforeEach((): void => {
 				$state.go(stateName);
 				$rootScope.$digest();
-				resolvedSecurities = $injector.invoke(($state.current.resolve as {securities: () => Security[];}).securities);
+				resolvedSecurities = $injector.invoke(($state.current.resolve as { securities: () => Security[]; }).securities);
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -587,9 +587,9 @@ describe("lootStatesProvider", (): void => {
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
-							resolvedContextModel = $injector.invoke(($state.current.resolve as {contextModel: () => SecurityModel;}).contextModel);
-							resolvedContext = $injector.invoke(($state.current.resolve as {context: () => angular.IPromise<Security>;}).context, null, { contextModel: resolvedContextModel });
-							resolvedContext.then((context: Security): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { contextModel: resolvedContextModel, context })));
+							resolvedContextModel = $injector.invoke(($state.current.resolve as { contextModel: () => SecurityModel; }).contextModel);
+							resolvedContext = $injector.invoke(($state.current.resolve as { context: () => angular.IPromise<Security>; }).context, null, { contextModel: resolvedContextModel });
+							resolvedContext.then((context: Security): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
 						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
@@ -667,23 +667,23 @@ describe("lootStatesProvider", (): void => {
 				};
 				$state.go(stateName, stateParams);
 				$rootScope.$digest();
-				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, { $state: previousState });
-				resolvedContext = $injector.invoke(($state.current.resolve as {context: () => string;}).context);
-				resolvedTransactionBatch = $injector.invoke(($state.current.resolve as {transactionBatch: () => TransactionBatch;}).transactionBatch, null, { context: resolvedContext });
+				resolvedPreviousState = $injector.invoke(($state.current.resolve as { previousState: () => angular.ui.IState; }).previousState, null, { $state: previousState });
+				resolvedContext = $injector.invoke(($state.current.resolve as { context: () => string; }).context);
+				resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { context: resolvedContext });
 				$injector.invoke($state.current.onEnter as () => void, null, { previousState: resolvedPreviousState });
 			});
 
 			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
 
-			it("should resolve the previous state", (): Chai.Assertion => resolvedPreviousState.should.deep.equal({ name: (previousState.current as {name: string;}).name, params: previousState.params }));
+			it("should resolve the previous state", (): Chai.Assertion => resolvedPreviousState.should.deep.equal({ name: (previousState.current as { name: string; }).name, params: previousState.params }));
 
 			it("should not resolve the previous state if transitioning from a different query", (): void => {
 				previousState.includes.withArgs("root.transactions").returns(true);
-				resolvedPreviousState = $injector.invoke(($state.current.resolve as {previousState: () => angular.ui.IState;}).previousState, null, { $state: previousState });
+				resolvedPreviousState = $injector.invoke(($state.current.resolve as { previousState: () => angular.ui.IState; }).previousState, null, { $state: previousState });
 				(null === resolvedPreviousState as angular.ui.IState | null).should.be.true;
 			});
 
-			it("should resolve the context model", (): Chai.Assertion => (null === $injector.invoke(($state.current.resolve as {contextModel: () => EntityModel | null;}).contextModel)).should.be.true);
+			it("should resolve the context model", (): Chai.Assertion => (null === $injector.invoke(($state.current.resolve as { contextModel: () => EntityModel | null; }).contextModel)).should.be.true);
 
 			it("should resolve the context", (): Chai.Assertion => resolvedContext.should.equal(query));
 

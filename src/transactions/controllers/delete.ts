@@ -1,5 +1,5 @@
-import { Transaction } from "transactions/types";
-import TransactionModel from "transactions/models/transaction";
+import type { Transaction } from "transactions/types";
+import type TransactionModel from "transactions/models/transaction";
 
 export default class TransactionDeleteController {
 	public errorMessage: string | null = null;

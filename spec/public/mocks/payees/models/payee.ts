@@ -1,14 +1,15 @@
-import {
+import type {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import { Mock } from "mocks/types";
-import { Payee } from "payees/types";
-import PayeeMockProvider from "mocks/payees/providers/payee";
-import { PayeeModelMock } from "mocks/payees/types";
-import PayeesMockProvider from "mocks/payees/providers/payees";
-import QMockProvider from "mocks/node-modules/angular/services/q";
+import type { Mock } from "mocks/types";
+import type { Payee } from "payees/types";
+import type PayeeMockProvider from "mocks/payees/providers/payee";
+import type { PayeeModelMock } from "mocks/payees/types";
+import type PayeesMockProvider from "mocks/payees/providers/payees";
+import type QMockProvider from "mocks/node-modules/angular/services/q";
+import type { SinonStub } from "sinon";
+import sinon from "sinon";
 
 export default class PayeeModelMockProvider implements Mock<PayeeModelMock> {
 	private readonly payeeModel: PayeeModelMock;
@@ -16,7 +17,7 @@ export default class PayeeModelMockProvider implements Mock<PayeeModelMock> {
 	public constructor(payeeMockProvider: PayeeMockProvider, payeesMockProvider: PayeesMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
 		const	$q: QMock = $qMockProvider.$get(),
-					success: PromiseMockConfig<{data: Payee;}> = {
+					success: PromiseMockConfig<{ data: Payee; }> = {
 						args: { id: 1 },
 						response: { data: payeeMockProvider.$get() }
 					},

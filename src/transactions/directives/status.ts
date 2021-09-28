@@ -1,11 +1,11 @@
 import "../css/status.less";
-import {
+import type {
 	TransactionStatus,
 	TransactionStatusScope
 } from "transactions/types";
-import AccountModel from "accounts/models/account";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import TransactionModel from "transactions/models/transaction";
+import type AccountModel from "accounts/models/account";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type TransactionModel from "transactions/models/transaction";
 import TransactionStatusView from "transactions/views/status.html";
 
 export default class TransactionStatusDirective {

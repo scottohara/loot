@@ -1,5 +1,5 @@
-import { Mock } from "mocks/types";
-import { OgNavigatorServiceWorkerServiceMock } from "mocks/og-components/og-navigator-serviceworker/types";
+import type { Mock } from "mocks/types";
+import type { OgNavigatorServiceWorkerServiceMock } from "mocks/og-components/og-navigator-serviceworker/types";
 import sinon from "sinon";
 
 export default class OgNavigatorServiceWorkerServiceMockProvider implements Mock<OgNavigatorServiceWorkerServiceMock> {

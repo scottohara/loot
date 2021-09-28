@@ -1,8 +1,8 @@
-import {
+import type {
 	Schedule,
 	ScheduleEdit
 } from "./types";
-import { Subtransaction } from "transactions/types";
+import type { Subtransaction } from "transactions/types";
 
 export const schedulesTableRows = "#transactions > tbody > tr";
 

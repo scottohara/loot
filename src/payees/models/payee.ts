@@ -1,14 +1,14 @@
-import {
+import type {
 	Cacheable,
 	Favouritable,
 	Persistable
 } from "loot/types";
-import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
-import OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
-import OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
-import { Payee } from "payees/types";
-import { StoredAccountType } from "accounts/types";
-import { Transaction } from "transactions/types";
+import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+import type OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
+import type OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
+import type { Payee } from "payees/types";
+import type { StoredAccountType } from "accounts/types";
+import type { Transaction } from "transactions/types";
 
 // Number of payees to keep in the LRU cache
 const LRU_CAPACITY = 10;

@@ -1,19 +1,20 @@
-import {
+import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
-import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import { Security } from "securities/types";
-import SecurityIndexController from "securities/controllers";
-import { SecurityModelMock } from "mocks/securities/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { Security } from "securities/types";
+import type SecurityIndexController from "securities/controllers";
+import type { SecurityModelMock } from "mocks/securities/types";
+import type { SinonStub } from "sinon";
 import angular from "angular";
 import createSecurity from "mocks/securities/factories";
+import sinon from "sinon";
 
 describe("SecurityIndexController", (): void => {
 	let	securityIndexController: SecurityIndexController,
@@ -28,7 +29,7 @@ describe("SecurityIndexController", (): void => {
 			deregisterTransitionSuccessHook: SinonStub;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "securityModel", "securities"])));
+	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "securityModel", "securities"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$timeout_: angular.ITimeoutService, _$uibModal_: UibModalMock, _$state_: StateMock, _securityModel_: SecurityModelMock, _ogTableNavigableService_: OgTableNavigableService, _securities_: Security[]): void => {
@@ -43,7 +44,7 @@ describe("SecurityIndexController", (): void => {
 		deregisterTransitionSuccessHook = sinon.stub();
 		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		securityIndexController = controllerTest("SecurityIndexController") as SecurityIndexController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed securities available to the view", (): Chai.Assertion => securityIndexController.securities.should.deep.equal(securities));
 
@@ -67,7 +68,7 @@ describe("SecurityIndexController", (): void => {
 	});
 
 	it("should ensure the security is focussed when the security id state param changes", (): void => {
-		const toParams: {id: string;} = { id: "1" };
+		const toParams: { id: string; } = { id: "1" };
 
 		sinon.stub(securityIndexController, "focusSecurity" as keyof SecurityIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });

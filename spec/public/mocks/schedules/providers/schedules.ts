@@ -2,8 +2,8 @@ import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import { Mock } from "mocks/types";
-import { ScheduledBasicTransaction } from "schedules/types";
+import type { Mock } from "mocks/types";
+import type { ScheduledBasicTransaction } from "schedules/types";
 import { createScheduledBasicTransaction } from "mocks/schedules/factories";
 
 function *schedules(count: number): Iterable<ScheduledBasicTransaction> {

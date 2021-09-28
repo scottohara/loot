@@ -1,35 +1,35 @@
-import {
+import type {
 	Entity,
 	EntityModel
 } from "loot/types";
 import AccountIndexView from "accounts/views/index.html";
-import AccountModel from "accounts/models/account";
-import { Accounts } from "accounts/types";
+import type AccountModel from "accounts/models/account";
+import type { Accounts } from "accounts/types";
 import AuthenticationEditView from "authentication/views/edit.html";
-import AuthenticationModel from "authentication/models/authentication";
-import { Category } from "categories/types";
+import type AuthenticationModel from "authentication/models/authentication";
+import type { Category } from "categories/types";
 import CategoryIndexView from "categories/views/index.html";
-import CategoryModel from "categories/models/category";
+import type CategoryModel from "categories/models/category";
 import LootLayoutView from "loot/views/layout.html";
-import { Payee } from "payees/types";
+import type { Payee } from "payees/types";
 import PayeeIndexView from "payees/views/index.html";
-import PayeeModel from "payees/models/payee";
-import QueryService from "transactions/services/query";
-import { Schedule } from "schedules/types";
+import type PayeeModel from "payees/models/payee";
+import type QueryService from "transactions/services/query";
+import type { Schedule } from "schedules/types";
 import ScheduleIndexView from "schedules/views/index.html";
-import ScheduleModel from "schedules/models/schedule";
-import { Security } from "securities/types";
+import type ScheduleModel from "schedules/models/schedule";
+import type { Security } from "securities/types";
 import SecurityIndexView from "securities/views/index.html";
-import SecurityModel from "securities/models/security";
-import { TransactionBatch } from "transactions/types";
+import type SecurityModel from "securities/models/security";
+import type { TransactionBatch } from "transactions/types";
 import TransactionIndexView from "transactions/views/index.html";
-import TransactionModel from "transactions/models/transaction";
+import type TransactionModel from "transactions/models/transaction";
 
 export default class LootStatesProvider {
 	public $get: () => LootStatesProvider;
 
 	public constructor($stateProvider: angular.ui.IStateProvider) {
-		const transactionViews: {[name: string]: angular.ui.IState;} = {
+		const transactionViews: Record<string, angular.ui.IState> = {
 			"@root": {
 				templateUrl: TransactionIndexView,
 				controller: "TransactionIndexController",

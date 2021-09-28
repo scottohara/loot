@@ -1,4 +1,4 @@
-import { DirectiveTestScope } from "mocks/types";
+import type { DirectiveTestScope } from "mocks/types";
 
 export default class DirectiveTest {
 	public scope!: DirectiveTestScope;
@@ -44,7 +44,7 @@ export default class DirectiveTest {
 	 * - the DOM element into which the directive was compiled
 	 * - the scope object that it was compiled with
 	 */
-	public compile(options: {[option: string]: string | undefined;} = {}, replace = false): void {
+	public compile(options: Record<string, string | undefined> = {}, replace = false): void {
 		// Configure the directive with any passed options
 		let directive = `${this.directive}${undefined === Object.getOwnPropertyDescriptor(options, this.directive) ? "" : `="${options[this.directive]}"`}`;
 

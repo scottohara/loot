@@ -1,4 +1,4 @@
-import {
+import type {
 	Schedule,
 	ScheduleFrequency,
 	ScheduledBasicTransaction,
@@ -17,7 +17,7 @@ import {
 	createTransferTransaction
 } from "mocks/transactions/factories";
 
-function createSchedule(props: Partial<Schedule> & {transaction_date: Date;} = { transaction_date: new Date() }): Schedule & {transaction_date: Date;} {
+function createSchedule(props: Partial<Schedule> & { transaction_date: Date; } = { transaction_date: new Date() }): Schedule & { transaction_date: Date; } {
 	return {
 		frequency: "Monthly" as ScheduleFrequency,
 		next_due_date: addDays(startOfDay(new Date()), 3),

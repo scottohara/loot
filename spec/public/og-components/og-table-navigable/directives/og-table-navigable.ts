@@ -1,29 +1,30 @@
-import {
+import type {
 	JQueryKeyEventObjectMock,
 	JQueryMouseEventObjectMock
 } from "mocks/types";
-import {
+import type {
 	OgTableActionHandlers,
 	OgTableActions,
 	OgTableNavigableScope
 } from "og-components/og-table-navigable/types";
-import sinon, {
+import type {
 	SinonMatcher,
 	SinonStub
 } from "sinon";
-import DirectiveTest from "mocks/loot/directivetest";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type DirectiveTest from "mocks/loot/directivetest";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
+import sinon from "sinon";
 
 describe("ogTableNavigable", (): void => {
 	let	ogTableNavigable: DirectiveTest,
 			ogTableNavigableService: OgTableNavigableService,
 			$window: angular.IWindowService,
-			scope: OgTableNavigableScope & {rows: Record<string, unknown>[]; model: OgTableActions;},
+			scope: OgTableNavigableScope & { rows: Record<string, unknown>[]; model: OgTableActions; },
 			isolateScope: OgTableNavigableScope;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, directiveTest: DirectiveTest, _ogTableNavigableService_: OgTableNavigableService): void => {
@@ -31,7 +32,7 @@ describe("ogTableNavigable", (): void => {
 		ogTableNavigableService = _ogTableNavigableService_;
 		ogTableNavigable = directiveTest;
 		ogTableNavigable.configure("og-table-navigable", "table", "<tbody><tr ng-repeat=\"row in rows\"><td></td></tr></tbody>");
-		scope = ogTableNavigable.scope as OgTableNavigableScope & {rows: Record<string, unknown>[]; model: OgTableActions;};
+		scope = ogTableNavigable.scope as OgTableNavigableScope & { rows: Record<string, unknown>[]; model: OgTableActions; };
 		scope.rows = [{}, {}];
 		scope.model = {
 			selectAction: sinon.stub(),
@@ -44,7 +45,7 @@ describe("ogTableNavigable", (): void => {
 		ogTableNavigable.compile({ "og-table-navigable": "model" });
 		ogTableNavigable.scope.$digest();
 		isolateScope = ogTableNavigable["element"].isolateScope();
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should attach a focusRow function to the handlers object", (): Chai.Assertion => (scope.model as OgTableActionHandlers).focusRow.should.be.a("function"));
 
@@ -72,14 +73,7 @@ describe("ogTableNavigable", (): void => {
 			Number(isolateScope.focussedRow).should.equal(1);
 		});
 
-		it("should ignore the focusAction handler if undefined", (): void => {
-			delete scope.model.focusAction;
-			isolateScope.focusRow(row);
-
-			// Nothing to assert..this spec is only here for full coverage
-		});
-
-		it("should invoke the focusAction handler if defined", (): void => {
+		it("should invoke the focusAction handler", (): void => {
 			isolateScope.focusRow(row);
 			scope.model.focusAction.should.have.been.calledWith(1);
 		});
@@ -102,7 +96,7 @@ describe("ogTableNavigable", (): void => {
 	});
 
 	describe("scrollToRow", (): void => {
-		let	mockJqueryInstance: {scrollTop: SinonStub; height: SinonStub;},
+		let	mockJqueryInstance: { scrollTop: SinonStub; height: SinonStub; },
 				realJqueryInstance: JQuery,
 				row: JQuery<Element>,
 				top: number;
@@ -163,7 +157,7 @@ describe("ogTableNavigable", (): void => {
 		});
 
 		it("should do nothing if the target row could not be determined", (): void => {
-			(sinon.stub(isolateScope, "getRows") as SinonStub).callsFake((): {length: number;} => {
+			(sinon.stub(isolateScope, "getRows") as SinonStub).callsFake((): { length: number; } => {
 				(isolateScope.getRows as SinonStub).restore();
 
 				return {
@@ -232,13 +226,6 @@ describe("ogTableNavigable", (): void => {
 			scope.model.selectAction.should.not.have.been.called;
 		});
 
-		it("should do nothing if a selectAction hander is not defined", (): void => {
-			delete scope.model.selectAction;
-			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
-
-			// Nothing to assert..this spec is only here for full coverage
-		});
-
 		it("should do nothing if the event was triggered by a button click", (): void => {
 			event.target = { localName: "button" } as Element;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
@@ -290,7 +277,7 @@ describe("ogTableNavigable", (): void => {
 	});
 
 	describe("keyHandler", (): void => {
-		const	TEST_MOVEMENT_KEYS: {code: number; name: string; amount: number;}[] = [
+		const	TEST_MOVEMENT_KEYS: { code: number; name: string; amount: number; }[] = [
 						{ code: 33, name: "page up", amount: -10 },
 						{ code: 34, name: "page down", amount: 10 },
 						{ code: 38, name: "arrow up", amount: -1 },
@@ -298,7 +285,7 @@ describe("ogTableNavigable", (): void => {
 						{ code: 74, name: "J", amount: 1 },
 						{ code: 75, name: "K", amount: -1 }
 					],
-					TEST_ACTION_KEYS: {code: number; ctrl?: boolean; name: string; handler: string;}[] = [
+					TEST_ACTION_KEYS: { code: number; ctrl?: boolean; name: string; handler: string; }[] = [
 						{ code: 8, name: "Backspace", handler: "deleteAction" },
 						{ code: 13, name: "Enter", handler: "selectAction" },
 						{ code: 27, name: "Esc", handler: "cancelAction" },
@@ -325,7 +312,7 @@ describe("ogTableNavigable", (): void => {
 			scope.model.selectAction.should.not.have.been.called;
 		});
 
-		TEST_MOVEMENT_KEYS.forEach((key: {code: number; name: string; amount: number;}): void => {
+		TEST_MOVEMENT_KEYS.forEach((key: { code: number; name: string; amount: number; }): void => {
 			it(`should jump ${key.amount < 0 ? "up" : "down"} ${Math.abs(key.amount)} row${1 === Math.abs(key.amount) ? "" : "s"} when the ${key.name} key is pressed`, (): void => {
 				event.keyCode = key.code;
 				isolateScope.keyHandler(event as JQueryKeyEventObject);
@@ -334,7 +321,7 @@ describe("ogTableNavigable", (): void => {
 			});
 		});
 
-		TEST_ACTION_KEYS.forEach((key: {code: number; ctrl?: boolean; name: string; handler: string;}): void => {
+		TEST_ACTION_KEYS.forEach((key: { code: number; ctrl?: boolean; name: string; handler: string; }): void => {
 			it(`should do nothing when the ${key.name} key${undefined === key.ctrl ? " is" : "s are"} pressed and a ${key.handler} handler is not defined`, (): void => {
 				event.keyCode = key.code;
 				event.ctrlKey = key.ctrl;

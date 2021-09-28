@@ -1,18 +1,19 @@
-import sinon, { SinonStub } from "sinon";
-import DirectiveTest from "mocks/loot/directivetest";
-import { OgInputAutoSelectScope } from "og-components/og-input-autoselect/types";
+import type DirectiveTest from "mocks/loot/directivetest";
+import type { OgInputAutoSelectScope } from "og-components/og-input-autoselect/types";
+import type { SinonStub } from "sinon";
 import angular from "angular";
+import sinon from "sinon";
 
 describe("ogInputAutoselect", (): void => {
 	let	ogInputAutoselect: DirectiveTest,
 			$window: angular.IWindowService,
 			$timeout: angular.ITimeoutService,
-			mockJqueryInstance: {select: SinonStub;},
+			mockJqueryInstance: { select: SinonStub; },
 			realJqueryInstance: JQuery,
 			scope: OgInputAutoSelectScope;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, _$timeout_: angular.ITimeoutService, directiveTest: DirectiveTest): void => {
@@ -30,7 +31,7 @@ describe("ogInputAutoselect", (): void => {
 		realJqueryInstance = $window.$ as JQuery;
 		$window.$ = sinon.stub();
 		$window.$.withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputAutoselect["element"][0])).returns(mockJqueryInstance);
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("isFocussed", (): void => {
 		beforeEach((): void => $timeout.flush());

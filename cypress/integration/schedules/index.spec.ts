@@ -18,7 +18,7 @@ import {
 	scheduleEditForm,
 	scheduleEditHeading
 } from "schedules/edit";
-import { Schedule } from "schedules/types";
+import type { Schedule } from "schedules/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
 describe("Schedule Index", (): void => {

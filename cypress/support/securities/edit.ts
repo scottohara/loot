@@ -1,4 +1,4 @@
-import { Security } from "./types";
+import type { Security } from "./types";
 
 export const securityEditForm = "form[name=securityForm]";
 export const securityEditHeading = `${securityEditForm} > div.modal-header > h4`;

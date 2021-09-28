@@ -1,9 +1,9 @@
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { Transaction } from "transactions/types";
-import TransactionFlagController from "transactions/controllers/flag";
-import { TransactionModelMock } from "mocks/transactions/types";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { Transaction } from "transactions/types";
+import type TransactionFlagController from "transactions/controllers/flag";
+import type { TransactionModelMock } from "mocks/transactions/types";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("TransactionFlagController", (): void => {
@@ -14,7 +14,7 @@ describe("TransactionFlagController", (): void => {
 			transaction: Transaction;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _transactionModel_: TransactionModelMock, _transaction_: Transaction): void => {
@@ -23,7 +23,7 @@ describe("TransactionFlagController", (): void => {
 		transactionModel = _transactionModel_;
 		transaction = _transaction_;
 		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed transaction available to the view", (): Chai.Assertion => transactionFlagController["transaction"].should.deep.equal(transaction));
 

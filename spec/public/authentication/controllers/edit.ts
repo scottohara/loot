@@ -1,8 +1,8 @@
-import AuthenticationEditController from "authentication/controllers/edit";
-import { AuthenticationModelMock } from "mocks/authentication/types";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type AuthenticationEditController from "authentication/controllers/edit";
+import type { AuthenticationModelMock } from "mocks/authentication/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AuthenticationEditController", (): void => {
@@ -11,14 +11,14 @@ describe("AuthenticationEditController", (): void => {
 			authenticationModel: AuthenticationModelMock;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "authenticationModel"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "authenticationModel"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _authenticationModel_: AuthenticationModelMock): void => {
 		$uibModalInstance = _$uibModalInstance_;
 		authenticationModel = _authenticationModel_;
 		authenticationEditController = controllerTest("AuthenticationEditController") as AuthenticationEditController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should set null authentication credentials to the view", (): void => {
 		(null === authenticationEditController.userName).should.be.true;

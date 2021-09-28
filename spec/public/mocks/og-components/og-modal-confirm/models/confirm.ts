@@ -1,5 +1,5 @@
-import { Mock } from "mocks/types";
-import { OgModalConfirm } from "og-components/og-modal-confirm/types";
+import type { Mock } from "mocks/types";
+import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
 
 export default class ConfirmMockProvider implements Mock<OgModalConfirm> {
 	// Mock confirm object

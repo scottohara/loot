@@ -1,4 +1,4 @@
-import {
+import type {
 	ControllerTestFactory,
 	ControllerTestLocals
 } from "mocks/types";

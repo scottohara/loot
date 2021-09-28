@@ -1,14 +1,14 @@
-import AccountModel from "accounts/models/account";
+import type AccountModel from "accounts/models/account";
 import AuthenticationEditView from "authentication/views/edit.html";
-import AuthenticationModel from "authentication/models/authentication";
-import CategoryModel from "categories/models/category";
-import { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import PayeeModel from "payees/models/payee";
-import QueryService from "transactions/services/query";
-import SecurityModel from "securities/models/security";
+import type AuthenticationModel from "authentication/models/authentication";
+import type CategoryModel from "categories/models/category";
+import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
+import type PayeeModel from "payees/models/payee";
+import type QueryService from "transactions/services/query";
+import type SecurityModel from "securities/models/security";
 
 export default class LayoutController {
 	public readonly scrollTo: (anchor: string) => void;
@@ -43,7 +43,7 @@ export default class LayoutController {
 			this.loadingState = true;
 			this.navCollapsed = true;
 			transition.promise.finally((): false => (this.loadingState = false));
-		}));
+		}) as () => void);
 
 		$window.$("#transactionSearch").on("search", (): void => this.checkIfSearchCleared());
 	}
@@ -109,7 +109,7 @@ export default class LayoutController {
 	private checkIfSearchCleared(): void {
 		// When the search field is cleared, return to the previous state
 		if ("" === this.queryService.query && null !== this.queryService.previousState) {
-			this.$state.go(String(this.queryService.previousState.name), this.queryService.previousState.params).catch(this.showError);
+			this.$state.go(String(this.queryService.previousState.name), this.queryService.previousState.params as undefined).catch(this.showError);
 			this.queryService.previousState = null;
 		}
 	}

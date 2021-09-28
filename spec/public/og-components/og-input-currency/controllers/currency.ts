@@ -1,15 +1,15 @@
-import { ControllerTestFactory } from "mocks/types";
-import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
+import type { ControllerTestFactory } from "mocks/types";
+import type OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
 import angular from "angular";
 
 describe("OgInputCurrencyController", (): void => {
 	let	ogInputCurrencyController: OgInputCurrencyController;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory): OgInputCurrencyController => (ogInputCurrencyController = controllerTest("OgInputCurrencyController") as OgInputCurrencyController)));
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory): OgInputCurrencyController => (ogInputCurrencyController = controllerTest("OgInputCurrencyController") as OgInputCurrencyController)) as Mocha.HookFunction);
 
 	it("should default to 2 decimal places", (): Chai.Assertion => ogInputCurrencyController.decimalPlaces.should.equal(2));
 

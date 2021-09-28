@@ -1,12 +1,12 @@
-import {
+import type {
 	Transaction,
 	TransactionStatus,
 	TransactionStatusScope
 } from "transactions/types";
-import DirectiveTest from "mocks/loot/directivetest";
-import { DirectiveTestModel } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { TransactionModelMock } from "mocks/transactions/types";
+import type DirectiveTest from "mocks/loot/directivetest";
+import type { DirectiveTestModel } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { TransactionModelMock } from "mocks/transactions/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import { createBasicTransaction } from "mocks/transactions/factories";
@@ -19,7 +19,7 @@ describe("transactionStatus", (): void => {
 			isolateScope: TransactionStatusScope;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["transactionModel"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["transactionModel"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_$sce_: angular.ISCEService, directiveTest: DirectiveTest, _transactionModel_: TransactionModelMock): void => {
@@ -28,9 +28,9 @@ describe("transactionStatus", (): void => {
 		transactionStatus.configure("transaction-status", "div");
 		transactionStatus.scope.model = { account: createAccount({ id: 123 }), transaction: createBasicTransaction({ id: 456 }) };
 		transactionModel = _transactionModel_;
-	}));
+	}) as Mocha.HookFunction);
 
-	const scenarios: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}[] = [
+	const scenarios: { currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "lock" | "tag"; tooltip: string; }[] = [
 		{
 			currentStatus: "",
 			nextStatus: "Cleared",
@@ -58,14 +58,14 @@ describe("transactionStatus", (): void => {
 	];
 
 	// Helper function in lieu of beforeEach (which we can't use for dynamically generated specs)
-	function setup(scenario: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}): void {
+	function setup(scenario: { currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "lock" | "tag"; tooltip: string; }): void {
 		((transactionStatus.scope.model as DirectiveTestModel).transaction as Transaction).status = scenario.currentStatus;
 		transactionStatus.compile({ "transaction-status": "model" });
 		transactionStatus.scope.$digest();
 		isolateScope = transactionStatus["element"].isolateScope();
 	}
 
-	scenarios.forEach((scenario: {currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "tag" | "lock"; tooltip: string;}): void => {
+	scenarios.forEach((scenario: { currentStatus: TransactionStatus; nextStatus: TransactionStatus; icon: "lock" | "tag"; tooltip: string; }): void => {
 		if ("" === scenario.currentStatus) {
 			it(`should set the current status to 'Unreconciled' when the transaction status is ${String(scenario.currentStatus)}`, (): void => {
 				setup(scenario);

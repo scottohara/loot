@@ -1,8 +1,8 @@
 import $ from "jquery";
-import { LootRootScope } from "loot/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
-import { UrlService } from "@uirouter/angularjs";
+import type { LootRootScope } from "loot/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
+import type { UrlService } from "@uirouter/angularjs";
 import angular from "angular";
 import sinon from "sinon";
 
@@ -18,9 +18,9 @@ describe("loot", (): void => {
 	beforeEach(angular.mock.module("ui.router", (_$urlServiceProvider_: UrlService): void => {
 		$urlServiceProvider = _$urlServiceProvider_;
 		sinon.stub($urlServiceProvider.rules, "otherwise");
-	}));
+	}) as Mocha.HookFunction);
 
-	beforeEach(angular.mock.module("lootMocks", "lootApp", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$state", "ogNavigatorServiceWorkerService"])));
+	beforeEach(angular.mock.module("lootMocks", "lootApp", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$state", "ogNavigatorServiceWorkerService"])) as Mocha.HookFunction);
 
 	// Inject any dependencies that need to be configured first
 	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, _$rootScope_: LootRootScope, _$state_: angular.ui.IStateService, _ogNavigatorServiceWorkerService_: OgNavigatorServiceWorkerService): void => {
@@ -28,7 +28,7 @@ describe("loot", (): void => {
 		$rootScope = _$rootScope_;
 		$state = _$state_;
 		ogNavigatorServiceWorkerService = _ogNavigatorServiceWorkerService_;
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("config", (): void => {
 		it("should set a default URL route", (): Chai.Assertion => $urlServiceProvider.rules.otherwise.should.have.been.calledWith("/accounts"));

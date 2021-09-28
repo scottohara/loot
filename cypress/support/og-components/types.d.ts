@@ -1,15 +1,8 @@
-export type Action = "insert" | "edit" | "del" | "select";
+export type Action = "del" | "edit" | "insert" | "select";
 
-export interface OgTableNavigable {
-	rows: string;
-	actions: OgTableNavigableActions;
-}
-
-interface OgTableNavigableActions {
-	insert: OgTableNavigableAction;
-	edit: OgTableNavigableAction;
-	del: OgTableNavigableAction;
-	select: OgTableNavigableAction;
+interface OgTableNavigableMouseAction {
+	name: string;
+	perform: (row: number) => void;
 }
 
 interface OgTableNavigableAction {
@@ -21,7 +14,14 @@ interface OgTableNavigableAction {
 	mouseAction?: OgTableNavigableMouseAction;
 }
 
-interface OgTableNavigableMouseAction {
-	name: string;
-	perform: (row: number) => void;
+interface OgTableNavigableActions {
+	insert: OgTableNavigableAction;
+	edit: OgTableNavigableAction;
+	del: OgTableNavigableAction;
+	select: OgTableNavigableAction;
+}
+
+export interface OgTableNavigable {
+	rows: string;
+	actions: OgTableNavigableActions;
 }

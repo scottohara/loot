@@ -21,7 +21,7 @@ import {
 	secondLastSubcategory,
 	secondSubcategory
 } from "categories/index";
-import { Category } from "categories/types";
+import type { Category } from "categories/types";
 
 describe("Category Delete", (): void => {
 	let originalRowCount: number;

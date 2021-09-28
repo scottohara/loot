@@ -1,17 +1,17 @@
-import {
+import type {
 	Account,
 	DisplayAccountStatus,
 	DisplayAccountType,
 	StoredAccountStatus,
 	StoredAccountType
 } from "accounts/types";
-import AccountModel from "accounts/models/account";
+import type AccountModel from "accounts/models/account";
 import angular from "angular";
 
 export default class AccountEditController {
 	public readonly account: Account;
 
-	public readonly mode: "Edit" | "Add";
+	public readonly mode: "Add" | "Edit";
 
 	public errorMessage: string | null = null;
 

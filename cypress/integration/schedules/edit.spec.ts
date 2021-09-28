@@ -1,4 +1,4 @@
-import {
+import type {
 	Schedule,
 	ScheduleEdit
 } from "schedules/types";

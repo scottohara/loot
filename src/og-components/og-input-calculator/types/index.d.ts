@@ -1,7 +1,7 @@
-import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
-import OgInputNumberController from "og-components/og-input-number/controllers/number";
+import type OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
+import type OgInputNumberController from "og-components/og-input-number/controllers/number";
 
-export type OgInputCalculatorOperator = "+" | "-" | "*" | "/";
+export type OgInputCalculatorOperator = "-" | "*" | "/" | "+";
 
 export interface OgInputCalculatorOperation {
 	operand?: number;

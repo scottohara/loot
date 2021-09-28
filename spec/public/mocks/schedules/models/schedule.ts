@@ -1,13 +1,13 @@
-import {
+import type {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import { Mock } from "mocks/types";
-import QMockProvider from "mocks/node-modules/angular/services/q";
-import ScheduleMockProvider from "mocks/schedules/providers/schedule";
-import { ScheduleModelMock } from "mocks/schedules/types";
-import { ScheduledTransferTransaction } from "schedules/types";
-import SchedulesMockProvider from "mocks/schedules/providers/schedules";
+import type { Mock } from "mocks/types";
+import type QMockProvider from "mocks/node-modules/angular/services/q";
+import type ScheduleMockProvider from "mocks/schedules/providers/schedule";
+import type { ScheduleModelMock } from "mocks/schedules/types";
+import type { ScheduledTransferTransaction } from "schedules/types";
+import type SchedulesMockProvider from "mocks/schedules/providers/schedules";
 import sinon from "sinon";
 
 export default class ScheduleModelMockProvider implements Mock<ScheduleModelMock> {

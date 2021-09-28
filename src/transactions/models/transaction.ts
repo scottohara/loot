@@ -1,4 +1,4 @@
-import {
+import type {
 	CategorisableTransaction,
 	PayeeCashTransaction,
 	SecurityTransaction,
@@ -11,7 +11,7 @@ import {
 	TransactionStatus,
 	TransferrableTransaction
 } from "transactions/types";
-import {
+import type {
 	EntityModel,
 	NewOrExistingEntity
 } from "loot/types";
@@ -20,13 +20,13 @@ import {
 	parseISO,
 	startOfDay
 } from "date-fns";
-import AccountModel from "accounts/models/account";
-import { Category } from "categories/types";
-import CategoryModel from "categories/models/category";
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
-import { Security } from "securities/types";
-import SecurityModel from "securities/models/security";
+import type AccountModel from "accounts/models/account";
+import type { Category } from "categories/types";
+import type CategoryModel from "categories/models/category";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
+import type { Security } from "securities/types";
+import type SecurityModel from "securities/models/security";
 import angular from "angular";
 
 export default class TransactionModel {

@@ -1,16 +1,16 @@
 import "../css/index.less";
-import {
+import type {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
-import { Category } from "categories/types";
+import type { Category } from "categories/types";
 import CategoryDeleteView from "categories/views/delete.html";
 import CategoryEditView from "categories/views/edit.html";
-import CategoryModel from "categories/models/category";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
+import type CategoryModel from "categories/models/category";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 
 export default class CategoryIndexController {
@@ -32,7 +32,7 @@ export default class CategoryIndexController {
 		const self: this = this;
 
 		this.categories = angular.copy(categories).reduce((flattened: Category[], category: Category): Category[] => {
-			const { children }: {children?: Category[];} = category;
+			const { children }: { children?: Category[]; } = category;
 
 			delete category.children;
 
@@ -65,7 +65,7 @@ export default class CategoryIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.categories.category" }, (transition: angular.ui.IState): number => this.focusCategory(Number(transition.params("to").id))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.categories.category" }, (transition: angular.ui.IState): number => this.focusCategory(Number(transition.params("to").id))) as () => void);
 	}
 
 	public editCategory(index?: number): void {
@@ -120,7 +120,7 @@ export default class CategoryIndexController {
 					this.categoryModel.addRecent(category);
 
 					// If the new category has a parent, increment the parent's children count
-					if (!isNaN(Number(category.parent_id))) {
+					if (null !== category.parent_id) {
 						// Find the parent category by it's id
 						parentIndex = this.categoryIndexById(category.parent_id);
 
@@ -133,7 +133,7 @@ export default class CategoryIndexController {
 					// If the edited category parent has changed, increment/decrement the parent(s) children count
 					if (category.parent_id !== this.categories[Number(index)].parent_id) {
 						// Decrement the original parent (if required)
-						if (!isNaN(Number(this.categories[Number(index)].parent_id))) {
+						if (null !== this.categories[Number(index)].parent_id) {
 							parentIndex = this.categoryIndexById(this.categories[Number(index)].parent_id);
 							if (!isNaN(parentIndex)) {
 								(this.categories[parentIndex].num_children as number)--;
@@ -141,7 +141,7 @@ export default class CategoryIndexController {
 						}
 
 						// Increment the new parent (if required)
-						if (!isNaN(Number(category.parent_id))) {
+						if (null !== category.parent_id) {
 							parentIndex = this.categoryIndexById(category.parent_id);
 							if (!isNaN(parentIndex)) {
 								(this.categories[parentIndex].num_children as number)++;
@@ -203,7 +203,7 @@ export default class CategoryIndexController {
 			this.$uibModal.open(modalOptions).result
 				.then((): void => {
 					// If the deleted category has a parent, decrement the parent's children count
-					if (!isNaN(Number(this.categories[index].parent_id))) {
+					if (null !== this.categories[index].parent_id) {
 						// Find the parent category by it's id
 						const parentIndex = this.categoryIndexById(this.categories[index].parent_id);
 
@@ -231,7 +231,7 @@ export default class CategoryIndexController {
 	}
 
 	// Finds a specific category and focusses that row in the table
-	private focusCategory(categoryIdToFocus: string | number): number {
+	private focusCategory(categoryIdToFocus: number | string): number {
 		// Find the category by it's id
 		const	targetIndex: number = this.categoryIndexById(categoryIdToFocus),
 					delay = 50;
@@ -245,7 +245,7 @@ export default class CategoryIndexController {
 	}
 
 	// Helper function to find a category by it's id and return it's index
-	private categoryIndexById(id: string | number | null): number {
+	private categoryIndexById(id: number | string | null): number {
 		let targetIndex = NaN;
 
 		angular.forEach(this.categories, (category: Category, index: number): void => {

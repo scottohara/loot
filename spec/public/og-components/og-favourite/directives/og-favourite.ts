@@ -1,12 +1,12 @@
-import DirectiveTest from "mocks/loot/directivetest";
-import { DirectiveTestModel } from "mocks/types";
+import type DirectiveTest from "mocks/loot/directivetest";
+import type { DirectiveTestModel } from "mocks/types";
 import angular from "angular";
 
 describe("ogFavourite", (): void => {
 	let ogFavourite: DirectiveTest;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
@@ -17,7 +17,7 @@ describe("ogFavourite", (): void => {
 			type: "test"
 		};
 		ogFavourite.compile({ "og-favourite": "model" }, true);
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("default", (): void => {
 		beforeEach((): void => {

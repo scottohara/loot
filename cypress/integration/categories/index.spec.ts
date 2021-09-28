@@ -18,7 +18,7 @@ import {
 	transactionsIndexHeading,
 	transactionsTable
 } from "transactions";
-import { Category } from "categories/types";
+import type { Category } from "categories/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
 describe("Category Index", (): void => {

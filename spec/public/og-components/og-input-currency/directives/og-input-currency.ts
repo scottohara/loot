@@ -1,12 +1,12 @@
-import DirectiveTest from "mocks/loot/directivetest";
+import type DirectiveTest from "mocks/loot/directivetest";
 import angular from "angular";
 
 describe("ogInputCurrency", (): void => {
 	let	ogInputCurrency: DirectiveTest,
-			expected: string | number;
+			expected: number | string;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
@@ -14,7 +14,7 @@ describe("ogInputCurrency", (): void => {
 		ogInputCurrency.configure("og-input-currency", "input");
 		ogInputCurrency.compile();
 		ogInputCurrency.scope.$digest();
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("on model change", (): void => {
 		beforeEach((): string => (expected = "$0.00"));

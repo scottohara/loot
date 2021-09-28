@@ -1,4 +1,4 @@
-import {
+import type {
 	Subtransaction,
 	TransactionEdit
 } from "./types";

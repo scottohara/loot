@@ -17,10 +17,10 @@ import "./css/loot.less";
 // Components
 import $ from "jquery";
 import LayoutController from "./controllers/layout";
-import { LootRootScope } from "loot/types";
+import type { LootRootScope } from "loot/types";
 import LootStatesProvider from "./providers/states";
-import OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
-import { UrlService } from "@uirouter/angularjs";
+import type OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
+import type { UrlService } from "@uirouter/angularjs";
 import angular from "angular";
 
 angular.module("lootApp", [

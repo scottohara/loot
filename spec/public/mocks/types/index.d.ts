@@ -1,23 +1,23 @@
-import {
+import type {
 	Account,
 	Accounts
 } from "accounts/types";
-import {
+import type {
 	Entity,
 	EntityModel
 } from "loot/types";
-import {
+import type {
 	Transaction,
 	TransactionBatch
 } from "transactions/types";
-import { StateMock } from "mocks/node-modules/angular/types";
+import type { StateMock } from "mocks/node-modules/angular/types";
 
 export interface Mock<T> {
 	$get: () => T;
 }
 
 export interface ControllerTestLocals {
-	[key: string]: angular.IScope | Accounts | Account | StateMock | Transaction | TransactionBatch | EntityModel | Entity | string | null | undefined;
+	[key: string]: Account | Accounts | angular.IScope | Entity | EntityModel | StateMock | Transaction | TransactionBatch | string | null | undefined;
 	$scope?: angular.IScope;
 }
 
@@ -31,7 +31,7 @@ export interface DirectiveTestModel {
 }
 
 export interface DirectiveTestScope extends angular.IScope {
-	model?: DirectiveTestModel | string | number | boolean | null;
+	model?: DirectiveTestModel | boolean | number | string | null;
 }
 
 interface EventMock {

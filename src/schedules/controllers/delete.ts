@@ -1,5 +1,5 @@
-import ScheduleModel from "schedules/models/schedule";
-import { ScheduledTransaction } from "schedules/types";
+import type ScheduleModel from "schedules/models/schedule";
+import type { ScheduledTransaction } from "schedules/types";
 
 export default class ScheduleDeleteController {
 	public errorMessage: string | null = null;

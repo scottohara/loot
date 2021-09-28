@@ -1,9 +1,9 @@
-import {
+import type {
 	Account,
 	DisplayAccountStatus,
 	DisplayAccountType
 } from "accounts/types";
-import AccountModel from "accounts/models/account";
+import type AccountModel from "accounts/models/account";
 
 export default class AccountDeleteController {
 	public errorMessage: string | null = null;

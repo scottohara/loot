@@ -1,4 +1,4 @@
-import { Entity } from "loot/types";
+import type { Entity } from "loot/types";
 
 export interface Category extends Entity {
 	direction: "inflow" | "outflow";

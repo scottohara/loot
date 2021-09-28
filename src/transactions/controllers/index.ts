@@ -1,9 +1,9 @@
 import "../css/index.less";
-import {
+import type {
 	Account,
 	AccountType
 } from "accounts/types";
-import {
+import type {
 	CashTransaction,
 	CategorisableTransaction,
 	PayeeCashTransaction,
@@ -17,11 +17,11 @@ import {
 	TransactionFetchDirection,
 	TransferrableTransaction
 } from "transactions/types";
-import {
+import type {
 	Entity,
 	EntityModel
 } from "loot/types";
-import {
+import type {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
@@ -33,20 +33,20 @@ import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import AccountModel from "accounts/models/account";
+import type AccountModel from "accounts/models/account";
 import AccountReconcileView from "accounts/views/reconcile.html";
-import { Category } from "categories/types";
-import { OgModalConfirm } from "og-components/og-modal-confirm/types";
+import type { Category } from "categories/types";
+import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
 import OgModalConfirmView from "og-components/og-modal-confirm/views/confirm.html";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import { Payee } from "payees/types";
-import { Security } from "securities/types";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
+import type { Payee } from "payees/types";
+import type { Security } from "securities/types";
 import TransactionDeleteView from "transactions/views/delete.html";
 import TransactionEditView from "transactions/views/edit.html";
 import TransactionFlagView from "transactions/views/flag.html";
-import TransactionModel from "transactions/models/transaction";
+import type TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 
 export default class TransactionIndexController {
@@ -76,7 +76,7 @@ export default class TransactionIndexController {
 
 	public unreconciledOnly: boolean;
 
-	public readonly loading: {prev: boolean; next: boolean;} = { prev: false, next: false };
+	public readonly loading: { prev: boolean; next: boolean; } = { prev: false, next: false };
 
 	private atEnd = true;
 
@@ -142,7 +142,7 @@ export default class TransactionIndexController {
 		this.processTransactions(transactionBatch, undefined, Number(this.$state.params.transactionId));
 
 		// When the transaction id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "**.transactions.transaction" }, (transition: angular.ui.IState): void => this.transitionSuccessHandler(Number(transition.params("to").transactionId))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "**.transactions.transaction" }, (transition: angular.ui.IState): void => this.transitionSuccessHandler(Number(transition.params("to").transactionId))) as () => void);
 
 		// Auto scroll to the bottom
 		$timeout((): void => ogViewScrollService.scrollTo("bottom")).catch(this.showError);
@@ -338,7 +338,7 @@ export default class TransactionIndexController {
 	private editTransaction(index?: number): void {
 		// Helper function to sort by transaction date, then by transaction id
 		function byTransactionDateAndId(a: Transaction, b: Transaction): number {
-			let x: number | Date, y: number | Date;
+			let x: Date | number, y: Date | number;
 
 			if (isEqual(a.transaction_date as Date, b.transaction_date as Date)) {
 				x = Number(a.id);
@@ -367,7 +367,7 @@ export default class TransactionIndexController {
 			backdrop: "static",
 			size: "lg",
 			resolve: {
-				transaction: (): angular.IPromise<Transaction> | Transaction | Partial<Transaction | SecurityTransaction> => {
+				transaction: (): angular.IPromise<Transaction> | Partial<SecurityTransaction | Transaction> | Transaction => {
 					// If we didn't get an index, we're adding a new transaction
 					if (isNaN(Number(index))) {
 						if ("security" === this.contextType) {
@@ -463,7 +463,7 @@ export default class TransactionIndexController {
 	}
 
 	private contextChanged(transaction: Transaction): boolean {
-		let currentContext: Entity | undefined | null;
+		let currentContext: Entity | null | undefined;
 
 		// Check if the transaction still matches the context
 		switch (this.contextType) {
@@ -480,7 +480,7 @@ export default class TransactionIndexController {
 				break;
 
 			case "category":
-				currentContext = (undefined === (this.context as Category).parent || null === (this.context as Category).parent ? transaction.category : (transaction as SubcategorisableTransaction).subcategory) as Category | undefined | null;
+				currentContext = (undefined === (this.context as Category).parent || null === (this.context as Category).parent ? transaction.category : (transaction as SubcategorisableTransaction).subcategory) as Category | null | undefined;
 				break;
 
 			// Search mode - check if the transaction memo still matches the search query
@@ -546,7 +546,7 @@ export default class TransactionIndexController {
 	}
 
 	// Returns true if the action is allowed for the transaction
-	private isAllowed(action: "edit" | "delete", transaction: Transaction | SplitTransactionChild): boolean {
+	private isAllowed(action: "delete" | "edit", transaction: SplitTransactionChild | Transaction): boolean {
 		let	allowed = true,
 				message = "";
 
@@ -577,7 +577,7 @@ export default class TransactionIndexController {
 		return allowed;
 	}
 
-	private promptToSwitchAccounts(message: string, transaction: Transaction | SplitTransactionChild): void {
+	private promptToSwitchAccounts(message: string, transaction: SplitTransactionChild | Transaction): void {
 		// Disable navigation on the table
 		this.ogTableNavigableService.enabled = false;
 
@@ -690,7 +690,7 @@ export default class TransactionIndexController {
 	}
 
 	// Helper function for switching states
-	private switchTo($event: Event | null, state: string, id: number, transaction: Transaction | SplitTransactionChild): void {
+	private switchTo($event: Event | null, state: string, id: number, transaction: SplitTransactionChild | Transaction): void {
 		/*
 		 * For Subtransactions, don't switch to the parent
 		 * (only applies when switching between Category <=> Subcategory transaction lists)
@@ -711,7 +711,7 @@ export default class TransactionIndexController {
 		}
 	}
 
-	private switchToAccount($event: Event | null, id: number, transaction: Transaction | SplitTransactionChild): void {
+	private switchToAccount($event: Event | null, id: number, transaction: SplitTransactionChild | Transaction): void {
 		// If the transaction is reconciled, make sure the account we're switching to shows reconciled transactions
 		if ("Reconciled" === (transaction as Transaction).status) {
 			this.accountModel.unreconciledOnly(id, false);

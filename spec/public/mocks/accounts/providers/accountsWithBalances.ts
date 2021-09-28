@@ -1,5 +1,5 @@
-import { Accounts } from "accounts/types";
-import { Mock } from "mocks/types";
+import type { Accounts } from "accounts/types";
+import type { Mock } from "mocks/types";
 import createAccount from "mocks/accounts/factories";
 
 export default class AccountsWithBalancesMockProvider implements Mock<Accounts> {

@@ -1,15 +1,15 @@
-import {
+import type {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import { Payee } from "payees/types";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { Payee } from "payees/types";
 import PayeeDeleteView from "payees/views/delete.html";
 import PayeeEditView from "payees/views/edit.html";
-import PayeeModel from "payees/models/payee";
+import type PayeeModel from "payees/models/payee";
 import angular from "angular";
 
 export default class PayeeIndexController {
@@ -54,7 +54,7 @@ export default class PayeeIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.payees.payee" }, (transition: angular.ui.IState): number => this.focusPayee(Number(transition.params("to").id))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.payees.payee" }, (transition: angular.ui.IState): number => this.focusPayee(Number(transition.params("to").id))) as () => void);
 	}
 
 	public editPayee(index?: number): void {
@@ -164,7 +164,7 @@ export default class PayeeIndexController {
 	}
 
 	// Finds a specific payee and focusses that row in the table
-	private focusPayee(payeeIdToFocus: string | number): number {
+	private focusPayee(payeeIdToFocus: number | string): number {
 		const delay = 50;
 		let targetIndex = NaN;
 

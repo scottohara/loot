@@ -10,7 +10,7 @@ import {
 	getValuesFrom,
 	payeesTableRows
 } from "payees/index";
-import { Payee } from "payees/types";
+import type { Payee } from "payees/types";
 
 describe("Payee Delete", (): void => {
 	let	originalRowCount: number,

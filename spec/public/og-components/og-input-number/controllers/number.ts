@@ -1,15 +1,15 @@
-import { ControllerTestFactory } from "mocks/types";
-import OgInputNumberController from "og-components/og-input-number/controllers/number";
+import type { ControllerTestFactory } from "mocks/types";
+import type OgInputNumberController from "og-components/og-input-number/controllers/number";
 import angular from "angular";
 
 describe("OgInputNumberController", (): void => {
 	let	ogInputNumberController: OgInputNumberController;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory): OgInputNumberController => (ogInputNumberController = controllerTest("OgInputNumberController") as OgInputNumberController)));
+	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory): OgInputNumberController => (ogInputNumberController = controllerTest("OgInputNumberController") as OgInputNumberController)) as Mocha.HookFunction);
 
 	describe("formattedToRaw", (): void => {
 		it("should return 0 if the value is blank", (): Chai.Assertion => ogInputNumberController.formattedToRaw("").should.equal(0));

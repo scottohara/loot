@@ -1,23 +1,24 @@
-import {
+import type {
 	Account,
 	Accounts
 } from "accounts/types";
-import {
+import type {
 	ControllerTestFactory,
 	JQueryKeyEventObjectMock
 } from "mocks/types";
-import {
+import type {
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
 import $ from "jquery";
-import AccountIndexController from "accounts/controllers";
-import { AccountModelMock } from "mocks/accounts/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
+import type AccountIndexController from "accounts/controllers";
+import type { AccountModelMock } from "mocks/accounts/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { SinonStub } from "sinon";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
+import sinon from "sinon";
 
 describe("AccountIndexController", (): void => {
 	let accountIndexController: AccountIndexController,
@@ -27,7 +28,7 @@ describe("AccountIndexController", (): void => {
 			accountsWithBalances: Accounts;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "accountModel", "accountsWithBalances"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "accountModel", "accountsWithBalances"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, _$uibModal_: UibModalMock, controllerTest: ControllerTestFactory, _accountModel_: AccountModelMock, _accountsWithBalances_: Accounts): void => {
@@ -37,7 +38,7 @@ describe("AccountIndexController", (): void => {
 		accountsWithBalances = _accountsWithBalances_;
 		$window.$ = $;
 		accountIndexController = controllerTest("AccountIndexController", { accounts: accountsWithBalances }) as AccountIndexController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the account list available to the view", (): Chai.Assertion => accountIndexController.accounts.should.equal(accountsWithBalances));
 

@@ -11,7 +11,7 @@ import {
 	getValuesFrom,
 	securitiesTableRows
 } from "securities/index";
-import { Security } from "securities/types";
+import type { Security } from "securities/types";
 
 describe("Security Delete", (): void => {
 	let	originalRowCount: number,

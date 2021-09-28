@@ -1,8 +1,8 @@
-import {
+import type {
 	Account,
 	StoredAccountType
 } from "accounts/types";
-import {
+import type {
 	CashTransaction,
 	CategorisableTransaction,
 	PayeeCashTransaction,
@@ -18,28 +18,28 @@ import {
 	TransactionType,
 	TransferrableTransaction
 } from "transactions/types";
-import {
+import type {
 	Category,
 	DisplayCategory
 } from "categories/types";
-import {
+import type {
 	Entity,
 	EntityModel
 } from "loot/types";
-import AccountModel from "accounts/models/account";
-import CategoryModel from "categories/models/category";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
-import { Security } from "securities/types";
-import SecurityModel from "securities/models/security";
-import TransactionModel from "transactions/models/transaction";
+import type AccountModel from "accounts/models/account";
+import type CategoryModel from "categories/models/category";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
+import type { Security } from "securities/types";
+import type SecurityModel from "securities/models/security";
+import type TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 
 export default class TransactionEditController {
 	public transaction: Transaction;
 
-	public readonly mode: "Edit" | "Add";
+	public readonly mode: "Add" | "Edit";
 
 	public loadingLastTransaction = false;
 
@@ -143,7 +143,7 @@ export default class TransactionEditController {
 	}
 
 	// Returns true if the passed value is typeof string (and is not empty)
-	public isString(object: string | Record<string, unknown>): boolean {
+	public isString(object: Record<string, unknown> | string): boolean {
 		return "string" === typeof object && object.length > 0;
 	}
 
@@ -181,8 +181,8 @@ export default class TransactionEditController {
 
 	// Handler for category changes (`index` is the subtransaction index, or null for the main transaction)
 	public categorySelected(index?: number): void {
-		const	transaction: Transaction | SplitTransactionChild = isNaN(Number(index)) ? this.transaction : (this.transaction as SplitTransaction).subtransactions[Number(index)];
-		let	type: TransactionType | SubtransactionType | undefined,
+		const	transaction: SplitTransactionChild | Transaction = isNaN(Number(index)) ? this.transaction : (this.transaction as SplitTransaction).subtransactions[Number(index)];
+		let	type: SubtransactionType | TransactionType | undefined,
 				direction: TransactionDirection | undefined,
 				parentId: number | undefined;
 
@@ -458,7 +458,7 @@ export default class TransactionEditController {
 	}
 
 	// Merges the details of a previous transaction into the current one
-	private useLastTransaction(transaction?: Transaction): void {
+	private useLastTransaction(transaction?: Partial<Transaction>): void {
 		if (undefined === transaction) {
 			return;
 		}
@@ -468,7 +468,7 @@ export default class TransactionEditController {
 		delete transaction.transaction_date;
 		delete transaction.primary_account;
 		delete transaction.status;
-		delete (transaction as TransferrableTransaction).related_status;
+		delete (transaction as Partial<TransferrableTransaction>).related_status;
 		delete transaction.flag;
 
 		// Merge the last transaction details into the transaction on the scope
@@ -486,7 +486,7 @@ export default class TransactionEditController {
 	private invalidateCaches(savedTransaction: Transaction): angular.IPromise<Transaction> {
 		// Create a deferred so that we return a promise
 		const q: angular.IDeferred<Transaction> = this.$q.defer(),
-					models: {[mode: string]: EntityModel;} = {
+					models: Record<string, EntityModel> = {
 						primary_account: this.accountModel,
 						payee: this.payeeModel,
 						category: this.categoryModel,

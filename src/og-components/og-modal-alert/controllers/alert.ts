@@ -1,4 +1,4 @@
-import { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
 import angular from "angular";
 
 export default class OgModalAlertController {

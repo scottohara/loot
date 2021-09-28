@@ -1,4 +1,4 @@
-import {
+import type {
 	CategoryDirection,
 	CategoryDirectionLabel
 } from "./types";

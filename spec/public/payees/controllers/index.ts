@@ -1,19 +1,20 @@
-import {
+import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
-import { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import { Payee } from "payees/types";
-import PayeeIndexController from "payees/controllers";
-import { PayeeModelMock } from "mocks/payees/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { Payee } from "payees/types";
+import type PayeeIndexController from "payees/controllers";
+import type { PayeeModelMock } from "mocks/payees/types";
+import type { SinonStub } from "sinon";
 import angular from "angular";
 import createPayee from "mocks/payees/factories";
+import sinon from "sinon";
 
 describe("PayeeIndexController", (): void => {
 	let	payeeIndexController: PayeeIndexController,
@@ -28,7 +29,7 @@ describe("PayeeIndexController", (): void => {
 			deregisterTransitionSuccessHook: SinonStub;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "payeeModel", "payees"])));
+	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModal", "$state", "payeeModel", "payees"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$transitions_: angular.ui.IStateParamsService, _$timeout_: angular.ITimeoutService, _$uibModal_: UibModalMock, _$state_: StateMock, _payeeModel_: PayeeModelMock, _ogTableNavigableService_: OgTableNavigableService, _payees_: Payee[]): void => {
@@ -43,7 +44,7 @@ describe("PayeeIndexController", (): void => {
 		deregisterTransitionSuccessHook = sinon.stub();
 		sinon.stub($transitions, "onSuccess").returns(deregisterTransitionSuccessHook);
 		payeeIndexController = controllerTest("PayeeIndexController") as PayeeIndexController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed payees available to the view", (): Chai.Assertion => payeeIndexController.payees.should.deep.equal(payees));
 
@@ -65,7 +66,7 @@ describe("PayeeIndexController", (): void => {
 	});
 
 	it("should ensure the payee is focussed when the payee id state param changes", (): void => {
-		const toParams: {id: string;} = { id: "1" };
+		const toParams: { id: string; } = { id: "1" };
 
 		sinon.stub(payeeIndexController, "focusPayee" as keyof PayeeIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });

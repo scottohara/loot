@@ -1,9 +1,9 @@
-import { Category } from "categories/types";
-import CategoryEditController from "categories/controllers/edit";
-import { CategoryModelMock } from "mocks/categories/types";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { Category } from "categories/types";
+import type CategoryEditController from "categories/controllers/edit";
+import type { CategoryModelMock } from "mocks/categories/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createCategory from "mocks/categories/factories";
 
@@ -15,7 +15,7 @@ describe("CategoryEditController", (): void => {
 			category: Category;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "categoryModel", "category"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "categoryModel", "category"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _categoryModel_: CategoryModelMock, _category_: Category): void => {
@@ -24,7 +24,7 @@ describe("CategoryEditController", (): void => {
 		categoryModel = _categoryModel_;
 		category = _category_;
 		categoryEditController = controllerTest("CategoryEditController") as CategoryEditController;
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("when a category is provided", (): void => {
 		it("should make the passed category available to the view", (): Chai.Assertion => categoryEditController.category.should.deep.equal(category));

@@ -1,7 +1,7 @@
-import AccountModel from "accounts/models/account";
-import CategoryModel from "categories/models/category";
-import PayeeModel from "payees/models/payee";
-import SecurityModel from "securities/models/security";
+import type AccountModel from "accounts/models/account";
+import type CategoryModel from "categories/models/category";
+import type PayeeModel from "payees/models/payee";
+import type SecurityModel from "securities/models/security";
 
 export interface Entity {
 	id?: number;
@@ -11,7 +11,7 @@ export interface Entity {
 
 export type NewOrExistingEntity = Entity | string | undefined;
 
-export type EntityModel = AccountModel | PayeeModel | CategoryModel | SecurityModel;
+export type EntityModel = AccountModel | CategoryModel | PayeeModel | SecurityModel;
 
 export interface Cacheable<T> {
 	readonly LRU_LOCAL_STORAGE_KEY: string;

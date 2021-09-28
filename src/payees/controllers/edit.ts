@@ -1,11 +1,11 @@
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
 import angular from "angular";
 
 export default class PayeeEditController {
 	public readonly payee: Payee;
 
-	public readonly mode: "Edit" | "Add";
+	public readonly mode: "Add" | "Edit";
 
 	public errorMessage: string | null = null;
 

@@ -1,14 +1,15 @@
-import {
+import type {
 	PromiseMockConfig,
 	QMock
 } from "mocks/node-modules/angular/types";
-import sinon, { SinonStub } from "sinon";
-import CategoriesMockProvider from "mocks/categories/providers/categories";
-import { Category } from "categories/types";
-import CategoryMockProvider from "mocks/categories/providers/category";
-import { CategoryModelMock } from "mocks/categories/types";
-import { Mock } from "mocks/types";
-import QMockProvider from "mocks/node-modules/angular/services/q";
+import type CategoriesMockProvider from "mocks/categories/providers/categories";
+import type { Category } from "categories/types";
+import type CategoryMockProvider from "mocks/categories/providers/category";
+import type { CategoryModelMock } from "mocks/categories/types";
+import type { Mock } from "mocks/types";
+import type QMockProvider from "mocks/node-modules/angular/services/q";
+import type { SinonStub } from "sinon";
+import sinon from "sinon";
 
 export default class CategoryModelMockProvider implements Mock<CategoryModelMock> {
 	private readonly categoryModel: CategoryModelMock;
@@ -16,7 +17,7 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 	public constructor(categoryMockProvider: CategoryMockProvider, categoriesMockProvider: CategoriesMockProvider, $qMockProvider: QMockProvider) {
 		// Success/error = options for the stub promises
 		const	$q: QMock = $qMockProvider.$get(),
-					success: PromiseMockConfig<{data: Category;}> = {
+					success: PromiseMockConfig<{ data: Category; }> = {
 						args: { id: 1 },
 						response: { data: categoryMockProvider.$get() }
 					},

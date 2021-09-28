@@ -1,10 +1,10 @@
-import {
+import type {
 	CacheFactoryMock,
 	WindowMock
 } from "mocks/node-modules/angular/types";
-import AuthenticationModel from "authentication/models/authentication";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { SinonStub } from "sinon";
+import type AuthenticationModel from "authentication/models/authentication";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { SinonStub } from "sinon";
 import angular from "angular";
 
 describe("authenticationModel", (): void => {
@@ -16,7 +16,7 @@ describe("authenticationModel", (): void => {
 			$window: WindowMock;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window"])));
+	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window"])) as Mocha.HookFunction);
 
 	// Inject the object under test and the $httpBackend
 	beforeEach(angular.mock.inject((_authenticationModel_: AuthenticationModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _$window_: WindowMock): void => {
@@ -29,7 +29,7 @@ describe("authenticationModel", (): void => {
 		$cache = $cacheFactory();
 
 		$window = _$window_;
-	}));
+	}) as Mocha.HookFunction);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {

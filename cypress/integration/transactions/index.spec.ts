@@ -15,7 +15,7 @@ import {
 	transactionEditForm,
 	transactionEditHeading
 } from "transactions/edit";
-import { TransactionsContext } from "transactions/types";
+import type { TransactionsContext } from "transactions/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
 describe("Transaction Index", (): void => {

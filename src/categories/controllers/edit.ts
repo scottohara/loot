@@ -1,11 +1,11 @@
-import { Category } from "categories/types";
-import CategoryModel from "categories/models/category";
+import type { Category } from "categories/types";
+import type CategoryModel from "categories/models/category";
 import angular from "angular";
 
 export default class CategoryEditController {
 	public readonly category: Category;
 
-	public readonly mode: "Edit" | "Add";
+	public readonly mode: "Add" | "Edit";
 
 	public errorMessage: string | null = null;
 

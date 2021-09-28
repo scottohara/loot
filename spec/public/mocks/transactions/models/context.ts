@@ -1,6 +1,6 @@
-import { Mock } from "mocks/types";
-import { PayeeModelMock } from "mocks/payees/types";
-import PayeeModelMockProvider from "mocks/payees/models/payee";
+import type { Mock } from "mocks/types";
+import type { PayeeModelMock } from "mocks/payees/types";
+import type PayeeModelMockProvider from "mocks/payees/models/payee";
 
 export default class ContextModelMockProvider implements Mock<PayeeModelMock> {
 	public constructor(private readonly payeeModelMockProvider: PayeeModelMockProvider) {}

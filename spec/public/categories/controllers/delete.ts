@@ -1,9 +1,9 @@
-import { Category } from "categories/types";
-import CategoryDeleteController from "categories/controllers/delete";
-import { CategoryModelMock } from "mocks/categories/types";
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { Category } from "categories/types";
+import type CategoryDeleteController from "categories/controllers/delete";
+import type { CategoryModelMock } from "mocks/categories/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("CategoryDeleteController", (): void => {
@@ -13,7 +13,7 @@ describe("CategoryDeleteController", (): void => {
 			category: Category;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "categoryModel", "category"])));
+	beforeEach(angular.mock.module("lootMocks", "lootCategories", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "categoryModel", "category"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _categoryModel_: CategoryModelMock, _category_: Category): void => {
@@ -21,7 +21,7 @@ describe("CategoryDeleteController", (): void => {
 		categoryModel = _categoryModel_;
 		category = _category_;
 		categoryDeleteController = controllerTest("CategoryDeleteController") as CategoryDeleteController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed category available to the view", (): Chai.Assertion => categoryDeleteController.category.should.deep.equal(category));
 

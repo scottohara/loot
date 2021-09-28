@@ -1,11 +1,11 @@
-import DirectiveTest from "mocks/loot/directivetest";
+import type DirectiveTest from "mocks/loot/directivetest";
 import angular from "angular";
 
 describe("ogTableLoading", (): void => {
 	let ogTableLoading: DirectiveTest;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents"));
+	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
@@ -13,7 +13,7 @@ describe("ogTableLoading", (): void => {
 		ogTableLoading.configure("og-table-loading", "tr");
 		ogTableLoading.scope.model = false;
 		ogTableLoading.compile({ "og-table-loading": "model" }, true);
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should be hidden", (): void => {
 		ogTableLoading.scope.$digest();

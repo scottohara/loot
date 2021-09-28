@@ -1,9 +1,9 @@
 import "transactions/css/index.less";
-import {
+import type {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
-import {
+import type {
 	SplitTransaction,
 	SplitTransactionChild
 } from "transactions/types";
@@ -11,12 +11,12 @@ import {
 	isEqual,
 	startOfDay
 } from "date-fns";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import ScheduleDeleteView from "schedules/views/delete.html";
 import ScheduleEditView from "schedules/views/edit.html";
-import { ScheduledTransaction } from "schedules/types";
-import TransactionModel from "transactions/models/transaction";
+import type { ScheduledTransaction } from "schedules/types";
+import type TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 
 export default class ScheduleIndexController {
@@ -64,7 +64,7 @@ export default class ScheduleIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.schedules.schedule" }, (transition: angular.ui.IState): number => this.focusSchedule(Number(transition.params("to").id))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.schedules.schedule" }, (transition: angular.ui.IState): number => this.focusSchedule(Number(transition.params("to").id))) as () => void);
 	}
 
 	// Shows/hides subtransactions
@@ -95,7 +95,7 @@ export default class ScheduleIndexController {
 	private editSchedule(index?: number): void {
 		// Helper function to sort by next due date, then by transaction id
 		function byNextDueDateAndId(a: ScheduledTransaction, b: ScheduledTransaction): number {
-			let x: number | Date | string, y: number | Date | string;
+			let x: Date | number | string, y: Date | number | string;
 
 			if (isEqual(a.next_due_date as Date, b.next_due_date as Date)) {
 				x = Number(a.id);
@@ -143,7 +143,7 @@ export default class ScheduleIndexController {
 				}
 			}
 		}).result
-			.then((schedule: {data: ScheduledTransaction; skipped: boolean;}): void => {
+			.then((schedule: { data: ScheduledTransaction; skipped: boolean; }): void => {
 				if (isNaN(Number(index))) {
 					// Add new schedule to the end of the array
 					this.schedules.push(schedule.data);

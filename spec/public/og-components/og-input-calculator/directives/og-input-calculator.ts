@@ -1,21 +1,22 @@
-import {
+import type {
 	DirectiveTestScope,
 	JQueryKeyEventObjectMock
 } from "mocks/types";
-import {
+import type {
 	OgInputCalculatorOperation,
 	OgInputCalculatorOperator,
 	OgInputCalculatorScope
 } from "og-components/og-input-calculator/types";
-import sinon, { SinonStub } from "sinon";
-import DirectiveTest from "mocks/loot/directivetest";
-import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
-import { OgInputCurrencyControllerMock } from "mocks/og-components/og-input-currency/types";
-import OgInputCurrencyDirective from "og-components/og-input-currency/directives/og-input-currency";
-import OgInputNumberController from "og-components/og-input-number/controllers/number";
-import { OgInputNumberControllerMock } from "mocks/og-components/og-input-number/types";
-import OgInputNumberDirective from "og-components/og-input-number/directives/og-input-number";
+import type DirectiveTest from "mocks/loot/directivetest";
+import type OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
+import type { OgInputCurrencyControllerMock } from "mocks/og-components/og-input-currency/types";
+import type OgInputCurrencyDirective from "og-components/og-input-currency/directives/og-input-currency";
+import type OgInputNumberController from "og-components/og-input-number/controllers/number";
+import type { OgInputNumberControllerMock } from "mocks/og-components/og-input-number/types";
+import type OgInputNumberDirective from "og-components/og-input-number/directives/og-input-number";
+import type { SinonStub } from "sinon";
 import angular from "angular";
+import sinon from "sinon";
 
 describe("ogInputCalculator", (): void => {
 	let	ogInputCalculator: DirectiveTest,
@@ -28,9 +29,9 @@ describe("ogInputCalculator", (): void => {
 	beforeEach(angular.mock.module("lootMocks", "ui.bootstrap", (_$uibTooltipProvider_: angular.ui.bootstrap.ITooltipProvider): void => {
 		$uibTooltipProvider = _$uibTooltipProvider_;
 		sinon.stub($uibTooltipProvider, "setTriggers");
-	}));
+	}) as Mocha.HookFunction);
 
-	beforeEach(angular.mock.module("ogComponents"));
+	beforeEach(angular.mock.module("ogComponents") as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_$window_: angular.IWindowService, _$timeout_: angular.ITimeoutService, ogInputCurrencyControllerMock: OgInputCurrencyControllerMock, ogInputNumberControllerMock: OgInputNumberControllerMock, ogInputCurrencyDirective: OgInputCurrencyDirective[], ogInputNumberDirective: OgInputNumberDirective[], directiveTest: DirectiveTest): void => {
@@ -47,7 +48,7 @@ describe("ogInputCalculator", (): void => {
 		ogInputCalculator.scope.$digest();
 		ogInputCalculator["element"] = ogInputCalculator["element"].find("input");
 		scope = ogInputCalculator.scope as OgInputCalculatorScope;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should default the position to left if unspecified", (): Chai.Assertion => scope.position.should.equal("left"));
 
@@ -77,7 +78,7 @@ describe("ogInputCalculator", (): void => {
 
 	describe("push", (): void => {
 		describe("(initial value)", (): void => {
-			let	mockAngularElement: {dispatchEvent: SinonStub;}[],
+			let	mockAngularElement: { dispatchEvent: SinonStub; }[],
 					realAngularElement: JQueryStatic;
 
 			beforeEach((): void => {
@@ -173,7 +174,7 @@ describe("ogInputCalculator", (): void => {
 		});
 
 		describe("(value contains an operator)", (): void => {
-			const scenarios: {input: string; operand: number; operator: OgInputCalculatorOperator; residual: string;}[] = [
+			const scenarios: { input: string; operand: number; operator: OgInputCalculatorOperator; residual: string; }[] = [
 				{
 					input: "1+",
 					operand: 1,
@@ -230,7 +231,7 @@ describe("ogInputCalculator", (): void => {
 				}
 			];
 
-			scenarios.forEach((scenario: {input: string; operand: number; operator: OgInputCalculatorOperator; residual: string;}): void => {
+			scenarios.forEach((scenario: { input: string; operand: number; operator: OgInputCalculatorOperator; residual: string; }): void => {
 				it(`should push the operand ${scenario.operand} and operator '${scenario.operator}' onto the stack when the input is '${scenario.input}'`, (): void => {
 					scope.inputChanged(scenario.input);
 					scope.push.should.have.been.calledWith(scenario.operand, scenario.operator);
@@ -304,7 +305,7 @@ describe("ogInputCalculator", (): void => {
 	});
 
 	describe("close", (): void => {
-		let	mockAngularElement: {dispatchEvent: SinonStub;}[],
+		let	mockAngularElement: { dispatchEvent: SinonStub; }[],
 				realAngularElement: JQueryStatic;
 
 		beforeEach((): void => {
@@ -331,14 +332,14 @@ describe("ogInputCalculator", (): void => {
 	});
 
 	describe("keyhandler", (): void => {
-		const TEST_ACTION_KEYS: {code: number; name: string; handler: string;}[] = [
+		const TEST_ACTION_KEYS: { code: number; name: string; handler: string; }[] = [
 			{ code: 13, name: "Enter", handler: "update" },
 			{ code: 27, name: "Esc", handler: "cancel" },
 			{ code: 187, name: "Equals", handler: "update" }
 		];
 
 		let	event: JQueryKeyEventObjectMock,
-				mockJqueryInstance: {select: SinonStub;},
+				mockJqueryInstance: { select: SinonStub; },
 				realJqueryInstance: JQuery,
 				actionHandler: () => void;
 
@@ -361,7 +362,7 @@ describe("ogInputCalculator", (): void => {
 			$window.$.withArgs(sinon.match((value: JQuery<Element>): boolean => value[0] === ogInputCalculator["element"][0])).returns(mockJqueryInstance);
 		});
 
-		TEST_ACTION_KEYS.forEach((key: {code: number; name: string; handler: string;}): void => {
+		TEST_ACTION_KEYS.forEach((key: { code: number; name: string; handler: string; }): void => {
 			it(`should do nothing when the SHIFT+${key.name} keys are pressed`, (): void => {
 				event.keyCode = key.code;
 				event.shiftKey = true;

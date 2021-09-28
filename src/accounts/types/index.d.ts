@@ -1,16 +1,16 @@
-import { Entity } from "loot/types";
+import type { Entity } from "loot/types";
 
 export type StoredAccountType =	"asset" | "bank" | "cash" | "credit" | "investment" | "liability" | "loan";
 
 export type DisplayAccountType =	"Asset" | "Bank" | "Cash" | "Credit" | "Investment" | "Liability" | "Loan";
 
-export type AccountType =	StoredAccountType | DisplayAccountType;
+export type AccountType =	DisplayAccountType | StoredAccountType;
 
-export type StoredAccountStatus = "open" | "closed";
+export type StoredAccountStatus = "closed" | "open";
 
-export type DisplayAccountStatus = "Open" | "Closed";
+export type DisplayAccountStatus = "Closed" | "Open";
 
-export type AccountStatus = StoredAccountStatus | DisplayAccountStatus;
+export type AccountStatus = DisplayAccountStatus | StoredAccountStatus;
 
 interface InvestmentRelatedAccount {
 	opening_balance: number;
@@ -25,9 +25,7 @@ export interface Account extends Entity {
 	num_transactions: number;
 }
 
-export interface Accounts {
-	[account_type: string]: {
-		accounts: Account[];
-		total: number;
-	};
-}
+export type Accounts = Record<string, {
+	accounts: Account[];
+	total: number;
+}>;

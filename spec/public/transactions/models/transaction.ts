@@ -1,4 +1,4 @@
-import {
+import type {
 	BasicTransaction,
 	SecurityTransaction,
 	SplitTransaction,
@@ -19,14 +19,14 @@ import {
 	parseISO,
 	startOfDay
 } from "date-fns";
-import { AccountModelMock } from "mocks/accounts/types";
-import { CategoryModelMock } from "mocks/categories/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
-import { SecurityModelMock } from "mocks/securities/types";
-import TransactionModel from "transactions/models/transaction";
-import { WindowMock } from "mocks/node-modules/angular/types";
+import type { AccountModelMock } from "mocks/accounts/types";
+import type { CategoryModelMock } from "mocks/categories/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
+import type { SecurityModelMock } from "mocks/securities/types";
+import type TransactionModel from "transactions/models/transaction";
+import type { WindowMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 import createAccount from "mocks/accounts/factories";
 import createPayee from "mocks/payees/factories";
@@ -43,7 +43,7 @@ describe("transactionModel", (): void => {
 			securityModel: SecurityModelMock;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$window", "accountModel", "payeeModel", "categoryModel", "securityModel"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$window", "accountModel", "payeeModel", "categoryModel", "securityModel"])) as Mocha.HookFunction);
 
 	// Inject the object under test and it's remaining dependencies
 	beforeEach(angular.mock.inject((_transactionModel_: TransactionModel, _$httpBackend_: angular.IHttpBackendService, _$window_: WindowMock, _accountModel_: AccountModelMock, _payeeModel_: PayeeModel, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
@@ -56,7 +56,7 @@ describe("transactionModel", (): void => {
 		payeeModel = _payeeModel_;
 		categoryModel = _categoryModel_;
 		securityModel = _securityModel_;
-	}));
+	}) as Mocha.HookFunction);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {

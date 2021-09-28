@@ -1,9 +1,9 @@
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { Payee } from "payees/types";
-import PayeeEditController from "payees/controllers/edit";
-import { PayeeModelMock } from "mocks/payees/types";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { Payee } from "payees/types";
+import type PayeeEditController from "payees/controllers/edit";
+import type { PayeeModelMock } from "mocks/payees/types";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("PayeeEditController", (): void => {
@@ -14,7 +14,7 @@ describe("PayeeEditController", (): void => {
 			payee: Payee;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "payee"])));
+	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "payee"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((_controllerTest_: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _payeeModel_: PayeeModelMock, _payee_: Payee): void => {
@@ -23,7 +23,7 @@ describe("PayeeEditController", (): void => {
 		payeeModel = _payeeModel_;
 		payee = _payee_;
 		payeeEditController = controllerTest("PayeeEditController") as PayeeEditController;
-	}));
+	}) as Mocha.HookFunction);
 
 	describe("when a payee is provided", (): void => {
 		it("should make the passed payee available to the view", (): Chai.Assertion => payeeEditController.payee.should.deep.equal(payee));

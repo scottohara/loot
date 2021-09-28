@@ -1,5 +1,5 @@
-import { Category } from "categories/types";
-import { SinonStub } from "sinon";
+import type { Category } from "categories/types";
+import type { SinonStub } from "sinon";
 
 export interface CategoryModelMock {
 	recent: string;

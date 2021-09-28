@@ -20,7 +20,7 @@ import {
 	transactionsIndexHeading,
 	transactionsTable
 } from "transactions";
-import { Security } from "securities/types";
+import type { Security } from "securities/types";
 import { testNavigableTable } from "og-components/og-table-navigable";
 
 describe("Security Index", (): void => {

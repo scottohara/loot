@@ -1,5 +1,5 @@
-import OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
-import { SinonStub } from "sinon";
+import type OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
+import type { SinonStub } from "sinon";
 
 export interface OgInputCurrencyControllerType {
 	type: "ogInputCurrencyController";

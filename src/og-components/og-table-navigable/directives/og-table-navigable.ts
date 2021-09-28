@@ -1,9 +1,9 @@
-import {
+import type {
 	OgTableActionCallback,
 	OgTableMovementKeys,
 	OgTableNavigableScope
 } from "og-components/og-table-navigable/types";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 
 export default class OgTableNavigableDirective {
@@ -33,10 +33,8 @@ export default class OgTableNavigableDirective {
 					// Store the focussed row index
 					scope.focussedRow = rowIndex;
 
-					// If a focus action is defined, invoke it for the focussed row
-					if ("function" === typeof scope.handlers.focusAction) {
-						scope.handlers.focusAction(rowIndex);
-					}
+					// Invoke the focus action for the focussed row
+					scope.handlers.focusAction(rowIndex);
 				};
 
 				// Highlight the focussed row in the table
@@ -117,11 +115,6 @@ export default class OgTableNavigableDirective {
 				// Declare a double-click handler to perform an action on a row
 				scope.doubleClickHandler = (event: JQueryMouseEventObject): void => {
 					if (ogTableNavigableService.enabled) {
-						// If a select action wasn't specified for the directive, do nothing
-						if ("function" !== typeof scope.handlers.selectAction) {
-							return;
-						}
-
 						// If the event target was a button, do nothing
 						if ("button" === event.target.localName) {
 							return;
@@ -152,7 +145,7 @@ export default class OgTableNavigableDirective {
 					}
 				};
 
-				const	MOVEMENT_KEYS: {[keyCode: number]: OgTableMovementKeys;} = {
+				const	MOVEMENT_KEYS: Record<number, OgTableMovementKeys> = {
 								// Page up
 								33: -10,
 
@@ -171,7 +164,7 @@ export default class OgTableNavigableDirective {
 								// K
 								75: -1
 							},
-							ACTION_KEYS: {[keyCode: number]: OgTableActionCallback | undefined;} = {
+							ACTION_KEYS: Record<number, OgTableActionCallback | undefined> = {
 								// Backspace
 								8: scope.handlers.deleteAction,
 
@@ -187,7 +180,7 @@ export default class OgTableNavigableDirective {
 								// Delete
 								46: scope.handlers.deleteAction
 							},
-							CTRL_ACTION_KEYS: {[keyCode: number]: OgTableActionCallback;} = {
+							CTRL_ACTION_KEYS: Record<number, OgTableActionCallback> = {
 								// CTRL+E
 								69: scope.handlers.editAction,
 

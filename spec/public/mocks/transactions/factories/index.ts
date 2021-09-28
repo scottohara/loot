@@ -1,4 +1,4 @@
-import {
+import type {
 	BasicTransaction,
 	SecurityHoldingTransaction,
 	SplitTransaction,
@@ -23,7 +23,7 @@ import createSecurity from "mocks/securities/factories";
 
 let id = 1;
 
-function createPartialTransaction(props: Partial<Transaction | SplitTransactionChild>): Partial<Transaction | SplitTransactionChild> {
+function createPartialTransaction(props: Partial<SplitTransactionChild | Transaction>): Partial<SplitTransactionChild | Transaction> {
 	id++;
 
 	return {
@@ -34,19 +34,19 @@ function createPartialTransaction(props: Partial<Transaction | SplitTransactionC
 		transaction_date: subDays(startOfDay(new Date()), 1),
 		status: "" as TransactionStatus,
 		...props
-	};
+	} as Partial<Transaction>;
 }
 
-function createPartialCashTransaction(props: Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild>): Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild> {
+function createPartialCashTransaction(props: Partial<BasicTransaction | SplitTransaction | SubtransferTransaction | TransferTransaction>): Partial<BasicTransaction | SplitTransaction | SubtransferTransaction | TransferTransaction> {
 	return createPartialTransaction({
 		amount: 0,
 		primary_account: createAccount({ id: 1, name: "Account 1" }),
 		direction: "inflow" as TransactionDirection,
 		...props
-	}) as Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild>;
+	}) as Partial<BasicTransaction | SplitTransaction | SubtransferTransaction | TransferTransaction>;
 }
 
-function createPartialPayeeTransaction(props: Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild>): Partial<BasicTransaction | TransferTransaction | SplitTransaction | SplitTransactionChild> {
+function createPartialPayeeTransaction(props: Partial<BasicTransaction | SplitTransaction | SubtransferTransaction | TransferTransaction>): Partial<BasicTransaction | SplitTransaction | SubtransferTransaction | TransferTransaction> {
 	return createPartialCashTransaction({ payee: createPayee({ id: 1, name: "Payee 1" }), ...props });
 }
 

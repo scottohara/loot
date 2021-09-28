@@ -1,5 +1,5 @@
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
 
 export default class PayeeDeleteController {
 	public errorMessage: string | null = null;

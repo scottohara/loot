@@ -1,10 +1,10 @@
-import {
+import type {
 	Account,
 	AccountType,
 	Accounts,
 	StoredAccountType
 } from "accounts/types";
-import {
+import type {
 	CashTransaction,
 	CategorisableTransaction,
 	PayeeCashTransaction,
@@ -18,11 +18,11 @@ import {
 	TransactionType,
 	TransferrableTransaction
 } from "transactions/types";
-import {
+import type {
 	Category,
 	DisplayCategory
 } from "categories/types";
-import {
+import type {
 	ScheduleFrequency,
 	ScheduledTransaction
 } from "schedules/types";
@@ -33,21 +33,21 @@ import {
 	addYears,
 	startOfDay
 } from "date-fns";
-import AccountModel from "accounts/models/account";
-import CategoryModel from "categories/models/category";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import { Payee } from "payees/types";
-import PayeeModel from "payees/models/payee";
-import ScheduleModel from "schedules/models/schedule";
-import { Security } from "securities/types";
-import SecurityModel from "securities/models/security";
-import TransactionModel from "transactions/models/transaction";
+import type AccountModel from "accounts/models/account";
+import type CategoryModel from "categories/models/category";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type { Payee } from "payees/types";
+import type PayeeModel from "payees/models/payee";
+import type ScheduleModel from "schedules/models/schedule";
+import type { Security } from "securities/types";
+import type SecurityModel from "securities/models/security";
+import type TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 
 export default class ScheduleEditController {
 	public transaction: ScheduledTransaction;
 
-	public mode: "Enter Transaction" | "Add Schedule" | "Edit Schedule";
+	public mode: "Add Schedule" | "Edit Schedule" | "Enter Transaction";
 
 	public readonly schedule: ScheduledTransaction;
 
@@ -176,7 +176,7 @@ export default class ScheduleEditController {
 	}
 
 	// Returns true if the passed value is typeof string (and is not empty)
-	public isString(object: string | Record<string, unknown>): boolean {
+	public isString(object: Record<string, unknown> | string): boolean {
 		return "string" === typeof object && object.length > 0;
 	}
 
@@ -214,8 +214,8 @@ export default class ScheduleEditController {
 
 	// Handler for category changes (`index` is the subtransaction index, or null for the main schedule)
 	public categorySelected(index?: number): void {
-		const transaction: Transaction | SplitTransactionChild = isNaN(Number(index)) ? this.transaction : (this.transaction as SplitTransaction).subtransactions[Number(index)];
-		let	type: TransactionType | SubtransactionType | undefined,
+		const transaction: SplitTransactionChild | Transaction = isNaN(Number(index)) ? this.transaction : (this.transaction as SplitTransaction).subtransactions[Number(index)];
+		let	type: SubtransactionType | TransactionType | undefined,
 				direction: TransactionDirection | undefined,
 				parentId: number | undefined;
 
@@ -534,7 +534,7 @@ export default class ScheduleEditController {
 	}
 
 	// Merges the details of a previous transaction into the current one
-	private useLastTransaction(transaction?: ScheduledTransaction): void {
+	private useLastTransaction(transaction?: Partial<ScheduledTransaction>): void {
 		if (undefined === transaction) {
 			return;
 		}
@@ -546,7 +546,7 @@ export default class ScheduleEditController {
 		delete transaction.transaction_date;
 		delete transaction.frequency;
 		delete transaction.status;
-		delete (transaction as TransferrableTransaction).related_status;
+		delete (transaction as Partial<TransferrableTransaction>).related_status;
 
 		// Retain the schedule's flag (if any), don't overwrite with the previous transaction's flag
 		transaction.flag = this.transaction.flag;
@@ -571,7 +571,7 @@ export default class ScheduleEditController {
 					QUARTER = 1,
 					YEAR = 1;
 
-		let addFn: (nextDue: Date, amount: number) => Date = addWeeks,
+		let addFn = addWeeks,
 				amount = 0;
 
 		switch (this.schedule.frequency) {

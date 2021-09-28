@@ -1,4 +1,4 @@
-import { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
 
 export default class OgModalErrorService {

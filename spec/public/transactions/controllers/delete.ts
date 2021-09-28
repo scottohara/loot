@@ -1,9 +1,9 @@
-import { ControllerTestFactory } from "mocks/types";
-import MockDependenciesProvider from "mocks/loot/mockdependencies";
-import { Transaction } from "transactions/types";
-import TransactionDeleteController from "transactions/controllers/delete";
-import { TransactionModelMock } from "mocks/transactions/types";
-import { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "mocks/types";
+import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+import type { Transaction } from "transactions/types";
+import type TransactionDeleteController from "transactions/controllers/delete";
+import type { TransactionModelMock } from "mocks/transactions/types";
+import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("TransactionDeleteController", (): void => {
@@ -13,7 +13,7 @@ describe("TransactionDeleteController", (): void => {
 			transaction: Transaction;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])));
+	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "transactionModel", "transaction"])) as Mocha.HookFunction);
 
 	// Configure & compile the object under test
 	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _transactionModel_: TransactionModelMock, _transaction_: Transaction): void => {
@@ -21,7 +21,7 @@ describe("TransactionDeleteController", (): void => {
 		transactionModel = _transactionModel_;
 		transaction = _transaction_;
 		transactionDeleteController = controllerTest("TransactionDeleteController") as TransactionDeleteController;
-	}));
+	}) as Mocha.HookFunction);
 
 	it("should make the passed transaction available to the view", (): Chai.Assertion => transactionDeleteController["transaction"].should.deep.equal(transaction));
 

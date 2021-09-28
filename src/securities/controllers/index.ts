@@ -1,16 +1,16 @@
 import "../css/index.less";
-import {
+import type {
 	OgTableActionHandlers,
 	OgTableActions
 } from "og-components/og-table-navigable/types";
-import { OgModalAlert } from "og-components/og-modal-alert/types";
+import type { OgModalAlert } from "og-components/og-modal-alert/types";
 import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
-import OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import { Security } from "securities/types";
+import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type { Security } from "securities/types";
 import SecurityDeleteView from "securities/views/delete.html";
 import SecurityEditView from "securities/views/edit.html";
-import SecurityModel from "securities/models/security";
+import type SecurityModel from "securities/models/security";
 import angular from "angular";
 
 export default class SecurityIndexController {
@@ -60,7 +60,7 @@ export default class SecurityIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.securities.security" }, (transition: angular.ui.IState): number => this.focusSecurity(Number(transition.params("to").id))));
+		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.securities.security" }, (transition: angular.ui.IState): number => this.focusSecurity(Number(transition.params("to").id))) as () => void);
 	}
 
 	public editSecurity(index?: number): void {
@@ -182,7 +182,7 @@ export default class SecurityIndexController {
 	}
 
 	// Finds a specific security and focusses that row in the table
-	private focusSecurity(securityIdToFocus: string | number): number {
+	private focusSecurity(securityIdToFocus: number | string): number {
 		const delay = 50;
 		let targetIndex = NaN;
 
