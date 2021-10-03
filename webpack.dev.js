@@ -6,7 +6,6 @@ const { merge } = require("webpack-merge"),
 				cssRule,
 				fontRule,
 				iconRule,
-				cleanBuildDirectory,
 				providejQuery,
 				extractCss,
 				createIndexHtml,
@@ -56,7 +55,6 @@ module.exports = merge(config, {
 
 	plugins: [
 		providejQuery,
-		cleanBuildDirectory,
 		extractCss(),
 		createIndexHtml,
 		copyStaticAssets,

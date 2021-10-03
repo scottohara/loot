@@ -1,7 +1,6 @@
 const path = require("path"),
 			webpack = require("webpack"),
 			MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-			{ CleanWebpackPlugin } = require("clean-webpack-plugin"),
 			HtmlWebpackPlugin = require("html-webpack-plugin"),
 			CopyWebpackPlugin = require("copy-webpack-plugin"),
 			{ GenerateSW } = require("workbox-webpack-plugin"),
@@ -100,9 +99,6 @@ const	entry = {
 				]
 			},
 
-			// Cleans the build directory
-			cleanBuildDirectory = new CleanWebpackPlugin(),
-
 			/*
 			 * Exposes a global jQuery object (Bootstrap expects this global to exist)
 			 * window.jQuery is needed to prevent Angular from using jqLite
@@ -192,7 +188,6 @@ module.exports = {
 	cssRule,
 	fontRule,
 	iconRule,
-	cleanBuildDirectory,
 	providejQuery,
 	extractCss,
 	createIndexHtml,
