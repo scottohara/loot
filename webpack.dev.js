@@ -47,7 +47,6 @@ module.exports = merge(config, {
 
 	devServer: {
 		open: true,
-		overlay: true,
 		proxy: {
 			"/": "http://localhost:5000"
 		}
