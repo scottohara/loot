@@ -155,6 +155,8 @@ const	entry = {
 				},
 
 				optimization: {
+					// Remove in webpack 5
+					moduleIds: "hashed",
 					splitChunks: {
 						chunks: "all",
 						minSize: 0,

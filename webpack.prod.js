@@ -1,5 +1,4 @@
-const webpack = require("webpack"),
-			{ CleanWebpackPlugin } = require("clean-webpack-plugin"),
+const { CleanWebpackPlugin } = require("clean-webpack-plugin"),
 			{ merge } = require("webpack-merge"),
 			{
 				entry,
@@ -40,12 +39,6 @@ module.exports = merge(config, {
 	devtool: "source-map",
 
 	plugins: [
-		/*
-		 * Ensure that bundles only change when necessary by using a hash of the content for the module id
-		 * instead of a numbers derived from the order of dependencies in the graph
-		 */
-		new webpack.HashedModuleIdsPlugin(),
-
 		providejQuery,
 
 		// Cleans the build directory
