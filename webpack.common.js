@@ -13,7 +13,9 @@ const	entry = {
 
 			// Default output
 			output = {
-				path: path.resolve(__dirname, "public")
+				path: path.resolve(__dirname, "public"),
+				assetModuleFilename: "[name][ext]",
+				clean: true
 			},
 
 			// Rule for *.ts processing
@@ -50,27 +52,16 @@ const	entry = {
 			// Rule for font processing
 			fontRule = {
 				test: /\.(?:ttf|woff|woff2|eot|svg)$/u,
-				loader: "url-loader",
-				options: {
-					// Use file-loader for anything bigger than 1 byte
-					limit: 1,
-
-					// Include a hash in the file name
-					name: "fonts/[name]-[hash:6].[ext]"
+				type: "asset/resource",
+				generator: {
+					filename: "fonts/[name][ext]"
 				}
 			},
 
 			// Rule for *.ico processing
 			iconRule = {
 				test: /\.ico$/u,
-				loader: "url-loader",
-				options: {
-					// Use file-loader for anything bigger than 1 byte
-					limit: 1,
-
-					// Include a hash in the file name
-					name: "[name]-[hash:6].[ext]"
-				}
+				type: "asset/resource"
 			},
 
 			// Rule for *.html processing
@@ -88,12 +79,17 @@ const	entry = {
 					{
 						loader: "html-loader",
 						options: {
-							attributes: {
+							sources: {
 								list: [
 									"...",
-									{ attribute: "typeahead-template-url", type: "src" }
+									{
+										tag: "input",
+										attribute: "typeahead-template-url",
+										type: "src"
+									}
 								]
-							}
+							},
+							esModule: false
 						}
 					}
 				]
@@ -110,7 +106,7 @@ const	entry = {
 			}),
 
 			// Creates index.html with the bundled resources
-			createIndexHtml = new HtmlWebpackPlugin({ scriptLoading: "defer" }),
+			createIndexHtml = new HtmlWebpackPlugin(),
 
 			// Copies static resources to the build directory
 			copyStaticAssets = new CopyWebpackPlugin({
@@ -146,7 +142,7 @@ const	entry = {
 				resolve: {
 					extensions: [
 						".ts",
-						".js"
+						"..."
 					],
 					modules: [
 						path.resolve(__dirname, "src"),
@@ -155,20 +151,13 @@ const	entry = {
 				},
 
 				optimization: {
-					// Remove in webpack 5
-					moduleIds: "hashed",
 					splitChunks: {
 						chunks: "all",
 						minSize: 0,
 						cacheGroups: {
-							app: {
-								name: "app",
-								priority: 10
-							},
-							vendor: {
+							defaultVendors: {
 								name: "vendor",
-								test: /[\\/]node_modules[\\/]/u,
-								priority: 20
+								test: /[\\/]node_modules[\\/]/u
 							}
 						}
 					},
@@ -179,8 +168,8 @@ const	entry = {
 				bail: true
 			};
 
-function extractCss(hashFilename) {
-	return new MiniCssExtractPlugin({ filename: undefined === hashFilename ? "[name].css" : "[name]-[chunkhash:6].css" });
+function extractCss(options = undefined) {
+	return new MiniCssExtractPlugin(options);
 }
 
 module.exports = {

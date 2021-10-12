@@ -19,28 +19,22 @@ module.exports = merge(config, {
 	entry,
 
 	// Use default output, with no hash in file names
-	output: merge(output, {
-		filename: "[name].js"
-	}),
+	output,
 
 	module: {
 		rules: [
 			lessRule,
 			cssRule,
-			merge(fontRule, {
-				options: {
-					// No hash in file names
-					name: "fonts/[name].[ext]"
-				}
-			}),
-			merge(iconRule, {
-				options: {
-					// No hash in file names
-					name: "[name].[ext]"
-				}
-			})
+			fontRule,
+			iconRule
 		]
 	},
+
+	resolve: merge(config.resolve, {
+		fallback: {
+			punycode: false
+		}
+	}),
 
 	// Eval source maps
 	devtool: "eval-source-map",

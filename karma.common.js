@@ -6,7 +6,7 @@ module.exports = {
 	 * Frameworks to use
 	 * available frameworks: https://npmjs.org/browse/keyword/karma-adapter
 	 */
-	frameworks: ["mocha", "chai-sinon"],
+	frameworks: ["mocha", "chai-sinon", "webpack"],
 
 	// List of files / patterns to load in the browser
 	files: [

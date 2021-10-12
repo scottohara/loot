@@ -1,5 +1,4 @@
-const { CleanWebpackPlugin } = require("clean-webpack-plugin"),
-			{ merge } = require("webpack-merge"),
+const { merge } = require("webpack-merge"),
 			{
 				entry,
 				output,
@@ -23,14 +22,21 @@ module.exports = merge(config, {
 
 	// Use default output with chunk hash in file names
 	output: merge(output, {
-		filename: "[name]-[chunkhash:6].js"
+		hashDigestLength: 6,
+		filename: "[name]-[chunkhash].js",
+		assetModuleFilename: "[name]-[contenthash][ext]"
 	}),
 
 	module: {
 		rules: [
 			lessRule,
 			cssRule,
-			fontRule,
+			merge(fontRule, {
+				generator: {
+					// Include hash in file names
+					filename: "fonts/[name]-[contenthash][ext]"
+				}
+			}),
 			iconRule
 		]
 	},
@@ -40,11 +46,7 @@ module.exports = merge(config, {
 
 	plugins: [
 		providejQuery,
-
-		// Cleans the build directory
-		new CleanWebpackPlugin(),
-
-		extractCss(true),
+		extractCss({ filename: "[name]-[chunkhash].css" }),
 		createIndexHtml,
 		copyStaticAssets,
 		generateServiceWorker
