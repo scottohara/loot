@@ -200,7 +200,7 @@ describe("ScheduleEditController", (): void => {
 		describe("(parent categories)", (): void => {
 			it("should fetch the list of parent categories", (): void => {
 				categories = scheduleEditController.categories("a", 3);
-				categoryModel.all.should.have.been.calledWith(null);
+				categoryModel.all.should.have.been.calledWith(undefined);
 			});
 
 			it("should include transfer categories", async (): Promise<Chai.Assertion> => (await scheduleEditController.categories("a", 5)).should.deep.equal([

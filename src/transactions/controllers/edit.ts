@@ -100,10 +100,7 @@ export default class TransactionEditController {
 			return [];
 		}
 
-		// If the parent was specified, pass the parent's id
-		const parentId: number | null = undefined === parent || null === parent ? null : Number(parent.id);
-
-		return this.categoryModel.all(parentId).then((categories: Category[]): DisplayCategory[] => {
+		return this.categoryModel.all(parent?.id).then((categories: Category[]): DisplayCategory[] => {
 			let psuedoCategories: DisplayCategory[] = categories;
 
 			// For the category dropdown, include psuedo-categories that change the transaction type
@@ -272,8 +269,8 @@ export default class TransactionEditController {
 		}
 
 		// Update the transaction type & direction
-		transaction.transaction_type = undefined === type ? isNaN(Number(index)) ? "Basic" : "Sub" : type;
-		transaction.direction = undefined === direction ? "outflow" : direction;
+		transaction.transaction_type = type ?? (isNaN(Number(index)) ? "Basic" : "Sub");
+		transaction.direction = direction ?? "outflow";
 
 		// Make sure the subcategory is still valid
 		if (undefined !== (transaction as SubcategorisableTransaction).subcategory && null !== (transaction as SubcategorisableTransaction).subcategory && ((transaction as SubcategorisableTransaction).subcategory as Category).parent_id !== parentId) {
@@ -502,8 +499,8 @@ export default class TransactionEditController {
 		 * For any that have changed, invalidate the original from the $http cache
 		 */
 		angular.forEach(Object.keys(models), (key: keyof Transaction): void => {
-			const	originalValue: number | null = undefined === this.originalTransaction[key] || null === this.originalTransaction[key] ? null : Number((this.originalTransaction[key] as Entity).id),
-						savedValue: number | null = undefined === savedTransaction[key] || null === savedTransaction[key] ? null : Number((savedTransaction[key] as Entity).id);
+			const	originalValue: number | null = (this.originalTransaction[key] as Entity | undefined)?.id ?? null,
+						savedValue: number | null = (savedTransaction[key] as Entity | undefined)?.id ?? null;
 
 			if (null !== originalValue && originalValue !== savedValue) {
 				models[key].flush(originalValue);

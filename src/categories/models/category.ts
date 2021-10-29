@@ -36,7 +36,7 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 	private get recentCategories(): OgCacheEntry[] {
 		const recentCategories: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
-		return JSON.parse(null === recentCategories ? "[]" : recentCategories) as OgCacheEntry[];
+		return JSON.parse(recentCategories ?? "[]") as OgCacheEntry[];
 	}
 
 	// Returns the API path

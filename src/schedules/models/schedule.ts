@@ -48,7 +48,7 @@ export default class ScheduleModel {
 
 		return this.$http({
 			method: null === schedule.id ? "POST" : "PATCH",
-			url: this.path(null === schedule.id ? undefined : Number(schedule.id)),
+			url: this.path(schedule.id ?? undefined),
 			data: this.stringify(schedule)
 		}).then((response: angular.IHttpResponse<ScheduledTransaction>): ScheduledTransaction => this.parse(response.data));
 	}

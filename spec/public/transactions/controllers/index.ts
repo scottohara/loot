@@ -630,14 +630,14 @@ describe("TransactionIndexController", (): void => {
 			angular.forEach(scenarios, (scenario: { action: "delete" | "edit"; type: TransactionType; account_type?: "investment"; }): void => {
 				it(`should not prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction${undefined === scenario.account_type ? "" : ` from an ${scenario.account_type} acount`}`, (): void => {
 					transaction.transaction_type = scenario.type;
-					(transaction.primary_account as Account).account_type = undefined === scenario.account_type ? (transaction.primary_account as Account).account_type : scenario.account_type;
+					(transaction.primary_account as Account).account_type = scenario.account_type ?? (transaction.primary_account as Account).account_type;
 					transactionIndexController["isAllowed"](scenario.action, transaction);
 					transactionIndexController["promptToSwitchAccounts"].should.not.have.been.called;
 				});
 
 				it(`should return true when attempting to ${scenario.action} a ${scenario.type} transaction${undefined === scenario.account_type ? "" : ` from an ${scenario.account_type} acount`}`, (): void => {
 					transaction.transaction_type = scenario.type;
-					(transaction.primary_account as Account).account_type = undefined === scenario.account_type ? (transaction.primary_account as Account).account_type : scenario.account_type;
+					(transaction.primary_account as Account).account_type = scenario.account_type ?? (transaction.primary_account as Account).account_type;
 					transactionIndexController["isAllowed"](scenario.action, transaction).should.be.true;
 				});
 			});

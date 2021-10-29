@@ -191,7 +191,7 @@ export default class LootStatesProvider {
 				},
 				views: transactionViews,
 				onEnter: ["$stateParams", "queryService", "previousState", ($stateParams: angular.ui.IStateParamsService, queryService: QueryService, previousState: angular.ui.IState | null): void => {
-					queryService.previousState = null === previousState ? queryService.previousState : previousState;
+					queryService.previousState = previousState ?? queryService.previousState;
 					queryService.query = String($stateParams.query);
 				}],
 				onExit: ["queryService", (queryService: QueryService): void => {

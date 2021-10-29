@@ -40,7 +40,7 @@ export default class OgInputCalculatorDirective {
 											}
 										};
 
-							scope.ogInput = null === controllers[ogInputCurrency] as angular.IController | null ? controllers[ogInputNumber] as OgInputNumberController : controllers[ogInputCurrency] as OgInputCurrencyController;
+							scope.ogInput = controllers[ogInputCurrency] as OgInputCurrencyController | null ?? controllers[ogInputNumber] as OgInputNumberController;
 
 							// Push an operation onto the stack
 							scope.push = (operand: number, operator: OgInputCalculatorOperator): void => {

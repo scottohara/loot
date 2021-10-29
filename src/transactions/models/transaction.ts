@@ -98,7 +98,7 @@ export default class TransactionModel {
 
 		return this.$http({
 			method: null === transaction.id ? "POST" : "PATCH",
-			url: this.path(null === transaction.id ? undefined : Number(transaction.id)),
+			url: this.path(transaction.id ?? undefined),
 			data: this.stringify(transaction)
 		}).then((response: angular.IHttpResponse<Transaction>): Transaction => {
 			this.lastUsedTransactionDate = transaction.transaction_date;

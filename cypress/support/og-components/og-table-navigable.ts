@@ -107,8 +107,8 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 
 			beforeEach((): Action => (action = "select"));
 
-			it(`should display the ${headingText}${undefined === headingText2 ? "" : headingText2} view when a row is double clicked`, (): Cypress.Chainable<JQuery> => cy.get(rows).eq(0).dblclick());
-			it(`should display the ${headingText}${undefined === headingText2 ? "" : headingText2} view when the enter key is pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{enter}"));
+			it(`should display the ${headingText}${headingText2 ?? ""} view when a row is double clicked`, (): Cypress.Chainable<JQuery> => cy.get(rows).eq(0).dblclick());
+			it(`should display the ${headingText}${headingText2 ?? ""} view when the enter key is pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{enter}"));
 		});
 
 		afterEach((): void => {

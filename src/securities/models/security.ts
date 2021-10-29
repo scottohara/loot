@@ -38,7 +38,7 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 	private get recentSecurities(): OgCacheEntry[] {
 		const recentSecurities: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
-		return JSON.parse(null === recentSecurities ? "[]" : recentSecurities) as OgCacheEntry[];
+		return JSON.parse(recentSecurities ?? "[]") as OgCacheEntry[];
 	}
 
 	// Returns the API path

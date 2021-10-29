@@ -320,7 +320,7 @@ describe("Transaction Edit", (): void => {
 				});
 
 				transactions.forEach((transaction: TransactionEdit): void => {
-					describe(undefined === transaction.type ? transaction.memo : transaction.type, (): void => {
+					describe(transaction.type ?? transaction.memo, (): void => {
 						beforeEach((): void => {
 							expected = transaction;
 							populateFormWith(expected);

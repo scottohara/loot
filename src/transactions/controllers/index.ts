@@ -102,7 +102,7 @@ export default class TransactionIndexController {
 						public readonly transactionBatch: TransactionBatch) {
 		const self: this = this;
 
-		this.contextType = null === contextModel ? undefined : contextModel.type;
+		this.contextType = contextModel?.type;
 		this.firstTransactionDate = this.today;
 		this.lastTransactionDate = this.today;
 		this.reconcilable = "account" === this.contextType;
@@ -395,7 +395,7 @@ export default class TransactionIndexController {
 								break;
 
 							case "category":
-								newTransaction.category = undefined === (this.context as Category).parent || null === (this.context as Category).parent ? this.context as Category : (this.context as Category).parent as Category;
+								newTransaction.category = (this.context as Category).parent ?? this.context as Category;
 								newTransaction.subcategory = undefined === (this.context as Category).parent || null === (this.context as Category).parent ? null : this.context as Category;
 								break;
 
@@ -703,7 +703,7 @@ export default class TransactionIndexController {
 
 		this.$state.go(`root.${state}.transactions.transaction`, {
 			id,
-			transactionId: undefined === parentId || null === parentId ? transaction.id : parentId
+			transactionId: parentId ?? transaction.id
 		}).catch(this.showError);
 
 		if (null !== $event) {

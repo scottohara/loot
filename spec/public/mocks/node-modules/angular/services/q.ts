@@ -26,7 +26,7 @@ export default class QMockProvider implements Mock<QMock> {
 				}
 
 				// Otherwise, update the promise value to the callback result; and return the existing promise
-				promiseValue = undefined === result ? promiseValue : result;
+				promiseValue = result ?? promiseValue;
 
 				return promise;
 			}
@@ -68,21 +68,21 @@ export default class QMockProvider implements Mock<QMock> {
 						stub: SinonStub = sinon.stub();
 
 			// Auto-resolve the success promise with the specified success response
-			qSuccess.resolve(undefined === success ? null : (success as PromiseMockConfig<T>).response);
+			qSuccess.resolve((success as PromiseMockConfig<T> | undefined)?.response ?? null);
 
 			// Auto-reject the error promise with the specified error response
-			qError.reject(undefined !== error && undefined !== (error as PromiseMockConfig<T>).response ? (error as PromiseMockConfig<T>).response : { data: "unsuccessful" });
+			qError.reject((error as PromiseMockConfig<T> | undefined)?.response ?? { data: "unsuccessful" });
 
 			// Configure the stub to return the appropriate promise based on the call arguments
 			if (undefined === success || (angular.isObject(success) && undefined === (success as PromiseMockConfig<T>).args)) {
 				// No success args specified, so default response is a success
 				stub.returns(qSuccess.promise);
 			} else {
-				stub.withArgs(sinon.match((undefined === (success as PromiseMockConfig<T>).args ? success : (success as PromiseMockConfig<T>).args) as Record<string, unknown>)).returns(qSuccess.promise);
+				stub.withArgs(sinon.match(((success as PromiseMockConfig<T>).args ?? success) as Record<string, unknown>)).returns(qSuccess.promise);
 			}
 
 			if (undefined !== error) {
-				stub.withArgs(sinon.match((undefined === (error as PromiseMockConfig<T>).args ? error : (error as PromiseMockConfig<T>).args) as Record<string, unknown>)).returns(qError.promise);
+				stub.withArgs(sinon.match(((error as PromiseMockConfig<T>).args ?? error) as Record<string, unknown>)).returns(qError.promise);
 			}
 
 			return stub;

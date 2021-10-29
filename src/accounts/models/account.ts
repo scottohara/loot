@@ -42,7 +42,7 @@ export default class AccountModel implements Cacheable<Account>, Favouritable<Ac
 	private get recentAccounts(): OgCacheEntry[] {
 		const recentAccounts: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
-		return JSON.parse(null === recentAccounts ? "[]" : recentAccounts) as OgCacheEntry[];
+		return JSON.parse(recentAccounts ?? "[]") as OgCacheEntry[];
 	}
 
 	// Returns the API path

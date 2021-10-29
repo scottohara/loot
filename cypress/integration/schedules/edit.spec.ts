@@ -331,7 +331,7 @@ describe("Schedule Edit", (): void => {
 		});
 
 		schedules.forEach((schedule: ScheduleEdit): void => {
-			describe(undefined === schedule.type ? schedule.memo : schedule.type, (): void => {
+			describe(schedule.type ?? schedule.memo, (): void => {
 				beforeEach((): void => {
 					expected = schedule;
 					populateFormWith(expected);

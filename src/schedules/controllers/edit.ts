@@ -133,10 +133,7 @@ export default class ScheduleEditController {
 			return [];
 		}
 
-		// If the parent was specified, pass the parent's id
-		const parentId: number | null = undefined === parent || null === parent ? null : Number(parent.id);
-
-		return this.categoryModel.all(parentId).then((categories: Category[]): DisplayCategory[] => {
+		return this.categoryModel.all(parent?.id).then((categories: Category[]): DisplayCategory[] => {
 			let psuedoCategories: DisplayCategory[] = categories;
 
 			// For the category dropdown, include psuedo-categories that change the transaction type
@@ -305,8 +302,8 @@ export default class ScheduleEditController {
 		}
 
 		// Update the transaction type & direction
-		transaction.transaction_type = undefined === type ? isNaN(Number(index)) ? "Basic" : "Sub" : type;
-		transaction.direction = undefined === direction ? "outflow" : direction;
+		transaction.transaction_type = type ?? (isNaN(Number(index)) ? "Basic" : "Sub");
+		transaction.direction = direction ?? "outflow";
 
 		// Make sure the subcategory is still valid
 		if (undefined !== (transaction as SubcategorisableTransaction).subcategory && null !== (transaction as SubcategorisableTransaction).subcategory && ((transaction as SubcategorisableTransaction).subcategory as Category).parent_id !== parentId) {
@@ -367,7 +364,7 @@ export default class ScheduleEditController {
 
 	// Handler for primary account changes
 	public primaryAccountSelected(): void {
-		const selectedAccountType: AccountType | null = undefined === this.transaction.primary_account as Account | undefined ? null : this.transaction.primary_account.account_type;
+		const selectedAccountType: AccountType | null = (this.transaction.primary_account as Account | undefined)?.account_type ?? null;
 
 		if (null !== this.account_type && this.account_type !== selectedAccountType) {
 			(this.transaction as CategorisableTransaction).category = null;
@@ -492,7 +489,7 @@ export default class ScheduleEditController {
 
 		// Ensure the flag is appropriately set or cleared
 		if (this.schedule.autoFlag) {
-			this.schedule.flag = undefined === this.schedule.flag || null === this.schedule.flag ? "(no memo)" : this.schedule.flag;
+			this.schedule.flag ??= "(no memo)";
 		} else {
 			this.schedule.flag = null;
 		}

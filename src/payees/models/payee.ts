@@ -38,7 +38,7 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 	private get recentPayees(): OgCacheEntry[] {
 		const recentPayees: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
 
-		return JSON.parse(null === recentPayees ? "[]" : recentPayees) as OgCacheEntry[];
+		return JSON.parse(recentPayees ?? "[]") as OgCacheEntry[];
 	}
 
 	// Returns the API path

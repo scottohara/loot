@@ -53,7 +53,7 @@ export default class OgTableNavigableDirective {
 					// Get the top/bottom of the focussed row, and the top/bottom of the viewport
 					const	rowOffset: JQueryCoordinates | undefined = row.offset(),
 								viewTop = Number($window.$(document).scrollTop()),
-								rowTop: number = undefined === rowOffset ? viewTop : rowOffset.top,
+								rowTop: number = rowOffset?.top ?? viewTop,
 								rowBottom: number = rowTop + Number(row.height()),
 								viewBottom: number = viewTop + Number($window.$(window).height()),
 								scrollNeeded: boolean = rowTop < viewTop || rowBottom > viewBottom;
@@ -203,9 +203,7 @@ export default class OgTableNavigableDirective {
 							const callback = ACTION_KEYS[event.keyCode];
 
 							// If an action is defined, invoke it for the focussed row
-							if (undefined !== callback) {
-								callback(Number(scope.focussedRow));
-							}
+							callback?.(Number(scope.focussedRow));
 							event.preventDefault();
 						}
 
