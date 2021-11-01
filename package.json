@@ -42,7 +42,7 @@
     "copy-webpack-plugin": "9.0.1",
     "coverage-istanbul-loader": "3.0.5",
     "css-loader": "6.4.0",
-    "cypress": "6.8.0",
+    "cypress": "8.7.0",
     "eslint": "7.32.0",
     "eslint-config-oharagroup": "3.8.2",
     "html-loader": "2.1.2",
