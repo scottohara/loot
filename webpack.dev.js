@@ -30,12 +30,6 @@ module.exports = merge(config, {
 		]
 	},
 
-	resolve: merge(config.resolve, {
-		fallback: {
-			punycode: false
-		}
-	}),
-
 	// Eval source maps
 	devtool: "eval-source-map",
 
