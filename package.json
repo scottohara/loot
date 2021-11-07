@@ -75,7 +75,7 @@
     "workbox-webpack-plugin": "6.3.0"
   },
   "scripts": {
-    "start": "heroku local --procfile Procfile.dev",
+    "start": "heroku local --procfile Procfile.dev --port 3000",
     "start:db": "postgres -D /usr/local/var/postgres",
     "build": "webpack --progress --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
@@ -83,7 +83,7 @@
     "test": "npm run lint && npm run test:coverage",
     "test:bdd": "karma start karma-bdd.conf.js",
     "test:coverage": "karma start",
-    "test:e2e": "npm run build && heroku local --procfile Procfile.test"
+    "test:e2e": "npm run build && heroku local --procfile Procfile.test --port 3000"
   },
   "engines": {
     "node": "16.9.1",

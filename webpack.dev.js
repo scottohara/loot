@@ -36,7 +36,7 @@ module.exports = merge(config, {
 	devServer: {
 		open: true,
 		proxy: {
-			"/": "http://localhost:5000"
+			"/": "http://localhost:3000"
 		}
 	},
 
