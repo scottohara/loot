@@ -25,8 +25,6 @@ Getting Started
 8. Start the database server and app server in dev mode (`npm start`)
 9. Browse to http://localhost:8080/index.html and login using the credentials configured at step #8
 
-(Tip: In Chrome DevTools > Application > Service Workers, enable the "Update on reload" option so that all changes appear immediately on reload)
-
 Exporting MS Money data
 =======================
 To get data out of MS Money and into Loot, I'm using the excellent [Sunriise](http://sourceforge.net/projects/sunriise/) project to access the underlying data from my \*.mny file, and export it as a set of CSV files.

@@ -1,4 +1,6 @@
 const { merge } = require("webpack-merge"),
+			{ GenerateSW } = require("workbox-webpack-plugin"),
+			packageJson = require("./package"),
 			{
 				entry,
 				output,
@@ -10,7 +12,6 @@ const { merge } = require("webpack-merge"),
 				extractCss,
 				createIndexHtml,
 				copyStaticAssets,
-				generateServiceWorker,
 				config
 			} = require("./webpack.common");
 
@@ -49,7 +50,11 @@ module.exports = merge(config, {
 		extractCss({ filename: "[name]-[chunkhash].css" }),
 		createIndexHtml,
 		copyStaticAssets,
-		generateServiceWorker
+		new GenerateSW({
+			cacheId: packageJson.name,
+			skipWaiting: true,
+			clientsClaim: true
+		})
 	],
 
 	// Fail if any chunks exceed performance budget

@@ -2,9 +2,7 @@ const path = require("path"),
 			webpack = require("webpack"),
 			MiniCssExtractPlugin = require("mini-css-extract-plugin"),
 			HtmlWebpackPlugin = require("html-webpack-plugin"),
-			CopyWebpackPlugin = require("copy-webpack-plugin"),
-			{ GenerateSW } = require("workbox-webpack-plugin"),
-			packageJson = require("./package");
+			CopyWebpackPlugin = require("copy-webpack-plugin");
 
 // Default entry
 const	entry = {
@@ -116,13 +114,6 @@ const	entry = {
 				]
 			}),
 
-			// Generate a service worker to precache static assets
-			generateServiceWorker = new GenerateSW({
-				cacheId: packageJson.name,
-				skipWaiting: true,
-				clientsClaim: true
-			}),
-
 			// Default config
 			config = {
 				mode: "development",
@@ -183,6 +174,5 @@ module.exports = {
 	extractCss,
 	createIndexHtml,
 	copyStaticAssets,
-	generateServiceWorker,
 	config
 };

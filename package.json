@@ -44,7 +44,7 @@
     "css-loader": "6.4.0",
     "cypress": "8.7.0",
     "eslint": "7.32.0",
-    "eslint-config-oharagroup": "3.8.2",
+    "eslint-config-oharagroup": "3.8.3",
     "html-loader": "2.1.2",
     "html-webpack-plugin": "5.4.0",
     "ignore-loader": "0.1.2",

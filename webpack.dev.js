@@ -10,13 +10,12 @@ const { merge } = require("webpack-merge"),
 				extractCss,
 				createIndexHtml,
 				copyStaticAssets,
-				generateServiceWorker,
 				config
 			} = require("./webpack.common");
 
 module.exports = merge(config, {
 	// Use default entry
-	entry,
+	entry: merge(entry, { "service-worker": "service-worker" }),
 
 	// Use default output, with no hash in file names
 	output,
@@ -44,7 +43,6 @@ module.exports = merge(config, {
 		providejQuery,
 		extractCss(),
 		createIndexHtml,
-		copyStaticAssets,
-		generateServiceWorker
+		copyStaticAssets
 	]
 });

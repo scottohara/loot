@@ -4,6 +4,11 @@
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"incremental": true,
+		"lib": [
+			"DOM",
+			"ES2020",
+			"WebWorker"
+		],
 		"module": "es2020",
 		"moduleResolution": "node",
 		"noFallthroughCasesInSwitch": true,
