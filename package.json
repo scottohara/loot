@@ -76,7 +76,7 @@
   },
   "scripts": {
     "start": "heroku local --procfile Procfile.dev --port 3000",
-    "start:db": "postgres -D /usr/local/var/postgres",
+    "start:db": "postgres -D /opt/homebrew/var/postgres",
     "build": "webpack --progress --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
     "lint": "eslint 'src/**/*.{ts,js}' 'spec/public/**/*.{ts,js}' 'cypress/**/*.{ts,js}' '*.{ts,js}'",
