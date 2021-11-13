@@ -13,7 +13,7 @@ require 'rails_helper'
 				actual.investment_account.direction.eql?(expected['direction']) &&
 				actual.investment_account.status.eql?(expected['status']) &&
 				actual.investment_account.account.eql?(investment_account) &&
-				actual.cash_account.direction.eql?(expected['direction'].eql?('inflow') && 'outflow' || 'inflow') &&
+				actual.cash_account.direction.eql?((expected['direction'].eql?('inflow') && 'outflow') || 'inflow') &&
 				actual.cash_account.status.eql?(expected['related_status']) &&
 				actual.cash_account.account.eql?(cash_account)
 		end

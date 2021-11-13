@@ -7,7 +7,7 @@ class SecuritySerializer < ::ActiveModel::Serializer
 
 	def current_holding
 		object.transactions.for_current_holding.reduce(0) do |holding, security|
-			holding + security.total_quantity * (security.direction.eql?('inflow') ? 1 : -1)
+			holding + (security.total_quantity * (security.direction.eql?('inflow') ? 1 : -1))
 		end
 	end
 

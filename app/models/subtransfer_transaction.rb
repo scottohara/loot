@@ -13,7 +13,7 @@ class SubtransferTransaction < PayeeCashTransaction
 
 	class << self
 		def create_from_json(json)
-			direction = json['direction'].eql?('inflow') && 'outflow' || 'inflow'
+			direction = (json['direction'].eql?('inflow') && 'outflow') || 'inflow'
 
 			s = super
 			s.build_transaction_account(direction: direction, status: json['status']).account = ::Account.find json['account']['id']
@@ -25,8 +25,8 @@ class SubtransferTransaction < PayeeCashTransaction
 		super.merge(
 			primary_account: account.as_json,
 			category: {
-				id: options[:direction].eql?('inflow') && 'TransferFrom' || 'TransferTo',
-				name: options[:direction].eql?('inflow') && 'Transfer From' || 'Transfer To'
+				id: (options[:direction].eql?('inflow') && 'TransferFrom') || 'TransferTo',
+				name: (options[:direction].eql?('inflow') && 'Transfer From') || 'Transfer To'
 			},
 			account: parent.account.as_json,
 			direction: transaction_account.direction,

@@ -114,7 +114,7 @@ require 'models/concerns/categorisable'
 
 			# Create the context with 15 basic transactions
 			context = create context_factory, transactions: 15
-			subject = defined?(as_class_method) && described_class || context
+			subject = (defined?(as_class_method) && described_class) || context
 
 			# Change the size of the result set
 			stub_const 'Transactable::NUM_RESULTS', 9
@@ -130,7 +130,7 @@ require 'models/concerns/categorisable'
 
 		it 'should handle all types of transactions and ignore scheduled transactions' do
 			context = create context_factory, :with_all_transaction_types, scheduled: 1
-			subject = defined?(as_class_method) && described_class || context
+			subject = (defined?(as_class_method) && described_class) || context
 
 			_, transactions = subject.ledger query: 'Transaction'
 			expected_transactions = subject.transactions.for_ledger(query: 'Transaction').where.not('transaction_headers.transaction_date': nil)
@@ -147,7 +147,7 @@ require 'models/concerns/categorisable'
 				# Another context with transactions
 				create context_factory, transactions: 2
 			end
-			subject = defined?(as_class_method) && described_class || context
+			subject = (defined?(as_class_method) && described_class) || context
 
 			_, transactions = subject.ledger(query: 'Transaction')
 
@@ -195,7 +195,7 @@ require 'models/concerns/categorisable'
 	end
 
 	describe '#closing_balance' do
-		subject { defined?(as_class_method) && described_class || context }
+		subject { (defined?(as_class_method) && described_class) || context }
 
 		let(:context) { create context_factory, :with_all_transaction_types, scheduled: 1 }
 
@@ -219,7 +219,7 @@ require 'models/concerns/categorisable'
 	end
 
 	describe '#ledger_options' do
-		subject { defined?(as_class_method) && described_class || described_class.new }
+		subject { (defined?(as_class_method) && described_class) || described_class.new }
 
 		it 'should set default values for missing options' do
 			opts = subject.ledger_options
@@ -255,7 +255,7 @@ require 'models/concerns/categorisable'
 	end
 
 	describe '#drop_opening_date' do
-		subject { defined?(as_class_method) && described_class || described_class.new }
+		subject { (defined?(as_class_method) && described_class) || described_class.new }
 
 		let(:transactions) do
 			[
@@ -286,7 +286,7 @@ require 'models/concerns/categorisable'
 	end
 
 	describe '#ledger_opening_balance' do
-		subject { defined?(as_class_method) && described_class || described_class.new }
+		subject { (defined?(as_class_method) && described_class) || described_class.new }
 
 		context 'when fetching backwards' do
 			let(:opts) { {direction: :prev} }
@@ -320,7 +320,7 @@ require 'models/concerns/categorisable'
 	end
 
 	describe '#exclude_reconciled' do
-		subject { defined?(as_class_method) && described_class || described_class.new }
+		subject { (defined?(as_class_method) && described_class) || described_class.new }
 
 		opening_balance = nil
 		transactions = []

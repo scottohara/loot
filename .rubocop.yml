@@ -29,6 +29,10 @@ Lint/ConstantResolution:
     - NUM_RESULTS
     - LEDGER_QUERY_OPTS
 
+# Allow reading of ENV vars for authentication
+Rails/EnvironmentVariableAccess:
+  AllowReads: true
+
 # Can't use :inverse_of due to self-referential and polymorphic associations
 Rails/InverseOf:
   Enabled: false

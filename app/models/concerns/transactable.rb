@@ -180,7 +180,7 @@ module Transactable
 			end
 
 		# Default direction if not specified or invalid
-		ledger_opts[:direction] = ledger_opts[:direction].present? && ledger_opts[:direction].to_sym || :prev
+		ledger_opts[:direction] = (ledger_opts[:direction].present? && ledger_opts[:direction].to_sym) || :prev
 		ledger_opts[:direction] = :prev unless LEDGER_QUERY_OPTS.key? ledger_opts[:direction]
 
 		# Default unreconciled if not specified or invalid
@@ -298,11 +298,11 @@ module Transactable
 				id: trx['security_id'],
 				name: trx['security_name']
 			},
-			category: (is_a?(::Class) && self || self.class).transaction_category(trx, account_type),
-			subcategory: (is_a?(::Class) && self || self.class).basic_subcategory(trx),
+			category: ((is_a?(::Class) && self) || self.class).transaction_category(trx, account_type),
+			subcategory: ((is_a?(::Class) && self) || self.class).basic_subcategory(trx),
 			account: {
-				id: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
-				name: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
+				id: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id']) || trx['transfer_account_id'],
+				name: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name']) || trx['transfer_account_name']
 			},
 			parent_id: trx['split_parent_id'],
 			amount: trx['amount'],
@@ -311,7 +311,7 @@ module Transactable
 			price: trx['price'],
 			direction: trx['direction'] || trx['split_parent_direction'],
 			status: trx['status'],
-			related_status: (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status'] || trx['transfer_status']),
+			related_status: (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status']) || trx['transfer_status'],
 			memo: trx['memo'],
 			flag: trx['flag']
 		}

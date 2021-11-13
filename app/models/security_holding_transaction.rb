@@ -41,8 +41,8 @@ class SecurityHoldingTransaction < SecurityTransaction
 		super.merge(
 			primary_account: account.as_json,
 			category: {
-				id: transaction_account.direction.eql?('inflow') && 'AddShares' || 'RemoveShares',
-				name: transaction_account.direction.eql?('inflow') && 'Add Shares' || 'Remove Shares'
+				id: (transaction_account.direction.eql?('inflow') && 'AddShares') || 'RemoveShares',
+				name: (transaction_account.direction.eql?('inflow') && 'Add Shares') || 'Remove Shares'
 			},
 			direction: transaction_account.direction,
 			status: transaction_account.status,

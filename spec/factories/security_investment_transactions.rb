@@ -5,7 +5,7 @@
 	factory :security_investment_transaction, aliases: [:security_purchase_transaction] do
 		# Default attributes for security transaction
 		security_transaction
-		amount { price * quantity + commission * (direction.eql?('Buy') ? 1 : -1) }
+		amount { (price * quantity) + (commission * (direction.eql?('Buy') ? 1 : -1)) }
 
 		# Default accounts if none specified
 		transient do

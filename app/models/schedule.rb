@@ -100,8 +100,8 @@ class Schedule < ApplicationRecord
 					category: transaction_category(trx, trx['account_type']),
 					subcategory: basic_subcategory(trx),
 					account: {
-						id: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id'] || trx['transfer_account_id']),
-						name: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name'] || trx['transfer_account_name'])
+						id: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_id']) || trx['transfer_account_id'],
+						name: (trx['transaction_type'].eql?('Subtransfer') && trx['split_account_name']) || trx['transfer_account_name']
 					},
 					amount: trx['amount'],
 					quantity: trx['quantity'],

@@ -63,8 +63,8 @@ class SplitTransaction < PayeeCashTransaction
 		super.merge(
 			primary_account: account.as_json,
 			category: {
-				id: transaction_account.direction.eql?('inflow') && 'SplitFrom' || 'SplitTo',
-				name: transaction_account.direction.eql?('inflow') && 'Split From' || 'Split To'
+				id: (transaction_account.direction.eql?('inflow') && 'SplitFrom') || 'SplitTo',
+				name: (transaction_account.direction.eql?('inflow') && 'Split From') || 'Split To'
 			},
 			direction: transaction_account.direction,
 			status: transaction_account.status
@@ -118,7 +118,7 @@ class SplitTransaction < PayeeCashTransaction
 					name: trx['account_name']
 				},
 				amount: trx['amount'],
-				direction: (trx['transaction_type'].eql?('Subtransfer') && (trx['parent_transaction_type'].eql?('Payslip') && 'outflow' || trx['direction']) || trx['category_direction']),
+				direction: ((trx['transaction_type'].eql?('Subtransfer') && ((trx['parent_transaction_type'].eql?('Payslip') && 'outflow') || trx['direction'])) || trx['category_direction']),
 				memo: trx['memo'],
 				flag: trx['flag']
 			}

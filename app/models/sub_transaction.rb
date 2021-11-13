@@ -25,8 +25,8 @@ class SubTransaction < CashTransaction
 	def as_json(options = {})
 		super.merge parent.header.as_json.merge(
 			primary_account: parent.account.as_json,
-			category: category.parent.blank? && category.as_json || category.parent.as_json,
-			subcategory: category.parent.present? && category.as_json || nil,
+			category: (category.parent.blank? && category.as_json) || category.parent.as_json,
+			subcategory: (category.parent.present? && category.as_json) || nil,
 			direction: parent.transaction_account.direction,
 			parent_id: parent.id
 		)

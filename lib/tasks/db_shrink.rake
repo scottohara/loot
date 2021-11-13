@@ -1,9 +1,12 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-def progress(action, count, type)
-	reset_line = "\r\e[0K"
-	print "#{reset_line}#{action} #{::ActionController::Base.helpers.pluralize count, type}"
+# Helper functions
+module Shrink
+	def progress(action, count, type)
+		reset_line = "\r\e[0K"
+		print "#{reset_line}#{action} #{::ActionController::Base.helpers.pluralize count, type}"
+	end
 end
 
 namespace :db do
@@ -30,14 +33,14 @@ namespace :db do
 			header.trx.as_subclass.destroy! unless header.trx.nil? || subtransaction_types.include?(header.trx.transaction_type)
 
 			index += 1
-			progress 'Deleted', index, 'transaction'
+			::Shrink.progress 'Deleted', index, 'transaction'
 		end
 		puts
 
 		# Remove any categories/payees/securities that no longer have transactions
 		%w[category payee security].each do |entity|
-			table = entity.eql?('category') && 'categories' || 'headers'
-			where = entity.eql?('category') && 'categories.parent_id IS NOT NULL' || ''
+			table = (entity.eql?('category') && 'categories') || 'headers'
+			where = (entity.eql?('category') && 'categories.parent_id IS NOT NULL') || ''
 			entities = entity.capitalize.constantize.joins("LEFT OUTER JOIN transaction_#{table} ON transaction_#{table}.#{entity}_id = #{::ActiveSupport::Inflector.pluralize entity}.id").where(where).group(:id).having "COUNT(transaction_#{table}.transaction_id) = 0"
 
 			next if entities.length.eql? 0
@@ -49,7 +52,7 @@ namespace :db do
 					e.destroy!
 
 					index += 1
-					progress 'Deleted', index, entity
+					::Shrink.progress 'Deleted', index, entity
 				end
 			else
 				print "Skipped purging #{::ActionController::Base.helpers.pluralize entities.length, entity}"

@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 ::RSpec.describe ::CategoriesController, type: :controller do
-	describe 'GET index ', request: true, json: true do
+	describe 'GET index', request: true, json: true do
 		context 'for category list' do
 			let(:json) { 'category list with children' }
 

@@ -16,7 +16,7 @@ class Transaction < ApplicationRecord
 		end
 
 		def types_for(account_type)
-			account_type.eql?('investment') && %w[SecurityTransfer SecurityHolding SecurityInvestment Dividend] || %w[Basic Split Transfer Payslip LoanRepayment]
+			(account_type.eql?('investment') && %w[SecurityTransfer SecurityHolding SecurityInvestment Dividend]) || %w[Basic Split Transfer Payslip LoanRepayment]
 		end
 
 		# Transactable concern expects a transactions association, so just return self
@@ -96,7 +96,7 @@ class Transaction < ApplicationRecord
 			id: id,
 			transaction_type: transaction_type,
 			memo: memo,
-			flag: flag.present? && flag.memo || nil
+			flag: (flag.present? && flag.memo) || nil
 		}
 	end
 end

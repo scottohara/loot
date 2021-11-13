@@ -44,8 +44,8 @@ class BasicTransaction < PayeeCashTransaction
 	def as_json(options = {})
 		super.merge(
 			primary_account: account.as_json,
-			category: category.parent.blank? && category.as_json || category.parent.as_json,
-			subcategory: category.parent.present? && category.as_json || nil,
+			category: (category.parent.blank? && category.as_json) || category.parent.as_json,
+			subcategory: (category.parent.present? && category.as_json) || nil,
 			direction: transaction_account.direction,
 			status: transaction_account.status
 		)

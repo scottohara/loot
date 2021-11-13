@@ -95,15 +95,17 @@ require 'models/concerns/categorisable'
 						id: subcategory.id
 					}
 				},
-				::ActionController::Parameters.new({
-					id: 'child 3',
-					amount: 1,
-					memo: 'Test subtransaction 2',
-					transaction_type: 'Sub',
-					category: {
-						id: subcategory.parent.id
+				::ActionController::Parameters.new(
+					{
+						id: 'child 3',
+						amount: 1,
+						memo: 'Test subtransaction 2',
+						transaction_type: 'Sub',
+						category: {
+							id: subcategory.parent.id
+						}
 					}
-				}),
+				),
 				{
 					'id' => 'child 2',
 					'amount' => 1,
@@ -213,10 +215,10 @@ require 'models/concerns/categorisable'
 						actual_trx[:category][:name].eql?(expected_trx[:category] && expected_trx[:category][:name]) &&
 						(actual_trx[:subcategory] && actual_trx[:subcategory][:id]).eql?(expected_trx[:subcategory] && expected_trx[:subcategory][:id].to_s) &&
 						(actual_trx[:subcategory] && actual_trx[:subcategory][:name]).eql?(expected_trx[:subcategory] && expected_trx[:subcategory][:name]) &&
-						actual_trx[:account][:id].eql?(expected_trx[:transaction_type].eql?('Subtransfer') && expected_trx[:primary_account][:id] || nil) &&
-						actual_trx[:account][:name].eql?(expected_trx[:transaction_type].eql?('Subtransfer') && expected_trx[:primary_account][:name] || nil) &&
+						actual_trx[:account][:id].eql?((expected_trx[:transaction_type].eql?('Subtransfer') && expected_trx[:primary_account][:id]) || nil) &&
+						actual_trx[:account][:name].eql?((expected_trx[:transaction_type].eql?('Subtransfer') && expected_trx[:primary_account][:name]) || nil) &&
 						actual_trx[:amount].eql?(expected_trx[:amount]) &&
-						actual_trx[:direction].eql?(expected_trx[:transaction_type].eql?('Subtransfer') && direction || expected_trx[:category][:direction]) &&
+						actual_trx[:direction].eql?((expected_trx[:transaction_type].eql?('Subtransfer') && direction) || expected_trx[:category][:direction]) &&
 						actual_trx[:memo].eql?(expected_trx[:memo]) &&
 						actual_trx[:flag].eql?(expected_trx[:flag])
 				end

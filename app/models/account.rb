@@ -162,7 +162,7 @@ class Account < ApplicationRecord
 				next if cash_account.nil?
 
 				cash_account.merge! account
-				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + cash_account['total_value'].to_f || 0
+				cash_account['closing_balance'] = (cash_account['closing_balance'].to_f + cash_account['total_value'].to_f) || 0
 			end
 
 			account_list.values.sort_by { |a| a['account_type'] }.group_by { |a| "#{a['account_type'].capitalize} account".pluralize }.transform_values do |accounts|
@@ -231,7 +231,7 @@ class Account < ApplicationRecord
 			related_account.destroy! if original_account_type.eql? 'investment'
 
 			# If changing to a loan account, set the related asset account
-			self.related_account = account_type.eql?('loan') && json.dig('related_account', 'id') && ::Account.find(json['related_account']['id']) || nil
+			self.related_account = (account_type.eql?('loan') && json.dig('related_account', 'id') && ::Account.find(json['related_account']['id'])) || nil
 		end
 
 		save!

@@ -441,16 +441,18 @@ module Loot
 	def create_basic_transaction(trx)
 		category = ::Category.find trx[:category] unless trx[:category].nil?
 
-		::BasicTransaction.create_from_json({
-			'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-			'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
-			'amount' => trx[:amount],
-			'memo' => trx[:memo],
-			'status' => trx[:status],
-			'primary_account' => {'id' => trx[:account]},
-			'payee' => trx[:payee] && {'id' => trx[:payee]} || nil,
-			'flag' => @tmp_flags[trx[:id]]
-		}.merge(header_json trx))
+		::BasicTransaction.create_from_json(
+			{
+				'category' => (category && {'id' => (category.parent.blank? && category.id) || category.parent.id}) || nil,
+				'subcategory' => (category&.parent.present? && {'id' => category.id}) || nil,
+				'amount' => trx[:amount],
+				'memo' => trx[:memo],
+				'status' => trx[:status],
+				'primary_account' => {'id' => trx[:account]},
+				'payee' => (trx[:payee] && {'id' => trx[:payee]}) || nil,
+				'flag' => @tmp_flags[trx[:id]]
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_split_out_transaction(trx)
@@ -467,7 +469,7 @@ module Loot
 				subtrx = @tmp_transactions[trxid]
 
 				if subtrx[:type].eql? 'subtransaction'
-					category = subtrx[:category] && ::Category.find(subtrx[:category]) || nil
+					category = (subtrx[:category] && ::Category.find(subtrx[:category])) || nil
 				else
 					subaccount = subtrx[:account]
 					substatus = subtrx[:status]
@@ -484,24 +486,26 @@ module Loot
 					'amount' => subtrx[:amount],
 					'memo' => subtrx[:memo],
 					'transaction_type' => subtrx[:type].eql?('subtransaction') ? 'Sub' : 'Subtransfer',
-					'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-					'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
+					'category' => (category && {'id' => (category.parent.blank? && category.id) || category.parent.id}) || nil,
+					'subcategory' => (category&.parent.present? && {'id' => category.id}) || nil,
 					'direction' => direction,
 					'account' => {'id' => subaccount},
 					'status' => substatus
 				}
 			end
 
-		::SplitTransaction.create_from_json({
-			'amount' => trx[:amount],
-			'memo' => trx[:memo],
-			'primary_account' => {'id' => trx[:account]},
-			'direction' => direction,
-			'status' => trx[:status],
-			'payee' => trx[:payee] && {'id' => trx[:payee]} || nil,
-			'flag' => @tmp_flags[trx[:id]],
-			'subtransactions' => subtransactions
-		}.merge(header_json trx))
+		::SplitTransaction.create_from_json(
+			{
+				'amount' => trx[:amount],
+				'memo' => trx[:memo],
+				'primary_account' => {'id' => trx[:account]},
+				'direction' => direction,
+				'status' => trx[:status],
+				'payee' => (trx[:payee] && {'id' => trx[:payee]}) || nil,
+				'flag' => @tmp_flags[trx[:id]],
+				'subtransactions' => subtransactions
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_transfer_out_transaction(trx)
@@ -515,17 +519,19 @@ module Loot
 	def create_transfer_transaction(trx, direction)
 		other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 
-		::TransferTransaction.create_from_json({
-			'primary_account' => {'id' => trx[:account]},
-			'account' => {'id' => other_side[:account]},
-			'status' => trx[:status],
-			'related_status' => other_side[:status],
-			'direction' => direction,
-			'amount' => trx[:amount],
-			'memo' => trx[:memo],
-			'payee' => trx[:payee] && {'id' => trx[:payee]} || nil,
-			'flag' => @tmp_flags[trx[:id]]
-		}.merge(header_json trx))
+		::TransferTransaction.create_from_json(
+			{
+				'primary_account' => {'id' => trx[:account]},
+				'account' => {'id' => other_side[:account]},
+				'status' => trx[:status],
+				'related_status' => other_side[:status],
+				'direction' => direction,
+				'amount' => trx[:amount],
+				'memo' => trx[:memo],
+				'payee' => (trx[:payee] && {'id' => trx[:payee]}) || nil,
+				'flag' => @tmp_flags[trx[:id]]
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_payslip_transaction(trx)
@@ -535,7 +541,7 @@ module Loot
 				subtrx = @tmp_transactions[trxid]
 
 				if categorisable_types.include? subtrx[:type]
-					category = subtrx[:category] && ::Category.find(subtrx[:category]) || nil
+					category = (subtrx[:category] && ::Category.find(subtrx[:category])) || nil
 				else
 					subaccount = subtrx[:account]
 					substatus = subtrx[:status]
@@ -552,24 +558,26 @@ module Loot
 					'amount' => subtrx[:amount],
 					'memo' => subtrx[:memo],
 					'transaction_type' => categorisable_types.include?(subtrx[:type]) ? 'Sub' : 'Subtransfer',
-					'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-					'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
+					'category' => (category && {'id' => (category.parent.blank? && category.id) || category.parent.id}) || nil,
+					'subcategory' => (category&.parent.present? && {'id' => category.id}) || nil,
 					'direction' => 'outflow',
 					'account' => {'id' => subaccount},
 					'status' => substatus
 				}
 			end
 
-		::PayslipTransaction.create_from_json({
-			'amount' => trx[:amount],
-			'memo' => trx[:memo],
-			'primary_account' => {'id' => trx[:account]},
-			'direction' => 'inflow',
-			'status' => trx[:status],
-			'payee' => trx[:payee] && {'id' => trx[:payee]} || nil,
-			'flag' => @tmp_flags[trx[:id]],
-			'subtransactions' => subtransactions
-		}.merge(header_json trx))
+		::PayslipTransaction.create_from_json(
+			{
+				'amount' => trx[:amount],
+				'memo' => trx[:memo],
+				'primary_account' => {'id' => trx[:account]},
+				'direction' => 'inflow',
+				'status' => trx[:status],
+				'payee' => (trx[:payee] && {'id' => trx[:payee]}) || nil,
+				'flag' => @tmp_flags[trx[:id]],
+				'subtransactions' => subtransactions
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_loanrepayment_transaction(trx)
@@ -578,7 +586,7 @@ module Loot
 				subtrx = @tmp_transactions[trxid]
 
 				if subtrx[:type].eql? 'subtransaction'
-					category = subtrx[:category] && ::Category.find(subtrx[:category]) || nil
+					category = (subtrx[:category] && ::Category.find(subtrx[:category])) || nil
 				else
 					subaccount = subtrx[:account]
 					substatus = subtrx[:status]
@@ -595,24 +603,26 @@ module Loot
 					'amount' => subtrx[:amount],
 					'memo' => subtrx[:memo],
 					'transaction_type' => subtrx[:type].eql?('subtransaction') ? 'Sub' : 'Subtransfer',
-					'category' => category && {'id' => category.parent.blank? && category.id || category.parent.id} || nil,
-					'subcategory' => category&.parent.present? && {'id' => category.id} || nil,
+					'category' => (category && {'id' => (category.parent.blank? && category.id) || category.parent.id}) || nil,
+					'subcategory' => (category&.parent.present? && {'id' => category.id}) || nil,
 					'direction' => 'outflow',
 					'account' => {'id' => subaccount},
 					'status' => substatus
 				}
 			end
 
-		::LoanRepaymentTransaction.create_from_json({
-			'amount' => trx[:amount],
-			'memo' => trx[:memo],
-			'primary_account' => {'id' => trx[:account]},
-			'direction' => 'outflow',
-			'status' => trx[:status],
-			'payee' => trx[:payee] && {'id' => trx[:payee]} || nil,
-			'flag' => @tmp_flags[trx[:id]],
-			'subtransactions' => subtransactions
-		}.merge(header_json trx))
+		::LoanRepaymentTransaction.create_from_json(
+			{
+				'amount' => trx[:amount],
+				'memo' => trx[:memo],
+				'primary_account' => {'id' => trx[:account]},
+				'direction' => 'outflow',
+				'status' => trx[:status],
+				'payee' => (trx[:payee] && {'id' => trx[:payee]}) || nil,
+				'flag' => @tmp_flags[trx[:id]],
+				'subtransactions' => subtransactions
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_securitytransfer_out_transaction(trx)
@@ -626,17 +636,19 @@ module Loot
 	def create_securitytransfer_transaction(trx, direction)
 		other_side = @tmp_transactions[@tmp_transfers[trx[:id]]]
 
-		::SecurityTransferTransaction.create_from_json({
-			'primary_account' => {'id' => trx[:account]},
-			'account' => {'id' => other_side[:account]},
-			'status' => trx[:status],
-			'related_status' => other_side[:status],
-			'direction' => direction,
-			'memo' => trx[:memo],
-			'quantity' => @tmp_investments[trx[:id]][:qty],
-			'security' => trx[:security] && {'id' => trx[:security][:id]} || nil,
-			'flag' => @tmp_flags[trx[:id]]
-		}.merge(header_json trx))
+		::SecurityTransferTransaction.create_from_json(
+			{
+				'primary_account' => {'id' => trx[:account]},
+				'account' => {'id' => other_side[:account]},
+				'status' => trx[:status],
+				'related_status' => other_side[:status],
+				'direction' => direction,
+				'memo' => trx[:memo],
+				'quantity' => @tmp_investments[trx[:id]][:qty],
+				'security' => (trx[:security] && {'id' => trx[:security][:id]}) || nil,
+				'flag' => @tmp_flags[trx[:id]]
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_securityholding_out_transaction(trx)
@@ -648,15 +660,17 @@ module Loot
 	end
 
 	def create_securityholding_transaction(trx, direction)
-		::SecurityHoldingTransaction.create_from_json({
-			'memo' => trx[:memo],
-			'direction' => direction,
-			'status' => trx[:status],
-			'primary_account' => {'id' => trx[:account]},
-			'quantity' => @tmp_investments[trx[:id]][:qty],
-			'security' => trx[:security] && {'id' => trx[:security][:id]} || nil,
-			'flag' => @tmp_flags[trx[:id]]
-		}.merge(header_json trx))
+		::SecurityHoldingTransaction.create_from_json(
+			{
+				'memo' => trx[:memo],
+				'direction' => direction,
+				'status' => trx[:status],
+				'primary_account' => {'id' => trx[:account]},
+				'quantity' => @tmp_investments[trx[:id]][:qty],
+				'security' => (trx[:security] && {'id' => trx[:security][:id]}) || nil,
+				'flag' => @tmp_flags[trx[:id]]
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_securityinvestment_out_transaction(trx)
@@ -693,20 +707,22 @@ module Loot
 			investment_direction = trx[:orig_amount].to_f.positive? ? 'outflow' : 'inflow'
 		end
 
-		::SecurityInvestmentTransaction.create_from_json({
-			'amount' => trx[:amount],
-			'memo' => trx[:memo],
-			'direction' => investment_direction,
-			'primary_account' => {'id' => investment_account},
-			'account' => {'id' => cash_account},
-			'status' => investment_status,
-			'related_status' => cash_status,
-			'quantity' => investment[:qty],
-			'price' => investment[:price],
-			'commission' => investment[:commission],
-			'security' => security && {'id' => security[:id]} || nil,
-			'flag' => @tmp_flags[trx[:id]]
-		}.merge(header_json trx))
+		::SecurityInvestmentTransaction.create_from_json(
+			{
+				'amount' => trx[:amount],
+				'memo' => trx[:memo],
+				'direction' => investment_direction,
+				'primary_account' => {'id' => investment_account},
+				'account' => {'id' => cash_account},
+				'status' => investment_status,
+				'related_status' => cash_status,
+				'quantity' => investment[:qty],
+				'price' => investment[:price],
+				'commission' => investment[:commission],
+				'security' => (security && {'id' => security[:id]}) || nil,
+				'flag' => @tmp_flags[trx[:id]]
+			}.merge(header_json trx)
+		)
 	end
 
 	def create_dividend_out_transaction(trx)
@@ -724,16 +740,18 @@ module Loot
 
 		investment_trx, cash_trx = cash_trx, investment_trx if direction.eql? 'inflow'
 
-		::DividendTransaction.create_from_json({
-			'amount' => trx[:amount],
-			'memo' => trx[:memo],
-			'primary_account' => {'id' => investment_trx[:account]},
-			'account' => {'id' => cash_trx[:account]},
-			'status' => investment_trx[:status],
-			'related_status' => cash_trx[:status],
-			'security' => investment_trx && {'id' => investment_trx[:security][:id]} || nil,
-			'flag' => @tmp_flags[trx[:id]]
-		}.merge(header_json trx))
+		::DividendTransaction.create_from_json(
+			{
+				'amount' => trx[:amount],
+				'memo' => trx[:memo],
+				'primary_account' => {'id' => investment_trx[:account]},
+				'account' => {'id' => cash_trx[:account]},
+				'status' => investment_trx[:status],
+				'related_status' => cash_trx[:status],
+				'security' => (investment_trx && {'id' => investment_trx[:security][:id]}) || nil,
+				'flag' => @tmp_flags[trx[:id]]
+			}.merge(header_json trx)
+		)
 	end
 
 	def header_json(trx)

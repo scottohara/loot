@@ -26,10 +26,10 @@ module Categorisable
 				when 'Transfer', 'Subtransfer', 'SecurityTransfer' then psuedo_category 'Transfer', trx['direction'], trx['parent_transaction_type']
 				when 'Split', 'Dividend' then psuedo_category trx['transaction_type'], trx['direction']
 				when 'LoanRepayment' then [trx['transaction_type'], 'Loan Repayment']
-				when 'SecurityHolding' then trx['direction'].eql?('outflow') && ['RemoveShares', 'Remove Shares'] || ['AddShares', 'Add Shares']
+				when 'SecurityHolding' then (trx['direction'].eql?('outflow') && ['RemoveShares', 'Remove Shares']) || ['AddShares', 'Add Shares']
 				when 'SecurityInvestment'
 					if account_type.eql? 'investment'
-						trx['direction'].eql?('outflow') && %w[Sell Sell] || %w[Buy Buy]
+						(trx['direction'].eql?('outflow') && %w[Sell Sell]) || %w[Buy Buy]
 					else
 						psuedo_category 'Transfer', trx['direction']
 					end
@@ -63,7 +63,7 @@ module Categorisable
 
 		def psuedo_category(type, direction, parent_type = nil)
 			direction = 'outflow' if parent_type.eql? 'Payslip'
-			suffix = direction.eql?('outflow') && 'To' || 'From'
+			suffix = (direction.eql?('outflow') && 'To') || 'From'
 			[type + suffix, "#{type} #{suffix}"]
 		end
 	end

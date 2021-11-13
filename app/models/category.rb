@@ -10,11 +10,13 @@ class Category < ApplicationRecord
 	has_many :transaction_categories, ->(object) { rewhere(category_id: object.children.ids.unshift(object.id)) }, dependent: :restrict_with_error
 	has_many :transactions, through: :transaction_categories, source: :trx do
 		def for_ledger(_opts)
-			joins([
-				'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
-				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
-				'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
-			])
+			joins(
+				[
+					'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+					'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+					'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
+				]
+			)
 				.where('transactions.transaction_type != \'Subtransfer\'')
 		end
 

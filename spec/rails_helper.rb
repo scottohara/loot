@@ -98,7 +98,7 @@ end
 	end
 
 	after do
-		expect(response).to have_http_status defined?(expected_status) && expected_status || 200
+		expect(response).to have_http_status (defined?(expected_status) && expected_status) || 200
 	end
 
 	after :each, :json do
