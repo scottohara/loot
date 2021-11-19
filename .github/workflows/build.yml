@@ -76,9 +76,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install postgres libs
-      run: sudo apt-get install libpq-dev
-
     - name: Install ruby and gem dependencies
       uses: ruby/setup-ruby@v1
       with:
@@ -88,7 +85,7 @@ jobs:
       run: bundle exec rake db:create db:migrate
 
     - name: Lint
-      run: bundle exec rubocop --parallel
+      run: bundle exec rubocop
 
     - name: Test
       run: bundle exec rake
