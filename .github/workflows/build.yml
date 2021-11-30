@@ -33,22 +33,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Setup dependency cache
-      uses: actions/cache@v1
+    - name: Install node
+      uses: actions/setup-node@v2
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-
-    - name: Delete npm prefix
-      run: npm config delete prefix
+        node-version-file: .nvmrc
+        cache: npm
 
     - name: Install dependencies
-      shell: bash --login {0}
-      run: nvm install && nvm use && npm ci
+      run: npm ci
 
     - name: Lint and test
-      shell: bash --login {0}
-      run: nvm use && npm test
+      run: npm test
 
     - name: Upload test coverage artifact
       uses: actions/upload-artifact@v1
