@@ -16,11 +16,24 @@ require 'models/concerns/categorisable'
 
 	it_behaves_like ::Categorisable
 
-	it_behaves_like ::Transactable do
-		let(:as_class_method) { true }
-		let(:context_factory) { :bank_account }
-		let(:ledger_json_key) { :memo }
-		let(:expected_closing_balances) { {with_date: -1, without_date: 1} }
+	context 'search by memo' do
+		it_behaves_like ::Transactable do
+			let(:as_class_method) { true }
+			let(:context_factory) { :bank_account }
+			let(:ledger_json_key) { :memo }
+			let(:expected_closing_balances) { {with_date: -1, without_date: 1} }
+			let(:search_term) { 'transaction' }
+		end
+	end
+
+	context 'search by is:flagged' do
+		it_behaves_like ::Transactable do
+			let(:as_class_method) { true }
+			let(:context_factory) { :bank_account }
+			let(:ledger_json_key) { :flag }
+			let(:expected_closing_balances) { {with_date: -1, without_date: -1} }
+			let(:search_term) { 'is:flagged' }
+		end
 	end
 
 	describe '::class_for' do

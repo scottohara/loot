@@ -95,12 +95,15 @@ require 'models/concerns/categorisable'
 		end
 
 		# Custom matcher that checks if a set of transactions are all for a particular context
-		matcher :all_belong_to do |subject, key|
+		matcher :all_belong_to do |subject, key, value|
 			match do |transactions|
 				transactions.all? do |transaction|
-					if key.eql? :memo
-						# For transaction search, check that the memo contains the search term ("transaction")
-						transaction[:memo].downcase.include? 'transaction'
+					case key
+					when :memo
+						# For transaction search, check that the memo contains the search term
+						transaction[:memo].downcase.include? value
+					when :flag
+						transaction[:flag].present?
 					else
 						# For anything else, compare the :id of the keys
 						transaction[key][:id].to_s.eql? subject.id.to_s
@@ -115,12 +118,13 @@ require 'models/concerns/categorisable'
 			# Create the context with 15 basic transactions
 			context = create context_factory, transactions: 15
 			subject = (defined?(as_class_method) && described_class) || context
+			query = defined?(search_term) && search_term
 
 			# Change the size of the result set
 			stub_const 'Transactable::NUM_RESULTS', 9
 
 			# Get the ledger
-			_, transactions, at_end = subject.ledger as_at: (::Date.parse('2014-01-01') + as_at).to_s, direction: direction, query: 'Transaction'
+			_, transactions, at_end = subject.ledger as_at: (::Date.parse('2014-01-01') + as_at).to_s, direction: direction, query: query
 
 			expect(transactions.uniq { |t| t[:id] }.size).to eq range.size
 			expect(transactions.first[:transaction_date]).to eq(::Date.parse('2014-01-01') + range.first)
@@ -131,9 +135,10 @@ require 'models/concerns/categorisable'
 		it 'should handle all types of transactions and ignore scheduled transactions' do
 			context = create context_factory, :with_all_transaction_types, scheduled: 1
 			subject = (defined?(as_class_method) && described_class) || context
+			query = defined?(search_term) && search_term
 
-			_, transactions = subject.ledger query: 'Transaction'
-			expected_transactions = subject.transactions.for_ledger(query: 'Transaction').where.not('transaction_headers.transaction_date': nil)
+			_, transactions = subject.ledger query: query
+			expected_transactions = subject.transactions.for_ledger(query: query).where.not('transaction_headers.transaction_date': nil)
 
 			expect(transactions).to match_ledger_transactions expected_transactions
 		end
@@ -148,11 +153,12 @@ require 'models/concerns/categorisable'
 				create context_factory, transactions: 2
 			end
 			subject = (defined?(as_class_method) && described_class) || context
+			query = defined?(search_term) && search_term
 
-			_, transactions = subject.ledger(query: 'Transaction')
+			_, transactions = subject.ledger query: query
 
 			expect(transactions.uniq { |t| t[:id] }.size).to eq 2
-			expect(transactions).to all_belong_to context, ledger_json_key
+			expect(transactions).to all_belong_to context, ledger_json_key, query
 		end
 
 		context 'when fetching backwards', spec_type: :range do
@@ -198,6 +204,7 @@ require 'models/concerns/categorisable'
 		subject { (defined?(as_class_method) && described_class) || context }
 
 		let(:context) { create context_factory, :with_all_transaction_types, scheduled: 1 }
+		let(:query) { defined?(search_term) && search_term }
 
 		before do
 			::FactoryBot.reload
@@ -208,12 +215,12 @@ require 'models/concerns/categorisable'
 		end
 
 		it 'should return the closing balance as the passed date' do
-			expect(subject.closing_balance(as_at: '2014-01-01', query: 'Transaction')).to eq expected_closing_balances[:with_date]
+			expect(subject.closing_balance(as_at: '2014-01-01', query: query)).to eq expected_closing_balances[:with_date]
 		end
 
 		context 'when a date is not passed' do
 			it 'should return the closing balance as at today' do
-				expect(subject.closing_balance(query: 'Transaction')).to eq expected_closing_balances[:without_date]
+				expect(subject.closing_balance(query: query)).to eq expected_closing_balances[:without_date]
 			end
 		end
 	end

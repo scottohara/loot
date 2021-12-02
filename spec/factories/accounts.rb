@@ -49,7 +49,7 @@
 		end
 
 		after :build do |account, evaluator|
-			create_list :basic_transaction, evaluator.transactions, account: account
+			create_list :basic_transaction, evaluator.transactions, :flagged, account: account
 			create_list :basic_transaction, evaluator.reconciled, account: account, status: 'Reconciled'
 		end
 

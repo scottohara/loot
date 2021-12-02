@@ -34,7 +34,7 @@ class Transaction < ApplicationRecord
 				]
 			)
 				.where('transactions.transaction_type != \'Subtransfer\'')
-				.where 'LOWER(transactions.memo) LIKE ?', "%#{opts[:query].downcase}%"
+				.for_query opts
 		end
 
 		def for_closing_balance(opts)
@@ -44,7 +44,7 @@ class Transaction < ApplicationRecord
 					'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id'
 				]
 			)
-				.where 'LOWER(transactions.memo) LIKE ?', "%#{opts[:query].downcase}%"
+				.for_query opts
 		end
 
 		def for_basic_closing_balance(opts)
@@ -55,7 +55,16 @@ class Transaction < ApplicationRecord
 					'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
 				]
 			)
-				.where 'LOWER(transactions.memo) LIKE ?', "%#{opts[:query].downcase}%"
+				.for_query opts
+		end
+
+		def for_query(opts)
+			term = opts[:query].downcase
+
+			case term
+			when 'is:flagged' then joins 'JOIN transaction_flags as is_flagged ON is_flagged.transaction_id = transactions.id'
+			else where 'LOWER(transactions.memo) LIKE ?', "%#{term}%"
+			end
 		end
 
 		def opening_balance
