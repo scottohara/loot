@@ -55,12 +55,12 @@ group :development, :test do
 
 	# Shared Rubocop config
 	gem 'rubocop-config-oharagroup', '2.3.0', require: false
+
+	# Use byebug instead of IRB
+	gem 'byebug', '11.1.3'
 end
 
 group :development do
 	# File watcher
 	gem 'listen', '3.7.0'
-
-	# Use byebug instead of IRB
-	gem 'byebug', '11.1.3'
 end
