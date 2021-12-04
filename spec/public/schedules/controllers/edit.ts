@@ -12,6 +12,7 @@ import type {
 	SubtransactionType,
 	TransactionDirection,
 	TransactionFlag,
+	TransactionFlagType,
 	TransactionStatus,
 	TransactionType
 } from "transactions/types";
@@ -102,6 +103,7 @@ describe("ScheduleEditController", (): void => {
 
 		beforeEach((): void => {
 			originalSchedule = angular.copy(schedule);
+			originalSchedule.flag_type = "followup";
 			schedule.id = null;
 			schedule.transaction_date = schedule.next_due_date;
 		});
@@ -128,7 +130,8 @@ describe("ScheduleEditController", (): void => {
 				id: null,
 				transaction_type: "Basic",
 				next_due_date: startOfDay(new Date()),
-				autoFlag: false
+				autoFlag: false,
+				flag_type: "followup"
 			};
 			scheduleEditController = controllerTest("ScheduleEditController", { schedule: undefined }) as ScheduleEditController;
 		});
@@ -140,13 +143,15 @@ describe("ScheduleEditController", (): void => {
 		it("should make an alias of the transaction as schedule available to the view", (): Chai.Assertion => scheduleEditController.schedule.should.equal(scheduleEditController.transaction));
 	});
 
-	it("should set the auto-flag property when a flag is present", (): void => {
-		schedule.flag = "Test flag";
+	it("should set the auto-flag property when a flag type is present", (): void => {
+		schedule.flag_type = "noreceipt";
 		scheduleEditController = controllerTest("ScheduleEditController") as ScheduleEditController;
 		scheduleEditController.schedule.autoFlag.should.be.true;
 	});
 
-	it("should not set the auto-flag property when a flag is absent", (): Chai.Assertion => scheduleEditController.schedule.autoFlag.should.be.false);
+	it("should not set the auto-flag property when a flag type is absent", (): Chai.Assertion => scheduleEditController.schedule.autoFlag.should.be.false);
+
+	it("should set a default flag type when a flag type is absent", (): Chai.Assertion => String(scheduleEditController.schedule.flag_type).should.equal("followup"));
 
 	it("should set the flag memo to null when the flag memo is '(no memo)'", (): void => {
 		schedule.flag = "(no memo)";
@@ -498,16 +503,21 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should preserve the schedule's flag", (): void => {
-			const flag = "schedule flag";
+			const flag_type: TransactionFlagType = "noreceipt",
+						flag = "schedule flag";
 
+			scheduleEditController.transaction.flag_type = flag_type;
 			scheduleEditController.transaction.flag = flag;
 			scheduleEditController["useLastTransaction"](transaction);
+			scheduleEditController.transaction.flag_type.should.equal(flag_type);
 			scheduleEditController.transaction.flag.should.equal(flag);
 		});
 
 		it("should ignore the previous transaction's flag", (): void => {
+			scheduleEditController.transaction.flag_type = null;
 			scheduleEditController.transaction.flag = null;
 			scheduleEditController["useLastTransaction"](transaction);
+			(null === scheduleEditController.transaction.flag_type as TransactionFlagType).should.be.true;
 			(null === scheduleEditController.transaction.flag as TransactionFlag).should.be.true;
 		});
 
@@ -1053,8 +1063,10 @@ describe("ScheduleEditController", (): void => {
 		});
 
 		it("should set the flag to null if the auto-flag property is not set", (): void => {
+			scheduleEditController.schedule.flag_type = "noreceipt";
 			scheduleEditController.schedule.flag = "Test flag";
 			scheduleEditController.save();
+			(null === scheduleEditController.schedule.flag_type as string | null).should.be.true;
 			(null === scheduleEditController.schedule.flag as string | null).should.be.true;
 		});
 

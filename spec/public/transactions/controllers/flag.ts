@@ -27,12 +27,24 @@ describe("TransactionFlagController", (): void => {
 
 	it("should make the passed transaction available to the view", (): Chai.Assertion => transactionFlagController["transaction"].should.deep.equal(transaction));
 
-	it("should make the passed transaction's flag memo available to the view", (): Chai.Assertion => (transactionFlagController.flag as string).should.deep.equal(transaction.flag));
+	it("should make the passed transaction's flag type available to the view", (): void => {
+		transaction.flag_type = "noreceipt";
+		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
+		(transactionFlagController.flagType as string).should.equal(transaction.flag_type);
+	});
 
-	it("should set the flag to null when transaction's flag memo is '(no memo)'", (): void => {
+	it("should make the passed transaction's flag memo available to the view", (): Chai.Assertion => (transactionFlagController.flag as string).should.equal(transaction.flag));
+
+	it("should default the flag type when transaction doesn't have a flag", (): void => {
+		transaction.flag_type = undefined;
+		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
+		String(transactionFlagController.flagType).should.equal("followup");
+	});
+
+	it("should set the flag to an empty string when transaction's flag memo is '(no memo)'", (): void => {
 		transaction.flag = "(no memo)";
 		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
-		(null === transactionFlagController.flag).should.be.true;
+		String(transactionFlagController.flag).should.equal("");
 	});
 
 	it("should set the flagged property when the transaction has a flag", (): Chai.Assertion => transactionFlagController.flagged.should.be.true);
@@ -56,7 +68,7 @@ describe("TransactionFlagController", (): void => {
 		});
 
 		it("should set the flag memo to '(no memo)' if the memo is blank", (): void => {
-			transactionFlagController.flag = null;
+			transactionFlagController.flag = "";
 			transaction.flag = "(no memo)";
 			transactionFlagController.save();
 			transactionModel.flag.should.have.been.calledWith(transaction);
@@ -88,7 +100,8 @@ describe("TransactionFlagController", (): void => {
 
 		it("should clear transaction's flag", (): void => {
 			transactionFlagController.deleteFlag();
-			Boolean(transactionFlagController["transaction"].flag).should.be.false;
+			(null === transactionFlagController["transaction"].flag_type).should.be.true;
+			(null === transactionFlagController["transaction"].flag).should.be.true;
 		});
 
 		it("should close the modal when the flag delete is successful", (): void => {

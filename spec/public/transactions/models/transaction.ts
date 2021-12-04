@@ -389,8 +389,8 @@ describe("transactionModel", (): void => {
 
 	describe("flag", (): void => {
 		it("should dispatch a PUT request to /transactions/{id}/flag", (): void => {
-			$httpBackend.expectPUT(/transactions\/1\/flag/u, { memo: "flag" }).respond(200);
-			transactionModel.flag(createBasicTransaction({ id: 1, flag: "flag" }));
+			$httpBackend.expectPUT(/transactions\/1\/flag/u, { flag_type: "noreceipt", memo: "flag" }).respond(200);
+			transactionModel.flag(createBasicTransaction({ id: 1, flag_type: "noreceipt", flag: "flag" }));
 			$httpBackend.flush();
 		});
 	});

@@ -78,7 +78,7 @@ class Transaction < ApplicationRecord
 		def create_from_json(json)
 			# id included for the case where we destroy & recreate on transaction type change
 			s = new id: json[:id], memo: json['memo']
-			s.build_flag memo: json['flag'] unless json['flag'].nil?
+			s.build_flag flag_type: json['flag_type'], memo: json['flag'] unless json['flag_type'].nil? && json['flag'].nil?
 			s
 		end
 	end
@@ -89,13 +89,13 @@ class Transaction < ApplicationRecord
 
 	def update_from_json(json)
 		self.memo = json['memo']
-		if json['flag'].nil?
+		if json['flag_type'].nil? && json['flag'].nil?
 			unless flag.nil?
 				flag.destroy!
 				self.flag = nil
 			end
 		else
-			flag.nil? ? build_flag(memo: json['flag']) : flag.memo = json['flag']
+			flag.nil? ? build_flag(flag_type: json['flag_type'], memo: json['flag']) : flag.assign_attributes(flag_type: json['flag_type'], memo: json['flag'])
 		end
 		self
 	end
@@ -105,6 +105,7 @@ class Transaction < ApplicationRecord
 			id: id,
 			transaction_type: transaction_type,
 			memo: memo,
+			flag_type: (flag.present? && flag.flag_type) || nil,
 			flag: (flag.present? && flag.memo) || nil
 		}
 	end

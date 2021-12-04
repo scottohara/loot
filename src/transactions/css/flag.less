@@ -1,0 +1,28 @@
+@import "bootstrap/less/variables.less";
+@import "bootstrap/less/mixins.less";
+
+.transaction-flag {
+	&.followup {
+		.text-emphasis-variant(@state-danger-text);
+	}
+
+	&.noreceipt {
+		.text-emphasis-variant(@state-warning-text);
+	}
+
+	&.taxdeductible {
+		.text-emphasis-variant(@state-success-text);
+	}
+}
+
+strong {
+	.transaction-flag;
+}
+
+.has-action {
+	i.action {
+		&.active {
+			.transaction-flag;
+		}
+	}
+}

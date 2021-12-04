@@ -1,11 +1,14 @@
 import type {
 	Transaction,
-	TransactionFlag
+	TransactionFlag,
+	TransactionFlagType
 } from "transactions/types";
 import type TransactionModel from "transactions/models/transaction";
 
 export default class TransactionFlagController {
 	public errorMessage: string | null = null;
+
+	public flagType: TransactionFlagType;
 
 	public flag: TransactionFlag;
 
@@ -14,14 +17,16 @@ export default class TransactionFlagController {
 	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
 						private readonly transactionModel: TransactionModel,
 						private readonly transaction: Transaction) {
-		this.flag = "(no memo)" === String(transaction.flag) ? null : transaction.flag;
+		this.flagType = transaction.flag_type ?? "followup";
+		this.flag = "(no memo)" === String(transaction.flag) ? "" : transaction.flag ?? "";
 		this.flagged = Boolean(transaction.flag);
 	}
 
 	// Save and close the modal
 	public save(): void {
 		this.errorMessage = null;
-		this.transaction.flag = this.flag ?? "(no memo)";
+		this.transaction.flag_type = this.flagType;
+		this.transaction.flag = "" === this.flag ? "(no memo)" : this.flag;
 		this.transactionModel.flag(this.transaction).then((): void => this.$uibModalInstance.close(this.transaction), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
 	}
 
@@ -29,6 +34,7 @@ export default class TransactionFlagController {
 	public deleteFlag(): void {
 		this.errorMessage = null;
 		this.transactionModel.unflag(Number(this.transaction.id)).then((): void => {
+			this.transaction.flag_type = null;
 			this.transaction.flag = null;
 			this.$uibModalInstance.close(this.transaction);
 		}, (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));

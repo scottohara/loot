@@ -94,8 +94,9 @@ export default class ScheduleEditController {
 			this.transaction.transaction_date = this.schedule.next_due_date;
 		}
 
-		// Set the auto-flag property based on the presence/absence of a flag
-		this.schedule.autoFlag = Boolean(this.schedule.flag);
+		// Set the auto-flag property based on the presence/absence of a flag type
+		this.schedule.autoFlag = Boolean(this.schedule.flag_type);
+		this.schedule.flag_type ??= "followup";
 		if ("(no memo)" === this.schedule.flag) {
 			this.schedule.flag = null;
 		}
@@ -491,6 +492,7 @@ export default class ScheduleEditController {
 		if (this.schedule.autoFlag) {
 			this.schedule.flag ??= "(no memo)";
 		} else {
+			this.schedule.flag_type = null;
 			this.schedule.flag = null;
 		}
 
@@ -546,6 +548,7 @@ export default class ScheduleEditController {
 		delete (transaction as Partial<TransferrableTransaction>).related_status;
 
 		// Retain the schedule's flag (if any), don't overwrite with the previous transaction's flag
+		transaction.flag_type = this.transaction.flag_type;
 		transaction.flag = this.transaction.flag;
 
 		// Merge the last transaction details into the transaction on the scope

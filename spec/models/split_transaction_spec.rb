@@ -87,6 +87,7 @@ require 'models/concerns/categorisable'
 					amount: 1,
 					memo: 'Test subtransaction 1',
 					transaction_type: 'Sub',
+					flag_type: 'noreceipt',
 					flag: 'Test flag',
 					category: {
 						id: subcategory.parent.id
@@ -132,6 +133,7 @@ require 'models/concerns/categorisable'
 			expect(first_subtransaction.amount).to eq children.first[:amount]
 			expect(first_subtransaction.memo).to eq children.first[:memo]
 			expect(first_subtransaction.transaction_type).to eq children.first[:transaction_type]
+			expect(first_subtransaction.flag.flag_type).to eq children.first[:flag_type]
 			expect(first_subtransaction.flag.memo).to eq children.first[:flag]
 			expect(first_subtransaction.category).to eq subcategory
 
@@ -220,6 +222,7 @@ require 'models/concerns/categorisable'
 						actual_trx[:amount].eql?(expected_trx[:amount]) &&
 						actual_trx[:direction].eql?((expected_trx[:transaction_type].eql?('Subtransfer') && direction) || expected_trx[:category][:direction]) &&
 						actual_trx[:memo].eql?(expected_trx[:memo]) &&
+						actual_trx[:flag_type].eql?(expected_trx[:flag_type]) &&
 						actual_trx[:flag].eql?(expected_trx[:flag])
 				end
 			end

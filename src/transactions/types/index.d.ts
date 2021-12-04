@@ -9,6 +9,7 @@ import type { Security } from "securities/types";
 export type TransactionFetchDirection = "next" | "prev";
 export type TransactionStatus = "" | "Cleared" | "Reconciled" | "Unreconciled" | null;
 export type TransactionDirection = "inflow" | "outflow";
+export type TransactionFlagType = "followup" | "noreceipt" | "taxdeductible" | null | undefined;
 export type TransactionFlag = string | null | undefined;
 
 /*
@@ -48,6 +49,7 @@ export interface BaseTransaction {
 	id: number | null;
 	transaction_type: TransactionType;
 	memo: string;
+	flag_type?: TransactionFlagType;
 	flag?: TransactionFlag;
 	balance: number;
 }
@@ -193,6 +195,12 @@ export interface TransactionStatusScope extends angular.IScope {
 	currentStatus: TransactionStatus;
 	nextStatus: TransactionStatus;
 	icon: "lock" | "tag";
+	tooltip: string;
+	clickHandler: () => void;
+}
+
+export interface TransactionFlagScope extends angular.IScope {
+	transaction: Transaction;
 	tooltip: string;
 	clickHandler: () => void;
 }

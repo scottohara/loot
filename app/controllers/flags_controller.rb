@@ -6,11 +6,11 @@ class FlagsController < ApplicationController
 	def update
 		transaction = ::Transaction.find(params[:transaction_id])
 		if transaction.flag.nil?
-			transaction.build_flag(memo: params[:memo])
+			transaction.build_flag(flag_type: params[:flag_type], memo: params[:memo])
+			transaction.save!
 		else
-			transaction.flag.memo = params[:memo]
+			transaction.flag.update!(flag_type: params[:flag_type], memo: params[:memo])
 		end
-		transaction.save!
 		head :ok
 	end
 

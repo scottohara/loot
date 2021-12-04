@@ -29,6 +29,7 @@ function createPartialTransaction(props: Partial<SplitTransactionChild | Transac
 	return {
 		id,
 		memo: "",
+		flag_type: null,
 		flag: null,
 		balance: 0,
 		transaction_date: subDays(startOfDay(new Date()), 1),

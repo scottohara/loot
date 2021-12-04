@@ -45,7 +45,6 @@ import type { Payee } from "payees/types";
 import type { Security } from "securities/types";
 import TransactionDeleteView from "transactions/views/delete.html";
 import TransactionEditView from "transactions/views/edit.html";
-import TransactionFlagView from "transactions/views/flag.html";
 import type TransactionModel from "transactions/models/transaction";
 import angular from "angular";
 
@@ -282,27 +281,6 @@ export default class TransactionIndexController {
 		}
 
 		$event.cancelBubble = true;
-	}
-
-	// Opens the flag transaction dialog
-	public flag(index: number): void {
-		// Disable navigation on the table
-		this.ogTableNavigableService.enabled = false;
-
-		// Show the modal
-		this.$uibModal.open({
-			templateUrl: TransactionFlagView,
-			controller: "TransactionFlagController",
-			controllerAs: "vm",
-			backdrop: "static",
-			size: "sm",
-			resolve: {
-				transaction: (): Transaction => this.transactions[index]
-			}
-		}).result
-			.then((transaction: Transaction): Transaction => (this.transactions[index] = transaction))
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
-			.catch(this.showError);
 	}
 
 	// Switch to the other side of a transaction

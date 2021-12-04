@@ -1166,38 +1166,6 @@ describe("TransactionIndexController", (): void => {
 		});
 	});
 
-	describe("flag", (): void => {
-		let transaction: Transaction;
-
-		beforeEach((): void => {
-			transaction = angular.copy(transactionIndexController.transactions[1]);
-			transactionIndexController.flag(1);
-		});
-
-		it("should disable navigation on the table", (): Chai.Assertion => ogTableNavigableService.enabled.should.be.false);
-
-		it("should show the flag modal for the transaction", (): void => {
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).should.deep.equal(transaction);
-		});
-
-		it("should update the transaction in the list of transactions when the modal is closed", (): void => {
-			transaction.flag = "test flag";
-			$uibModal.close(transaction);
-			transactionIndexController.transactions[1].should.deep.equal(transaction);
-		});
-
-		it("should enable navigation on the table when the modal is closed", (): void => {
-			$uibModal.close(transaction);
-			ogTableNavigableService.enabled.should.be.true;
-		});
-
-		it("should enable navigation on the table when the modal is dismissed", (): void => {
-			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
-		});
-	});
-
 	describe("switchTo", (): void => {
 		let	transaction: SplitTransactionChild,
 				stateParams: { id: number; transactionId?: number | null; },

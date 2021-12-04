@@ -126,6 +126,7 @@ export default class TransactionModel {
 	// Flags a transaction
 	public flag(transaction: Transaction): angular.IHttpPromise<void> {
 		return this.$http.put(`${this.path(Number(transaction.id))}/flag`, {
+			flag_type: transaction.flag_type,
 			memo: transaction.flag
 		});
 	}

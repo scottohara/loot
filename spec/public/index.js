@@ -57,5 +57,6 @@ import "./transactions/controllers/delete";
 import "./transactions/controllers/edit";
 import "./transactions/controllers/flag";
 import "./transactions/controllers/index";
+import "./transactions/directives/flag";
 import "./transactions/directives/status";
 import "./transactions/models/transaction";

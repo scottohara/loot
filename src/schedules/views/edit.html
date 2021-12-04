@@ -195,8 +195,16 @@
 					<input type="checkbox" ng-model="vm.schedule.autoFlag"> Automatically flag this transaction when entered
 				</label>
 			</div>
-			<div class="form-group">
-				<input ng-if="vm.schedule.autoFlag" name="flag" class="form-control" ng-model="vm.schedule.flag" placeholder="Flag" og-input-autoselect>
+			<div class="form-group" ng-if="vm.schedule.autoFlag">
+				<label for="flagType">Flag Type</label>
+				<select name="flagType" class="form-control" ng-model="vm.schedule.flag_type">
+					<option value="followup">Follow Up</option>
+					<option value="noreceipt">No Receipt</option>
+					<option value="taxdeductible">Tax Deductible</option>
+				</select>
+			</div>
+			<div class="form-group" ng-if="vm.schedule.autoFlag">
+				<input name="flag" class="form-control" ng-model="vm.schedule.flag" placeholder="Flag" og-input-autoselect>
 			</div>
 		</div>
 	</div>

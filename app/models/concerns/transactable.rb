@@ -225,6 +225,7 @@ module Transactable
 					'transaction_accounts.direction',
 					'transaction_accounts.status',
 					'transactions.memo',
+					'transaction_flags.flag_type',
 					'transaction_flags.memo AS flag'
 				]
 			)
@@ -313,6 +314,7 @@ module Transactable
 			status: trx['status'],
 			related_status: (trx['transaction_type'].eql?('Subtransfer') && trx['split_parent_status']) || trx['transfer_status'],
 			memo: trx['memo'],
+			flag_type: trx['flag_type'],
 			flag: trx['flag']
 		}
 	end

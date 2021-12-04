@@ -379,7 +379,7 @@ describe("TransactionEditController", (): void => {
 
 		beforeEach((): void => {
 			// The previous transaction to merge
-			lastTransaction = createTransferTransaction({ flag: "flag" });
+			lastTransaction = createTransferTransaction({ flag_type: "noreceipt", flag: "flag" });
 
 			// The current transaction to merge into
 			transactionEditController.transaction = createTransferTransaction({
@@ -417,6 +417,7 @@ describe("TransactionEditController", (): void => {
 			(undefined === lastTransaction.primary_account as Account | undefined).should.be.true;
 			(undefined === lastTransaction.status as TransactionStatus | undefined).should.be.true;
 			(undefined === lastTransaction.related_status as TransactionStatus | undefined).should.be.true;
+			(undefined === lastTransaction.flag_type).should.be.true;
 			(undefined === lastTransaction.flag).should.be.true;
 		});
 
@@ -430,6 +431,7 @@ describe("TransactionEditController", (): void => {
 			lastTransaction.related_status = (transactionEditController.transaction as TransferTransaction).related_status;
 			lastTransaction.payee = (transactionEditController.transaction as TransferTransaction).payee;
 			lastTransaction.category = transactionEditController.transaction.category as PsuedoCategory;
+			lastTransaction.flag_type = transactionEditController.transaction.flag_type;
 			lastTransaction.flag = transactionEditController.transaction.flag;
 
 			transactionEditController.transaction.should.deep.equal(lastTransaction);

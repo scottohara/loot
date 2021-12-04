@@ -89,6 +89,7 @@ class SplitTransaction < PayeeCashTransaction
 				'transactions.amount',
 				'transaction_accounts.direction',
 				'transactions.memo',
+				'transaction_flags.flag_type',
 				'transaction_flags.memo AS flag'
 			)
 			.joins(
@@ -120,6 +121,7 @@ class SplitTransaction < PayeeCashTransaction
 				amount: trx['amount'],
 				direction: ((trx['transaction_type'].eql?('Subtransfer') && ((trx['parent_transaction_type'].eql?('Payslip') && 'outflow') || trx['direction'])) || trx['category_direction']),
 				memo: trx['memo'],
+				flag_type: trx['flag_type'],
 				flag: trx['flag']
 			}
 		end

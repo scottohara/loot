@@ -12,6 +12,7 @@ import QueryService from "./services/query";
 import TransactionDeleteController from "./controllers/delete";
 import TransactionEditController from "./controllers/edit";
 import TransactionFlagController from "./controllers/flag";
+import TransactionFlagDirective from "./directives/flag";
 import TransactionIndexController from "./controllers/index";
 import TransactionModel from "./models/transaction";
 import TransactionStatusDirective from "./directives/status";
@@ -30,6 +31,7 @@ angular.module("lootTransactions", [
 	.controller("TransactionEditController", TransactionEditController)
 	.controller("TransactionFlagController", TransactionFlagController)
 	.controller("TransactionIndexController", TransactionIndexController)
+	.directive("transactionFlag", TransactionFlagDirective.factory)
 	.directive("transactionStatus", TransactionStatusDirective.factory)
 	.service("transactionModel", TransactionModel)
 	.service("queryService", QueryService);

@@ -10,7 +10,7 @@ require 'models/concerns/categorisable'
 		match do |actual|
 			actual.id.eql?(expected[:id]) &&
 				actual.memo.eql?(expected['memo']) &&
-				(expected['flag'].nil? ? actual.flag : actual.flag.memo).eql?(expected['flag'])
+				(actual.flag ? (actual.flag.flag_type.eql?(expected['flag_type']) && actual.flag.memo.eql?(expected['flag'])) : expected['flag_type'].nil? && expected['flag'].nil?)
 		end
 	end
 
@@ -91,6 +91,7 @@ require 'models/concerns/categorisable'
 				'memo' => 'Test json'
 			}
 		end
+		let(:flag_type) { 'noreceipt' }
 		let(:flag) { 'test flag' }
 
 		after do
@@ -102,8 +103,17 @@ require 'models/concerns/categorisable'
 		end
 
 		context 'flagged' do
-			it 'should create a transaction from a JSON representation' do
-				json['flag'] = flag
+			context 'with type only' do
+				it 'should create a transaction from a JSON representation' do
+					json['flag_type'] = flag_type
+				end
+			end
+
+			context 'with type and memo' do
+				it 'should create a transaction from a JSON representation' do
+					json['flag_type'] = flag_type
+					json['flag'] = flag
+				end
 			end
 		end
 	end
@@ -123,6 +133,7 @@ require 'models/concerns/categorisable'
 				'memo' => 'Test json'
 			}
 		end
+		let(:flag_type) { 'noreceipt' }
 		let(:flag) { 'test flag' }
 
 		after do
@@ -136,8 +147,15 @@ require 'models/concerns/categorisable'
 				it('should update a transaction from a JSON representation and remain unflagged') {} # Empty block
 			end
 
-			context 'and the update includes a flag' do
+			context 'and the update includes a flag with type only' do
 				it 'should update a transaction from a JSON representation and set the flag' do
+					json['flag_type'] = flag_type
+				end
+			end
+
+			context 'and the update includes a flag with type and memo' do
+				it 'should update a transaction from a JSON representation and set the flag' do
+					json['flag_type'] = flag_type
 					json['flag'] = flag
 				end
 			end
@@ -151,9 +169,21 @@ require 'models/concerns/categorisable'
 			end
 
 			context 'and the update includes a flag' do
-				it 'should update a transaction from a JSON representation and remain flagged' do
-					json['flag'] = flag
+				after do
 					expect(transaction.flag).not_to receive :destroy
+				end
+
+				context 'with type only' do
+					it 'should update a transaction from a JSON representation and remain flagged' do
+						json['flag_type'] = flag_type
+					end
+				end
+
+				context 'with type and memo' do
+					it 'should update a transaction from a JSON representation and remain flagged' do
+						json['flag_type'] = flag_type
+						json['flag'] = flag
+					end
 				end
 			end
 		end
@@ -172,6 +202,7 @@ require 'models/concerns/categorisable'
 			subject(:transaction) { create :basic_transaction }
 
 			it 'should return a JSON representation' do
+				expect(json).to include flag_type: nil
 				expect(json).to include flag: nil
 			end
 		end
@@ -180,6 +211,7 @@ require 'models/concerns/categorisable'
 			subject(:transaction) { create :basic_transaction, :flagged }
 
 			it 'should return a JSON representation' do
+				expect(json).to include flag_type: 'noreceipt'
 				expect(json).to include flag: 'Transaction flag'
 			end
 		end

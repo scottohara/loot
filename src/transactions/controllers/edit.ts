@@ -466,6 +466,7 @@ export default class TransactionEditController {
 		delete transaction.primary_account;
 		delete transaction.status;
 		delete (transaction as Partial<TransferrableTransaction>).related_status;
+		delete transaction.flag_type;
 		delete transaction.flag;
 
 		// Merge the last transaction details into the transaction on the scope

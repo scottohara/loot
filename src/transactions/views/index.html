@@ -56,7 +56,7 @@
 			<!-- Transaction date -->
 			<td class="has-action">
 				{{::transaction.transaction_date | date:'dd/MM/yyyy'}}
-				<i class="action glyphicon glyphicon-flag text-danger pull-right flag" ng-class="{'active': transaction.flag}" uib-tooltip="{{transaction.flag || 'Flag transaction...'}}" ng-click="vm.flag($index)"></i>
+				<span transaction-flag="::transaction"></span>
 			</td>
 			<!-- Details table -->
 			<td class="details">

@@ -31,7 +31,7 @@ export interface DirectiveTestModel {
 }
 
 export interface DirectiveTestScope extends angular.IScope {
-	model?: DirectiveTestModel | boolean | number | string | null;
+	model?: DirectiveTestModel | Transaction | boolean | number | string | null;
 }
 
 interface EventMock {

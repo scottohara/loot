@@ -42,6 +42,7 @@ class Schedule < ApplicationRecord
 					'transaction_headers.commission',
 					'transaction_accounts.direction',
 					'transactions.memo',
+					'transaction_flags.flag_type',
 					'transaction_flags.memo AS flag'
 				)
 				.joins(
@@ -109,6 +110,7 @@ class Schedule < ApplicationRecord
 					price: trx['price'],
 					direction: trx['direction'],
 					memo: trx['memo'],
+					flag_type: trx['flag_type'],
 					flag: trx['flag'],
 					overdue_count: periods_since(trx['frequency'], trx['next_due_date'])
 				}

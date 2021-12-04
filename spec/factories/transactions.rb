@@ -12,7 +12,7 @@
 
 	trait :flagged do
 		after :build do |trx|
-			trx.flag = ::FactoryBot.build :transaction_flag, memo: 'Transaction flag'
+			trx.flag = ::FactoryBot.build :transaction_flag, flag_type: 'noreceipt', memo: 'Transaction flag'
 		end
 	end
 
