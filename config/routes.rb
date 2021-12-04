@@ -1,10 +1,13 @@
-Rails.application.routes.draw do
+# Copyright (c) 2016 Scott O'Hara, oharagroup.net
+# frozen_string_literal: true
+
+::Rails.application.routes.draw do
 	# Root
-  root to: 'accounts#index'
+	root to: 'accounts#index'
 
 	# Resource can be flagged
 	concern :flaggable do
-		resource :flag, only: [:update, :destroy]
+		resource :flag, only: %i[update destroy]
 	end
 
 	# Resource can be split
@@ -14,7 +17,7 @@ Rails.application.routes.draw do
 
 	# Resource has a status
 	concern :reconcilable do
-		resource :status, only: [:update, :destroy]
+		resource :status, only: %i[update destroy]
 	end
 
 	# Resource will default to last used values
@@ -24,11 +27,11 @@ Rails.application.routes.draw do
 
 	# Resource can be favourited
 	concern :favouritable do
-		resource :favourite, only: [:update, :destroy]
+		resource :favourite, only: %i[update destroy]
 	end
 
 	resources :accounts, concerns: [:favouritable] do
-		resources :transactions, only: [:index], concerns: [:reconcilable, :defaultable]
+		resources :transactions, only: [:index], concerns: %i[reconcilable defaultable]
 		put 'reconcile', on: :member
 	end
 
@@ -36,7 +39,7 @@ Rails.application.routes.draw do
 		resources :transactions, only: [:index], concerns: [:defaultable]
 	end
 
-	resources :transactions, concerns: [:flaggable, :splittable]
+	resources :transactions, concerns: %i[flaggable splittable]
 	resources :schedules, except: [:show]
 	resources :logins, only: [:create]
 
