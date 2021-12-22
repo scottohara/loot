@@ -1,12 +1,13 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
+source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
 ruby '3.0.2'
 
-source 'https://rubygems.org'
-
 # Web application framework
-gem 'rails', '6.1.4.1'
+gem 'rails', '7.0.1'
 
 # Postgres
 gem 'pg', '1.2.3'
@@ -17,10 +18,10 @@ group :development, :production do
 end
 
 # For JSON serialisation
-gem 'active_model_serializers', '0.10.12'
+gem 'active_model_serializers', '0.10.13'
 
-# Reduces boot times through caching
-gem 'bootsnap', '1.9.1', require: false
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '1.10.1', require: false
 
 group :development, :test do
 	# Cleans database on each test run
@@ -56,11 +57,6 @@ group :development, :test do
 	# Shared Rubocop config
 	gem 'rubocop-config-oharagroup', '2.3.0', require: false
 
-	# Use byebug instead of IRB
-	gem 'byebug', '11.1.3'
-end
-
-group :development do
-	# File watcher
-	gem 'listen', '3.7.0'
+	# Debugging
+	gem 'debug', '1.4.0'
 end
