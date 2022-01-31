@@ -43,16 +43,16 @@ group :development, :test do
 	gem 'rubocop', '1.22.3', require: false
 
 	# Rubocop Rails cops
-	gem 'rubocop-rails', '2.12.4'
+	gem 'rubocop-rails', '2.12.4', require: false
 
 	# Rubocop Performance cops
-	gem 'rubocop-performance', '1.12.0'
+	gem 'rubocop-performance', '1.12.0', require: false
 
 	# Rubocop RSpec cops
-	gem 'rubocop-rspec', '2.6.0'
+	gem 'rubocop-rspec', '2.6.0', require: false
 
 	# Rubocop Rake cops
-	gem 'rubocop-rake', '0.6.0'
+	gem 'rubocop-rake', '0.6.0', require: false
 
 	# Shared Rubocop config
 	gem 'rubocop-config-oharagroup', '2.3.0', require: false
