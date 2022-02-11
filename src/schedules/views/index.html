@@ -62,7 +62,6 @@
 					<tr>
 						<td class="memo" colspan="2">
 							<span>{{::schedule.memo}}</span>
-							<span ng-if="::(!schedule.memo) && schedule.transaction_type == 'SecurityInvestment'">{{::schedule.quantity | number}} @ ${{schedule.price | number:3}} <span ng-if="::schedule.commission">(less {{::schedule.commission | currency}} commission)</span></span>
 						</td>
 					</tr>
 				</table>

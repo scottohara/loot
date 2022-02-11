@@ -171,8 +171,8 @@ describe("Transaction Edit", (): void => {
 								payeeOrSecurityName: "Security 1",
 								categoryName: "Buy",
 								subcategoryOrAccountName: "bank account 2",
-								memo: "2 @ $1.00 (plus $1.00 commission)",
-								balanceOrAmount: "$1.00",
+								memo: "2 @ $1.000 (plus $1.00 commission)",
+								balanceOrAmount: "$3.00",
 								rawTransactionDate,
 								securityName: "Security 1",
 								accountName: "bank account 2",
@@ -189,7 +189,7 @@ describe("Transaction Edit", (): void => {
 								categoryName: "Buy",
 								subcategoryOrAccountName: "bank account 2",
 								memo: "Security Buy",
-								balanceOrAmount: "$1.00",
+								balanceOrAmount: "$3.00",
 								rawTransactionDate,
 								securityName: "Security 1",
 								accountName: "bank account 2",
@@ -197,6 +197,23 @@ describe("Transaction Edit", (): void => {
 								price: "1",
 								commission: "1",
 								closingBalance: "$993.00"
+							},
+							{
+								transactionDate,
+								payeeOrSecurityName: "Security 1",
+								categoryName: "Sell",
+								subcategoryOrAccountName: "bank account 2",
+								memo: "2 @ $1.000 (less $1.00 commission)",
+								balanceOrAmount: "$1.00",
+								rawTransactionDate,
+								securityName: "Security 1",
+								accountName: "bank account 2",
+								quantity: "2",
+								price: "1",
+								commission: "1",
+								memoFromInvestmentDetails: true,
+								type: "Security Sell (no memo)",
+								closingBalance: "$991.00"
 							},
 							{
 								transactionDate,
@@ -211,7 +228,7 @@ describe("Transaction Edit", (): void => {
 								quantity: "2",
 								price: "1",
 								commission: "1",
-								closingBalance: "$991.00"
+								closingBalance: "$989.00"
 							},
 							{
 								transactionDate,
@@ -256,7 +273,7 @@ describe("Transaction Edit", (): void => {
 								securityName: "Security 1",
 								amount: "1",
 								accountName: "bank account 1",
-								closingBalance: "$988.00"
+								closingBalance: "$986.00"
 							}
 						]
 					}

@@ -143,7 +143,6 @@
 						<!-- Memo -->
 						<td class="memo" colspan="2">
 							<span>{{::transaction.memo}}</span>
-							<span ng-if="::(!transaction.memo) && transaction.transaction_type == 'SecurityInvestment'">{{::transaction.quantity | number}} @ ${{::transaction.price | number:3}} <span ng-if="::transaction.commission">(less {{::transaction.commission | currency}} commission)</span></span>
 						</td>
 					</tr>
 				</table>
@@ -175,8 +174,7 @@
 			<!-- Balance / Investment Amount -->
 			<td class="amount">
 				<span ng-switch-default ng-class="{'text-danger': transaction.balance < 0}">{{transaction.balance | currency}}</span>
-				<span ng-switch-when="investment" ng-if="::transaction.transaction_type == 'SecurityInvestment'">{{::transaction.quantity * transaction.price - transaction.commission | currency}}</span>
-				<span ng-switch-when="investment" ng-if="::transaction.transaction_type == 'Dividend'">{{::transaction.amount | currency}}</span>
+				<span ng-switch-when="investment">{{::transaction.amount | currency}}</span>
 			</td>
 		</tr>
 	</tbody>

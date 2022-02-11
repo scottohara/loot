@@ -386,6 +386,8 @@ export default class TransactionEditController {
 
 	// Updates the transaction amount and memo when the quantity, price or commission change
 	public updateInvestmentDetails(): void {
+		const PRICE_DECIMAL_PLACES = 3;
+
 		if ("SecurityInvestment" === this.transaction.transaction_type) {
 			// Base amount is the quantity multiplied by the price
 			const amount = Number(this.transaction.quantity) * Number(this.transaction.price),
@@ -404,7 +406,7 @@ export default class TransactionEditController {
 		// If we're adding a new buy or sell transaction, update the memo with the details
 		if (null === this.transaction.id && "SecurityInvestment" === this.transaction.transaction_type) {
 			const	quantity: string = Number(this.transaction.quantity) > 0 ? String(this.transaction.quantity) : "",
-						price: string = Number(this.transaction.price) > 0 ? ` @ ${this.currencyFilter(this.transaction.price)}` : "",
+						price: string = Number(this.transaction.price) > 0 ? ` @ ${this.currencyFilter(this.transaction.price, undefined, PRICE_DECIMAL_PLACES)}` : "",
 						commission: string = Number(this.transaction.commission) > 0 ? ` (${"inflow" === this.transaction.direction ? "plus" : "less"} ${this.currencyFilter(this.transaction.commission)} commission)` : "";
 
 			this.transaction.memo = quantity + price + commission;

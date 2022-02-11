@@ -801,7 +801,7 @@ describe("TransactionEditController", (): void => {
 			it(`should update the memo with the price, quantity and commission when adding a new Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				transactionEditController.transaction.direction = scenario.direction;
 				transactionEditController.updateInvestmentDetails();
-				transactionEditController.transaction.memo.should.equal(`2 @ $10.00 (${scenario.memo} $1.00 commission)`);
+				transactionEditController.transaction.memo.should.equal(`2 @ $10.000 (${scenario.memo} $1.00 commission)`);
 			});
 		});
 	});

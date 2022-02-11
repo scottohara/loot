@@ -988,7 +988,7 @@ describe("ScheduleEditController", (): void => {
 			it(`should update the memo with the price, quantity and commission when adding a new Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				scheduleEditController.transaction.direction = scenario.direction;
 				scheduleEditController.updateInvestmentDetails();
-				scheduleEditController.transaction.memo.should.equal(`2 @ $10.00 (${scenario.memo} $1.00 commission)`);
+				scheduleEditController.transaction.memo.should.equal(`2 @ $10.000 (${scenario.memo} $1.00 commission)`);
 			});
 		});
 	});

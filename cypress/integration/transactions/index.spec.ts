@@ -183,7 +183,7 @@ describe("Transaction Index", (): void => {
 					quantity: "1",
 					price: "$1",
 					commission: "$1.00",
-					balanceOrAmount: "$0.00"
+					balanceOrAmount: "$2.00"
 				},
 				{
 					transactionDate: "08/01/2014",
