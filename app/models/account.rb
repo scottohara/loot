@@ -162,6 +162,7 @@ class Account < ApplicationRecord
 				next if cash_account.nil?
 
 				cash_account.merge! account
+				cash_account['related_account_closing_balance'] = cash_account['closing_balance']
 				cash_account['closing_balance'] = (cash_account['closing_balance'].to_f + cash_account['total_value'].to_f) || 0
 			end
 
@@ -181,6 +182,7 @@ class Account < ApplicationRecord
 								name: a['related_account_name'],
 								account_type: a['related_account_type'],
 								opening_balance: a['related_account_opening_balance']&.to_f,
+								closing_balance: a['related_account_closing_balance']&.to_f,
 								status: a['related_account_status']
 							}
 						}

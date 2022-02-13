@@ -83,6 +83,7 @@ require 'models/concerns/transactable'
 								name: nil,
 								account_type: nil,
 								opening_balance: nil,
+								closing_balance: nil,
 								status: nil
 							}
 						}
@@ -104,6 +105,7 @@ require 'models/concerns/transactable'
 								name: nil,
 								account_type: nil,
 								opening_balance: nil,
+								closing_balance: nil,
 								status: nil
 							}
 						},
@@ -120,6 +122,7 @@ require 'models/concerns/transactable'
 								name: nil,
 								account_type: nil,
 								opening_balance: nil,
+								closing_balance: nil,
 								status: nil
 							}
 						}
@@ -141,6 +144,7 @@ require 'models/concerns/transactable'
 								name: related_bank_account.name,
 								account_type: related_bank_account.account_type,
 								opening_balance: related_bank_account.opening_balance.to_f,
+								closing_balance: related_bank_account.closing_balance.to_f,
 								status: related_bank_account.status
 							}
 						}
@@ -162,6 +166,7 @@ require 'models/concerns/transactable'
 								name: asset_account.name,
 								account_type: asset_account.account_type,
 								opening_balance: asset_account.opening_balance.to_f,
+								closing_balance: nil,
 								status: asset_account.status
 							}
 						},
@@ -178,6 +183,7 @@ require 'models/concerns/transactable'
 								name: nil,
 								account_type: nil,
 								opening_balance: nil,
+								closing_balance: nil,
 								status: nil
 							}
 						}
@@ -225,6 +231,7 @@ require 'models/concerns/transactable'
 					actual.related_account.name.eql?(related_account.name) &&
 						actual.related_account.account_type.eql?(related_account.account_type) &&
 						actual.related_account.opening_balance.eql?(related_account.opening_balance) &&
+						actual.related_account.closing_balance.eql?(related_account.closing_balance) &&
 						actual.related_account.status.eql?(related_account.status)
 				end
 		end
