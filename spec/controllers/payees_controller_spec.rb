@@ -46,7 +46,7 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', request: true, json: true do
-		let(:payee) { instance_double 'payee' }
+		let(:payee) { instance_double ::Payee }
 		let(:request_body) { {name: 'Updated payee'} }
 		let(:raw_json) { 'updated payee' }
 		let(:json) { ::JSON.dump raw_json }

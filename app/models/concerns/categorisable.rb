@@ -38,8 +38,8 @@ module Categorisable
 				end
 
 			{
-				id: id,
-				name: name
+				id:,
+				name:
 			}
 		end
 

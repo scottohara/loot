@@ -26,7 +26,7 @@ require 'rails_helper'
 
 	before do
 		expect(context.class).to receive(:find).with('1').and_return context
-		expect(context).to receive(:update!).with favourite: favourite
+		expect(context).to receive(:update!).with favourite:
 	end
 
 	describe 'PATCH update', request: true do

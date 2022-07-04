@@ -68,8 +68,8 @@ class TransferTransaction < PayeeCashTransaction
 			},
 			account: other_account.as_json,
 			direction: options[:direction],
-			status: status,
-			related_status: related_status
+			status:,
+			related_status:
 		)
 	end
 end

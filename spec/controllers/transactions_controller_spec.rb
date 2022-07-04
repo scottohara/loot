@@ -11,7 +11,7 @@ require 'rails_helper'
 		let(:json) do
 			::JSON.dump(
 				openingBalance: opening_balance.to_f,
-				transactions: transactions,
+				transactions:,
 				atEnd: at_end
 			)
 		end
@@ -151,7 +151,7 @@ require 'rails_helper'
 				expect(::Transaction).to receive(:types_for).with(account_type).and_return transaction_types
 				expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
 				expect(last_transaction).to receive(:as_subclass).and_return last_transaction
-				get :last, params: request_params.merge(account_type: account_type)
+				get :last, params: request_params.merge(account_type:)
 			end
 
 			context 'for account', instance: true do
@@ -193,7 +193,7 @@ require 'rails_helper'
 				expect(controller).to receive(:context).and_call_original
 				expect(::Transaction).to receive(:types_for).with(account_type).and_return transaction_types
 				expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
-				get :last, params: request_params.merge(account_type: account_type)
+				get :last, params: request_params.merge(account_type:)
 			end
 
 			context 'for account', instance: true do

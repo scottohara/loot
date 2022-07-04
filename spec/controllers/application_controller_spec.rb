@@ -5,11 +5,13 @@ require 'rails_helper'
 
 ::RSpec.describe ::ApplicationController, type: :controller do
 	controller do
+		include ::FactoryBot::Syntax::Methods
+
 		def index
 			case params['context']
 			when 'internal error' then raise ::StandardError, params['context']
-			when 'record invalid' then raise ::ActiveRecord::RecordInvalid, ::FactoryBot.create(:category, name: nil, direction: 'invalid')
-			when 'record not destroyed' then raise ::ActiveRecord::RecordNotDestroyed, ::FactoryBot.create(:category, transactions: 1).destroy!
+			when 'record invalid' then raise ::ActiveRecord::RecordInvalid, create(:category, name: nil, direction: 'invalid')
+			when 'record not destroyed' then raise ::ActiveRecord::RecordNotDestroyed, create(:category, transactions: 1).destroy!
 			when 'record not found' then raise ::ActiveRecord::RecordNotFound, params['context']
 			when 'routing error'
 				params[:unmatched_route] = params['context']

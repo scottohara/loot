@@ -5,7 +5,7 @@ require 'rails_helper'
 
 ::RSpec.describe ::StatusesController, type: :controller do
 	before do
-		expect(::TransactionAccount).to receive_message_chain(:where, :where, :update_all).with status: status
+		expect(::TransactionAccount).to receive_message_chain(:where, :where, :update_all).with status:
 	end
 
 	describe 'PATCH update', request: true do

@@ -10,7 +10,7 @@ class TransactionsController < ApplicationController
 		opening_balance, transactions, at_end = @context.ledger params
 		render json: {
 			openingBalance: opening_balance.to_f,
-			transactions: transactions,
+			transactions:,
 			atEnd: at_end
 		}
 	end

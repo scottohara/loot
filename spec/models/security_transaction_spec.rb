@@ -160,7 +160,7 @@ require 'rails_helper'
 
 		context 'unknown method' do
 			it 'should be false' do
-				expect(transaction.validate_method? :unknown_method).to be nil
+				expect(transaction.validate_method? :unknown_method).to be_nil
 			end
 		end
 	end

@@ -138,7 +138,7 @@ require 'models/concerns/categorisable'
 			query = defined?(search_term) && search_term
 
 			_, transactions = subject.ledger query: query
-			expected_transactions = subject.transactions.for_ledger(query: query).where.not('transaction_headers.transaction_date': nil)
+			expected_transactions = subject.transactions.for_ledger(query:).where.not('transaction_headers.transaction_date': nil)
 
 			expect(transactions).to match_ledger_transactions expected_transactions
 		end
@@ -215,12 +215,12 @@ require 'models/concerns/categorisable'
 		end
 
 		it 'should return the closing balance as the passed date' do
-			expect(subject.closing_balance(as_at: '2014-01-01', query: query)).to eq expected_closing_balances[:with_date]
+			expect(subject.closing_balance(as_at: '2014-01-01', query:)).to eq expected_closing_balances[:with_date]
 		end
 
 		context 'when a date is not passed' do
 			it 'should return the closing balance as at today' do
-				expect(subject.closing_balance(query: query)).to eq expected_closing_balances[:without_date]
+				expect(subject.closing_balance(query:)).to eq expected_closing_balances[:without_date]
 			end
 		end
 	end

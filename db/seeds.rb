@@ -143,7 +143,7 @@ module Loot
 		subcats = subcategories id
 
 		# Create the subcategories
-		subcats.sort_by { |_k, v| v[:name] }.each_value { |category| c.children.build(name: category[:name], direction: direction) }
+		subcats.sort_by { |_k, v| v[:name] }.each_value { |category| c.children.build(name: category[:name], direction:) }
 
 		# Save the category (and it's children)
 		c.save!

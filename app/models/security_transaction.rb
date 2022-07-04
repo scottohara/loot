@@ -19,7 +19,7 @@ class SecurityTransaction < Transaction
 		self
 	end
 
-	def method_missing(method, *args, &block)
+	def method_missing(method, *args, &)
 		validate_method?(method) do |match|
 			public_send "validate_#{match[2]}", match[1]
 			true
@@ -48,7 +48,7 @@ class SecurityTransaction < Transaction
 
 	# :nocov:
 
-	def validate_method?(method, &block)
-		/^validate_(.+)_(presence|absence)$/.match method.to_s, &block
+	def validate_method?(method, &)
+		/^validate_(.+)_(presence|absence)$/.match method.to_s, &
 	end
 end

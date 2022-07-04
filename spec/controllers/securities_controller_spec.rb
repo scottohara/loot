@@ -52,7 +52,7 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', request: true, json: true do
-		let(:security) { instance_double 'security' }
+		let(:security) { instance_double ::Security }
 		let(:request_body) { {name: 'Updated security', code: 'ABC'} }
 		let(:raw_json) { 'updated security' }
 		let(:json) { ::JSON.dump raw_json }

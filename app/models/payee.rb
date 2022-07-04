@@ -46,7 +46,7 @@ class Payee < ApplicationRecord
 		nil
 	end
 
-	def as_json
+	def as_json(*)
 		# Defer to serializer
 		::ActiveModelSerializers::SerializableResource.new(self).as_json
 	end

@@ -31,6 +31,6 @@ class TransactionHeader < ApplicationRecord
 	end
 
 	def as_json(_options = {})
-		((schedule.present? && schedule.as_json) || {}).merge(transaction_date: transaction_date)
+		((schedule.present? && schedule.as_json) || {}).merge(transaction_date:)
 	end
 end

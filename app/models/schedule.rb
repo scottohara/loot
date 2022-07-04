@@ -179,10 +179,10 @@ class Schedule < ApplicationRecord
 
 	def as_json(_options = {})
 		{
-			next_due_date: next_due_date,
-			frequency: frequency,
-			estimate: estimate,
-			auto_enter: auto_enter,
+			next_due_date:,
+			frequency:,
+			estimate:,
+			auto_enter:,
 			overdue_count: self.class.periods_since(frequency, next_due_date)
 		}
 	end

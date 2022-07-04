@@ -22,7 +22,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe 'before_destroy' do
-		subject(:account) { create :bank_account, account_type: account_type, related_account: related_account }
+		subject(:account) { create :bank_account, account_type:, related_account: }
 
 		let!(:related_account) { create :cash_account }
 

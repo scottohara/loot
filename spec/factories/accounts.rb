@@ -26,7 +26,7 @@
 					create :dividend_transaction, investment_account: account, cash_account: account.related_account
 
 					# Create any scheduled transactions
-					create_list :security_holding_transaction, evaluator.scheduled, :scheduled, account: account
+					create_list :security_holding_transaction, evaluator.scheduled, :scheduled, account:
 				else
 					create :basic_expense_transaction, :flagged, account: account, status: 'Cleared' # flagged and cleared
 					create :basic_income_transaction, account: account
@@ -43,14 +43,14 @@
 					create :dividend_transaction, cash_account: account
 
 					# Create any scheduled transactions
-					create_list :basic_transaction, evaluator.scheduled, :scheduled, account: account
+					create_list :basic_transaction, evaluator.scheduled, :scheduled, account:
 				end
 			end
 		end
 
 		after :build do |account, evaluator|
 			create_list :basic_transaction, evaluator.transactions, :flagged, account: account
-			create_list :basic_transaction, evaluator.reconciled, account: account, status: 'Reconciled'
+			create_list :basic_transaction, evaluator.reconciled, account:, status: 'Reconciled'
 		end
 
 		trait :asset do

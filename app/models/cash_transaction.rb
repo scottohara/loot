@@ -20,6 +20,6 @@ class CashTransaction < Transaction
 	end
 
 	def as_json(options = {})
-		super.merge(amount: amount)
+		super.merge(amount:)
 	end
 end

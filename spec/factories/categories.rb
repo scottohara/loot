@@ -18,7 +18,7 @@
 				create :split_transaction, direction: category.direction, category: category, subtransactions: 1
 
 				# Create any scheduled transactions
-				create_list :basic_transaction, evaluator.scheduled, :scheduled, category: category
+				create_list :basic_transaction, evaluator.scheduled, :scheduled, category:
 			end
 		end
 

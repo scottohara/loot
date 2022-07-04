@@ -102,9 +102,9 @@ class Transaction < ApplicationRecord
 
 	def as_json(_options = {})
 		{
-			id: id,
-			transaction_type: transaction_type,
-			memo: memo,
+			id:,
+			transaction_type:,
+			memo:,
 			flag_type: (flag.present? && flag.flag_type) || nil,
 			flag: (flag.present? && flag.memo) || nil
 		}

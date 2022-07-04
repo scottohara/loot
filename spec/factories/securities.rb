@@ -21,12 +21,12 @@
 				create :dividend_transaction, security: security
 
 				# Create any scheduled transactions
-				create_list :security_holding_transaction, evaluator.scheduled, :scheduled, security: security
+				create_list :security_holding_transaction, evaluator.scheduled, :scheduled, security:
 			end
 		end
 
 		after :build do |security, evaluator|
-			create_list :security_holding_transaction, evaluator.transactions, security: security
+			create_list :security_holding_transaction, evaluator.transactions, security:
 		end
 
 		trait :favourite do

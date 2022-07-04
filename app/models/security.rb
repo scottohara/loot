@@ -138,7 +138,7 @@ class Security < ApplicationRecord
 			security_price.update_column(:price, price) unless security_transaction_headers.where(transaction_date: as_at_date).exists?(['transaction_id > ?', transaction_id])
 		else
 			# No existing price for this date, so create one
-			prices.create! price: price, as_at_date: as_at_date
+			prices.create! price:, as_at_date:
 		end
 	end
 
@@ -154,7 +154,7 @@ class Security < ApplicationRecord
 		nil
 	end
 
-	def as_json
+	def as_json(*)
 		# Defer to serializer
 		::ActiveModelSerializers::SerializableResource.new(self).as_json
 	end

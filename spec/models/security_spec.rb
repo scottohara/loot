@@ -152,8 +152,8 @@ require 'models/concerns/transactable'
 
 		context 'when a price already exists for the date' do
 			let(:new_price) { 200 }
-			let!(:first_transaction) { create :security_holding_transaction, security: security, transaction_date: as_at }
-			let!(:second_transaction) { create :security_holding_transaction, security: security, transaction_date: as_at }
+			let!(:first_transaction) { create :security_holding_transaction, security:, transaction_date: as_at }
+			let!(:second_transaction) { create :security_holding_transaction, security:, transaction_date: as_at }
 
 			context "and this transaction represents the 'most recent' price" do
 				it 'should update the existing price' do

@@ -21,12 +21,12 @@
 				create :loan_repayment_transaction, payee: payee, subtransactions: 1, subtransfers: 1
 
 				# Create any scheduled transactions
-				create_list :basic_transaction, evaluator.scheduled, :scheduled, payee: payee
+				create_list :basic_transaction, evaluator.scheduled, :scheduled, payee:
 			end
 		end
 
 		after :build do |payee, evaluator|
-			create_list :basic_transaction, evaluator.transactions, payee: payee
+			create_list :basic_transaction, evaluator.transactions, payee:
 		end
 
 		trait :favourite do

@@ -16,7 +16,7 @@ class SubtransferTransaction < PayeeCashTransaction
 			direction = (json['direction'].eql?('inflow') && 'outflow') || 'inflow'
 
 			s = super
-			s.build_transaction_account(direction: direction, status: json['status']).account = ::Account.find json['account']['id']
+			s.build_transaction_account(direction:, status: json['status']).account = ::Account.find json['account']['id']
 			s
 		end
 	end

@@ -50,7 +50,7 @@ class DividendTransaction < SecurityTransaction
 			primary_account: primary_account.account.as_json,
 			category: self.class.transaction_category('transaction_type' => transaction_type, 'direction' => primary_account.direction),
 			account: other_account.account.as_json,
-			amount: amount,
+			amount:,
 			direction: primary_account.direction,
 			status: primary_account.status,
 			related_status: other_account.status

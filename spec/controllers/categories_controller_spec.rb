@@ -52,7 +52,7 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', request: true, json: true do
-		let(:category) { instance_double 'category' }
+		let(:category) { instance_double ::Category }
 		let(:request_body) { {name: 'Updated category', direction: 'outflow', parent_id: '1'} }
 		let(:raw_json) { 'updated category' }
 		let(:json) { ::JSON.dump raw_json }

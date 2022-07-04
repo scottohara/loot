@@ -74,8 +74,8 @@ class SecurityTransferTransaction < SecurityTransaction
 			account: other_account.as_json,
 			direction: options[:direction],
 			quantity: header.quantity,
-			status: status,
-			related_status: related_status
+			status:,
+			related_status:
 		)
 	end
 end

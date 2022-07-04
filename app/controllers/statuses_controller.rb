@@ -16,7 +16,7 @@ class StatusesController < ApplicationController
 		::TransactionAccount
 			.where(account_id: params[:account_id])
 			.where(transaction_id: params[:transaction_id])
-			.update_all(status: status)
+			.update_all(status:)
 
 		head :ok
 	end

@@ -172,12 +172,12 @@ require 'models/concerns/measurable'
 				# Date.advance(months: -x) will round down (ie. to an earlier date) if the date is invalid (eg. 30-Feb)
 				# To ensure that we only have one overdue transaction, make sure that advancing back yields the original date
 				target_date = ::Time.zone.tomorrow.advance months: -months
-				target_date = target_date.advance days: 1 until target_date.advance(months: months).future?
+				target_date = target_date.advance days: 1 until target_date.advance(months:).future?
 				target_date
 			end
 
 			def next_due_date(months)
-				months_ago(months).advance months: months
+				months_ago(months).advance months:
 			end
 
 			weekly = create :basic_transaction, :scheduled, frequency: 'Weekly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -1)

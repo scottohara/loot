@@ -13,14 +13,14 @@ require 'rails_helper'
 		end
 
 		after do
-			patch :update, params: {transaction_id: '1', flag_type: flag_type, memo: memo}
+			patch :update, params: {transaction_id: '1', flag_type:, memo:}
 		end
 
 		context "when a flag doesn't already exist" do
 			let(:transaction) { create :transaction }
 
 			it 'should create a new flag' do
-				expect(transaction).to receive(:build_flag).with flag_type: flag_type, memo: memo
+				expect(transaction).to receive(:build_flag).with(flag_type:, memo:)
 				expect(transaction).to receive :save!
 			end
 		end
@@ -31,7 +31,7 @@ require 'rails_helper'
 			it 'should update the existing flag' do
 				expect(transaction).not_to receive :build_flag
 				expect(transaction).not_to receive :save!
-				expect(transaction.flag).to receive(:update!).with flag_type: flag_type, memo: memo
+				expect(transaction.flag).to receive(:update!).with(flag_type:, memo:)
 			end
 		end
 	end

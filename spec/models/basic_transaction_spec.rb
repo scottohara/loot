@@ -132,7 +132,7 @@ require 'rails_helper'
 		end
 
 		context 'with subcategory' do
-			subject(:transaction) { create :basic_transaction, category: ::FactoryBot.create(:subcategory), status: 'Reconciled' }
+			subject(:transaction) { create :basic_transaction, category: create(:subcategory), status: 'Reconciled' }
 
 			before do
 				expect(transaction.category.parent).to receive(:as_json).and_return 'category json'
