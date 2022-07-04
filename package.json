@@ -86,7 +86,7 @@
     "test:e2e": "npm run build && heroku local --procfile Procfile.test --port 3000"
   },
   "engines": {
-    "node": "17.8.0",
-    "npm": "8.6.0"
+    "node": "18.4.0",
+    "npm": "8.13.2"
   }
 }
