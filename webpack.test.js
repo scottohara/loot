@@ -18,7 +18,10 @@ module.exports = merge(config, {
 	resolve: {
 		modules: [
 			path.resolve(__dirname, "spec", "public")
-		]
+		],
+		fallback: {
+			"process/browser": require.resolve("process/browser.js")
+		}
 	},
 	devtool: "inline-source-map",
 	plugins: [
