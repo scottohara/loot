@@ -41,6 +41,11 @@ export default class TransactionModel {
 						private readonly categoryModel: CategoryModel,
 						private readonly securityModel: SecurityModel) {}
 
+	// Returns the last used transaction date
+	public get lastTransactionDate(): Date | string | undefined {
+		return this.lastUsedTransactionDate;
+	}
+
 	// Returns the API path
 	public path(id?: number): string {
 		return `/transactions${undefined === id ? "" : `/${id}`}`;
@@ -144,11 +149,6 @@ export default class TransactionModel {
 	// Set the show all details setting in local storage
 	public showAllDetails(showAllDetails: boolean): void {
 		this.$window.localStorage.setItem(this.SHOW_ALL_DETAILS_LOCAL_STORAGE_KEY, String(showAllDetails));
-	}
-
-	// Returns the last used transaction date
-	public get lastTransactionDate(): Date | string | undefined {
-		return this.lastUsedTransactionDate;
 	}
 
 	// Performs post-processing after parsing from JSON

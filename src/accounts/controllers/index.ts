@@ -32,6 +32,10 @@ export default class AccountIndexController {
 		this.$scope.$on("$destroy", (): unknown => $window.$(document).off("keydown", this.keydownHandler) as unknown);
 	}
 
+	public get netWorth(): number {
+		return Object.keys(this.accounts).reduce((memo: number, accountType: string): number => memo + this.accounts[accountType].total, 0);
+	}
+
 	public editAccount(accountType?: string, index?: number): void {
 		// Helper function to sort by account name
 		function byName(a: Account, b: Account): number {
@@ -131,10 +135,6 @@ export default class AccountIndexController {
 				this.calculateAccountTypeTotal(accountType);
 			}).catch(this.showError);
 		}).catch(this.showError);
-	}
-
-	public get netWorth(): number {
-		return Object.keys(this.accounts).reduce((memo: number, accountType: string): number => memo + this.accounts[accountType].total, 0);
 	}
 
 	public toggleFavourite(accountType: string, index: number): void {

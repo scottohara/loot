@@ -3,6 +3,11 @@ import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
 export default class OgLruCache {
 	public constructor(private readonly capacity: number, private items: OgCacheEntry[]) {}
 
+	// List the cached items in order (MRU)
+	public get list(): OgCacheEntry[] {
+		return this.items;
+	}
+
 	// Put an item into the cache
 	public put(item: OgCacheEntry): OgCacheEntry[] {
 		// Exit early if the item is already the current head
@@ -26,10 +31,5 @@ export default class OgLruCache {
 		}
 
 		return this.list;
-	}
-
-	// List the cached items in order (MRU)
-	public get list(): OgCacheEntry[] {
-		return this.items;
 	}
 }

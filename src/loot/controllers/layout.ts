@@ -48,6 +48,31 @@ export default class LayoutController {
 		$window.$("#transactionSearch").on("search", (): void => this.checkIfSearchCleared());
 	}
 
+	// Recently accessed lists
+	public get recentlyAccessedAccounts(): OgCacheEntry[] {
+		return this.accountModel.recent;
+	}
+
+	public get recentlyAccessedPayees(): OgCacheEntry[] {
+		return this.payeeModel.recent;
+	}
+
+	public get recentlyAccessedCategories(): OgCacheEntry[] {
+		return this.categoryModel.recent;
+	}
+
+	public get recentlyAccessedSecurities(): OgCacheEntry[] {
+		return this.securityModel.recent;
+	}
+
+	public get loadingState(): boolean {
+		return this.isLoadingState;
+	}
+
+	public set loadingState(loading: boolean) {
+		this.isLoadingState = loading;
+	}
+
 	// Login
 	public login(): void {
 		this.$uibModal.open({
@@ -79,31 +104,6 @@ export default class LayoutController {
 	// Disable/enable any table key-bindings
 	public toggleTableNavigationEnabled(state: boolean): void {
 		this.ogTableNavigableService.enabled = state;
-	}
-
-	// Recently accessed lists
-	public get recentlyAccessedAccounts(): OgCacheEntry[] {
-		return this.accountModel.recent;
-	}
-
-	public get recentlyAccessedPayees(): OgCacheEntry[] {
-		return this.payeeModel.recent;
-	}
-
-	public get recentlyAccessedCategories(): OgCacheEntry[] {
-		return this.categoryModel.recent;
-	}
-
-	public get recentlyAccessedSecurities(): OgCacheEntry[] {
-		return this.securityModel.recent;
-	}
-
-	public get loadingState(): boolean {
-		return this.isLoadingState;
-	}
-
-	public set loadingState(loading: boolean) {
-		this.isLoadingState = loading;
 	}
 
 	private checkIfSearchCleared(): void {
