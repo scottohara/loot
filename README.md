@@ -54,7 +54,7 @@ Two npm scripts are available to run the frontend test suite:
 
 Backend specs are implemented using [RSpec](http://rspec.info/):
 
-1. Ensure the database server is running (e.g. `npm run start:db`)
+1. Ensure the database server is running (e.g. `npm run db`)
 2. Run the RSpec rake task (`bundle exec rake spec`). To run specific specs, use RSpec filtering (`fdescribe`, `fit`, `xdescribe`, `xit`)
 
 Integration tests are implemented using [Cypress](http://cypress.io/):
@@ -76,12 +76,7 @@ Deployment (Staging/Production)
 ===============================
 Before deploying, you should first create an annotated tag (e.g. `git tag -am "Version 1.00" v1.00`).
 
-If you use use heroku, it's a simple `git push heroku master`. If there are additional commits after the tag that shouldn't be deployed, just push the tag (`git push heroku v1.00:master`).
+Then run:
 
-The `Procfile` includes a `release` phase that automatically runs `db:migrate` before release is deployed.
-
-If you use heroku pipelines, the recommendation is that your `heroku` git remote maps to a `staging` app in the pipeline. This allows you to verify the release before promoting it to a `production` app in the pipeline.
-
-(Note: You must configure your heroku app to use the multi buildpack, e.g. `heroku buildpack:set https://github.com/heroku/heroku-buildpack-multi`)
-
-(Note: Ensure your server is configured to your local timezone. For heroku, this is done by setting the `TZ` config variable, e.g. `heroku config:add TZ=Australia/Sydney`)
+* `npm run deploy:staging` to deploy to the staging app
+* `npm run deploy:production` to deploy to the production app

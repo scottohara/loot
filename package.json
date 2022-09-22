@@ -39,6 +39,7 @@
     "@typescript-eslint/parser": "5.30.5",
     "angular-mocks": "1.8.3",
     "chai": "4.3.6",
+		"concurrently": "7.4.0",
     "copy-webpack-plugin": "9.0.1",
     "coverage-istanbul-loader": "3.0.5",
     "css-loader": "6.4.0",
@@ -75,18 +76,25 @@
     "workbox-webpack-plugin": "6.3.0"
   },
   "scripts": {
-    "start": "heroku local --procfile Procfile.dev --port 3000",
-    "start:db": "postgres -D /opt/homebrew/var/postgres",
+		"start": "concurrently --prefix-colors bgBlue.bold,bgYellow.bold,bgGreen.bold npm:web:dev npm:db npm:dev",
+		"web:dev": "bundle exec rails server",
+		"web:test": "bundle exec rails server --environment=test",
+		"db": "postgres -D /opt/homebrew/var/postgres",
     "build": "webpack --progress --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
     "lint": "eslint 'src/**/*.{ts,js}' 'spec/public/**/*.{ts,js}' 'cypress/**/*.{ts,js}' '*.{ts,js}'",
+		"cypress": "cypress open --e2e --browser chrome",
     "test": "npm run lint && npm run test:coverage",
     "test:bdd": "karma start karma-bdd.conf.js",
     "test:coverage": "karma start",
-    "test:e2e": "npm run build && heroku local --procfile Procfile.test --port 3000"
+		"test:e2e": "npm run build && concurrently --prefix-colors bgBlue.bold,bgYellow.bold,bgGreen.bold npm:web:test npm:db npm:cypress",
+		"deploy": "fly deploy --build-arg NODE_VERSION=$npm_package_engines_node --build-arg NPM_VERSION=$npm_package_engines_npm --build-arg RUBY_VERSION=$npm_package_engines_ruby",
+		"deploy:staging": "npm run deploy -- --app loottest",
+		"deploy:production": "npm run deploy -- --app lootprod"
   },
   "engines": {
     "node": "18.4.0",
-    "npm": "8.13.2"
+		"npm": "8.13.2",
+		"ruby": "3.1.2"
   }
 }
