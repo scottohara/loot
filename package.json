@@ -93,8 +93,8 @@
 		"deploy:production": "npm run deploy -- --app lootprod"
   },
   "engines": {
-    "node": "18.4.0",
-		"npm": "8.13.2",
+    "node": "18.12.1",
+    "npm": "9.1.1",
 		"ruby": "3.1.2"
   }
 }
