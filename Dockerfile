@@ -53,7 +53,7 @@ RUN --mount=type=cache,id=loot-bundler,target=tmp/vendor/bundle \
 FROM ruby:${RUBY_VERSION}-alpine as app
 
 RUN \
-	fallocate --length 512M /swapfile; \
+	fallocate -l 512M /swapfile; \
 	chmod 0600 /swapfile; \
 	mkswap /swapfile; \
 	sysctl --write vm.swappiness=10; \
