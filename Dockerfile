@@ -55,9 +55,7 @@ FROM ruby:${RUBY_VERSION}-alpine as app
 RUN \
 	fallocate -l 512M /swapfile; \
 	chmod 0600 /swapfile; \
-	mkswap /swapfile; \
-	sysctl --write vm.swappiness=10; \
-	swapon /swapfile;
+	mkswap /swapfile;
 
 RUN apk add --no-cache \
 	libpq \

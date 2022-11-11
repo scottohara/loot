@@ -90,7 +90,11 @@
 		"test:e2e": "npm run build && concurrently --prefix-colors bgBlue.bold,bgYellow.bold,bgGreen.bold npm:web:test npm:db npm:cypress",
 		"deploy": "fly deploy --build-arg NODE_VERSION=$npm_package_engines_node --build-arg NPM_VERSION=$npm_package_engines_npm --build-arg RUBY_VERSION=$npm_package_engines_ruby",
 		"deploy:staging": "npm run deploy -- --app loottest",
-		"deploy:production": "npm run deploy -- --app lootprod"
+		"deploy:production": "npm run deploy -- --app lootprod",
+		"swap:configure": "fly ssh console --command 'sysctl --write vm.swappiness=10'",
+		"swap:on": "fly ssh console --command 'swapon /swapfile'",
+		"postdeploy:staging": "npm run swap:configure -- --app loottest && npm run swap:on -- --app loottest",
+		"postdeploy:production": "npm run swap:configure -- --app lootprod && npm run swap:on -- --app lootprod"
   },
   "engines": {
     "node": "18.12.1",
