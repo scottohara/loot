@@ -180,7 +180,7 @@ describe("Transaction Index", (): void => {
 					categoryName: "Buy",
 					subcategoryOrAccountName: "bank account 4",
 					memo: "SecurityInvestment transaction",
-					quantity: "1",
+					quantity: "1.0000",
 					price: "$1",
 					commission: "$1.00",
 					balanceOrAmount: "$2.00"
@@ -191,7 +191,7 @@ describe("Transaction Index", (): void => {
 					categoryName: "Sell",
 					subcategoryOrAccountName: "bank account 4",
 					memo: "SecurityInvestment transaction",
-					quantity: "1",
+					quantity: "1.0000",
 					price: "$1",
 					commission: "$1.00",
 					balanceOrAmount: "$0.00"
@@ -201,14 +201,14 @@ describe("Transaction Index", (): void => {
 					payeeOrSecurityName: "Security 1",
 					categoryName: "Add Shares",
 					memo: "SecurityHolding transaction",
-					quantity: "10"
+					quantity: "10.0000"
 				},
 				{
 					transactionDate: "10/01/2014",
 					payeeOrSecurityName: "Security 1",
 					categoryName: "Remove Shares",
 					memo: "SecurityHolding transaction",
-					quantity: "10"
+					quantity: "10.0000"
 				},
 				{
 					transactionDate: "11/01/2014",
@@ -216,7 +216,7 @@ describe("Transaction Index", (): void => {
 					categoryName: "Transfer To",
 					subcategoryOrAccountName: "investment account 8",
 					memo: "SecurityTransfer transaction",
-					quantity: "10"
+					quantity: "10.0000"
 				},
 				{
 					transactionDate: "12/01/2014",
@@ -246,7 +246,7 @@ describe("Transaction Index", (): void => {
 					categoryName: "Transfer From",
 					subcategoryOrAccountName: "investment account 3",
 					memo: "SecurityTransfer transaction",
-					quantity: "10"
+					quantity: "10.0000"
 				}
 			],
 			closingBalance: "$1,010.00"

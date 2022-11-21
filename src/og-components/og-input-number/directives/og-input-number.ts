@@ -6,11 +6,18 @@ export default class OgInputNumberDirective {
 			restrict: "A",
 			priority: 1,
 			require: "ngModel",
-			scope: {},
+			scope: {
+				precision: "@ogInputNumber"
+			},
 			controller: "OgInputNumberController",
 			controllerAs: "vm",
 			bindToController: true,
 			link(scope: OgInputNumberScope, iElement: JQuery<Element>, _: angular.IAttributes, ngModel: angular.INgModelController): void {
+				// Set the decimal places
+				if (scope.vm.precision) {
+					scope.vm.decimalPlaces = Number(scope.vm.precision);
+				}
+
 				// View to model
 				ngModel.$parsers.push(scope.vm.formattedToRaw.bind(scope.vm));
 
@@ -18,7 +25,7 @@ export default class OgInputNumberDirective {
 				ngModel.$formatters.unshift(scope.vm.rawToFormatted.bind(scope.vm));
 
 				function formattedToRaw(): void {
-					iElement.val(numberFilter(scope.vm.formattedToRaw(String(iElement.val()))));
+					iElement.val(numberFilter(scope.vm.formattedToRaw(String(iElement.val())), scope.vm.decimalPlaces));
 				}
 
 				// Update view when tabbing in/out of the field

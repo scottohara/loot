@@ -56,6 +56,7 @@ export default class TransactionEditController {
 						private readonly filterFilter: angular.IFilterFilter,
 						private readonly limitToFilter: angular.IFilterLimitTo,
 						private readonly currencyFilter: angular.IFilterCurrency,
+						private readonly numberFilter: angular.IFilterNumber,
 						private readonly payeeModel: PayeeModel,
 						private readonly securityModel: SecurityModel,
 						private readonly categoryModel: CategoryModel,
@@ -386,7 +387,8 @@ export default class TransactionEditController {
 
 	// Updates the transaction amount and memo when the quantity, price or commission change
 	public updateInvestmentDetails(): void {
-		const PRICE_DECIMAL_PLACES = 3;
+		const QUANTITY_DECIMAL_PLACES = 4,
+					PRICE_DECIMAL_PLACES = 3;
 
 		if ("SecurityInvestment" === this.transaction.transaction_type) {
 			// Base amount is the quantity multiplied by the price
@@ -405,7 +407,7 @@ export default class TransactionEditController {
 
 		// If we're adding a new buy or sell transaction, update the memo with the details
 		if (null === this.transaction.id && "SecurityInvestment" === this.transaction.transaction_type) {
-			const	quantity: string = Number(this.transaction.quantity) > 0 ? String(this.transaction.quantity) : "",
+			const quantity: string = Number(this.transaction.quantity) > 0 ? this.numberFilter(this.transaction.quantity, QUANTITY_DECIMAL_PLACES) : "",
 						price: string = Number(this.transaction.price) > 0 ? ` @ ${this.currencyFilter(this.transaction.price, undefined, PRICE_DECIMAL_PLACES)}` : "",
 						commission: string = Number(this.transaction.commission) > 0 ? ` (${"inflow" === this.transaction.direction ? "plus" : "less"} ${this.currencyFilter(this.transaction.commission)} commission)` : "";
 
@@ -628,4 +630,4 @@ export default class TransactionEditController {
 	}
 }
 
-TransactionEditController.$inject = ["$scope", "$uibModalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "ogModalErrorService", "transaction"];
+TransactionEditController.$inject = ["$scope", "$uibModalInstance", "$q", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "numberFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "ogModalErrorService", "transaction"];

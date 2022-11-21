@@ -17,17 +17,23 @@ describe("ogInputNumber", (): void => {
 	}) as Mocha.HookFunction);
 
 	describe("on model change", (): void => {
-		beforeEach((): string => (expected = "0"));
+		beforeEach((): string => (expected = "0.0000"));
 
-		it("should display 0 if the model is undefined", (): boolean => delete ogInputNumber.scope.model);
+		it("should display 0.0000 if the model is undefined", (): boolean => delete ogInputNumber.scope.model);
 
-		it("should display 0 if the model is null", (): null => (ogInputNumber.scope.model = null));
+		it("should display 0.0000 if the model is null", (): null => (ogInputNumber.scope.model = null));
 
-		it("should display 0 if the model is NaN", (): string => (ogInputNumber.scope.model = "abc"));
+		it("should display 0.0000 if the model is NaN", (): string => (ogInputNumber.scope.model = "abc"));
 
 		it("should display the value formatted as a number if the model is a valid number", (): void => {
-			expected = "-123,456.7";
+			expected = "-123,456.7000";
 			ogInputNumber.scope.model = -123456.7;
+		});
+
+		it("should display the value formatted to a specified number of decimals if the model is a valid number", (): void => {
+			ogInputNumber.compile({ "og-input-number": "3" });
+			expected = "100,000.000";
+			ogInputNumber.scope.model = 100000;
 		});
 
 		afterEach((): void => {
@@ -57,7 +63,7 @@ describe("ogInputNumber", (): void => {
 
 	describe("on focus", (): void => {
 		it("should strip any formatting", (): void => {
-			expected = "-1,234.5";
+			expected = "-1,234.5000";
 			ogInputNumber["element"].val("-1a,234.5");
 			ogInputNumber["element"].triggerHandler("focus");
 			(ogInputNumber["element"].val() as string).should.equal(expected);
@@ -68,7 +74,7 @@ describe("ogInputNumber", (): void => {
 		it("should format the value", (): void => {
 			ogInputNumber["element"].val("-1234.5");
 			ogInputNumber["element"].triggerHandler("blur");
-			(ogInputNumber["element"].val() as string).should.equal("-1,234.5");
+			(ogInputNumber["element"].val() as string).should.equal("-1,234.5000");
 		});
 	});
 

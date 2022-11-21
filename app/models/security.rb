@@ -59,7 +59,7 @@ class Security < ApplicationRecord
 									securities.name,
 									securities.code,
 									securities.favourite,
-									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),3) AS current_holding,
+									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),4) AS current_holding,
 									ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END) * MAX(p.price),2) AS closing_balance
 				FROM			securities
 				JOIN			transaction_headers ON transaction_headers.security_id = securities.id
@@ -79,7 +79,7 @@ class Security < ApplicationRecord
 									transactions.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
 									accounts.account_type = 'investment'
 				GROUP BY	securities.id
-				ORDER BY	CASE WHEN ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),3) > 0 THEN 0 ELSE 1 END,
+				ORDER BY	CASE WHEN ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),4) > 0 THEN 0 ELSE 1 END,
 									securities.name
 			QUERY
 

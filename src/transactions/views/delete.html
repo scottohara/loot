@@ -25,7 +25,7 @@
 			<dt ng-if="::vm.transaction.amount">Amount</dt>
 			<dd ng-if="::vm.transaction.amount">{{::vm.transaction.amount | currency}}</dd>
 			<dt ng-if="::vm.transaction.quantity">Quantity</dt>
-			<dd ng-if="::vm.transaction.quantity">{{::vm.transaction.quantity | number}}</dd>
+			<dd ng-if="::vm.transaction.quantity">{{::vm.transaction.quantity | number:4}}</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">

@@ -152,7 +152,7 @@
 				<span ng-switch-default ng-if="::transaction.direction == 'outflow'" ng-class="::{'text-danger': transaction.amount < 0}">{{::transaction.amount | currency}}</span>
 				<table class="table-condensed" ng-switch-when="investment">
 					<tr>
-						<td>{{::transaction.quantity | number}}</td>
+						<td>{{::transaction.quantity | number:4}}</td>
 					</tr>
 					<tr ng-if="::transaction.transaction_type == 'SecurityInvestment'">
 						<td><em>Commission:</em></td>

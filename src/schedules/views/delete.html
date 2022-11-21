@@ -17,7 +17,7 @@
 			<dt ng-if="::vm.schedule.amount">Amount</dt>
 			<dd ng-if="::vm.schedule.amount">{{::vm.schedule.amount | currency}}</dd>
 			<dt ng-if="::vm.schedule.quantity">Quantity</dt>
-			<dd ng-if="::vm.schedule.quantity">{{::vm.schedule.quantity | number}}</dd>
+			<dd ng-if="::vm.schedule.quantity">{{::vm.schedule.quantity | number:4}}</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">
