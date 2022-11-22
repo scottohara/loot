@@ -388,11 +388,12 @@ export default class TransactionEditController {
 	// Updates the transaction amount and memo when the quantity, price or commission change
 	public updateInvestmentDetails(): void {
 		const QUANTITY_DECIMAL_PLACES = 4,
-					PRICE_DECIMAL_PLACES = 3;
+					PRICE_DECIMAL_PLACES = 3,
+					AMOUNT_DECIMAL_PLACES = 2;
 
 		if ("SecurityInvestment" === this.transaction.transaction_type) {
 			// Base amount is the quantity multiplied by the price
-			const amount = Number(this.transaction.quantity) * Number(this.transaction.price),
+			const amount = Number((Number(this.transaction.quantity) * Number(this.transaction.price)).toFixed(AMOUNT_DECIMAL_PLACES)),
 						commission = Number(this.transaction.commission);
 
 			this.transaction.amount = isNaN(amount) ? 0 : amount;
