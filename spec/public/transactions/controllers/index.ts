@@ -1046,6 +1046,14 @@ describe("TransactionIndexController", (): void => {
 					transactionIndexController["closingBalance"].should.equal(closingBalance);
 				});
 
+				it("should set the reconcile target to the difference between the reconciled closing balance and closing balance", (): void => {
+					const closingBalance = 100.009;
+
+					(transactionIndexController.context as Account).reconciled_closing_balance = 15.003;
+					$uibModal.close(closingBalance);
+					transactionIndexController.reconcileTarget.should.equal(85.01);
+				});
+
 				it("should refetch the list of unreconciled transactions when the modal is closed", (): void => {
 					$uibModal.close();
 					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(true);
@@ -1070,12 +1078,9 @@ describe("TransactionIndexController", (): void => {
 
 		describe("updateReconciledTotals", (): void => {
 			beforeEach((): void => {
-				transactionIndexController["openingBalance"] = 100.002;
-				transactionIndexController["closingBalance"] = 300.008;
+				transactionIndexController["reconcileTarget"] = 200.01;
 				transactionIndexController["updateReconciledTotals"]();
 			});
-
-			it("should set the reconcile target to the difference between the opening and closing balances", (): Chai.Assertion => transactionIndexController.reconcileTarget.should.equal(200.01));
 
 			it("should set the cleared total to the sum of all cleared transaction amounts", (): Chai.Assertion => transactionIndexController.clearedTotal.should.equal(2));
 

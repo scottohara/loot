@@ -17,15 +17,27 @@ class Account < ApplicationRecord
 			]
 		end
 
-		def for_closing_balance(_opts)
+		def for_closing_balance(opts)
 			joins('JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id')
+				.for_status opts
 		end
 
-		def for_basic_closing_balance(_opts)
-			joins [
-				'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
-				'JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
-			]
+		def for_basic_closing_balance(opts)
+			joins(
+				[
+					'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
+					'JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
+				]
+			)
+				.for_status opts
+		end
+
+		def for_status(opts)
+			if opts[:status]
+				where(transaction_accounts: {status: opts[:status]})
+			else
+				all
+			end
 		end
 	end
 

@@ -21,6 +21,26 @@ require 'models/concerns/transactable'
 		end
 	end
 
+	context 'closing balance by status' do
+		subject(:account) { create :account, transactions: 3, reconciled: 2 }
+
+		before do
+			account.transaction_accounts.where(status: nil).first.update! status: 'Cleared'
+		end
+
+		it 'should return the closing balance of all transactions if no status specified' do
+			expect(account.closing_balance).to eq 995
+		end
+
+		it 'should return the closing balance of only cleared transactions' do
+			expect(account.closing_balance(status: 'Cleared')).to eq 999
+		end
+
+		it 'should return the closing balance of only reconciled transactions' do
+			expect(account.closing_balance(status: 'Reconciled')).to eq 998
+		end
+	end
+
 	describe 'before_destroy' do
 		subject(:account) { create :bank_account, account_type:, related_account: }
 

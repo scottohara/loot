@@ -23,6 +23,7 @@ export interface Account extends Entity {
 	related_account: Account | InvestmentRelatedAccount | null;
 	opening_balance: number;
 	num_transactions: number;
+	reconciled_closing_balance: number;
 }
 
 export type Accounts = Record<string, {

@@ -19,6 +19,7 @@ export default function createAccount(props: Partial<Account> = {}): Account {
 		related_account: null,
 		opening_balance: 0,
 		num_transactions: 0,
+		reconciled_closing_balance: 0,
 		...props
 	};
 }

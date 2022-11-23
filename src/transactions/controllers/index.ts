@@ -237,8 +237,11 @@ export default class TransactionIndexController {
 				}
 			}).result
 				.then((closingBalance: number): void => {
-					// Make the closing balance available on the scope
+					const decimalPlaces = 2;
+
+					// Make the closing balance available on the scope and set the reconcile target
 					this.closingBalance = closingBalance;
+					this.reconcileTarget = Number((this.closingBalance - (this.context as Account).reconciled_closing_balance).toFixed(decimalPlaces));
 
 					// Refresh the list with only unreconciled transactions
 					this.toggleUnreconciledOnly(true, "prev");
@@ -648,9 +651,6 @@ export default class TransactionIndexController {
 	// Helper function to calculate the total cleared/uncleared totals
 	private updateReconciledTotals(): void {
 		const decimalPlaces = 2;
-
-		// Target is the closing balance, minus the opening balance
-		this.reconcileTarget = Number((this.closingBalance - this.openingBalance).toFixed(decimalPlaces));
 
 		// Cleared total is the sum of all transaction amounts that are cleared
 		this.clearedTotal = this.transactions.reduce((clearedAmount: number, transaction: Transaction): number => {
