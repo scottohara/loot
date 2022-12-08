@@ -6,9 +6,6 @@ import "schedules/commands";
 import "securities/commands";
 import "transactions/commands";
 
-// Clear the login state
-beforeEach((): Cypress.Chainable<Window> => cy.window().then((win: Window): void => win.sessionStorage.clear()));
-
 // Helper command for working with typeaheads
 Cypress.Commands.add("typeahead", (typeahead: string, searchText: string): void => {
 	cy.get(typeahead).clear().type(searchText);
