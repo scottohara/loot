@@ -241,13 +241,20 @@ export default class TransactionIndexController {
 
 					// Make the closing balance available on the scope and set the reconcile target
 					this.closingBalance = closingBalance;
-					this.reconcileTarget = Number((this.closingBalance - (this.context as Account).reconciled_closing_balance).toFixed(decimalPlaces));
 
-					// Refresh the list with only unreconciled transactions
-					this.toggleUnreconciledOnly(true, "prev");
+					// Refresh the account to ensure we have the latest balances
+					this.accountModel.flush((this.context as Entity).id);
+					this.accountModel.find(Number((this.context as Entity).id)).then((account: Account): void => {
+						this.reconcileTarget = Number((this.closingBalance - account.reconciled_closing_balance).toFixed(decimalPlaces));
+						this.clearedTotal = Number(account.cleared_closing_balance.toFixed(decimalPlaces));
+						this.unclearedTotal = Number((this.reconcileTarget - this.clearedTotal).toFixed(decimalPlaces));
 
-					// Switch to reconcile mode
-					this.reconciling = true;
+						// Refresh the list with only unreconciled transactions
+						this.toggleUnreconciledOnly(true, "prev");
+
+						// Switch to reconcile mode
+						this.reconciling = true;
+					}).catch(this.showError);
 				})
 				.finally((): true => (this.ogTableNavigableService.enabled = true))
 				.catch(this.showError);
@@ -257,7 +264,7 @@ export default class TransactionIndexController {
 	// Toggles a transaction as cleared
 	public toggleCleared(transaction: Transaction): void {
 		this.transactionModel.updateStatus((this.contextModel as EntityModel).path((this.context as Entity).id), Number(transaction.id), transaction.status)
-			.then((): void => this.updateReconciledTotals())
+			.then((): void => this.updateReconciledTotals(transaction))
 			.catch(this.showError);
 	}
 
@@ -606,11 +613,6 @@ export default class TransactionIndexController {
 			if (!isNaN(Number(transactionIdToFocus))) {
 				this.focusTransaction(Number(transactionIdToFocus));
 			}
-
-			// Update the reconciled amounts if in reconcile mode
-			if (this.reconciling) {
-				this.updateReconciledTotals();
-			}
 		}
 	}
 
@@ -649,19 +651,19 @@ export default class TransactionIndexController {
 	}
 
 	// Helper function to calculate the total cleared/uncleared totals
-	private updateReconciledTotals(): void {
+	private updateReconciledTotals(transaction: Transaction): void {
 		const decimalPlaces = 2;
 
-		// Cleared total is the sum of all transaction amounts that are cleared
-		this.clearedTotal = this.transactions.reduce((clearedAmount: number, transaction: Transaction): number => {
-			let clearedTotal: number = clearedAmount;
+		// Start with the transaction amount if it is an inflow, or the inverse if it is an outflow
+		let amount = (transaction as CashTransaction).amount * ("inflow" === transaction.direction ? 1 : -1);
 
-			if ("Cleared" === transaction.status) {
-				clearedTotal += (transaction as CashTransaction).amount * ("inflow" === transaction.direction ? 1 : -1);
-			}
+		// Invert again if the transction is not cleared
+		if ("Cleared" !== transaction.status) {
+			amount *= -1;
+		}
 
-			return Number(clearedTotal.toFixed(decimalPlaces));
-		}, 0);
+		// Adjust the cleared total by the amount
+		this.clearedTotal += Number(amount.toFixed(decimalPlaces));
 
 		// Uncleared total is the target less the cleared total
 		this.unclearedTotal = Number((this.reconcileTarget - this.clearedTotal).toFixed(decimalPlaces));

@@ -807,7 +807,7 @@ describe("ScheduleEditController", (): void => {
 		it("should fetch the list of accounts", (): Chai.Assertion => accountModel.all.should.have.been.called);
 
 		it("should return a filtered & limited list of accounts", async (): Promise<Chai.Assertion> => (await accounts).should.deep.equal([
-			createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100 }),
+			createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100, cleared_closing_balance: 1.01, reconciled_closing_balance: 15.003 }),
 			createAccount({ id: 4, name: "ba", account_type: "asset" }),
 			createAccount({ id: 5, name: "ab", account_type: "asset" })
 		]));
@@ -830,7 +830,7 @@ describe("ScheduleEditController", (): void => {
 		it("should not filter the list if there is no current account", async (): Promise<void> => {
 			delete (scheduleEditController.transaction as Partial<ScheduledTransaction>).primary_account;
 			(await scheduleEditController.accounts("a", 2)).should.deep.equal([
-				createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100 }),
+				createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100, cleared_closing_balance: 1.01, reconciled_closing_balance: 15.003 }),
 				createAccount({ id: 4, name: "ba", account_type: "asset" })
 			]);
 		});

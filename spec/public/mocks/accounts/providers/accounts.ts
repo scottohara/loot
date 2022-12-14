@@ -5,7 +5,7 @@ import createAccount from "mocks/accounts/factories";
 export default class AccountsMockProvider implements Mock<Account[]> {
 	// Mock accounts object
 	public constructor(private readonly accounts: Account[] = [
-		createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100 }),
+		createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100, cleared_closing_balance: 1.01, reconciled_closing_balance: 15.003 }),
 		createAccount({ id: 2, name: "bb", account_type: "investment" }),
 		createAccount({ id: 3, name: "cc", num_transactions: 1 }),
 		createAccount({ id: 4, name: "ba", account_type: "asset" }),

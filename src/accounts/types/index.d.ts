@@ -23,6 +23,7 @@ export interface Account extends Entity {
 	related_account: Account | InvestmentRelatedAccount | null;
 	opening_balance: number;
 	num_transactions: number;
+	cleared_closing_balance: number;
 	reconciled_closing_balance: number;
 }
 

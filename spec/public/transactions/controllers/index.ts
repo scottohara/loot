@@ -874,14 +874,6 @@ describe("TransactionIndexController", (): void => {
 			transactionIndexController["processTransactions"](transactionBatch, undefined, 1);
 			transactionIndexController["focusTransaction"].should.have.been.calledWith(1);
 		});
-
-		it("should update the reconciled totals when reconciling", (): void => {
-			transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel }) as TransactionIndexController;
-			sinon.stub(transactionIndexController, "updateReconciledTotals" as keyof TransactionIndexController);
-			transactionIndexController.reconciling = true;
-			transactionIndexController["processTransactions"](transactionBatch);
-			transactionIndexController["updateReconciledTotals"].should.have.been.called;
-		});
 	});
 
 	describe("updateRunningBalances", (): void => {
@@ -1049,9 +1041,20 @@ describe("TransactionIndexController", (): void => {
 				it("should set the reconcile target to the difference between the reconciled closing balance and closing balance", (): void => {
 					const closingBalance = 100.009;
 
-					(transactionIndexController.context as Account).reconciled_closing_balance = 15.003;
 					$uibModal.close(closingBalance);
 					transactionIndexController.reconcileTarget.should.equal(85.01);
+				});
+
+				it("should set the cleared total to the cleared closing balance", (): void => {
+					$uibModal.close();
+					transactionIndexController.clearedTotal.should.equal(1.01);
+				});
+
+				it("should set the uncleared total to the difference between cleared closing balance and the reconcile target", (): void => {
+					const closingBalance = 100.009;
+
+					$uibModal.close(closingBalance);
+					transactionIndexController.unclearedTotal.should.equal(84);
 				});
 
 				it("should refetch the list of unreconciled transactions when the modal is closed", (): void => {
@@ -1077,14 +1080,56 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("updateReconciledTotals", (): void => {
+			let	transaction: Transaction;
+
 			beforeEach((): void => {
-				transactionIndexController["reconcileTarget"] = 200.01;
-				transactionIndexController["updateReconciledTotals"]();
+				transaction = createBasicTransaction({ amount: 1.02 });
+				transactionIndexController["clearedTotal"] = 100.03;
 			});
 
-			it("should set the cleared total to the sum of all cleared transaction amounts", (): Chai.Assertion => transactionIndexController.clearedTotal.should.equal(2));
+			describe("(clearing an inflow transaction", (): void => {
+				it("should increase the cleared total by the amount of the transaction", (): void => {
+					transaction.status = "Cleared";
+					transaction.direction = "inflow";
+					transactionIndexController["updateReconciledTotals"](transaction);
+					transactionIndexController.clearedTotal.should.equal(101.05);
+				});
+			});
 
-			it("should set the uncleared total to the difference between the cleared total and the reconcile target", (): Chai.Assertion => transactionIndexController.unclearedTotal.should.equal(198.01));
+			describe("(clearing an outflow transaction", (): void => {
+				it("should decrease the cleared total by the amount of the transaction", (): void => {
+					transaction.status = "Cleared";
+					transaction.direction = "outflow";
+					transactionIndexController["updateReconciledTotals"](transaction);
+					transactionIndexController.clearedTotal.should.equal(99.01);
+				});
+			});
+
+			describe("(unclearing an inflow transaction", (): void => {
+				it("should decrease the cleared total by the amount of the transaction", (): void => {
+					transaction.status = "";
+					transaction.direction = "inflow";
+					transactionIndexController["updateReconciledTotals"](transaction);
+					transactionIndexController.clearedTotal.should.equal(99.01);
+				});
+			});
+
+			describe("(unclearing an outflow transaction", (): void => {
+				it("should increase the cleared total by the amount of the transaction", (): void => {
+					transaction.status = "";
+					transaction.direction = "outflow";
+					transactionIndexController["updateReconciledTotals"](transaction);
+					transactionIndexController.clearedTotal.should.equal(101.05);
+				});
+			});
+
+			it("should set the uncleared total to the difference between the cleared total and the reconcile target", (): void => {
+				transactionIndexController["reconcileTarget"] = 200.01;
+				transaction.status = "Cleared";
+				transaction.direction = "inflow";
+				transactionIndexController["updateReconciledTotals"](transaction);
+				transactionIndexController.unclearedTotal.should.equal(98.96);
+			});
 		});
 
 		describe("toggleCleared", (): void => {
@@ -1098,7 +1143,7 @@ describe("TransactionIndexController", (): void => {
 
 			it("should update the transaction status", (): Chai.Assertion => transactionModel.updateStatus.should.have.been.calledWith("/accounts/1", transaction.id, transaction.status));
 
-			it("should update the reconciled totals", (): Chai.Assertion => transactionIndexController["updateReconciledTotals"].should.have.been.called);
+			it("should update the reconciled totals", (): Chai.Assertion => transactionIndexController["updateReconciledTotals"].should.have.been.calledWith(transaction));
 		});
 	});
 
