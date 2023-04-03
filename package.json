@@ -94,7 +94,8 @@
 		"swap:configure": "fly ssh console --command 'sysctl --write vm.swappiness=10'",
 		"swap:on": "fly ssh console --command 'swapon /swapfile'",
 		"postdeploy:staging": "npm run swap:configure -- --app loottest && npm run swap:on -- --app loottest",
-		"postdeploy:production": "npm run swap:configure -- --app lootprod && npm run swap:on -- --app lootprod"
+		"postdeploy:production": "npm run swap:configure -- --app lootprod && npm run swap:on -- --app lootprod",
+		"swap:check": "fly ssh console --command 'free'"
   },
   "engines": {
     "node": "18.12.1",
