@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::CashTransaction, type: :model do
+::RSpec.describe ::CashTransaction do
 	matcher :match_json do |expected|
 		match do |actual|
 			actual.amount.eql? expected['amount']
@@ -29,7 +29,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction) { create :basic_transaction }
+		subject(:transaction) { create(:basic_transaction) }
 
 		let(:json) { transaction.as_json }
 

@@ -3,10 +3,10 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::PayeeTransactionHeader, type: :model do
+::RSpec.describe ::PayeeTransactionHeader do
 	describe '#update_from_json' do
-		let(:payee) { create :payee }
-		let(:header) { create :payee_transaction_header }
+		let(:payee) { create(:payee) }
+		let(:header) { create(:payee_transaction_header) }
 		let(:json) do
 			{
 				'payee' => {
@@ -25,7 +25,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction_header) { create :payee_transaction_header }
+		subject(:transaction_header) { create(:payee_transaction_header) }
 
 		let(:json) { transaction_header.as_json }
 

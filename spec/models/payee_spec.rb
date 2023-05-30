@@ -1,10 +1,10 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'rails_helper'
 require 'models/concerns/transactable'
+require 'rails_helper'
 
-::RSpec.describe ::Payee, type: :model do
+::RSpec.describe ::Payee do
 	it_behaves_like ::Transactable do
 		let(:context_factory) { :payee }
 		let(:ledger_json_key) { :payee }
@@ -13,7 +13,7 @@ require 'models/concerns/transactable'
 
 	describe '::find_or_new' do
 		context 'existing payee' do
-			let(:payee) { create :payee }
+			let(:payee) { create(:payee) }
 
 			it 'should return the existing payee' do
 				expect(described_class.find_or_new 'id' => payee.id).to eq payee
@@ -30,7 +30,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#opening_balance' do
-		subject(:payee) { create :payee }
+		subject(:payee) { create(:payee) }
 
 		it 'should return zero' do
 			expect(payee.opening_balance).to eq 0
@@ -38,7 +38,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#account_type' do
-		subject(:payee) { create :payee }
+		subject(:payee) { create(:payee) }
 
 		it 'should return nil' do
 			expect(payee.account_type).to be_nil
@@ -46,7 +46,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#as_json' do
-		subject(:payee) { create :payee, name: 'Test Payee', transactions: 1 }
+		subject(:payee) { create(:payee, name: 'Test Payee', transactions: 1) }
 
 		let(:json) { payee.as_json }
 

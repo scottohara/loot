@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::TransactionSplit, type: :model do
+::RSpec.describe ::TransactionSplit do
 	describe '#validate_transaction_type_inclusion' do
 		subject(:split) { described_class.new }
 
@@ -31,7 +31,7 @@ require 'rails_helper'
 	describe '#destroy_transaction' do
 		subject(:split) { parent.transaction_splits.first }
 
-		let(:parent) { create :split_transaction, subtransactions: 1 }
+		let(:parent) { create(:split_transaction, subtransactions: 1) }
 
 		it 'should destroy the transaction' do
 			split.destroy_transaction

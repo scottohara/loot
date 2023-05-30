@@ -3,9 +3,9 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::FavouritesController, type: :controller do
+::RSpec.describe ::FavouritesController do
 	shared_context 'for account', :account do
-		let(:context) { create :account }
+		let(:context) { create(:account) }
 		let(:request_params) { {'account_id' => '1'} }
 	end
 

@@ -9,8 +9,8 @@
 
 		# Default accounts if none specified
 		transient do
-			investment_account { ::FactoryBot.build :investment_account, related_account: cash_account }
-			cash_account { ::FactoryBot.build :bank_account }
+			investment_account { ::FactoryBot.build(:investment_account, related_account: cash_account) }
+			cash_account { ::FactoryBot.build(:bank_account) }
 			status { nil }
 		end
 

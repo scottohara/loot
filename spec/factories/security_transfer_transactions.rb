@@ -8,8 +8,8 @@
 
 		# Default accounts if none specified
 		transient do
-			source_account { ::FactoryBot.build :investment_account }
-			destination_account { ::FactoryBot.build :investment_account }
+			source_account { ::FactoryBot.build(:investment_account) }
+			destination_account { ::FactoryBot.build(:investment_account) }
 			quantity { 10 }
 			status { nil }
 		end

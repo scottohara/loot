@@ -8,7 +8,7 @@
 
 		# Default accounts if none specified
 		transient do
-			account { ::FactoryBot.build :investment_account }
+			account { ::FactoryBot.build(:investment_account) }
 			direction { 'Add' }
 			quantity { 10 }
 			status { nil }

@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::StatusesController, type: :controller do
+::RSpec.describe ::StatusesController do
 	before do
 		expect(::TransactionAccount).to receive_message_chain(:where, :where, :update_all).with status:
 	end

@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::SecurityInvestmentTransaction, type: :model do
+::RSpec.describe ::SecurityInvestmentTransaction do
 	matcher :match_json do |expected, investment_account, cash_account|
 		match do |actual|
 			actual.transaction_type.eql?('SecurityInvestment') &&
@@ -20,9 +20,9 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:security) { create :security }
-		let(:investment_account) { create :investment_account }
-		let(:cash_account) { create :bank_account }
+		let(:security) { create(:security) }
+		let(:investment_account) { create(:investment_account) }
+		let(:cash_account) { create(:bank_account) }
 		let(:json) do
 			{
 				id: 1,
@@ -77,20 +77,20 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', security_investment_transaction_create_from_json: true, direction: 'outflow' do
+		context 'outflow', direction: 'outflow', security_investment_transaction_create_from_json: true do
 			let(:amount) { 15 }
 		end
 
-		context 'inflow', security_investment_transaction_create_from_json: true, direction: 'inflow' do
+		context 'inflow', direction: 'inflow', security_investment_transaction_create_from_json: true do
 			let(:amount) { 25 }
 		end
 	end
 
 	describe '::update_from_json' do
-		let(:security) { create :security }
-		let(:investment_account) { create :investment_account }
-		let(:cash_account) { create :bank_account }
-		let(:transaction) { create :security_investment_transaction }
+		let(:security) { create(:security) }
+		let(:investment_account) { create(:investment_account) }
+		let(:cash_account) { create(:bank_account) }
+		let(:transaction) { create(:security_investment_transaction) }
 		let(:json) do
 			{
 				id: transaction.id,
@@ -141,11 +141,11 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', security_investment_transaction_update_from_json: true, direction: 'outflow' do
+		context 'outflow', direction: 'outflow', security_investment_transaction_update_from_json: true do
 			let(:amount) { 15 }
 		end
 
-		context 'inflow', security_investment_transaction_update_from_json: true, direction: 'inflow' do
+		context 'inflow', direction: 'inflow', security_investment_transaction_update_from_json: true do
 			let(:amount) { 25 }
 		end
 	end
@@ -176,19 +176,19 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', validate_amount: true, direction: 'outflow' do
+		context 'outflow', direction: 'outflow', validate_amount: true do
 			let(:error_message) { 'Amount must equal price times quantity less commission' }
 			let(:valid_amount) { 15 }
 		end
 
-		context 'inflow', validate_amount: true, direction: 'inflow' do
+		context 'inflow', direction: 'inflow', validate_amount: true do
 			let(:error_message) { 'Amount must equal price times quantity plus commission' }
 			let(:valid_amount) { 25 }
 		end
 	end
 
 	describe '#as_json' do
-		subject(:transaction) { create :security_investment_transaction, status: 'Reconciled' }
+		subject(:transaction) { create(:security_investment_transaction, status: 'Reconciled') }
 
 		before do
 			expect(transaction.investment_account.account).to receive(:as_json).and_return 'investment account json'
@@ -230,9 +230,9 @@ require 'rails_helper'
 	end
 
 	describe '#investment_account' do
-		subject(:transaction) { create :security_investment_transaction, investment_account: account }
+		subject(:transaction) { create(:security_investment_transaction, investment_account: account) }
 
-		let(:account) { create :investment_account }
+		let(:account) { create(:investment_account) }
 
 		it "should return the first account of type 'investment'" do
 			expect(transaction.investment_account.account).to eq account
@@ -240,9 +240,9 @@ require 'rails_helper'
 	end
 
 	describe '#cash_account' do
-		subject(:transaction) { create :security_investment_transaction, cash_account: account }
+		subject(:transaction) { create(:security_investment_transaction, cash_account: account) }
 
-		let(:account) { create :bank_account }
+		let(:account) { create(:bank_account) }
 
 		it "should return the first account of type 'bank'" do
 			expect(transaction.cash_account.account).to eq account

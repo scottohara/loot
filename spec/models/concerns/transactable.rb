@@ -116,7 +116,7 @@ require 'models/concerns/categorisable'
 			::FactoryBot.reload
 
 			# Create the context with 15 basic transactions
-			context = create context_factory, transactions: 15
+			context = create(context_factory, transactions: 15)
 			subject = (defined?(as_class_method) && described_class) || context
 			query = defined?(search_term) && search_term
 
@@ -124,7 +124,7 @@ require 'models/concerns/categorisable'
 			stub_const 'Transactable::NUM_RESULTS', 9
 
 			# Get the ledger
-			_, transactions, at_end = subject.ledger as_at: (::Date.parse('2014-01-01') + as_at).to_s, direction: direction, query: query
+			_, transactions, at_end = subject.ledger(as_at: (::Date.parse('2014-01-01') + as_at).to_s, direction:, query:)
 
 			expect(transactions.uniq { |t| t[:id] }.size).to eq range.size
 			expect(transactions.first[:transaction_date]).to eq(::Date.parse('2014-01-01') + range.first)
@@ -133,18 +133,18 @@ require 'models/concerns/categorisable'
 		end
 
 		it 'should handle all types of transactions and ignore scheduled transactions' do
-			context = create context_factory, :with_all_transaction_types, scheduled: 1
+			context = create(context_factory, :with_all_transaction_types, scheduled: 1)
 			subject = (defined?(as_class_method) && described_class) || context
 			query = defined?(search_term) && search_term
 
-			_, transactions = subject.ledger query: query
+			_, transactions = subject.ledger(query:)
 			expected_transactions = subject.transactions.for_ledger(query:).where.not('transaction_headers.transaction_date': nil)
 
 			expect(transactions).to match_ledger_transactions expected_transactions
 		end
 
 		it 'should only include transactions belonging to the context' do
-			context = create context_factory, transactions: 2
+			context = create(context_factory, transactions: 2)
 			if defined? as_class_method
 				# Another transaction with a memo that doesn't contain the search term ("transaction")
 				create :basic_transaction, memo: 'Other context'
@@ -155,7 +155,7 @@ require 'models/concerns/categorisable'
 			subject = (defined?(as_class_method) && described_class) || context
 			query = defined?(search_term) && search_term
 
-			_, transactions = subject.ledger query: query
+			_, transactions = subject.ledger(query:)
 
 			expect(transactions.uniq { |t| t[:id] }.size).to eq 2
 			expect(transactions).to all_belong_to context, ledger_json_key, query
@@ -203,7 +203,7 @@ require 'models/concerns/categorisable'
 	describe '#closing_balance' do
 		subject { (defined?(as_class_method) && described_class) || context }
 
-		let(:context) { create context_factory, :with_all_transaction_types, scheduled: 1 }
+		let(:context) { create(context_factory, :with_all_transaction_types, scheduled: 1) }
 		let(:query) { defined?(search_term) && search_term }
 
 		before do

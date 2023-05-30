@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'logins routes', type: :routing do
+describe 'logins routes' do
 	# Collection routes
 	it 'should route POST /logins to logins#create' do
 		expect(post: '/logins').to route_to controller: 'logins', action: 'create'

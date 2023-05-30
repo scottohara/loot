@@ -131,7 +131,7 @@ class Security < ApplicationRecord
 
 	def update_price!(price, as_at_date, transaction_id)
 		# Check if a price already exists for the transaction date
-		security_price = prices.find_by as_at_date: as_at_date
+		security_price = prices.find_by(as_at_date:)
 
 		if security_price.present?
 			# Update the existing price if the transaction_id is highest of all for this security/date (best guess at this being the 'most recent' price)

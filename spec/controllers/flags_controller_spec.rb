@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::FlagsController, type: :controller do
+::RSpec.describe ::FlagsController do
 	describe 'PATCH update', request: true do
 		let(:flag_type) { 'noreceipt' }
 		let(:memo) { 'Test flag' }
@@ -17,7 +17,7 @@ require 'rails_helper'
 		end
 
 		context "when a flag doesn't already exist" do
-			let(:transaction) { create :transaction }
+			let(:transaction) { create(:transaction) }
 
 			it 'should create a new flag' do
 				expect(transaction).to receive(:build_flag).with(flag_type:, memo:)
@@ -26,7 +26,7 @@ require 'rails_helper'
 		end
 
 		context 'when a flag already exists' do
-			let(:transaction) { create :transaction, :flagged }
+			let(:transaction) { create(:transaction, :flagged) }
 
 			it 'should update the existing flag' do
 				expect(transaction).not_to receive :build_flag
@@ -37,7 +37,7 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', request: true do
-		let(:transaction) { create :transaction, :flagged }
+		let(:transaction) { create(:transaction, :flagged) }
 
 		it 'should delete an existing flag' do
 			expect(::Transaction).to receive(:find).with('1').and_return transaction

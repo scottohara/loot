@@ -3,8 +3,8 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::PayeesController, type: :controller do
-	describe 'GET index', request: true, json: true do
+::RSpec.describe ::PayeesController do
+	describe 'GET index', json: true, request: true do
 		let(:json) { 'payee list' }
 
 		context 'for payee list' do
@@ -26,7 +26,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET show', request: true, json: true do
+	describe 'GET show', json: true, request: true do
 		let(:json) { 'payee details' }
 
 		it 'should return the details of the specified payee' do
@@ -35,7 +35,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', request: true, json: true do
+	describe 'POST create', json: true, request: true do
 		let(:request_body) { {name: 'New payee'} }
 		let(:json) { 'created payee' }
 
@@ -45,7 +45,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'PATCH update', request: true, json: true do
+	describe 'PATCH update', json: true, request: true do
 		let(:payee) { instance_double ::Payee }
 		let(:request_body) { {name: 'Updated payee'} }
 		let(:raw_json) { 'updated payee' }

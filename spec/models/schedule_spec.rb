@@ -1,11 +1,11 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'rails_helper'
 require 'models/concerns/categorisable'
 require 'models/concerns/measurable'
+require 'rails_helper'
 
-::RSpec.describe ::Schedule, type: :model do
+::RSpec.describe ::Schedule do
 	it_behaves_like ::Categorisable
 	it_behaves_like ::Measurable
 
@@ -111,7 +111,7 @@ require 'models/concerns/measurable'
 
 		it 'should handle all types of scheduled transactions and ignore non-scheduled ones' do
 			# Non-scheduled transaction (should be ignored)
-			create :basic_transaction
+			create(:basic_transaction)
 
 			transactions = described_class.ledger
 
@@ -140,12 +140,12 @@ require 'models/concerns/measurable'
 		end
 
 		it 'should handle all types of overdue, auto-enter scheduled transactions' do
-			basic_transaction = create :basic_transaction, :scheduled
-			transfer_transaction = create :transfer_transaction, :scheduled
-			split_transaction = create :split_transaction, :scheduled, subtransactions: 1
-			security_investment_transaction = create :security_investment_transaction, :scheduled
-			security_transfer_transaction = create :security_transfer_transaction, :scheduled
-			dividend_transaction = create :dividend_transaction, :scheduled
+			basic_transaction = create(:basic_transaction, :scheduled)
+			transfer_transaction = create(:transfer_transaction, :scheduled)
+			split_transaction = create(:split_transaction, :scheduled, subtransactions: 1)
+			security_investment_transaction = create(:security_investment_transaction, :scheduled)
+			security_transfer_transaction = create(:security_transfer_transaction, :scheduled)
+			dividend_transaction = create(:dividend_transaction, :scheduled)
 
 			expect(::BasicTransaction).to be_created_from basic_transaction.as_json, basic_transaction.account.id, basic_transaction.header.schedule.next_due_date
 			expect(::TransferTransaction).to be_created_from transfer_transaction.as_subclass.as_json(direction: 'outflow'), transfer_transaction.source_account.id, transfer_transaction.header.schedule.next_due_date
@@ -158,9 +158,9 @@ require 'models/concerns/measurable'
 		end
 
 		it 'should ignore non-scheduled, non-overdue or non-auto-enter transactions' do
-			create :basic_transaction # Non-scheduled
-			create :basic_transaction, :scheduled, next_due_date: ::Time.zone.tomorrow # Non-overdue
-			create :basic_transaction, :scheduled, auto_enter: false # Non-auto-enter
+			create(:basic_transaction) # Non-scheduled
+			create(:basic_transaction, :scheduled, next_due_date: ::Time.zone.tomorrow) # Non-overdue
+			create(:basic_transaction, :scheduled, auto_enter: false) # Non-auto-enter
 
 			expect(::BasicTransaction).not_to receive :create_from_json
 
@@ -180,12 +180,12 @@ require 'models/concerns/measurable'
 				months_ago(months).advance months:
 			end
 
-			weekly = create :basic_transaction, :scheduled, frequency: 'Weekly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -1)
-			fortnightly = create :basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -2)
-			monthly = create :basic_transaction, :scheduled, frequency: 'Monthly', next_due_date: months_ago(1)
-			bimonthly = create :basic_transaction, :scheduled, frequency: 'Bimonthly', next_due_date: months_ago(2)
-			quarterly = create :basic_transaction, :scheduled, frequency: 'Quarterly', next_due_date: months_ago(3)
-			yearly = create :basic_transaction, :scheduled, frequency: 'Yearly', next_due_date: ::Time.zone.tomorrow.advance(years: -1)
+			weekly = create(:basic_transaction, :scheduled, frequency: 'Weekly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -1))
+			fortnightly = create(:basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -2))
+			monthly = create(:basic_transaction, :scheduled, frequency: 'Monthly', next_due_date: months_ago(1))
+			bimonthly = create(:basic_transaction, :scheduled, frequency: 'Bimonthly', next_due_date: months_ago(2))
+			quarterly = create(:basic_transaction, :scheduled, frequency: 'Quarterly', next_due_date: months_ago(3))
+			yearly = create(:basic_transaction, :scheduled, frequency: 'Yearly', next_due_date: ::Time.zone.tomorrow.advance(years: -1))
 
 			expect(::BasicTransaction).to be_created_from weekly.as_json, weekly.account.id, weekly.header.schedule.next_due_date
 			expect(::BasicTransaction).to be_created_from fortnightly.as_json, fortnightly.account.id, fortnightly.header.schedule.next_due_date
@@ -204,7 +204,7 @@ require 'models/concerns/measurable'
 		end
 
 		it 'should create as many transactions as are overdue' do
-			three_overdue = create :basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -6)
+			three_overdue = create(:basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -6))
 
 			expect(::BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, ::Time.zone.tomorrow.advance(weeks: -6)
 			expect(::BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, ::Time.zone.tomorrow.advance(weeks: -4)
@@ -217,7 +217,7 @@ require 'models/concerns/measurable'
 	end
 
 	describe '#as_json' do
-		subject { create :schedule, next_due_date: ::Time.zone.today.to_s, frequency: 'Yearly', estimate: false, auto_enter: false }
+		subject { create(:schedule, next_due_date: ::Time.zone.today.to_s, frequency: 'Yearly', estimate: false, auto_enter: false) }
 
 		let(:json) { subject.as_json }
 

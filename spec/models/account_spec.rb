@@ -1,10 +1,10 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'rails_helper'
 require 'models/concerns/transactable'
+require 'rails_helper'
 
-::RSpec.describe ::Account, type: :model do
+::RSpec.describe ::Account do
 	context 'non-investment account' do
 		it_behaves_like ::Transactable do
 			let(:context_factory) { :bank_account }
@@ -22,7 +22,7 @@ require 'models/concerns/transactable'
 	end
 
 	context 'closing balance by status' do
-		subject(:account) { create :account, transactions: 3, reconciled: 2 }
+		subject(:account) { create(:account, transactions: 3, reconciled: 2) }
 
 		before do
 			account.transaction_accounts.where(status: nil).first.update! status: 'Cleared'
@@ -42,9 +42,9 @@ require 'models/concerns/transactable'
 	end
 
 	describe 'before_destroy' do
-		subject(:account) { create :bank_account, account_type:, related_account: }
+		subject(:account) { create(:bank_account, account_type:, related_account:) }
 
-		let!(:related_account) { create :cash_account }
+		let!(:related_account) { create(:cash_account) }
 
 		before do
 			allow(related_account).to receive :destroy!
@@ -72,19 +72,19 @@ require 'models/concerns/transactable'
 		subject(:account) { described_class }
 
 		# Accounts for non-investment transactions
-		let!(:bank_account) { create :bank_account }
-		let!(:another_bank_account) { create :bank_account, :favourite }
+		let!(:bank_account) { create(:bank_account) }
+		let!(:another_bank_account) { create(:bank_account, :favourite) }
 
 		# Accounts for investment transactions
-		let!(:related_bank_account) { create :bank_account, opening_balance: 0 }
-		let!(:investment_account) { create :investment_account, related_account: related_bank_account }
+		let!(:related_bank_account) { create(:bank_account, opening_balance: 0) }
+		let!(:investment_account) { create(:investment_account, related_account: related_bank_account) }
 
 		# Loan account with related asset
-		let!(:asset_account) { create :asset_account }
-		let!(:loan_account) { create :loan_account, related_account: asset_account }
+		let!(:asset_account) { create(:asset_account) }
+		let!(:loan_account) { create(:loan_account, related_account: asset_account) }
 
 		# Loan account without related asset
-		let!(:another_loan_account) { create :loan_account }
+		let!(:another_loan_account) { create(:loan_account) }
 
 		let(:json) do
 			{
@@ -214,25 +214,25 @@ require 'models/concerns/transactable'
 		end
 
 		it 'should return the list of accounts and their balances' do
-			create :basic_expense_transaction, account: bank_account
-			create :basic_income_transaction, account: bank_account
-			create :transfer_transaction, source_account: bank_account, destination_account: another_bank_account
-			create :transfer_transaction, destination_account: bank_account, source_account: another_bank_account
-			create :split_to_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account
-			create :split_from_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account
-			create :subtransfer_to_transaction, account: bank_account, parent: create(:split_transaction, account: another_bank_account)
-			create :subtransfer_from_transaction, account: bank_account, parent: create(:split_transaction, account: another_bank_account)
-			create :payslip_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account
-			create :loan_repayment_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account
-			create :security_purchase_transaction, cash_account: related_bank_account, investment_account: investment_account
-			create :security_sale_transaction, cash_account: related_bank_account, investment_account: investment_account
-			create :dividend_transaction, cash_account: bank_account, investment_account: investment_account
+			create(:basic_expense_transaction, account: bank_account)
+			create(:basic_income_transaction, account: bank_account)
+			create(:transfer_transaction, source_account: bank_account, destination_account: another_bank_account)
+			create(:transfer_transaction, destination_account: bank_account, source_account: another_bank_account)
+			create(:split_to_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account)
+			create(:split_from_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account)
+			create(:subtransfer_to_transaction, account: bank_account, parent: create(:split_transaction, account: another_bank_account))
+			create(:subtransfer_from_transaction, account: bank_account, parent: create(:split_transaction, account: another_bank_account))
+			create(:payslip_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account)
+			create(:loan_repayment_transaction, account: bank_account, subtransactions: 1, subtransfers: 1, subtransfer_account: another_bank_account)
+			create(:security_purchase_transaction, cash_account: related_bank_account, investment_account:)
+			create(:security_sale_transaction, cash_account: related_bank_account, investment_account:)
+			create(:dividend_transaction, cash_account: bank_account, investment_account:)
 
 			# Second investment account with no related cash account (should be ignored)
-			create :investment_account, related_account: nil
+			create(:investment_account, related_account: nil)
 
 			# Scheduled transaction (should be ignored)
-			create :basic_expense_transaction, :scheduled, account: bank_account
+			create(:basic_expense_transaction, :scheduled, account: bank_account)
 
 			expect(account.list).to eq json
 		end
@@ -299,7 +299,7 @@ require 'models/concerns/transactable'
 			end
 
 			context 'with asset', account_create_from_json: true do
-				let(:related_account) { create :asset_account, :favourite }
+				let(:related_account) { create(:asset_account, :favourite) }
 
 				before do
 					json['related_account'] = {'id' => related_account.id}
@@ -334,7 +334,7 @@ require 'models/concerns/transactable'
 		end
 
 		context 'investment account' do
-			let(:related_account) { create :bank_account, name: 'Test account (Cash)', opening_balance: 200, status: 'closed', favourite: true }
+			let(:related_account) { create(:bank_account, name: 'Test account (Cash)', opening_balance: 200, status: 'closed', favourite: true) }
 
 			before do
 				json['account_type'] = 'investment'
@@ -342,17 +342,17 @@ require 'models/concerns/transactable'
 			end
 
 			context 'from investment account', account_update_from_json: true do
-				let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
+				let(:account) { create(:investment_account, :favourite, related_account: create(:cash_account, :favourite)) }
 			end
 
 			context 'from non-investment account', account_update_from_json: true do
-				let(:account) { create :bank_account, :favourite }
+				let(:account) { create(:bank_account, :favourite) }
 			end
 		end
 
 		context 'non-investment account' do
 			context 'from investment account', account_update_from_json: true do
-				let(:account) { create :investment_account, :favourite, related_account: create(:cash_account, :favourite) }
+				let(:account) { create(:investment_account, :favourite, related_account: create(:cash_account, :favourite)) }
 
 				before do
 					expect(account.related_account).to receive :destroy!
@@ -360,7 +360,7 @@ require 'models/concerns/transactable'
 			end
 
 			context 'from non-investment account' do
-				let(:account) { create :bank_account, :favourite }
+				let(:account) { create(:bank_account, :favourite) }
 
 				context 'loan account' do
 					before do
@@ -368,7 +368,7 @@ require 'models/concerns/transactable'
 					end
 
 					context 'with asset', account_update_from_json: true do
-						let(:related_account) { create :asset_account, :favourite }
+						let(:related_account) { create(:asset_account, :favourite) }
 
 						before do
 							json['related_account'] = {'id' => related_account.id}
@@ -394,7 +394,7 @@ require 'models/concerns/transactable'
 		end
 
 		context 'when unreconciled parameter is passed' do
-			subject(:account) { create :account, transactions: 2, reconciled: 1 }
+			subject(:account) { create(:account, transactions: 2, reconciled: 1) }
 
 			it 'should include only unreconciled transactions' do
 				_, transactions = account.ledger unreconciled: 'true'
@@ -406,7 +406,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#reconcile' do
-		subject(:account) { create :account, transactions: 2, reconciled: 1 }
+		subject(:account) { create(:account, transactions: 2, reconciled: 1) }
 
 		it 'should mark all cleared transactions as reconciled' do
 			trx = account.transaction_accounts.where(status: nil).first
@@ -420,7 +420,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#as_json' do
-		subject(:account) { create :account, name: 'Test Account', transactions: 1 }
+		subject(:account) { create(:account, name: 'Test Account', transactions: 1) }
 
 		after do
 			expect(json).to include id: account.id
@@ -435,7 +435,7 @@ require 'models/concerns/transactable'
 			let(:json) { account.as_json }
 
 			before do
-				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account, fields: %i[id name account_type opening_balance status favourite]).and_call_original
+				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account, {fields: %i[id name account_type opening_balance status favourite]}).and_call_original
 			end
 
 			it('should return a JSON representation') do
@@ -466,7 +466,7 @@ require 'models/concerns/transactable'
 
 				before do
 					account.related_account = create :account, name: 'Related Account'
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account.related_account, fields: %i[id name account_type opening_balance status]).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account.related_account, {fields: %i[id name account_type opening_balance status]}).and_call_original
 				end
 
 				it 'should return a JSON representation including related account' do

@@ -3,8 +3,8 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::CategoriesController, type: :controller do
-	describe 'GET index', request: true, json: true do
+::RSpec.describe ::CategoriesController do
+	describe 'GET index', json: true, request: true do
 		context 'for category list' do
 			let(:json) { 'category list with children' }
 
@@ -32,7 +32,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET show', request: true, json: true do
+	describe 'GET show', json: true, request: true do
 		let(:json) { 'category details' }
 
 		it 'should return the details of the specified category' do
@@ -41,7 +41,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', request: true, json: true do
+	describe 'POST create', json: true, request: true do
 		let(:request_body) { {name: 'New category', direction: 'outflow', parent_id: '1'} }
 		let(:json) { 'created category' }
 
@@ -51,7 +51,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'PATCH update', request: true, json: true do
+	describe 'PATCH update', json: true, request: true do
 		let(:category) { instance_double ::Category }
 		let(:request_body) { {name: 'Updated category', direction: 'outflow', parent_id: '1'} }
 		let(:raw_json) { 'updated category' }

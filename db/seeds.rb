@@ -92,7 +92,7 @@ module Loot
 			progress 'Loaded', $INPUT_LINE_NUMBER, 'payee' if ($INPUT_LINE_NUMBER % 10).zero?
 		end
 		progress 'Loaded', $INPUT_LINE_NUMBER, 'payee'
-		2.times { puts }
+		2.times { @logger.info }
 	end
 
 	# Categories
@@ -137,7 +137,7 @@ module Loot
 
 	def create_category(id, name, direction)
 		# Create the new category
-		c = ::Category.new name: name, direction: direction
+		c = ::Category.new(name:, direction:)
 
 		# Get the list of categories that have this parent
 		subcats = subcategories id
@@ -164,7 +164,7 @@ module Loot
 			progress 'Loaded', $INPUT_LINE_NUMBER, 'security' if ($INPUT_LINE_NUMBER % 10).zero?
 		end
 		progress 'Loaded', $INPUT_LINE_NUMBER, 'security'
-		2.times { puts }
+		2.times { @logger.info }
 	end
 
 	# Security Prices
@@ -193,7 +193,7 @@ module Loot
 			s.save!
 		end
 		progress 'Loaded', loaded, 'security prices'
-		2.times { puts }
+		2.times { @logger.info }
 	end
 
 	# Transactions
@@ -395,7 +395,7 @@ module Loot
 			progress 'Prepared', $INPUT_LINE_NUMBER, 'bill'
 		end
 		progress 'Prepared', $INPUT_LINE_NUMBER, 'bill'
-		puts
+		@logger.info
 
 		loaded = 0
 		@tmp_head_bills.each do |id, bill|
@@ -411,7 +411,7 @@ module Loot
 			progress 'Calculated', loaded, 'bill next due date'
 		end
 		progress 'Calculated', loaded, 'bill next due date'
-		puts
+		@logger.info
 
 		loaded = 0
 		@tmp_head_bills.sort_by { |_k, v| v[:next_date] }.each do |id, bill|
@@ -435,7 +435,7 @@ module Loot
 			raise
 		end
 		progress 'Loaded', loaded, 'bill'
-		2.times { puts }
+		2.times { @logger.info }
 	end
 
 	def create_basic_transaction(trx)

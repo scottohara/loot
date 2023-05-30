@@ -1,10 +1,10 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'rails_helper'
 require 'models/concerns/transactable'
+require 'rails_helper'
 
-::RSpec.describe ::Security, type: :model do
+::RSpec.describe ::Security do
 	before do
 		::FactoryBot.reload
 	end
@@ -17,7 +17,7 @@ require 'models/concerns/transactable'
 
 	describe '::find_or_new' do
 		context 'existing security' do
-			let(:security) { create :security }
+			let(:security) { create(:security) }
 
 			it 'should return the existing security' do
 				expect(described_class.find_or_new 'id' => security.id).to eq security
@@ -36,10 +36,10 @@ require 'models/concerns/transactable'
 	describe '::list' do
 		subject(:security) { described_class }
 
-		let!(:another_security) { create :security, :with_all_transaction_types, :favourite, transactions: 1, scheduled: 1 }
-		let!(:unused_security) { create :security, :favourite }
-		let!(:unused_security_scheduled) { create :security, scheduled: 1 }
-		let!(:security_with_prices) { create :security, transactions: 2 }
+		let!(:another_security) { create(:security, :with_all_transaction_types, :favourite, transactions: 1, scheduled: 1) }
+		let!(:unused_security) { create(:security, :favourite) }
+		let!(:unused_security_scheduled) { create(:security, scheduled: 1) }
+		let!(:security_with_prices) { create(:security, transactions: 2) }
 
 		let(:json) do
 			[
@@ -93,7 +93,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#price' do
-		subject(:security) { create :security }
+		subject(:security) { create(:security) }
 
 		before do
 			# Prices before the target date
@@ -141,7 +141,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#update_price!' do
-		subject(:security) { create :security }
+		subject(:security) { create(:security) }
 
 		let(:price) { 100 }
 		let(:as_at) { ::Date.parse '2014-01-01' }
@@ -152,8 +152,8 @@ require 'models/concerns/transactable'
 
 		context 'when a price already exists for the date' do
 			let(:new_price) { 200 }
-			let!(:first_transaction) { create :security_holding_transaction, security:, transaction_date: as_at }
-			let!(:second_transaction) { create :security_holding_transaction, security:, transaction_date: as_at }
+			let!(:first_transaction) { create(:security_holding_transaction, security:, transaction_date: as_at) }
+			let!(:second_transaction) { create(:security_holding_transaction, security:, transaction_date: as_at) }
 
 			context "and this transaction represents the 'most recent' price" do
 				it 'should update the existing price' do
@@ -178,7 +178,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#opening_balance' do
-		subject(:security) { create :security }
+		subject(:security) { create(:security) }
 
 		it 'should return zero' do
 			expect(security.opening_balance).to eq 0
@@ -186,7 +186,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#account_type' do
-		subject(:security) { create :security }
+		subject(:security) { create(:security) }
 
 		it "should return 'investment'" do
 			expect(security.account_type).to eq 'investment'
@@ -194,7 +194,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#related_account' do
-		subject(:security) { create :security }
+		subject(:security) { create(:security) }
 
 		it 'should return nil' do
 			expect(security.related_account).to be_nil
@@ -202,7 +202,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#as_json' do
-		subject(:security) { create :security, name: 'Test Security', code: 'TEST', transactions: 1 }
+		subject(:security) { create(:security, name: 'Test Security', code: 'TEST', transactions: 1) }
 
 		let(:json) { security.as_json }
 

@@ -9,8 +9,8 @@
 
 		# Default account, subtransactions and subtransfers if none specified
 		transient do
-			parent { ::FactoryBot.build :split_transaction }
-			category { ::FactoryBot.build :category }
+			parent { ::FactoryBot.build(:split_transaction) }
+			category { ::FactoryBot.build(:category) }
 		end
 
 		after :build do |trx, evaluator|
@@ -19,7 +19,7 @@
 		end
 
 		trait :inflow do
-			category { ::FactoryBot.build :inflow_category }
+			category { ::FactoryBot.build(:inflow_category) }
 		end
 
 		factory :sub_income_transaction, traits: [:inflow]

@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'categories routes', type: :routing do
+describe 'categories routes' do
 	# Collection routes
 	it 'should route GET /categories to categories#index' do
 		expect(get: '/categories').to route_to controller: 'categories', action: 'index'

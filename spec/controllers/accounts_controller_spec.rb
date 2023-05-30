@@ -3,8 +3,8 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::AccountsController, type: :controller do
-	describe 'GET index', request: true, json: true do
+::RSpec.describe ::AccountsController do
+	describe 'GET index', json: true, request: true do
 		context 'for account list' do
 			let(:json) { 'account list with balances' }
 
@@ -32,7 +32,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET show', request: true, json: true do
+	describe 'GET show', json: true, request: true do
 		let(:json) { 'account details' }
 
 		it 'should return the details of the specified account' do
@@ -41,7 +41,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', request: true, json: true do
+	describe 'POST create', json: true, request: true do
 		let(:request_body) { {name: 'New account', account_type: 'cash', opening_balance: '1000.00', status: 'open', related_account_id: '1', controller: 'accounts', action: 'create'} }
 		let(:json) { 'created account' }
 
@@ -51,7 +51,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'PATCH update', request: true, json: true do
+	describe 'PATCH update', json: true, request: true do
 		let(:request_body) { {id: '1', name: 'Updated account', account_type: 'credit', opening_balance: '2000.00', status: 'closed', related_account_id: '2', controller: 'accounts', action: 'update'} }
 		let(:json) { 'updated account' }
 

@@ -8,8 +8,8 @@
 
 		# Default account and category if none specified
 		transient do
-			account { ::FactoryBot.build :account }
-			category { ::FactoryBot.build :category }
+			account { ::FactoryBot.build(:account) }
+			category { ::FactoryBot.build(:category) }
 			status { nil }
 		end
 
@@ -19,7 +19,7 @@
 		end
 
 		trait :inflow do
-			category { ::FactoryBot.build :inflow_category }
+			category { ::FactoryBot.build(:inflow_category) }
 		end
 
 		trait :scheduled do

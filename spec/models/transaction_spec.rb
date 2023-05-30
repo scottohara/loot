@@ -1,11 +1,11 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'rails_helper'
-require 'models/concerns/transactable'
 require 'models/concerns/categorisable'
+require 'models/concerns/transactable'
+require 'rails_helper'
 
-::RSpec.describe ::Transaction, type: :model do
+::RSpec.describe ::Transaction do
 	matcher :match_json do |expected|
 		match do |actual|
 			actual.id.eql?(expected[:id]) &&
@@ -119,7 +119,7 @@ require 'models/concerns/categorisable'
 	end
 
 	describe '#as_subclass' do
-		subject(:transaction) { create :transaction }
+		subject(:transaction) { create(:transaction) }
 
 		it 'should become an instance matching the transaction type' do
 			expect(transaction.as_subclass.class).to be ::BasicTransaction
@@ -141,7 +141,7 @@ require 'models/concerns/categorisable'
 		end
 
 		context 'when initially unflagged' do
-			subject(:transaction) { create :transaction }
+			subject(:transaction) { create(:transaction) }
 
 			context 'and the update does not include a flag' do
 				it('should update a transaction from a JSON representation and remain unflagged') {} # Empty block
@@ -162,7 +162,7 @@ require 'models/concerns/categorisable'
 		end
 
 		context 'when initially flagged' do
-			subject(:transaction) { create :transaction, :flagged }
+			subject(:transaction) { create(:transaction, :flagged) }
 
 			context 'and the update does not include a flag' do
 				it('should update a transaction from a JSON representation and clear the flag') {} # Empty block
@@ -199,7 +199,7 @@ require 'models/concerns/categorisable'
 		end
 
 		context 'unflagged' do
-			subject(:transaction) { create :basic_transaction }
+			subject(:transaction) { create(:basic_transaction) }
 
 			it 'should return a JSON representation' do
 				expect(json).to include flag_type: nil
@@ -208,7 +208,7 @@ require 'models/concerns/categorisable'
 		end
 
 		context 'flagged' do
-			subject(:transaction) { create :basic_transaction, :flagged }
+			subject(:transaction) { create(:basic_transaction, :flagged) }
 
 			it 'should return a JSON representation' do
 				expect(json).to include flag_type: 'noreceipt'

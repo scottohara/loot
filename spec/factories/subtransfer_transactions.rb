@@ -9,8 +9,8 @@
 
 		# Default account, subtransactions and subtransfers if none specified
 		transient do
-			parent { ::FactoryBot.build :split_from_transaction }
-			account { ::FactoryBot.build :account }
+			parent { ::FactoryBot.build(:split_from_transaction) }
+			account { ::FactoryBot.build(:account) }
 			status { nil }
 		end
 
@@ -21,7 +21,7 @@
 		end
 
 		trait :inflow do
-			parent { ::FactoryBot.build :split_to_transaction }
+			parent { ::FactoryBot.build(:split_to_transaction) }
 		end
 
 		factory :subtransfer_from_transaction, traits: [:inflow]

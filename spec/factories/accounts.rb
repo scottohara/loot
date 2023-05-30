@@ -17,40 +17,40 @@
 		trait :with_all_transaction_types do
 			after :build do |account, evaluator|
 				if account.account_type.eql? 'investment'
-					create :security_purchase_transaction, :flagged, investment_account: account, cash_account: account.related_account, status: 'Cleared' # flagged and cleared
-					create :security_sale_transaction, investment_account: account, cash_account: account.related_account
-					create :security_transfer_transaction, source_account: account
-					create :security_transfer_transaction, destination_account: account
-					create :security_add_transaction, account: account
-					create :security_remove_transaction, account: account
-					create :dividend_transaction, investment_account: account, cash_account: account.related_account
+					create(:security_purchase_transaction, :flagged, investment_account: account, cash_account: account.related_account, status: 'Cleared') # flagged and cleared
+					create(:security_sale_transaction, investment_account: account, cash_account: account.related_account)
+					create(:security_transfer_transaction, source_account: account)
+					create(:security_transfer_transaction, destination_account: account)
+					create(:security_add_transaction, account:)
+					create(:security_remove_transaction, account:)
+					create(:dividend_transaction, investment_account: account, cash_account: account.related_account)
 
 					# Create any scheduled transactions
-					create_list :security_holding_transaction, evaluator.scheduled, :scheduled, account:
+					create_list(:security_holding_transaction, evaluator.scheduled, :scheduled, account:)
 				else
-					create :basic_expense_transaction, :flagged, account: account, status: 'Cleared' # flagged and cleared
-					create :basic_income_transaction, account: account
-					create :transfer_transaction, source_account: account
-					create :transfer_transaction, destination_account: account
-					create :split_to_transaction, account: account, subtransactions: 1, subtransfers: 1
-					create :split_from_transaction, account: account, subtransactions: 1, subtransfers: 1
-					create :subtransfer_to_transaction, account: account
-					create :subtransfer_from_transaction, account: account
-					create :payslip_transaction, account: account, subtransactions: 1, subtransfers: 1
-					create :loan_repayment_transaction, account: account, subtransactions: 1, subtransfers: 1
-					create :security_purchase_transaction, cash_account: account
-					create :security_sale_transaction, cash_account: account
-					create :dividend_transaction, cash_account: account
+					create(:basic_expense_transaction, :flagged, account:, status: 'Cleared') # flagged and cleared
+					create(:basic_income_transaction, account:)
+					create(:transfer_transaction, source_account: account)
+					create(:transfer_transaction, destination_account: account)
+					create(:split_to_transaction, account:, subtransactions: 1, subtransfers: 1)
+					create(:split_from_transaction, account:, subtransactions: 1, subtransfers: 1)
+					create(:subtransfer_to_transaction, account:)
+					create(:subtransfer_from_transaction, account:)
+					create(:payslip_transaction, account:, subtransactions: 1, subtransfers: 1)
+					create(:loan_repayment_transaction, account:, subtransactions: 1, subtransfers: 1)
+					create(:security_purchase_transaction, cash_account: account)
+					create(:security_sale_transaction, cash_account: account)
+					create(:dividend_transaction, cash_account: account)
 
 					# Create any scheduled transactions
-					create_list :basic_transaction, evaluator.scheduled, :scheduled, account:
+					create_list(:basic_transaction, evaluator.scheduled, :scheduled, account:)
 				end
 			end
 		end
 
 		after :build do |account, evaluator|
-			create_list :basic_transaction, evaluator.transactions, :flagged, account: account
-			create_list :basic_transaction, evaluator.reconciled, account:, status: 'Reconciled'
+			create_list(:basic_transaction, evaluator.transactions, :flagged, account:)
+			create_list(:basic_transaction, evaluator.reconciled, account:, status: 'Reconciled')
 		end
 
 		trait :asset do
@@ -66,7 +66,7 @@
 			opening_balance { 0 }
 
 			transient do
-				related_account { ::FactoryBot.build :bank_account }
+				related_account { ::FactoryBot.build(:bank_account) }
 			end
 
 			after :build do |account, evaluator|

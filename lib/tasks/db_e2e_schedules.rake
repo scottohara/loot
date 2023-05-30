@@ -25,18 +25,18 @@ namespace :db do
 			security = create :security
 
 			# Create schedules of all types
-			create :basic_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee: payee, category: expense_subcategory
-			create :basic_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee: payee, category: income_subcategory
-			create :transfer_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), source_account: bank_account, payee: payee
-			create :split_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee: payee, category: expense_subcategory, subtransactions: 2
-			create :loan_repayment_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee: payee, category: expense_subcategory, subtransactions: 2
-			create :payslip_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee: payee, category: income_subcategory, subtransactions: 2
-			create :security_purchase_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security: security, investment_account: investment_account, cash_account: investment_account.related_account
-			create :security_sale_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security: security, investment_account: investment_account, cash_account: investment_account.related_account
-			create :security_add_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security: security, account: investment_account
-			create :security_remove_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security: security, account: investment_account
-			create :security_transfer_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security: security, source_account: investment_account
-			create :dividend_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security: security, investment_account: investment_account, cash_account: bank_account
+			create :basic_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee:, category: expense_subcategory
+			create :basic_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee:, category: income_subcategory
+			create(:transfer_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), source_account: bank_account, payee:)
+			create :split_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee:, category: expense_subcategory, subtransactions: 2
+			create :loan_repayment_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee:, category: expense_subcategory, subtransactions: 2
+			create :payslip_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), account: bank_account, payee:, category: income_subcategory, subtransactions: 2
+			create :security_purchase_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security:, investment_account:, cash_account: investment_account.related_account
+			create :security_sale_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security:, investment_account:, cash_account: investment_account.related_account
+			create :security_add_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security:, account: investment_account
+			create :security_remove_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security:, account: investment_account
+			create :security_transfer_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security:, source_account: investment_account
+			create :dividend_transaction, :scheduled, next_due_date: ::Time.zone.today.advance(days: 1), security:, investment_account:, cash_account: bank_account
 
 			# Reset the database connection
 			::ActiveRecord::Base.establish_connection ::ENV['RAILS_ENV']

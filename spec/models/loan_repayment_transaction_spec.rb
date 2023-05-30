@@ -3,9 +3,9 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::LoanRepaymentTransaction, type: :model do
+::RSpec.describe ::LoanRepaymentTransaction do
 	describe '#as_json' do
-		subject { create :loan_repayment_transaction }
+		subject { create(:loan_repayment_transaction) }
 
 		let(:json) { subject.as_json }
 

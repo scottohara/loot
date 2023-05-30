@@ -14,17 +14,17 @@
 
 		trait :with_all_transaction_types do
 			after :build do |category, evaluator|
-				create :basic_transaction, :flagged, category: category, status: 'Cleared' # flagged and cleared
-				create :split_transaction, direction: category.direction, category: category, subtransactions: 1
+				create(:basic_transaction, :flagged, category:, status: 'Cleared') # flagged and cleared
+				create(:split_transaction, direction: category.direction, category:, subtransactions: 1)
 
 				# Create any scheduled transactions
-				create_list :basic_transaction, evaluator.scheduled, :scheduled, category:
+				create_list(:basic_transaction, evaluator.scheduled, :scheduled, category:)
 			end
 		end
 
 		after :build do |category, evaluator|
-			create_list :basic_transaction, evaluator.transactions, category: category
-			create_list :category, evaluator.children, parent: category, direction: category.direction
+			create_list(:basic_transaction, evaluator.transactions, category:)
+			create_list(:category, evaluator.children, parent: category, direction: category.direction)
 		end
 
 		trait :outflow do

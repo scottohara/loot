@@ -25,7 +25,7 @@ namespace :db do
 
 		# Sanity check
 		print "WARNING: You are about to purge #{::ActionController::Base.helpers.pluralize transaction_headers.size, 'transaction header'} earlier than #{args[:cutoff_date]}. Type 'purge' and hit enter to proceed: "
-		abort 'Shrink aborted' unless $stdin.gets.chomp.casecmp('purge').zero?
+		abort 'Shrink aborted' if $stdin.gets.chomp.casecmp('purge').nonzero?
 
 		subtransaction_types = %w[Subtransfer Sub]
 		transaction_headers.each_with_index do |header, index|

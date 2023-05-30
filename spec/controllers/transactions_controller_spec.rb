@@ -3,8 +3,8 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::TransactionsController, type: :controller do
-	describe 'GET index', request: true, json: true do
+::RSpec.describe ::TransactionsController do
+	describe 'GET index', json: true, request: true do
 		let(:opening_balance) { 1 }
 		let(:transactions) { 'transactions' }
 		let(:at_end) { false }
@@ -63,7 +63,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET show', request: true, json: true do
+	describe 'GET show', json: true, request: true do
 		let(:transaction) { ::Transaction.new }
 		let(:json) { 'transaction details' }
 
@@ -74,7 +74,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', request: true, json: true do
+	describe 'POST create', json: true, request: true do
 		let(:json) { 'created transaction' }
 
 		it 'should create a new transaction of the specified type and return the details' do
@@ -84,8 +84,8 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'PATCH update', request: true, json: true do
-		let(:transaction) { create :basic_transaction }
+	describe 'PATCH update', json: true, request: true do
+		let(:transaction) { create(:basic_transaction) }
 		let(:json) { 'updated transaction' }
 
 		before do
@@ -117,7 +117,7 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', request: true do
-		let(:transaction) { create :basic_transaction }
+		let(:transaction) { create(:basic_transaction) }
 
 		it 'should delete an existing transaction' do
 			expect(::Transaction).to receive(:find).with('1').and_return transaction
@@ -127,7 +127,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET last', request: true, json: true do
+	describe 'GET last', json: true, request: true do
 		let(:account_type) { 'account type' }
 		let(:transaction_types) { 'transaction types' }
 
@@ -136,7 +136,7 @@ require 'rails_helper'
 		end
 
 		context 'when there are transactions' do
-			let(:last_transaction) { create :basic_transaction }
+			let(:last_transaction) { create(:basic_transaction) }
 			let(:transactions) do
 				[
 					create(:transaction),

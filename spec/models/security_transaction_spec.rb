@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::SecurityTransaction, type: :model do
+::RSpec.describe ::SecurityTransaction do
 	describe '::create_from_json' do
 		let(:json) { {} }
 
@@ -121,7 +121,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction) { create :security_holding_transaction }
+		subject(:transaction) { create(:security_holding_transaction) }
 
 		let(:json) { transaction.as_json }
 

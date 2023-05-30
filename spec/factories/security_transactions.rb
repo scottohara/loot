@@ -7,7 +7,7 @@
 
 		# Default security if none specified
 		transient do
-			security { ::FactoryBot.build :security }
+			security { ::FactoryBot.build(:security) }
 		end
 
 		after :build do |trx, evaluator|

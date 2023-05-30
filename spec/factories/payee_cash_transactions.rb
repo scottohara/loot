@@ -8,7 +8,7 @@
 
 		# Default payee if none specified
 		transient do
-			payee { ::FactoryBot.build :payee }
+			payee { ::FactoryBot.build(:payee) }
 		end
 
 		after :build do |trx, evaluator|

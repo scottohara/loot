@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::BasicTransaction, type: :model do
+::RSpec.describe ::BasicTransaction do
 	matcher :match_json do |expected, account, category, header|
 		match do |actual|
 			actual.transaction_type.eql?('Basic') &&
@@ -20,10 +20,10 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:account) { create :bank_account }
-		let(:category) { create :category }
-		let(:subcategory) { create :subcategory, parent: category }
-		let(:header) { create :payee_transaction_header }
+		let(:account) { create(:bank_account) }
+		let(:category) { create(:category) }
+		let(:subcategory) { create(:subcategory, parent: category) }
+		let(:header) { create(:payee_transaction_header) }
 		let(:json) do
 			{
 				id: 1,
@@ -65,10 +65,10 @@ require 'rails_helper'
 	end
 
 	describe '::update_from_json' do
-		let(:account) { create :bank_account }
-		let(:category) { create :category }
-		let(:subcategory) { create :subcategory, parent: category }
-		let(:transaction) { create :basic_transaction }
+		let(:account) { create(:bank_account) }
+		let(:category) { create(:category) }
+		let(:subcategory) { create(:subcategory, parent: category) }
+		let(:transaction) { create(:basic_transaction) }
 		let(:json) do
 			{
 				id: transaction.id,
@@ -119,7 +119,7 @@ require 'rails_helper'
 		end
 
 		context 'with category' do
-			subject(:transaction) { create :basic_transaction, status: 'Reconciled' }
+			subject(:transaction) { create(:basic_transaction, status: 'Reconciled') }
 
 			before do
 				expect(transaction.category).to receive(:as_json).and_return 'category json'
@@ -132,7 +132,7 @@ require 'rails_helper'
 		end
 
 		context 'with subcategory' do
-			subject(:transaction) { create :basic_transaction, category: create(:subcategory), status: 'Reconciled' }
+			subject(:transaction) { create(:basic_transaction, category: create(:subcategory), status: 'Reconciled') }
 
 			before do
 				expect(transaction.category.parent).to receive(:as_json).and_return 'category json'

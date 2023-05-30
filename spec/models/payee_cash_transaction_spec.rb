@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::PayeeCashTransaction, type: :model do
+::RSpec.describe ::PayeeCashTransaction do
 	describe '::create_from_json' do
 		let(:json) { {} }
 
@@ -32,7 +32,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction) { create :basic_transaction }
+		subject(:transaction) { create(:basic_transaction) }
 
 		let(:json) { transaction.as_json }
 

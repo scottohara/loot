@@ -8,19 +8,19 @@
 
 		# Default account, subtransactions and subtransfers if none specified
 		transient do
-			account { ::FactoryBot.build :account }
+			account { ::FactoryBot.build(:account) }
 			direction { 'outflow' }
-			category { ::FactoryBot.build :category, direction: }
+			category { ::FactoryBot.build(:category, direction:) }
 			subtransactions { 0 }
 			subtransfers { 0 }
-			subtransfer_account { ::FactoryBot.build :account }
+			subtransfer_account { ::FactoryBot.build(:account) }
 			status { nil }
 		end
 
 		after :build do |trx, evaluator|
 			trx.transaction_account = ::FactoryBot.build :transaction_account, account: evaluator.account, direction: evaluator.direction, status: evaluator.status
 			create_list (evaluator.direction.eql?('outflow') ? :sub_expense_transaction : :sub_income_transaction), evaluator.subtransactions, parent: trx, category: evaluator.category
-			create_list :subtransfer_transaction, evaluator.subtransfers, parent: trx, payee: evaluator.payee, account: evaluator.subtransfer_account
+			create_list(:subtransfer_transaction, evaluator.subtransfers, parent: trx, payee: evaluator.payee, account: evaluator.subtransfer_account)
 			trx.amount = trx.subtransactions.pluck(:amount).sum + trx.subtransfers.pluck(:amount).sum
 		end
 

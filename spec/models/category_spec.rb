@@ -1,10 +1,10 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-require 'rails_helper'
 require 'models/concerns/transactable'
+require 'rails_helper'
 
-::RSpec.describe ::Category, type: :model do
+::RSpec.describe ::Category do
 	context 'category' do
 		it_behaves_like ::Transactable do
 			let(:context_factory) { :category_with_children }
@@ -23,7 +23,7 @@ require 'models/concerns/transactable'
 
 	describe '::find_or_new' do
 		context 'existing category' do
-			let(:category) { create :category }
+			let(:category) { create(:category) }
 
 			it 'should return the existing category' do
 				expect(described_class.find_or_new 'id' => category.id).to eq category
@@ -41,7 +41,7 @@ require 'models/concerns/transactable'
 			end
 
 			context 'with parent' do
-				let(:parent) { create :inflow_category }
+				let(:parent) { create(:inflow_category) }
 
 				it 'should return a newly created category' do
 					category = described_class.find_or_new category_name, parent
@@ -54,7 +54,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#opening_balance' do
-		subject(:category) { create :category }
+		subject(:category) { create(:category) }
 
 		it 'should return zero' do
 			expect(category.opening_balance).to eq 0
@@ -62,7 +62,7 @@ require 'models/concerns/transactable'
 	end
 
 	describe '#account_type' do
-		subject(:category) { create :category }
+		subject(:category) { create(:category) }
 
 		it 'should return nil' do
 			expect(category.account_type).to be_nil
@@ -81,7 +81,7 @@ require 'models/concerns/transactable'
 			let(:json) { category.as_json }
 
 			before do
-				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction parent_id favourite]).and_call_original
+				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {fields: %i[id name direction parent_id favourite]}).and_call_original
 			end
 
 			after do
@@ -93,7 +93,7 @@ require 'models/concerns/transactable'
 			end
 
 			context 'category' do
-				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
+				subject(:category) { create(:category, name: 'Test Category', children: 1, transactions: 1) }
 
 				it 'should return a JSON representation excluding children' do
 					expect(json).to include parent_id: nil
@@ -101,7 +101,7 @@ require 'models/concerns/transactable'
 			end
 
 			context 'subcategory' do
-				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
+				subject(:category) { create(:subcategory, name: 'Test Category', transactions: 1) }
 
 				it 'should return a JSON representation excluding parent' do
 					expect(json).to include parent_id: category.parent.id
@@ -124,14 +124,14 @@ require 'models/concerns/transactable'
 			end
 
 			context 'category' do
-				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
+				subject(:category) { create(:category, name: 'Test Category', children: 1, transactions: 1) }
 
 				let(:child) { json[:children].first }
 				let(:child_parent) { child[:parent] }
 
 				before do
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.children.first, fields: %i[id name direction parent_id parent num_transactions favourite]).and_call_original
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, fields: %i[id name direction]).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.children.first, {fields: %i[id name direction parent_id parent num_transactions favourite]}).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {fields: %i[id name direction]}).and_call_original
 				end
 
 				it 'should return a JSON representation including children' do
@@ -159,12 +159,12 @@ require 'models/concerns/transactable'
 			end
 
 			context 'subcategory' do
-				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
+				subject(:category) { create(:subcategory, name: 'Test Category', transactions: 1) }
 
 				let(:parent) { json[:parent] }
 
 				before do
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.parent, fields: %i[id name direction]).and_call_original
+					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.parent, {fields: %i[id name direction]}).and_call_original
 				end
 
 				it 'should return a JSON representation including parent' do

@@ -8,8 +8,8 @@
 
 		# Default accounts if none specified
 		transient do
-			source_account { ::FactoryBot.build :account }
-			destination_account { ::FactoryBot.build :account }
+			source_account { ::FactoryBot.build(:account) }
+			destination_account { ::FactoryBot.build(:account) }
 			status { nil }
 		end
 

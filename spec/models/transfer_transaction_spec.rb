@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-::RSpec.describe ::TransferTransaction, type: :model do
+::RSpec.describe ::TransferTransaction do
 	matcher :match_json do |expected, source_account, destination_account, header|
 		match do |actual|
 			actual[:transaction_type].eql?('Transfer') &&
@@ -21,9 +21,9 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:primary_account) { create :bank_account }
-		let(:account) { create :bank_account }
-		let(:header) { create :payee_transaction_header }
+		let(:primary_account) { create(:bank_account) }
+		let(:account) { create(:bank_account) }
+		let(:header) { create(:payee_transaction_header) }
 		let(:json) do
 			{
 				id: 1,
@@ -68,9 +68,9 @@ require 'rails_helper'
 	end
 
 	describe '::update_from_json' do
-		let(:primary_account) { create :bank_account }
-		let(:account) { create :bank_account }
-		let(:transaction) { create :transfer_transaction }
+		let(:primary_account) { create(:bank_account) }
+		let(:account) { create(:bank_account) }
+		let(:transaction) { create(:transfer_transaction) }
 		let(:json) do
 			{
 				id: transaction.id,
@@ -112,7 +112,7 @@ require 'rails_helper'
 	describe '#validate_account_uniqueness' do
 		subject(:transaction) { described_class.new }
 
-		let(:source_account) { create :account }
+		let(:source_account) { create(:account) }
 		let(:error_message) { "Source and destination account can't be the same" }
 
 		before do
@@ -130,7 +130,7 @@ require 'rails_helper'
 		end
 
 		context 'when the source and destination accounts are not the same' do
-			let(:destination_account) { create :account }
+			let(:destination_account) { create(:account) }
 
 			it 'should not be an error' do
 				expect(transaction.errors[:base]).not_to include error_message
@@ -139,7 +139,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction) { create :transfer_transaction, status: 'Reconciled' }
+		subject(:transaction) { create(:transfer_transaction, status: 'Reconciled') }
 
 		before do
 			expect(transaction.source_account).to receive(:as_json).and_return 'source account json'

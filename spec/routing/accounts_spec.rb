@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'accounts routes', type: :routing do
+describe 'accounts routes' do
 	# Collection routes
 	it 'should route GET /accounts to accounts#index' do
 		expect(get: '/accounts').to route_to controller: 'accounts', action: 'index'
