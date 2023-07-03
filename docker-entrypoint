@@ -11,7 +11,7 @@ if [ $(id -u) -eq 0 ]; then
   swapon /swapfile
 
 	# Switch to a non-root system user and re-execute the command
-  exec su --shell /bin/sh loot --command "$0 $*"
+  exec su -s /bin/sh loot -c "$0 $*"
 fi
 
 # Execute the script args as a command
