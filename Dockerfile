@@ -78,6 +78,7 @@ RUN mkdir -p tmp/pids
 
 COPY --link --chown=loot \
 	config.ru \
+	docker-entrypoint \
 	Gemfile* \
 	Rakefile ./
 
@@ -89,4 +90,6 @@ COPY --link --chown=loot --from=frontend build/public public/
 
 EXPOSE 3000
 
+USER root
+ENTRYPOINT ["/loot/docker-entrypoint"]
 CMD ["bundle", "exec", "puma"]
