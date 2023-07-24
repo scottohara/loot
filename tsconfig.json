@@ -1,36 +1,59 @@
 {
 	"compilerOptions": {
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"incremental": true,
-		"lib": [
-			"DOM",
-			"ES2022",
-			"WebWorker"
-		],
-		"module": "es2022",
-		"moduleResolution": "node",
+		// Type Checking
 		"noFallthroughCasesInSwitch": true,
-		"noImplicitAny": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
-		"noImplicitThis": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
+		"strict": true,
+		"strictFunctionTypes": false,
+
+		// Modules
+		"module": "es2022",
+		"moduleResolution": "node",
 		"paths": {
 			"*": [
 				"./src/*",
 				"./spec/public/*"
 			]
 		},
+
+		// Emit
 		"sourceMap": true,
-		"strictBindCallApply": true,
-		"strictPropertyInitialization": true,
-		"strictNullChecks": true,
-		"target": "ES2022",
-		"tsBuildInfoFile": ".tsbuildinfo",
-		"useUnknownInCatchVariables": true
+
+		// JavaScript Support
+
+		// Editor Support
+
+		// Interop Constraints
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+
+		// Backwards Compatibility
+
+		// Language and Environment
+		"lib": [
+			"DOM",
+			"ES2022",
+			"WebWorker"
+		],
+		"target": "es2022",
+
+		// Compiler Diagnostics
+
+		// Projects
+		"incremental": true
+
+		// Output Formatting
+
+		// Completeness
+
+		// Command Line
+
+		// Watch Options
 	},
 	"exclude": [
 		"cypress",

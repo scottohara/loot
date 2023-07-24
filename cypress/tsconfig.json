@@ -1,6 +1,9 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
+		// Type Checking
+
+		// Modules
 		"baseUrl": "../",
 		"paths": {
 			"*": [
@@ -11,7 +14,32 @@
 			"cypress",
 			"node"
 		],
-		"target": "ES2019"
+
+		// Emit
+		"sourceMap": false,
+
+		// JavaScript Support
+
+		// Editor Support
+
+		// Interop Constraints
+
+		// Backwards Compatibility
+
+		// Language and Environment
+		"target": "es2019"
+
+		// Compiler Diagnostics
+
+		// Projects
+
+		// Output Formatting
+
+		// Completeness
+
+		// Command Line
+
+		// Watch Options
 	},
 	"exclude": [
 		"node_modules"

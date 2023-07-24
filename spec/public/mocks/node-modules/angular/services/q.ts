@@ -71,7 +71,7 @@ export default class QMockProvider implements Mock<QMock> {
 			qSuccess.resolve((success as PromiseMockConfig<T> | undefined)?.response ?? null);
 
 			// Auto-reject the error promise with the specified error response
-			qError.reject((error as PromiseMockConfig<T> | undefined)?.response ?? { data: "unsuccessful" });
+			qError.reject((error as PromiseMockConfig<T> | undefined)?.response ?? { data: "unsuccessful" as const });
 
 			// Configure the stub to return the appropriate promise based on the call arguments
 			if (undefined === success || (angular.isObject(success) && undefined === (success as PromiseMockConfig<T>).args)) {
