@@ -110,7 +110,10 @@ export default class OgInputCalculatorDirective {
 								// Matches any number of digits, periods or commas, followed by +, -, * or /
 								const	matches: RegExpExecArray | null = (/(?<operand>[-\d.,]+)(?<operator>[+\-*/])(?<residual>.*)/giu).exec(value);
 
-								if (null !== matches && undefined !== matches.groups) {
+								if (undefined === matches?.groups) {
+									// Recalculate
+									scope.calculate(value);
+								} else {
 									const { operand, operator, residual } = matches.groups;
 
 									// Push the first (operand) and second (operator) matches onto the stack
@@ -118,9 +121,6 @@ export default class OgInputCalculatorDirective {
 
 									// Update the view value to the third match (anything after the operator), which is typically an empty string
 									iElement.val(residual);
-								} else {
-									// Recalculate
-									scope.calculate(value);
 								}
 
 								// Return the current result

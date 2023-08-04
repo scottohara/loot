@@ -41,9 +41,15 @@ describe("ogModalErrorService", (): void => {
 
 		describe("when the message is escape key press", (): void => {
 			it("should do nothing", (): void => {
-				ogModalErrorService.showError();
+				ogModalErrorService.showError("escape key press");
 				$uibModal.open.should.not.have.been.called;
 			});
+		});
+
+		it("should register a catch callback", (): void => {
+			ogModalErrorService.showError("");
+			(undefined !== $uibModal.catchCallback).should.be.true;
+			(undefined === $uibModal.catchCallback?.()).should.be.true;
 		});
 	});
 });

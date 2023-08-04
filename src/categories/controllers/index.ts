@@ -36,7 +36,7 @@ export default class CategoryIndexController {
 
 			delete category.children;
 
-			return flattened.concat(category, undefined === children ? [] : children);
+			return flattened.concat(category, children ?? []);
 		}, []);
 
 		this.tableActions = {

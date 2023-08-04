@@ -17,7 +17,7 @@ export default class OgModalErrorService {
 						message
 					})
 				}
-			}).result.catch(undefined);
+			}).result.catch((): void => undefined);
 		}
 	}
 }

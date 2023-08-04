@@ -414,7 +414,7 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("(context mode)", (): void => {
-			const scenarios: { type: "account" | "category" | "payee" | "security"; field: (keyof BasicTransaction | keyof SecurityTransaction); contextFactory: () => Entity; }[] = [
+			const scenarios: { type: "account" | "category" | "payee" | "security"; field: keyof BasicTransaction | keyof SecurityTransaction; contextFactory: () => Entity; }[] = [
 				{ type: "account", field: "primary_account", contextFactory: createAccount },
 				{ type: "payee", field: "payee", contextFactory: createPayee },
 				{ type: "security", field: "security", contextFactory: createSecurity },
