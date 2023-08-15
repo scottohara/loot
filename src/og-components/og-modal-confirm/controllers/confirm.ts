@@ -1,4 +1,4 @@
-import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
+import type { OgModalConfirm } from "~/og-components/og-modal-confirm/types";
 import angular from "angular";
 
 export default class OgModalConfirmController {

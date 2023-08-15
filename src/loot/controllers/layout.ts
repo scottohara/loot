@@ -1,14 +1,14 @@
-import type AccountModel from "accounts/models/account";
-import AuthenticationEditView from "authentication/views/edit.html";
-import type AuthenticationModel from "authentication/models/authentication";
-import type CategoryModel from "categories/models/category";
-import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import type OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import type PayeeModel from "payees/models/payee";
-import type QueryService from "transactions/services/query";
-import type SecurityModel from "securities/models/security";
+import type AccountModel from "~/accounts/models/account";
+import AuthenticationEditView from "~/authentication/views/edit.html";
+import type AuthenticationModel from "~/authentication/models/authentication";
+import type CategoryModel from "~/categories/models/category";
+import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import type OgViewScrollService from "~/og-components/og-view-scroll/services/og-view-scroll";
+import type PayeeModel from "~/payees/models/payee";
+import type QueryService from "~/transactions/services/query";
+import type SecurityModel from "~/securities/models/security";
 
 export default class LayoutController {
 	public readonly scrollTo: (anchor: string) => void;

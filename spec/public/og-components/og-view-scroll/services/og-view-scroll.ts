@@ -1,5 +1,5 @@
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type OgViewScrollService from "~/og-components/og-view-scroll/services/og-view-scroll";
 import angular from "angular";
 
 describe("ogViewScrollService", (): void => {

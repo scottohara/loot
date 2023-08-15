@@ -1,18 +1,18 @@
 // Dependent modules
-import "./accounts";
-import "./authentication";
-import "./categories";
-import "./node-modules";
-import "./og-components";
-import "./payees";
-import "./schedules";
-import "./securities";
-import "./transactions";
+import "~/mocks/accounts";
+import "~/mocks/authentication";
+import "~/mocks/categories";
+import "~/mocks/node-modules";
+import "~/mocks/og-components";
+import "~/mocks/payees";
+import "~/mocks/schedules";
+import "~/mocks/securities";
+import "~/mocks/transactions";
 
 // Components
-import ControllerTest from "./loot/controllertest";
-import DirectiveTest from "./loot/directivetest";
-import MockDependenciesProvider from "./loot/mockdependencies";
+import ControllerTest from "~/mocks/loot/controllertest";
+import DirectiveTest from "~/mocks/loot/directivetest";
+import MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import angular from "angular";
 
 angular.module("lootMocks", [

@@ -1,4 +1,4 @@
-import type { Mock } from "mocks/types";
+import type { Mock } from "~/mocks/types";
 
 export default class AuthenticatedMockProvider implements Mock<boolean> {
 	public constructor(private readonly authenticated = true) {}

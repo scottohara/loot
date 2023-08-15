@@ -2,14 +2,14 @@ import type {
 	Account,
 	AccountStatus,
 	AccountType
-} from "accounts/types";
-import type AccountEditController from "accounts/controllers/edit";
-import type { AccountModelMock } from "mocks/accounts/types";
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+} from "~/accounts/types";
+import type AccountEditController from "~/accounts/controllers/edit";
+import type { AccountModelMock } from "~/mocks/accounts/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
-import createAccount from "mocks/accounts/factories";
+import createAccount from "~/mocks/accounts/factories";
 
 describe("AccountEditController", (): void => {
 	let accountEditController: AccountEditController,

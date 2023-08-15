@@ -1,13 +1,13 @@
 // Dependent modules
 import "angular-ui-bootstrap";
 import "@uirouter/angularjs";
-import "og-components";
+import "~/og-components";
 
 // Components
-import SecurityDeleteController from "./controllers/delete";
-import SecurityEditController from "./controllers/edit";
-import SecurityIndexController from "./controllers/index";
-import SecurityModel from "./models/security";
+import SecurityDeleteController from "~/securities/controllers/delete";
+import SecurityEditController from "~/securities/controllers/edit";
+import SecurityIndexController from "~/securities/controllers/index";
+import SecurityModel from "~/securities/models/security";
 import angular from "angular";
 
 angular.module("lootSecurities", [

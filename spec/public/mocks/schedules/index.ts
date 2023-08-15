@@ -1,7 +1,7 @@
 // Components
-import ScheduleMockProvider from "./providers/schedule";
-import ScheduleModelMockProvider from "./models/schedule";
-import SchedulesMockProvider from "./providers/schedules";
+import ScheduleMockProvider from "~/mocks/schedules/providers/schedule";
+import ScheduleModelMockProvider from "~/mocks/schedules/models/schedule";
+import SchedulesMockProvider from "~/mocks/schedules/providers/schedules";
 import angular from "angular";
 
 angular.module("lootSchedulesMocks", [])

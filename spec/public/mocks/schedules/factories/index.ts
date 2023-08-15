@@ -5,7 +5,7 @@ import type {
 	ScheduledSecurityHoldingTransaction,
 	ScheduledSplitTransaction,
 	ScheduledTransferTransaction
-} from "schedules/types";
+} from "~/schedules/types";
 import {
 	addDays,
 	startOfDay
@@ -15,7 +15,7 @@ import {
 	createSecurityHoldingTransaction,
 	createSplitTransaction,
 	createTransferTransaction
-} from "mocks/transactions/factories";
+} from "~/mocks/transactions/factories";
 
 function createSchedule(props: Partial<Schedule> & { transaction_date: Date; } = { transaction_date: new Date() }): Schedule & { transaction_date: Date; } {
 	return {

@@ -1,13 +1,13 @@
 import type {
 	BasicTransaction,
 	TransactionBatch
-} from "transactions/types";
+} from "~/transactions/types";
 import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import type { Mock } from "mocks/types";
-import { createBasicTransaction } from "mocks/transactions/factories";
+import type { Mock } from "~/mocks/types";
+import { createBasicTransaction } from "~/mocks/transactions/factories";
 
 function *transactions(count: number): Iterable<BasicTransaction> {
 	for (let id = 1, daysAgo = count + 1; id < count + 1; id++, daysAgo--) {

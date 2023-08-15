@@ -1,14 +1,14 @@
 import type {
 	PromiseMockConfig,
 	QMock
-} from "mocks/node-modules/angular/types";
-import type { Account } from "accounts/types";
-import type AccountMockProvider from "mocks/accounts/providers/account";
-import type { AccountModelMock } from "mocks/accounts/types";
-import type AccountsMockProvider from "mocks/accounts/providers/accounts";
-import type AccountsWithBalancesMockProvider from "mocks/accounts/providers/accountsWithBalances";
-import type { Mock } from "mocks/types";
-import type QMockProvider from "mocks/node-modules/angular/services/q";
+} from "~/mocks/node-modules/angular/types";
+import type { Account } from "~/accounts/types";
+import type AccountMockProvider from "~/mocks/accounts/providers/account";
+import type { AccountModelMock } from "~/mocks/accounts/types";
+import type AccountsMockProvider from "~/mocks/accounts/providers/accounts";
+import type AccountsWithBalancesMockProvider from "~/mocks/accounts/providers/accountsWithBalances";
+import type { Mock } from "~/mocks/types";
+import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 import type { SinonStub } from "sinon";
 import sinon from "sinon";
 

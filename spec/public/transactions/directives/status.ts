@@ -2,14 +2,14 @@ import type {
 	Transaction,
 	TransactionStatus,
 	TransactionStatusScope
-} from "transactions/types";
-import type DirectiveTest from "mocks/loot/directivetest";
-import type { DirectiveTestModel } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { TransactionModelMock } from "mocks/transactions/types";
+} from "~/transactions/types";
+import type DirectiveTest from "~/mocks/loot/directivetest";
+import type { DirectiveTestModel } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { TransactionModelMock } from "~/mocks/transactions/types";
 import angular from "angular";
-import createAccount from "mocks/accounts/factories";
-import { createBasicTransaction } from "mocks/transactions/factories";
+import createAccount from "~/mocks/accounts/factories";
+import { createBasicTransaction } from "~/mocks/transactions/factories";
 import sinon from "sinon";
 
 describe("transactionStatus", (): void => {

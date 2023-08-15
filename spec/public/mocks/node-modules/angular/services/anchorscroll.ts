@@ -1,4 +1,4 @@
-import type { Mock } from "mocks/types";
+import type { Mock } from "~/mocks/types";
 import type { SinonStub } from "sinon";
 import sinon from "sinon";
 

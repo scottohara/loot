@@ -2,8 +2,8 @@
 import "angular-ui-bootstrap";
 
 // Components
-import AuthenticationEditController from "./controllers/edit";
-import AuthenticationModel from "./models/authentication";
+import AuthenticationEditController from "~/authentication/controllers/edit";
+import AuthenticationModel from "~/authentication/models/authentication";
 import angular from "angular";
 
 angular.module("lootAuthentication", [

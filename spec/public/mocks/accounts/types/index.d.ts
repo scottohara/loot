@@ -1,7 +1,7 @@
 import type {
 	Account,
 	Accounts
-} from "accounts/types";
+} from "~/accounts/types";
 import type { SinonStub } from "sinon";
 
 export interface AccountModelMock {

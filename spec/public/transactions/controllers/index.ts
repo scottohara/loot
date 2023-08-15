@@ -15,21 +15,21 @@ import type {
 	TransactionType,
 	TransferTransaction,
 	TransferrableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	ControllerTestFactory,
 	EventMock,
 	JQueryMouseEventObjectMock
-} from "mocks/types";
+} from "~/mocks/types";
 import type {
 	Entity,
 	EntityModel
-} from "loot/types";
+} from "~/loot/types";
 import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
-} from "mocks/node-modules/angular/types";
+} from "~/mocks/node-modules/angular/types";
 import {
 	addDays,
 	startOfDay,
@@ -42,27 +42,27 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction,
 	createTransferTransaction
-} from "mocks/transactions/factories";
-import type { Account } from "accounts/types";
-import type AccountModel from "accounts/models/account";
-import type { Category } from "categories/types";
-import type CategoryModel from "categories/models/category";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
-import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import type OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import type { Payee } from "payees/types";
-import type { Security } from "securities/types";
-import type SecurityModel from "securities/models/security";
+} from "~/mocks/transactions/factories";
+import type { Account } from "~/accounts/types";
+import type AccountModel from "~/accounts/models/account";
+import type { Category } from "~/categories/types";
+import type CategoryModel from "~/categories/models/category";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgModalConfirm } from "~/og-components/og-modal-confirm/types";
+import type { OgTableActionHandlers } from "~/og-components/og-table-navigable/types";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import type OgViewScrollService from "~/og-components/og-view-scroll/services/og-view-scroll";
+import type { Payee } from "~/payees/types";
+import type { Security } from "~/securities/types";
+import type SecurityModel from "~/securities/models/security";
 import type { SinonStub } from "sinon";
-import type TransactionIndexController from "transactions/controllers";
-import type { TransactionModelMock } from "mocks/transactions/types";
+import type TransactionIndexController from "~/transactions/controllers";
+import type { TransactionModelMock } from "~/mocks/transactions/types";
 import angular from "angular";
-import createAccount from "mocks/accounts/factories";
-import createCategory from "mocks/categories/factories";
-import createPayee from "mocks/payees/factories";
-import createSecurity from "mocks/securities/factories";
+import createAccount from "~/mocks/accounts/factories";
+import createCategory from "~/mocks/categories/factories";
+import createPayee from "~/mocks/payees/factories";
+import createSecurity from "~/mocks/securities/factories";
 import sinon from "sinon";
 
 describe("TransactionIndexController", (): void => {

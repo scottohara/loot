@@ -1,5 +1,5 @@
-import type { Security } from "securities/types";
-import type SecurityModel from "securities/models/security";
+import type { Security } from "~/securities/types";
+import type SecurityModel from "~/securities/models/security";
 
 export default class SecurityDeleteController {
 	public errorMessage: string | null = null;

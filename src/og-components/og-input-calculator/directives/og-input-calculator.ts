@@ -3,11 +3,11 @@ import type {
 	OgInputCalculatorOperation,
 	OgInputCalculatorOperator,
 	OgInputCalculatorScope
-} from "og-components/og-input-calculator/types";
-import OgInputCalculatorView from "og-components/og-input-calculator/views/calculator.html";
-import type OgInputCurrencyController from "og-components/og-input-currency/controllers/currency";
-import type OgInputNumberController from "og-components/og-input-number/controllers/number";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+} from "~/og-components/og-input-calculator/types";
+import OgInputCalculatorView from "~/og-components/og-input-calculator/views/calculator.html";
+import type OgInputCurrencyController from "~/og-components/og-input-currency/controllers/currency";
+import type OgInputNumberController from "~/og-components/og-input-number/controllers/number";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
 import angular from "angular";
 
 export default class OgInputCalculatorDirective {

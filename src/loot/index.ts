@@ -1,25 +1,25 @@
 // These dependencies need to be loaded first
-import "./bootstrap";
+import "~/loot/bootstrap";
 
 // Dependent modules
 import "angular-ui-bootstrap";
-import "og-components";
-import "accounts";
-import "authentication";
-import "categories";
-import "payees";
-import "schedules";
-import "securities";
-import "transactions";
+import "~/og-components";
+import "~/accounts";
+import "~/authentication";
+import "~/categories";
+import "~/payees";
+import "~/schedules";
+import "~/securities";
+import "~/transactions";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./css/loot.less";
+import "~/loot/css/loot.less";
 
 // Components
 import $ from "jquery";
-import LayoutController from "./controllers/layout";
-import type { LootRootScope } from "loot/types";
-import LootStatesProvider from "./providers/states";
-import type OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
+import LayoutController from "~/loot/controllers/layout";
+import type { LootRootScope } from "~/loot/types";
+import LootStatesProvider from "~/loot/providers/states";
+import type OgNavigatorServiceWorkerService from "~/og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
 import type { UrlService } from "@uirouter/angularjs";
 import angular from "angular";
 

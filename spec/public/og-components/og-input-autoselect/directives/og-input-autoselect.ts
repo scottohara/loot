@@ -1,5 +1,5 @@
-import type DirectiveTest from "mocks/loot/directivetest";
-import type { OgInputAutoSelectScope } from "og-components/og-input-autoselect/types";
+import type DirectiveTest from "~/mocks/loot/directivetest";
+import type { OgInputAutoSelectScope } from "~/og-components/og-input-autoselect/types";
 import type { SinonStub } from "sinon";
 import angular from "angular";
 import sinon from "sinon";

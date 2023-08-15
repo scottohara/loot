@@ -1,13 +1,13 @@
 // Dependent modules
 import "angular-ui-bootstrap";
 import "@uirouter/angularjs";
-import "og-components";
+import "~/og-components";
 
 // Components
-import CategoryDeleteController from "./controllers/delete";
-import CategoryEditController from "./controllers/edit";
-import CategoryIndexController from "./controllers/index";
-import CategoryModel from "./models/category";
+import CategoryDeleteController from "~/categories/controllers/delete";
+import CategoryEditController from "~/categories/controllers/edit";
+import CategoryIndexController from "~/categories/controllers/index";
+import CategoryModel from "~/categories/models/category";
 import angular from "angular";
 
 angular.module("lootCategories", [

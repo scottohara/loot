@@ -1,38 +1,38 @@
 import type {
 	ControllerTestFactory,
 	JQueryMouseEventObjectMock
-} from "mocks/types";
+} from "~/mocks/types";
 import type {
 	ScheduledSplitTransaction,
 	ScheduledTransaction
-} from "schedules/types";
+} from "~/schedules/types";
 import type {
 	SplitTransactionChild,
 	SplitTransactionType
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
-} from "mocks/node-modules/angular/types";
+} from "~/mocks/node-modules/angular/types";
 import {
 	createScheduledBasicTransaction,
 	createScheduledSplitTransaction
-} from "mocks/schedules/factories";
+} from "~/mocks/schedules/factories";
 import {
 	createSubtransaction,
 	createSubtransferTransaction
-} from "mocks/transactions/factories";
+} from "~/mocks/transactions/factories";
 import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import type ScheduleIndexController from "schedules/controllers";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgTableActionHandlers } from "~/og-components/og-table-navigable/types";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import type ScheduleIndexController from "~/schedules/controllers";
 import type { SinonStub } from "sinon";
-import type { TransactionModelMock } from "mocks/transactions/types";
+import type { TransactionModelMock } from "~/mocks/transactions/types";
 import angular from "angular";
 import sinon from "sinon";
 

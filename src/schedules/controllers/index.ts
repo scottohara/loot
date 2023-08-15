@@ -1,22 +1,22 @@
-import "transactions/css/index.less";
+import "~/transactions/css/index.less";
 import type {
 	OgTableActionHandlers,
 	OgTableActions
-} from "og-components/og-table-navigable/types";
+} from "~/og-components/og-table-navigable/types";
 import type {
 	SplitTransaction,
 	SplitTransactionChild
-} from "transactions/types";
+} from "~/transactions/types";
 import {
 	isEqual,
 	startOfDay
 } from "date-fns";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import ScheduleDeleteView from "schedules/views/delete.html";
-import ScheduleEditView from "schedules/views/edit.html";
-import type { ScheduledTransaction } from "schedules/types";
-import type TransactionModel from "transactions/models/transaction";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import ScheduleDeleteView from "~/schedules/views/delete.html";
+import ScheduleEditView from "~/schedules/views/edit.html";
+import type { ScheduledTransaction } from "~/schedules/types";
+import type TransactionModel from "~/transactions/models/transaction";
 import angular from "angular";
 
 export default class ScheduleIndexController {

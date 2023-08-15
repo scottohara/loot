@@ -6,13 +6,13 @@ import {
 	saveButton,
 	securityEditForm,
 	securityEditHeading
-} from "securities/edit";
+} from "~/support/securities/edit";
 import {
 	checkRowMatches,
 	getValuesFrom,
 	securitiesTableRows
-} from "securities/index";
-import type { Security } from "securities/types";
+} from "~/support/securities/index";
+import type { Security } from "~/support/securities/types";
 
 describe("Security Edit", (): void => {
 	let	expected: Security,

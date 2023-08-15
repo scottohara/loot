@@ -1,7 +1,7 @@
 import type {
 	Subtransaction,
 	TransactionEdit
-} from "./types";
+} from "~/support/transactions/types";
 
 export const transactionEditForm = "form[name=transactionForm]";
 export const transactionEditHeading = `${transactionEditForm} > div.modal-header > h4`;

@@ -1,4 +1,4 @@
-import type { Payee } from "./types";
+import type { Payee } from "~/support/payees/types";
 
 export const payeesTableRows = "#payees > tbody > tr";
 

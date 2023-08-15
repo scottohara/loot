@@ -1,6 +1,6 @@
-import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
-import type OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
-import type OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
+import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
+import type OgLruCache from "~/og-components/og-lru-cache-factory/models/og-lru-cache";
+import type OgLruCacheFactory from "~/og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 import angular from "angular";
 
 describe("ogLruCacheFactory", (): void => {

@@ -1,18 +1,18 @@
 import type {
 	Account,
 	Accounts
-} from "accounts/types";
+} from "~/accounts/types";
 import type {
 	CacheFactoryMock,
 	WindowMock
-} from "mocks/node-modules/angular/types";
+} from "~/mocks/node-modules/angular/types";
 import type {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
-} from "mocks/og-components/og-lru-cache-factory/types";
-import type AccountModel from "accounts/models/account";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+} from "~/mocks/og-components/og-lru-cache-factory/types";
+import type AccountModel from "~/accounts/models/account";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
 import type { SinonStub } from "sinon";
 import angular from "angular";
 import sinon from "sinon";

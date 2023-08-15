@@ -1,5 +1,5 @@
-import type DirectiveTest from "mocks/loot/directivetest";
-import type { DirectiveTestModel } from "mocks/types";
+import type DirectiveTest from "~/mocks/loot/directivetest";
+import type { DirectiveTestModel } from "~/mocks/types";
 import angular from "angular";
 
 describe("ogFavourite", (): void => {

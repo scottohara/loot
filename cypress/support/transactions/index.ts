@@ -2,7 +2,7 @@ import type {
 	Subtransaction,
 	Transaction,
 	TransactionEdit
-} from "./types";
+} from "~/support/transactions/types";
 
 export const transactionsIndexHeading = "h3";
 export const transactionsTable = "#transactions";

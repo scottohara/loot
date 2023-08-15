@@ -1,8 +1,8 @@
-import type AuthenticationEditController from "authentication/controllers/edit";
-import type { AuthenticationModelMock } from "mocks/authentication/types";
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type AuthenticationEditController from "~/authentication/controllers/edit";
+import type { AuthenticationModelMock } from "~/mocks/authentication/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AuthenticationEditController", (): void => {

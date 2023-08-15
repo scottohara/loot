@@ -6,7 +6,7 @@ const path = require("path"),
 
 // Default entry
 const	entry = {
-				app: "loot"
+				app: "~/loot"
 			},
 
 			// Default output
@@ -131,13 +131,12 @@ const	entry = {
 
 				// Default resolve paths
 				resolve: {
+					alias: {
+						"~": path.resolve(__dirname, "src")
+					},
 					extensions: [
 						".ts",
 						"..."
-					],
-					modules: [
-						path.resolve(__dirname, "src"),
-						path.resolve(__dirname, "node_modules")
 					]
 				},
 

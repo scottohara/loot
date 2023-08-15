@@ -1,19 +1,19 @@
 // Dependent modules
 import "angular-ui-bootstrap";
 import "@uirouter/angularjs";
-import "og-components";
-import "accounts";
-import "categories";
-import "payees";
-import "securities";
-import "transactions";
+import "~/og-components";
+import "~/accounts";
+import "~/categories";
+import "~/payees";
+import "~/securities";
+import "~/transactions";
 
 // Components
-import EstimateFilter from "./filters/estimate";
-import ScheduleDeleteController from "./controllers/delete";
-import ScheduleEditController from "./controllers/edit";
-import ScheduleIndexController from "./controllers/index";
-import ScheduleModel from "./models/schedule";
+import EstimateFilter from "~/schedules/filters/estimate";
+import ScheduleDeleteController from "~/schedules/controllers/delete";
+import ScheduleEditController from "~/schedules/controllers/edit";
+import ScheduleIndexController from "~/schedules/controllers/index";
+import ScheduleModel from "~/schedules/models/schedule";
 import angular from "angular";
 
 angular.module("lootSchedules", [

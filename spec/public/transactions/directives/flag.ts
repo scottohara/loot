@@ -2,16 +2,16 @@ import type {
 	Transaction,
 	TransactionFlagScope,
 	TransactionFlagType
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	UibModalMock,
 	UibModalMockResolves
-} from "mocks/node-modules/angular/types";
-import type DirectiveTest from "mocks/loot/directivetest";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+} from "~/mocks/node-modules/angular/types";
+import type DirectiveTest from "~/mocks/loot/directivetest";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
-import { createBasicTransaction } from "mocks/transactions/factories";
+import { createBasicTransaction } from "~/mocks/transactions/factories";
 import sinon from "sinon";
 
 describe("transactionFlag", (): void => {

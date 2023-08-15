@@ -1,9 +1,9 @@
-import type { Entity } from "loot/types";
-import type { OgModalAlert } from "og-components/og-modal-alert/types";
-import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
-import type { ScheduledTransaction } from "schedules/types";
+import type { Entity } from "~/loot/types";
+import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
+import type { OgModalConfirm } from "~/og-components/og-modal-confirm/types";
+import type { ScheduledTransaction } from "~/schedules/types";
 import type { SinonStub } from "sinon";
-import type { Transaction } from "transactions/types";
+import type { Transaction } from "~/transactions/types";
 
 export interface CacheFactoryMock {
 	(): angular.ICacheObject;

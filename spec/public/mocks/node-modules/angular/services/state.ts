@@ -1,5 +1,5 @@
-import type { Mock } from "mocks/types";
-import type { StateMock } from "mocks/node-modules/angular/types";
+import type { Mock } from "~/mocks/types";
+import type { StateMock } from "~/mocks/node-modules/angular/types";
 import sinon from "sinon";
 
 export default class StateMockProvider implements Mock<StateMock> {

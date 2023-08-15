@@ -18,37 +18,37 @@ import type {
 	TransactionType,
 	TransferTransaction,
 	TransferrableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	Category,
 	DisplayCategory,
 	PsuedoCategory
-} from "categories/types";
+} from "~/categories/types";
 import {
 	createBasicTransaction,
 	createSplitTransaction,
 	createSubtransaction,
 	createSubtransferTransaction,
 	createTransferTransaction
-} from "mocks/transactions/factories";
-import type { Account } from "accounts/types";
-import type { AccountModelMock } from "mocks/accounts/types";
-import type { CategoryModelMock } from "mocks/categories/types";
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { Payee } from "payees/types";
-import type { PayeeModelMock } from "mocks/payees/types";
-import type { Security } from "securities/types";
-import type { SecurityModelMock } from "mocks/securities/types";
+} from "~/mocks/transactions/factories";
+import type { Account } from "~/accounts/types";
+import type { AccountModelMock } from "~/mocks/accounts/types";
+import type { CategoryModelMock } from "~/mocks/categories/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { Payee } from "~/payees/types";
+import type { PayeeModelMock } from "~/mocks/payees/types";
+import type { Security } from "~/securities/types";
+import type { SecurityModelMock } from "~/mocks/securities/types";
 import type { SinonStub } from "sinon";
-import type TransactionEditController from "transactions/controllers/edit";
-import type { TransactionModelMock } from "mocks/transactions/types";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type TransactionEditController from "~/transactions/controllers/edit";
+import type { TransactionModelMock } from "~/mocks/transactions/types";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
-import createAccount from "mocks/accounts/factories";
-import createCategory from "mocks/categories/factories";
-import createPayee from "mocks/payees/factories";
-import createSecurity from "mocks/securities/factories";
+import createAccount from "~/mocks/accounts/factories";
+import createCategory from "~/mocks/categories/factories";
+import createPayee from "~/mocks/payees/factories";
+import createSecurity from "~/mocks/securities/factories";
 import sinon from "sinon";
 
 describe("TransactionEditController", (): void => {

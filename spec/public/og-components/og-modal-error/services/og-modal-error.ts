@@ -1,10 +1,10 @@
 import type {
 	UibModalMock,
 	UibModalMockResolves
-} from "mocks/node-modules/angular/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgModalAlert } from "og-components/og-modal-alert/types";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+} from "~/mocks/node-modules/angular/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
 import angular from "angular";
 
 describe("ogModalErrorService", (): void => {

@@ -7,21 +7,21 @@ import {
 	securitiesTableRows,
 	securityTotalValue,
 	unusedTableRows
-} from "securities/index";
+} from "~/support/securities/index";
 import {
 	securityDeleteForm,
 	securityDeleteHeading
-} from "securities/delete";
+} from "~/support/securities/delete";
 import {
 	securityEditForm,
 	securityEditHeading
-} from "securities/edit";
+} from "~/support/securities/edit";
 import {
 	transactionsIndexHeading,
 	transactionsTable
-} from "transactions";
-import type { Security } from "securities/types";
-import { testNavigableTable } from "og-components/og-table-navigable";
+} from "~/support/transactions";
+import type { Security } from "~/support/securities/types";
+import { testNavigableTable } from "~/support/og-components/og-table-navigable";
 
 describe("Security Index", (): void => {
 	let expected: Security[],

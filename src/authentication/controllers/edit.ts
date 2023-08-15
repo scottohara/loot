@@ -1,4 +1,4 @@
-import type AuthenticationModel from "authentication/models/authentication";
+import type AuthenticationModel from "~/authentication/models/authentication";
 
 export default class AuthenticationEditController {
 	public userName: string | null = null;

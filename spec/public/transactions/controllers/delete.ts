@@ -1,9 +1,9 @@
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { Transaction } from "transactions/types";
-import type TransactionDeleteController from "transactions/controllers/delete";
-import type { TransactionModelMock } from "mocks/transactions/types";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { Transaction } from "~/transactions/types";
+import type TransactionDeleteController from "~/transactions/controllers/delete";
+import type { TransactionModelMock } from "~/mocks/transactions/types";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("TransactionDeleteController", (): void => {

@@ -1,4 +1,4 @@
-import type { Payee } from "payees/types";
+import type { Payee } from "~/payees/types";
 import type { SinonStub } from "sinon";
 
 export interface PayeeModelMock {

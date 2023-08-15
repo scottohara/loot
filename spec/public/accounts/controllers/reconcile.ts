@@ -1,11 +1,11 @@
 import type {
 	Account,
 	AccountType
-} from "accounts/types";
-import type AccountReconcileController from "accounts/controllers/reconcile";
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+} from "~/accounts/types";
+import type AccountReconcileController from "~/accounts/controllers/reconcile";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AccountReconcileController", (): void => {

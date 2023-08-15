@@ -1,12 +1,12 @@
-import "../css/status.less";
+import "~/transactions/css/status.less";
 import type {
 	TransactionStatus,
 	TransactionStatusScope
-} from "transactions/types";
-import type AccountModel from "accounts/models/account";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type TransactionModel from "transactions/models/transaction";
-import TransactionStatusView from "transactions/views/status.html";
+} from "~/transactions/types";
+import type AccountModel from "~/accounts/models/account";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type TransactionModel from "~/transactions/models/transaction";
+import TransactionStatusView from "~/transactions/views/status.html";
 
 export default class TransactionStatusDirective {
 	public constructor($sce: angular.ISCEService, transactionModel: TransactionModel, accountModel: AccountModel, ogModalErrorService: OgModalErrorService) {

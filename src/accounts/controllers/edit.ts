@@ -4,8 +4,8 @@ import type {
 	DisplayAccountType,
 	StoredAccountStatus,
 	StoredAccountType
-} from "accounts/types";
-import type AccountModel from "accounts/models/account";
+} from "~/accounts/types";
+import type AccountModel from "~/accounts/models/account";
 import angular from "angular";
 
 export default class AccountEditController {

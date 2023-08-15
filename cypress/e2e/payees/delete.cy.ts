@@ -4,13 +4,13 @@ import {
 	payeeDeleteForm,
 	payeeDeleteHeading,
 	payeeToDelete
-} from "payees/delete";
+} from "~/support/payees/delete";
 import {
 	checkRowMatches,
 	getValuesFrom,
 	payeesTableRows
-} from "payees/index";
-import type { Payee } from "payees/types";
+} from "~/support/payees/index";
+import type { Payee } from "~/support/payees/types";
 
 describe("Payee Delete", (): void => {
 	let	originalRowCount: number,

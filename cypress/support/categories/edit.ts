@@ -1,8 +1,8 @@
 import {
 	DIRECTION_INFLOW,
 	DIRECTION_OUTFLOW
-} from "./index";
-import type { Category } from "./types";
+} from "~/support/categories/index";
+import type { Category } from "~/support/categories/types";
 
 export const categoryEditForm = "form[name=categoryForm]";
 export const categoryEditHeading = `${categoryEditForm} > div.modal-header > h4`;

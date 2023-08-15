@@ -1,16 +1,16 @@
-import "../css/index.less";
+import "~/securities/css/index.less";
 import type {
 	OgTableActionHandlers,
 	OgTableActions
-} from "og-components/og-table-navigable/types";
-import type { OgModalAlert } from "og-components/og-modal-alert/types";
-import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import type { Security } from "securities/types";
-import SecurityDeleteView from "securities/views/delete.html";
-import SecurityEditView from "securities/views/edit.html";
-import type SecurityModel from "securities/models/security";
+} from "~/og-components/og-table-navigable/types";
+import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
+import OgModalAlertView from "~/og-components/og-modal-alert/views/alert.html";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import type { Security } from "~/securities/types";
+import SecurityDeleteView from "~/securities/views/delete.html";
+import SecurityEditView from "~/securities/views/edit.html";
+import type SecurityModel from "~/securities/models/security";
 import angular from "angular";
 
 export default class SecurityIndexController {

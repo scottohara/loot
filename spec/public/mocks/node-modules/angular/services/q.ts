@@ -5,8 +5,8 @@ import type {
 	PromiseMockConfig,
 	PromiseMockThen,
 	QMock
-} from "mocks/node-modules/angular/types";
-import type { Mock } from "mocks/types";
+} from "~/mocks/node-modules/angular/types";
+import type { Mock } from "~/mocks/types";
 import type { SinonStub } from "sinon";
 import angular from "angular";
 import sinon from "sinon";

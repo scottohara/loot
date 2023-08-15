@@ -5,8 +5,8 @@ import type {
 	UibModalMockResolves,
 	UibModalMockResult,
 	UibModalMockResultCallback
-} from "mocks/node-modules/angular/types";
-import type { Mock } from "mocks/types";
+} from "~/mocks/node-modules/angular/types";
+import type { Mock } from "~/mocks/types";
 import sinon from "sinon";
 
 export default class UibModalMockProvider implements Mock<UibModalMock> {

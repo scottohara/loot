@@ -1,9 +1,9 @@
 import type {
 	ServiceWorkerMock,
 	WindowMock
-} from "mocks/node-modules/angular/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type OgNavigatorServiceWorkerService from "og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
+} from "~/mocks/node-modules/angular/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type OgNavigatorServiceWorkerService from "~/og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
 import angular from "angular";
 
 describe("ogNavigatorServiceWorkerService", (): void => {

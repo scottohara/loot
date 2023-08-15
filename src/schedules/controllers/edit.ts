@@ -3,7 +3,7 @@ import type {
 	AccountType,
 	Accounts,
 	StoredAccountType
-} from "accounts/types";
+} from "~/accounts/types";
 import type {
 	CashTransaction,
 	CategorisableTransaction,
@@ -17,15 +17,15 @@ import type {
 	TransactionDirection,
 	TransactionType,
 	TransferrableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	Category,
 	DisplayCategory
-} from "categories/types";
+} from "~/categories/types";
 import type {
 	ScheduleFrequency,
 	ScheduledTransaction
-} from "schedules/types";
+} from "~/schedules/types";
 import {
 	addMonths,
 	addQuarters,
@@ -33,15 +33,15 @@ import {
 	addYears,
 	startOfDay
 } from "date-fns";
-import type AccountModel from "accounts/models/account";
-import type CategoryModel from "categories/models/category";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type { Payee } from "payees/types";
-import type PayeeModel from "payees/models/payee";
-import type ScheduleModel from "schedules/models/schedule";
-import type { Security } from "securities/types";
-import type SecurityModel from "securities/models/security";
-import type TransactionModel from "transactions/models/transaction";
+import type AccountModel from "~/accounts/models/account";
+import type CategoryModel from "~/categories/models/category";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type { Payee } from "~/payees/types";
+import type PayeeModel from "~/payees/models/payee";
+import type ScheduleModel from "~/schedules/models/schedule";
+import type { Security } from "~/securities/types";
+import type SecurityModel from "~/securities/models/security";
+import type TransactionModel from "~/transactions/models/transaction";
 import angular from "angular";
 
 export default class ScheduleEditController {

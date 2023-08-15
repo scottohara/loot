@@ -13,7 +13,7 @@
 		"module": "es2022",
 		"moduleResolution": "node",
 		"paths": {
-			"*": [
+			"~*": [
 				"./src/*",
 				"./spec/public/*"
 			]

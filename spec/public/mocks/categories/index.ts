@@ -1,7 +1,7 @@
 // Components
-import CategoriesMockProvider from "./providers/categories";
-import CategoryMockProvider from "./providers/category";
-import CategoryModelMockProvider from "./models/category";
+import CategoriesMockProvider from "~/mocks/categories/providers/categories";
+import CategoryMockProvider from "~/mocks/categories/providers/category";
+import CategoryModelMockProvider from "~/mocks/categories/models/category";
 import angular from "angular";
 
 angular.module("lootCategoriesMocks", [])

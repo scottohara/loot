@@ -6,17 +6,17 @@ import {
 	transactionsClosingBalance,
 	transactionsIndexHeading,
 	transactionsTableRows
-} from "transactions/index";
+} from "~/support/transactions/index";
 import {
 	transactionDeleteForm,
 	transactionDeleteHeading
-} from "transactions/delete";
+} from "~/support/transactions/delete";
 import {
 	transactionEditForm,
 	transactionEditHeading
-} from "transactions/edit";
-import type { TransactionsContext } from "transactions/types";
-import { testNavigableTable } from "og-components/og-table-navigable";
+} from "~/support/transactions/edit";
+import type { TransactionsContext } from "~/support/transactions/types";
+import { testNavigableTable } from "~/support/og-components/og-table-navigable";
 
 describe("Transaction Index", (): void => {
 	const expected: TransactionsContext[] = [

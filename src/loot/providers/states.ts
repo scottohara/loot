@@ -1,29 +1,29 @@
 import type {
 	Entity,
 	EntityModel
-} from "loot/types";
-import AccountIndexView from "accounts/views/index.html";
-import type AccountModel from "accounts/models/account";
-import type { Accounts } from "accounts/types";
-import AuthenticationEditView from "authentication/views/edit.html";
-import type AuthenticationModel from "authentication/models/authentication";
-import type { Category } from "categories/types";
-import CategoryIndexView from "categories/views/index.html";
-import type CategoryModel from "categories/models/category";
-import LootLayoutView from "loot/views/layout.html";
-import type { Payee } from "payees/types";
-import PayeeIndexView from "payees/views/index.html";
-import type PayeeModel from "payees/models/payee";
-import type QueryService from "transactions/services/query";
-import type { Schedule } from "schedules/types";
-import ScheduleIndexView from "schedules/views/index.html";
-import type ScheduleModel from "schedules/models/schedule";
-import type { Security } from "securities/types";
-import SecurityIndexView from "securities/views/index.html";
-import type SecurityModel from "securities/models/security";
-import type { TransactionBatch } from "transactions/types";
-import TransactionIndexView from "transactions/views/index.html";
-import type TransactionModel from "transactions/models/transaction";
+} from "~/loot/types";
+import AccountIndexView from "~/accounts/views/index.html";
+import type AccountModel from "~/accounts/models/account";
+import type { Accounts } from "~/accounts/types";
+import AuthenticationEditView from "~/authentication/views/edit.html";
+import type AuthenticationModel from "~/authentication/models/authentication";
+import type { Category } from "~/categories/types";
+import CategoryIndexView from "~/categories/views/index.html";
+import type CategoryModel from "~/categories/models/category";
+import LootLayoutView from "~/loot/views/layout.html";
+import type { Payee } from "~/payees/types";
+import PayeeIndexView from "~/payees/views/index.html";
+import type PayeeModel from "~/payees/models/payee";
+import type QueryService from "~/transactions/services/query";
+import type { Schedule } from "~/schedules/types";
+import ScheduleIndexView from "~/schedules/views/index.html";
+import type ScheduleModel from "~/schedules/models/schedule";
+import type { Security } from "~/securities/types";
+import SecurityIndexView from "~/securities/views/index.html";
+import type SecurityModel from "~/securities/models/security";
+import type { TransactionBatch } from "~/transactions/types";
+import TransactionIndexView from "~/transactions/views/index.html";
+import type TransactionModel from "~/transactions/models/transaction";
 
 export default class LootStatesProvider {
 	public $get: () => LootStatesProvider;

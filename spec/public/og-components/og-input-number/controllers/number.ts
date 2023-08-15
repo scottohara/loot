@@ -1,5 +1,5 @@
-import type { ControllerTestFactory } from "mocks/types";
-import type OgInputNumberController from "og-components/og-input-number/controllers/number";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type OgInputNumberController from "~/og-components/og-input-number/controllers/number";
 import angular from "angular";
 
 describe("OgInputNumberController", (): void => {

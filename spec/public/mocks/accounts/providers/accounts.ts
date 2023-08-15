@@ -1,6 +1,6 @@
-import type { Account } from "accounts/types";
-import type { Mock } from "mocks/types";
-import createAccount from "mocks/accounts/factories";
+import type { Account } from "~/accounts/types";
+import type { Mock } from "~/mocks/types";
+import createAccount from "~/mocks/accounts/factories";
 
 export default class AccountsMockProvider implements Mock<Account[]> {
 	// Mock accounts object

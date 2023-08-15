@@ -1,10 +1,10 @@
-import "accounts/commands";
-import "authentication/commands";
-import "categories/commands";
-import "payees/commands";
-import "schedules/commands";
-import "securities/commands";
-import "transactions/commands";
+import "~/support/accounts/commands";
+import "~/support/authentication/commands";
+import "~/support/categories/commands";
+import "~/support/payees/commands";
+import "~/support/schedules/commands";
+import "~/support/securities/commands";
+import "~/support/transactions/commands";
 
 // Helper command for working with typeaheads
 Cypress.Commands.add("typeahead", (typeahead: string, searchText: string): void => {

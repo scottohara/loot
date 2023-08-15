@@ -1,15 +1,15 @@
 import type {
 	Account,
 	Accounts
-} from "accounts/types";
+} from "~/accounts/types";
 import type {
 	Cacheable,
 	Favouritable,
 	Persistable
-} from "loot/types";
-import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
-import type OgLruCache from "og-components/og-lru-cache-factory/models/og-lru-cache";
-import type OgLruCacheFactory from "og-components/og-lru-cache-factory/models/og-lru-cache-factory";
+} from "~/loot/types";
+import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
+import type OgLruCache from "~/og-components/og-lru-cache-factory/models/og-lru-cache";
+import type OgLruCacheFactory from "~/og-components/og-lru-cache-factory/models/og-lru-cache-factory";
 
 // Number of accounts to keep in the LRU cache
 const LRU_CAPACITY = 10;

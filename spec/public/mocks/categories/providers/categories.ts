@@ -1,6 +1,6 @@
-import type { Category } from "categories/types";
-import type { Mock } from "mocks/types";
-import createCategory from "mocks/categories/factories";
+import type { Category } from "~/categories/types";
+import type { Mock } from "~/mocks/types";
+import createCategory from "~/mocks/categories/factories";
 
 export default class CategoriesMockProvider implements Mock<Category[]> {
 	// Mock categories object

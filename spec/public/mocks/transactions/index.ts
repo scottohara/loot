@@ -1,9 +1,9 @@
 // Components
-import ContextMockProvider from "./providers/context";
-import ContextModelMockProvider from "./models/context";
-import TransactionBatchMockProvider from "./providers/transactionbatch";
-import TransactionMockProvider from "./providers/transaction";
-import TransactionModelMockProvider from "./models/transaction";
+import ContextMockProvider from "~/mocks/transactions/providers/context";
+import ContextModelMockProvider from "~/mocks/transactions/models/context";
+import TransactionBatchMockProvider from "~/mocks/transactions/providers/transactionbatch";
+import TransactionMockProvider from "~/mocks/transactions/providers/transaction";
+import TransactionModelMockProvider from "~/mocks/transactions/models/transaction";
 import angular from "angular";
 
 angular.module("lootTransactionsMocks", [])

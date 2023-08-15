@@ -1,5 +1,5 @@
-import type { OgModalAlert } from "og-components/og-modal-alert/types";
-import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
+import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
+import OgModalAlertView from "~/og-components/og-modal-alert/views/alert.html";
 
 export default class OgModalErrorService {
 	public constructor(private readonly $uibModal: angular.ui.bootstrap.IModalService) {}

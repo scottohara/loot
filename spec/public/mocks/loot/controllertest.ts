@@ -1,7 +1,7 @@
 import type {
 	ControllerTestFactory,
 	ControllerTestLocals
-} from "mocks/types";
+} from "~/mocks/types";
 
 export default class ControllerTest {
 	public constructor($rootScope: angular.IRootScopeService, $controller: angular.IControllerService) {

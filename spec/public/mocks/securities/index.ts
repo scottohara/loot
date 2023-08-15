@@ -1,7 +1,7 @@
 // Components
-import SecuritiesMockProvider from "./providers/securities";
-import SecurityMockProvider from "./providers/security";
-import SecurityModelMockProvider from "./models/security";
+import SecuritiesMockProvider from "~/mocks/securities/providers/securities";
+import SecurityMockProvider from "~/mocks/securities/providers/security";
+import SecurityModelMockProvider from "~/mocks/securities/models/security";
 import angular from "angular";
 
 angular.module("lootSecuritiesMocks", [])

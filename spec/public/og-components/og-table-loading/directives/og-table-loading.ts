@@ -1,4 +1,4 @@
-import type DirectiveTest from "mocks/loot/directivetest";
+import type DirectiveTest from "~/mocks/loot/directivetest";
 import angular from "angular";
 
 describe("ogTableLoading", (): void => {

@@ -1,4 +1,4 @@
-import type EstimateFilter from "schedules/filters/estimate";
+import type EstimateFilter from "~/schedules/filters/estimate";
 import angular from "angular";
 
 describe("estimate", (): void => {

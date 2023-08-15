@@ -3,16 +3,16 @@ import type {
 	PayeeCashTransaction,
 	SecurityTransaction,
 	SubcategorisableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import {
 	lightFormat,
 	parseISO,
 	startOfDay
 } from "date-fns";
-import type CategoryModel from "categories/models/category";
-import type PayeeModel from "payees/models/payee";
-import type { ScheduledTransaction } from "schedules/types";
-import type SecurityModel from "securities/models/security";
+import type CategoryModel from "~/categories/models/category";
+import type PayeeModel from "~/payees/models/payee";
+import type { ScheduledTransaction } from "~/schedules/types";
+import type SecurityModel from "~/securities/models/security";
 import angular from "angular";
 
 export default class ScheduleModel {

@@ -1,27 +1,27 @@
 import type {
 	Account,
 	Accounts
-} from "accounts/types";
+} from "~/accounts/types";
 import type {
 	StateMock,
 	UibModalMock
-} from "mocks/node-modules/angular/types";
-import type AccountModel from "accounts/models/account";
-import type { AuthenticationModelMock } from "mocks/authentication/types";
-import type { Category } from "categories/types";
-import type CategoryModel from "categories/models/category";
-import type { EntityModel } from "loot/types";
-import type LootStatesProvider from "loot/providers/states";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { Payee } from "payees/types";
-import type PayeeModel from "payees/models/payee";
-import type QueryService from "transactions/services/query";
-import type { Schedule } from "schedules/types";
-import type ScheduleModel from "schedules/models/schedule";
-import type { Security } from "securities/types";
-import type SecurityModel from "securities/models/security";
-import type { TransactionBatch } from "transactions/types";
-import type TransactionModel from "transactions/models/transaction";
+} from "~/mocks/node-modules/angular/types";
+import type AccountModel from "~/accounts/models/account";
+import type { AuthenticationModelMock } from "~/mocks/authentication/types";
+import type { Category } from "~/categories/types";
+import type CategoryModel from "~/categories/models/category";
+import type { EntityModel } from "~/loot/types";
+import type LootStatesProvider from "~/loot/providers/states";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { Payee } from "~/payees/types";
+import type PayeeModel from "~/payees/models/payee";
+import type QueryService from "~/transactions/services/query";
+import type { Schedule } from "~/schedules/types";
+import type ScheduleModel from "~/schedules/models/schedule";
+import type { Security } from "~/securities/types";
+import type SecurityModel from "~/securities/models/security";
+import type { TransactionBatch } from "~/transactions/types";
+import type TransactionModel from "~/transactions/models/transaction";
 import angular from "angular";
 import sinon from "sinon";
 

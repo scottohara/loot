@@ -1,21 +1,21 @@
 // Dependent modules
 import "angular-ui-bootstrap";
 import "@uirouter/angularjs";
-import "og-components";
-import "accounts";
-import "categories";
-import "payees";
-import "securities";
+import "~/og-components";
+import "~/accounts";
+import "~/categories";
+import "~/payees";
+import "~/securities";
 
 // Components
-import QueryService from "./services/query";
-import TransactionDeleteController from "./controllers/delete";
-import TransactionEditController from "./controllers/edit";
-import TransactionFlagController from "./controllers/flag";
-import TransactionFlagDirective from "./directives/flag";
-import TransactionIndexController from "./controllers/index";
-import TransactionModel from "./models/transaction";
-import TransactionStatusDirective from "./directives/status";
+import QueryService from "~/transactions/services/query";
+import TransactionDeleteController from "~/transactions/controllers/delete";
+import TransactionEditController from "~/transactions/controllers/edit";
+import TransactionFlagController from "~/transactions/controllers/flag";
+import TransactionFlagDirective from "~/transactions/directives/flag";
+import TransactionIndexController from "~/transactions/controllers/index";
+import TransactionModel from "~/transactions/models/transaction";
+import TransactionStatusDirective from "~/transactions/directives/status";
 import angular from "angular";
 
 angular.module("lootTransactions", [

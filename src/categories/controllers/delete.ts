@@ -1,5 +1,5 @@
-import type { Category } from "categories/types";
-import type CategoryModel from "categories/models/category";
+import type { Category } from "~/categories/types";
+import type CategoryModel from "~/categories/models/category";
 
 export default class CategoryDeleteController {
 	public errorMessage: string | null = null;

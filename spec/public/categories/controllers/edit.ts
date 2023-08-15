@@ -1,11 +1,11 @@
-import type { Category } from "categories/types";
-import type CategoryEditController from "categories/controllers/edit";
-import type { CategoryModelMock } from "mocks/categories/types";
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { Category } from "~/categories/types";
+import type CategoryEditController from "~/categories/controllers/edit";
+import type { CategoryModelMock } from "~/mocks/categories/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
-import createCategory from "mocks/categories/factories";
+import createCategory from "~/mocks/categories/factories";
 
 describe("CategoryEditController", (): void => {
 	let	categoryEditController: CategoryEditController,

@@ -11,15 +11,15 @@ import type {
 	TransactionStatus,
 	TransactionType,
 	TransferTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import createAccount from "mocks/accounts/factories";
-import createCategory from "mocks/categories/factories";
-import createPayee from "mocks/payees/factories";
-import createSecurity from "mocks/securities/factories";
+import createAccount from "~/mocks/accounts/factories";
+import createCategory from "~/mocks/categories/factories";
+import createPayee from "~/mocks/payees/factories";
+import createSecurity from "~/mocks/securities/factories";
 
 let id = 1;
 

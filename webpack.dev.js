@@ -15,7 +15,7 @@ const { merge } = require("webpack-merge"),
 
 module.exports = merge(config, {
 	// Use default entry
-	entry: merge(entry, { "service-worker": "service-worker" }),
+	entry: merge(entry, { "service-worker": "~/service-worker" }),
 
 	// Use default output, with no hash in file names
 	output,

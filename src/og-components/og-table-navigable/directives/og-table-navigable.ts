@@ -2,8 +2,8 @@ import type {
 	OgTableActionCallback,
 	OgTableMovementKeys,
 	OgTableNavigableScope
-} from "og-components/og-table-navigable/types";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+} from "~/og-components/og-table-navigable/types";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 
 export default class OgTableNavigableDirective {

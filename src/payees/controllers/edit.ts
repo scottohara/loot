@@ -1,5 +1,5 @@
-import type { Payee } from "payees/types";
-import type PayeeModel from "payees/models/payee";
+import type { Payee } from "~/payees/types";
+import type PayeeModel from "~/payees/models/payee";
 import angular from "angular";
 
 export default class PayeeEditController {

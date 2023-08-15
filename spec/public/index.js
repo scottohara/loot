@@ -4,10 +4,10 @@ import "angular";
 import "angular-mocks";
 
 // Source
-import "loot";
+import "~/loot";
 
 // Mocks
-import "./mocks";
+import "~/mocks";
 
 // Specs
 import "./accounts/controllers/delete";

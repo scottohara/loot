@@ -1,13 +1,13 @@
 // Components
-import AnchorScrollMockProvider from "./services/anchorscroll";
-import CacheFactoryMockProvider from "./services/cachefactory";
-import IHttpPromiseMockProvider from "./providers/ihttppromise";
-import IPromiseMockProvider from "./providers/ipromise";
-import QMockProvider from "./services/q";
-import StateMockProvider from "./services/state";
-import UibModalInstanceMockProvider from "./services/uibmodalinstance";
-import UibModalMockProvider from "./services/uibmodal";
-import WindowMockProvider from "./services/window";
+import AnchorScrollMockProvider from "~/mocks/node-modules/angular/services/anchorscroll";
+import CacheFactoryMockProvider from "~/mocks/node-modules/angular/services/cachefactory";
+import IHttpPromiseMockProvider from "~/mocks/node-modules/angular/providers/ihttppromise";
+import IPromiseMockProvider from "~/mocks/node-modules/angular/providers/ipromise";
+import QMockProvider from "~/mocks/node-modules/angular/services/q";
+import StateMockProvider from "~/mocks/node-modules/angular/services/state";
+import UibModalInstanceMockProvider from "~/mocks/node-modules/angular/services/uibmodalinstance";
+import UibModalMockProvider from "~/mocks/node-modules/angular/services/uibmodal";
+import WindowMockProvider from "~/mocks/node-modules/angular/services/window";
 import angular from "angular";
 
 angular.module("ogAngularMocks", [])

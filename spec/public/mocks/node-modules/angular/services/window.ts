@@ -2,9 +2,9 @@ import type {
 	PromiseMockConfig,
 	QMock,
 	WindowMock
-} from "mocks/node-modules/angular/types";
-import type { Mock } from "mocks/types";
-import type QMockProvider from "mocks/node-modules/angular/services/q";
+} from "~/mocks/node-modules/angular/types";
+import type { Mock } from "~/mocks/types";
+import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 import sinon from "sinon";
 
 export default class WindowMockProvider implements Mock<WindowMock> {

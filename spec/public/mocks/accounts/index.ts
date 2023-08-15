@@ -1,8 +1,8 @@
 // Components
-import AccountMockProvider from "./providers/account";
-import AccountModelMockProvider from "./models/account";
-import AccountsMockProvider from "./providers/accounts";
-import AccountsWithBalancesMockProvider from "./providers/accountsWithBalances";
+import AccountMockProvider from "~/mocks/accounts/providers/account";
+import AccountModelMockProvider from "~/mocks/accounts/models/account";
+import AccountsMockProvider from "~/mocks/accounts/providers/accounts";
+import AccountsWithBalancesMockProvider from "~/mocks/accounts/providers/accountsWithBalances";
 import angular from "angular";
 
 angular.module("lootAccountsMocks", [])

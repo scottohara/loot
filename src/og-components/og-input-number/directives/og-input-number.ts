@@ -1,4 +1,4 @@
-import type { OgInputNumberScope } from "og-components/og-input-number/types";
+import type { OgInputNumberScope } from "~/og-components/og-input-number/types";
 
 export default class OgInputNumberDirective {
 	public constructor(numberFilter: angular.IFilterNumber) {

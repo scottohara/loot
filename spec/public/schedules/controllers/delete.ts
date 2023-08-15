@@ -1,9 +1,9 @@
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type ScheduleDeleteController from "schedules/controllers/delete";
-import type { ScheduleModelMock } from "mocks/schedules/types";
-import type { ScheduledTransaction } from "schedules/types";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type ScheduleDeleteController from "~/schedules/controllers/delete";
+import type { ScheduleModelMock } from "~/mocks/schedules/types";
+import type { ScheduledTransaction } from "~/schedules/types";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("ScheduleDeleteController", (): void => {

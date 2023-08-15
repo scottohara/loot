@@ -1,9 +1,9 @@
 import type {
 	CacheFactoryMock,
 	WindowMock
-} from "mocks/node-modules/angular/types";
-import type AuthenticationModel from "authentication/models/authentication";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
+} from "~/mocks/node-modules/angular/types";
+import type AuthenticationModel from "~/authentication/models/authentication";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { SinonStub } from "sinon";
 import angular from "angular";
 

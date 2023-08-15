@@ -2,7 +2,7 @@ import type {
 	Account,
 	AccountStatus,
 	AccountType
-} from "accounts/types";
+} from "~/accounts/types";
 
 let id = 1;
 

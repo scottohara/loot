@@ -1,5 +1,5 @@
-import type { OgInputAutoSelectScope } from "og-components/og-input-autoselect/types";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
+import type { OgInputAutoSelectScope } from "~/og-components/og-input-autoselect/types";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
 
 export default class OgInputAutoSelectDirective {
 	public constructor($window: angular.IWindowService, $timeout: angular.ITimeoutService, ogModalErrorService: OgModalErrorService) {

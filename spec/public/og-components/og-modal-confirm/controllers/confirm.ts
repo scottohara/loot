@@ -1,8 +1,8 @@
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
-import type OgModalConfirmController from "og-components/og-modal-confirm/controllers/confirm";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgModalConfirm } from "~/og-components/og-modal-confirm/types";
+import type OgModalConfirmController from "~/og-components/og-modal-confirm/controllers/confirm";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("OgModalConfirmController", (): void => {

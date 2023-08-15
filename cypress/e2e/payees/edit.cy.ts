@@ -6,13 +6,13 @@ import {
 	payeeEditHeading,
 	populateFormWith,
 	saveButton
-} from "payees/edit";
+} from "~/support/payees/edit";
 import {
 	checkRowMatches,
 	getValuesFrom,
 	payeesTableRows
-} from "payees/index";
-import type { Payee } from "payees/types";
+} from "~/support/payees/index";
+import type { Payee } from "~/support/payees/types";
 
 describe("Payee Edit", (): void => {
 	let	expected: Payee,

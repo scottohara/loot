@@ -1,18 +1,18 @@
 import type {
 	JQueryKeyEventObjectMock,
 	JQueryMouseEventObjectMock
-} from "mocks/types";
+} from "~/mocks/types";
 import type {
 	OgTableActionHandlers,
 	OgTableActions,
 	OgTableNavigableScope
-} from "og-components/og-table-navigable/types";
+} from "~/og-components/og-table-navigable/types";
 import type {
 	SinonMatcher,
 	SinonStub
 } from "sinon";
-import type DirectiveTest from "mocks/loot/directivetest";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+import type DirectiveTest from "~/mocks/loot/directivetest";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 import sinon from "sinon";
 

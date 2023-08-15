@@ -1,5 +1,5 @@
-import type { ScheduleEdit } from "./types";
-import type { Subtransaction } from "transactions/types";
+import type { ScheduleEdit } from "~/support/schedules/types";
+import type { Subtransaction } from "~/support/transactions/types";
 
 export const scheduleEditForm = "form[name=scheduleForm]";
 export const scheduleEditHeading = `${scheduleEditForm} > div.modal-header > h4`;

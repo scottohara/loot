@@ -1,7 +1,7 @@
 import type {
 	Account,
 	StoredAccountType
-} from "accounts/types";
+} from "~/accounts/types";
 import type {
 	CashTransaction,
 	CategorisableTransaction,
@@ -17,23 +17,23 @@ import type {
 	TransactionDirection,
 	TransactionType,
 	TransferrableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	Category,
 	DisplayCategory
-} from "categories/types";
+} from "~/categories/types";
 import type {
 	Entity,
 	EntityModel
-} from "loot/types";
-import type AccountModel from "accounts/models/account";
-import type CategoryModel from "categories/models/category";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type { Payee } from "payees/types";
-import type PayeeModel from "payees/models/payee";
-import type { Security } from "securities/types";
-import type SecurityModel from "securities/models/security";
-import type TransactionModel from "transactions/models/transaction";
+} from "~/loot/types";
+import type AccountModel from "~/accounts/models/account";
+import type CategoryModel from "~/categories/models/category";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type { Payee } from "~/payees/types";
+import type PayeeModel from "~/payees/models/payee";
+import type { Security } from "~/securities/types";
+import type SecurityModel from "~/securities/models/security";
+import type TransactionModel from "~/transactions/models/transaction";
 import angular from "angular";
 
 export default class TransactionEditController {

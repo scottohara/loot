@@ -1,6 +1,6 @@
-import "../css/og-loading-spinner.less";
-import type { OgLoadingSpinnerScope } from "og-components/og-loading-spinner/types";
-import OgLoadingSpinnerView from "og-components/og-loading-spinner/views/loading.html";
+import "~/og-components/og-loading-spinner/css/og-loading-spinner.less";
+import type { OgLoadingSpinnerScope } from "~/og-components/og-loading-spinner/types";
+import OgLoadingSpinnerView from "~/og-components/og-loading-spinner/views/loading.html";
 
 export default class OgLoadingSpinnerDirective {
 	public constructor() {

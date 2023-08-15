@@ -1,18 +1,18 @@
 import type {
 	CacheFactoryMock,
 	WindowMock
-} from "mocks/node-modules/angular/types";
+} from "~/mocks/node-modules/angular/types";
 import type {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
-} from "mocks/og-components/og-lru-cache-factory/types";
-import type { Category } from "categories/types";
-import type CategoryModel from "categories/models/category";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgCacheEntry } from "og-components/og-lru-cache-factory/types";
+} from "~/mocks/og-components/og-lru-cache-factory/types";
+import type { Category } from "~/categories/types";
+import type CategoryModel from "~/categories/models/category";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
 import type { SinonStub } from "sinon";
 import angular from "angular";
-import createCategory from "mocks/categories/factories";
+import createCategory from "~/mocks/categories/factories";
 import sinon from "sinon";
 
 describe("categoryModel", (): void => {

@@ -1,8 +1,8 @@
-import "../css/index.less";
+import "~/transactions/css/index.less";
 import type {
 	Account,
 	AccountType
-} from "accounts/types";
+} from "~/accounts/types";
 import type {
 	CashTransaction,
 	CategorisableTransaction,
@@ -16,15 +16,15 @@ import type {
 	TransactionBatch,
 	TransactionFetchDirection,
 	TransferrableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	Entity,
 	EntityModel
-} from "loot/types";
+} from "~/loot/types";
 import type {
 	OgTableActionHandlers,
 	OgTableActions
-} from "og-components/og-table-navigable/types";
+} from "~/og-components/og-table-navigable/types";
 import {
 	addDays,
 	isAfter,
@@ -33,19 +33,19 @@ import {
 	startOfDay,
 	subDays
 } from "date-fns";
-import type AccountModel from "accounts/models/account";
-import AccountReconcileView from "accounts/views/reconcile.html";
-import type { Category } from "categories/types";
-import type { OgModalConfirm } from "og-components/og-modal-confirm/types";
-import OgModalConfirmView from "og-components/og-modal-confirm/views/confirm.html";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import type OgViewScrollService from "og-components/og-view-scroll/services/og-view-scroll";
-import type { Payee } from "payees/types";
-import type { Security } from "securities/types";
-import TransactionDeleteView from "transactions/views/delete.html";
-import TransactionEditView from "transactions/views/edit.html";
-import type TransactionModel from "transactions/models/transaction";
+import type AccountModel from "~/accounts/models/account";
+import AccountReconcileView from "~/accounts/views/reconcile.html";
+import type { Category } from "~/categories/types";
+import type { OgModalConfirm } from "~/og-components/og-modal-confirm/types";
+import OgModalConfirmView from "~/og-components/og-modal-confirm/views/confirm.html";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import type OgViewScrollService from "~/og-components/og-view-scroll/services/og-view-scroll";
+import type { Payee } from "~/payees/types";
+import type { Security } from "~/securities/types";
+import TransactionDeleteView from "~/transactions/views/delete.html";
+import TransactionEditView from "~/transactions/views/edit.html";
+import type TransactionModel from "~/transactions/models/transaction";
 import angular from "angular";
 
 export default class TransactionIndexController {

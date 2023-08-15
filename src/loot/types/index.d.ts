@@ -1,7 +1,7 @@
-import type AccountModel from "accounts/models/account";
-import type CategoryModel from "categories/models/category";
-import type PayeeModel from "payees/models/payee";
-import type SecurityModel from "securities/models/security";
+import type AccountModel from "~/accounts/models/account";
+import type CategoryModel from "~/categories/models/category";
+import type PayeeModel from "~/payees/models/payee";
+import type SecurityModel from "~/securities/models/security";
 
 export interface Entity {
 	id?: number;

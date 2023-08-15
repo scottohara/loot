@@ -1,12 +1,12 @@
 import type {
 	StateMock,
 	UibModalMock
-} from "mocks/node-modules/angular/types";
-import type { AuthenticationModelMock } from "mocks/authentication/types";
-import type { ControllerTestFactory } from "mocks/types";
-import type LayoutController from "loot/controllers/layout";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+} from "~/mocks/node-modules/angular/types";
+import type { AuthenticationModelMock } from "~/mocks/authentication/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type LayoutController from "~/loot/controllers/layout";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import type { SinonStub } from "sinon";
 import angular from "angular";
 import sinon from "sinon";

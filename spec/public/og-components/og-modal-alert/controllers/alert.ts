@@ -1,8 +1,8 @@
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgModalAlert } from "og-components/og-modal-alert/types";
-import type OgModalAlertController from "og-components/og-modal-alert/controllers/alert";
-import type { UibModalInstanceMock } from "mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
+import type OgModalAlertController from "~/og-components/og-modal-alert/controllers/alert";
+import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("OgModalAlertController", (): void => {

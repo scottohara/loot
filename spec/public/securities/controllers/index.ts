@@ -2,18 +2,18 @@ import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves
-} from "mocks/node-modules/angular/types";
-import type { ControllerTestFactory } from "mocks/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { OgModalAlert } from "og-components/og-modal-alert/types";
-import type { OgTableActionHandlers } from "og-components/og-table-navigable/types";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import type { Security } from "securities/types";
-import type SecurityIndexController from "securities/controllers";
-import type { SecurityModelMock } from "mocks/securities/types";
+} from "~/mocks/node-modules/angular/types";
+import type { ControllerTestFactory } from "~/mocks/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
+import type { OgTableActionHandlers } from "~/og-components/og-table-navigable/types";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import type { Security } from "~/securities/types";
+import type SecurityIndexController from "~/securities/controllers";
+import type { SecurityModelMock } from "~/mocks/securities/types";
 import type { SinonStub } from "sinon";
 import angular from "angular";
-import createSecurity from "mocks/securities/factories";
+import createSecurity from "~/mocks/securities/factories";
 import sinon from "sinon";
 
 describe("SecurityIndexController", (): void => {

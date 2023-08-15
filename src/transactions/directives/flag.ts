@@ -1,12 +1,12 @@
-import "../css/flag.less";
+import "~/transactions/css/flag.less";
 import type {
 	Transaction,
 	TransactionFlagScope
-} from "transactions/types";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
-import TransactionEditFlagView from "transactions/views/edit-flag.html";
-import TransactionFlagView from "transactions/views/flag.html";
+} from "~/transactions/types";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
+import TransactionEditFlagView from "~/transactions/views/edit-flag.html";
+import TransactionFlagView from "~/transactions/views/flag.html";
 
 enum FlagTypes {
 	followup = "Follow Up",

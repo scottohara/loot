@@ -1,6 +1,6 @@
-import type { Mock } from "mocks/types";
-import type { Payee } from "payees/types";
-import createPayee from "mocks/payees/factories";
+import type { Mock } from "~/mocks/types";
+import type { Payee } from "~/payees/types";
+import createPayee from "~/mocks/payees/factories";
 
 export default class PayeeMockProvider implements Mock<Payee> {
 	// Mock payee object

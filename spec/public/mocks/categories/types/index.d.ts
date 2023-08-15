@@ -1,4 +1,4 @@
-import type { Category } from "categories/types";
+import type { Category } from "~/categories/types";
 import type { SinonStub } from "sinon";
 
 export interface CategoryModelMock {

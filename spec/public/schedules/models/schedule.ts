@@ -1,20 +1,20 @@
 import type {
 	ScheduledBasicTransaction,
 	ScheduledTransaction
-} from "schedules/types";
+} from "~/schedules/types";
 import {
 	createScheduledBasicTransaction,
 	createScheduledSecurityHoldingTransaction
-} from "mocks/schedules/factories";
+} from "~/mocks/schedules/factories";
 import {
 	lightFormat,
 	startOfDay
 } from "date-fns";
-import type { CategoryModelMock } from "mocks/categories/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { PayeeModelMock } from "mocks/payees/types";
-import type ScheduleModel from "schedules/models/schedule";
-import type { SecurityModelMock } from "mocks/securities/types";
+import type { CategoryModelMock } from "~/mocks/categories/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { PayeeModelMock } from "~/mocks/payees/types";
+import type ScheduleModel from "~/schedules/models/schedule";
+import type { SecurityModelMock } from "~/mocks/securities/types";
 import angular from "angular";
 import sinon from "sinon";
 

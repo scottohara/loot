@@ -1,4 +1,4 @@
-import type { DirectiveTestScope } from "mocks/types";
+import type { DirectiveTestScope } from "~/mocks/types";
 
 export default class DirectiveTest {
 	public scope!: DirectiveTestScope;

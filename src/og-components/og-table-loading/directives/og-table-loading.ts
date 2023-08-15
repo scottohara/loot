@@ -1,5 +1,5 @@
-import "../css/og-table-loading.less";
-import OgTableLoadingView from "og-components/og-table-loading/views/loading.html";
+import "~/og-components/og-table-loading/css/og-table-loading.less";
+import OgTableLoadingView from "~/og-components/og-table-loading/views/loading.html";
 
 export default class OgTableLoadingDirective {
 	public constructor() {

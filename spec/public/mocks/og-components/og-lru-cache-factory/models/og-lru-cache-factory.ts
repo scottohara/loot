@@ -1,8 +1,8 @@
 import type {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock
-} from "mocks/og-components/og-lru-cache-factory/types";
-import type { Mock } from "mocks/types";
+} from "~/mocks/og-components/og-lru-cache-factory/types";
+import type { Mock } from "~/mocks/types";
 import sinon from "sinon";
 
 export default class OgLruCacheFactoryMockProvider implements Mock<OgLruCacheFactoryMock> {

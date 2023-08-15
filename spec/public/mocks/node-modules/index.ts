@@ -1,5 +1,5 @@
 // Dependent modules
-import "./angular";
+import "~/mocks/node-modules/angular";
 
 // Components
 import angular from "angular";

@@ -1,16 +1,16 @@
 import type {
 	Account,
 	Accounts
-} from "accounts/types";
+} from "~/accounts/types";
 import type {
 	Entity,
 	EntityModel
-} from "loot/types";
+} from "~/loot/types";
 import type {
 	Transaction,
 	TransactionBatch
-} from "transactions/types";
-import type { StateMock } from "mocks/node-modules/angular/types";
+} from "~/transactions/types";
+import type { StateMock } from "~/mocks/node-modules/angular/types";
 
 export interface Mock<T> {
 	$get: () => T;

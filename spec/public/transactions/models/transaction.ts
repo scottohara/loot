@@ -8,29 +8,29 @@ import type {
 	Transaction,
 	TransactionBatch,
 	TransferrableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import {
 	createBasicTransaction,
 	createSubtransaction,
 	createSubtransferTransaction
-} from "mocks/transactions/factories";
+} from "~/mocks/transactions/factories";
 import {
 	lightFormat,
 	parseISO,
 	startOfDay
 } from "date-fns";
-import type { AccountModelMock } from "mocks/accounts/types";
-import type { CategoryModelMock } from "mocks/categories/types";
-import type MockDependenciesProvider from "mocks/loot/mockdependencies";
-import type { Payee } from "payees/types";
-import type PayeeModel from "payees/models/payee";
-import type { SecurityModelMock } from "mocks/securities/types";
-import type TransactionModel from "transactions/models/transaction";
-import type { WindowMock } from "mocks/node-modules/angular/types";
+import type { AccountModelMock } from "~/mocks/accounts/types";
+import type { CategoryModelMock } from "~/mocks/categories/types";
+import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
+import type { Payee } from "~/payees/types";
+import type PayeeModel from "~/payees/models/payee";
+import type { SecurityModelMock } from "~/mocks/securities/types";
+import type TransactionModel from "~/transactions/models/transaction";
+import type { WindowMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
-import createAccount from "mocks/accounts/factories";
-import createPayee from "mocks/payees/factories";
-import createSecurity from "mocks/securities/factories";
+import createAccount from "~/mocks/accounts/factories";
+import createPayee from "~/mocks/payees/factories";
+import createSecurity from "~/mocks/securities/factories";
 import sinon from "sinon";
 
 describe("transactionModel", (): void => {

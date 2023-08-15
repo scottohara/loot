@@ -1,5 +1,5 @@
-import type { Category } from "categories/types";
-import type CategoryModel from "categories/models/category";
+import type { Category } from "~/categories/types";
+import type CategoryModel from "~/categories/models/category";
 import angular from "angular";
 
 export default class CategoryEditController {

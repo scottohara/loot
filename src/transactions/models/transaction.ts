@@ -10,23 +10,23 @@ import type {
 	TransactionFetchDirection,
 	TransactionStatus,
 	TransferrableTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 import type {
 	EntityModel,
 	NewOrExistingEntity
-} from "loot/types";
+} from "~/loot/types";
 import {
 	lightFormat,
 	parseISO,
 	startOfDay
 } from "date-fns";
-import type AccountModel from "accounts/models/account";
-import type { Category } from "categories/types";
-import type CategoryModel from "categories/models/category";
-import type { Payee } from "payees/types";
-import type PayeeModel from "payees/models/payee";
-import type { Security } from "securities/types";
-import type SecurityModel from "securities/models/security";
+import type AccountModel from "~/accounts/models/account";
+import type { Category } from "~/categories/types";
+import type CategoryModel from "~/categories/models/category";
+import type { Payee } from "~/payees/types";
+import type PayeeModel from "~/payees/models/payee";
+import type { Security } from "~/securities/types";
+import type SecurityModel from "~/securities/models/security";
 import angular from "angular";
 
 export default class TransactionModel {

@@ -1,6 +1,6 @@
 // Components
-import AuthenticatedMockProvider from "./providers/authenticated";
-import AuthenticationModelMockProvider from "./models/authentication";
+import AuthenticatedMockProvider from "~/mocks/authentication/providers/authenticated";
+import AuthenticationModelMockProvider from "~/mocks/authentication/models/authentication";
 import angular from "angular";
 
 angular.module("lootAuthenticationMocks", [])

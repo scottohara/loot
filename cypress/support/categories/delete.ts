@@ -1,8 +1,8 @@
 import type {
 	CategoryDirection,
 	CategoryDirectionLabel
-} from "./types";
-import { DIRECTION_INFLOW } from "./index";
+} from "~/support/categories/types";
+import { DIRECTION_INFLOW } from "~/support/categories/index";
 
 export const categoryDeleteForm = "form[name=categoryForm]";
 export const categoryDeleteHeading = `${categoryDeleteForm} > div.modal-header > h4`;

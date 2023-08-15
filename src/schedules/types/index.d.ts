@@ -5,7 +5,7 @@ import type {
 	SplitTransaction,
 	Transaction,
 	TransferTransaction
-} from "transactions/types";
+} from "~/transactions/types";
 
 export type ScheduleFrequency = "Bimonthly" | "Fortnightly" | "Monthly" | "Quarterly" | "Weekly" | "Yearly";
 

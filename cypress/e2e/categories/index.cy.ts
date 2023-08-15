@@ -5,21 +5,21 @@ import {
 	checkRowMatches,
 	editButton,
 	favouriteButton
-} from "categories/index";
+} from "~/support/categories/index";
 import {
 	categoryDeleteForm,
 	categoryDeleteHeading
-} from "categories/delete";
+} from "~/support/categories/delete";
 import {
 	categoryEditForm,
 	categoryEditHeading
-} from "categories/edit";
+} from "~/support/categories/edit";
 import {
 	transactionsIndexHeading,
 	transactionsTable
-} from "transactions";
-import type { Category } from "categories/types";
-import { testNavigableTable } from "og-components/og-table-navigable";
+} from "~/support/transactions";
+import type { Category } from "~/support/categories/types";
+import { testNavigableTable } from "~/support/og-components/og-table-navigable";
 
 describe("Category Index", (): void => {
 	let expected: Category[];

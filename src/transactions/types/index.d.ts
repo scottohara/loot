@@ -1,10 +1,10 @@
 import type {
 	Category,
 	PsuedoCategory
-} from "categories/types";
-import type { Account } from "accounts/types";
-import type { Payee } from "payees/types";
-import type { Security } from "securities/types";
+} from "~/categories/types";
+import type { Account } from "~/accounts/types";
+import type { Payee } from "~/payees/types";
+import type { Security } from "~/securities/types";
 
 export type TransactionFetchDirection = "next" | "prev";
 export type TransactionStatus = "" | "Cleared" | "Reconciled" | "Unreconciled" | null;

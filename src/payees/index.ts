@@ -1,13 +1,13 @@
 // Dependent modules
 import "angular-ui-bootstrap";
 import "@uirouter/angularjs";
-import "og-components";
+import "~/og-components";
 
 // Components
-import PayeeDeleteController from "./controllers/delete";
-import PayeeEditController from "./controllers/edit";
-import PayeeIndexController from "./controllers/index";
-import PayeeModel from "./models/payee";
+import PayeeDeleteController from "~/payees/controllers/delete";
+import PayeeEditController from "~/payees/controllers/edit";
+import PayeeIndexController from "~/payees/controllers/index";
+import PayeeModel from "~/payees/models/payee";
 import angular from "angular";
 
 angular.module("lootPayees", [

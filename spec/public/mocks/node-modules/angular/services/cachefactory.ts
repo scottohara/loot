@@ -1,5 +1,5 @@
-import type { CacheFactoryMock } from "mocks/node-modules/angular/types";
-import type { Mock } from "mocks/types";
+import type { CacheFactoryMock } from "~/mocks/node-modules/angular/types";
+import type { Mock } from "~/mocks/types";
 import sinon from "sinon";
 
 function mockCache(): angular.ICacheObject {

@@ -1,13 +1,13 @@
 import type {
 	PromiseMockConfig,
 	QMock
-} from "mocks/node-modules/angular/types";
-import type { Mock } from "mocks/types";
-import type { Payee } from "payees/types";
-import type PayeeMockProvider from "mocks/payees/providers/payee";
-import type { PayeeModelMock } from "mocks/payees/types";
-import type PayeesMockProvider from "mocks/payees/providers/payees";
-import type QMockProvider from "mocks/node-modules/angular/services/q";
+} from "~/mocks/node-modules/angular/types";
+import type { Mock } from "~/mocks/types";
+import type { Payee } from "~/payees/types";
+import type PayeeMockProvider from "~/mocks/payees/providers/payee";
+import type { PayeeModelMock } from "~/mocks/payees/types";
+import type PayeesMockProvider from "~/mocks/payees/providers/payees";
+import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 import type { SinonStub } from "sinon";
 import sinon from "sinon";
 

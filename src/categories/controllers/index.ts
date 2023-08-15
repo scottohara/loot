@@ -1,16 +1,16 @@
-import "../css/index.less";
+import "~/categories/css/index.less";
 import type {
 	OgTableActionHandlers,
 	OgTableActions
-} from "og-components/og-table-navigable/types";
-import type { Category } from "categories/types";
-import CategoryDeleteView from "categories/views/delete.html";
-import CategoryEditView from "categories/views/edit.html";
-import type CategoryModel from "categories/models/category";
-import type { OgModalAlert } from "og-components/og-modal-alert/types";
-import OgModalAlertView from "og-components/og-modal-alert/views/alert.html";
-import type OgModalErrorService from "og-components/og-modal-error/services/og-modal-error";
-import type OgTableNavigableService from "og-components/og-table-navigable/services/og-table-navigable";
+} from "~/og-components/og-table-navigable/types";
+import type { Category } from "~/categories/types";
+import CategoryDeleteView from "~/categories/views/delete.html";
+import CategoryEditView from "~/categories/views/edit.html";
+import type CategoryModel from "~/categories/models/category";
+import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
+import OgModalAlertView from "~/og-components/og-modal-alert/views/alert.html";
+import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
+import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 
 export default class CategoryIndexController {
