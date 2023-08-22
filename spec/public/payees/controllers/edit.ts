@@ -26,50 +26,50 @@ describe("PayeeEditController", (): void => {
 	}) as Mocha.HookFunction);
 
 	describe("when a payee is provided", (): void => {
-		it("should make the passed payee available to the view", (): Chai.Assertion => payeeEditController.payee.should.deep.equal(payee));
+		it("should make the passed payee available to the view", (): Chai.Assertion => expect(payeeEditController.payee).to.deep.equal(payee));
 
-		it("should set the mode to Edit", (): Chai.Assertion => payeeEditController.mode.should.equal("Edit"));
+		it("should set the mode to Edit", (): Chai.Assertion => expect(payeeEditController.mode).to.equal("Edit"));
 	});
 
 	describe("when a payee is not provided", (): void => {
 		beforeEach((): PayeeEditController => (payeeEditController = controllerTest("PayeeEditController", { payee: undefined }) as PayeeEditController));
 
 		it("should make an empty payee object available to the view", (): void => {
-			payeeEditController.payee.should.be.an("object");
-			payeeEditController.payee.should.be.empty;
+			expect(payeeEditController.payee).to.be.an("object");
+			expect(payeeEditController.payee).to.be.empty;
 		});
 
-		it("should set the mode to Add", (): Chai.Assertion => payeeEditController.mode.should.equal("Add"));
+		it("should set the mode to Add", (): Chai.Assertion => expect(payeeEditController.mode).to.equal("Add"));
 	});
 
 	describe("save", (): void => {
 		it("should reset any previous error messages", (): void => {
 			payeeEditController.errorMessage = "error message";
 			payeeEditController.save();
-			(null === payeeEditController.errorMessage as string | null).should.be.true;
+			expect(payeeEditController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should save the payee", (): void => {
 			payeeEditController.save();
-			payeeModel.save.should.have.been.calledWith(payee);
+			expect(payeeModel.save).to.have.been.calledWith(payee);
 		});
 
 		it("should close the modal when the payee save is successful", (): void => {
 			payeeEditController.save();
-			$uibModalInstance.close.should.have.been.calledWith(payee);
+			expect($uibModalInstance.close).to.have.been.calledWith(payee);
 		});
 
 		it("should display an error message when the payee save is unsuccessful", (): void => {
 			payeeEditController.payee.id = -1;
 			payeeEditController.save();
-			(payeeEditController.errorMessage as string).should.equal("unsuccessful");
+			expect(payeeEditController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			payeeEditController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

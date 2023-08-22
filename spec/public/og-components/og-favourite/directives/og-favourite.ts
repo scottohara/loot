@@ -25,9 +25,9 @@ describe("ogFavourite", (): void => {
 			ogFavourite["element"] = ogFavourite["element"].find("i");
 		});
 
-		it("should not be active", (): Chai.Assertion => ogFavourite["element"].hasClass("active").should.not.be.true);
+		it("should not be active", (): Chai.Assertion => expect(ogFavourite["element"].hasClass("active")).to.not.be.true);
 
-		it("should show the type in a tooltip", (): Chai.Assertion => String(ogFavourite["element"].attr("uib-tooltip")).should.equal("Favourite test"));
+		it("should show the type in a tooltip", (): Chai.Assertion => expect(String(ogFavourite["element"].attr("uib-tooltip"))).to.equal("Favourite test"));
 	});
 
 	describe("favourite", (): void => {
@@ -36,7 +36,7 @@ describe("ogFavourite", (): void => {
 		it("should be active", (): void => {
 			ogFavourite.scope.$digest();
 			ogFavourite["element"] = ogFavourite["element"].find("i");
-			ogFavourite["element"].hasClass("active").should.be.true;
+			expect(ogFavourite["element"].hasClass("active")).to.be.true;
 		});
 	});
 });

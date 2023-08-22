@@ -25,64 +25,64 @@ describe("TransactionFlagController", (): void => {
 		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed transaction available to the view", (): Chai.Assertion => transactionFlagController["transaction"].should.deep.equal(transaction));
+	it("should make the passed transaction available to the view", (): Chai.Assertion => expect(transactionFlagController["transaction"]).to.deep.equal(transaction));
 
 	it("should make the passed transaction's flag type available to the view", (): void => {
 		transaction.flag_type = "noreceipt";
 		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
-		(transactionFlagController.flagType as string).should.equal(transaction.flag_type);
+		expect(transactionFlagController.flagType as string).to.equal(transaction.flag_type);
 	});
 
-	it("should make the passed transaction's flag memo available to the view", (): Chai.Assertion => (transactionFlagController.flag as string).should.equal(transaction.flag));
+	it("should make the passed transaction's flag memo available to the view", (): Chai.Assertion => expect(transactionFlagController.flag as string).to.equal(transaction.flag));
 
 	it("should default the flag type when transaction doesn't have a flag", (): void => {
 		transaction.flag_type = undefined;
 		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
-		String(transactionFlagController.flagType).should.equal("followup");
+		expect(String(transactionFlagController.flagType)).to.equal("followup");
 	});
 
 	it("should set the flag to an empty string when transaction's flag memo is '(no memo)'", (): void => {
 		transaction.flag = "(no memo)";
 		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
-		String(transactionFlagController.flag).should.equal("");
+		expect(String(transactionFlagController.flag)).to.equal("");
 	});
 
-	it("should set the flagged property when the transaction has a flag", (): Chai.Assertion => transactionFlagController.flagged.should.be.true);
+	it("should set the flagged property when the transaction has a flag", (): Chai.Assertion => expect(transactionFlagController.flagged).to.be.true);
 
 	it("should clear the flagged property when the transaction doesn't have a flag", (): void => {
 		transaction.flag = null;
 		transactionFlagController = controllerTest("TransactionFlagController") as TransactionFlagController;
-		transactionFlagController.flagged.should.be.false;
+		expect(transactionFlagController.flagged).to.be.false;
 	});
 
 	describe("save", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionFlagController.errorMessage = "error message";
 			transactionFlagController.save();
-			(null === transactionFlagController.errorMessage as string | null).should.be.true;
+			expect(transactionFlagController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should flag the transaction", (): void => {
 			transactionFlagController.save();
-			transactionModel.flag.should.have.been.calledWith(transaction);
+			expect(transactionModel.flag).to.have.been.calledWith(transaction);
 		});
 
 		it("should set the flag memo to '(no memo)' if the memo is blank", (): void => {
 			transactionFlagController.flag = "";
 			transaction.flag = "(no memo)";
 			transactionFlagController.save();
-			transactionModel.flag.should.have.been.calledWith(transaction);
+			expect(transactionModel.flag).to.have.been.calledWith(transaction);
 		});
 
 		it("should close the modal when the flag save is successful", (): void => {
 			transactionFlagController.save();
-			$uibModalInstance.close.should.have.been.calledWith(transaction);
+			expect($uibModalInstance.close).to.have.been.calledWith(transaction);
 		});
 
 		it("should display an error message when the flag save is unsuccessful", (): void => {
 			transactionFlagController["transaction"].id = -1;
 			transactionFlagController.save();
-			(transactionFlagController.errorMessage as string).should.equal("unsuccessful");
+			expect(transactionFlagController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
@@ -90,36 +90,36 @@ describe("TransactionFlagController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionFlagController.errorMessage = "error message";
 			transactionFlagController.deleteFlag();
-			(null === transactionFlagController.errorMessage as string | null).should.be.true;
+			expect(transactionFlagController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should unflag the transaction", (): void => {
 			transactionFlagController.deleteFlag();
-			transactionModel.unflag.should.have.been.calledWith(transaction.id);
+			expect(transactionModel.unflag).to.have.been.calledWith(transaction.id);
 		});
 
 		it("should clear transaction's flag", (): void => {
 			transactionFlagController.deleteFlag();
-			(null === transactionFlagController["transaction"].flag_type).should.be.true;
-			(null === transactionFlagController["transaction"].flag).should.be.true;
+			expect(transactionFlagController["transaction"].flag_type).to.be.null;
+			expect(transactionFlagController["transaction"].flag).to.be.null;
 		});
 
 		it("should close the modal when the flag delete is successful", (): void => {
 			transactionFlagController.deleteFlag();
-			$uibModalInstance.close.should.have.been.calledWith(transaction);
+			expect($uibModalInstance.close).to.have.been.calledWith(transaction);
 		});
 
 		it("should display an error message when the flag delete is unsuccessful", (): void => {
 			transactionFlagController["transaction"].id = -1;
 			transactionFlagController.deleteFlag();
-			(transactionFlagController.errorMessage as string).should.equal("unsuccessful");
+			expect(transactionFlagController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			transactionFlagController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

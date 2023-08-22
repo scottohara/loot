@@ -17,12 +17,12 @@ describe("ogLoadingSpinner", (): void => {
 
 	it("should show the specified message", (): void => {
 		ogLoadingSpinner.scope.$digest();
-		ogLoadingSpinner["element"].text().should.equal(" test message...\n");
+		expect(ogLoadingSpinner["element"].text()).to.equal(" test message...\n");
 	});
 
 	it("should show the text 'Loading...' when a message was not specified", (): void => {
 		ogLoadingSpinner.scope.model = "";
 		ogLoadingSpinner.scope.$digest();
-		ogLoadingSpinner["element"].text().should.equal(" Loading...\n");
+		expect(ogLoadingSpinner["element"].text()).to.equal(" Loading...\n");
 	});
 });

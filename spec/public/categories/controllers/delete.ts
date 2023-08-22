@@ -23,36 +23,36 @@ describe("CategoryDeleteController", (): void => {
 		categoryDeleteController = controllerTest("CategoryDeleteController") as CategoryDeleteController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed category available to the view", (): Chai.Assertion => categoryDeleteController.category.should.deep.equal(category));
+	it("should make the passed category available to the view", (): Chai.Assertion => expect(categoryDeleteController.category).to.deep.equal(category));
 
 	describe("deleteCategory", (): void => {
 		it("should reset any previous error messages", (): void => {
 			categoryDeleteController.errorMessage = "error message";
 			categoryDeleteController.deleteCategory();
-			(null === categoryDeleteController.errorMessage as string | null).should.be.true;
+			expect(categoryDeleteController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should delete the category", (): void => {
 			categoryDeleteController.deleteCategory();
-			categoryModel.destroy.should.have.been.calledWith(category);
+			expect(categoryModel.destroy).to.have.been.calledWith(category);
 		});
 
 		it("should close the modal when the category delete is successful", (): void => {
 			categoryDeleteController.deleteCategory();
-			$uibModalInstance.close.should.have.been.called;
+			expect($uibModalInstance.close).to.have.been.called;
 		});
 
 		it("should display an error message when the category delete is unsuccessful", (): void => {
 			categoryDeleteController.category.id = -1;
 			categoryDeleteController.deleteCategory();
-			(categoryDeleteController.errorMessage as string).should.equal("unsuccessful");
+			expect(categoryDeleteController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			categoryDeleteController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

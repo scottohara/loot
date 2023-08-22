@@ -61,16 +61,16 @@ describe("accountModel", (): void => {
 		$httpBackend.verifyNoOutstandingRequest();
 	});
 
-	it("should fetch the list of recent accounts from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentAccounts"));
+	it("should fetch the list of recent accounts from localStorage", (): Chai.Assertion => expect($window.localStorage.getItem).to.have.been.calledWith("lootRecentAccounts"));
 
-	it("should have a list of recent accounts", (): Chai.Assertion => accountModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
+	it("should have a list of recent accounts", (): Chai.Assertion => expect(accountModel.recent).to.deep.equal([{ id: 1, name: "recent item" }]));
 
 	describe("UNRECONCILED_ONLY_LOCAL_STORAGE_KEY", (): void => {
-		it("should be 'lootUnreconciledOnly-'", (): Chai.Assertion => accountModel["UNRECONCILED_ONLY_LOCAL_STORAGE_KEY"].should.equal("lootUnreconciledOnly-"));
+		it("should be 'lootUnreconciledOnly-'", (): Chai.Assertion => expect(accountModel["UNRECONCILED_ONLY_LOCAL_STORAGE_KEY"]).to.equal("lootUnreconciledOnly-"));
 	});
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
-		it("should be 'lootRecentAccounts'", (): Chai.Assertion => accountModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentAccounts"));
+		it("should be 'lootRecentAccounts'", (): Chai.Assertion => expect(accountModel.LRU_LOCAL_STORAGE_KEY).to.equal("lootRecentAccounts"));
 	});
 
 	describe("recentAccounts", (): void => {
@@ -82,22 +82,22 @@ describe("accountModel", (): void => {
 				$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(JSON.stringify(recentAccounts));
 			});
 
-			it("should return an array of cache entries", (): Chai.Assertion => accountModel["recentAccounts"].should.deep.equal(recentAccounts));
+			it("should return an array of cache entries", (): Chai.Assertion => expect(accountModel["recentAccounts"]).to.deep.equal(recentAccounts));
 		});
 
 		describe("when localStorage is null", (): void => {
-			it("should return an empty array", (): Chai.Assertion => accountModel["recentAccounts"].should.deep.equal([]));
+			it("should return an empty array", (): Chai.Assertion => expect(accountModel["recentAccounts"]).to.deep.equal([]));
 		});
 	});
 
 	describe("type", (): void => {
-		it("should be 'account'", (): Chai.Assertion => accountModel.type.should.equal("account"));
+		it("should be 'account'", (): Chai.Assertion => expect(accountModel.type).to.equal("account"));
 	});
 
 	describe("path", (): void => {
-		it("should return the accounts collection path when an id is not provided", (): Chai.Assertion => accountModel.path().should.equal("/accounts"));
+		it("should return the accounts collection path when an id is not provided", (): Chai.Assertion => expect(accountModel.path()).to.equal("/accounts"));
 
-		it("should return a specific account path when an id is provided", (): Chai.Assertion => accountModel.path(123).should.equal("/accounts/123"));
+		it("should return a specific account path when an id is provided", (): Chai.Assertion => expect(accountModel.path(123)).to.equal("/accounts/123"));
 	});
 
 	describe("all", (): void => {
@@ -114,12 +114,12 @@ describe("accountModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			accountModel.all();
-			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
 		});
 
 		it("should return a list of all accounts without their balances", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-			accountModel.all().then((accounts: Account[] | Accounts): Chai.Assertion => accounts.should.equal(expectedResponse));
+			accountModel.all().then((accounts: Account[] | Accounts): Chai.Assertion => expect(accounts).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 
@@ -139,12 +139,12 @@ describe("accountModel", (): void => {
 				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 				accountModel.all(true);
-				httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.false;
+				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.false;
 			});
 
 			it("should return a list of all accounts including their balances", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-				accountModel.all(true).then((accounts: Account[] | Accounts): Chai.Assertion => accounts.should.equal(expectedResponse));
+				accountModel.all(true).then((accounts: Account[] | Accounts): Chai.Assertion => expect(accounts).to.equal(expectedResponse));
 				$httpBackend.flush();
 			});
 		});
@@ -155,11 +155,11 @@ describe("accountModel", (): void => {
 
 		it("should call accountModel.all(true)", (): void => {
 			accountModel.allWithBalances();
-			accountModel.all.should.have.been.calledWith(true);
+			expect(accountModel["all"]).to.have.been.calledWith(true);
 		});
 
 		it("should return a list of all accounts including their balances", (): void => {
-			accountModel.allWithBalances().should.equal(iPromise);
+			expect(accountModel.allWithBalances()).to.equal(iPromise);
 		});
 	});
 
@@ -179,19 +179,19 @@ describe("accountModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			accountModel.find(123);
-			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
 		});
 
 		it("should add the account to the recent list", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			accountModel.find(123);
 			$httpBackend.flush();
-			accountModel.addRecent.should.have.been.calledWith(expectedResponse);
+			expect(accountModel["addRecent"]).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the account", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
-			accountModel.find(123).then((foundAccount: Account): Chai.Assertion => foundAccount.should.equal(expectedResponse));
+			accountModel.find(123).then((foundAccount: Account): Chai.Assertion => expect(foundAccount).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -208,7 +208,7 @@ describe("accountModel", (): void => {
 
 		it("should flush the account cache", (): void => {
 			accountModel.save(account);
-			accountModel.flush.should.have.been.called;
+			expect(accountModel["flush"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -235,11 +235,11 @@ describe("accountModel", (): void => {
 			$httpBackend.flush();
 		});
 
-		it("should flush the account cache", (): Chai.Assertion => accountModel.flush.should.have.been.called);
+		it("should flush the account cache", (): Chai.Assertion => expect(accountModel["flush"]).to.have.been.called);
 
 		it("should dispatch a DELETE request to /accounts/{id}", (): null => null);
 
-		it("should remove the account from the recent list", (): Chai.Assertion => accountModel.removeRecent.should.have.been.calledWith(1));
+		it("should remove the account from the recent list", (): Chai.Assertion => expect(accountModel["removeRecent"]).to.have.been.calledWith(1));
 	});
 
 	describe("reconcile", (): void => {
@@ -263,46 +263,46 @@ describe("accountModel", (): void => {
 
 		it("should flush the account cache", (): void => {
 			accountModel.toggleFavourite(account);
-			accountModel.flush.should.have.been.called;
+			expect(accountModel["flush"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a DELETE request to /accounts/{id}/favourite when the account is unfavourited", (): void => {
 			$httpBackend.expectDELETE(expectedUrl);
 			account.favourite = true;
-			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => favourite.should.be.false);
+			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /accounts/{id}/favourite when the account is favourited", (): void => {
 			$httpBackend.expectPUT(expectedUrl);
-			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => favourite.should.be.true);
+			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.true);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("isUnreconciledOnly", (): void => {
-		it("should be true if the account is configured to show unreconciled transactions only", (): Chai.Assertion => accountModel.isUnreconciledOnly(123).should.be.true);
+		it("should be true if the account is configured to show unreconciled transactions only", (): Chai.Assertion => expect(accountModel.isUnreconciledOnly(123)).to.be.true);
 
-		it("should be false if the account is not configured to show unreconciled transactions only", (): Chai.Assertion => accountModel.isUnreconciledOnly(456).should.be.false);
+		it("should be false if the account is not configured to show unreconciled transactions only", (): Chai.Assertion => expect(accountModel.isUnreconciledOnly(456)).to.be.false);
 	});
 
 	describe("unreconciledOnly", (): void => {
 		it("should save the unreconciledOnly setting for the specified account", (): void => {
 			accountModel.unreconciledOnly(123, true);
-			$window.localStorage.setItem.should.have.been.calledWith("lootUnreconciledOnly-123", "true");
+			expect($window.localStorage.setItem).to.have.been.calledWith("lootUnreconciledOnly-123", "true");
 		});
 	});
 
 	describe("flush", (): void => {
 		it("should remove the specified account from the account cache when an id is provided", (): void => {
 			accountModel.flush(1);
-			$cache.remove.should.have.been.calledWith("/accounts/1");
+			expect($cache["remove"]).to.have.been.calledWith("/accounts/1");
 		});
 
 		it("should flush the account cache when an id is not provided", (): void => {
 			accountModel.flush();
-			$cache.removeAll.should.have.been.called;
+			expect($cache["removeAll"]).to.have.been.called;
 		});
 	});
 
@@ -310,21 +310,21 @@ describe("accountModel", (): void => {
 		beforeEach((): void => accountModel.addRecent(account));
 
 		it("should add the account to the recent list", (): void => {
-			ogLruCache.put.should.have.been.calledWith(account);
-			accountModel.recent.should.equal("updated list");
+			expect(ogLruCache.put).to.have.been.calledWith(account);
+			expect(accountModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 
 	describe("removeRecent", (): void => {
 		beforeEach((): void => accountModel.removeRecent(Number(account.id)));
 
 		it("should remove the account from the recent list", (): void => {
-			ogLruCache.remove.should.have.been.calledWith(account.id);
-			accountModel.recent.should.equal("updated list");
+			expect(ogLruCache.remove).to.have.been.calledWith(account.id);
+			expect(accountModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 });

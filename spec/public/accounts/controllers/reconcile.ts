@@ -28,36 +28,36 @@ describe("AccountReconcileController", (): void => {
 	}) as Mocha.HookFunction);
 
 	it("should fetch the closing balance from localStorage and make it available to the view", (): void => {
-		$window.localStorage.getItem.should.have.been.calledWith("lootClosingBalance-1");
-		accountReconcileController.closingBalance.should.equal(1000);
+		expect($window.localStorage["getItem"]).to.have.been.calledWith("lootClosingBalance-1");
+		expect(accountReconcileController.closingBalance).to.equal(1000);
 	});
 
-	it("should expect a postive closing balance to be entered by the user", (): Chai.Assertion => accountReconcileController.expectNegativeBalance.should.be.false);
+	it("should expect a postive closing balance to be entered by the user", (): Chai.Assertion => expect(accountReconcileController.expectNegativeBalance).to.be.false);
 
 	["credit", "loan"].forEach((accountType: AccountType): void => {
 		it(`should expect a negative closing balance to be entered by the user for ${accountType} accounts`, (): void => {
 			account.account_type = accountType;
 			accountReconcileController = controllerTest("AccountReconcileController", { account }) as AccountReconcileController;
-			accountReconcileController.expectNegativeBalance.should.be.true;
+			expect(accountReconcileController.expectNegativeBalance).to.be.true;
 		});
 	});
 
 	describe("start", (): void => {
 		it("should save the closing balance to localStorage", (): void => {
 			accountReconcileController.start();
-			$window.localStorage.setItem.should.have.been.calledWith("lootClosingBalance-1", "1000");
+			expect($window.localStorage["setItem"]).to.have.been.calledWith("lootClosingBalance-1", "1000");
 		});
 
 		it("should close the modal when the transaction delete is successful", (): void => {
 			accountReconcileController.start();
-			$uibModalInstance.close.should.have.been.calledWith(1000);
+			expect($uibModalInstance.close).to.have.been.calledWith(1000);
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			accountReconcileController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

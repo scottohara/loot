@@ -30,7 +30,7 @@ describe("mockDependenciesProvider", (): void => {
 	beforeEach(angular.mock.inject((_mockDependencies_: MockDependenciesProvider): MockDependenciesProvider => (mockDependenciesProvider = _mockDependencies_)) as Mocha.HookFunction);
 
 	describe("$get", (): void => {
-		it("should return the mockDependencies provider", (): Chai.Assertion => mockDependenciesProvider.should.have.property("load"));
+		it("should return the mockDependencies provider", (): Chai.Assertion => expect(mockDependenciesProvider).to.have.property("load"));
 	});
 });
 

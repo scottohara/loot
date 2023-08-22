@@ -32,15 +32,15 @@ describe("iHttpPromiseMock", (): void => {
 	beforeEach(angular.mock.inject((_iHttpPromiseMock_: angular.IHttpPromise<unknown>): angular.IHttpPromise<unknown> => (iHttpPromiseMock = _iHttpPromiseMock_)) as Mocha.HookFunction);
 
 	describe("then", (): void => {
-		it("should return itself", (): Chai.Assertion => iHttpPromiseMock.then().should.equal(iHttpPromiseMock));
+		it("should return itself", (): Chai.Assertion => expect(iHttpPromiseMock.then()).to.equal(iHttpPromiseMock));
 	});
 
 	describe("catch", (): void => {
-		it("should return itself", (): Chai.Assertion => iHttpPromiseMock.catch().should.equal(iHttpPromiseMock));
+		it("should return itself", (): Chai.Assertion => expect(iHttpPromiseMock.catch()).to.equal(iHttpPromiseMock));
 	});
 
 	describe("finally", (): void => {
-		it("should return itself", (): Chai.Assertion => iHttpPromiseMock.finally((): void => undefined).should.equal(iHttpPromiseMock));
+		it("should return itself", (): Chai.Assertion => expect(iHttpPromiseMock.finally((): void => undefined)).to.equal(iHttpPromiseMock));
 	});
 });
 

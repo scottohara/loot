@@ -92,13 +92,13 @@ describe("lootStatesProvider", (): void => {
 			stateConfig = $state.get(stateName);
 		});
 
-		it("should be abstract", (): Chai.Assertion => (stateConfig.abstract as boolean).should.be.true);
+		it("should be abstract", (): Chai.Assertion => expect(stateConfig.abstract as boolean).to.be.true);
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Welcome") as Chai.Assertion);
+		it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Welcome"));
 
 		it("should resolve the authentication status of a logged in user", (): void => {
 			resolvedAuthenticated = $injector.invoke((stateConfig.resolve as { authenticated: () => boolean; }).authenticated);
-			resolvedAuthenticated.should.be.true;
+			expect(resolvedAuthenticated).to.be.true;
 		});
 
 		describe("(non-logged in user)", (): void => {
@@ -107,17 +107,17 @@ describe("lootStatesProvider", (): void => {
 				$injector.invoke((stateConfig.resolve as { authenticated: () => Promise<boolean>; }).authenticated);
 			});
 
-			it("should show the login modal", (): Chai.Assertion => $uibModal.open.should.have.been.called);
+			it("should show the login modal", (): Chai.Assertion => expect($uibModal.open).to.have.been.called);
 
 			it("should resolve the authentication status of a logged in user when the login modal is closed", (): void => {
 				authenticationModel.isAuthenticated = true;
 				$uibModal.close();
-				($uibModal.callbackResult as boolean).should.be.true;
+				expect($uibModal.callbackResult as boolean).to.be.true;
 			});
 
 			it("should resolve the authentication status of a non-logged in user when the login modal is dismissed", (): void => {
 				$uibModal.dismiss();
-				($uibModal.callbackResult as boolean).should.be.false;
+				expect($uibModal.callbackResult as boolean).to.be.false;
 			});
 		});
 	});
@@ -129,15 +129,15 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("accounts/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Accounts") as Chai.Assertion);
+		it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Accounts"));
 
-		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/accounts"));
+		it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName)).to.equal("#!/accounts"));
 
 		it("should not transition if the user is unauthenticated", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			($state.current.name as string).should.not.equal(stateName);
+			expect($state.current.name as string).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -149,11 +149,11 @@ describe("lootStatesProvider", (): void => {
 				resolvedAccounts = $injector.invoke(($state.current.resolve as { accounts: () => Accounts; }).accounts);
 			});
 
-			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+			it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
 			it("should resolve the accounts", (): void => {
-				accountModel.allWithBalances.should.have.been.called;
-				(resolvedAccounts as Promise<Accounts>).then((accounts: Accounts): Chai.Assertion => accounts.should.deep.equal(accountsWithBalances));
+				expect(accountModel["allWithBalances"]).to.have.been.called;
+				(resolvedAccounts as Promise<Accounts>).then((accounts: Accounts): Chai.Assertion => expect(accounts).to.deep.equal(accountsWithBalances));
 			});
 
 			describe("account state", (): void => {
@@ -162,12 +162,12 @@ describe("lootStatesProvider", (): void => {
 					stateParams = { id: 1 };
 				});
 
-				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/accounts/1"));
+				it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/accounts/1"));
 
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					($state.current.name as string).should.equal(stateName);
+					expect($state.current.name as string).to.equal(stateName);
 				});
 
 				describe("account transactions state", (): void => {
@@ -177,15 +177,15 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Account Transactions") as Chai.Assertion);
+					it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Account Transactions"));
 
-					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/accounts/1/transactions"));
+					it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/accounts/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						($state.current.name as string).should.not.equal(stateName);
+						expect($state.current.name as string).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
@@ -201,19 +201,19 @@ describe("lootStatesProvider", (): void => {
 							resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context: resolvedContext });
 						});
 
-						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+						it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
-						it("should resolve the parent context's model", (): Chai.Assertion => resolvedContextModel.should.equal(accountModel));
+						it("should resolve the parent context's model", (): Chai.Assertion => expect(resolvedContextModel).to.equal(accountModel));
 
 						it("should resolve the parent context", (): void => {
-							accountModel.find.should.have.been.calledWith(1);
-							resolvedContext.should.deep.equal(account);
+							expect(accountModel["find"]).to.have.been.calledWith(1);
+							expect(resolvedContext).to.deep.equal(account);
 						});
 
 						it("should resolve the transaction batch", (): void => {
-							resolvedContextModel.isUnreconciledOnly.should.have.been.calledWith(resolvedContext.id);
-							transactionModel.all.should.have.been.calledWith("/accounts/1", null, "prev", true);
-							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
+							expect(resolvedContextModel["isUnreconciledOnly"]).to.have.been.calledWith(resolvedContext.id);
+							expect(transactionModel["all"]).to.have.been.calledWith("/accounts/1", null, "prev", true);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => expect(actualTransactionBatch).to.deep.equal(transactionBatch));
 						});
 
 						describe("account transaction state", (): void => {
@@ -222,12 +222,12 @@ describe("lootStatesProvider", (): void => {
 								stateParams.transactionId = 2;
 							});
 
-							it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/accounts/1/transactions/2"));
+							it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/accounts/1/transactions/2"));
 
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								($state.current.name as string).should.equal(stateName);
+								expect($state.current.name as string).to.equal(stateName);
 							});
 						});
 					});
@@ -243,15 +243,15 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("schedules/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Schedules") as Chai.Assertion);
+		it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Schedules"));
 
-		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/schedules"));
+		it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName)).to.equal("#!/schedules"));
 
 		it("should not transition if the user is unauthenticated", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			($state.current.name as string).should.not.equal(stateName);
+			expect($state.current.name as string).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -263,11 +263,11 @@ describe("lootStatesProvider", (): void => {
 				resolvedSchedules = $injector.invoke(($state.current.resolve as { schedules: () => Schedule[]; }).schedules);
 			});
 
-			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+			it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
 			it("should resolve the schedules", (): void => {
-				scheduleModel.all.should.have.been.called;
-				resolvedSchedules.should.deep.equal(schedules);
+				expect(scheduleModel["all"]).to.have.been.called;
+				expect(resolvedSchedules).to.deep.equal(schedules);
 			});
 
 			describe("schedule state", (): void => {
@@ -276,12 +276,12 @@ describe("lootStatesProvider", (): void => {
 					stateParams = { id: 1 };
 				});
 
-				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/schedules/1"));
+				it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/schedules/1"));
 
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					($state.current.name as string).should.equal(stateName);
+					expect($state.current.name as string).to.equal(stateName);
 				});
 			});
 		});
@@ -294,15 +294,15 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("payees/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Payees") as Chai.Assertion);
+		it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Payees"));
 
-		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/payees"));
+		it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName)).to.equal("#!/payees"));
 
 		it("should not transition if the user is unauthenticated", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			($state.current.name as string).should.not.equal(stateName);
+			expect($state.current.name as string).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -314,11 +314,11 @@ describe("lootStatesProvider", (): void => {
 				resolvedPayees = $injector.invoke(($state.current.resolve as { payees: () => Payee[]; }).payees);
 			});
 
-			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+			it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
 			it("should resolve the payees", (): void => {
-				payeeModel.allList.should.have.been.called;
-				(resolvedPayees as Promise<Payee[]>).then((actualPayees: Payee[]): Chai.Assertion => actualPayees.should.deep.equal(payees));
+				expect(payeeModel["allList"]).to.have.been.called;
+				(resolvedPayees as Promise<Payee[]>).then((actualPayees: Payee[]): Chai.Assertion => expect(actualPayees).to.deep.equal(payees));
 			});
 
 			describe("payee state", (): void => {
@@ -327,12 +327,12 @@ describe("lootStatesProvider", (): void => {
 					stateParams = { id: 1 };
 				});
 
-				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/payees/1"));
+				it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/payees/1"));
 
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					($state.current.name as string).should.equal(stateName);
+					expect($state.current.name as string).to.equal(stateName);
 				});
 
 				describe("payee transactions state", (): void => {
@@ -342,15 +342,15 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Payee Transactions") as Chai.Assertion);
+					it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Payee Transactions"));
 
-					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/payees/1/transactions"));
+					it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/payees/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						($state.current.name as string).should.not.equal(stateName);
+						expect($state.current.name as string).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
@@ -366,18 +366,18 @@ describe("lootStatesProvider", (): void => {
 							resolvedContext.then((context: Payee): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
-						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+						it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
-						it("should resolve the parent context's model", (): Chai.Assertion => resolvedContextModel.should.equal(payeeModel));
+						it("should resolve the parent context's model", (): Chai.Assertion => expect(resolvedContextModel).to.equal(payeeModel));
 
 						it("should resolve the parent context", (): void => {
-							payeeModel.find.should.have.been.calledWith(1);
-							resolvedContext.then((context: Payee): Chai.Assertion => context.should.deep.equal(payee));
+							expect(payeeModel["find"]).to.have.been.calledWith(1);
+							resolvedContext.then((context: Payee): Chai.Assertion => expect(context).to.deep.equal(payee));
 						});
 
 						it("should resolve the transaction batch", (): void => {
-							transactionModel.all.should.have.been.calledWith("/payees/1", null, "prev", false);
-							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
+							expect(transactionModel["all"]).to.have.been.calledWith("/payees/1", null, "prev", false);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => expect(actualTransactionBatch).to.deep.equal(transactionBatch));
 						});
 
 						describe("payee transaction state", (): void => {
@@ -386,12 +386,12 @@ describe("lootStatesProvider", (): void => {
 								stateParams.transactionId = 2;
 							});
 
-							it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/payees/1/transactions/2"));
+							it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/payees/1/transactions/2"));
 
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								($state.current.name as string).should.equal(stateName);
+								expect($state.current.name as string).to.equal(stateName);
 							});
 						});
 					});
@@ -407,15 +407,15 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("categories/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Categories") as Chai.Assertion);
+		it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Categories"));
 
-		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/categories"));
+		it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName)).to.equal("#!/categories"));
 
 		it("should not transition if the user is unauthenticated", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			($state.current.name as string).should.not.equal(stateName);
+			expect($state.current.name as string).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -427,11 +427,11 @@ describe("lootStatesProvider", (): void => {
 				resolvedCategories = $injector.invoke(($state.current.resolve as { categories: () => Category[]; }).categories);
 			});
 
-			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+			it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
 			it("should resolve the categories", (): void => {
-				categoryModel.allWithChildren.should.have.been.called;
-				resolvedCategories.should.deep.equal(categories);
+				expect(categoryModel["allWithChildren"]).to.have.been.called;
+				expect(resolvedCategories).to.deep.equal(categories);
 			});
 
 			describe("category state", (): void => {
@@ -440,12 +440,12 @@ describe("lootStatesProvider", (): void => {
 					stateParams = { id: 1 };
 				});
 
-				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/categories/1"));
+				it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/categories/1"));
 
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					($state.current.name as string).should.equal(stateName);
+					expect($state.current.name as string).to.equal(stateName);
 				});
 
 				describe("category transactions state", (): void => {
@@ -455,15 +455,15 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Category Transactions") as Chai.Assertion);
+					it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Category Transactions"));
 
-					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/categories/1/transactions"));
+					it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/categories/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						($state.current.name as string).should.not.equal(stateName);
+						expect($state.current.name as string).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
@@ -479,18 +479,18 @@ describe("lootStatesProvider", (): void => {
 							resolvedContext.then((context: Category): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
-						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+						it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
-						it("should resolve the parent context's model", (): Chai.Assertion => resolvedContextModel.should.equal(categoryModel));
+						it("should resolve the parent context's model", (): Chai.Assertion => expect(resolvedContextModel).to.equal(categoryModel));
 
 						it("should resolve the parent context", (): void => {
-							categoryModel.find.should.have.been.calledWith(1);
-							resolvedContext.then((context: Category): Chai.Assertion => context.should.deep.equal(category));
+							expect(categoryModel["find"]).to.have.been.calledWith(1);
+							resolvedContext.then((context: Category): Chai.Assertion => expect(context).to.deep.equal(category));
 						});
 
 						it("should resolve the transaction batch", (): void => {
-							transactionModel.all.should.have.been.calledWith("/categories/1", null, "prev", false);
-							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
+							expect(transactionModel["all"]).to.have.been.calledWith("/categories/1", null, "prev", false);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => expect(actualTransactionBatch).to.deep.equal(transactionBatch));
 						});
 
 						describe("category transaction state", (): void => {
@@ -499,12 +499,12 @@ describe("lootStatesProvider", (): void => {
 								stateParams.transactionId = 2;
 							});
 
-							it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/categories/1/transactions/2"));
+							it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/categories/1/transactions/2"));
 
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								($state.current.name as string).should.equal(stateName);
+								expect($state.current.name as string).to.equal(stateName);
 							});
 						});
 					});
@@ -520,15 +520,15 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("securities/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Securities") as Chai.Assertion);
+		it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Securities"));
 
-		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName).should.equal("#!/securities"));
+		it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName)).to.equal("#!/securities"));
 
 		it("should not transition if the user is unauthenticated", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			($state.current.name as string).should.not.equal(stateName);
+			expect($state.current.name as string).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -540,11 +540,11 @@ describe("lootStatesProvider", (): void => {
 				resolvedSecurities = $injector.invoke(($state.current.resolve as { securities: () => Security[]; }).securities);
 			});
 
-			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+			it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
 			it("should resolve the securities", (): void => {
-				securityModel.allWithBalances.should.have.been.called;
-				resolvedSecurities.should.deep.equal(securities);
+				expect(securityModel["allWithBalances"]).to.have.been.called;
+				expect(resolvedSecurities).to.deep.equal(securities);
 			});
 
 			describe("security state", (): void => {
@@ -553,12 +553,12 @@ describe("lootStatesProvider", (): void => {
 					stateParams = { id: 1 };
 				});
 
-				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/securities/1"));
+				it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/securities/1"));
 
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					($state.current.name as string).should.equal(stateName);
+					expect($state.current.name as string).to.equal(stateName);
 				});
 
 				describe("security transactions state", (): void => {
@@ -568,15 +568,15 @@ describe("lootStatesProvider", (): void => {
 						$httpBackend.expectGET("transactions/views/index.html").respond(200);
 					});
 
-					it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Security Transactions") as Chai.Assertion);
+					it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Security Transactions"));
 
-					it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/securities/1/transactions"));
+					it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/securities/1/transactions"));
 
 					it("should not transition if the user is unauthenticated", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						($state.current.name as string).should.not.equal(stateName);
+						expect($state.current.name as string).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
@@ -592,18 +592,18 @@ describe("lootStatesProvider", (): void => {
 							resolvedContext.then((context: Security): TransactionBatch => (resolvedTransactionBatch = $injector.invoke(($state.current.resolve as { transactionBatch: () => TransactionBatch; }).transactionBatch, null, { contextModel: resolvedContextModel, context })));
 						});
 
-						it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+						it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
-						it("should resolve the parent context's model", (): Chai.Assertion => resolvedContextModel.should.equal(securityModel));
+						it("should resolve the parent context's model", (): Chai.Assertion => expect(resolvedContextModel).to.equal(securityModel));
 
 						it("should resolve the parent context", (): void => {
-							securityModel.find.should.have.been.calledWith(1);
-							resolvedContext.then((context: Security): Chai.Assertion => context.should.deep.equal(security));
+							expect(securityModel["find"]).to.have.been.calledWith(1);
+							resolvedContext.then((context: Security): Chai.Assertion => expect(context).to.deep.equal(security));
 						});
 
 						it("should resolve the transaction batch", (): void => {
-							transactionModel.all.should.have.been.calledWith("/securities/1", null, "prev", false);
-							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
+							expect(transactionModel["all"]).to.have.been.calledWith("/securities/1", null, "prev", false);
+							(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => expect(actualTransactionBatch).to.deep.equal(transactionBatch));
 						});
 
 						describe("security transaction state", (): void => {
@@ -612,12 +612,12 @@ describe("lootStatesProvider", (): void => {
 								stateParams.transactionId = 2;
 							});
 
-							it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal("#!/securities/1/transactions/2"));
+							it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal("#!/securities/1/transactions/2"));
 
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								($state.current.name as string).should.equal(stateName);
+								expect($state.current.name as string).to.equal(stateName);
 							});
 						});
 					});
@@ -637,15 +637,15 @@ describe("lootStatesProvider", (): void => {
 			$httpBackend.expectGET("transactions/views/index.html").respond(200);
 		});
 
-		it("should have a title", (): Chai.Assertion => stateConfig.data.title.should.equal("Search Transactions") as Chai.Assertion);
+		it("should have a title", (): Chai.Assertion => expect(stateConfig.data.title).to.equal("Search Transactions"));
 
-		it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal(`#!/transactions?query=${query}`));
+		it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal(`#!/transactions?query=${query}`));
 
 		it("should not transition if the user is unauthenticated", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName, stateParams);
 			$rootScope.$digest();
-			($state.current.name as string).should.not.equal(stateName);
+			expect($state.current.name as string).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -673,39 +673,39 @@ describe("lootStatesProvider", (): void => {
 				$injector.invoke($state.current.onEnter as () => void, null, { previousState: resolvedPreviousState });
 			});
 
-			it("should successfully transition", (): Chai.Assertion => ($state.current.name as string).should.equal(stateName));
+			it("should successfully transition", (): Chai.Assertion => expect($state.current.name as string).to.equal(stateName));
 
-			it("should resolve the previous state", (): Chai.Assertion => resolvedPreviousState.should.deep.equal({ name: (previousState.current as { name: string; }).name, params: previousState.params }));
+			it("should resolve the previous state", (): Chai.Assertion => expect(resolvedPreviousState).to.deep.equal({ name: (previousState.current as { name: string; }).name, params: previousState.params }));
 
 			it("should not resolve the previous state if transitioning from a different query", (): void => {
 				previousState.includes.withArgs("root.transactions").returns(true);
 				resolvedPreviousState = $injector.invoke(($state.current.resolve as { previousState: () => angular.ui.IState; }).previousState, null, { $state: previousState });
-				(null === resolvedPreviousState as angular.ui.IState | null).should.be.true;
+				expect(resolvedPreviousState as angular.ui.IState | null).to.be.null;
 			});
 
-			it("should resolve the context model", (): Chai.Assertion => (null === $injector.invoke(($state.current.resolve as { contextModel: () => EntityModel | null; }).contextModel)).should.be.true);
+			it("should resolve the context model", (): Chai.Assertion => expect($injector.invoke(($state.current.resolve as { contextModel: () => EntityModel | null; }).contextModel)).to.be.null);
 
-			it("should resolve the context", (): Chai.Assertion => resolvedContext.should.equal(query));
+			it("should resolve the context", (): Chai.Assertion => expect(resolvedContext).to.equal(query));
 
 			it("should resolve the transaction batch", (): void => {
-				transactionModel.query.should.have.been.calledWith(query, null, "prev");
-				(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => actualTransactionBatch.should.deep.equal(transactionBatch));
+				expect(transactionModel["query"]).to.have.been.calledWith(query, null, "prev");
+				(resolvedTransactionBatch as Promise<TransactionBatch>).then((actualTransactionBatch: TransactionBatch): Chai.Assertion => expect(actualTransactionBatch).to.deep.equal(transactionBatch));
 			});
 
-			it("should set the previous state property on the query service on enter", (): Chai.Assertion => (queryService.previousState as angular.ui.IState).should.deep.equal(resolvedPreviousState));
+			it("should set the previous state property on the query service on enter", (): Chai.Assertion => expect(queryService.previousState as angular.ui.IState).to.deep.equal(resolvedPreviousState));
 
 			it("should not update the previous state property on the query service on enter if the previous state did not resolve", (): void => {
 				$injector.invoke($state.current.onEnter as () => void, null, { previousState: null });
-				(queryService.previousState as angular.ui.IState).should.deep.equal(resolvedPreviousState);
+				expect(queryService.previousState as angular.ui.IState).to.deep.equal(resolvedPreviousState);
 			});
 
-			it("should set the query property on the query service on enter", (): Chai.Assertion => (queryService.query as string).should.equal(query));
+			it("should set the query property on the query service on enter", (): Chai.Assertion => expect(queryService.query as string).to.equal(query));
 
 			it("should clear the query property on the query service on exit", (): void => {
 				$httpBackend.expectGET("accounts/views/index.html").respond(200);
 				$state.go("root.accounts");
 				$rootScope.$digest();
-				(null === queryService.query).should.be.true;
+				expect(queryService.query).to.be.null;
 			});
 
 			describe("transaction state", (): void => {
@@ -714,12 +714,12 @@ describe("lootStatesProvider", (): void => {
 					stateParams.transactionId = 2;
 				});
 
-				it("should resolve to a URL", (): Chai.Assertion => $state.href(stateName, stateParams).should.equal(`#!/transactions/2?query=${query}`));
+				it("should resolve to a URL", (): Chai.Assertion => expect($state.href(stateName, stateParams)).to.equal(`#!/transactions/2?query=${query}`));
 
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					($state.current.name as string).should.equal(stateName);
+					expect($state.current.name as string).to.equal(stateName);
 				});
 			});
 		});

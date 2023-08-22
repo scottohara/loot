@@ -18,7 +18,7 @@ describe("ogViewScrollService", (): void => {
 	describe("scrollTo", (): void => {
 		it("should scroll to the specified anchor", (): void => {
 			ogViewScrollService.scrollTo("top");
-			$anchorScroll.should.have.been.calledWith("top");
+			expect($anchorScroll).to.have.been.calledWith("top");
 		});
 	});
 });

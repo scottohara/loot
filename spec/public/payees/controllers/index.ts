@@ -46,23 +46,23 @@ describe("PayeeIndexController", (): void => {
 		payeeIndexController = controllerTest("PayeeIndexController") as PayeeIndexController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed payees available to the view", (): Chai.Assertion => payeeIndexController.payees.should.deep.equal(payees));
+	it("should make the passed payees available to the view", (): Chai.Assertion => expect(payeeIndexController.payees).to.deep.equal(payees));
 
 	it("should focus the payee when a payee id is specified", (): void => {
 		$state.params.id = "1";
 		payeeIndexController = controllerTest("PayeeIndexController", { $state }) as PayeeIndexController;
 		payeeIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
-		(payeeIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
+		expect((payeeIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(0);
 	});
 
 	it("should not focus the payee when a payee id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.payees.payee" }, sinon.match.func) as Chai.Assertion);
+	it("should register a success transition hook", (): Chai.Assertion => expect($transitions.onSuccess).to.have.been.calledWith({ to: "root.payees.payee" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(payeeIndexController as angular.IController).$scope.$emit("$destroy");
-		deregisterTransitionSuccessHook.should.have.been.called;
+		expect(deregisterTransitionSuccessHook).to.have.been.called;
 	});
 
 	it("should ensure the payee is focussed when the payee id state param changes", (): void => {
@@ -70,7 +70,7 @@ describe("PayeeIndexController", (): void => {
 
 		sinon.stub(payeeIndexController, "focusPayee" as keyof PayeeIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
-		payeeIndexController["focusPayee"].should.have.been.calledWith(Number(toParams.id));
+		expect(payeeIndexController["focusPayee"]).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editPayee", (): void => {
@@ -83,22 +83,22 @@ describe("PayeeIndexController", (): void => {
 
 		it("should disable navigation on the table", (): void => {
 			payeeIndexController.editPayee();
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
 			beforeEach((): void => payeeIndexController.editPayee(1));
 
 			it("should open the edit payee modal with a payee", (): void => {
-				$uibModal.open.should.have.been.called;
-				payeeModel.addRecent.should.have.been.calledWith(payee);
-				(($uibModal.resolves as UibModalMockResolves).payee as Payee).should.deep.equal(payee);
+				expect($uibModal.open).to.have.been.called;
+				expect(payeeModel.addRecent).to.have.been.calledWith(payee);
+				expect(($uibModal.resolves as UibModalMockResolves).payee as Payee).to.deep.equal(payee);
 			});
 
 			it("should update the payee in the list of payees when the modal is closed", (): void => {
 				payee.name = "edited payee";
 				$uibModal.close(payee);
-				payeeIndexController.payees.should.include(payee);
+				expect(payeeIndexController.payees).to.include(payee);
 			});
 		});
 
@@ -112,19 +112,19 @@ describe("PayeeIndexController", (): void => {
 			});
 
 			it("should open the edit payee modal without a payee", (): void => {
-				$uibModal.open.should.have.been.called;
-				payeeModel.addRecent.should.not.have.been.called;
-				(undefined === ($uibModal.resolves as UibModalMockResolves).payee).should.be.true;
+				expect($uibModal.open).to.have.been.called;
+				expect(payeeModel.addRecent).to.not.have.been.called;
+				expect(($uibModal.resolves as UibModalMockResolves).payee).to.be.undefined;
 			});
 
 			it("should add the new payee to the list of payees when the modal is closed", (): void => {
 				$uibModal.close(payee);
-				(payeeIndexController.payees.pop() as Payee).should.deep.equal(payee);
+				expect(payeeIndexController.payees.pop() as Payee).to.deep.equal(payee);
 			});
 
 			it("should add the new payee to the recent list", (): void => {
 				$uibModal.close(payee);
-				payeeModel.addRecent.should.have.been.calledWith(payee);
+				expect(payeeModel.addRecent).to.have.been.calledWith(payee);
 			});
 		});
 
@@ -133,13 +133,13 @@ describe("PayeeIndexController", (): void => {
 
 			payeeIndexController.editPayee();
 			$uibModal.close(payee);
-			(payeeIndexController.payees.pop() as Payee).should.deep.equal(payeeWithHighestName);
+			expect(payeeIndexController.payees.pop() as Payee).to.deep.equal(payeeWithHighestName);
 		});
 
 		it("should focus the payee when the modal is closed", (): void => {
 			payeeIndexController.editPayee();
 			$uibModal.close(payee);
-			payeeIndexController["focusPayee"].should.have.been.calledWith(payee.id);
+			expect(payeeIndexController["focusPayee"]).to.have.been.calledWith(payee.id);
 		});
 
 		it("should not change the payees list when the modal is dismissed", (): void => {
@@ -147,19 +147,19 @@ describe("PayeeIndexController", (): void => {
 
 			payeeIndexController.editPayee();
 			$uibModal.dismiss();
-			payeeIndexController.payees.should.deep.equal(originalPayees);
+			expect(payeeIndexController.payees).to.deep.equal(originalPayees);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			payeeIndexController.editPayee();
 			$uibModal.close(payee);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			payeeIndexController.editPayee();
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -170,48 +170,48 @@ describe("PayeeIndexController", (): void => {
 
 		it("should fetch the payee", (): void => {
 			payeeIndexController.deletePayee(1);
-			payeeModel.find.should.have.been.calledWith(payee.id);
+			expect(payeeModel.find).to.have.been.calledWith(payee.id);
 		});
 
 		it("should disable navigation on the table", (): void => {
 			payeeIndexController.deletePayee(1);
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should show an alert if the payee has transactions", (): void => {
 			payeeIndexController.deletePayee(2);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header.should.equal("Payee has existing transactions");
+			expect($uibModal.open).to.have.been.called;
+			expect((($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header).to.equal("Payee has existing transactions");
 		});
 
 		it("should show the delete payee modal if the payee has no transactions", (): void => {
 			payeeIndexController.deletePayee(1);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).payee as Payee).should.deep.equal(payee);
+			expect($uibModal.open).to.have.been.called;
+			expect(($uibModal.resolves as UibModalMockResolves).payee as Payee).to.deep.equal(payee);
 		});
 
 		it("should remove the payee from the payees list when the modal is closed", (): void => {
 			payeeIndexController.deletePayee(1);
 			$uibModal.close(payee);
-			payeeIndexController.payees.should.not.include(payee);
+			expect(payeeIndexController.payees).to.not.include(payee);
 		});
 
 		it("should transition to the payees list when the modal is closed", (): void => {
 			payeeIndexController.deletePayee(1);
 			$uibModal.close(payee);
-			$state.go.should.have.been.calledWith("root.payees");
+			expect($state.go).to.have.been.calledWith("root.payees");
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			payeeIndexController.deletePayee(1);
 			$uibModal.close(payee);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			payeeIndexController.deletePayee(1);
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -223,22 +223,22 @@ describe("PayeeIndexController", (): void => {
 		it("should favourite the payee", (): void => {
 			payee.favourite = false;
 			payeeIndexController.toggleFavourite(0);
-			payee.favourite.should.be.true;
+			expect(payee.favourite).to.be.true;
 		});
 
 		it("should unfavourite the payee", (): void => {
 			payee.favourite = true;
 			payeeIndexController.toggleFavourite(0);
-			payee.favourite.should.be.false;
+			expect(payee.favourite).to.be.false;
 		});
 
-		afterEach((): Chai.Assertion => payeeModel.toggleFavourite.should.have.been.called);
+		afterEach((): Chai.Assertion => expect(payeeModel.toggleFavourite).to.have.been.called);
 	});
 
 	describe("tableActions.selectAction", (): void => {
 		it("should transition to the payee transactions list", (): void => {
 			payeeIndexController.tableActions.selectAction();
-			$state.go.should.have.been.calledWith(".transactions");
+			expect($state.go).to.have.been.calledWith(".transactions");
 		});
 	});
 
@@ -246,7 +246,7 @@ describe("PayeeIndexController", (): void => {
 		it("should edit the payee", (): void => {
 			sinon.stub(payeeIndexController, "editPayee");
 			payeeIndexController.tableActions.editAction(1);
-			payeeIndexController.editPayee.should.have.been.calledWithExactly(1);
+			expect(payeeIndexController["editPayee"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
@@ -254,7 +254,7 @@ describe("PayeeIndexController", (): void => {
 		it("should insert a payee", (): void => {
 			sinon.stub(payeeIndexController, "editPayee");
 			payeeIndexController.tableActions.insertAction();
-			payeeIndexController.editPayee.should.have.been.calledWithExactly();
+			expect(payeeIndexController["editPayee"]).to.have.been.calledWithExactly();
 		});
 	});
 
@@ -262,20 +262,20 @@ describe("PayeeIndexController", (): void => {
 		it("should delete a payee", (): void => {
 			sinon.stub(payeeIndexController, "deletePayee");
 			payeeIndexController.tableActions.deleteAction(1);
-			payeeIndexController.deletePayee.should.have.been.calledWithExactly(1);
+			expect(payeeIndexController["deletePayee"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a payee when no payee is currently focussed", (): void => {
 			payeeIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".payee", { id: 2 });
+			expect($state.go).to.have.been.calledWith(".payee", { id: 2 });
 		});
 
 		it("should focus a payee when another payee is currently focussed", (): void => {
 			$state.currentState("**.payee");
 			payeeIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.payee", { id: 2 });
+			expect($state.go).to.have.been.calledWith("^.payee", { id: 2 });
 		});
 	});
 
@@ -283,21 +283,21 @@ describe("PayeeIndexController", (): void => {
 		beforeEach((): SinonStub => (payeeIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific payee row could not be found", (): void => {
-			payeeIndexController["focusPayee"](999).should.be.NaN;
-			(payeeIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
+			expect(payeeIndexController["focusPayee"](999)).to.be.NaN;
+			expect((payeeIndexController.tableActions as OgTableActionHandlers).focusRow).to.not.have.been.called;
 		});
 
 		it("should focus the payee row for the specified payee", (): void => {
 			const targetIndex: number = payeeIndexController["focusPayee"](1);
 
 			$timeout.flush();
-			(payeeIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(targetIndex);
+			expect((payeeIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(targetIndex);
 		});
 
 		it("should return the index of the specified payee", (): void => {
 			const targetIndex: number = payeeIndexController["focusPayee"](1);
 
-			targetIndex.should.equal(0);
+			expect(targetIndex).to.equal(0);
 		});
 	});
 });

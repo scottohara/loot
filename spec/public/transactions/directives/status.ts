@@ -69,23 +69,23 @@ describe("transactionStatus", (): void => {
 		if ("" === scenario.currentStatus) {
 			it(`should set the current status to 'Unreconciled' when the transaction status is ${String(scenario.currentStatus)}`, (): void => {
 				setup(scenario);
-				String(isolateScope.currentStatus).should.equal("Unreconciled");
+				expect(String(isolateScope.currentStatus)).to.equal("Unreconciled");
 			});
 		}
 
 		it(`should set the next status to ${scenario.nextStatus} when the current status is ${String(scenario.currentStatus)}`, (): void => {
 			setup(scenario);
-			String(isolateScope.nextStatus).should.equal(scenario.nextStatus);
+			expect(String(isolateScope.nextStatus)).to.equal(scenario.nextStatus);
 		});
 
 		it(`should set the icon to ${scenario.icon} when the current status is ${String(scenario.currentStatus)}`, (): void => {
 			setup(scenario);
-			isolateScope.icon.should.equal(scenario.icon);
+			expect(isolateScope.icon).to.equal(scenario.icon);
 		});
 
 		it(`should set the tooltip when the current status is ${String(scenario.currentStatus)}`, (): void => {
 			setup(scenario);
-			$sce.getTrustedHtml(isolateScope.tooltip).should.equal(scenario.tooltip);
+			expect($sce.getTrustedHtml(isolateScope.tooltip)).to.equal(scenario.tooltip);
 		});
 	});
 
@@ -98,17 +98,17 @@ describe("transactionStatus", (): void => {
 			i = transactionStatus["element"].find("i");
 		});
 
-		it("should display the icon for the current status", (): Chai.Assertion => i.hasClass("glyphicon-tag").should.be.true);
+		it("should display the icon for the current status", (): Chai.Assertion => expect(i.hasClass("glyphicon-tag")).to.be.true);
 
-		it("should style the element according to the current status", (): Chai.Assertion => i.hasClass("unreconciled").should.be.true);
+		it("should style the element according to the current status", (): Chai.Assertion => expect(i.hasClass("unreconciled")).to.be.true);
 
-		it("should be transparent when the current status is Unreconciled", (): Chai.Assertion => i.hasClass("active").should.be.false);
+		it("should be transparent when the current status is Unreconciled", (): Chai.Assertion => expect(i.hasClass("active")).to.be.false);
 
 		it("should be opaque when the current status is not Unreconciled", (): void => {
 			((transactionStatus.scope.model as DirectiveTestModel).transaction as Transaction).status = "Cleared";
 			transactionStatus.compile({ "transaction-status": "model" });
 			transactionStatus.scope.$digest();
-			transactionStatus["element"].find("i").hasClass("active").should.be.true;
+			expect(transactionStatus["element"].find("i").hasClass("active")).to.be.true;
 		});
 	});
 
@@ -122,21 +122,21 @@ describe("transactionStatus", (): void => {
 		it("should update the transaction status to the next status if not Unreconciled", (): void => {
 			isolateScope.nextStatus = "Cleared";
 			transactionStatus["element"].triggerHandler("click");
-			transactionModel.updateStatus.should.have.been.calledWith("/accounts/123", 456, "Cleared");
+			expect(transactionModel.updateStatus).to.have.been.calledWith("/accounts/123", 456, "Cleared");
 		});
 
 		it("should clear the transaction status if the next status is Unreconciled", (): void => {
 			isolateScope.nextStatus = "Unreconciled";
 			transactionStatus["element"].triggerHandler("click");
-			transactionModel.updateStatus.should.have.been.calledWith("/accounts/123", 456, "");
+			expect(transactionModel.updateStatus).to.have.been.calledWith("/accounts/123", 456, "");
 		});
 
 		it("should set the current status", (): void => {
 			isolateScope.currentStatus = "Cleared";
 			isolateScope.nextStatus = "Reconciled";
 			transactionStatus["element"].triggerHandler("click");
-			isolateScope.currentStatus.should.equal("Reconciled");
-			isolateScope.nextStatus.should.equal("Unreconciled");
+			expect(isolateScope.currentStatus).to.equal("Reconciled");
+			expect(isolateScope.nextStatus).to.equal("Unreconciled");
 		});
 	});
 
@@ -151,7 +151,7 @@ describe("transactionStatus", (): void => {
 
 		it("should remove the click handler from the element", (): void => {
 			transactionStatus["element"].triggerHandler("click");
-			isolateScope.clickHandler.should.not.have.been.called;
+			expect(isolateScope.clickHandler).to.not.have.been.called;
 		});
 	});
 });

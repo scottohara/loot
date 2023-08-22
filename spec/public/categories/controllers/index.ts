@@ -51,9 +51,9 @@ describe("CategoryIndexController", (): void => {
 					[firstChild]: Category[] = firstParent.children as Category[];
 
 		delete firstParent.children;
-		categoryIndexController.categories[0].should.deep.equal(firstParent);
-		categoryIndexController.categories[1].should.deep.equal(firstChild);
-		categoryIndexController.categories.length.should.equal(15);
+		expect(categoryIndexController.categories[0]).to.deep.equal(firstParent);
+		expect(categoryIndexController.categories[1]).to.deep.equal(firstChild);
+		expect(categoryIndexController.categories.length).to.equal(15);
 	});
 
 	it("should focus the category when a category id is specified", (): void => {
@@ -61,16 +61,16 @@ describe("CategoryIndexController", (): void => {
 		categoryIndexController = controllerTest("CategoryIndexController", { $state }) as CategoryIndexController;
 		categoryIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
-		(categoryIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
+		expect((categoryIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(0);
 	});
 
 	it("should not focus the category when a category id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.categories.category" }, sinon.match.func) as Chai.Assertion);
+	it("should register a success transition hook", (): Chai.Assertion => expect($transitions.onSuccess).to.have.been.calledWith({ to: "root.categories.category" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(categoryIndexController as angular.IController).$scope.$emit("$destroy");
-		deregisterTransitionSuccessHook.should.have.been.called;
+		expect(deregisterTransitionSuccessHook).to.have.been.called;
 	});
 
 	it("should ensure the category is focussed when the category id state param changes", (): void => {
@@ -78,7 +78,7 @@ describe("CategoryIndexController", (): void => {
 
 		sinon.stub(categoryIndexController, "focusCategory" as keyof CategoryIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
-		categoryIndexController["focusCategory"].should.have.been.calledWith(Number(toParams.id));
+		expect(categoryIndexController["focusCategory"]).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editCategory", (): void => {
@@ -96,27 +96,27 @@ describe("CategoryIndexController", (): void => {
 
 		it("should disable navigation on the table", (): void => {
 			categoryIndexController.editCategory();
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
 			beforeEach((): void => categoryIndexController.editCategory(1));
 
 			it("should open the edit category modal with a category", (): void => {
-				$uibModal.open.should.have.been.called;
-				categoryModel.addRecent.should.have.been.calledWith(category);
-				(($uibModal.resolves as UibModalMockResolves).category as Category).should.deep.equal(category);
+				expect($uibModal.open).to.have.been.called;
+				expect(categoryModel.addRecent).to.have.been.calledWith(category);
+				expect(($uibModal.resolves as UibModalMockResolves).category as Category).to.deep.equal(category);
 			});
 
 			it("should not change the parent's children count if the parent category has not changed", (): void => {
 				$uibModal.close(category);
-				Number(categoryIndexController.categories[0].num_children).should.equal(2);
+				expect(Number(categoryIndexController.categories[0].num_children)).to.equal(2);
 			});
 
 			it("should decrement the original parent's children count when the parent category changes", (): void => {
 				category.parent_id = 2;
 				$uibModal.close(category);
-				Number(categoryIndexController.categories[0].num_children).should.equal(1);
+				expect(Number(categoryIndexController.categories[0].num_children)).to.equal(1);
 			});
 
 			it("should not attempt to decrement original parent's children count if there was no original parent", (): void => {
@@ -129,7 +129,7 @@ describe("CategoryIndexController", (): void => {
 				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
-				categoryIndexController.categories.should.deep.equal(originalCategories);
+				expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 			});
 
 			it("should not attempt to decrement original parent's children count if the parent could not be found", (): void => {
@@ -142,14 +142,14 @@ describe("CategoryIndexController", (): void => {
 				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
-				categoryIndexController.categories.should.deep.equal(originalCategories);
+				expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 			});
 
 			it("should increment the new parent's children count when the parent category changes", (): void => {
 				category.parent_id = 3;
 				(category.parent as Category).name = "cc";
 				$uibModal.close(category);
-				Number(categoryIndexController.categories[5].num_children).should.equal(3);
+				expect(Number(categoryIndexController.categories[5].num_children)).to.equal(3);
 			});
 
 			it("should not attempt to increment new parent's children count if there is no new parent", (): void => {
@@ -161,7 +161,7 @@ describe("CategoryIndexController", (): void => {
 				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
-				categoryIndexController.categories.should.deep.equal(originalCategories);
+				expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 			});
 
 			it("should not attempt to increment new parent's children count if the parent could not be found", (): void => {
@@ -173,13 +173,13 @@ describe("CategoryIndexController", (): void => {
 				$uibModal.close(category);
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
-				categoryIndexController.categories.should.deep.equal(originalCategories);
+				expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 			});
 
 			it("should update the category in the list of categories when the modal is closed", (): void => {
 				category.name = "edited category";
 				$uibModal.close(category);
-				categoryIndexController.categories.should.include(category);
+				expect(categoryIndexController.categories).to.include(category);
 			});
 		});
 
@@ -194,25 +194,25 @@ describe("CategoryIndexController", (): void => {
 			});
 
 			it("should open the edit category modal without a category", (): void => {
-				$uibModal.open.should.have.been.called;
-				categoryModel.addRecent.should.not.have.been.called;
-				(undefined === ($uibModal.resolves as UibModalMockResolves).category).should.be.true;
+				expect($uibModal.open).to.have.been.called;
+				expect(categoryModel.addRecent).to.not.have.been.called;
+				expect(($uibModal.resolves as UibModalMockResolves).category).to.be.undefined;
 			});
 
 			it("should add the new category to the list of categories when the modal is closed", (): void => {
 				$uibModal.close(category);
-				(categoryIndexController.categories.pop() as Category).should.deep.equal(category);
+				expect(categoryIndexController.categories.pop() as Category).to.deep.equal(category);
 			});
 
 			it("should add the new category to the recent list", (): void => {
 				$uibModal.close(category);
-				categoryModel.addRecent.should.have.been.calledWith(category);
+				expect(categoryModel.addRecent).to.have.been.calledWith(category);
 			});
 
 			it("should increment the parent's children count for a subcategory", (): void => {
 				category.parent_id = 1;
 				$uibModal.close(category);
-				Number(categoryIndexController.categories[0].num_children).should.equal(3);
+				expect(Number(categoryIndexController.categories[0].num_children)).to.equal(3);
 			});
 
 			it("should not attempt to increment parent's children count if there is no new parent", (): void => {
@@ -223,7 +223,7 @@ describe("CategoryIndexController", (): void => {
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
 				categoryIndexController.categories.pop();
-				categoryIndexController.categories.should.deep.equal(originalCategories);
+				expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 			});
 
 			it("should not attempt to increment parent's children count if the parent could not be found", (): void => {
@@ -234,7 +234,7 @@ describe("CategoryIndexController", (): void => {
 				originalCategories.sort(byId);
 				categoryIndexController.categories.sort(byId);
 				categoryIndexController.categories.pop();
-				categoryIndexController.categories.should.deep.equal(originalCategories);
+				expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 			});
 		});
 
@@ -243,13 +243,13 @@ describe("CategoryIndexController", (): void => {
 
 			categoryIndexController.editCategory();
 			$uibModal.close(category);
-			(categoryIndexController.categories.pop() as Category).should.deep.equal(outflowCategoryWithHighestName);
+			expect(categoryIndexController.categories.pop() as Category).to.deep.equal(outflowCategoryWithHighestName);
 		});
 
 		it("should focus the category when the modal is closed", (): void => {
 			categoryIndexController.editCategory();
 			$uibModal.close(category);
-			categoryIndexController["focusCategory"].should.have.been.calledWith(category.id);
+			expect(categoryIndexController["focusCategory"]).to.have.been.calledWith(category.id);
 		});
 
 		it("should not change the categories list when the modal is dismissed", (): void => {
@@ -257,19 +257,19 @@ describe("CategoryIndexController", (): void => {
 
 			categoryIndexController.editCategory();
 			$uibModal.dismiss();
-			categoryIndexController.categories.should.deep.equal(originalCategories);
+			expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			categoryIndexController.editCategory();
 			$uibModal.close(category);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			categoryIndexController.editCategory();
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -280,30 +280,30 @@ describe("CategoryIndexController", (): void => {
 
 		it("should fetch the category", (): void => {
 			categoryIndexController.deleteCategory(3);
-			categoryModel.find.should.have.been.calledWith(category.id);
+			expect(categoryModel.find).to.have.been.calledWith(category.id);
 		});
 
 		it("should disable navigation on the table", (): void => {
 			categoryIndexController.deleteCategory(3);
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should show an alert if the category has transactions", (): void => {
 			categoryIndexController.deleteCategory(6);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header.should.equal("Category has existing transactions");
+			expect($uibModal.open).to.have.been.called;
+			expect((($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header).to.equal("Category has existing transactions");
 		});
 
 		it("should show the delete category modal if the category has no transactions", (): void => {
 			categoryIndexController.deleteCategory(3);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).category as Category).should.deep.equal(category);
+			expect($uibModal.open).to.have.been.called;
+			expect(($uibModal.resolves as UibModalMockResolves).category as Category).to.deep.equal(category);
 		});
 
 		it("should decrement the parent's children count for a subcategory", (): void => {
 			categoryIndexController.deleteCategory(1);
 			$uibModal.close(category);
-			Number(categoryIndexController.categories[0].num_children).should.equal(1);
+			expect(Number(categoryIndexController.categories[0].num_children)).to.equal(1);
 		});
 
 		it("should not attempt to decrement parent's children count if there was no parent", (): void => {
@@ -313,7 +313,7 @@ describe("CategoryIndexController", (): void => {
 			originalCategories.splice(9, 1);
 			categoryIndexController.deleteCategory(9);
 			$uibModal.close(category);
-			categoryIndexController.categories.should.deep.equal(originalCategories);
+			expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 		});
 
 		it("should not attempt to decrement parent's children count if the parent could not be found", (): void => {
@@ -323,7 +323,7 @@ describe("CategoryIndexController", (): void => {
 			originalCategories.splice(9, 1);
 			categoryIndexController.deleteCategory(9);
 			$uibModal.close(category);
-			categoryIndexController.categories.should.deep.equal(originalCategories);
+			expect(categoryIndexController.categories).to.deep.equal(originalCategories);
 		});
 
 		it("should remove a parent category and it's children from the categories list when the modal is closed", (): void => {
@@ -331,34 +331,34 @@ describe("CategoryIndexController", (): void => {
 
 			categoryIndexController.deleteCategory(3);
 			$uibModal.close(category);
-			categoryIndexController.categories.should.not.include(category);
-			categoryIndexController.categories.should.not.include(child1);
-			categoryIndexController.categories.should.not.include(child2);
+			expect(categoryIndexController.categories).to.not.include(category);
+			expect(categoryIndexController.categories).to.not.include(child1);
+			expect(categoryIndexController.categories).to.not.include(child2);
 		});
 
 		it("should remove a subcategory from the categories list when the modal is closed", (): void => {
 			[, category] = categoryIndexController.categories;
 			categoryIndexController.deleteCategory(1);
 			$uibModal.close(category);
-			categoryIndexController.categories.should.not.include(category);
+			expect(categoryIndexController.categories).to.not.include(category);
 		});
 
 		it("should transition to the categories list when the modal is closed", (): void => {
 			categoryIndexController.deleteCategory(3);
 			$uibModal.close(category);
-			$state.go.should.have.been.calledWith("root.categories");
+			expect($state.go).to.have.been.calledWith("root.categories");
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			categoryIndexController.deleteCategory(3);
 			$uibModal.close(category);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			categoryIndexController.deleteCategory(3);
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -370,22 +370,22 @@ describe("CategoryIndexController", (): void => {
 		it("should favourite the category", (): void => {
 			category.favourite = false;
 			categoryIndexController.toggleFavourite(0);
-			category.favourite.should.be.true;
+			expect(category.favourite).to.be.true;
 		});
 
 		it("should unfavourite the category", (): void => {
 			category.favourite = true;
 			categoryIndexController.toggleFavourite(0);
-			category.favourite.should.be.false;
+			expect(category.favourite).to.be.false;
 		});
 
-		afterEach((): Chai.Assertion => categoryModel.toggleFavourite.should.have.been.called);
+		afterEach((): Chai.Assertion => expect(categoryModel.toggleFavourite).to.have.been.called);
 	});
 
 	describe("tableActions.selectAction", (): void => {
 		it("should transition to the category transactions list", (): void => {
 			categoryIndexController.tableActions.selectAction();
-			$state.go.should.have.been.calledWith(".transactions");
+			expect($state.go).to.have.been.calledWith(".transactions");
 		});
 	});
 
@@ -393,7 +393,7 @@ describe("CategoryIndexController", (): void => {
 		it("should edit the category", (): void => {
 			sinon.stub(categoryIndexController, "editCategory");
 			categoryIndexController.tableActions.editAction(1);
-			categoryIndexController.editCategory.should.have.been.calledWithExactly(1);
+			expect(categoryIndexController["editCategory"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
@@ -401,7 +401,7 @@ describe("CategoryIndexController", (): void => {
 		it("should insert a category", (): void => {
 			sinon.stub(categoryIndexController, "editCategory");
 			categoryIndexController.tableActions.insertAction();
-			categoryIndexController.editCategory.should.have.been.calledWithExactly();
+			expect(categoryIndexController["editCategory"]).to.have.been.calledWithExactly();
 		});
 	});
 
@@ -409,20 +409,20 @@ describe("CategoryIndexController", (): void => {
 		it("should delete a category", (): void => {
 			sinon.stub(categoryIndexController, "deleteCategory");
 			categoryIndexController.tableActions.deleteAction(1);
-			categoryIndexController.deleteCategory.should.have.been.calledWithExactly(1);
+			expect(categoryIndexController["deleteCategory"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a category when no category is currently focussed", (): void => {
 			categoryIndexController.tableActions.focusAction(3);
-			$state.go.should.have.been.calledWith(".category", { id: 2 });
+			expect($state.go).to.have.been.calledWith(".category", { id: 2 });
 		});
 
 		it("should focus a category when another category is currently focussed", (): void => {
 			$state.currentState("**.category");
 			categoryIndexController.tableActions.focusAction(3);
-			$state.go.should.have.been.calledWith("^.category", { id: 2 });
+			expect($state.go).to.have.been.calledWith("^.category", { id: 2 });
 		});
 	});
 
@@ -430,21 +430,21 @@ describe("CategoryIndexController", (): void => {
 		beforeEach((): SinonStub => (categoryIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific category row could not be found", (): void => {
-			categoryIndexController["focusCategory"](999).should.be.NaN;
-			(categoryIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
+			expect(categoryIndexController["focusCategory"](999)).to.be.NaN;
+			expect((categoryIndexController.tableActions as OgTableActionHandlers).focusRow).to.not.have.been.called;
 		});
 
 		it("should focus the category row for the specified category", (): void => {
 			const targetIndex: number = categoryIndexController["focusCategory"](1);
 
 			$timeout.flush();
-			(categoryIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(targetIndex);
+			expect((categoryIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(targetIndex);
 		});
 
 		it("should return the index of the specified category", (): void => {
 			const targetIndex: number = categoryIndexController["focusCategory"](1);
 
-			targetIndex.should.equal(0);
+			expect(targetIndex).to.equal(0);
 		});
 	});
 });

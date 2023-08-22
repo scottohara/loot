@@ -26,50 +26,50 @@ describe("SecurityEditController", (): void => {
 	}) as Mocha.HookFunction);
 
 	describe("when a security is provided", (): void => {
-		it("should make the passed security available to the view", (): Chai.Assertion => securityEditController.security.should.deep.equal(security));
+		it("should make the passed security available to the view", (): Chai.Assertion => expect(securityEditController.security).to.deep.equal(security));
 
-		it("should set the mode to Edit", (): Chai.Assertion => securityEditController.mode.should.equal("Edit"));
+		it("should set the mode to Edit", (): Chai.Assertion => expect(securityEditController.mode).to.equal("Edit"));
 	});
 
 	describe("when a security is not provided", (): void => {
 		beforeEach((): SecurityEditController => (securityEditController = controllerTest("SecurityEditController", { security: undefined }) as SecurityEditController));
 
 		it("should make an empty security object available to the view", (): void => {
-			securityEditController.security.should.be.an("object");
-			securityEditController.security.should.be.empty;
+			expect(securityEditController.security).to.be.an("object");
+			expect(securityEditController.security).to.be.empty;
 		});
 
-		it("should set the mode to Add", (): Chai.Assertion => securityEditController.mode.should.equal("Add"));
+		it("should set the mode to Add", (): Chai.Assertion => expect(securityEditController.mode).to.equal("Add"));
 	});
 
 	describe("save", (): void => {
 		it("should reset any previous error messages", (): void => {
 			securityEditController.errorMessage = "error message";
 			securityEditController.save();
-			(null === securityEditController.errorMessage as string | null).should.be.true;
+			expect(securityEditController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should save the security", (): void => {
 			securityEditController.save();
-			securityModel.save.should.have.been.calledWith(security);
+			expect(securityModel.save).to.have.been.calledWith(security);
 		});
 
 		it("should close the modal when the security save is successful", (): void => {
 			securityEditController.save();
-			$uibModalInstance.close.should.have.been.calledWith(security);
+			expect($uibModalInstance.close).to.have.been.calledWith(security);
 		});
 
 		it("should display an error message when the security save is unsuccessful", (): void => {
 			securityEditController.security.id = -1;
 			securityEditController.save();
-			(securityEditController.errorMessage as string).should.equal("unsuccessful");
+			expect(securityEditController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			securityEditController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

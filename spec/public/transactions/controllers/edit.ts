@@ -81,32 +81,32 @@ describe("TransactionEditController", (): void => {
 	}) as Mocha.HookFunction);
 
 	describe("when a transaction is provided", (): void => {
-		it("should make the passed transaction available to the view", (): Chai.Assertion => transactionEditController.transaction.should.deep.equal(transaction));
+		it("should make the passed transaction available to the view", (): Chai.Assertion => expect(transactionEditController.transaction).to.deep.equal(transaction));
 
-		it("should set the mode to Edit", (): Chai.Assertion => transactionEditController.mode.should.equal("Edit"));
+		it("should set the mode to Edit", (): Chai.Assertion => expect(transactionEditController.mode).to.equal("Edit"));
 	});
 
 	describe("when a transaction is not provided", (): void => {
 		beforeEach((): TransactionEditController => (transactionEditController = controllerTest("TransactionEditController", { transaction: {} }) as TransactionEditController));
 
 		it("should make the passed transaction available to the view", (): void => {
-			transactionEditController.transaction.should.be.an("object");
-			transactionEditController.transaction.should.deep.equal({ id: null });
+			expect(transactionEditController.transaction).to.be.an("object");
+			expect(transactionEditController.transaction).to.deep.equal({ id: null });
 		});
 
-		it("should set the mode to Add", (): Chai.Assertion => transactionEditController.mode.should.equal("Add"));
+		it("should set the mode to Add", (): Chai.Assertion => expect(transactionEditController.mode).to.equal("Add"));
 	});
 
-	it("should prefetch the payees list to populate the cache", (): Chai.Assertion => payeeModel.all.should.have.been.called);
+	it("should prefetch the payees list to populate the cache", (): Chai.Assertion => expect(payeeModel.all).to.have.been.called);
 
 	describe("payees", (): void => {
 		let payees: angular.IPromise<Payee[]>;
 
 		beforeEach((): angular.IPromise<Payee[]> => (payees = transactionEditController.payees("a", 3)));
 
-		it("should fetch the list of payees", (): Chai.Assertion => payeeModel.all.should.have.been.called);
+		it("should fetch the list of payees", (): Chai.Assertion => expect(payeeModel.all).to.have.been.called);
 
-		it("should return a filtered & limited list of payees", async (): Promise<Chai.Assertion> => (await payees).should.deep.equal([
+		it("should return a filtered & limited list of payees", async (): Promise<Chai.Assertion> => expect(await payees).to.deep.equal([
 			{ id: 1, name: "aa", closing_balance: 0, favourite: false, num_transactions: 0 },
 			{ id: 4, name: "ba", closing_balance: 0, favourite: false, num_transactions: 0 },
 			{ id: 5, name: "ab", closing_balance: 0, favourite: false, num_transactions: 0 }
@@ -118,9 +118,9 @@ describe("TransactionEditController", (): void => {
 
 		beforeEach((): angular.IPromise<Security[]> => (securities = transactionEditController.securities("a", 3)));
 
-		it("should fetch the list of securities", (): Chai.Assertion => securityModel.all.should.have.been.called);
+		it("should fetch the list of securities", (): Chai.Assertion => expect(securityModel.all).to.have.been.called);
 
-		it("should return a filtered & limited list of securities", async (): Promise<Chai.Assertion> => (await securities).should.deep.equal([
+		it("should return a filtered & limited list of securities", async (): Promise<Chai.Assertion> => expect(await securities).to.deep.equal([
 			{ id: 1, name: "aa", closing_balance: 1.006, code: "A", current_holding: 1, favourite: false, unused: false, num_transactions: 0 },
 			{ id: 4, name: "ba", closing_balance: 4, code: "D", current_holding: 1, favourite: false, unused: false, num_transactions: 0 },
 			{ id: 5, name: "ab", closing_balance: 5, code: "E", current_holding: 1, favourite: false, unused: false, num_transactions: 0 }
@@ -131,17 +131,17 @@ describe("TransactionEditController", (): void => {
 		it("should return an empty array if the parent category is new", (): void => {
 			const categories: angular.IPromise<DisplayCategory[]> | DisplayCategory[] = transactionEditController.categories("a", 3, {} as Category);
 
-			categories.should.be.an("array");
-			categories.should.be.empty;
+			expect(categories).to.be.an("array");
+			expect(categories).to.be.empty;
 		});
 
 		describe("(parent categories)", (): void => {
 			it("should fetch the list of parent categories", (): void => {
 				transactionEditController.categories("a", 3);
-				categoryModel.all.should.have.been.calledWith(undefined);
+				expect(categoryModel.all).to.have.been.calledWith(undefined);
 			});
 
-			it("should include transfer categories", async (): Promise<Chai.Assertion> => (await transactionEditController.categories("a", 5)).should.deep.equal([
+			it("should include transfer categories", async (): Promise<Chai.Assertion> => expect(await transactionEditController.categories("a", 5)).to.deep.equal([
 				{ id: "TransferTo", name: "Transfer To" },
 				{ id: "TransferFrom", name: "Transfer From" },
 				createCategory({ id: 1, name: "aa", num_children: 2, children: [
@@ -156,7 +156,7 @@ describe("TransactionEditController", (): void => {
 				createCategory({ id: 5, name: "ab", children: [] })
 			]));
 
-			it("should include split categories if requested", async (): Promise<Chai.Assertion> => (await transactionEditController.categories("a", 7, null, true)).should.deep.equal([
+			it("should include split categories if requested", async (): Promise<Chai.Assertion> => expect(await transactionEditController.categories("a", 7, null, true)).to.deep.equal([
 				{ id: "TransferTo", name: "Transfer To" },
 				{ id: "TransferFrom", name: "Transfer From" },
 				{ id: "Payslip", name: "Payslip" },
@@ -177,10 +177,10 @@ describe("TransactionEditController", (): void => {
 		describe("(subcategories)", (): void => {
 			it("should fetch the subcategories for the specified parent category", (): void => {
 				transactionEditController.categories("a", 3, createCategory({ id: 1 }));
-				categoryModel.all.should.have.been.calledWith(1);
+				expect(categoryModel.all).to.have.been.calledWith(1);
 			});
 
-			it("should eventually return a filtered & limited list of subcategories", async (): Promise<Chai.Assertion> => (await transactionEditController.categories("a", 3, createCategory({ id: 1 }))).should.deep.equal([
+			it("should eventually return a filtered & limited list of subcategories", async (): Promise<Chai.Assertion> => expect(await transactionEditController.categories("a", 3, createCategory({ id: 1 }))).to.deep.equal([
 				createCategory({ id: 1, name: "aa", num_children: 2, children: [
 					createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
 						createCategory({ id: 1, name: "aa", num_children: 2 })
@@ -196,7 +196,7 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("investmentCategories", (): void => {
-		it("should return the full list of investment categories when a filter is not specified", (): Chai.Assertion => transactionEditController.investmentCategories().should.deep.equal([
+		it("should return the full list of investment categories when a filter is not specified", (): Chai.Assertion => expect(transactionEditController.investmentCategories()).to.deep.equal([
 			{ id: "Buy", name: "Buy" },
 			{ id: "Sell", name: "Sell" },
 			{ id: "DividendTo", name: "Dividend To" },
@@ -206,7 +206,7 @@ describe("TransactionEditController", (): void => {
 			{ id: "TransferFrom", name: "Transfer From" }
 		]));
 
-		it("should return a filtered list of investment categories when a filter is specified", (): Chai.Assertion => transactionEditController.investmentCategories("a").should.deep.equal([
+		it("should return a filtered list of investment categories when a filter is specified", (): Chai.Assertion => expect(transactionEditController.investmentCategories("a")).to.deep.equal([
 			{ id: "AddShares", name: "Add Shares" },
 			{ id: "RemoveShares", name: "Remove Shares" },
 			{ id: "TransferTo", name: "Transfer To" },
@@ -215,11 +215,11 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("isString", (): void => {
-		it("should return false if the object is not a string", (): Chai.Assertion => transactionEditController.isString({}).should.be.false);
+		it("should return false if the object is not a string", (): Chai.Assertion => expect(transactionEditController.isString({})).to.be.false);
 
-		it("should return false if the object is an empty string", (): Chai.Assertion => transactionEditController.isString("").should.be.false);
+		it("should return false if the object is an empty string", (): Chai.Assertion => expect(transactionEditController.isString("")).to.be.false);
 
-		it("should return true if the object is a string and is not empty", (): Chai.Assertion => transactionEditController.isString("test").should.be.true);
+		it("should return true if the object is a string and is not empty", (): Chai.Assertion => expect(transactionEditController.isString("test")).to.be.true);
 	});
 
 	describe("payeeSelected", (): void => {
@@ -240,39 +240,39 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.transaction.id = 1;
 			(transactionEditController.transaction as PayeeCashTransaction).payee = payee;
 			transactionEditController.payeeSelected();
-			payeeModel.findLastTransaction.should.not.have.been.called;
+			expect(payeeModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should do nothing when the selected payee is not an existing payee", (): void => {
 			(transactionEditController.transaction as PayeeCashTransaction).payee = "payee";
 			transactionEditController.payeeSelected();
-			payeeModel.findLastTransaction.should.not.have.been.called;
+			expect(payeeModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should show a loading indicator", (): void => {
 			((transactionEditController.transaction as PayeeCashTransaction).payee as Payee).id = -1;
 			transactionEditController.payeeSelected();
-			transactionEditController.loadingLastTransaction.should.be.true;
+			expect(transactionEditController.loadingLastTransaction).to.be.true;
 		});
 
 		it("should fetch the last transaction for the selected payee", (): void => {
 			transactionEditController.payeeSelected();
-			payeeModel.findLastTransaction.should.have.been.calledWith(payee.id, primaryAccount.account_type);
+			expect(payeeModel.findLastTransaction).to.have.been.calledWith(payee.id, primaryAccount.account_type);
 		});
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			transactionEditController.payeeSelected();
-			transactionEditController["getSubtransactions"].should.have.been.called;
+			expect(transactionEditController["getSubtransactions"]).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			transactionEditController.payeeSelected();
-			transactionEditController["useLastTransaction"].should.have.been.called;
+			expect(transactionEditController["useLastTransaction"]).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
 			transactionEditController.payeeSelected();
-			transactionEditController.loadingLastTransaction.should.be.false;
+			expect(transactionEditController.loadingLastTransaction).to.be.false;
 		});
 	});
 
@@ -294,45 +294,45 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.transaction.id = 1;
 			(transactionEditController.transaction as SecurityTransaction).security = security;
 			transactionEditController.securitySelected();
-			securityModel.findLastTransaction.should.not.have.been.called;
+			expect(securityModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should do nothing when the selected security is not an existing security", (): void => {
 			(transactionEditController.transaction as SecurityTransaction).security = "security";
 			transactionEditController.securitySelected();
-			securityModel.findLastTransaction.should.not.have.been.called;
+			expect(securityModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should show a loading indicator", (): void => {
 			((transactionEditController.transaction as SecurityTransaction).security as Security).id = -1;
 			transactionEditController.securitySelected();
-			transactionEditController.loadingLastTransaction.should.be.true;
+			expect(transactionEditController.loadingLastTransaction).to.be.true;
 		});
 
 		it("should fetch the last transaction for the selected security", (): void => {
 			transactionEditController.securitySelected();
-			securityModel.findLastTransaction.should.have.been.calledWith(security.id, primaryAccount.account_type);
+			expect(securityModel.findLastTransaction).to.have.been.calledWith(security.id, primaryAccount.account_type);
 		});
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			transactionEditController.securitySelected();
-			transactionEditController["getSubtransactions"].should.have.been.called;
+			expect(transactionEditController["getSubtransactions"]).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			transactionEditController.securitySelected();
-			transactionEditController["useLastTransaction"].should.have.been.called;
+			expect(transactionEditController["useLastTransaction"]).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
 			transactionEditController.securitySelected();
-			transactionEditController.loadingLastTransaction.should.be.false;
+			expect(transactionEditController.loadingLastTransaction).to.be.false;
 		});
 	});
 
 	describe("getSubtransactions", (): void => {
 		describe("when a transaction is not provided", (): void => {
-			it("should return undefined", (): Chai.Assertion => (undefined === transactionEditController["getSubtransactions"]()).should.be.true);
+			it("should return undefined", (): Chai.Assertion => expect(transactionEditController["getSubtransactions"]()).to.be.undefined);
 		});
 
 		describe("when a transaction is provided", (): void => {
@@ -343,7 +343,7 @@ describe("TransactionEditController", (): void => {
 			it("should return the transaction if it is not a split, loan repayment or payslip", (): void => {
 				const basicTransaction: BasicTransaction = createBasicTransaction();
 
-				(transactionEditController["getSubtransactions"](basicTransaction) as BasicTransaction).should.deep.equal(basicTransaction);
+				expect(transactionEditController["getSubtransactions"](basicTransaction) as BasicTransaction).to.deep.equal(basicTransaction);
 			});
 
 			const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
@@ -352,8 +352,8 @@ describe("TransactionEditController", (): void => {
 				it("should fetch the subtransactions for the transaction", (): void => {
 					splitTransaction.transaction_type = scenario;
 					transactionEditController["getSubtransactions"](splitTransaction);
-					splitTransaction.subtransactions.should.be.an("array");
-					transactionModel.findSubtransactions.should.have.been.calledWith(splitTransaction.id);
+					expect(splitTransaction.subtransactions).to.be.an("array");
+					expect(transactionModel.findSubtransactions).to.have.been.calledWith(splitTransaction.id);
 				});
 			});
 
@@ -366,7 +366,7 @@ describe("TransactionEditController", (): void => {
 					createSubtransaction({ id: null })
 				];
 
-				(await transactionEditController["getSubtransactions"](splitTransaction) as SplitTransaction).should.deep.equal(expected);
+				expect(await transactionEditController["getSubtransactions"](splitTransaction) as SplitTransaction).to.deep.equal(expected);
 			});
 		});
 	});
@@ -407,18 +407,18 @@ describe("TransactionEditController", (): void => {
 
 		it("should do nothing when a transaction is not provided", (): void => {
 			transactionEditController["useLastTransaction"]();
-			(undefined === lastTransaction.id as number | undefined).should.be.false;
+			expect(lastTransaction.id as number | undefined).to.not.be.undefined;
 		});
 
 		it("should strip the transaction of it's id, date, primary account, status, related status & flag", (): void => {
 			transactionEditController["useLastTransaction"](lastTransaction);
-			(undefined === lastTransaction.id as number | undefined).should.be.true;
-			(undefined === lastTransaction.transaction_date as Date | undefined).should.be.true;
-			(undefined === lastTransaction.primary_account as Account | undefined).should.be.true;
-			(undefined === lastTransaction.status as TransactionStatus | undefined).should.be.true;
-			(undefined === lastTransaction.related_status as TransactionStatus | undefined).should.be.true;
-			(undefined === lastTransaction.flag_type).should.be.true;
-			(undefined === lastTransaction.flag).should.be.true;
+			expect(lastTransaction.id as number | undefined).to.be.undefined;
+			expect(lastTransaction.transaction_date as Date | undefined).to.be.undefined;
+			expect(lastTransaction.primary_account as Account | undefined).to.be.undefined;
+			expect(lastTransaction.status as TransactionStatus | undefined).to.be.undefined;
+			expect(lastTransaction.related_status as TransactionStatus | undefined).to.be.undefined;
+			expect(lastTransaction.flag_type).to.be.undefined;
+			expect(lastTransaction.flag).to.be.undefined;
 		});
 
 		it("should merge the transaction details into vm.transaction", (): void => {
@@ -434,19 +434,19 @@ describe("TransactionEditController", (): void => {
 			lastTransaction.flag_type = transactionEditController.transaction.flag_type;
 			lastTransaction.flag = transactionEditController.transaction.flag;
 
-			transactionEditController.transaction.should.deep.equal(lastTransaction);
+			expect(transactionEditController.transaction).to.deep.equal(lastTransaction);
 		});
 
 		it("should retrigger the focus handler of a refocussable field if focussed", (): void => {
 			currentElement = document.activeElement;
 			transactionEditController["useLastTransaction"](lastTransaction);
 			$timeout.flush();
-			mockAngularElement.triggerHandler.should.have.been.calledWith("focus");
+			expect(mockAngularElement.triggerHandler).to.have.been.calledWith("focus");
 		});
 
 		it("should not retrigger the amount focus handler of a refocussable field if not focussed", (): void => {
 			transactionEditController["useLastTransaction"](lastTransaction);
-			mockAngularElement.triggerHandler.should.not.have.been.called;
+			expect(mockAngularElement.triggerHandler).to.not.have.been.called;
 		});
 
 		afterEach((): void => {
@@ -477,12 +477,12 @@ describe("TransactionEditController", (): void => {
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 					(transactionEditController.transaction.category as PsuedoCategory).id = scenario.id;
 					transactionEditController.categorySelected();
-					transactionEditController.transaction.transaction_type.should.equal(scenario.type);
+					expect(transactionEditController.transaction.transaction_type).to.equal(scenario.type);
 
 					if ("Basic" === scenario.type) {
-						transactionEditController.transaction.direction.should.equal((transactionEditController.transaction.category as Category).direction);
+						expect(transactionEditController.transaction.direction).to.equal((transactionEditController.transaction.category as Category).direction);
 					} else {
-						transactionEditController.transaction.direction.should.equal(scenario.direction);
+						expect(transactionEditController.transaction.direction).to.equal(scenario.direction);
 					}
 				});
 
@@ -495,7 +495,7 @@ describe("TransactionEditController", (): void => {
 						(transactionEditController.transaction.category as PsuedoCategory).id = scenario.id;
 						(transactionEditController.transaction as SplitTransaction).subtransactions = subtransactions;
 						transactionEditController.categorySelected();
-						(transactionEditController.transaction as SplitTransaction).subtransactions.should.equal(subtransactions);
+						expect((transactionEditController.transaction as SplitTransaction).subtransactions).to.equal(subtransactions);
 					});
 
 					it(`should create four stub subtransactions for a ${scenario.id} if none exist`, (): void => {
@@ -505,7 +505,7 @@ describe("TransactionEditController", (): void => {
 						transactionEditController.transaction.memo = memo;
 						(transactionEditController.transaction as SplitTransaction).amount = amount;
 						transactionEditController.categorySelected();
-						(transactionEditController.transaction as SplitTransaction).subtransactions.should.deep.equal(subtransactions);
+						expect((transactionEditController.transaction as SplitTransaction).subtransactions).to.deep.equal(subtransactions);
 					});
 				}
 			});
@@ -513,7 +513,7 @@ describe("TransactionEditController", (): void => {
 			it("should set the transaction type to Basic if the selected category is not an existing category", (): void => {
 				transactionEditController.transaction.category = "new category";
 				transactionEditController.categorySelected();
-				transactionEditController.transaction.transaction_type.should.equal("Basic");
+				expect(transactionEditController.transaction.transaction_type).to.equal("Basic");
 			});
 		});
 
@@ -530,12 +530,12 @@ describe("TransactionEditController", (): void => {
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 					((transactionEditController.transaction as SplitTransaction).subtransactions[0].category as PsuedoCategory).id = scenario.id;
 					transactionEditController.categorySelected(0);
-					((transactionEditController.transaction as SplitTransaction).subtransactions[0].transaction_type as SubtransactionType).should.equal(scenario.type);
+					expect((transactionEditController.transaction as SplitTransaction).subtransactions[0].transaction_type as SubtransactionType).to.equal(scenario.type);
 
 					if ("Sub" === scenario.type) {
-						((transactionEditController.transaction as SplitTransaction).subtransactions[0].direction as TransactionDirection).should.equal(((transactionEditController.transaction as SplitTransaction).subtransactions[0].category as Category).direction);
+						expect((transactionEditController.transaction as SplitTransaction).subtransactions[0].direction as TransactionDirection).to.equal(((transactionEditController.transaction as SplitTransaction).subtransactions[0].category as Category).direction);
 					} else {
-						((transactionEditController.transaction as SplitTransaction).subtransactions[0].direction as TransactionDirection).should.equal(scenario.direction);
+						expect((transactionEditController.transaction as SplitTransaction).subtransactions[0].direction as TransactionDirection).to.equal(scenario.direction);
 					}
 				});
 			});
@@ -543,26 +543,26 @@ describe("TransactionEditController", (): void => {
 			it("should set the transaction type to Sub if the selected category is not an existing category", (): void => {
 				(transactionEditController.transaction as SplitTransaction).subtransactions[0].category = "new category";
 				transactionEditController.categorySelected(0);
-				((transactionEditController.transaction as SplitTransaction).subtransactions[0].transaction_type as SubtransactionType).should.equal("Sub");
+				expect((transactionEditController.transaction as SplitTransaction).subtransactions[0].transaction_type as SubtransactionType).to.equal("Sub");
 			});
 		});
 
 		it("should set the direction to outflow if the selected category is not an existing category", (): void => {
 			transactionEditController.transaction.category = "new category";
 			transactionEditController.categorySelected();
-			transactionEditController.transaction.direction.should.equal("outflow");
+			expect(transactionEditController.transaction.direction).to.equal("outflow");
 		});
 
 		it("should clear the subcategory if it's parent no longer matches the selected category", (): void => {
 			(transactionEditController.transaction as BasicTransaction).subcategory = createCategory({ parent_id: 2 });
 			transactionEditController.categorySelected();
-			(null === (transactionEditController.transaction as BasicTransaction).subcategory).should.be.true;
+			expect((transactionEditController.transaction as BasicTransaction).subcategory).to.be.null;
 		});
 
 		it("should not attempt to clear the subcategory if there isn't one", (): void => {
 			delete (transactionEditController.transaction as BasicTransaction).subcategory;
 			transactionEditController.categorySelected();
-			(null === (transactionEditController.transaction as BasicTransaction).subcategory).should.be.false;
+			expect((transactionEditController.transaction as BasicTransaction).subcategory).to.not.be.null;
 		});
 	});
 
@@ -577,8 +577,8 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.transaction.transaction_type = transactionType;
 			transactionEditController.transaction.direction = direction;
 			transactionEditController.investmentCategorySelected();
-			transactionEditController.transaction.transaction_type.should.equal(transactionType);
-			transactionEditController.transaction.direction.should.equal(direction);
+			expect(transactionEditController.transaction.transaction_type).to.equal(transactionType);
+			expect(transactionEditController.transaction.direction).to.equal(direction);
 		});
 
 		const scenarios: { id: string; type: SecurityTransactionType; direction: TransactionDirection; }[] = [
@@ -595,8 +595,8 @@ describe("TransactionEditController", (): void => {
 			it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 				(transactionEditController.transaction.category as PsuedoCategory).id = scenario.id;
 				transactionEditController.investmentCategorySelected();
-				transactionEditController.transaction.transaction_type.should.equal(scenario.type);
-				transactionEditController.transaction.direction.should.equal(scenario.direction);
+				expect(transactionEditController.transaction.transaction_type).to.equal(scenario.type);
+				expect(transactionEditController.transaction.direction).to.equal(scenario.direction);
 			});
 		});
 	});
@@ -615,23 +615,23 @@ describe("TransactionEditController", (): void => {
 		it("should do nothing if there are no subtransactions", (): void => {
 			delete (transactionEditController.transaction as Partial<SplitTransaction>).subtransactions;
 			(transactionEditController as angular.IController).$scope.$digest();
-			(null === transactionEditController.totalAllocated).should.be.true;
+			expect(transactionEditController.totalAllocated).to.be.null;
 		});
 
 		it("should calculate the total and make it available to the view", (): void => {
 			(transactionEditController as angular.IController).$scope.$digest();
-			(transactionEditController.totalAllocated as number).should.equal(5);
+			expect(transactionEditController.totalAllocated as number).to.equal(5);
 		});
 
 		it("should not set the main transaction memo when editing an existing transaction", (): void => {
 			(transactionEditController as angular.IController).$scope.$digest();
-			transactionEditController.memoFromSubtransactions.should.not.have.been.called;
+			expect(transactionEditController["memoFromSubtransactions"]).to.not.have.been.called;
 		});
 
 		it("should set the main transaction memos when adding a new transaction", (): void => {
 			transactionEditController.transaction.id = null;
 			(transactionEditController as angular.IController).$scope.$digest();
-			transactionEditController.memoFromSubtransactions.should.have.been.called;
+			expect(transactionEditController["memoFromSubtransactions"]).to.have.been.called;
 		});
 	});
 
@@ -649,7 +649,7 @@ describe("TransactionEditController", (): void => {
 
 		it("should join the sub transaction memos and set the main transaction memo", (): void => {
 			transactionEditController.memoFromSubtransactions();
-			transactionEditController.transaction.memo.should.equal("memo 1; memo 2");
+			expect(transactionEditController.transaction.memo).to.equal("memo 1; memo 2");
 		});
 	});
 
@@ -658,25 +658,25 @@ describe("TransactionEditController", (): void => {
 
 		it("should fetch the list of accounts", (): void => {
 			transactionEditController.accounts("a", 2);
-			accountModel.all.should.have.been.called;
+			expect(accountModel.all).to.have.been.called;
 		});
 
 		it("should remove the current account from the list", async (): Promise<void> => {
 			transactionEditController.transaction.primary_account = createAccount({ name: "aa" });
-			(await transactionEditController.accounts("a", 2)).should.deep.equal([
+			expect(await transactionEditController.accounts("a", 2)).to.deep.equal([
 				createAccount({ id: 4, name: "ba", account_type: "asset" }),
 				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
 		});
 
-		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", async (): Promise<Chai.Assertion> => (await transactionEditController.accounts("b", 2)).should.deep.equal([
+		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", async (): Promise<Chai.Assertion> => expect(await transactionEditController.accounts("b", 2)).to.deep.equal([
 			createAccount({ id: 4, name: "ba", account_type: "asset" }),
 			createAccount({ id: 5, name: "ab", account_type: "asset" })
 		]));
 
 		it("should return a filtered & limited list of investment accounts when the transaction type is Security Transfer", async (): Promise<void> => {
 			transactionEditController.transaction.transaction_type = "SecurityTransfer";
-			(await transactionEditController.accounts("b", 2)).should.deep.equal([
+			expect(await transactionEditController.accounts("b", 2)).to.deep.equal([
 				createAccount({ id: 2, name: "bb", account_type: "investment" }),
 				createAccount({ id: 6, name: "bc", account_type: "investment" })
 			]);
@@ -687,19 +687,19 @@ describe("TransactionEditController", (): void => {
 		it("should do nothing when the transfer account is null", (): void => {
 			(transactionEditController.transaction as TransferrableTransaction).account = null;
 			transactionEditController.primaryAccountSelected();
-			(null === (transactionEditController.transaction as TransferrableTransaction).account).should.be.true;
+			expect((transactionEditController.transaction as TransferrableTransaction).account).to.be.null;
 		});
 
 		it("should do nothing when the transfer account is undefined", (): void => {
 			transactionEditController.primaryAccountSelected();
-			transactionEditController.transaction.should.not.have.property("account");
+			expect(transactionEditController.transaction).to.not.have.property("account");
 		});
 
 		it("should clear the transfer account when the primary account matches", (): void => {
 			(transactionEditController.transaction as TransferrableTransaction).account = createAccount({ id: 1 });
 			transactionEditController.transaction.primary_account = createAccount({ id: 1 });
 			transactionEditController.primaryAccountSelected();
-			(null === (transactionEditController.transaction as TransferrableTransaction).account).should.be.true;
+			expect((transactionEditController.transaction as TransferrableTransaction).account).to.be.null;
 		});
 	});
 
@@ -707,7 +707,7 @@ describe("TransactionEditController", (): void => {
 		it("should add an empty object to the subtransactions array", (): void => {
 			(transactionEditController.transaction as SplitTransaction).subtransactions = [];
 			transactionEditController.addSubtransaction();
-			(transactionEditController.transaction as SplitTransaction).subtransactions.should.deep.equal([{}]);
+			expect((transactionEditController.transaction as SplitTransaction).subtransactions).to.deep.equal([{}]);
 		});
 	});
 
@@ -719,7 +719,7 @@ describe("TransactionEditController", (): void => {
 				createSubtransaction({ id: 3 })
 			];
 			transactionEditController.deleteSubtransaction(1);
-			(transactionEditController.transaction as SplitTransaction).subtransactions.should.deep.equal([
+			expect((transactionEditController.transaction as SplitTransaction).subtransactions).to.deep.equal([
 				createSubtransaction({ id: 1 }),
 				createSubtransaction({ id: 3 })
 			]);
@@ -738,12 +738,12 @@ describe("TransactionEditController", (): void => {
 
 		it("should increase an existing subtransaction amount by the unallocated amount", (): void => {
 			transactionEditController.addUnallocatedAmount(0);
-			((transactionEditController.transaction as SplitTransaction).subtransactions[0].amount as number).should.equal(100);
+			expect((transactionEditController.transaction as SplitTransaction).subtransactions[0].amount as number).to.equal(100);
 		});
 
 		it("should set a blank subtransacion amount to the unallocated amount", (): void => {
 			transactionEditController.addUnallocatedAmount(1);
-			((transactionEditController.transaction as SplitTransaction).subtransactions[1].amount as number).should.equal(20);
+			expect((transactionEditController.transaction as SplitTransaction).subtransactions[1].amount as number).to.equal(20);
 		});
 	});
 
@@ -766,14 +766,14 @@ describe("TransactionEditController", (): void => {
 		it("should do nothing when the transaction type is not SecurityInvestment", (): void => {
 			transactionEditController.transaction.transaction_type = "Basic";
 			transactionEditController.updateInvestmentDetails();
-			(transactionEditController.transaction as BasicTransaction).amount.should.equal(amount);
-			transactionEditController.transaction.memo.should.equal(memo);
+			expect((transactionEditController.transaction as BasicTransaction).amount).to.equal(amount);
+			expect(transactionEditController.transaction.memo).to.equal(memo);
 		});
 
 		it("should not update the memo when editing an existing Security Investment transaction", (): void => {
 			transactionEditController.transaction.id = 1;
 			transactionEditController.updateInvestmentDetails();
-			transactionEditController.transaction.memo.should.equal(memo);
+			expect(transactionEditController.transaction.memo).to.equal(memo);
 		});
 
 		const scenarios: { direction: TransactionDirection; amount: number; memo: string; }[] = [
@@ -788,20 +788,20 @@ describe("TransactionEditController", (): void => {
 				delete (transactionEditController.transaction as Partial<SecurityInvestmentTransaction>).price;
 				delete (transactionEditController.transaction as Partial<SecurityInvestmentTransaction>).commission;
 				transactionEditController.updateInvestmentDetails();
-				(transactionEditController.transaction as SecurityInvestmentTransaction).amount.should.equal(0);
-				transactionEditController.transaction.memo.should.be.empty;
+				expect((transactionEditController.transaction as SecurityInvestmentTransaction).amount).to.equal(0);
+				expect(transactionEditController.transaction.memo).to.be.empty;
 			});
 
 			it(`should calculate the transaction amount from the price, quantity and commission for a Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				transactionEditController.transaction.direction = scenario.direction;
 				transactionEditController.updateInvestmentDetails();
-				(transactionEditController.transaction as SecurityInvestmentTransaction).amount.should.equal(scenario.amount);
+				expect((transactionEditController.transaction as SecurityInvestmentTransaction).amount).to.equal(scenario.amount);
 			});
 
 			it(`should update the memo with the price, quantity and commission when adding a new Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				transactionEditController.transaction.direction = scenario.direction;
 				transactionEditController.updateInvestmentDetails();
-				transactionEditController.transaction.memo.should.equal(`2.0000 @ $10.000 (${scenario.memo} $1.00 commission)`);
+				expect(transactionEditController.transaction.memo).to.equal(`2.0000 @ $10.000 (${scenario.memo} $1.00 commission)`);
 			});
 		});
 	});
@@ -843,54 +843,54 @@ describe("TransactionEditController", (): void => {
 			delete (saved as Partial<SecurityTransaction>).security;
 			delete (saved as Partial<SplitTransaction>).subtransactions;
 			transactionEditController["invalidateCaches"](saved);
-			accountModel.flush.should.not.have.been.called;
-			payeeModel.flush.should.not.have.been.called;
-			categoryModel.flush.should.not.have.been.called;
-			securityModel.flush.should.not.have.been.called;
+			expect(accountModel.flush).to.not.have.been.called;
+			expect(payeeModel.flush).to.not.have.been.called;
+			expect(categoryModel.flush).to.not.have.been.called;
+			expect(securityModel.flush).to.not.have.been.called;
 		});
 
 		it("should do nothing if the original values are unchanged", (): void => {
 			transactionEditController["invalidateCaches"](saved);
-			accountModel.flush.should.not.have.been.called;
-			payeeModel.flush.should.not.have.been.called;
-			categoryModel.flush.should.not.have.been.called;
-			securityModel.flush.should.not.have.been.called;
+			expect(accountModel.flush).to.not.have.been.called;
+			expect(payeeModel.flush).to.not.have.been.called;
+			expect(categoryModel.flush).to.not.have.been.called;
+			expect(securityModel.flush).to.not.have.been.called;
 		});
 
 		it("should invalidate the original primary account if changed", (): void => {
 			saved.primary_account.id = 2;
 			transactionEditController["invalidateCaches"](saved);
-			accountModel.flush.should.have.been.calledWith(original.primary_account.id);
+			expect(accountModel.flush).to.have.been.calledWith(original.primary_account.id);
 		});
 
 		it("should invalidate the original payee if changed", (): void => {
 			((saved as BasicTransaction).payee as Payee).id = 2;
 			transactionEditController["invalidateCaches"](saved);
-			payeeModel.flush.should.have.been.calledWith(((original as BasicTransaction).payee as Payee).id);
+			expect(payeeModel.flush).to.have.been.calledWith(((original as BasicTransaction).payee as Payee).id);
 		});
 
 		it("should invalidate the original category if changed", (): void => {
 			((saved as BasicTransaction).category as Category).id = 2;
 			transactionEditController["invalidateCaches"](saved);
-			categoryModel.flush.should.have.been.calledWith(((original as BasicTransaction).category as Category).id);
+			expect(categoryModel.flush).to.have.been.calledWith(((original as BasicTransaction).category as Category).id);
 		});
 
 		it("should invalidate the original subcategory if changed", (): void => {
 			((saved as BasicTransaction).subcategory as Category).id = 3;
 			transactionEditController["invalidateCaches"](saved);
-			categoryModel.flush.should.have.been.calledWith(((original as BasicTransaction).subcategory as Category).id);
+			expect(categoryModel.flush).to.have.been.calledWith(((original as BasicTransaction).subcategory as Category).id);
 		});
 
 		it("should invalidate the original account if changed", (): void => {
 			((saved as TransferrableTransaction).account as Account).id = 2;
 			transactionEditController["invalidateCaches"](saved);
-			accountModel.flush.should.have.been.calledWith(((original as TransferrableTransaction).account as Account).id);
+			expect(accountModel.flush).to.have.been.calledWith(((original as TransferrableTransaction).account as Account).id);
 		});
 
 		it("should invalidate the original security if changed", (): void => {
 			((saved as SecurityTransaction).security as Security).id = 2;
 			transactionEditController["invalidateCaches"](saved);
-			securityModel.flush.should.have.been.calledWith(((original as SecurityTransaction).security as Security).id);
+			expect(securityModel.flush).to.have.been.calledWith(((original as SecurityTransaction).security as Security).id);
 		});
 
 		const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
@@ -900,7 +900,7 @@ describe("TransactionEditController", (): void => {
 				original.transaction_type = scenario;
 				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
-				transactionModel.findSubtransactions.should.have.been.calledWith(original.id);
+				expect(transactionModel.findSubtransactions).to.have.been.calledWith(original.id);
 			});
 
 			it(`should do nothing if subtransaction values are undefined when the type is ${scenario}`, (): void => {
@@ -910,8 +910,8 @@ describe("TransactionEditController", (): void => {
 				delete (subtransaction as Partial<SubtransferTransaction>).account;
 				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
-				categoryModel.flush.should.not.have.been.called;
-				accountModel.flush.should.not.have.been.called;
+				expect(categoryModel.flush).to.not.have.been.called;
+				expect(accountModel.flush).to.not.have.been.called;
 			});
 
 			it(`should do nothing if subtransaction ids are undefined when the type is ${scenario}`, (): void => {
@@ -921,33 +921,33 @@ describe("TransactionEditController", (): void => {
 				delete (subtransaction as SubtransferTransaction).account.id;
 				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
-				categoryModel.flush.should.not.have.been.called;
-				accountModel.flush.should.not.have.been.called;
+				expect(categoryModel.flush).to.not.have.been.called;
+				expect(accountModel.flush).to.not.have.been.called;
 			});
 
 			it(`should invalidate the subtransaction category if defined when the type is ${scenario}`, (): void => {
 				original.transaction_type = scenario;
 				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
-				categoryModel.flush.should.have.been.calledWith((subtransaction.category as Category).id);
+				expect(categoryModel.flush).to.have.been.calledWith((subtransaction.category as Category).id);
 			});
 
 			it(`should invalidate the subtransaction subcategory if defined when the type is ${scenario}`, (): void => {
 				original.transaction_type = scenario;
 				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
-				categoryModel.flush.should.have.been.calledWith(((subtransaction as Subtransaction).subcategory as Category).id);
+				expect(categoryModel.flush).to.have.been.calledWith(((subtransaction as Subtransaction).subcategory as Category).id);
 			});
 
 			it(`should invalidate the subtransfer account if defined when the type is ${scenario}`, (): void => {
 				original.transaction_type = scenario;
 				transactionEditController = controllerTest("TransactionEditController", { transaction: original }) as TransactionEditController;
 				transactionEditController["invalidateCaches"](saved);
-				accountModel.flush.should.have.been.calledWith((subtransaction as SubtransferTransaction).account.id);
+				expect(accountModel.flush).to.have.been.calledWith((subtransaction as SubtransferTransaction).account.id);
 			});
 		});
 
-		it("should resolve with the saved transaction", async (): Promise<Chai.Assertion> => (await transactionEditController["invalidateCaches"](saved)).should.deep.equal(saved));
+		it("should resolve with the saved transaction", async (): Promise<Chai.Assertion> => expect(await transactionEditController["invalidateCaches"](saved)).to.deep.equal(saved));
 	});
 
 	describe("updateLruCaches", (): void => {
@@ -976,44 +976,44 @@ describe("TransactionEditController", (): void => {
 
 		it("should add the primary account to the recent list", (): void => {
 			transactionEditController["updateLruCaches"](data);
-			accountModel.addRecent.should.have.been.calledWith(data.primary_account);
+			expect(accountModel.addRecent).to.have.been.calledWith(data.primary_account);
 		});
 
 		it("should add the payee to the recent list for a non-investment account", (): void => {
 			transactionEditController["updateLruCaches"](data);
-			payeeModel.addRecent.should.have.been.calledWith((data as BasicTransaction).payee);
-			securityModel.addRecent.should.not.have.been.called;
+			expect(payeeModel.addRecent).to.have.been.calledWith((data as BasicTransaction).payee);
+			expect(securityModel.addRecent).to.not.have.been.called;
 		});
 
 		it("should add the security to the recent list for an investment account", (): void => {
 			data.primary_account = createAccount({ account_type: "investment" });
 			transactionEditController["updateLruCaches"](data);
-			securityModel.addRecent.should.have.been.calledWith((data as SecurityTransaction).security);
-			payeeModel.addRecent.should.not.have.been.called;
+			expect(securityModel.addRecent).to.have.been.calledWith((data as SecurityTransaction).security);
+			expect(payeeModel.addRecent).to.not.have.been.called;
 		});
 
 		it("should add the category to the recent list if the type is Basic", (): void => {
 			transactionEditController["updateLruCaches"](data);
-			categoryModel.addRecent.should.have.been.calledWith(data.category);
+			expect(categoryModel.addRecent).to.have.been.calledWith(data.category);
 		});
 
 		it("should not try to add the subcategory to the recent list if the type is Basic but there is no subcategory", (): void => {
 			delete (data as BasicTransaction).subcategory;
 			transactionEditController["updateLruCaches"](data);
-			categoryModel.addRecent.should.have.been.calledOnce;
+			expect(categoryModel.addRecent).to.have.been.calledOnce;
 		});
 
 		it("should add the subcategory to the recent list if the type is Basic", (): void => {
 			transactionEditController["updateLruCaches"](data);
-			categoryModel.addRecent.should.have.been.calledTwice;
-			categoryModel.addRecent.should.have.been.calledWith((data as BasicTransaction).subcategory);
+			expect(categoryModel.addRecent).to.have.been.calledTwice;
+			expect(categoryModel.addRecent).to.have.been.calledWith((data as BasicTransaction).subcategory);
 		});
 
 		transferScenarios.forEach((scenario: PayeeTransactionType | SecurityTransactionType): void => {
 			it(`should add the account to the recent list if the type is ${scenario}`, (): void => {
 				data.transaction_type = scenario;
 				transactionEditController["updateLruCaches"](data);
-				accountModel.addRecent.should.have.been.calledWith((data as TransferrableTransaction).account);
+				expect(accountModel.addRecent).to.have.been.calledWith((data as TransferrableTransaction).account);
 			});
 		});
 
@@ -1021,47 +1021,47 @@ describe("TransactionEditController", (): void => {
 			it(`should fetch the subtransactions when the type is ${scenario}`, (): void => {
 				data.transaction_type = scenario;
 				transactionEditController["updateLruCaches"](data);
-				transactionModel.findSubtransactions.should.have.been.calledWith(data.id);
+				expect(transactionModel.findSubtransactions).to.have.been.calledWith(data.id);
 			});
 
 			it(`should add the subtransaction account to the recent list for Subtranfers when the type is ${scenario}`, (): void => {
 				data.transaction_type = scenario;
 				subtransaction.transaction_type = "Subtransfer";
 				transactionEditController["updateLruCaches"](data);
-				accountModel.addRecent.should.have.been.calledWith((subtransaction as SubtransferTransaction).account);
+				expect(accountModel.addRecent).to.have.been.calledWith((subtransaction as SubtransferTransaction).account);
 			});
 
 			it(`should add the subtransaction category to the recent list for Subtransactions when the type is ${scenario}`, (): void => {
 				data.transaction_type = scenario;
 				transactionEditController["updateLruCaches"](data);
-				categoryModel.addRecent.should.have.been.calledWith((subtransaction as Subtransaction).category);
+				expect(categoryModel.addRecent).to.have.been.calledWith((subtransaction as Subtransaction).category);
 			});
 
 			it(`should not try to add the subtransaction subcategory to the recent list for Subtransactions if there is no subcategory when the type is ${scenario}`, (): void => {
 				data.transaction_type = scenario;
 				delete (subtransaction as Subtransaction).subcategory;
 				transactionEditController["updateLruCaches"](data);
-				categoryModel.addRecent.should.have.been.calledOnce;
+				expect(categoryModel.addRecent).to.have.been.calledOnce;
 			});
 
 			it(`should add the subtransaction subcategory to the recent list for Subtransactions when the type is ${scenario}`, (): void => {
 				data.transaction_type = scenario;
 				transactionEditController["updateLruCaches"](data);
-				categoryModel.addRecent.should.have.been.calledWith((subtransaction as Subtransaction).subcategory);
+				expect(categoryModel.addRecent).to.have.been.calledWith((subtransaction as Subtransaction).subcategory);
 			});
 		});
 
 		it("should do nothing for other transaction types", (): void => {
 			data.transaction_type = "SecurityHolding";
 			transactionEditController["updateLruCaches"](data);
-			accountModel.addRecent.should.have.been.calledOnce;
-			categoryModel.addRecent.should.not.have.been.called;
-			payeeModel.addRecent.should.have.been.calledOnce;
-			securityModel.addRecent.should.not.have.been.called;
-			transactionModel.findSubtransactions.should.not.have.been.called;
+			expect(accountModel.addRecent).to.have.been.calledOnce;
+			expect(categoryModel.addRecent).to.not.have.been.called;
+			expect(payeeModel.addRecent).to.have.been.calledOnce;
+			expect(securityModel.addRecent).to.not.have.been.called;
+			expect(transactionModel.findSubtransactions).to.not.have.been.called;
 		});
 
-		it("should resolve with the saved transaction", async (): Promise<Chai.Assertion> => (await transactionEditController["updateLruCaches"](data)).should.deep.equal(data));
+		it("should resolve with the saved transaction", async (): Promise<Chai.Assertion> => expect(await transactionEditController["updateLruCaches"](data)).to.deep.equal(data));
 	});
 
 	describe("save", (): void => {
@@ -1073,40 +1073,40 @@ describe("TransactionEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionEditController.errorMessage = "error message";
 			transactionEditController.save();
-			(null === transactionEditController.errorMessage as string | null).should.be.true;
+			expect(transactionEditController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should save the transaction", (): void => {
 			transactionEditController.save();
-			transactionModel.save.should.have.been.calledWith(transaction);
+			expect(transactionModel.save).to.have.been.calledWith(transaction);
 		});
 
 		it("should invalidate the $http caches", (): void => {
 			transactionEditController.save();
-			transactionEditController["invalidateCaches"].should.have.been.calledWith(transaction);
+			expect(transactionEditController["invalidateCaches"]).to.have.been.calledWith(transaction);
 		});
 
 		it("should update the LRU caches", (): void => {
 			transactionEditController.save();
-			transactionEditController["updateLruCaches"].should.have.been.calledWith(transaction);
+			expect(transactionEditController["updateLruCaches"]).to.have.been.calledWith(transaction);
 		});
 
 		it("should close the modal when the transaction save is successful", (): void => {
 			transactionEditController.save();
-			$uibModalInstance.close.should.have.been.calledWith(transaction);
+			expect($uibModalInstance.close).to.have.been.calledWith(transaction);
 		});
 
 		it("should display an error message when the transaction save unsuccessful", (): void => {
 			transactionEditController.transaction.id = -1;
 			transactionEditController.save();
-			(transactionEditController.errorMessage as string).should.equal("unsuccessful");
+			expect(transactionEditController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			transactionEditController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

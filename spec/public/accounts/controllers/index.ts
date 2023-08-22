@@ -40,9 +40,9 @@ describe("AccountIndexController", (): void => {
 		accountIndexController = controllerTest("AccountIndexController", { accounts: accountsWithBalances }) as AccountIndexController;
 	}) as Mocha.HookFunction);
 
-	it("should make the account list available to the view", (): Chai.Assertion => accountIndexController.accounts.should.equal(accountsWithBalances));
+	it("should make the account list available to the view", (): Chai.Assertion => expect(accountIndexController.accounts).to.equal(accountsWithBalances));
 
-	it("should calculate the net worth by summing the account type totals", (): Chai.Assertion => accountIndexController.netWorth.should.equal(200));
+	it("should calculate the net worth by summing the account type totals", (): Chai.Assertion => expect(accountIndexController.netWorth).to.equal(200));
 
 	describe("editAccount", (): void => {
 		let account: Account;
@@ -56,9 +56,9 @@ describe("AccountIndexController", (): void => {
 			beforeEach((): void => accountIndexController.editAccount("Bank accounts", 1));
 
 			it("should open the edit account modal with an account", (): void => {
-				$uibModal.open.should.have.been.called;
-				accountModel.addRecent.should.have.been.calledWith(account);
-				(($uibModal.resolves as UibModalMockResolves).account as Account).should.deep.equal(account);
+				expect($uibModal.open).to.have.been.called;
+				expect(accountModel.addRecent).to.have.been.calledWith(account);
+				expect(($uibModal.resolves as UibModalMockResolves).account as Account).to.deep.equal(account);
 			});
 
 			describe("(account type changed)", (): void => {
@@ -67,17 +67,17 @@ describe("AccountIndexController", (): void => {
 					$uibModal.close(account);
 				});
 
-				it("should remove the account from original account type's list", (): Chai.Assertion => accountIndexController.accounts["Bank accounts"].accounts.should.not.include(account));
+				it("should remove the account from original account type's list", (): Chai.Assertion => expect(accountIndexController.accounts["Bank accounts"].accounts).to.not.include(account));
 
-				it("should recalculate the original account type total", (): Chai.Assertion => accountIndexController["calculateAccountTypeTotal"].should.have.been.calledWith("Bank accounts"));
+				it("should recalculate the original account type total", (): Chai.Assertion => expect(accountIndexController["calculateAccountTypeTotal"]).to.have.been.calledWith("Bank accounts"));
 
-				it("should add the account to the new account type's list", (): Chai.Assertion => accountIndexController.accounts["Investment accounts"].accounts.should.include(account));
+				it("should add the account to the new account type's list", (): Chai.Assertion => expect(accountIndexController.accounts["Investment accounts"].accounts).to.include(account));
 			});
 
 			it("should update the account in the list of accounts when the modal is closed", (): void => {
 				account.name = "edited account";
 				$uibModal.close(account);
-				accountIndexController.accounts["Bank accounts"].accounts.should.include(account);
+				expect(accountIndexController.accounts["Bank accounts"].accounts).to.include(account);
 			});
 		});
 
@@ -88,19 +88,19 @@ describe("AccountIndexController", (): void => {
 			});
 
 			it("should open the edit account modal without an account", (): void => {
-				$uibModal.open.should.have.been.called;
-				accountModel.addRecent.should.not.have.been.called;
-				(undefined === ($uibModal.resolves as UibModalMockResolves).account).should.be.true;
+				expect($uibModal.open).to.have.been.called;
+				expect(accountModel.addRecent).to.not.have.been.called;
+				expect(($uibModal.resolves as UibModalMockResolves).account).to.be.undefined;
 			});
 
 			it("should add the new account to the list of accounts when the modal is closed", (): void => {
 				$uibModal.close(account);
-				(accountIndexController.accounts["Bank accounts"].accounts.pop() as Account).should.deep.equal(account);
+				expect(accountIndexController.accounts["Bank accounts"].accounts.pop() as Account).to.deep.equal(account);
 			});
 
 			it("should add the new account to the recent list", (): void => {
 				$uibModal.close(account);
-				accountModel.addRecent.should.have.been.calledWith(account);
+				expect(accountModel.addRecent).to.have.been.calledWith(account);
 			});
 		});
 
@@ -109,13 +109,13 @@ describe("AccountIndexController", (): void => {
 
 			accountIndexController.editAccount();
 			$uibModal.close(account);
-			(accountIndexController.accounts["Bank accounts"].accounts.pop() as Account).should.deep.equal(accountWithHighestName);
+			expect(accountIndexController.accounts["Bank accounts"].accounts.pop() as Account).to.deep.equal(accountWithHighestName);
 		});
 
 		it("should recalculate the account type total when the modal is closed", (): void => {
 			accountIndexController.editAccount();
 			$uibModal.close(account);
-			accountIndexController["calculateAccountTypeTotal"].should.have.been.calledWith("Bank accounts");
+			expect(accountIndexController["calculateAccountTypeTotal"]).to.have.been.calledWith("Bank accounts");
 		});
 
 		it("should not change the accounts list when the modal is dismissed", (): void => {
@@ -123,7 +123,7 @@ describe("AccountIndexController", (): void => {
 
 			accountIndexController.editAccount();
 			$uibModal.dismiss();
-			accountIndexController.accounts.should.deep.equal(originalAccounts);
+			expect(accountIndexController.accounts).to.deep.equal(originalAccounts);
 		});
 	});
 
@@ -137,31 +137,31 @@ describe("AccountIndexController", (): void => {
 
 		it("should fetch the account", (): void => {
 			accountIndexController.deleteAccount("Bank accounts", 1);
-			accountModel.find.should.have.been.calledWith(account.id);
+			expect(accountModel.find).to.have.been.calledWith(account.id);
 		});
 
 		it("should show an alert if the account has transactions", (): void => {
 			accountIndexController.deleteAccount("Bank accounts", 2);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header.should.equal("Account has existing transactions");
+			expect($uibModal.open).to.have.been.called;
+			expect((($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header).to.equal("Account has existing transactions");
 		});
 
 		it("should show the delete account modal if the account has no transactions", (): void => {
 			accountIndexController.deleteAccount("Bank accounts", 1);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).account as Account).should.deep.equal(account);
+			expect($uibModal.open).to.have.been.called;
+			expect(($uibModal.resolves as UibModalMockResolves).account as Account).to.deep.equal(account);
 		});
 
 		it("should remove the account from the accounts list when the modal is closed", (): void => {
 			accountIndexController.deleteAccount("Bank accounts", 1);
 			$uibModal.close(account);
-			accountIndexController.accounts["Bank accounts"].accounts.should.not.include(account);
+			expect(accountIndexController.accounts["Bank accounts"].accounts).to.not.include(account);
 		});
 
 		it("should recalculate the account type total when the modal is closed", (): void => {
 			accountIndexController.deleteAccount("Bank accounts", 1);
 			$uibModal.close(account);
-			accountIndexController["calculateAccountTypeTotal"].should.have.been.calledWith("Bank accounts");
+			expect(accountIndexController["calculateAccountTypeTotal"]).to.have.been.calledWith("Bank accounts");
 		});
 	});
 
@@ -182,29 +182,29 @@ describe("AccountIndexController", (): void => {
 		it("should invoke editAccount() with no account when the Insert key is pressed", (): void => {
 			event.keyCode = INSERT_KEY;
 			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
-			accountIndexController.editAccount.should.have.been.called;
-			(event.preventDefault as SinonStub).should.have.been.called;
+			expect(accountIndexController["editAccount"]).to.have.been.called;
+			expect(event.preventDefault as SinonStub).to.have.been.called;
 		});
 
 		it("should invoke editAccount() with no account when the CTRL+N keys are pressed", (): void => {
 			event.keyCode = N_KEY;
 			event.ctrlKey = true;
 			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
-			accountIndexController.editAccount.should.have.been.called;
-			(event.preventDefault as SinonStub).should.have.been.called;
+			expect(accountIndexController["editAccount"]).to.have.been.called;
+			expect(event.preventDefault as SinonStub).to.have.been.called;
 		});
 
 		it("should do nothing when any other keys are pressed", (): void => {
 			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
-			accountIndexController.editAccount.should.not.have.been.called;
-			(event.preventDefault as SinonStub).should.not.have.been.called;
+			expect(accountIndexController["editAccount"]).to.not.have.been.called;
+			expect(event.preventDefault as SinonStub).to.not.have.been.called;
 		});
 	});
 
 	it("should attach a keydown handler to the document", (): void => {
 		sinon.stub(accountIndexController, "keyHandler" as keyof AccountIndexController);
 		$window.$(document).triggerHandler("keydown");
-		accountIndexController["keyHandler"].should.have.been.called;
+		expect(accountIndexController["keyHandler"]).to.have.been.called;
 	});
 
 	describe("on destroy", (): void => {
@@ -215,7 +215,7 @@ describe("AccountIndexController", (): void => {
 
 		it("should remove the keydown handler from the document", (): void => {
 			$window.$(document).triggerHandler("keydown");
-			accountIndexController["keyHandler"].should.not.have.been.called;
+			expect(accountIndexController["keyHandler"]).to.not.have.been.called;
 		});
 	});
 
@@ -225,7 +225,7 @@ describe("AccountIndexController", (): void => {
 
 			accountIndexController.accounts["Bank accounts"].accounts[0].closing_balance += 10;
 			accountIndexController["calculateAccountTypeTotal"]("Bank accounts");
-			accountIndexController.accounts["Bank accounts"].total.should.equal(originalTotal + 10);
+			expect(accountIndexController.accounts["Bank accounts"].total).to.equal(originalTotal + 10);
 		});
 	});
 
@@ -239,15 +239,15 @@ describe("AccountIndexController", (): void => {
 		it("should favourite the account", (): void => {
 			account.favourite = false;
 			accountIndexController.toggleFavourite("Bank accounts", 0);
-			account.favourite.should.be.true;
+			expect(account.favourite).to.be.true;
 		});
 
 		it("should unfavourite the account", (): void => {
 			account.favourite = true;
 			accountIndexController.toggleFavourite("Bank accounts", 0);
-			account.favourite.should.be.false;
+			expect(account.favourite).to.be.false;
 		});
 
-		afterEach((): Chai.Assertion => accountModel.toggleFavourite.should.have.been.called);
+		afterEach((): Chai.Assertion => expect(accountModel.toggleFavourite).to.have.been.called);
 	});
 });

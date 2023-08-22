@@ -65,15 +65,15 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("path", (): void => {
-		it("should return the transactions collection path when an id is not provided", (): Chai.Assertion => transactionModel.path().should.equal("/transactions"));
+		it("should return the transactions collection path when an id is not provided", (): Chai.Assertion => expect(transactionModel.path()).to.equal("/transactions"));
 
-		it("should return a specific transaction path when an id is provided", (): Chai.Assertion => transactionModel.path(123).should.equal("/transactions/123"));
+		it("should return a specific transaction path when an id is provided", (): Chai.Assertion => expect(transactionModel.path(123)).to.equal("/transactions/123"));
 	});
 
 	describe("fullPath", (): void => {
 		it("should return the path including the parent context", (): void => {
 			sinon.stub(transactionModel, "path").returns("/path");
-			transactionModel.fullPath("/context").should.equal("/context/path");
+			expect(transactionModel.fullPath("/context")).to.equal("/context/path");
 		});
 	});
 
@@ -81,14 +81,14 @@ describe("transactionModel", (): void => {
 		it("should convert the transaction date from a string to a date", (): void => {
 			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss") }));
 
-			(transaction.transaction_date as Date).should.be.a("date");
-			(transaction.transaction_date as Date).should.deep.equal(startOfDay(new Date()));
+			expect(transaction.transaction_date as Date).to.be.a("date");
+			expect(transaction.transaction_date as Date).to.deep.equal(startOfDay(new Date()));
 		});
 
 		it("should do nothing if the transaction date is undefined", (): void => {
 			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: undefined }));
 
-			(undefined === transaction.transaction_date).should.be.true;
+			expect(transaction.transaction_date).to.be.undefined;
 		});
 	});
 
@@ -96,14 +96,14 @@ describe("transactionModel", (): void => {
 		it("should convert the transaction date from a date to a string", (): void => {
 			const transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: startOfDay(new Date()) }));
 
-			(transaction.transaction_date as string).should.be.a("string");
-			(transaction.transaction_date as string).should.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
+			expect(transaction.transaction_date as string).to.be.a("string");
+			expect(transaction.transaction_date as string).to.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
 		});
 
 		it("should do nothing if the transaction date is undefined", (): void => {
 			const transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: undefined }));
 
-			(undefined === transaction.transaction_date).should.be.true;
+			expect(transaction.transaction_date).to.be.undefined;
 		});
 	});
 
@@ -129,11 +129,11 @@ describe("transactionModel", (): void => {
 		it("should parse each transaction returned", (): void => {
 			transactionModel.all("context", fromDate, "prev", true);
 			$httpBackend.flush();
-			transactionModel["parse"].should.have.been.calledTwice;
+			expect(transactionModel["parse"]).to.have.been.calledTwice;
 		});
 
 		it("should return a list of transactions", (): void => {
-			transactionModel.all("context", fromDate, "prev", true).then((transactionBatch: TransactionBatch): Chai.Assertion => transactionBatch.should.deep.equal(expectedResponse));
+			transactionModel.all("context", fromDate, "prev", true).then((transactionBatch: TransactionBatch): Chai.Assertion => expect(transactionBatch).to.deep.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -158,11 +158,11 @@ describe("transactionModel", (): void => {
 		it("should parse each transaction returned", (): void => {
 			transactionModel.query("query", null, "prev");
 			$httpBackend.flush();
-			transactionModel["parse"].should.have.been.calledTwice;
+			expect(transactionModel["parse"]).to.have.been.calledTwice;
 		});
 
 		it("should return a list of transactions", (): void => {
-			transactionModel.query("query", null, "prev").then((transactionBatch: TransactionBatch): Chai.Assertion => transactionBatch.should.deep.equal(expectedResponse));
+			transactionModel.query("query", null, "prev").then((transactionBatch: TransactionBatch): Chai.Assertion => expect(transactionBatch).to.deep.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -178,7 +178,7 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should return a list of subtransactions", (): void => {
-			transactionModel.findSubtransactions(123).then((subtransactions: SplitTransactionChild[]): Chai.Assertion => subtransactions.should.equal(expectedResponse));
+			transactionModel.findSubtransactions(123).then((subtransactions: SplitTransactionChild[]): Chai.Assertion => expect(subtransactions).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -199,11 +199,11 @@ describe("transactionModel", (): void => {
 		it("should parse the transaction", (): void => {
 			transactionModel.find(123);
 			$httpBackend.flush();
-			transactionModel["parse"].should.have.been.calledWith(expectedResponse);
+			expect(transactionModel["parse"]).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the transaction", (): void => {
-			transactionModel.find(123).then((transaction: Transaction): Chai.Assertion => transaction.should.equal(expectedResponse));
+			transactionModel.find(123).then((transaction: Transaction): Chai.Assertion => expect(transaction).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -225,13 +225,13 @@ describe("transactionModel", (): void => {
 
 		it("should invalidate the associated $http caches", (): void => {
 			transactionModel.save(transaction);
-			transactionModel["invalidateCaches"].should.have.been.called;
+			expect(transactionModel["invalidateCaches"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should stringify the transaction", (): void => {
 			transactionModel.save(transaction);
-			transactionModel["stringify"].should.have.been.calledWith(transaction);
+			expect(transactionModel["stringify"]).to.have.been.calledWith(transaction);
 			$httpBackend.flush();
 		});
 
@@ -252,17 +252,17 @@ describe("transactionModel", (): void => {
 			transaction.transaction_date = parseISO("2000-01-01");
 			transactionModel.save(transaction);
 			$httpBackend.flush();
-			(transactionModel.lastTransactionDate as Date).should.deep.equal(transaction.transaction_date);
+			expect(transactionModel.lastTransactionDate as Date).to.deep.equal(transaction.transaction_date);
 		});
 
 		it("should parse the transaction", (): void => {
 			transactionModel.save(transaction);
 			$httpBackend.flush();
-			transactionModel["parse"].should.have.been.calledWith(expectedResponse);
+			expect(transactionModel["parse"]).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the transaction", (): void => {
-			transactionModel.save(transaction).then((savedTransaction: Transaction): Chai.Assertion => savedTransaction.should.equal(expectedResponse));
+			transactionModel.save(transaction).then((savedTransaction: Transaction): Chai.Assertion => expect(savedTransaction).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -279,7 +279,7 @@ describe("transactionModel", (): void => {
 
 		it("should invalidate the associated $http caches", (): void => {
 			transactionModel.destroy(transaction);
-			transactionModel["invalidateCaches"].should.have.been.called;
+			expect(transactionModel["invalidateCaches"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -301,44 +301,44 @@ describe("transactionModel", (): void => {
 			transactionModel["invalidateCaches"](transaction);
 		});
 
-		it("should invalidate the primary account from the account cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(accountModel, transaction.primary_account));
+		it("should invalidate the primary account from the account cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(accountModel, transaction.primary_account));
 
-		it("should invalidate the payee from the payee cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(payeeModel, (transaction as BasicTransaction).payee));
+		it("should invalidate the payee from the payee cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(payeeModel, (transaction as BasicTransaction).payee));
 
-		it("should invalidate the category from the category cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(categoryModel, transaction.category));
+		it("should invalidate the category from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, transaction.category));
 
-		it("should invalidate the subcategory from the category cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(categoryModel, (transaction as BasicTransaction).subcategory));
+		it("should invalidate the subcategory from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, (transaction as BasicTransaction).subcategory));
 
-		it("should invalidate the account from the account cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(accountModel, (transaction as TransferrableTransaction).account));
+		it("should invalidate the account from the account cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(accountModel, (transaction as TransferrableTransaction).account));
 
-		it("should invalidate the security from the security cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(securityModel, (transaction as SecurityTransaction).security));
+		it("should invalidate the security from the security cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(securityModel, (transaction as SecurityTransaction).security));
 
-		it("should invalidate any subtransaction categories from the category cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(categoryModel, (transaction as SplitTransaction).subtransactions[0].category));
+		it("should invalidate any subtransaction categories from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, (transaction as SplitTransaction).subtransactions[0].category));
 
-		it("should invalidate any subtransaction subcategories from the category cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(categoryModel, ((transaction as SplitTransaction).subtransactions[0] as Subtransaction).subcategory));
+		it("should invalidate any subtransaction subcategories from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, ((transaction as SplitTransaction).subtransactions[0] as Subtransaction).subcategory));
 
-		it("should invalidate any subtransfer accounts from the account cache", (): Chai.Assertion => transactionModel["invalidateCache"].should.have.been.calledWith(accountModel, ((transaction as SplitTransaction).subtransactions[1] as SubtransferTransaction).account));
+		it("should invalidate any subtransfer accounts from the account cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(accountModel, ((transaction as SplitTransaction).subtransactions[1] as SubtransferTransaction).account));
 	});
 
 	describe("invalidateCache", (): void => {
 		it("should do nothing if the item is an empty string", (): void => {
 			transactionModel["invalidateCache"](payeeModel, "");
-			payeeModel.flush.should.not.have.been.called;
+			expect(payeeModel["flush"]).to.not.have.been.called;
 		});
 
 		it("should flush the $http cache if the item is a non-empty string", (): void => {
 			transactionModel["invalidateCache"](payeeModel, "test");
-			payeeModel.flush.should.have.been.calledWithExactly();
+			expect(payeeModel["flush"]).to.have.been.calledWithExactly();
 		});
 
 		it("should do nothing if the item is undefined", (): void => {
 			transactionModel["invalidateCache"](payeeModel, {} as Payee);
-			payeeModel.flush.should.not.have.been.called;
+			expect(payeeModel["flush"]).to.not.have.been.called;
 		});
 
 		it("should do nothing if the item is null", (): void => {
 			transactionModel["invalidateCache"](payeeModel, null);
-			payeeModel.flush.should.not.have.been.called;
+			expect(payeeModel["flush"]).to.not.have.been.called;
 		});
 
 		it("should do nothing if the item has no id", (): void => {
@@ -346,12 +346,12 @@ describe("transactionModel", (): void => {
 
 			delete payee.id;
 			transactionModel["invalidateCache"](payeeModel, payee);
-			payeeModel.flush.should.not.have.been.called;
+			expect(payeeModel["flush"]).to.not.have.been.called;
 		});
 
 		it("should remove the item from the $http cache when the item has an id", (): void => {
 			transactionModel["invalidateCache"](payeeModel, createPayee({ id: 1 }));
-			payeeModel.flush.should.have.been.calledWith(1);
+			expect(payeeModel["flush"]).to.have.been.calledWith(1);
 		});
 	});
 
@@ -404,27 +404,27 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("allDetailsShown", (): void => {
-		it("should be true if the show all details setting is not present", (): Chai.Assertion => transactionModel.allDetailsShown().should.be.true);
+		it("should be true if the show all details setting is not present", (): Chai.Assertion => expect(transactionModel.allDetailsShown()).to.be.true);
 
 		it("should be true if the show all details setting is not set to false", (): void => {
 			$window.localStorage.getItem.withArgs("lootShowAllTransactionDetails").returns("true");
-			transactionModel.allDetailsShown().should.be.true;
+			expect(transactionModel.allDetailsShown()).to.be.true;
 		});
 
 		it("should be false if the show all details setting is set to false", (): void => {
 			$window.localStorage.getItem.withArgs("lootShowAllTransactionDetails").returns("false");
-			transactionModel.allDetailsShown().should.be.false;
+			expect(transactionModel.allDetailsShown()).to.be.false;
 		});
 	});
 
 	describe("showAllDetails", (): void => {
 		it("should save the show all details setting", (): void => {
 			transactionModel.showAllDetails(true);
-			$window.localStorage.setItem.should.have.been.calledWith("lootShowAllTransactionDetails", "true");
+			expect($window.localStorage.setItem).to.have.been.calledWith("lootShowAllTransactionDetails", "true");
 		});
 	});
 
 	describe("lastTransactionDate", (): void => {
-		it("should return the last used transaction date", (): Chai.Assertion => (transactionModel.lastTransactionDate as Date).should.deep.equal(startOfDay(new Date())));
+		it("should return the last used transaction date", (): Chai.Assertion => expect(transactionModel.lastTransactionDate as Date).to.deep.equal(startOfDay(new Date())));
 	});
 });

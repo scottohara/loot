@@ -46,9 +46,9 @@ describe("scheduleModel", (): void => {
 	});
 
 	describe("path", (): void => {
-		it("should return the schedules collection path when an id is not provided", (): Chai.Assertion => scheduleModel.path().should.equal("/schedules"));
+		it("should return the schedules collection path when an id is not provided", (): Chai.Assertion => expect(scheduleModel.path()).to.equal("/schedules"));
 
-		it("should return a specific schedule path when an id is provided", (): Chai.Assertion => scheduleModel.path(123).should.equal("/schedules/123"));
+		it("should return a specific schedule path when an id is provided", (): Chai.Assertion => expect(scheduleModel.path(123)).to.equal("/schedules/123"));
 	});
 
 	describe("parse", (): void => {
@@ -57,8 +57,8 @@ describe("scheduleModel", (): void => {
 		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["parse"](createScheduledBasicTransaction({ next_due_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss") }))));
 
 		it("should convert the next due date from a string to a date", (): void => {
-			schedule.next_due_date.should.be.a("date");
-			schedule.next_due_date.should.deep.equal(startOfDay(new Date()));
+			expect(schedule.next_due_date).to.be.a("date");
+			expect(schedule.next_due_date).to.deep.equal(startOfDay(new Date()));
 		});
 	});
 
@@ -68,8 +68,8 @@ describe("scheduleModel", (): void => {
 		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["stringify"](createScheduledBasicTransaction({ next_due_date: startOfDay(new Date()) }))));
 
 		it("should convert the next due date from a date to a string", (): void => {
-			schedule.next_due_date.should.be.a("string");
-			schedule.next_due_date.should.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
+			expect(schedule.next_due_date).to.be.a("string");
+			expect(schedule.next_due_date).to.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
 		});
 	});
 
@@ -91,11 +91,11 @@ describe("scheduleModel", (): void => {
 			scheduleModel["parse"] = sinon.stub().returnsArg(0);
 			scheduleModel.all();
 			$httpBackend.flush();
-			scheduleModel["parse"].should.have.been.calledTwice;
+			expect(scheduleModel["parse"]).to.have.been.calledTwice;
 		});
 
 		it("should return a list of all schedules", (): void => {
-			scheduleModel.all().then((scheduledTransactions: ScheduledTransaction[]): Chai.Assertion => scheduledTransactions.should.deep.equal(expectedResponse));
+			scheduleModel.all().then((scheduledTransactions: ScheduledTransaction[]): Chai.Assertion => expect(scheduledTransactions).to.deep.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -114,49 +114,49 @@ describe("scheduleModel", (): void => {
 
 		it("should flush the payee cache when the schedule payee is new", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1, payee: "" }));
-			payeeModel.flush.should.have.been.called;
+			expect(payeeModel.flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the payee cache when the schedule payee is existing", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
-			payeeModel.flush.should.not.have.been.called;
+			expect(payeeModel.flush).to.not.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should flush the category cache when the schedule category is new", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1, category: "" }));
-			categoryModel.flush.should.have.been.called;
+			expect(categoryModel.flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the category cache when the schedule category is existing", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
-			categoryModel.flush.should.not.have.been.called;
+			expect(categoryModel.flush).to.not.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should flush the category cache when the schedule subcategory is new", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1, subcategory: "" }));
-			categoryModel.flush.should.have.been.called;
+			expect(categoryModel.flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the category cache when the schedule subcategory is existing", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
-			categoryModel.flush.should.not.have.been.called;
+			expect(categoryModel.flush).to.not.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should flush the security cache when the schedule security is new", (): void => {
 			scheduleModel.save(createScheduledSecurityHoldingTransaction({ id: 1, security: "" }));
-			securityModel.flush.should.have.been.called;
+			expect(securityModel.flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should not flush the security cache when the schedule security is existing", (): void => {
 			scheduleModel.save(createScheduledSecurityHoldingTransaction({ id: 1 }));
-			securityModel.flush.should.not.have.been.called;
+			expect(securityModel.flush).to.not.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -164,7 +164,7 @@ describe("scheduleModel", (): void => {
 			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({ id: 1 });
 
 			scheduleModel.save(schedule);
-			scheduleModel["stringify"].should.have.been.calledWith(schedule);
+			expect(scheduleModel["stringify"]).to.have.been.calledWith(schedule);
 			$httpBackend.flush();
 		});
 
@@ -188,11 +188,11 @@ describe("scheduleModel", (): void => {
 		it("should parse the schedule", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
 			$httpBackend.flush();
-			scheduleModel["parse"].should.have.been.calledWith(expectedResponse);
+			expect(scheduleModel["parse"]).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the schedule", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({ id: 1 })).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion => scheduledTransaction.should.equal(expectedResponse));
+			scheduleModel.save(createScheduledBasicTransaction({ id: 1 })).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion => expect(scheduledTransaction).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});

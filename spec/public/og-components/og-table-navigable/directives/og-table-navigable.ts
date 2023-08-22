@@ -47,7 +47,7 @@ describe("ogTableNavigable", (): void => {
 		isolateScope = ogTableNavigable["element"].isolateScope();
 	}) as Mocha.HookFunction);
 
-	it("should attach a focusRow function to the handlers object", (): Chai.Assertion => (scope.model as OgTableActionHandlers).focusRow.should.be.a("function"));
+	it("should attach a focusRow function to the handlers object", (): Chai.Assertion => expect((scope.model as OgTableActionHandlers).focusRow).to.be.a("function"));
 
 	describe("focusRow", (): void => {
 		let row: JQuery<Element>;
@@ -60,22 +60,22 @@ describe("ogTableNavigable", (): void => {
 
 		it("should highlight the row", (): void => {
 			isolateScope.focusRow(row);
-			isolateScope.highlightRow.should.have.been.calledWith(row);
+			expect(isolateScope.highlightRow).to.have.been.calledWith(row);
 		});
 
 		it("should scroll to the row", (): void => {
 			isolateScope.focusRow(row);
-			isolateScope.scrollToRow.should.have.been.calledWith(row);
+			expect(isolateScope.scrollToRow).to.have.been.calledWith(row);
 		});
 
 		it("should store the focussed row index", (): void => {
 			isolateScope.focusRow(row);
-			Number(isolateScope.focussedRow).should.equal(1);
+			expect(Number(isolateScope.focussedRow)).to.equal(1);
 		});
 
 		it("should invoke the focusAction handler", (): void => {
 			isolateScope.focusRow(row);
-			scope.model.focusAction.should.have.been.calledWith(1);
+			expect(scope.model.focusAction).to.have.been.calledWith(1);
 		});
 	});
 
@@ -90,9 +90,9 @@ describe("ogTableNavigable", (): void => {
 			isolateScope.highlightRow(newRow);
 		});
 
-		it("should remove highlighting on the previous row", (): Chai.Assertion => oldRow.hasClass("warning").should.be.false);
+		it("should remove highlighting on the previous row", (): Chai.Assertion => expect(oldRow.hasClass("warning")).to.be.false);
 
-		it("should highlight the new row", (): Chai.Assertion => newRow.hasClass("warning").should.be.true);
+		it("should highlight the new row", (): Chai.Assertion => expect(newRow.hasClass("warning")).to.be.true);
 	});
 
 	describe("scrollToRow", (): void => {
@@ -120,25 +120,25 @@ describe("ogTableNavigable", (): void => {
 		it("should scroll the page up if the specified row is off the top of the screen", (): void => {
 			top = 50;
 			isolateScope.scrollToRow(row);
-			row[0].scrollIntoView.should.have.been.calledWith({ behavior: "smooth" });
+			expect(row[0]["scrollIntoView"]).to.have.been.calledWith({ behavior: "smooth" });
 		});
 
 		it("should scroll the page down if the specified row is off the bottom of the screen", (): void => {
 			top = 350;
 			isolateScope.scrollToRow(row);
-			row[0].scrollIntoView.should.have.been.calledWith({ behavior: "smooth" });
+			expect(row[0]["scrollIntoView"]).to.have.been.calledWith({ behavior: "smooth" });
 		});
 
 		it("should do nothing if the specified row is on screen", (): void => {
 			isolateScope.scrollToRow(row);
-			row[0].scrollIntoView.should.not.have.been.called;
+			expect(row[0]["scrollIntoView"]).to.not.have.been.called;
 		});
 
 		it("should do nothing if the specified row offset can't be determined", (): void => {
 			(row.offset as SinonStub).restore();
 			sinon.stub(row, "offset").returns(undefined);
 			isolateScope.scrollToRow(row);
-			row[0].scrollIntoView.should.not.have.been.called;
+			expect(row[0]["scrollIntoView"]).to.not.have.been.called;
 		});
 
 		afterEach((): JQuery => ($window.$ = realJqueryInstance));
@@ -153,7 +153,7 @@ describe("ogTableNavigable", (): void => {
 		it("should do nothing if there is no focussed row", (): void => {
 			isolateScope.focussedRow = null;
 			isolateScope.jumpToRow(1);
-			isolateScope.focusRow.should.not.have.been.called;
+			expect(isolateScope.focusRow).to.not.have.been.called;
 		});
 
 		it("should do nothing if the target row could not be determined", (): void => {
@@ -166,28 +166,28 @@ describe("ogTableNavigable", (): void => {
 			});
 			isolateScope.focussedRow = 0;
 			isolateScope.jumpToRow(3);
-			isolateScope.focusRow.should.not.have.been.called;
+			expect(isolateScope.focusRow).to.not.have.been.called;
 		});
 
 		it("should focus the first row if currently focussed row + offset is less than zero", (): void => {
 			isolateScope.focussedRow = 0;
 			isolateScope.jumpToRow(-10);
 			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first() as JQuery<Element>;
-			isolateScope.focusRow.should.have.been.calledWith(matchTargetRow);
+			expect(isolateScope.focusRow).to.have.been.calledWith(matchTargetRow);
 		});
 
 		it("should focus the last row if the currently focussed row + offset is greater than the number of rows", (): void => {
 			isolateScope.focussedRow = 1;
 			isolateScope.jumpToRow(10);
 			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").last() as JQuery<Element>;
-			isolateScope.focusRow.should.have.been.calledWith(matchTargetRow);
+			expect(isolateScope.focusRow).to.have.been.calledWith(matchTargetRow);
 		});
 
 		it("should focus the currently focussed row + offset if within the bounds of the table", (): void => {
 			isolateScope.focussedRow = 1;
 			isolateScope.jumpToRow(-1);
 			targetRow = $window.$(ogTableNavigable["element"]).children("tbody").children("tr").first() as JQuery<Element>;
-			isolateScope.focusRow.should.have.been.calledWith(matchTargetRow);
+			expect(isolateScope.focusRow).to.have.been.calledWith(matchTargetRow);
 		});
 	});
 
@@ -199,12 +199,12 @@ describe("ogTableNavigable", (): void => {
 		it("should do nothing when navigation is disabled", (): void => {
 			ogTableNavigableService.enabled = false;
 			isolateScope.clickHandler(event as JQueryMouseEventObject);
-			isolateScope.focusRow.should.not.have.been.called;
+			expect(isolateScope.focusRow).to.not.have.been.called;
 		});
 
 		it("should do nothing if the closest parent TR element to where the event occurred could not be determined", (): void => {
 			isolateScope.clickHandler(event as JQueryMouseEventObject);
-			isolateScope.focusRow.should.not.have.been.called;
+			expect(isolateScope.focusRow).to.not.have.been.called;
 		});
 
 		it("should focus the closest parent TR element to where the event occurred", (): void => {
@@ -213,7 +213,7 @@ describe("ogTableNavigable", (): void => {
 
 			event.target = cellInLastRow;
 			isolateScope.clickHandler(event as JQueryMouseEventObject);
-			isolateScope.focusRow.should.have.been.calledWith(lastRow);
+			expect(isolateScope.focusRow).to.have.been.calledWith(lastRow);
 		});
 	});
 
@@ -223,25 +223,25 @@ describe("ogTableNavigable", (): void => {
 		it("should do nothing when navigation is disabled", (): void => {
 			ogTableNavigableService.enabled = false;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
-			scope.model.selectAction.should.not.have.been.called;
+			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
 		it("should do nothing if the event was triggered by a button click", (): void => {
 			event.target = { localName: "button" } as Element;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
-			scope.model.selectAction.should.not.have.been.called;
+			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
 		it("should do nothing if the closest parent TR element to where the event occurred could not be determined", (): void => {
 			event.target = { localName: "td" } as Element;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
-			scope.model.selectAction.should.not.have.been.called;
+			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
 		it("should invoke the selectAction handler for the closest parent TR element to where the event occurred", (): void => {
 			event.target = $window.$(ogTableNavigable["element"]).find("tbody > tr > td").last() as Element;
 			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
-			scope.model.selectAction.should.have.been.calledWith(1);
+			expect(scope.model.selectAction).to.have.been.calledWith(1);
 		});
 	});
 
@@ -258,21 +258,21 @@ describe("ogTableNavigable", (): void => {
 
 		it("should do nothing if the target row could not be determined", (): void => {
 			isolateScope.handlers.focusRow(3);
-			isolateScope.focusRow.should.not.have.been.called;
-			isolateScope.highlightRow.should.not.have.been.called;
+			expect(isolateScope.focusRow).to.not.have.been.called;
+			expect(isolateScope.highlightRow).to.not.have.been.called;
 		});
 
 		it("should focus the target row if not already focussed", (): void => {
 			isolateScope.handlers.focusRow(1);
-			isolateScope.focusRow.should.have.been.calledWith(matchLastRow);
-			isolateScope.highlightRow.should.not.have.been.called;
+			expect(isolateScope.focusRow).to.have.been.calledWith(matchLastRow);
+			expect(isolateScope.highlightRow).to.not.have.been.called;
 		});
 
 		it("should highlight the target row if already focussed", (): void => {
 			isolateScope.focussedRow = 1;
 			isolateScope.handlers.focusRow(1);
-			isolateScope.focusRow.should.not.have.been.called;
-			isolateScope.highlightRow.should.have.been.calledWith(matchLastRow);
+			expect(isolateScope.focusRow).to.not.have.been.called;
+			expect(isolateScope.highlightRow).to.have.been.calledWith(matchLastRow);
 		});
 	});
 
@@ -309,15 +309,15 @@ describe("ogTableNavigable", (): void => {
 		it("should do nothing when navigation is disabled", (): void => {
 			ogTableNavigableService.enabled = false;
 			isolateScope.keyHandler(event as JQueryKeyEventObject);
-			scope.model.selectAction.should.not.have.been.called;
+			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
 		TEST_MOVEMENT_KEYS.forEach((key: { code: number; name: string; amount: number; }): void => {
 			it(`should jump ${key.amount < 0 ? "up" : "down"} ${Math.abs(key.amount)} row${1 === Math.abs(key.amount) ? "" : "s"} when the ${key.name} key is pressed`, (): void => {
 				event.keyCode = key.code;
 				isolateScope.keyHandler(event as JQueryKeyEventObject);
-				isolateScope.jumpToRow.should.have.been.calledWith(key.amount);
-				(event.preventDefault as SinonStub).should.have.been.called;
+				expect(isolateScope.jumpToRow).to.have.been.calledWith(key.amount);
+				expect(event.preventDefault as SinonStub).to.have.been.called;
 			});
 		});
 
@@ -332,15 +332,15 @@ describe("ogTableNavigable", (): void => {
 				sinon.stub(isolateScope, "jumpToRow");
 				isolateScope.focussedRow = 1;
 				isolateScope.keyHandler(event as JQueryKeyEventObject);
-				(event.preventDefault as SinonStub).should.have.been.called;
+				expect(event.preventDefault as SinonStub).to.have.been.called;
 			});
 
 			it(`should invoke the defined ${key.handler} handler when the ${key.name} key${undefined === key.ctrl ? " is" : "s are"} pressed`, (): void => {
 				event.keyCode = key.code;
 				event.ctrlKey = key.ctrl;
 				isolateScope.keyHandler(event as JQueryKeyEventObject);
-				(scope.model[key.handler] as SinonStub).should.have.been.calledWith(1);
-				(event.preventDefault as SinonStub).should.have.been.called;
+				expect(scope.model[key.handler] as SinonStub).to.have.been.calledWith(1);
+				expect(event.preventDefault as SinonStub).to.have.been.called;
 			});
 		});
 	});
@@ -348,19 +348,19 @@ describe("ogTableNavigable", (): void => {
 	it("should attach a click handler to the element", (): void => {
 		sinon.stub(isolateScope, "clickHandler");
 		ogTableNavigable["element"].triggerHandler("click");
-		isolateScope.clickHandler.should.have.been.called;
+		expect(isolateScope.clickHandler).to.have.been.called;
 	});
 
 	it("should attach a double-click handler to the element", (): void => {
 		sinon.stub(isolateScope, "doubleClickHandler");
 		ogTableNavigable["element"].triggerHandler("dblclick");
-		isolateScope.doubleClickHandler.should.have.been.called;
+		expect(isolateScope.doubleClickHandler).to.have.been.called;
 	});
 
 	it("should attach a keydown handler to the document", (): void => {
 		sinon.stub(isolateScope, "keyHandler");
 		$window.$(document).triggerHandler("keydown");
-		isolateScope.keyHandler.should.have.been.called;
+		expect(isolateScope.keyHandler).to.have.been.called;
 	});
 
 	describe("on destroy", (): void => {
@@ -373,17 +373,17 @@ describe("ogTableNavigable", (): void => {
 
 		it("should remove the click handler from the element", (): void => {
 			ogTableNavigable["element"].triggerHandler("click");
-			isolateScope.clickHandler.should.not.have.been.called;
+			expect(isolateScope.clickHandler).to.not.have.been.called;
 		});
 
 		it("should remove the double-click handler from the element", (): void => {
 			ogTableNavigable["element"].triggerHandler("dblclick");
-			isolateScope.doubleClickHandler.should.not.have.been.called;
+			expect(isolateScope.doubleClickHandler).to.not.have.been.called;
 		});
 
 		it("should remove the keydown handler from the element", (): void => {
 			$window.$(document).triggerHandler("keydown");
-			isolateScope.keyHandler.should.not.have.been.called;
+			expect(isolateScope.keyHandler).to.not.have.been.called;
 		});
 	});
 });

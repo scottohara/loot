@@ -110,23 +110,23 @@ describe("TransactionIndexController", (): void => {
 		transactionIndexController = controllerTest("TransactionIndexController") as TransactionIndexController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed context available to the view", (): Chai.Assertion => transactionIndexController.context.should.deep.equal(context));
+	it("should make the passed context available to the view", (): Chai.Assertion => expect(transactionIndexController.context).to.deep.equal(context));
 
-	it("should make the passed context type available to the view", (): Chai.Assertion => String(transactionIndexController.contextType).should.equal(contextModel.type));
+	it("should make the passed context type available to the view", (): Chai.Assertion => expect(String(transactionIndexController.contextType)).to.equal(contextModel.type));
 
 	it("should not set a context type when a context model was not specified", (): void => {
 		transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null }) as TransactionIndexController;
-		(undefined === transactionIndexController.contextType).should.be.true;
+		expect(transactionIndexController.contextType).to.be.undefined;
 	});
 
-	it("should fetch the show all details setting", (): Chai.Assertion => transactionModel.allDetailsShown.should.have.been.called);
+	it("should fetch the show all details setting", (): Chai.Assertion => expect(transactionModel.allDetailsShown).to.have.been.called);
 
-	it("should make today's date available to the view", (): Chai.Assertion => transactionIndexController.today.should.deep.equal(startOfDay(new Date())));
+	it("should make today's date available to the view", (): Chai.Assertion => expect(transactionIndexController.today).to.deep.equal(startOfDay(new Date())));
 
 	it("should set an empty array of transactions to the view", (): void => {
 		transactionIndexController = controllerTest("TransactionIndexController", { transactionBatch: { transactions: { length: 0 } as Transaction[], openingBalance: 0, atEnd: false } }) as TransactionIndexController;
-		transactionIndexController.transactions.should.be.an("array");
-		transactionIndexController.transactions.should.be.empty;
+		expect(transactionIndexController.transactions).to.be.an("array");
+		expect(transactionIndexController.transactions).to.be.empty;
 	});
 
 	it("should process the passed transaction batch", (): number => (transactionIndexController["openingBalance"] = transactionBatch.openingBalance));
@@ -136,19 +136,19 @@ describe("TransactionIndexController", (): void => {
 		transactionIndexController = controllerTest("TransactionIndexController", { $state }) as TransactionIndexController;
 		transactionIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
-		(transactionIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
+		expect((transactionIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(0);
 	});
 
 	it("should set the previous/next loading indicators to false", (): void => {
-		transactionIndexController.loading.prev.should.be.false;
-		transactionIndexController.loading.next.should.be.false;
+		expect(transactionIndexController.loading.prev).to.be.false;
+		expect(transactionIndexController.loading.next).to.be.false;
 	});
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "**.transactions.transaction" }, sinon.match.func) as Chai.Assertion);
+	it("should register a success transition hook", (): Chai.Assertion => expect($transitions.onSuccess).to.have.been.calledWith({ to: "**.transactions.transaction" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(transactionIndexController as angular.IController).$scope.$emit("$destroy");
-		deregisterTransitionSuccessHook.should.have.been.called;
+		expect(deregisterTransitionSuccessHook).to.have.been.called;
 	});
 
 	it("should ensure the transaction is focussed when the transaction id state param changes", (): void => {
@@ -156,12 +156,12 @@ describe("TransactionIndexController", (): void => {
 
 		sinon.stub(transactionIndexController, "transitionSuccessHandler" as keyof TransactionIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
-		transactionIndexController["transitionSuccessHandler"].should.have.been.calledWith(Number(toParams.transactionId));
+		expect(transactionIndexController["transitionSuccessHandler"]).to.have.been.calledWith(Number(toParams.transactionId));
 	});
 
 	it("should scroll to the bottom when the controller loads", (): void => {
 		$timeout.flush();
-		ogViewScrollService.scrollTo.should.have.been.calledWith("bottom");
+		expect(ogViewScrollService["scrollTo"]).to.have.been.calledWith("bottom");
 	});
 
 	describe("editTransaction", (): void => {
@@ -179,22 +179,22 @@ describe("TransactionIndexController", (): void => {
 
 		it("should disable navigation on the table", (): void => {
 			transactionIndexController["editTransaction"]();
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
 			it("should do nothing if the transaction can't be edited", (): void => {
 				sinon.stub(transactionIndexController, "isAllowed" as keyof TransactionIndexController).returns(false);
 				transactionIndexController["editTransaction"](1);
-				Boolean(ogTableNavigableService.enabled).should.be.true;
-				$uibModal.open.should.not.have.been.called;
+				expect(Boolean(ogTableNavigableService.enabled)).to.be.true;
+				expect($uibModal.open).to.not.have.been.called;
 			});
 
 			it("should open the edit transaction modal with a transaction", (): void => {
 				transactionIndexController["editTransaction"](1);
-				$uibModal.open.should.have.been.called;
-				(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).should.deep.equal(transaction);
-				transactionModel.findSubtransactions.should.not.have.been.called;
+				expect($uibModal.open).to.have.been.called;
+				expect(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).to.deep.equal(transaction);
+				expect(transactionModel.findSubtransactions).to.not.have.been.called;
 			});
 
 			const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
@@ -203,8 +203,8 @@ describe("TransactionIndexController", (): void => {
 				it(`should prefetch the subtransactions for a ${scenario} transaction`, (): void => {
 					transactionIndexController.transactions[1].transaction_type = scenario;
 					transactionIndexController["editTransaction"](1);
-					transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
-					(($uibModal.resolves as UibModalMockResolves).transaction as angular.IPromise<Transaction>).then((resolvedTransaction: Transaction): Chai.Assertion => resolvedTransaction.should.have.property("subtransactions"));
+					expect(transactionModel.findSubtransactions).to.have.been.calledWith(transaction.id);
+					(($uibModal.resolves as UibModalMockResolves).transaction as angular.IPromise<Transaction>).then((resolvedTransaction: Transaction): Chai.Assertion => expect(resolvedTransaction).to.have.property("subtransactions"));
 				});
 			});
 
@@ -214,14 +214,14 @@ describe("TransactionIndexController", (): void => {
 				transaction.memo = "edited transaction";
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				transactionIndexController["updateClosingBalance"].should.have.been.calledWith(originalTransaction, transaction);
+				expect(transactionIndexController["updateClosingBalance"]).to.have.been.calledWith(originalTransaction, transaction);
 			});
 
 			it("should update the transaction in the list of transactions when the modal is closed", (): void => {
 				transaction.memo = "edited transaction";
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				transactionIndexController.transactions.should.include(transaction);
+				expect(transactionIndexController.transactions).to.include(transaction);
 			});
 		});
 
@@ -276,8 +276,8 @@ describe("TransactionIndexController", (): void => {
 
 				afterEach((): void => {
 					transactionIndexController["editTransaction"]();
-					$uibModal.open.should.have.been.called;
-					(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).should.deep.equal(newTransaction);
+					expect($uibModal.open).to.have.been.called;
+					expect(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).to.deep.equal(newTransaction);
 				});
 			});
 
@@ -287,21 +287,21 @@ describe("TransactionIndexController", (): void => {
 
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(newTransaction as Transaction);
-				transactionIndexController["updateClosingBalance"].should.have.been.calledWith(originalTransaction, newTransaction);
+				expect(transactionIndexController["updateClosingBalance"]).to.have.been.calledWith(originalTransaction, newTransaction);
 			});
 
 			it("should add the new transaction to the list of transactions when the modal is closed", (): void => {
 				(newTransaction as PayeeCashTransaction).payee = context as Payee;
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(newTransaction as Transaction);
-				(transactionIndexController.transactions.pop() as Transaction).should.deep.equal(newTransaction);
+				expect(transactionIndexController.transactions.pop() as Transaction).to.deep.equal(newTransaction);
 			});
 		});
 
 		it("should check if the context has changed when the modal is closed", (): void => {
 			transactionIndexController["editTransaction"](1);
 			$uibModal.close(transaction);
-			transactionIndexController["contextChanged"].should.have.been.calledWith(transaction);
+			expect(transactionIndexController["contextChanged"]).to.have.been.calledWith(transaction);
 		});
 
 		describe("(on context changed)", (): void => {
@@ -313,7 +313,7 @@ describe("TransactionIndexController", (): void => {
 
 			it("should remove the transaction from the list of transactions", (): void => {
 				$uibModal.close(transaction);
-				transactionIndexController["removeTransaction"].should.have.been.calledWith(1);
+				expect(transactionIndexController["removeTransaction"]).to.have.been.calledWith(1);
 			});
 		});
 
@@ -322,7 +322,7 @@ describe("TransactionIndexController", (): void => {
 				transaction.transaction_date = subDays(transactionIndexController.firstTransactionDate, 1);
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				transactionIndexController.getTransactions.should.have.been.calledWith("next", subDays(transaction.transaction_date, 1), transaction.id);
+				expect(transactionIndexController["getTransactions"]).to.have.been.calledWith("next", subDays(transaction.transaction_date, 1), transaction.id);
 			});
 		});
 
@@ -335,13 +335,13 @@ describe("TransactionIndexController", (): void => {
 			it("should not fetch a new transaction batch if we're already at the end", (): void => {
 				transactionIndexController["atEnd"] = true;
 				$uibModal.close(transaction);
-				transactionIndexController.getTransactions.should.not.have.been.called;
+				expect(transactionIndexController["getTransactions"]).to.not.have.been.called;
 			});
 
 			it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", (): void => {
 				transactionIndexController["atEnd"] = false;
 				$uibModal.close(transaction);
-				transactionIndexController.getTransactions.should.have.been.calledWith("prev", addDays(transaction.transaction_date as Date, 1), transaction.id);
+				expect(transactionIndexController["getTransactions"]).to.have.been.calledWith("prev", addDays(transaction.transaction_date as Date, 1), transaction.id);
 			});
 		});
 
@@ -349,7 +349,7 @@ describe("TransactionIndexController", (): void => {
 			it("should not fetch a new transaction batch when the modal is closed", (): void => {
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				transactionIndexController.getTransactions.should.not.have.been.called;
+				expect(transactionIndexController["getTransactions"]).to.not.have.been.called;
 			});
 
 			it("should resort the transaction list when the modal is closed", (): void => {
@@ -357,19 +357,19 @@ describe("TransactionIndexController", (): void => {
 				transaction.transaction_date = subDays(startOfDay(new Date()), 1);
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				(transactionIndexController.transactions.pop() as Transaction).should.deep.equal(transaction);
+				expect(transactionIndexController.transactions.pop() as Transaction).to.deep.equal(transaction);
 			});
 
 			it("should recalculate the running balances when the modal is closed", (): void => {
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(transaction);
-				transactionIndexController["updateRunningBalances"].should.have.been.called;
+				expect(transactionIndexController["updateRunningBalances"]).to.have.been.called;
 			});
 
 			it("should focus the transaction when the modal is closed", (): void => {
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(transaction);
-				transactionIndexController["focusTransaction"].should.have.been.calledWith(transaction.id);
+				expect(transactionIndexController["focusTransaction"]).to.have.been.calledWith(transaction.id);
 			});
 		});
 
@@ -378,19 +378,19 @@ describe("TransactionIndexController", (): void => {
 
 			transactionIndexController["editTransaction"]();
 			$uibModal.dismiss();
-			transactionIndexController.transactions.should.deep.equal(originalTransactions);
+			expect(transactionIndexController.transactions).to.deep.equal(originalTransactions);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			transactionIndexController["editTransaction"]();
 			$uibModal.close(transaction);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			transactionIndexController["editTransaction"]();
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -404,12 +404,12 @@ describe("TransactionIndexController", (): void => {
 
 			it("should return true when the transaction memo no longer contains the search query", (): void => {
 				transaction.memo = "test memo";
-				transactionIndexController["contextChanged"](transaction).should.be.true;
+				expect(transactionIndexController["contextChanged"](transaction)).to.be.true;
 			});
 
 			it("should return false when the transaction memo contains the search query", (): void => {
 				transaction.memo = "test search";
-				transactionIndexController["contextChanged"](transaction).should.be.false;
+				expect(transactionIndexController["contextChanged"](transaction)).to.be.false;
 			});
 		});
 
@@ -436,21 +436,21 @@ describe("TransactionIndexController", (): void => {
 				it(`should return true when the context type is ${scenario.type} and the transaction ${scenario.field} no longer matches the context`, (): void => {
 					transactionIndexController = controllerTest("TransactionIndexController", { contextModel: contextModels[scenario.type], context: scenario.contextFactory() }) as TransactionIndexController;
 					transaction[scenario.field] = scenario.contextFactory();
-					transactionIndexController["contextChanged"](transaction).should.be.true;
+					expect(transactionIndexController["contextChanged"](transaction)).to.be.true;
 				});
 
 				it(`should return false when the context type is ${scenario.type} and the transaction ${scenario.field} matches the context`, (): void => {
 					context = scenario.contextFactory();
 					transactionIndexController = controllerTest("TransactionIndexController", { contextModel: contextModels[scenario.type], context }) as TransactionIndexController;
 					transaction[scenario.field] = context;
-					transactionIndexController["contextChanged"](transaction).should.be.false;
+					expect(transactionIndexController["contextChanged"](transaction)).to.be.false;
 				});
 			});
 
 			it("should return false when the transaction field is undefined", (): void => {
 				transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel as EntityModel }) as TransactionIndexController;
 				delete (transaction as Partial<Transaction>).primary_account;
-				transactionIndexController["contextChanged"](transaction).should.be.false;
+				expect(transactionIndexController["contextChanged"](transaction)).to.be.false;
 			});
 		});
 	});
@@ -466,37 +466,37 @@ describe("TransactionIndexController", (): void => {
 		it("should do nothing if the transaction can't be deleted", (): void => {
 			sinon.stub(transactionIndexController, "isAllowed" as keyof TransactionIndexController).returns(false);
 			transactionIndexController["deleteTransaction"](1);
-			Boolean(ogTableNavigableService.enabled).should.be.true;
-			$uibModal.open.should.not.have.been.called;
+			expect(Boolean(ogTableNavigableService.enabled)).to.be.true;
+			expect($uibModal.open).to.not.have.been.called;
 		});
 
 		it("should disable navigation on the table", (): void => {
 			transactionIndexController["deleteTransaction"](1);
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should open the delete transaction modal with a transaction", (): void => {
 			transactionIndexController["deleteTransaction"](1);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).should.deep.equal(transaction);
+			expect($uibModal.open).to.have.been.called;
+			expect(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).to.deep.equal(transaction);
 		});
 
 		it("should remove the transaction from the transactions list when the modal is closed", (): void => {
 			transactionIndexController["deleteTransaction"](1);
 			$uibModal.close(transaction);
-			transactionIndexController["removeTransaction"].should.have.been.calledWith(1);
+			expect(transactionIndexController["removeTransaction"]).to.have.been.calledWith(1);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			transactionIndexController["deleteTransaction"](1);
 			$uibModal.close(transaction);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			transactionIndexController["deleteTransaction"](1);
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -510,18 +510,18 @@ describe("TransactionIndexController", (): void => {
 
 		it("should update the closing balance if the transaction was not focussed", (): void => {
 			transactionIndexController["removeTransaction"](1);
-			transactionIndexController["updateClosingBalance"].should.have.been.calledWith(transaction);
+			expect(transactionIndexController["updateClosingBalance"]).to.have.been.calledWith(transaction);
 		});
 
 		it("should remove the transaction from the transactions list", (): void => {
 			transactionIndexController["removeTransaction"](1);
-			transactionIndexController.transactions.should.not.include(transaction);
+			expect(transactionIndexController.transactions).to.not.include(transaction);
 		});
 
 		it("should transition to the parent state if the transaction was focussed", (): void => {
 			$state.currentState("**.transaction");
 			transactionIndexController["removeTransaction"](1);
-			$state.go.should.have.been.calledWith("^");
+			expect($state.go).to.have.been.calledWith("^");
 		});
 	});
 
@@ -530,7 +530,7 @@ describe("TransactionIndexController", (): void => {
 			context = "";
 			transactionIndexController = controllerTest("TransactionIndexController", { context }) as TransactionIndexController;
 			transactionIndexController["updateClosingBalance"](createBasicTransaction({ amount: 1 }));
-			transactionIndexController.should.not.have.property("closing_balance");
+			expect(transactionIndexController).to.not.have.property("closing_balance");
 		});
 
 		describe("(context has a closing balance property)", (): void => {
@@ -580,7 +580,7 @@ describe("TransactionIndexController", (): void => {
 				afterEach((): void => transactionIndexController["updateClosingBalance"](createBasicTransaction(), transaction as Transaction));
 			});
 
-			afterEach((): Chai.Assertion => (transactionIndexController.context as Account).closing_balance.should.equal(expected));
+			afterEach((): Chai.Assertion => expect((transactionIndexController.context as Account).closing_balance).to.equal(expected));
 		});
 	});
 
@@ -607,12 +607,12 @@ describe("TransactionIndexController", (): void => {
 				it(`should prompt to switch accounts when attempting to ${scenario.action} a ${scenario.type} transaction`, (): void => {
 					transaction.transaction_type = scenario.type;
 					transactionIndexController["isAllowed"](scenario.action, transaction);
-					transactionIndexController["promptToSwitchAccounts"].should.have.been.calledWith(scenario.message, transaction);
+					expect(transactionIndexController["promptToSwitchAccounts"]).to.have.been.calledWith(scenario.message, transaction);
 				});
 
 				it(`should return false when attempting to ${scenario.action} a ${scenario.type} transaction`, (): void => {
 					transaction.transaction_type = scenario.type;
-					transactionIndexController["isAllowed"](scenario.action, transaction).should.be.false;
+					expect(transactionIndexController["isAllowed"](scenario.action, transaction)).to.be.false;
 				});
 			});
 		});
@@ -632,13 +632,13 @@ describe("TransactionIndexController", (): void => {
 					transaction.transaction_type = scenario.type;
 					(transaction.primary_account as Account).account_type = scenario.account_type ?? (transaction.primary_account as Account).account_type;
 					transactionIndexController["isAllowed"](scenario.action, transaction);
-					transactionIndexController["promptToSwitchAccounts"].should.not.have.been.called;
+					expect(transactionIndexController["promptToSwitchAccounts"]).to.not.have.been.called;
 				});
 
 				it(`should return true when attempting to ${scenario.action} a ${scenario.type} transaction${undefined === scenario.account_type ? "" : ` from an ${scenario.account_type} acount`}`, (): void => {
 					transaction.transaction_type = scenario.type;
 					(transaction.primary_account as Account).account_type = scenario.account_type ?? (transaction.primary_account as Account).account_type;
-					transactionIndexController["isAllowed"](scenario.action, transaction).should.be.true;
+					expect(transactionIndexController["isAllowed"](scenario.action, transaction)).to.be.true;
 				});
 			});
 		});
@@ -658,32 +658,32 @@ describe("TransactionIndexController", (): void => {
 			transactionIndexController["promptToSwitchAccounts"](message, transaction);
 		});
 
-		it("should disable navigation on the table", (): Chai.Assertion => ogTableNavigableService.enabled.should.be.false);
+		it("should disable navigation on the table", (): Chai.Assertion => expect(ogTableNavigableService.enabled).to.be.false);
 
 		it("should prompt the user to switch to the other account", (): void => {
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).confirm as OgModalConfirm).message.should.equal(message);
+			expect($uibModal.open).to.have.been.called;
+			expect((($uibModal.resolves as UibModalMockResolves).confirm as OgModalConfirm).message).to.equal(message);
 		});
 
 		it("should switch to the other account when the modal is closed", (): void => {
 			$uibModal.close();
-			transactionIndexController.switchAccount.should.have.been.calledWith(null, transaction);
+			expect(transactionIndexController["switchAccount"]).to.have.been.calledWith(null, transaction);
 		});
 
 		it("should switch to the primary account if there is no other account when the modal is closed", (): void => {
 			(transaction as TransferrableTransaction).account = null;
 			$uibModal.close();
-			transactionIndexController.switchPrimaryAccount.should.have.been.calledWith(null, transaction);
+			expect(transactionIndexController["switchPrimaryAccount"]).to.have.been.calledWith(null, transaction);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			$uibModal.close();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dismissed", (): void => {
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -692,7 +692,7 @@ describe("TransactionIndexController", (): void => {
 			it("should edit a transaction", (): void => {
 				sinon.stub(transactionIndexController, "editTransaction" as keyof TransactionIndexController);
 				transactionIndexController.tableActions.selectAction(1);
-				transactionIndexController["editTransaction"].should.have.been.calledWith(1);
+				expect(transactionIndexController["editTransaction"]).to.have.been.calledWith(1);
 			});
 		});
 
@@ -706,18 +706,18 @@ describe("TransactionIndexController", (): void => {
 			it("should set the transaction status to Cleared if not already", (): void => {
 				transactionIndexController.transactions[1].status = "";
 				transactionIndexController.tableActions.selectAction(1);
-				transactionIndexController.transactions[1].status.should.equal("Cleared");
+				expect(transactionIndexController.transactions[1].status).to.equal("Cleared");
 			});
 
 			it("should clear the transaction status if set to Cleared", (): void => {
 				transactionIndexController.transactions[1].status = "Cleared";
 				transactionIndexController.tableActions.selectAction(1);
-				transactionIndexController.transactions[1].status.should.equal("");
+				expect(transactionIndexController.transactions[1].status).to.equal("");
 			});
 
 			it("should toggle the transaction's cleared status", (): void => {
 				transactionIndexController.tableActions.selectAction(1);
-				transactionIndexController.toggleCleared.should.have.been.calledWith(transactionIndexController.transactions[1]);
+				expect(transactionIndexController["toggleCleared"]).to.have.been.calledWith(transactionIndexController.transactions[1]);
 			});
 		});
 	});
@@ -726,7 +726,7 @@ describe("TransactionIndexController", (): void => {
 		it("should edit the transaction", (): void => {
 			sinon.stub(transactionIndexController, "editTransaction" as keyof TransactionIndexController);
 			transactionIndexController.tableActions.editAction(1);
-			transactionIndexController["editTransaction"].should.have.been.calledWithExactly(1);
+			expect(transactionIndexController["editTransaction"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
@@ -734,7 +734,7 @@ describe("TransactionIndexController", (): void => {
 		it("should insert a transaction", (): void => {
 			sinon.stub(transactionIndexController, "editTransaction" as keyof TransactionIndexController);
 			transactionIndexController.tableActions.insertAction();
-			transactionIndexController["editTransaction"].should.have.been.calledWithExactly();
+			expect(transactionIndexController["editTransaction"]).to.have.been.calledWithExactly();
 		});
 	});
 
@@ -742,20 +742,20 @@ describe("TransactionIndexController", (): void => {
 		it("should delete a transaction", (): void => {
 			sinon.stub(transactionIndexController, "deleteTransaction" as keyof TransactionIndexController);
 			transactionIndexController.tableActions.deleteAction(1);
-			transactionIndexController["deleteTransaction"].should.have.been.calledWithExactly(1);
+			expect(transactionIndexController["deleteTransaction"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a transaction when no transaction is currently focussed", (): void => {
 			transactionIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".transaction", { transactionId: 2 });
+			expect($state.go).to.have.been.calledWith(".transaction", { transactionId: 2 });
 		});
 
 		it("should focus a transaction when another transaction is currently focussed", (): void => {
 			$state.currentState("**.transaction");
 			transactionIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.transaction", { transactionId: 2 });
+			expect($state.go).to.have.been.calledWith("^.transaction", { transactionId: 2 });
 		});
 	});
 
@@ -770,48 +770,48 @@ describe("TransactionIndexController", (): void => {
 		it("should show a loading indicator in the specified direction", (): void => {
 			(transactionIndexController.context as Entity).id = -1;
 			transactionIndexController.getTransactions("next");
-			transactionIndexController.loading.next.should.be.true;
+			expect(transactionIndexController.loading.next).to.be.true;
 		});
 
 		it("should fetch transactions before the first transaction date when going backwards", (): void => {
 			const firstTransactionDate: Date = transactionIndexController.transactions[0].transaction_date as Date;
 
 			transactionIndexController.getTransactions("prev");
-			transactionModel.all.should.have.been.calledWith("/payees/1", firstTransactionDate, "prev");
+			expect(transactionModel.all).to.have.been.calledWith("/payees/1", firstTransactionDate, "prev");
 		});
 
 		it("should fetch transactions after the last transaction date when going forwards", (): void => {
 			const lastTransactionDate: Date = transactionIndexController.transactions[transactionIndexController.transactions.length - 1].transaction_date as Date;
 
 			transactionIndexController.getTransactions("next");
-			transactionModel.all.should.have.been.calledWith("/payees/1", lastTransactionDate, "next");
+			expect(transactionModel.all).to.have.been.calledWith("/payees/1", lastTransactionDate, "next");
 		});
 
 		it("should fetch transactions without a from date in either direction if there are no transactions", (): void => {
 			transactionIndexController.transactions = [];
 			transactionIndexController.getTransactions("prev");
-			transactionModel.all.should.have.been.calledWith("/payees/1");
+			expect(transactionModel.all).to.have.been.calledWith("/payees/1");
 		});
 
 		it("should fetch transactions from a specified transaction date in either direction", (): void => {
 			transactionIndexController.getTransactions("prev", fromDate);
-			transactionModel.all.should.have.been.calledWith("/payees/1", fromDate);
+			expect(transactionModel.all).to.have.been.calledWith("/payees/1", fromDate);
 		});
 
 		it("should search for transactions from a specified date in either direction", (): void => {
 			transactionIndexController = controllerTest("TransactionIndexController", { contextModel: null, context: "search" }) as TransactionIndexController;
 			transactionIndexController.getTransactions("prev", fromDate);
-			transactionModel.query.should.have.been.calledWith("search", fromDate);
+			expect(transactionModel.query).to.have.been.calledWith("search", fromDate);
 		});
 
 		it("should process the fetched transactions", (): void => {
 			transactionIndexController.getTransactions("prev", fromDate, 1);
-			transactionIndexController["processTransactions"].should.have.been.calledWith(transactionBatch, fromDate, 1);
+			expect(transactionIndexController["processTransactions"]).to.have.been.calledWith(transactionBatch, fromDate, 1);
 		});
 
 		it("should hide the loading indicator after fetching the transacactions", (): void => {
 			transactionIndexController.getTransactions("prev");
-			transactionIndexController.loading.prev.should.be.false;
+			expect(transactionIndexController.loading.prev).to.be.false;
 		});
 	});
 
@@ -827,7 +827,7 @@ describe("TransactionIndexController", (): void => {
 		it("should do nothing if no transactions to process", (): void => {
 			transactionBatch.transactions = [];
 			transactionIndexController["processTransactions"](transactionBatch);
-			transactionIndexController["openingBalance"].should.equal(0);
+			expect(transactionIndexController["openingBalance"]).to.equal(0);
 		});
 
 		it("should make the opening balance of the batch available to the view", (): void => {
@@ -842,37 +842,37 @@ describe("TransactionIndexController", (): void => {
 
 		it("should set a flag if we've reached the end", (): void => {
 			transactionIndexController["processTransactions"](transactionBatch, new Date());
-			transactionIndexController["atEnd"].should.be.true;
+			expect(transactionIndexController["atEnd"]).to.be.true;
 		});
 
 		it("should set a flag if a from date was not specified", (): void => {
 			transactionBatch.atEnd = false;
 			transactionIndexController["processTransactions"](transactionBatch);
-			transactionIndexController["atEnd"].should.be.true;
+			expect(transactionIndexController["atEnd"]).to.be.true;
 		});
 
 		it("should make the first transaction date available to the view", (): void => {
 			const firstTransactionDate: Date = transactionBatch.transactions[0].transaction_date as Date;
 
 			transactionIndexController["processTransactions"](transactionBatch);
-			transactionIndexController.firstTransactionDate.should.equal(firstTransactionDate);
+			expect(transactionIndexController.firstTransactionDate).to.equal(firstTransactionDate);
 		});
 
 		it("should make the last transaction date available to the view", (): void => {
 			const lastTransactionDate: Date = transactionBatch.transactions[transactionBatch.transactions.length - 1].transaction_date as Date;
 
 			transactionIndexController["processTransactions"](transactionBatch);
-			transactionIndexController.lastTransactionDate.should.equal(lastTransactionDate);
+			expect(transactionIndexController.lastTransactionDate).to.equal(lastTransactionDate);
 		});
 
 		it("should calculate the running balances", (): void => {
 			transactionIndexController["processTransactions"](transactionBatch);
-			transactionIndexController["updateRunningBalances"].should.have.been.called;
+			expect(transactionIndexController["updateRunningBalances"]).to.have.been.called;
 		});
 
 		it("should focus the transaction row for a specified transaction", (): void => {
 			transactionIndexController["processTransactions"](transactionBatch, undefined, 1);
-			transactionIndexController["focusTransaction"].should.have.been.calledWith(1);
+			expect(transactionIndexController["focusTransaction"]).to.have.been.calledWith(1);
 		});
 	});
 
@@ -880,12 +880,12 @@ describe("TransactionIndexController", (): void => {
 		it("should do nothing for investment accounts", (): void => {
 			(transactionIndexController.context as Account).account_type = "investment";
 			transactionIndexController["updateRunningBalances"]();
-			transactionIndexController.transactions.should.deep.equal(transactionBatch.transactions);
+			expect(transactionIndexController.transactions).to.deep.equal(transactionBatch.transactions);
 		});
 
 		it("should calculate a running balance on each transaction", (): void => {
 			transactionIndexController["updateRunningBalances"]();
-			(transactionIndexController.transactions.pop() as Transaction).balance.should.equal(95);
+			expect((transactionIndexController.transactions.pop() as Transaction).balance).to.equal(95);
 		});
 	});
 
@@ -893,43 +893,43 @@ describe("TransactionIndexController", (): void => {
 		beforeEach((): SinonStub => (transactionIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific transaction row could not be found", (): void => {
-			transactionIndexController["focusTransaction"](999).should.be.NaN;
-			(transactionIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
+			expect(transactionIndexController["focusTransaction"](999)).to.be.NaN;
+			expect((transactionIndexController.tableActions as OgTableActionHandlers).focusRow).to.not.have.been.called;
 		});
 
 		it("should focus the transaction row for the specified transaction", (): void => {
 			const targetIndex: number = transactionIndexController["focusTransaction"](1);
 
 			$timeout.flush();
-			(transactionIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(targetIndex);
+			expect((transactionIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(targetIndex);
 		});
 
 		it("should return the index of the specified transaction", (): void => {
 			const targetIndex: number = transactionIndexController["focusTransaction"](1);
 
-			targetIndex.should.equal(0);
+			expect(targetIndex).to.equal(0);
 		});
 	});
 
 	describe("toggleShowAllDetails", (): void => {
 		it("should update the show all details setting", (): void => {
 			transactionIndexController.toggleShowAllDetails(true);
-			transactionModel.showAllDetails.should.have.been.calledWith(true);
+			expect(transactionModel.showAllDetails).to.have.been.calledWith(true);
 		});
 
 		it("should set a flag to indicate that we're showing all details", (): void => {
 			transactionIndexController.showAllDetails = false;
 			transactionIndexController.toggleShowAllDetails(true);
-			transactionIndexController.showAllDetails.should.be.true;
+			expect(transactionIndexController.showAllDetails).to.be.true;
 		});
 	});
 
 	describe("(account context)", (): void => {
 		beforeEach((): TransactionIndexController => (transactionIndexController = controllerTest("TransactionIndexController", { contextModel: accountModel }) as TransactionIndexController));
 
-		it("should set a flag to enable reconciling", (): Chai.Assertion => transactionIndexController.reconcilable.should.be.true);
+		it("should set a flag to enable reconciling", (): Chai.Assertion => expect(transactionIndexController.reconcilable).to.be.true);
 
-		it("should fetch the unreconciled only setting for the current account", (): Chai.Assertion => accountModel.isUnreconciledOnly.should.have.been.calledWith((transactionIndexController.context as Entity).id));
+		it("should fetch the unreconciled only setting for the current account", (): Chai.Assertion => expect(accountModel["isUnreconciledOnly"]).to.have.been.calledWith((transactionIndexController.context as Entity).id));
 
 		describe("toggleUnreconciledOnly", (): void => {
 			let	direction: TransactionFetchDirection | null,
@@ -947,33 +947,33 @@ describe("TransactionIndexController", (): void => {
 			it("should do nothing if we're currently reconciling", (): void => {
 				transactionIndexController.reconciling = true;
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				accountModel.unreconciledOnly.should.not.have.been.called;
+				expect(accountModel["unreconciledOnly"]).to.not.have.been.called;
 			});
 
 			it("should update the unreconciled only setting for the current account", (): void => {
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				accountModel.unreconciledOnly.should.have.been.calledWith((transactionIndexController.context as Entity).id, true);
+				expect(accountModel["unreconciledOnly"]).to.have.been.calledWith((transactionIndexController.context as Entity).id, true);
 			});
 
 			it("should set a flag to indicate that we're showing unreconciled transactions only", (): void => {
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				transactionIndexController.unreconciledOnly.should.be.true;
+				expect(transactionIndexController.unreconciledOnly).to.be.true;
 			});
 
 			it("should clear the list of transactions", (): void => {
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				transactionIndexController.transactions.should.be.empty;
+				expect(transactionIndexController.transactions).to.be.empty;
 			});
 
 			it("should refetch a batch of transactions in the specified direction", (): void => {
 				transactionIndexController.toggleUnreconciledOnly(true, direction as TransactionFetchDirection, fromDate, transactionIdToFocus);
-				transactionIndexController.getTransactions.should.have.been.calledWith(direction, fromDate, transactionIdToFocus);
+				expect(transactionIndexController["getTransactions"]).to.have.been.calledWith(direction, fromDate, transactionIdToFocus);
 			});
 
 			it("should refetch a batch of transactions in the previous direction if a direction is not specified", (): void => {
 				direction = null;
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				transactionIndexController.getTransactions.should.have.been.calledWith("prev");
+				expect(transactionIndexController["getTransactions"]).to.have.been.calledWith("prev");
 			});
 		});
 
@@ -988,25 +988,25 @@ describe("TransactionIndexController", (): void => {
 				transactionIndexController.save();
 			});
 
-			it("should update all cleared transactions to reconciled", (): Chai.Assertion => accountModel.reconcile.should.have.been.calledWith(contextId));
+			it("should update all cleared transactions to reconciled", (): Chai.Assertion => expect(accountModel["reconcile"]).to.have.been.calledWith(contextId));
 
-			it("should cleared the account's closing balance", (): Chai.Assertion => $window.localStorage.removeItem.should.have.been.calledWith("lootClosingBalance-1"));
+			it("should cleared the account's closing balance", (): Chai.Assertion => expect($window.localStorage["removeItem"]).to.have.been.calledWith("lootClosingBalance-1"));
 
-			it("should exit reconcile mode", (): Chai.Assertion => transactionIndexController.reconciling.should.be.false);
+			it("should exit reconcile mode", (): Chai.Assertion => expect(transactionIndexController.reconciling).to.be.false);
 
 			it("should clear the list of transactions", (): void => {
-				transactionIndexController.transactions.should.be.an("array");
-				transactionIndexController.transactions.should.be.empty;
+				expect(transactionIndexController.transactions).to.be.an("array");
+				expect(transactionIndexController.transactions).to.be.empty;
 			});
 
-			it("should refresh the list of transactions", (): Chai.Assertion => transactionIndexController.getTransactions.should.have.been.calledWith("prev"));
+			it("should refresh the list of transactions", (): Chai.Assertion => expect(transactionIndexController["getTransactions"]).to.have.been.calledWith("prev"));
 		});
 
 		describe("cancel", (): void => {
 			it("should exit reconcile mode", (): void => {
 				transactionIndexController.reconciling = true;
 				transactionIndexController.cancel();
-				transactionIndexController.reconciling.should.be.false;
+				expect(transactionIndexController.reconciling).to.be.false;
 			});
 		});
 
@@ -1014,7 +1014,7 @@ describe("TransactionIndexController", (): void => {
 			it("should do nothing if we're currently reconciling", (): void => {
 				transactionIndexController.reconciling = true;
 				transactionIndexController.reconcile();
-				$uibModal.open.should.not.have.been.called;
+				expect($uibModal.open).to.not.have.been.called;
 			});
 
 			describe("(not already reconciling)", (): void => {
@@ -1024,57 +1024,57 @@ describe("TransactionIndexController", (): void => {
 					transactionIndexController.reconcile();
 				});
 
-				it("should disable navigation on the table", (): Chai.Assertion => ogTableNavigableService.enabled.should.be.false);
+				it("should disable navigation on the table", (): Chai.Assertion => expect(ogTableNavigableService.enabled).to.be.false);
 
 				it("should prompt the user for the accounts closing balance", (): void => {
-					$uibModal.open.should.have.been.called;
-					(($uibModal.resolves as UibModalMockResolves).account as Account).should.deep.equal(transactionIndexController.context);
+					expect($uibModal.open).to.have.been.called;
+					expect(($uibModal.resolves as UibModalMockResolves).account as Account).to.deep.equal(transactionIndexController.context);
 				});
 
 				it("should make the closing balance available to the view when the modal is closed", (): void => {
 					const closingBalance = 100;
 
 					$uibModal.close(closingBalance);
-					transactionIndexController["closingBalance"].should.equal(closingBalance);
+					expect(transactionIndexController["closingBalance"]).to.equal(closingBalance);
 				});
 
 				it("should set the reconcile target to the difference between the reconciled closing balance and closing balance", (): void => {
 					const closingBalance = 100.009;
 
 					$uibModal.close(closingBalance);
-					transactionIndexController.reconcileTarget.should.equal(85.01);
+					expect(transactionIndexController.reconcileTarget).to.equal(85.01);
 				});
 
 				it("should set the cleared total to the cleared closing balance", (): void => {
 					$uibModal.close();
-					transactionIndexController.clearedTotal.should.equal(1.01);
+					expect(transactionIndexController.clearedTotal).to.equal(1.01);
 				});
 
 				it("should set the uncleared total to the difference between cleared closing balance and the reconcile target", (): void => {
 					const closingBalance = 100.009;
 
 					$uibModal.close(closingBalance);
-					transactionIndexController.unclearedTotal.should.equal(84);
+					expect(transactionIndexController.unclearedTotal).to.equal(84);
 				});
 
 				it("should refetch the list of unreconciled transactions when the modal is closed", (): void => {
 					$uibModal.close();
-					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(true);
+					expect(transactionIndexController["toggleUnreconciledOnly"]).to.have.been.calledWith(true);
 				});
 
 				it("should enter reconcile mode when the modal is closed", (): void => {
 					$uibModal.close();
-					transactionIndexController.reconciling.should.be.true;
+					expect(transactionIndexController.reconciling).to.be.true;
 				});
 
 				it("should enable navigation on the table when the modal is closed", (): void => {
 					$uibModal.close();
-					ogTableNavigableService.enabled.should.be.true;
+					expect(ogTableNavigableService.enabled).to.be.true;
 				});
 
 				it("should enable navigation on the table when the modal is dismissed", (): void => {
 					$uibModal.dismiss();
-					ogTableNavigableService.enabled.should.be.true;
+					expect(ogTableNavigableService.enabled).to.be.true;
 				});
 			});
 		});
@@ -1092,7 +1092,7 @@ describe("TransactionIndexController", (): void => {
 					transaction.status = "Cleared";
 					transaction.direction = "inflow";
 					transactionIndexController["updateReconciledTotals"](transaction);
-					transactionIndexController.clearedTotal.should.equal(101.05);
+					expect(transactionIndexController.clearedTotal).to.equal(101.05);
 				});
 			});
 
@@ -1101,7 +1101,7 @@ describe("TransactionIndexController", (): void => {
 					transaction.status = "Cleared";
 					transaction.direction = "outflow";
 					transactionIndexController["updateReconciledTotals"](transaction);
-					transactionIndexController.clearedTotal.should.equal(99.01);
+					expect(transactionIndexController.clearedTotal).to.equal(99.01);
 				});
 			});
 
@@ -1110,7 +1110,7 @@ describe("TransactionIndexController", (): void => {
 					transaction.status = "";
 					transaction.direction = "inflow";
 					transactionIndexController["updateReconciledTotals"](transaction);
-					transactionIndexController.clearedTotal.should.equal(99.01);
+					expect(transactionIndexController.clearedTotal).to.equal(99.01);
 				});
 			});
 
@@ -1119,7 +1119,7 @@ describe("TransactionIndexController", (): void => {
 					transaction.status = "";
 					transaction.direction = "outflow";
 					transactionIndexController["updateReconciledTotals"](transaction);
-					transactionIndexController.clearedTotal.should.equal(101.05);
+					expect(transactionIndexController.clearedTotal).to.equal(101.05);
 				});
 			});
 
@@ -1128,7 +1128,7 @@ describe("TransactionIndexController", (): void => {
 				transaction.status = "Cleared";
 				transaction.direction = "inflow";
 				transactionIndexController["updateReconciledTotals"](transaction);
-				transactionIndexController.unclearedTotal.should.equal(98.96);
+				expect(transactionIndexController.unclearedTotal).to.equal(98.96);
 			});
 		});
 
@@ -1141,9 +1141,9 @@ describe("TransactionIndexController", (): void => {
 				transactionIndexController.toggleCleared(transaction);
 			});
 
-			it("should update the transaction status", (): Chai.Assertion => transactionModel.updateStatus.should.have.been.calledWith("/accounts/1", transaction.id, transaction.status));
+			it("should update the transaction status", (): Chai.Assertion => expect(transactionModel.updateStatus).to.have.been.calledWith("/accounts/1", transaction.id, transaction.status));
 
-			it("should update the reconciled totals", (): Chai.Assertion => transactionIndexController["updateReconciledTotals"].should.have.been.calledWith(transaction));
+			it("should update the reconciled totals", (): Chai.Assertion => expect(transactionIndexController["updateReconciledTotals"]).to.have.been.calledWith(transaction));
 		});
 	});
 
@@ -1158,12 +1158,12 @@ describe("TransactionIndexController", (): void => {
 
 		it("should toggle a flag on the transaction indicating whether subtransactions are shown", (): void => {
 			transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-			transaction.showSubtransactions.should.be.false;
+			expect(transaction.showSubtransactions).to.be.false;
 		});
 
 		it("should do nothing if we're not showing subtransactions", (): void => {
 			transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-			transactionModel.findSubtransactions.should.not.have.been.called;
+			expect(transactionModel.findSubtransactions).to.not.have.been.called;
 		});
 
 		describe("(on shown)", (): void => {
@@ -1175,20 +1175,20 @@ describe("TransactionIndexController", (): void => {
 
 			it("should show a loading indicator", (): void => {
 				transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-				transaction.showSubtransactions.should.be.true;
-				transaction.loadingSubtransactions.should.be.true;
+				expect(transaction.showSubtransactions).to.be.true;
+				expect(transaction.loadingSubtransactions).to.be.true;
 			});
 
 			it("should clear the subtransactions for the transaction", (): void => {
 				transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-				transaction.subtransactions.should.be.an("array");
-				transaction.subtransactions.should.be.empty;
+				expect(transaction.subtransactions).to.be.an("array");
+				expect(transaction.subtransactions).to.be.empty;
 			});
 
 			it("should fetch the subtransactions", (): void => {
 				transaction.id = 1;
 				transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-				transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
+				expect(transactionModel.findSubtransactions).to.have.been.calledWith(transaction.id);
 			});
 
 			it("should update the transaction with it's subtransactions", (): void => {
@@ -1200,19 +1200,19 @@ describe("TransactionIndexController", (): void => {
 
 				transaction.id = 1;
 				transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-				transaction.subtransactions.should.deep.equal(subtransactions);
+				expect(transaction.subtransactions).to.deep.equal(subtransactions);
 			});
 
 			it("should hide the loading indicator", (): void => {
 				transaction.id = 1;
 				transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-				transaction.loadingSubtransactions.should.be.false;
+				expect(transaction.loadingSubtransactions).to.be.false;
 			});
 		});
 
 		it("should prevent the event from bubbling", (): void => {
 			transactionIndexController.toggleSubtransactions(event as JQueryMouseEventObject, transaction);
-			(event.cancelBubble as boolean).should.be.true;
+			expect(event.cancelBubble as boolean).to.be.true;
 		});
 	});
 
@@ -1235,24 +1235,24 @@ describe("TransactionIndexController", (): void => {
 		it("should transition to the specified state passing the transaction id", (): void => {
 			transaction.parent_id = null;
 			transactionIndexController["switchTo"](null, "state", stateParams.id, transaction);
-			$state.go.should.have.been.calledWith("root.state.transactions.transaction", stateParams);
+			expect($state.go).to.have.been.calledWith("root.state.transactions.transaction", stateParams);
 		});
 
 		it("should transition to the specified state passing the parent transaction id if present", (): void => {
 			stateParams.transactionId = transaction.parent_id;
 			transactionIndexController["switchTo"](null, "state", stateParams.id, transaction);
-			$state.go.should.have.been.calledWith("root.state.transactions.transaction", stateParams);
+			expect($state.go).to.have.been.calledWith("root.state.transactions.transaction", stateParams);
 		});
 
 		it("should transition to the specified state passing the transaction id for a Subtransaction", (): void => {
 			transaction.transaction_type = "Sub";
 			transactionIndexController["switchTo"](null, "state", stateParams.id, transaction);
-			$state.go.should.have.been.calledWith("root.state.transactions.transaction", stateParams);
+			expect($state.go).to.have.been.calledWith("root.state.transactions.transaction", stateParams);
 		});
 
 		it("should stop the event from propagating if present", (): void => {
 			transactionIndexController["switchTo"]($event as Event, "state", stateParams.id, transaction);
-			($event.stopPropagation as SinonStub).should.have.been.called;
+			expect($event.stopPropagation as SinonStub).to.have.been.called;
 		});
 	});
 
@@ -1268,20 +1268,20 @@ describe("TransactionIndexController", (): void => {
 
 		it("should not toggle the unreconciled only setting for the account if the transaction is not reconciled", (): void => {
 			transactionIndexController["switchToAccount"](null, id, transaction);
-			accountModel.unreconciledOnly.should.not.have.been.called;
+			expect(accountModel["unreconciledOnly"]).to.not.have.been.called;
 		});
 
 		it("should toggle the unreconciled only setting for the account if the transaction is reconciled", (): void => {
 			transaction.status = "Reconciled";
 			transactionIndexController["switchToAccount"](null, id, transaction);
-			accountModel.unreconciledOnly.should.have.been.calledWith(id, false);
+			expect(accountModel["unreconciledOnly"]).to.have.been.calledWith(id, false);
 		});
 
 		it("should transition to the specified state", (): void => {
 			const event: EventMock = {};
 
 			transactionIndexController["switchToAccount"](event as Event, id, transaction);
-			transactionIndexController["switchTo"].should.have.been.calledWith(event, "accounts.account", id, transaction);
+			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(event, "accounts.account", id, transaction);
 		});
 	});
 
@@ -1292,7 +1292,7 @@ describe("TransactionIndexController", (): void => {
 
 			sinon.stub(transactionIndexController, "switchToAccount" as keyof TransactionIndexController);
 			transactionIndexController["switchAccount"](event as Event, transaction);
-			transactionIndexController["switchToAccount"].should.have.been.calledWith(event, (transaction.account as Account).id, transaction);
+			expect(transactionIndexController["switchToAccount"]).to.have.been.calledWith(event, (transaction.account as Account).id, transaction);
 		});
 	});
 
@@ -1303,7 +1303,7 @@ describe("TransactionIndexController", (): void => {
 
 			sinon.stub(transactionIndexController, "switchToAccount" as keyof TransactionIndexController);
 			transactionIndexController.switchPrimaryAccount(event as Event, transaction);
-			transactionIndexController["switchToAccount"].should.have.been.calledWith(event, transaction.primary_account.id, transaction);
+			expect(transactionIndexController["switchToAccount"]).to.have.been.calledWith(event, transaction.primary_account.id, transaction);
 		});
 	});
 
@@ -1314,7 +1314,7 @@ describe("TransactionIndexController", (): void => {
 
 			sinon.stub(transactionIndexController, "switchTo" as keyof TransactionIndexController);
 			transactionIndexController.switchPayee(event as Event, transaction);
-			transactionIndexController["switchTo"].should.have.been.calledWith(event, "payees.payee", (transaction.payee as Payee).id, transaction);
+			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(event, "payees.payee", (transaction.payee as Payee).id, transaction);
 		});
 	});
 
@@ -1325,7 +1325,7 @@ describe("TransactionIndexController", (): void => {
 
 			sinon.stub(transactionIndexController, "switchTo" as keyof TransactionIndexController);
 			transactionIndexController.switchSecurity(event as Event, transaction);
-			transactionIndexController["switchTo"].should.have.been.calledWith(event, "securities.security", (transaction.security as Security).id, transaction);
+			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(event, "securities.security", (transaction.security as Security).id, transaction);
 		});
 	});
 
@@ -1336,7 +1336,7 @@ describe("TransactionIndexController", (): void => {
 
 			sinon.stub(transactionIndexController, "switchTo" as keyof TransactionIndexController);
 			transactionIndexController.switchCategory(event as Event, transaction);
-			transactionIndexController["switchTo"].should.have.been.calledWith(event, "categories.category", (transaction.category as Category).id, transaction);
+			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(event, "categories.category", (transaction.category as Category).id, transaction);
 		});
 	});
 
@@ -1347,7 +1347,7 @@ describe("TransactionIndexController", (): void => {
 
 			sinon.stub(transactionIndexController, "switchTo" as keyof TransactionIndexController);
 			transactionIndexController.switchSubcategory(event as Event, transaction);
-			transactionIndexController["switchTo"].should.have.been.calledWith(event, "categories.category", (transaction.subcategory as Category).id, transaction);
+			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(event, "categories.category", (transaction.subcategory as Category).id, transaction);
 		});
 	});
 
@@ -1360,7 +1360,7 @@ describe("TransactionIndexController", (): void => {
 		it("should ensure the transaction is focussed when the transaction id state param changes", (): void => {
 			transactionId = 2;
 			transactionIndexController["transitionSuccessHandler"](transactionId);
-			transactionIndexController["focusTransaction"].should.have.been.calledWith(transactionId);
+			expect(transactionIndexController["focusTransaction"]).to.have.been.calledWith(transactionId);
 		});
 
 		describe("(transaction not found)", (): void => {
@@ -1372,7 +1372,7 @@ describe("TransactionIndexController", (): void => {
 
 			it("should fetch the transaction details", (): void => {
 				transactionIndexController["transitionSuccessHandler"](transactionId);
-				transactionModel.find.should.have.been.calledWith(transactionId);
+				expect(transactionModel.find).to.have.been.calledWith(transactionId);
 			});
 
 			describe("(showing unreconciled only)", (): void => {
@@ -1385,7 +1385,7 @@ describe("TransactionIndexController", (): void => {
 					sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
 					transactionIndexController.unreconciledOnly = true;
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					transactionIndexController.toggleUnreconciledOnly.should.have.been.calledWith(false, direction, transactionDate, transactionId);
+					expect(transactionIndexController["toggleUnreconciledOnly"]).to.have.been.calledWith(false, direction, transactionDate, transactionId);
 				});
 			});
 
@@ -1395,7 +1395,7 @@ describe("TransactionIndexController", (): void => {
 
 					transactionIndexController.firstTransactionDate = startOfDay(new Date());
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					transactionIndexController.getTransactions.should.have.been.calledWith("next", fromDate);
+					expect(transactionIndexController["getTransactions"]).to.have.been.calledWith("next", fromDate);
 				});
 			});
 
@@ -1406,7 +1406,7 @@ describe("TransactionIndexController", (): void => {
 					transactionIndexController.lastTransactionDate = subDays(startOfDay(new Date()), 2);
 					transactionIndexController["atEnd"] = false;
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					transactionIndexController.getTransactions.should.have.been.calledWith("prev", fromDate);
+					expect(transactionIndexController["getTransactions"]).to.have.been.calledWith("prev", fromDate);
 				});
 
 				it("should fetch a new transaction batch for the current transaction date if we're already at the end", (): void => {
@@ -1416,7 +1416,7 @@ describe("TransactionIndexController", (): void => {
 					transactionIndexController.lastTransactionDate = subDays(startOfDay(new Date()), 2);
 					transactionIndexController["atEnd"] = true;
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					transactionIndexController.getTransactions.should.have.been.calledWith(direction, fromDate);
+					expect(transactionIndexController["getTransactions"]).to.have.been.calledWith(direction, fromDate);
 				});
 			});
 		});

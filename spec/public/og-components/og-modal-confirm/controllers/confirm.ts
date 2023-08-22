@@ -23,22 +23,22 @@ describe("OgModalConfirmController", (): void => {
 	}) as Mocha.HookFunction);
 
 	it("should make the passed confirmation details available on the $scope", (): void => {
-		ogModalConfirmController.confirm.message.should.equal(confirm.message);
-		(ogModalConfirmController.confirm.noButtonStyle as string).should.equal("default");
-		(ogModalConfirmController.confirm.yesButtonStyle as string).should.equal("primary");
+		expect(ogModalConfirmController.confirm.message).to.equal(confirm.message);
+		expect(ogModalConfirmController.confirm.noButtonStyle as string).to.equal("default");
+		expect(ogModalConfirmController.confirm.yesButtonStyle as string).to.equal("primary");
 	});
 
 	describe("yes", (): void => {
 		it("should close the modal and return true", (): void => {
 			ogModalConfirmController.yes();
-			$uibModalInstance.close.should.have.been.calledWith(true);
+			expect($uibModalInstance.close).to.have.been.calledWith(true);
 		});
 	});
 
 	describe("no", (): void => {
 		it("should dismiss the modal", (): void => {
 			ogModalConfirmController.no();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

@@ -61,7 +61,7 @@ describe("transactionFlag", (): void => {
 	scenarios.forEach((scenario: { flagType: TransactionFlagType; tooltip: string; }): void => {
 		it(`should set the tooltip when the flag type is ${String(scenario.flagType)}`, (): void => {
 			setup(scenario);
-			$sce.getTrustedHtml(isolateScope.tooltip).should.equal(scenario.tooltip);
+			expect($sce.getTrustedHtml(isolateScope.tooltip)).to.equal(scenario.tooltip);
 		});
 	});
 
@@ -74,16 +74,16 @@ describe("transactionFlag", (): void => {
 			i = transactionFlag["element"].find("i");
 		});
 
-		it("should display the icon for the flag", (): Chai.Assertion => i.hasClass("glyphicon-flag").should.be.true);
+		it("should display the icon for the flag", (): Chai.Assertion => expect(i.hasClass("glyphicon-flag")).to.be.true);
 
-		it("should be transparent when the transaction is not flagged", (): Chai.Assertion => i.hasClass("active").should.be.false);
+		it("should be transparent when the transaction is not flagged", (): Chai.Assertion => expect(i.hasClass("active")).to.be.false);
 
 		it("should be opaque when the transaction is flagged", (): void => {
 			(transactionFlag.scope.model as Transaction).flag_type = "noreceipt";
 			transactionFlag.compile({ "transaction-flag": "model" });
 			transactionFlag.scope.$digest();
-			transactionFlag["element"].find("i").hasClass("active").should.be.true;
-			transactionFlag["element"].find("i").hasClass("noreceipt").should.be.true;
+			expect(transactionFlag["element"].find("i").hasClass("active")).to.be.true;
+			expect(transactionFlag["element"].find("i").hasClass("noreceipt")).to.be.true;
 		});
 	});
 
@@ -98,28 +98,28 @@ describe("transactionFlag", (): void => {
 			transactionFlag["element"].triggerHandler("click");
 		});
 
-		it("should disable navigation on the table", (): Chai.Assertion => ogTableNavigableService.enabled.should.be.false);
+		it("should disable navigation on the table", (): Chai.Assertion => expect(ogTableNavigableService.enabled).to.be.false);
 
 		it("should show the flag modal for the transaction", (): void => {
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).should.deep.equal(transaction);
+			expect($uibModal.open).to.have.been.called;
+			expect(($uibModal.resolves as UibModalMockResolves).transaction as Transaction).to.deep.equal(transaction);
 		});
 
 		it("should update the transaction in the list of transactions when the modal is closed", (): void => {
 			transaction.flag_type = "noreceipt";
 			transaction.flag = "test flag";
 			$uibModal.close(transaction);
-			isolateScope.transaction.should.deep.equal(transaction);
+			expect(isolateScope.transaction).to.deep.equal(transaction);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			$uibModal.close(transaction);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dismissed", (): void => {
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -134,7 +134,7 @@ describe("transactionFlag", (): void => {
 
 		it("should remove the click handler from the element", (): void => {
 			transactionFlag["element"].triggerHandler("click");
-			isolateScope.clickHandler.should.not.have.been.called;
+			expect(isolateScope.clickHandler).to.not.have.been.called;
 		});
 	});
 });

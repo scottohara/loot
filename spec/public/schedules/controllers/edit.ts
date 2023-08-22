@@ -108,18 +108,18 @@ describe("ScheduleEditController", (): void => {
 			schedule.transaction_date = schedule.next_due_date;
 		});
 
-		it("should make the passed schedule available to the view", (): Chai.Assertion => scheduleEditController.transaction.should.deep.equal(schedule));
+		it("should make the passed schedule available to the view", (): Chai.Assertion => expect(scheduleEditController.transaction).to.deep.equal(schedule));
 
-		it("should set the mode to Enter Transaction", (): Chai.Assertion => scheduleEditController.mode.should.equal("Enter Transaction"));
+		it("should set the mode to Enter Transaction", (): Chai.Assertion => expect(scheduleEditController.mode).to.equal("Enter Transaction"));
 
 		it("should make a copy of the transaction as schedule available to the view", (): void => {
-			(scheduleEditController.schedule.id as number).should.not.be.null;
-			scheduleEditController.schedule.should.deep.equal(originalSchedule);
+			expect(scheduleEditController.schedule.id as number).to.not.be.null;
+			expect(scheduleEditController.schedule).to.deep.equal(originalSchedule);
 		});
 
-		it("should clear the transaction id", (): Chai.Assertion => (null === scheduleEditController.transaction.id).should.be.true);
+		it("should clear the transaction id", (): Chai.Assertion => expect(scheduleEditController.transaction.id).to.be.null);
 
-		it("should set the transaction date to the next due date", (): Chai.Assertion => (scheduleEditController.transaction.transaction_date as Date).should.deep.equal(schedule.next_due_date));
+		it("should set the transaction date to the next due date", (): Chai.Assertion => expect(scheduleEditController.transaction.transaction_date as Date).to.deep.equal(schedule.next_due_date));
 	});
 
 	describe("when a schedule is not provided", (): void => {
@@ -136,39 +136,39 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController = controllerTest("ScheduleEditController", { schedule: undefined }) as ScheduleEditController;
 		});
 
-		it("should make an empty transaction object available to the view", (): Chai.Assertion => scheduleEditController.transaction.should.deep.equal(transaction));
+		it("should make an empty transaction object available to the view", (): Chai.Assertion => expect(scheduleEditController.transaction).to.deep.equal(transaction));
 
-		it("should set the mode to Add Schedule", (): Chai.Assertion => scheduleEditController.mode.should.equal("Add Schedule"));
+		it("should set the mode to Add Schedule", (): Chai.Assertion => expect(scheduleEditController.mode).to.equal("Add Schedule"));
 
-		it("should make an alias of the transaction as schedule available to the view", (): Chai.Assertion => scheduleEditController.schedule.should.equal(scheduleEditController.transaction));
+		it("should make an alias of the transaction as schedule available to the view", (): Chai.Assertion => expect(scheduleEditController.schedule).to.equal(scheduleEditController.transaction));
 	});
 
 	it("should set the auto-flag property when a flag type is present", (): void => {
 		schedule.flag_type = "noreceipt";
 		scheduleEditController = controllerTest("ScheduleEditController") as ScheduleEditController;
-		scheduleEditController.schedule.autoFlag.should.be.true;
+		expect(scheduleEditController.schedule.autoFlag).to.be.true;
 	});
 
-	it("should not set the auto-flag property when a flag type is absent", (): Chai.Assertion => scheduleEditController.schedule.autoFlag.should.be.false);
+	it("should not set the auto-flag property when a flag type is absent", (): Chai.Assertion => expect(scheduleEditController.schedule.autoFlag).to.be.false);
 
-	it("should set a default flag type when a flag type is absent", (): Chai.Assertion => String(scheduleEditController.schedule.flag_type).should.equal("followup"));
+	it("should set a default flag type when a flag type is absent", (): Chai.Assertion => expect(String(scheduleEditController.schedule.flag_type)).to.equal("followup"));
 
 	it("should set the flag memo to null when the flag memo is '(no memo)'", (): void => {
 		schedule.flag = "(no memo)";
 		scheduleEditController = controllerTest("ScheduleEditController") as ScheduleEditController;
-		(null === scheduleEditController.schedule.flag).should.be.true;
+		expect(scheduleEditController.schedule.flag).to.be.null;
 	});
 
-	it("should prefetch the payees list to populate the cache", (): Chai.Assertion => payeeModel.all.should.have.been.called);
+	it("should prefetch the payees list to populate the cache", (): Chai.Assertion => expect(payeeModel.all).to.have.been.called);
 
 	describe("payees", (): void => {
 		let payees: angular.IPromise<Payee[]>;
 
 		beforeEach((): angular.IPromise<Payee[]> => (payees = scheduleEditController.payees("a", 3)));
 
-		it("should fetch the list of payees", (): Chai.Assertion => payeeModel.all.should.have.been.called);
+		it("should fetch the list of payees", (): Chai.Assertion => expect(payeeModel.all).to.have.been.called);
 
-		it("should return a filtered & limited list of payees", async (): Promise<Chai.Assertion> => (await payees).should.deep.equal([
+		it("should return a filtered & limited list of payees", async (): Promise<Chai.Assertion> => expect(await payees).to.deep.equal([
 			createPayee({ id: 1, name: "aa" }),
 			createPayee({ id: 4, name: "ba" }),
 			createPayee({ id: 5, name: "ab" })
@@ -180,9 +180,9 @@ describe("ScheduleEditController", (): void => {
 
 		beforeEach((): angular.IPromise<Security[]> => (securities = scheduleEditController.securities("a", 3)));
 
-		it("should fetch the list of securities", (): Chai.Assertion => securityModel.all.should.have.been.called);
+		it("should fetch the list of securities", (): Chai.Assertion => expect(securityModel.all).to.have.been.called);
 
-		it("should return a filtered & limited list of securities", async (): Promise<Chai.Assertion> => (await securities).should.deep.equal([
+		it("should return a filtered & limited list of securities", async (): Promise<Chai.Assertion> => expect(await securities).to.deep.equal([
 			createSecurity({ id: 1, name: "aa", closing_balance: 1.006, code: "A", current_holding: 1 }),
 			createSecurity({ id: 4, name: "ba", closing_balance: 4, code: "D", current_holding: 1 }),
 			createSecurity({ id: 5, name: "ab", closing_balance: 5, code: "E", current_holding: 1 })
@@ -198,17 +198,17 @@ describe("ScheduleEditController", (): void => {
 		it("should return an empty array if the parent category is new", (): void => {
 			delete parentCategory.id;
 			categories = scheduleEditController.categories("a", 3, parentCategory);
-			categories.should.be.an("array");
-			categories.should.be.empty;
+			expect(categories).to.be.an("array");
+			expect(categories).to.be.empty;
 		});
 
 		describe("(parent categories)", (): void => {
 			it("should fetch the list of parent categories", (): void => {
 				categories = scheduleEditController.categories("a", 3);
-				categoryModel.all.should.have.been.calledWith(undefined);
+				expect(categoryModel.all).to.have.been.calledWith(undefined);
 			});
 
-			it("should include transfer categories", async (): Promise<Chai.Assertion> => (await scheduleEditController.categories("a", 5)).should.deep.equal([
+			it("should include transfer categories", async (): Promise<Chai.Assertion> => expect(await scheduleEditController.categories("a", 5)).to.deep.equal([
 				{ id: "TransferTo", name: "Transfer To" },
 				{ id: "TransferFrom", name: "Transfer From" },
 				createCategory({ id: 1, name: "aa", num_children: 2, children: [
@@ -223,7 +223,7 @@ describe("ScheduleEditController", (): void => {
 				createCategory({ id: 5, name: "ab", children: [] })
 			]));
 
-			it("should include split categories if requested", async (): Promise<Chai.Assertion> => (await scheduleEditController.categories("a", 7, null, true)).should.deep.equal([
+			it("should include split categories if requested", async (): Promise<Chai.Assertion> => expect(await scheduleEditController.categories("a", 7, null, true)).to.deep.equal([
 				{ id: "TransferTo", name: "Transfer To" },
 				{ id: "TransferFrom", name: "Transfer From" },
 				{ id: "Payslip", name: "Payslip" },
@@ -244,10 +244,10 @@ describe("ScheduleEditController", (): void => {
 		describe("(subcategories)", (): void => {
 			it("should fetch the subcategories for the specified parent category", (): void => {
 				categories = scheduleEditController.categories("a", 3, parentCategory);
-				categoryModel.all.should.have.been.calledWith(1);
+				expect(categoryModel.all).to.have.been.calledWith(1);
 			});
 
-			it("should eventually return a filtered & limited list of subcategories", async (): Promise<Chai.Assertion> => (await scheduleEditController.categories("a", 3, parentCategory)).should.deep.equal([
+			it("should eventually return a filtered & limited list of subcategories", async (): Promise<Chai.Assertion> => expect(await scheduleEditController.categories("a", 3, parentCategory)).to.deep.equal([
 				createCategory({ id: 1, name: "aa", num_children: 2, children: [
 					createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
 						createCategory({ id: 1, name: "aa", num_children: 2 })
@@ -263,7 +263,7 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("investmentCategories", (): void => {
-		it("should return the full list of investment categories when a filter is not specified", (): Chai.Assertion => scheduleEditController.investmentCategories().should.deep.equal([
+		it("should return the full list of investment categories when a filter is not specified", (): Chai.Assertion => expect(scheduleEditController.investmentCategories()).to.deep.equal([
 			{ id: "Buy", name: "Buy" },
 			{ id: "Sell", name: "Sell" },
 			{ id: "DividendTo", name: "Dividend To" },
@@ -273,7 +273,7 @@ describe("ScheduleEditController", (): void => {
 			{ id: "TransferFrom", name: "Transfer From" }
 		]));
 
-		it("should return a filtered list of investment categories when a filter is specified", (): Chai.Assertion => scheduleEditController.investmentCategories("a").should.deep.equal([
+		it("should return a filtered list of investment categories when a filter is specified", (): Chai.Assertion => expect(scheduleEditController.investmentCategories("a")).to.deep.equal([
 			{ id: "AddShares", name: "Add Shares" },
 			{ id: "RemoveShares", name: "Remove Shares" },
 			{ id: "TransferTo", name: "Transfer To" },
@@ -282,11 +282,11 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("isString", (): void => {
-		it("should return false if the object is not a string", (): Chai.Assertion => scheduleEditController.isString({}).should.be.false);
+		it("should return false if the object is not a string", (): Chai.Assertion => expect(scheduleEditController.isString({})).to.be.false);
 
-		it("should return false if the object is an empty string", (): Chai.Assertion => scheduleEditController.isString("").should.be.false);
+		it("should return false if the object is an empty string", (): Chai.Assertion => expect(scheduleEditController.isString("")).to.be.false);
 
-		it("should return true if the object is a string and is not empty", (): Chai.Assertion => scheduleEditController.isString("test").should.be.true);
+		it("should return true if the object is a string and is not empty", (): Chai.Assertion => expect(scheduleEditController.isString("test")).to.be.true);
 	});
 
 	describe("payeeSelected", (): void => {
@@ -308,45 +308,45 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.id = 1;
 			(scheduleEditController.transaction as ScheduledBasicTransaction).payee = payee;
 			scheduleEditController.payeeSelected();
-			payeeModel.findLastTransaction.should.not.have.been.called;
+			expect(payeeModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should do nothing when the selected payee is not an existing payee", (): void => {
 			((scheduleEditController.transaction as ScheduledBasicTransaction).payee as NewOrExistingEntity) = "payee";
 			scheduleEditController.payeeSelected();
-			payeeModel.findLastTransaction.should.not.have.been.called;
+			expect(payeeModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should do nothing when entering a transaction from a schedule", (): void => {
 			scheduleEditController.mode = "Enter Transaction";
 			scheduleEditController.payeeSelected();
-			payeeModel.findLastTransaction.should.not.have.been.called;
+			expect(payeeModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should show a loading indicator", (): void => {
 			((scheduleEditController.transaction as ScheduledBasicTransaction).payee as Payee).id = -1;
 			scheduleEditController.payeeSelected();
-			scheduleEditController.loadingLastTransaction.should.be.true;
+			expect(scheduleEditController.loadingLastTransaction).to.be.true;
 		});
 
 		it("should fetch the last transaction for the selected payee", (): void => {
 			scheduleEditController.payeeSelected();
-			payeeModel.findLastTransaction.should.have.been.calledWith(payee.id, primaryAccount.account_type);
+			expect(payeeModel.findLastTransaction).to.have.been.calledWith(payee.id, primaryAccount.account_type);
 		});
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			scheduleEditController.payeeSelected();
-			scheduleEditController["getSubtransactions"].should.have.been.called;
+			expect(scheduleEditController["getSubtransactions"]).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			scheduleEditController.payeeSelected();
-			scheduleEditController["useLastTransaction"].should.have.been.called;
+			expect(scheduleEditController["useLastTransaction"]).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
 			scheduleEditController.payeeSelected();
-			scheduleEditController.loadingLastTransaction.should.be.false;
+			expect(scheduleEditController.loadingLastTransaction).to.be.false;
 		});
 	});
 
@@ -369,51 +369,51 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.id = 1;
 			(scheduleEditController.transaction as ScheduledSecurityHoldingTransaction).security = security;
 			scheduleEditController.securitySelected();
-			securityModel.findLastTransaction.should.not.have.been.called;
+			expect(securityModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should do nothing when the selected security is not an existing security", (): void => {
 			((scheduleEditController.transaction as ScheduledSecurityHoldingTransaction).security as NewOrExistingEntity) = "security";
 			scheduleEditController.securitySelected();
-			securityModel.findLastTransaction.should.not.have.been.called;
+			expect(securityModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should do nothing when entering a transaction from a schedule", (): void => {
 			scheduleEditController.mode = "Enter Transaction";
 			scheduleEditController.securitySelected();
-			securityModel.findLastTransaction.should.not.have.been.called;
+			expect(securityModel.findLastTransaction).to.not.have.been.called;
 		});
 
 		it("should show a loading indicator", (): void => {
 			((scheduleEditController.transaction as ScheduledSecurityHoldingTransaction).security as Security).id = -1;
 			scheduleEditController.securitySelected();
-			scheduleEditController.loadingLastTransaction.should.be.true;
+			expect(scheduleEditController.loadingLastTransaction).to.be.true;
 		});
 
 		it("should fetch the last transaction for the selected security", (): void => {
 			scheduleEditController.securitySelected();
-			securityModel.findLastTransaction.should.have.been.calledWith(security.id, primaryAccount.account_type);
+			expect(securityModel.findLastTransaction).to.have.been.calledWith(security.id, primaryAccount.account_type);
 		});
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			scheduleEditController.securitySelected();
-			scheduleEditController["getSubtransactions"].should.have.been.called;
+			expect(scheduleEditController["getSubtransactions"]).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			scheduleEditController.securitySelected();
-			scheduleEditController["useLastTransaction"].should.have.been.called;
+			expect(scheduleEditController["useLastTransaction"]).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
 			scheduleEditController.securitySelected();
-			scheduleEditController.loadingLastTransaction.should.be.false;
+			expect(scheduleEditController.loadingLastTransaction).to.be.false;
 		});
 	});
 
 	describe("getSubtransactions", (): void => {
 		describe("when a transaction is not provided", (): void => {
-			it("should return undefined", (): Chai.Assertion => (undefined === scheduleEditController["getSubtransactions"]()).should.be.true);
+			it("should return undefined", (): Chai.Assertion => expect(scheduleEditController["getSubtransactions"]()).to.be.undefined);
 		});
 
 		describe("when a transaction is provided", (): void => {
@@ -424,7 +424,7 @@ describe("ScheduleEditController", (): void => {
 			it("should return the transaction if it is not a split, loan repayment or payslip", (): void => {
 				const basicTransaction: ScheduledBasicTransaction = createScheduledBasicTransaction();
 
-				(scheduleEditController["getSubtransactions"](basicTransaction) as ScheduledBasicTransaction).should.deep.equal(basicTransaction);
+				expect(scheduleEditController["getSubtransactions"](basicTransaction) as ScheduledBasicTransaction).to.deep.equal(basicTransaction);
 			});
 
 			const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
@@ -433,8 +433,8 @@ describe("ScheduleEditController", (): void => {
 				it(`should fetch the subtransactions for a ${scenario} transaction`, (): void => {
 					transaction.transaction_type = scenario;
 					scheduleEditController["getSubtransactions"](transaction);
-					transaction.subtransactions.should.be.an("array");
-					transactionModel.findSubtransactions.should.have.been.calledWith(transaction.id);
+					expect(transaction.subtransactions).to.be.an("array");
+					expect(transactionModel.findSubtransactions).to.have.been.calledWith(transaction.id);
 				});
 			});
 
@@ -447,7 +447,7 @@ describe("ScheduleEditController", (): void => {
 					createSubtransaction({ id: null })
 				] as SplitTransactionChild[];
 
-				(await scheduleEditController["getSubtransactions"](transaction) as ScheduledSplitTransaction).should.deep.equal(expected);
+				expect(await scheduleEditController["getSubtransactions"](transaction) as ScheduledSplitTransaction).to.deep.equal(expected);
 			});
 		});
 	});
@@ -488,18 +488,18 @@ describe("ScheduleEditController", (): void => {
 
 		it("should do nothing when a transaction is not provided", (): void => {
 			scheduleEditController["useLastTransaction"]();
-			(undefined === transaction.id as number | undefined).should.be.false;
+			expect(transaction.id as number | undefined).to.not.be.undefined;
 		});
 
 		it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & related status", (): void => {
 			scheduleEditController["useLastTransaction"](transaction);
-			(undefined === transaction.id as number | undefined).should.be.true;
-			(undefined === transaction.transaction_date as Date | undefined).should.be.true;
-			(undefined === transaction.next_due_date as Date | undefined).should.be.true;
-			(undefined === transaction.frequency as ScheduleFrequency | undefined).should.be.true;
-			(undefined === transaction.primary_account as Account | undefined).should.be.true;
-			(undefined === transaction.status as TransactionStatus | undefined).should.be.true;
-			(undefined === transaction.related_status as TransactionStatus | undefined).should.be.true;
+			expect(transaction.id as number | undefined).to.be.undefined;
+			expect(transaction.transaction_date as Date | undefined).to.be.undefined;
+			expect(transaction.next_due_date as Date | undefined).to.be.undefined;
+			expect(transaction.frequency as ScheduleFrequency | undefined).to.be.undefined;
+			expect(transaction.primary_account as Account | undefined).to.be.undefined;
+			expect(transaction.status as TransactionStatus | undefined).to.be.undefined;
+			expect(transaction.related_status as TransactionStatus | undefined).to.be.undefined;
 		});
 
 		it("should preserve the schedule's flag", (): void => {
@@ -509,16 +509,16 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.flag_type = flag_type;
 			scheduleEditController.transaction.flag = flag;
 			scheduleEditController["useLastTransaction"](transaction);
-			scheduleEditController.transaction.flag_type.should.equal(flag_type);
-			scheduleEditController.transaction.flag.should.equal(flag);
+			expect(scheduleEditController.transaction.flag_type).to.equal(flag_type);
+			expect(scheduleEditController.transaction.flag).to.equal(flag);
 		});
 
 		it("should ignore the previous transaction's flag", (): void => {
 			scheduleEditController.transaction.flag_type = null;
 			scheduleEditController.transaction.flag = null;
 			scheduleEditController["useLastTransaction"](transaction);
-			(null === scheduleEditController.transaction.flag_type as TransactionFlagType).should.be.true;
-			(null === scheduleEditController.transaction.flag as TransactionFlag).should.be.true;
+			expect(scheduleEditController.transaction.flag_type as TransactionFlagType).to.be.null;
+			expect(scheduleEditController.transaction.flag as TransactionFlag).to.be.null;
 		});
 
 		it("should merge the transaction details into vm.transaction", (): void => {
@@ -534,19 +534,19 @@ describe("ScheduleEditController", (): void => {
 			transaction.payee = (scheduleEditController.transaction as ScheduledTransferTransaction).payee;
 			transaction.category = scheduleEditController.transaction.category as PsuedoCategory;
 
-			scheduleEditController.transaction.should.deep.equal(transaction);
+			expect(scheduleEditController.transaction).to.deep.equal(transaction);
 		});
 
 		it("should retrigger the amount focus handler if focussed", (): void => {
 			currentElement = document.activeElement;
 			scheduleEditController["useLastTransaction"](transaction);
 			$timeout.flush();
-			mockAngularElement.triggerHandler.should.have.been.calledWith("focus");
+			expect(mockAngularElement.triggerHandler).to.have.been.calledWith("focus");
 		});
 
 		it("should not retrigger the amount focus handler if not focussed", (): void => {
 			scheduleEditController["useLastTransaction"](transaction);
-			mockAngularElement.triggerHandler.should.not.have.been.called;
+			expect(mockAngularElement.triggerHandler).to.not.have.been.called;
 		});
 
 		afterEach((): void => {
@@ -577,12 +577,12 @@ describe("ScheduleEditController", (): void => {
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 					(scheduleEditController.transaction.category as PsuedoCategory).id = scenario.id;
 					scheduleEditController.categorySelected();
-					scheduleEditController.transaction.transaction_type.should.equal(scenario.type);
+					expect(scheduleEditController.transaction.transaction_type).to.equal(scenario.type);
 
 					if ("Basic" === scenario.type) {
-						scheduleEditController.transaction.direction.should.equal((scheduleEditController.transaction.category as Category).direction);
+						expect(scheduleEditController.transaction.direction).to.equal((scheduleEditController.transaction.category as Category).direction);
 					} else {
-						scheduleEditController.transaction.direction.should.equal(scenario.direction);
+						expect(scheduleEditController.transaction.direction).to.equal(scenario.direction);
 					}
 				});
 
@@ -595,7 +595,7 @@ describe("ScheduleEditController", (): void => {
 						(scheduleEditController.transaction.category as PsuedoCategory).id = scenario.id;
 						(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = subtransactions;
 						scheduleEditController.categorySelected();
-						(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions.should.equal(subtransactions);
+						expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions).to.equal(subtransactions);
 					});
 
 					it(`should create four stub subtransactions for a ${scenario.id} if none exist`, (): void => {
@@ -605,7 +605,7 @@ describe("ScheduleEditController", (): void => {
 						scheduleEditController.transaction.memo = memo;
 						(scheduleEditController.transaction as ScheduledSplitTransaction).amount = amount;
 						scheduleEditController.categorySelected();
-						(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions.should.deep.equal(subtransactions);
+						expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions).to.deep.equal(subtransactions);
 					});
 				}
 			});
@@ -613,7 +613,7 @@ describe("ScheduleEditController", (): void => {
 			it("should set the transaction type to Basic if the selected category is not an existing category", (): void => {
 				(scheduleEditController.transaction as ScheduledBasicTransaction).category = "new category";
 				scheduleEditController.categorySelected();
-				scheduleEditController.transaction.transaction_type.should.equal("Basic");
+				expect(scheduleEditController.transaction.transaction_type).to.equal("Basic");
 			});
 		});
 
@@ -630,12 +630,12 @@ describe("ScheduleEditController", (): void => {
 				it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 					((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].category as PsuedoCategory).id = scenario.id;
 					scheduleEditController.categorySelected(0);
-					((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].transaction_type as SubtransactionType).should.equal(scenario.type);
+					expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].transaction_type as SubtransactionType).to.equal(scenario.type);
 
 					if ("Sub" === scenario.type) {
-						((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].direction as TransactionDirection).should.equal(((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].category as Category).direction);
+						expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].direction as TransactionDirection).to.equal(((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].category as Category).direction);
 					} else {
-						((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].direction as TransactionDirection).should.equal(scenario.direction);
+						expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].direction as TransactionDirection).to.equal(scenario.direction);
 					}
 				});
 			});
@@ -643,19 +643,19 @@ describe("ScheduleEditController", (): void => {
 			it("should set the transaction type to Sub if the selected category is not an existing category", (): void => {
 				(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].category = "new category";
 				scheduleEditController.categorySelected(0);
-				((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].transaction_type as SubtransactionType).should.equal("Sub");
+				expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].transaction_type as SubtransactionType).to.equal("Sub");
 			});
 		});
 
 		it("should set the direction to outflow if the selected category is not an existing category", (): void => {
 			scheduleEditController.categorySelected();
-			scheduleEditController.transaction.direction.should.equal("outflow");
+			expect(scheduleEditController.transaction.direction).to.equal("outflow");
 		});
 
 		it("should clear the subcategory if it's parent no longer matches the selected category", (): void => {
 			(scheduleEditController.transaction as ScheduledBasicTransaction).subcategory = createCategory({ parent_id: 2 });
 			scheduleEditController.categorySelected();
-			(null === (scheduleEditController.transaction as ScheduledBasicTransaction).subcategory).should.be.true;
+			expect((scheduleEditController.transaction as ScheduledBasicTransaction).subcategory).to.be.null;
 		});
 	});
 
@@ -670,8 +670,8 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.transaction_type = transactionType;
 			scheduleEditController.transaction.direction = direction;
 			scheduleEditController.investmentCategorySelected();
-			scheduleEditController.transaction.transaction_type.should.equal(transactionType);
-			scheduleEditController.transaction.direction.should.equal(direction);
+			expect(scheduleEditController.transaction.transaction_type).to.equal(transactionType);
+			expect(scheduleEditController.transaction.direction).to.equal(direction);
 		});
 
 		const scenarios: { id: string; type: SecurityTransactionType; direction: TransactionDirection; }[] = [
@@ -688,8 +688,8 @@ describe("ScheduleEditController", (): void => {
 			it(`should set the transaction type to ${scenario.type} and the direction to ${scenario.direction} if the category is ${scenario.id}`, (): void => {
 				(scheduleEditController.transaction.category as PsuedoCategory).id = scenario.id;
 				scheduleEditController.investmentCategorySelected();
-				scheduleEditController.transaction.transaction_type.should.equal(scenario.type);
-				scheduleEditController.transaction.direction.should.equal(scenario.direction);
+				expect(scheduleEditController.transaction.transaction_type).to.equal(scenario.type);
+				expect(scheduleEditController.transaction.direction).to.equal(scenario.direction);
 			});
 		});
 	});
@@ -700,37 +700,37 @@ describe("ScheduleEditController", (): void => {
 		it("should clear the category and subcategory if the account type no longer matches the primary account type", (): void => {
 			scheduleEditController["account_type"] = "cash";
 			scheduleEditController.primaryAccountSelected();
-			(null === (scheduleEditController.transaction as CategorisableTransaction).category).should.be.true;
-			(null === (scheduleEditController.transaction as SubcategorisableTransaction).subcategory).should.be.true;
+			expect((scheduleEditController.transaction as CategorisableTransaction).category).to.be.null;
+			expect((scheduleEditController.transaction as SubcategorisableTransaction).subcategory).to.be.null;
 		});
 
 		it("should set the account type to the primary account type", (): void => {
 			scheduleEditController.primaryAccountSelected();
-			(scheduleEditController["account_type"] as AccountType).should.equal("bank");
+			expect(scheduleEditController["account_type"] as AccountType).to.equal("bank");
 		});
 
 		it("should set the account type to null when there is no primary account", (): void => {
 			delete (scheduleEditController.transaction as Partial<ScheduledTransaction>).primary_account;
 			scheduleEditController.primaryAccountSelected();
-			(null === scheduleEditController["account_type"]).should.be.true;
+			expect(scheduleEditController["account_type"]).to.be.null;
 		});
 
 		it("should do nothing when the transfer account is null", (): void => {
 			(scheduleEditController.transaction as ScheduledTransferTransaction).account = null;
 			scheduleEditController.primaryAccountSelected();
-			(null === (scheduleEditController.transaction as ScheduledTransferTransaction).account).should.be.true;
+			expect((scheduleEditController.transaction as ScheduledTransferTransaction).account).to.be.null;
 		});
 
 		it("should do nothing when the transfer account is undefined", (): void => {
 			delete (scheduleEditController.transaction as Partial<ScheduledTransferTransaction>).account;
 			scheduleEditController.primaryAccountSelected();
-			scheduleEditController.transaction.should.not.have.property("account");
+			expect(scheduleEditController.transaction).to.not.have.property("account");
 		});
 
 		it("should clear the transfer account when the primary account matches", (): void => {
 			(scheduleEditController.transaction as ScheduledTransferTransaction).account = createAccount({ id: 1 });
 			scheduleEditController.primaryAccountSelected();
-			(null === (scheduleEditController.transaction as ScheduledTransferTransaction).account).should.be.true;
+			expect((scheduleEditController.transaction as ScheduledTransferTransaction).account).to.be.null;
 		});
 	});
 
@@ -752,32 +752,32 @@ describe("ScheduleEditController", (): void => {
 
 		it("should do nothing if the watched value hasn't changed", (): void => {
 			(scheduleEditController as angular.IController).$scope.$digest();
-			(null === scheduleEditController.totalAllocated).should.be.true;
+			expect(scheduleEditController.totalAllocated).to.be.null;
 		});
 
 		it("should do nothing if there are no subtransactions", (): void => {
 			delete (scheduleEditController.transaction as Partial<ScheduledSplitTransaction>).subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
-			(null === scheduleEditController.totalAllocated).should.be.true;
+			expect(scheduleEditController.totalAllocated).to.be.null;
 		});
 
 		it("should calculate the total and make it available to the view", (): void => {
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
-			(scheduleEditController.totalAllocated as number).should.equal(5);
+			expect(scheduleEditController.totalAllocated as number).to.equal(5);
 		});
 
 		it("should not set the main transaction memo when editing an existing transaction", (): void => {
 			scheduleEditController.transaction.id = 1;
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
-			scheduleEditController.memoFromSubtransactions.should.not.have.been.called;
+			expect(scheduleEditController["memoFromSubtransactions"]).to.not.have.been.called;
 		});
 
 		it("should set the main transaction memo when adding a new transaction", (): void => {
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
-			scheduleEditController.memoFromSubtransactions.should.have.been.called;
+			expect(scheduleEditController["memoFromSubtransactions"]).to.have.been.called;
 		});
 	});
 
@@ -795,7 +795,7 @@ describe("ScheduleEditController", (): void => {
 
 		it("should join the sub transaction memos and set the main transaction memo when adding a new transaction", (): void => {
 			scheduleEditController.memoFromSubtransactions();
-			scheduleEditController.transaction.memo.should.equal("memo 1; memo 2");
+			expect(scheduleEditController.transaction.memo).to.equal("memo 1; memo 2");
 		});
 	});
 
@@ -804,9 +804,9 @@ describe("ScheduleEditController", (): void => {
 
 		beforeEach((): angular.IPromise<Account[]> => (accounts = scheduleEditController.primaryAccounts("a", 3)));
 
-		it("should fetch the list of accounts", (): Chai.Assertion => accountModel.all.should.have.been.called);
+		it("should fetch the list of accounts", (): Chai.Assertion => expect(accountModel.all).to.have.been.called);
 
-		it("should return a filtered & limited list of accounts", async (): Promise<Chai.Assertion> => (await accounts).should.deep.equal([
+		it("should return a filtered & limited list of accounts", async (): Promise<Chai.Assertion> => expect(await accounts).to.deep.equal([
 			createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100, cleared_closing_balance: 1.01, reconciled_closing_balance: 15.003 }),
 			createAccount({ id: 4, name: "ba", account_type: "asset" }),
 			createAccount({ id: 5, name: "ab", account_type: "asset" })
@@ -816,12 +816,12 @@ describe("ScheduleEditController", (): void => {
 	describe("accounts", (): void => {
 		it("should fetch the list of accounts", (): void => {
 			scheduleEditController.accounts("a", 2);
-			accountModel.all.should.have.been.called;
+			expect(accountModel.all).to.have.been.called;
 		});
 
 		it("should remove the current account from the list", async (): Promise<void> => {
 			scheduleEditController.transaction.primary_account = createAccount({ name: "aa" });
-			(await scheduleEditController.accounts("a", 2)).should.deep.equal([
+			expect(await scheduleEditController.accounts("a", 2)).to.deep.equal([
 				createAccount({ id: 4, name: "ba", account_type: "asset" }),
 				createAccount({ id: 5, name: "ab", account_type: "asset" })
 			]);
@@ -829,20 +829,20 @@ describe("ScheduleEditController", (): void => {
 
 		it("should not filter the list if there is no current account", async (): Promise<void> => {
 			delete (scheduleEditController.transaction as Partial<ScheduledTransaction>).primary_account;
-			(await scheduleEditController.accounts("a", 2)).should.deep.equal([
+			expect(await scheduleEditController.accounts("a", 2)).to.deep.equal([
 				createAccount({ id: 1, name: "aa", closing_balance: 100, opening_balance: 100, cleared_closing_balance: 1.01, reconciled_closing_balance: 15.003 }),
 				createAccount({ id: 4, name: "ba", account_type: "asset" })
 			]);
 		});
 
-		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", async (): Promise<Chai.Assertion> => (await scheduleEditController.accounts("b", 2)).should.deep.equal([
+		it("should return a filtered & limited list of non-investment accounts when the transaction type is not Security Transfer", async (): Promise<Chai.Assertion> => expect(await scheduleEditController.accounts("b", 2)).to.deep.equal([
 			createAccount({ id: 4, name: "ba", account_type: "asset" }),
 			createAccount({ id: 5, name: "ab", account_type: "asset" })
 		]));
 
 		it("should return a filtered & limited list of investment accounts when the transaction type is Security Transfer", async (): Promise<void> => {
 			scheduleEditController.transaction.transaction_type = "SecurityTransfer";
-			(await scheduleEditController.accounts("b", 2)).should.deep.equal([
+			expect(await scheduleEditController.accounts("b", 2)).to.deep.equal([
 				createAccount({ id: 2, name: "bb", account_type: "investment" }),
 				createAccount({ id: 6, name: "bc", account_type: "investment" })
 			]);
@@ -850,16 +850,16 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("frequencies", (): void => {
-		it("should return the full list of frequencies when a filter is not specified", (): Chai.Assertion => scheduleEditController.frequencies().should.deep.equal(["Weekly", "Fortnightly", "Monthly", "Bimonthly", "Quarterly", "Yearly"]));
+		it("should return the full list of frequencies when a filter is not specified", (): Chai.Assertion => expect(scheduleEditController.frequencies()).to.deep.equal(["Weekly", "Fortnightly", "Monthly", "Bimonthly", "Quarterly", "Yearly"]));
 
-		it("should return a filtered list of frequencies when a filter is specified", (): Chai.Assertion => scheduleEditController.frequencies("t").should.deep.equal(["Fortnightly", "Monthly", "Bimonthly", "Quarterly"]));
+		it("should return a filtered list of frequencies when a filter is specified", (): Chai.Assertion => expect(scheduleEditController.frequencies("t")).to.deep.equal(["Fortnightly", "Monthly", "Bimonthly", "Quarterly"]));
 	});
 
 	describe("addSubtransaction", (): void => {
 		it("should add an empty object to the subtransactions array", (): void => {
 			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions = [];
 			scheduleEditController.addSubtransaction();
-			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions.should.deep.equal([{}]);
+			expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions).to.deep.equal([{}]);
 		});
 	});
 
@@ -871,7 +871,7 @@ describe("ScheduleEditController", (): void => {
 				createSubtransaction({ id: 3 })
 			];
 			scheduleEditController.deleteSubtransaction(1);
-			(scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions.should.deep.equal([
+			expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions).to.deep.equal([
 				createSubtransaction({ id: 1 }),
 				createSubtransaction({ id: 3 })
 			]);
@@ -890,12 +890,12 @@ describe("ScheduleEditController", (): void => {
 
 		it("should increase an existing subtransaction amount by the unallocated amount", (): void => {
 			scheduleEditController.addUnallocatedAmount(0);
-			((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].amount as number).should.equal(100);
+			expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[0].amount as number).to.equal(100);
 		});
 
 		it("should set a blank subtransaction amount to the unallocated amount", (): void => {
 			scheduleEditController.addUnallocatedAmount(1);
-			((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[1].amount as number).should.equal(20);
+			expect((scheduleEditController.transaction as ScheduledSplitTransaction).subtransactions[1].amount as number).to.equal(20);
 		});
 	});
 
@@ -915,7 +915,7 @@ describe("ScheduleEditController", (): void => {
 
 				scheduleEditController.schedule.frequency = scenario.frequency;
 				scheduleEditController["calculateNextDue"]();
-				scheduleEditController.schedule.next_due_date.should.deep.equal(scenario.addFn(nextDueDate, scenario.amount));
+				expect(scheduleEditController.schedule.next_due_date).to.deep.equal(scenario.addFn(nextDueDate, scenario.amount));
 			});
 		});
 
@@ -923,14 +923,14 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.schedule.overdue_count = 1;
 			scheduleEditController.schedule.frequency = "Weekly";
 			scheduleEditController["calculateNextDue"]();
-			scheduleEditController.schedule.overdue_count.should.equal(0);
+			expect(scheduleEditController.schedule.overdue_count).to.equal(0);
 		});
 
 		it("should leave the overdue account unchanged when zero", (): void => {
 			scheduleEditController.schedule.overdue_count = 0;
 			scheduleEditController.schedule.frequency = "Weekly";
 			scheduleEditController["calculateNextDue"]();
-			scheduleEditController.schedule.overdue_count.should.equal(0);
+			expect(scheduleEditController.schedule.overdue_count).to.equal(0);
 		});
 	});
 
@@ -953,14 +953,14 @@ describe("ScheduleEditController", (): void => {
 		it("should do nothing when the transaction type is not SecurityInvestment", (): void => {
 			scheduleEditController.transaction.transaction_type = "Basic";
 			scheduleEditController.updateInvestmentDetails();
-			(scheduleEditController.transaction as ScheduledBasicTransaction).amount.should.equal(amount);
-			scheduleEditController.transaction.memo.should.equal(memo);
+			expect((scheduleEditController.transaction as ScheduledBasicTransaction).amount).to.equal(amount);
+			expect(scheduleEditController.transaction.memo).to.equal(memo);
 		});
 
 		it("should not update the memo when editing an existing Security Investment transaction", (): void => {
 			scheduleEditController.transaction.id = 1;
 			scheduleEditController.updateInvestmentDetails();
-			scheduleEditController.transaction.memo.should.equal(memo);
+			expect(scheduleEditController.transaction.memo).to.equal(memo);
 		});
 
 		const scenarios: { direction: TransactionDirection; amount: number; memo: string; }[] = [
@@ -975,20 +975,20 @@ describe("ScheduleEditController", (): void => {
 				delete (scheduleEditController.transaction as Partial<ScheduledSecurityInvestmentTransaction>).price;
 				delete (scheduleEditController.transaction as Partial<ScheduledSecurityInvestmentTransaction>).commission;
 				scheduleEditController.updateInvestmentDetails();
-				(scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).amount.should.equal(0);
-				scheduleEditController.transaction.memo.should.be.empty;
+				expect((scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).amount).to.equal(0);
+				expect(scheduleEditController.transaction.memo).to.be.empty;
 			});
 
 			it(`should calculate the transaction amount from the price, quantity and commission for a Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				scheduleEditController.transaction.direction = scenario.direction;
 				scheduleEditController.updateInvestmentDetails();
-				(scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).amount.should.equal(scenario.amount);
+				expect((scheduleEditController.transaction as ScheduledSecurityInvestmentTransaction).amount).to.equal(scenario.amount);
 			});
 
 			it(`should update the memo with the price, quantity and commission when adding a new Security Investment transaction when the direction is ${scenario.direction}`, (): void => {
 				scheduleEditController.transaction.direction = scenario.direction;
 				scheduleEditController.updateInvestmentDetails();
-				scheduleEditController.transaction.memo.should.equal(`2.0000 @ $10.000 (${scenario.memo} $1.00 commission)`);
+				expect(scheduleEditController.transaction.memo).to.equal(`2.0000 @ $10.000 (${scenario.memo} $1.00 commission)`);
 			});
 		});
 	});
@@ -996,9 +996,9 @@ describe("ScheduleEditController", (): void => {
 	describe("edit", (): void => {
 		beforeEach((): void => scheduleEditController.edit());
 
-		it("should set the mode to Edit Schedule", (): Chai.Assertion => scheduleEditController.mode.should.equal("Edit Schedule"));
+		it("should set the mode to Edit Schedule", (): Chai.Assertion => expect(scheduleEditController.mode).to.equal("Edit Schedule"));
 
-		it("should set the transaction to the schedule", (): Chai.Assertion => scheduleEditController.transaction.should.equal(scheduleEditController.schedule));
+		it("should set the transaction to the schedule", (): Chai.Assertion => expect(scheduleEditController.transaction).to.equal(scheduleEditController.schedule));
 	});
 
 	describe("enter", (): void => {
@@ -1010,23 +1010,23 @@ describe("ScheduleEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleEditController.errorMessage = "error message";
 			scheduleEditController.enter();
-			(null === scheduleEditController.errorMessage as string | null).should.be.true;
+			expect(scheduleEditController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should save the schedule", (): void => {
 			scheduleEditController.enter();
-			transactionModel.save.should.have.been.calledWith(scheduleEditController.transaction);
+			expect(transactionModel.save).to.have.been.calledWith(scheduleEditController.transaction);
 		});
 
 		it("should update the next due date when the transaction save is successful", (): void => {
 			scheduleEditController.enter();
-			scheduleEditController.skip.should.have.been.called;
+			expect(scheduleEditController["skip"]).to.have.been.called;
 		});
 
 		it("should display an error message when the transaction save is unsuccessful", (): void => {
 			scheduleEditController.transaction.id = -1;
 			scheduleEditController.enter();
-			(scheduleEditController.errorMessage as string).should.equal("unsuccessful");
+			expect(scheduleEditController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
@@ -1037,65 +1037,65 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.skip();
 		});
 
-		it("should calculate the next due date", (): Chai.Assertion => scheduleEditController["calculateNextDue"].should.have.been.called);
+		it("should calculate the next due date", (): Chai.Assertion => expect(scheduleEditController["calculateNextDue"]).to.have.been.called);
 
-		it("should save the schedule", (): Chai.Assertion => scheduleEditController.save.should.have.been.calledWith(true));
+		it("should save the schedule", (): Chai.Assertion => expect(scheduleEditController["save"]).to.have.been.calledWith(true));
 	});
 
 	describe("save", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleEditController.errorMessage = "error message";
 			scheduleEditController.save();
-			(null === scheduleEditController.errorMessage as string | null).should.be.true;
+			expect(scheduleEditController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should set the flag memo to '(no memo)' if the auto-flag property is set and the memo is blank", (): void => {
 			scheduleEditController.schedule.autoFlag = true;
 			scheduleEditController.save();
-			(scheduleEditController.schedule.flag as string).should.equal("(no memo)");
+			expect(scheduleEditController.schedule.flag as string).to.equal("(no memo)");
 		});
 
 		it("should preserve the flag memo if the auto-flag property is set", (): void => {
 			scheduleEditController.schedule.autoFlag = true;
 			scheduleEditController.schedule.flag = "Test flag";
 			scheduleEditController.save();
-			scheduleEditController.schedule.flag.should.equal("Test flag");
+			expect(scheduleEditController.schedule.flag).to.equal("Test flag");
 		});
 
 		it("should set the flag to null if the auto-flag property is not set", (): void => {
 			scheduleEditController.schedule.flag_type = "noreceipt";
 			scheduleEditController.schedule.flag = "Test flag";
 			scheduleEditController.save();
-			(null === scheduleEditController.schedule.flag_type as string | null).should.be.true;
-			(null === scheduleEditController.schedule.flag as string | null).should.be.true;
+			expect(scheduleEditController.schedule.flag_type as string | null).to.be.null;
+			expect(scheduleEditController.schedule.flag as string | null).to.be.null;
 		});
 
 		it("should save the schedule", (): void => {
 			scheduleEditController.save();
-			scheduleModel.save.should.have.been.calledWith(schedule);
+			expect(scheduleModel.save).to.have.been.calledWith(schedule);
 		});
 
 		it("should close the modal when the schedule save is successful", (): void => {
 			scheduleEditController.save();
-			$uibModalInstance.close.should.have.been.calledWith({ data: schedule, skipped: false });
+			expect($uibModalInstance.close).to.have.been.calledWith({ data: schedule, skipped: false });
 		});
 
 		it("should mark the schedule as skipped when the skipped parameter is true", (): void => {
 			scheduleEditController.save(true);
-			$uibModalInstance.close.should.have.been.calledWith({ data: schedule, skipped: true });
+			expect($uibModalInstance.close).to.have.been.calledWith({ data: schedule, skipped: true });
 		});
 
 		it("should display an error message when the schedule save is unsuccessful", (): void => {
 			scheduleEditController.schedule.id = -1;
 			scheduleEditController.save();
-			(scheduleEditController.errorMessage as string).should.equal("unsuccessful");
+			expect(scheduleEditController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			scheduleEditController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

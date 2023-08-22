@@ -31,14 +31,14 @@ describe("loot", (): void => {
 	}) as Mocha.HookFunction);
 
 	describe("config", (): void => {
-		it("should set a default URL route", (): Chai.Assertion => $urlServiceProvider.rules.otherwise.should.have.been.calledWith("/accounts"));
+		it("should set a default URL route", (): Chai.Assertion => expect($urlServiceProvider.rules["otherwise"]).to.have.been.calledWith("/accounts"));
 	});
 
 	describe("run", (): void => {
-		it("should make jQuery available on the $window", (): Chai.Assertion => $window.$.should.deep.equal($) as Chai.Assertion);
+		it("should make jQuery available on the $window", (): Chai.Assertion => expect($window.$).to.deep.equal($));
 
-		it("should make the state configuration available on the $rootScope", (): Chai.Assertion => $rootScope.$state.should.deep.equal($state));
+		it("should make the state configuration available on the $rootScope", (): Chai.Assertion => expect($rootScope.$state).to.deep.equal($state));
 
-		it("should register a service worker", (): Chai.Assertion => ogNavigatorServiceWorkerService.register.should.have.been.calledWith("/service-worker.js"));
+		it("should register a service worker", (): Chai.Assertion => expect(ogNavigatorServiceWorkerService["register"]).to.have.been.calledWith("/service-worker.js"));
 	});
 });

@@ -23,36 +23,36 @@ describe("ScheduleDeleteController", (): void => {
 		scheduleDeleteController = controllerTest("ScheduleDeleteController") as ScheduleDeleteController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed schedule available to the view", (): Chai.Assertion => scheduleDeleteController.schedule.should.deep.equal(schedule));
+	it("should make the passed schedule available to the view", (): Chai.Assertion => expect(scheduleDeleteController.schedule).to.deep.equal(schedule));
 
 	describe("deleteSchedule", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleDeleteController.errorMessage = "error message";
 			scheduleDeleteController.deleteSchedule();
-			(null === scheduleDeleteController.errorMessage as string | null).should.be.true;
+			expect(scheduleDeleteController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should delete the schedule", (): void => {
 			scheduleDeleteController.deleteSchedule();
-			scheduleModel.destroy.should.have.been.calledWith(schedule);
+			expect(scheduleModel.destroy).to.have.been.calledWith(schedule);
 		});
 
 		it("should close the modal when the schedule delete is successful", (): void => {
 			scheduleDeleteController.deleteSchedule();
-			$uibModalInstance.close.should.have.been.called;
+			expect($uibModalInstance.close).to.have.been.called;
 		});
 
 		it("should display an error message when the schedule delete is unsuccessful", (): void => {
 			scheduleDeleteController.schedule.id = -1;
 			scheduleDeleteController.deleteSchedule();
-			(scheduleDeleteController.errorMessage as string).should.equal("unsuccessful");
+			expect(scheduleDeleteController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			scheduleDeleteController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

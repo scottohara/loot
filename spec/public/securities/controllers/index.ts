@@ -46,25 +46,25 @@ describe("SecurityIndexController", (): void => {
 		securityIndexController = controllerTest("SecurityIndexController") as SecurityIndexController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed securities available to the view", (): Chai.Assertion => securityIndexController.securities.should.deep.equal(securities));
+	it("should make the passed securities available to the view", (): Chai.Assertion => expect(securityIndexController.securities).to.deep.equal(securities));
 
-	it("should return the sum of all security values, to 2 decimal places", (): Chai.Assertion => securityIndexController.totalValue.should.equal(45.01));
+	it("should return the sum of all security values, to 2 decimal places", (): Chai.Assertion => expect(securityIndexController.totalValue).to.equal(45.01));
 
 	it("should focus the security when a security id is specified", (): void => {
 		$state.params.id = "1";
 		securityIndexController = controllerTest("SecurityIndexController", { $state }) as SecurityIndexController;
 		securityIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
-		(securityIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
+		expect((securityIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(0);
 	});
 
 	it("should not focus the security when a security id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.securities.security" }, sinon.match.func) as Chai.Assertion);
+	it("should register a success transition hook", (): Chai.Assertion => expect($transitions.onSuccess).to.have.been.calledWith({ to: "root.securities.security" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(securityIndexController as angular.IController).$scope.$emit("$destroy");
-		deregisterTransitionSuccessHook.should.have.been.called;
+		expect(deregisterTransitionSuccessHook).to.have.been.called;
 	});
 
 	it("should ensure the security is focussed when the security id state param changes", (): void => {
@@ -72,7 +72,7 @@ describe("SecurityIndexController", (): void => {
 
 		sinon.stub(securityIndexController, "focusSecurity" as keyof SecurityIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
-		securityIndexController["focusSecurity"].should.have.been.calledWith(Number(toParams.id));
+		expect(securityIndexController["focusSecurity"]).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editSecurity", (): void => {
@@ -85,22 +85,22 @@ describe("SecurityIndexController", (): void => {
 
 		it("should disable navigation on the table", (): void => {
 			securityIndexController.editSecurity();
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
 			beforeEach((): void => securityIndexController.editSecurity(1));
 
 			it("should open the edit security modal with a security", (): void => {
-				$uibModal.open.should.have.been.called;
-				securityModel.addRecent.should.have.been.calledWith(security);
-				(($uibModal.resolves as UibModalMockResolves).security as Security).should.deep.equal(security);
+				expect($uibModal.open).to.have.been.called;
+				expect(securityModel.addRecent).to.have.been.calledWith(security);
+				expect(($uibModal.resolves as UibModalMockResolves).security as Security).to.deep.equal(security);
 			});
 
 			it("should update the security in the list of securities when the modal is closed", (): void => {
 				security.name = "edited security";
 				$uibModal.close(security);
-				securityIndexController.securities.should.include(security);
+				expect(securityIndexController.securities).to.include(security);
 			});
 		});
 
@@ -111,19 +111,19 @@ describe("SecurityIndexController", (): void => {
 			});
 
 			it("should open the edit security modal without a security", (): void => {
-				$uibModal.open.should.have.been.called;
-				securityModel.addRecent.should.not.have.been.called;
-				(undefined === ($uibModal.resolves as UibModalMockResolves).security).should.be.true;
+				expect($uibModal.open).to.have.been.called;
+				expect(securityModel.addRecent).to.not.have.been.called;
+				expect(($uibModal.resolves as UibModalMockResolves).security).to.be.undefined;
 			});
 
 			it("should add the new security to the list of securities when the modal is closed", (): void => {
 				$uibModal.close(security);
-				(securityIndexController.securities.pop() as Security).should.deep.equal(security);
+				expect(securityIndexController.securities.pop() as Security).to.deep.equal(security);
 			});
 
 			it("should add the new security to the recent list", (): void => {
 				$uibModal.close(security);
-				securityModel.addRecent.should.have.been.calledWith(security);
+				expect(securityModel.addRecent).to.have.been.calledWith(security);
 			});
 		});
 
@@ -132,13 +132,13 @@ describe("SecurityIndexController", (): void => {
 
 			securityIndexController.editSecurity();
 			$uibModal.close(security);
-			(securityIndexController.securities.pop() as Security).should.deep.equal(securityWithNoHoldingAndHighestName);
+			expect(securityIndexController.securities.pop() as Security).to.deep.equal(securityWithNoHoldingAndHighestName);
 		});
 
 		it("should focus the security when the modal is closed", (): void => {
 			securityIndexController.editSecurity();
 			$uibModal.close(security);
-			securityIndexController["focusSecurity"].should.have.been.calledWith(security.id);
+			expect(securityIndexController["focusSecurity"]).to.have.been.calledWith(security.id);
 		});
 
 		it("should not change the securities list when the modal is dismissed", (): void => {
@@ -146,19 +146,19 @@ describe("SecurityIndexController", (): void => {
 
 			securityIndexController.editSecurity();
 			$uibModal.dismiss();
-			securityIndexController.securities.should.deep.equal(originalSecurities);
+			expect(securityIndexController.securities).to.deep.equal(originalSecurities);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			securityIndexController.editSecurity();
 			$uibModal.close(security);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			securityIndexController.editSecurity();
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -169,48 +169,48 @@ describe("SecurityIndexController", (): void => {
 
 		it("should fetch the security", (): void => {
 			securityIndexController.deleteSecurity(1);
-			securityModel.find.should.have.been.calledWith(security.id);
+			expect(securityModel.find).to.have.been.calledWith(security.id);
 		});
 
 		it("should disable navigation on the table", (): void => {
 			securityIndexController.deleteSecurity(1);
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should show an alert if the security has transactions", (): void => {
 			securityIndexController.deleteSecurity(2);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header.should.equal("Security has existing transactions");
+			expect($uibModal.open).to.have.been.called;
+			expect((($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header).to.equal("Security has existing transactions");
 		});
 
 		it("should show the delete security modal if the security has no transactions", (): void => {
 			securityIndexController.deleteSecurity(1);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).security as Security).should.deep.equal(security);
+			expect($uibModal.open).to.have.been.called;
+			expect(($uibModal.resolves as UibModalMockResolves).security as Security).to.deep.equal(security);
 		});
 
 		it("should remove the security from the securities list when the modal is closed", (): void => {
 			securityIndexController.deleteSecurity(1);
 			$uibModal.close(security);
-			securityIndexController.securities.should.not.include(security);
+			expect(securityIndexController.securities).to.not.include(security);
 		});
 
 		it("should transition to the securities list when the modal is closed", (): void => {
 			securityIndexController.deleteSecurity(1);
 			$uibModal.close(security);
-			$state.go.should.have.been.calledWith("root.securities");
+			expect($state.go).to.have.been.calledWith("root.securities");
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			securityIndexController.deleteSecurity(1);
 			$uibModal.close(security);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			securityIndexController.deleteSecurity(1);
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -222,22 +222,22 @@ describe("SecurityIndexController", (): void => {
 		it("should favourite the security", (): void => {
 			security.favourite = false;
 			securityIndexController.toggleFavourite(0);
-			security.favourite.should.be.true;
+			expect(security.favourite).to.be.true;
 		});
 
 		it("should unfavourite the security", (): void => {
 			security.favourite = true;
 			securityIndexController.toggleFavourite(0);
-			security.favourite.should.be.false;
+			expect(security.favourite).to.be.false;
 		});
 
-		afterEach((): Chai.Assertion => securityModel.toggleFavourite.should.have.been.called);
+		afterEach((): Chai.Assertion => expect(securityModel.toggleFavourite).to.have.been.called);
 	});
 
 	describe("tableActions.selectAction", (): void => {
 		it("should transition to the security transactions list", (): void => {
 			securityIndexController.tableActions.selectAction();
-			$state.go.should.have.been.calledWith(".transactions");
+			expect($state.go).to.have.been.calledWith(".transactions");
 		});
 	});
 
@@ -245,7 +245,7 @@ describe("SecurityIndexController", (): void => {
 		it("should edit the security", (): void => {
 			sinon.stub(securityIndexController, "editSecurity");
 			securityIndexController.tableActions.editAction(1);
-			securityIndexController.editSecurity.should.have.been.calledWithExactly(1);
+			expect(securityIndexController["editSecurity"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
@@ -253,7 +253,7 @@ describe("SecurityIndexController", (): void => {
 		it("should insert a security", (): void => {
 			sinon.stub(securityIndexController, "editSecurity");
 			securityIndexController.tableActions.insertAction();
-			securityIndexController.editSecurity.should.have.been.calledWithExactly();
+			expect(securityIndexController["editSecurity"]).to.have.been.calledWithExactly();
 		});
 	});
 
@@ -261,20 +261,20 @@ describe("SecurityIndexController", (): void => {
 		it("should delete a security", (): void => {
 			sinon.stub(securityIndexController, "deleteSecurity");
 			securityIndexController.tableActions.deleteAction(1);
-			securityIndexController.deleteSecurity.should.have.been.calledWithExactly(1);
+			expect(securityIndexController["deleteSecurity"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a security when no security is currently focussed", (): void => {
 			securityIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".security", { id: 2 });
+			expect($state.go).to.have.been.calledWith(".security", { id: 2 });
 		});
 
 		it("should focus a security when another security is currently focussed", (): void => {
 			$state.currentState("**.security");
 			securityIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.security", { id: 2 });
+			expect($state.go).to.have.been.calledWith("^.security", { id: 2 });
 		});
 	});
 
@@ -282,21 +282,21 @@ describe("SecurityIndexController", (): void => {
 		beforeEach((): SinonStub => (securityIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific security row could not be found", (): void => {
-			securityIndexController["focusSecurity"](999).should.be.NaN;
-			(securityIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
+			expect(securityIndexController["focusSecurity"](999)).to.be.NaN;
+			expect((securityIndexController.tableActions as OgTableActionHandlers).focusRow).to.not.have.been.called;
 		});
 
 		it("should focus the security row for the specified security", (): void => {
 			const targetIndex: number = securityIndexController["focusSecurity"](1);
 
 			$timeout.flush();
-			(securityIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(targetIndex);
+			expect((securityIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(targetIndex);
 		});
 
 		it("should return the index of the specified security", (): void => {
 			const targetIndex: number = securityIndexController["focusSecurity"](1);
 
-			targetIndex.should.equal(0);
+			expect(targetIndex).to.equal(0);
 		});
 	});
 });

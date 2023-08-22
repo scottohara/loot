@@ -26,17 +26,17 @@ describe("ogNavigatorServiceWorkerService", (): void => {
 			delete $window.navigator.serviceWorker;
 
 			ogNavigatorServiceWorkerService.register("");
-			(serviceWorker as ServiceWorkerMock).register.should.not.have.been.called;
+			expect((serviceWorker as ServiceWorkerMock).register).to.not.have.been.called;
 		});
 
 		it("should log a message when the service worker is successfully registered", (): void => {
 			ogNavigatorServiceWorkerService.register("good-script");
-			$window.console.log.should.have.been.calledWith("ServiceWorker registration successful with scope: test scope");
+			expect($window.console.log).to.have.been.calledWith("ServiceWorker registration successful with scope: test scope");
 		});
 
 		it("should log an error when the service worker is not successfully registered", (): void => {
 			ogNavigatorServiceWorkerService.register("bad-script");
-			$window.console.log.should.have.been.calledWith("ServiceWorker registration failed: test error");
+			expect($window.console.log).to.have.been.calledWith("ServiceWorker registration failed: test error");
 		});
 	});
 });

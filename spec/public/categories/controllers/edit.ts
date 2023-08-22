@@ -27,29 +27,29 @@ describe("CategoryEditController", (): void => {
 	}) as Mocha.HookFunction);
 
 	describe("when a category is provided", (): void => {
-		it("should make the passed category available to the view", (): Chai.Assertion => categoryEditController.category.should.deep.equal(category));
+		it("should make the passed category available to the view", (): Chai.Assertion => expect(categoryEditController.category).to.deep.equal(category));
 
-		it("should set the mode to Edit", (): Chai.Assertion => categoryEditController.mode.should.equal("Edit"));
+		it("should set the mode to Edit", (): Chai.Assertion => expect(categoryEditController.mode).to.equal("Edit"));
 	});
 
 	describe("when a category is not provided", (): void => {
 		beforeEach((): CategoryEditController => (categoryEditController = controllerTest("CategoryEditController", { category: undefined }) as CategoryEditController));
 
 		it("should make an empty category object available to the view", (): void => {
-			categoryEditController.category.should.be.an("object");
-			categoryEditController.category.should.be.empty;
+			expect(categoryEditController.category).to.be.an("object");
+			expect(categoryEditController.category).to.be.empty;
 		});
 
-		it("should set the mode to Add", (): Chai.Assertion => categoryEditController.mode.should.equal("Add"));
+		it("should set the mode to Add", (): Chai.Assertion => expect(categoryEditController.mode).to.equal("Add"));
 	});
 
 	describe("parentCategories", (): void => {
 		it("should fetch the list of parent categories", (): void => {
 			categoryEditController.parentCategories("", 1);
-			categoryModel.all.should.have.been.called;
+			expect(categoryModel.all).to.have.been.called;
 		});
 
-		it("should return a filtered & limited list of parent categories", async (): Promise<Chai.Assertion> => (await categoryEditController.parentCategories("a", 3)).should.deep.equal([
+		it("should return a filtered & limited list of parent categories", async (): Promise<Chai.Assertion> => expect(await categoryEditController.parentCategories("a", 3)).to.deep.equal([
 			createCategory({ id: 1, name: "aa", num_children: 2, children: [
 				createCategory({ id: 10, name: "aa_1", parent_id: 1, parent:
 					createCategory({ id: 1, name: "aa", num_children: 2 })
@@ -71,42 +71,42 @@ describe("CategoryEditController", (): void => {
 				direction: "outflow"
 			});
 			categoryEditController.save();
-			categoryEditController.category.direction.should.equal("outflow");
-			(categoryEditController.category.parent_id as number).should.equal(1);
+			expect(categoryEditController.category.direction).to.equal("outflow");
+			expect(categoryEditController.category.parent_id as number).to.equal(1);
 		});
 
 		it("should clear the parent id if the category does not have a parent", (): void => {
 			categoryEditController.save();
-			(null === categoryEditController.category.parent_id).should.be.true;
+			expect(categoryEditController.category.parent_id).to.be.null;
 		});
 
 		it("should reset any previous error messages", (): void => {
 			categoryEditController.errorMessage = "error message";
 			categoryEditController.save();
-			(null === categoryEditController.errorMessage as string | null).should.be.true;
+			expect(categoryEditController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should save the category", (): void => {
 			categoryEditController.save();
-			categoryModel.save.should.have.been.calledWith(category);
+			expect(categoryModel.save).to.have.been.calledWith(category);
 		});
 
 		it("should close the modal when the category save is successful", (): void => {
 			categoryEditController.save();
-			$uibModalInstance.close.should.have.been.calledWith(category);
+			expect($uibModalInstance.close).to.have.been.calledWith(category);
 		});
 
 		it("should display an error message when the category save is unsuccessful", (): void => {
 			categoryEditController.category.id = -1;
 			categoryEditController.save();
-			(categoryEditController.errorMessage as string).should.equal("unsuccessful");
+			expect(categoryEditController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			categoryEditController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

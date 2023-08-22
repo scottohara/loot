@@ -56,49 +56,49 @@ describe("LayoutController", (): void => {
 
 	afterEach((): JQuery => ($window.$ = realJqueryInstance));
 
-	it("should make the authentication status available to the view", (): Chai.Assertion => layoutController.authenticated.should.equal(authenticated));
+	it("should make the authentication status available to the view", (): Chai.Assertion => expect(layoutController.authenticated).to.equal(authenticated));
 
-	it("should make the navigation collapsed state available to the view", (): Chai.Assertion => layoutController.navCollapsed.should.be.true);
+	it("should make the navigation collapsed state available to the view", (): Chai.Assertion => expect(layoutController.navCollapsed).to.be.true);
 
-	it("should make the scrollTo function available to the view", (): Chai.Assertion => layoutController.scrollTo.should.be.a("function"));
+	it("should make the scrollTo function available to the view", (): Chai.Assertion => expect(layoutController.scrollTo).to.be.a("function"));
 
-	it("should hide the state loading spinner by default", (): Chai.Assertion => layoutController.loadingState.should.be.false);
+	it("should hide the state loading spinner by default", (): Chai.Assertion => expect(layoutController.loadingState).to.be.false);
 
 	describe("login", (): void => {
 		beforeEach((): void => layoutController.login());
 
-		it("should show the login modal", (): Chai.Assertion => $uibModal.open.should.have.been.calledWithMatch({ controller: "AuthenticationEditController" }));
+		it("should show the login modal", (): Chai.Assertion => expect($uibModal.open).to.have.been.calledWithMatch({ controller: "AuthenticationEditController" }));
 
 		it("should reload the current state when the login modal is closed", (): void => {
 			$uibModal.close();
-			$state.reload.should.have.been.called;
+			expect($state.reload).to.have.been.called;
 		});
 
 		it("should not reload the current state when the login modal is dismissed", (): void => {
 			$uibModal.dismiss();
-			$state.reload.should.not.have.been.called;
+			expect($state.reload).to.not.have.been.called;
 		});
 	});
 
 	describe("logout", (): void => {
 		beforeEach((): void => layoutController.logout());
 
-		it("should logout the user", (): Chai.Assertion => authenticationModel.logout.should.have.been.called);
+		it("should logout the user", (): Chai.Assertion => expect(authenticationModel.logout).to.have.been.called);
 
-		it("should reload the current state", (): Chai.Assertion => $state.reload.should.have.been.called);
+		it("should reload the current state", (): Chai.Assertion => expect($state.reload).to.have.been.called);
 	});
 
 	describe("search", (): void => {
 		it("should do nothing if the search query is empty", (): void => {
 			layoutController.queryService.query = "";
 			layoutController.search();
-			$state.go.should.not.have.been.called;
+			expect($state.go).to.not.have.been.called;
 		});
 
 		it("should transition to the transaction search state passing the query", (): void => {
 			layoutController.queryService.query = "search query";
 			layoutController.search();
-			$state.go.should.have.been.calledWith("root.transactions", { query: "search query" });
+			expect($state.go).to.have.been.calledWith("root.transactions", { query: "search query" });
 		});
 	});
 
@@ -106,32 +106,32 @@ describe("LayoutController", (): void => {
 		it("should toggle the table navigable enabled flag", (): void => {
 			ogTableNavigableService.enabled = true;
 			layoutController.toggleTableNavigationEnabled(false);
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 	});
 
 	describe("recentlyAccessedAccounts", (): void => {
-		it("should return the list of recent accounts", (): Chai.Assertion => layoutController.recentlyAccessedAccounts.should.equal("recent accounts list"));
+		it("should return the list of recent accounts", (): Chai.Assertion => expect(layoutController.recentlyAccessedAccounts).to.equal("recent accounts list"));
 	});
 
 	describe("recentlyAccessedPayees", (): void => {
-		it("should return the list of recent payees", (): Chai.Assertion => layoutController.recentlyAccessedPayees.should.equal("recent payees list"));
+		it("should return the list of recent payees", (): Chai.Assertion => expect(layoutController.recentlyAccessedPayees).to.equal("recent payees list"));
 	});
 
 	describe("recentlyAccessedCategories", (): void => {
-		it("should return the list of recent categories", (): Chai.Assertion => layoutController.recentlyAccessedCategories.should.equal("recent categories list"));
+		it("should return the list of recent categories", (): Chai.Assertion => expect(layoutController.recentlyAccessedCategories).to.equal("recent categories list"));
 	});
 
 	describe("recentlyAccessedSecurities", (): void => {
-		it("should return the list of recent securities", (): Chai.Assertion => layoutController.recentlyAccessedSecurities.should.equal("recent securities list"));
+		it("should return the list of recent securities", (): Chai.Assertion => expect(layoutController.recentlyAccessedSecurities).to.equal("recent securities list"));
 	});
 
 	describe("loadingState", (): void => {
 		it("should set a flag to indicate whether a state is loading", (): void => {
 			layoutController["isLoadingState"] = false;
 			layoutController.loadingState = true;
-			layoutController["isLoadingState"].should.be.true;
-			layoutController.loadingState.should.be.true;
+			expect(layoutController["isLoadingState"]).to.be.true;
+			expect(layoutController.loadingState).to.be.true;
 		});
 	});
 
@@ -140,14 +140,14 @@ describe("LayoutController", (): void => {
 			layoutController.queryService.query = "search query";
 			layoutController.queryService.previousState = {};
 			layoutController["checkIfSearchCleared"]();
-			$state.go.should.not.have.been.called;
+			expect($state.go).to.not.have.been.called;
 		});
 
 		it("should do nothing if a previous state is not set", (): void => {
 			layoutController.queryService.query = "";
 			layoutController.queryService.previousState = null;
 			layoutController["checkIfSearchCleared"]();
-			$state.go.should.not.have.been.called;
+			expect($state.go).to.not.have.been.called;
 		});
 
 		describe("(search field cleared)", (): void => {
@@ -162,9 +162,9 @@ describe("LayoutController", (): void => {
 				layoutController["checkIfSearchCleared"]();
 			});
 
-			it("should transition to the previous state when the search field is cleared", (): Chai.Assertion => $state.go.should.have.been.calledWith(previousStateName, previousStateParams));
+			it("should transition to the previous state when the search field is cleared", (): Chai.Assertion => expect($state.go).to.have.been.calledWith(previousStateName, previousStateParams));
 
-			it("should clear the stored previous state", (): Chai.Assertion => (null === layoutController.queryService.previousState).should.be.true);
+			it("should clear the stored previous state", (): Chai.Assertion => expect(layoutController.queryService.previousState).to.be.null);
 		});
 	});
 
@@ -183,17 +183,17 @@ describe("LayoutController", (): void => {
 			layoutController = controllerTest("LayoutController") as LayoutController;
 		});
 
-		it("should register a start transition hook", (): Chai.Assertion => $transitions.onStart.should.have.been.calledWith({}, sinon.match.func) as Chai.Assertion);
+		it("should register a start transition hook", (): Chai.Assertion => expect($transitions.onStart).to.have.been.calledWith({}, sinon.match.func));
 
 		it("should deregister the start transition hook when the scope is destroyed", (): void => {
 			(layoutController as angular.IController).$scope.$emit("$destroy");
-			deregisterTransitionStartHook.should.have.been.called;
+			expect(deregisterTransitionStartHook).to.have.been.called;
 		});
 
 		describe("on transition start", (): void => {
-			it("should set the loading state", (): Chai.Assertion => layoutController.loadingState.should.be.true);
-			it("should collapse the navigation", (): Chai.Assertion => layoutController.navCollapsed.should.be.true);
-			it("should register a callback for when the transition ends", (): Chai.Assertion => mockTransition.promise.finally.should.have.been.calledWith(sinon.match.func));
+			it("should set the loading state", (): Chai.Assertion => expect(layoutController.loadingState).to.be.true);
+			it("should collapse the navigation", (): Chai.Assertion => expect(layoutController.navCollapsed).to.be.true);
+			it("should register a callback for when the transition ends", (): Chai.Assertion => expect(mockTransition.promise.finally).to.have.been.calledWith(sinon.match.func));
 		});
 
 		describe("on transition end", (): void => {
@@ -202,7 +202,7 @@ describe("LayoutController", (): void => {
 				layoutController = controllerTest("LayoutController") as LayoutController;
 			});
 
-			it("should clear the loading state", (): Chai.Assertion => layoutController.loadingState.should.be.false);
+			it("should clear the loading state", (): Chai.Assertion => expect(layoutController.loadingState).to.be.false);
 		});
 	});
 
@@ -211,7 +211,7 @@ describe("LayoutController", (): void => {
 
 		it("should check if the search field was cleared", (): void => {
 			mockJqueryInstance["events"].search();
-			layoutController["checkIfSearchCleared"].should.have.been.called;
+			expect(layoutController["checkIfSearchCleared"]).to.have.been.called;
 		});
 	});
 });

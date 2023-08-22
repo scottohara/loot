@@ -26,30 +26,30 @@ describe("ogModalErrorService", (): void => {
 				const message = "test error message";
 
 				ogModalErrorService.showError(message);
-				$uibModal.open.should.have.been.called;
-				(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header.should.equal("An error has occurred");
-				(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).message.should.equal(message);
+				expect($uibModal.open).to.have.been.called;
+				expect((($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).header).to.equal("An error has occurred");
+				expect((($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert).message).to.equal(message);
 			});
 		});
 
 		describe("when a message is not provided", (): void => {
 			it("should do nothing", (): void => {
 				ogModalErrorService.showError();
-				$uibModal.open.should.not.have.been.called;
+				expect($uibModal.open).to.not.have.been.called;
 			});
 		});
 
 		describe("when the message is escape key press", (): void => {
 			it("should do nothing", (): void => {
 				ogModalErrorService.showError("escape key press");
-				$uibModal.open.should.not.have.been.called;
+				expect($uibModal.open).to.not.have.been.called;
 			});
 		});
 
 		it("should register a catch callback", (): void => {
 			ogModalErrorService.showError("");
-			(undefined !== $uibModal.catchCallback).should.be.true;
-			(undefined === $uibModal.catchCallback?.()).should.be.true;
+			expect($uibModal.catchCallback).to.not.be.undefined;
+			expect($uibModal.catchCallback?.()).to.be.undefined;
 		});
 	});
 });

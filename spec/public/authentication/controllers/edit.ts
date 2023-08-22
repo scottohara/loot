@@ -21,8 +21,8 @@ describe("AuthenticationEditController", (): void => {
 	}) as Mocha.HookFunction);
 
 	it("should set null authentication credentials to the view", (): void => {
-		(null === authenticationEditController.userName).should.be.true;
-		(null === authenticationEditController.password).should.be.true;
+		expect(authenticationEditController.userName).to.be.null;
+		expect(authenticationEditController.password).to.be.null;
 	});
 
 	describe("login", (): void => {
@@ -34,32 +34,32 @@ describe("AuthenticationEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			authenticationEditController.errorMessage = "error message";
 			authenticationEditController.login();
-			(null === authenticationEditController.errorMessage as string | null).should.be.true;
+			expect(authenticationEditController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should attempt to login with the username & password", (): void => {
 			authenticationEditController.login();
-			authenticationModel.login.should.have.been.calledWith("gooduser", "goodpassword");
+			expect(authenticationModel.login).to.have.been.calledWith("gooduser", "goodpassword");
 		});
 
 		it("should close the modal when login successful", (): void => {
 			authenticationEditController.login();
-			$uibModalInstance.close.should.have.been.called;
+			expect($uibModalInstance.close).to.have.been.called;
 		});
 
 		it("should display an error message when login unsuccessful", (): void => {
 			authenticationEditController.userName = "baduser";
 			authenticationEditController.password = "badpassword";
 			authenticationEditController.login();
-			(authenticationEditController.errorMessage as string).should.equal("unsuccessful");
-			authenticationEditController.loginInProgress.should.be.false;
+			expect(authenticationEditController.errorMessage as string).to.equal("unsuccessful");
+			expect(authenticationEditController.loginInProgress).to.be.false;
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			authenticationEditController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

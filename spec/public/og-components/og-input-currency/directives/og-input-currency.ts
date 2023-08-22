@@ -43,7 +43,7 @@ describe("ogInputCurrency", (): void => {
 
 		afterEach((): void => {
 			ogInputCurrency.scope.$digest();
-			(ogInputCurrency["element"].val() as string).should.equal(expected);
+			expect(ogInputCurrency["element"].val() as string).to.equal(expected);
 		});
 	});
 
@@ -62,7 +62,7 @@ describe("ogInputCurrency", (): void => {
 		afterEach((): void => {
 			ogInputCurrency["element"].triggerHandler("change");
 			ogInputCurrency.scope.$digest();
-			(ogInputCurrency.scope.model as number).should.equal(expected);
+			expect(ogInputCurrency.scope.model as number).to.equal(expected);
 		});
 	});
 
@@ -71,9 +71,9 @@ describe("ogInputCurrency", (): void => {
 			expected = "-1,234.56";
 			ogInputCurrency.scope.model = -1234.56;
 			ogInputCurrency.scope.$digest();
-			(ogInputCurrency["element"].val() as string).should.equal("-$1,234.56");
+			expect(ogInputCurrency["element"].val() as string).to.equal("-$1,234.56");
 			ogInputCurrency["element"].triggerHandler("focus");
-			(ogInputCurrency["element"].val() as string).should.equal(expected);
+			expect(ogInputCurrency["element"].val() as string).to.equal(expected);
 		});
 	});
 
@@ -81,7 +81,7 @@ describe("ogInputCurrency", (): void => {
 		it("should format the value", (): void => {
 			ogInputCurrency["element"].val("-1234.56");
 			ogInputCurrency["element"].triggerHandler("blur");
-			(ogInputCurrency["element"].val() as string).should.equal("-$1,234.56");
+			expect(ogInputCurrency["element"].val() as string).to.equal("-$1,234.56");
 		});
 	});
 
@@ -92,15 +92,15 @@ describe("ogInputCurrency", (): void => {
 			expected = "-$1,234.56";
 			ogInputCurrency.scope.model = "-1234.56";
 			ogInputCurrency.scope.$digest();
-			(ogInputCurrency["element"].val() as string).should.equal("-$1,234.56");
+			expect(ogInputCurrency["element"].val() as string).to.equal("-$1,234.56");
 			ogInputCurrency["element"].triggerHandler("focus");
-			(ogInputCurrency["element"].val() as string).should.equal(expected);
+			expect(ogInputCurrency["element"].val() as string).to.equal(expected);
 		});
 
 		it("should remove the blur handler from the element", (): void => {
 			ogInputCurrency["element"].val("-1234.56");
 			ogInputCurrency["element"].triggerHandler("blur");
-			(ogInputCurrency["element"].val() as string).should.equal("-1234.56");
+			expect(ogInputCurrency["element"].val() as string).to.equal("-1234.56");
 		});
 	});
 });

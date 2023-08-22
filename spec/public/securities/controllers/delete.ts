@@ -23,36 +23,36 @@ describe("SecurityDeleteController", (): void => {
 		securityDeleteController = controllerTest("SecurityDeleteController") as SecurityDeleteController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed security available to the view", (): Chai.Assertion => securityDeleteController.security.should.deep.equal(security));
+	it("should make the passed security available to the view", (): Chai.Assertion => expect(securityDeleteController.security).to.deep.equal(security));
 
 	describe("deleteSecurity", (): void => {
 		it("should reset any previous error messages", (): void => {
 			securityDeleteController.errorMessage = "error message";
 			securityDeleteController.deleteSecurity();
-			(null === securityDeleteController.errorMessage as string | null).should.be.true;
+			expect(securityDeleteController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should delete the security", (): void => {
 			securityDeleteController.deleteSecurity();
-			securityModel.destroy.should.have.been.calledWith(security);
+			expect(securityModel.destroy).to.have.been.calledWith(security);
 		});
 
 		it("should close the modal when the security delete is successful", (): void => {
 			securityDeleteController.deleteSecurity();
-			$uibModalInstance.close.should.have.been.called;
+			expect($uibModalInstance.close).to.have.been.called;
 		});
 
 		it("should display an error message when the security delete is unsuccessful", (): void => {
 			securityDeleteController.security.id = -1;
 			securityDeleteController.deleteSecurity();
-			(securityDeleteController.errorMessage as string).should.equal("unsuccessful");
+			expect(securityDeleteController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			securityDeleteController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

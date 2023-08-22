@@ -15,14 +15,14 @@ describe("ogLruCacheFactory", (): void => {
 	describe("new", (): void => {
 		let ogLruCache: OgLruCache;
 
-		it("should return an LruCache", (): Chai.Assertion => ogLruCacheFactory.new(10, []).should.be.an("object"));
+		it("should return an LruCache", (): Chai.Assertion => expect(ogLruCacheFactory.new(10, [])).to.be.an("object"));
 
 		describe("LruCache (empty)", (): void => {
 			beforeEach((): OgLruCache => (ogLruCache = ogLruCacheFactory.new(10, [])));
 
-			it("should have the specified capacity", (): Chai.Assertion => ogLruCache["capacity"].should.equal(10));
+			it("should have the specified capacity", (): Chai.Assertion => expect(ogLruCache["capacity"]).to.equal(10));
 
-			it("should have no items", (): Chai.Assertion => ogLruCache.list.should.be.an("array").that.is.empty);
+			it("should have no items", (): Chai.Assertion => expect(ogLruCache.list).to.be.an("array").that.is.empty);
 		});
 
 		describe("LruCache", (): void => {
@@ -39,10 +39,10 @@ describe("ogLruCacheFactory", (): void => {
 				ogLruCache = ogLruCacheFactory.new(capacity, data);
 			});
 
-			it("should be populated with the initial set of items", (): Chai.Assertion => ogLruCache["items"].should.deep.equal(list));
+			it("should be populated with the initial set of items", (): Chai.Assertion => expect(ogLruCache["items"]).to.deep.equal(list));
 
 			describe("put", (): void => {
-				it("should leave the list unchanged if the item is already the current head", (): Chai.Assertion => ogLruCache.put({ id: capacity, name: `item ${capacity}` }).should.deep.equal(list));
+				it("should leave the list unchanged if the item is already the current head", (): Chai.Assertion => expect(ogLruCache.put({ id: capacity, name: `item ${capacity}` })).to.deep.equal(list));
 
 				const scenarios: { description: string; item: OgCacheEntry; currentIndex?: number; }[] = [
 					{
@@ -70,7 +70,7 @@ describe("ogLruCacheFactory", (): void => {
 							list.splice(scenario.currentIndex, 1);
 						}
 						list.unshift(scenario.item);
-						newList.should.deep.equal(list);
+						expect(newList).to.deep.equal(list);
 					});
 				});
 
@@ -81,12 +81,12 @@ describe("ogLruCacheFactory", (): void => {
 								newList: OgCacheEntry[] = ogLruCache.put(item);
 
 					list = [item];
-					newList.should.deep.equal(list);
+					expect(newList).to.deep.equal(list);
 				});
 			});
 
 			describe("remove", (): void => {
-				it("should leave the list unchanged if the item does not exist", (): Chai.Assertion => ogLruCache.remove(-1).should.deep.equal(list));
+				it("should leave the list unchanged if the item does not exist", (): Chai.Assertion => expect(ogLruCache.remove(-1)).to.deep.equal(list));
 
 				describe("existing item", (): void => {
 					let id: number;
@@ -98,31 +98,31 @@ describe("ogLruCacheFactory", (): void => {
 						];
 
 						ogLruCache.remove(id);
-						ogLruCache["items"].should.be.an("array").that.is.empty;
+						expect(ogLruCache["items"]).to.be.an("array").that.is.empty;
 					});
 
 					it("should remove an item from the head of the list", (): void => {
 						id = 10;
 						ogLruCache.remove(id);
-						ogLruCache["items"].should.deep.equal(list.slice(1, capacity));
+						expect(ogLruCache["items"]).to.deep.equal(list.slice(1, capacity));
 					});
 
 					it("should remove an item from the tail of the list", (): void => {
 						id = 1;
 						ogLruCache.remove(id);
-						ogLruCache["items"].should.deep.equal(list.slice(0, capacity - 1));
+						expect(ogLruCache["items"]).to.deep.equal(list.slice(0, capacity - 1));
 					});
 
 					it("should remove an item from the middle of the list", (): void => {
 						id = 5;
 						ogLruCache.remove(id);
-						ogLruCache["items"].should.deep.equal([...list.slice(0, 5), ...list.slice(6, capacity)]);
+						expect(ogLruCache["items"]).to.deep.equal([...list.slice(0, 5), ...list.slice(6, capacity)]);
 					});
 				});
 			});
 
 			describe("list", (): void => {
-				it("should return the cached items in order", (): Chai.Assertion => ogLruCache.list.should.deep.equal(list));
+				it("should return the cached items in order", (): Chai.Assertion => expect(ogLruCache.list).to.deep.equal(list));
 			});
 		});
 	});

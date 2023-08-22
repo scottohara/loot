@@ -23,36 +23,36 @@ describe("TransactionDeleteController", (): void => {
 		transactionDeleteController = controllerTest("TransactionDeleteController") as TransactionDeleteController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed transaction available to the view", (): Chai.Assertion => transactionDeleteController["transaction"].should.deep.equal(transaction));
+	it("should make the passed transaction available to the view", (): Chai.Assertion => expect(transactionDeleteController["transaction"]).to.deep.equal(transaction));
 
 	describe("deleteTransaction", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionDeleteController.errorMessage = "error message";
 			transactionDeleteController.deleteTransaction();
-			(null === transactionDeleteController.errorMessage as string | null).should.be.true;
+			expect(transactionDeleteController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should delete the transaction", (): void => {
 			transactionDeleteController.deleteTransaction();
-			transactionModel.destroy.should.have.been.calledWith(transaction);
+			expect(transactionModel.destroy).to.have.been.calledWith(transaction);
 		});
 
 		it("should close the modal when the transaction delete is successful", (): void => {
 			transactionDeleteController.deleteTransaction();
-			$uibModalInstance.close.should.have.been.called;
+			expect($uibModalInstance.close).to.have.been.called;
 		});
 
 		it("should display an error message when the transaction delete is unsuccessful", (): void => {
 			transactionDeleteController["transaction"].id = -1;
 			transactionDeleteController.deleteTransaction();
-			(transactionDeleteController.errorMessage as string).should.equal("unsuccessful");
+			expect(transactionDeleteController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			transactionDeleteController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

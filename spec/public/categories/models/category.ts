@@ -56,12 +56,12 @@ describe("categoryModel", (): void => {
 		$httpBackend.verifyNoOutstandingRequest();
 	});
 
-	it("should fetch the list of recent categories from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentCategories"));
+	it("should fetch the list of recent categories from localStorage", (): Chai.Assertion => expect($window.localStorage.getItem).to.have.been.calledWith("lootRecentCategories"));
 
-	it("should have a list of recent categories", (): Chai.Assertion => categoryModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
+	it("should have a list of recent categories", (): Chai.Assertion => expect(categoryModel.recent).to.deep.equal([{ id: 1, name: "recent item" }]));
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
-		it("should be 'lootRecentCategories'", (): Chai.Assertion => categoryModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentCategories"));
+		it("should be 'lootRecentCategories'", (): Chai.Assertion => expect(categoryModel.LRU_LOCAL_STORAGE_KEY).to.equal("lootRecentCategories"));
 	});
 
 	describe("recentCategories", (): void => {
@@ -73,22 +73,22 @@ describe("categoryModel", (): void => {
 				$window.localStorage.getItem.withArgs("lootRecentCategories").returns(JSON.stringify(recentCategories));
 			});
 
-			it("should return an array of cache entries", (): Chai.Assertion => categoryModel["recentCategories"].should.deep.equal(recentCategories));
+			it("should return an array of cache entries", (): Chai.Assertion => expect(categoryModel["recentCategories"]).to.deep.equal(recentCategories));
 		});
 
 		describe("when localStorage is null", (): void => {
-			it("should return an empty array", (): Chai.Assertion => categoryModel["recentCategories"].should.deep.equal([]));
+			it("should return an empty array", (): Chai.Assertion => expect(categoryModel["recentCategories"]).to.deep.equal([]));
 		});
 	});
 
 	describe("type", (): void => {
-		it("should be 'category'", (): Chai.Assertion => categoryModel.type.should.equal("category"));
+		it("should be 'category'", (): Chai.Assertion => expect(categoryModel.type).to.equal("category"));
 	});
 
 	describe("path", (): void => {
-		it("should return the categories collection path when an id is not provided", (): Chai.Assertion => categoryModel.path().should.equal("/categories"));
+		it("should return the categories collection path when an id is not provided", (): Chai.Assertion => expect(categoryModel.path()).to.equal("/categories"));
 
-		it("should return a specific category path when an id is provided", (): Chai.Assertion => categoryModel.path(123).should.equal("/categories/123"));
+		it("should return a specific category path when an id is provided", (): Chai.Assertion => expect(categoryModel.path(123)).to.equal("/categories/123"));
 	});
 
 	describe("all", (): void => {
@@ -105,12 +105,12 @@ describe("categoryModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			categoryModel.all();
-			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
 		});
 
 		it("should return a list of all categories without their children", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-			categoryModel.all(1).then((categories: Category[]): Chai.Assertion => categories.should.equal(expectedResponse));
+			categoryModel.all(1).then((categories: Category[]): Chai.Assertion => expect(categories).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 
@@ -130,12 +130,12 @@ describe("categoryModel", (): void => {
 				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 				categoryModel.all(1, true);
-				httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.false;
+				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.false;
 			});
 
 			it("should return a list of all categories including their children", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-				categoryModel.all(1, true).then((categories: Category[]): Chai.Assertion => categories.should.equal(expectedResponse));
+				categoryModel.all(1, true).then((categories: Category[]): Chai.Assertion => expect(categories).to.equal(expectedResponse));
 				$httpBackend.flush();
 			});
 		});
@@ -146,10 +146,10 @@ describe("categoryModel", (): void => {
 
 		it("should fetch the list of categories with children", (): void => {
 			categoryModel.allWithChildren(1);
-			categoryModel.all.should.have.been.calledWith(1, true);
+			expect(categoryModel["all"]).to.have.been.calledWith(1, true);
 		});
 
-		it("should return a list of all categories including their children", (): Chai.Assertion => categoryModel.allWithChildren(1).should.equal(iPromise));
+		it("should return a list of all categories including their children", (): Chai.Assertion => expect(categoryModel.allWithChildren(1)).to.equal(iPromise));
 	});
 
 	describe("find", (): void => {
@@ -168,19 +168,19 @@ describe("categoryModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			categoryModel.find(123);
-			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
 		});
 
 		it("should add the category to the recent list", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			categoryModel.find(123);
 			$httpBackend.flush();
-			categoryModel.addRecent.should.have.been.calledWith(expectedResponse);
+			expect(categoryModel["addRecent"]).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the category", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
-			categoryModel.find(123).then((foundCategory: Category): Chai.Assertion => foundCategory.should.equal(expectedResponse));
+			categoryModel.find(123).then((foundCategory: Category): Chai.Assertion => expect(foundCategory).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -198,7 +198,7 @@ describe("categoryModel", (): void => {
 		it("should flush the category cache", (): void => {
 			$httpBackend.expectPATCH(expectedPatchUrl);
 			categoryModel.save(category);
-			categoryModel.flush.should.have.been.called;
+			expect(categoryModel["flush"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -225,11 +225,11 @@ describe("categoryModel", (): void => {
 			$httpBackend.flush();
 		});
 
-		it("should flush the category cache", (): Chai.Assertion => categoryModel.flush.should.have.been.called);
+		it("should flush the category cache", (): Chai.Assertion => expect(categoryModel["flush"]).to.have.been.called);
 
 		it("should dispatch a DELETE request to /categories/{id}", (): null => null);
 
-		it("should remove the category from the recent list", (): Chai.Assertion => categoryModel.removeRecent.should.have.been.calledWith(1));
+		it("should remove the category from the recent list", (): Chai.Assertion => expect(categoryModel["removeRecent"]).to.have.been.calledWith(1));
 	});
 
 	describe("toggleFavourite", (): void => {
@@ -243,20 +243,20 @@ describe("categoryModel", (): void => {
 
 		it("should flush the category cache", (): void => {
 			categoryModel.toggleFavourite(category);
-			categoryModel.flush.should.have.been.called;
+			expect(categoryModel["flush"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a DELETE request to /categories/{id}/favourite when the category is unfavourited", (): void => {
 			$httpBackend.expectDELETE(expectedUrl);
 			category.favourite = true;
-			categoryModel.toggleFavourite(category).then((favourite: boolean): Chai.Assertion => favourite.should.be.false);
+			categoryModel.toggleFavourite(category).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /categories/{id}/favourite when the category is favourited", (): void => {
 			$httpBackend.expectPUT(expectedUrl);
-			categoryModel.toggleFavourite(category).then((favourite: boolean): Chai.Assertion => favourite.should.be.true);
+			categoryModel.toggleFavourite(category).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.true);
 			$httpBackend.flush();
 		});
 	});
@@ -264,12 +264,12 @@ describe("categoryModel", (): void => {
 	describe("flush", (): void => {
 		it("should remove the specified category from the category cache when an id is provided", (): void => {
 			categoryModel.flush(1);
-			$cache.remove.should.have.been.calledWith("/categories/1");
+			expect($cache["remove"]).to.have.been.calledWith("/categories/1");
 		});
 
 		it("should flush the category cache when an id is not provided", (): void => {
 			categoryModel.flush();
-			$cache.removeAll.should.have.been.called;
+			expect($cache["removeAll"]).to.have.been.called;
 		});
 	});
 
@@ -277,21 +277,21 @@ describe("categoryModel", (): void => {
 		beforeEach((): void => categoryModel.addRecent(category));
 
 		it("should add the category to the recent list", (): void => {
-			ogLruCache.put.should.have.been.calledWith(category);
-			categoryModel.recent.should.equal("updated list");
+			expect(ogLruCache.put).to.have.been.calledWith(category);
+			expect(categoryModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentCategories", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentCategories", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 
 	describe("removeRecent", (): void => {
 		beforeEach((): void => categoryModel.removeRecent(1));
 
 		it("should remove the category from the recent list", (): void => {
-			ogLruCache.remove.should.have.been.calledWith(1);
-			categoryModel.recent.should.equal("updated list");
+			expect(ogLruCache.remove).to.have.been.calledWith(1);
+			expect(categoryModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentCategories", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentCategories", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 });

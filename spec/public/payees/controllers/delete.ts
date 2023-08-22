@@ -23,36 +23,36 @@ describe("PayeeDeleteController", (): void => {
 		payeeDeleteController = controllerTest("PayeeDeleteController") as PayeeDeleteController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed payee available to the view", (): Chai.Assertion => payeeDeleteController.payee.should.deep.equal(payee));
+	it("should make the passed payee available to the view", (): Chai.Assertion => expect(payeeDeleteController.payee).to.deep.equal(payee));
 
 	describe("deletePayee", (): void => {
 		it("should reset any previous error messages", (): void => {
 			payeeDeleteController.errorMessage = "error message";
 			payeeDeleteController.deletePayee();
-			(null === payeeDeleteController.errorMessage as string | null).should.be.true;
+			expect(payeeDeleteController.errorMessage as string | null).to.be.null;
 		});
 
 		it("should delete the payee", (): void => {
 			payeeDeleteController.deletePayee();
-			payeeModel.destroy.should.have.been.calledWith(payee);
+			expect(payeeModel.destroy).to.have.been.calledWith(payee);
 		});
 
 		it("should close the modal when the payee delete is successful", (): void => {
 			payeeDeleteController.deletePayee();
-			$uibModalInstance.close.should.have.been.called;
+			expect($uibModalInstance.close).to.have.been.called;
 		});
 
 		it("should display an error message when the payee delete is unsuccessful", (): void => {
 			payeeDeleteController.payee.id = -1;
 			payeeDeleteController.deletePayee();
-			(payeeDeleteController.errorMessage as string).should.equal("unsuccessful");
+			expect(payeeDeleteController.errorMessage as string).to.equal("unsuccessful");
 		});
 	});
 
 	describe("cancel", (): void => {
 		it("should dismiss the modal", (): void => {
 			payeeDeleteController.cancel();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

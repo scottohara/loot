@@ -23,14 +23,14 @@ describe("OgModalAlertController", (): void => {
 	}) as Mocha.HookFunction);
 
 	it("should make the passed alert available to the view", (): void => {
-		ogModalAlertController.alert.message.should.equal(alert.message);
-		(ogModalAlertController.alert.closeButtonStyle as string).should.equal("primary");
+		expect(ogModalAlertController.alert.message).to.equal(alert.message);
+		expect(ogModalAlertController.alert.closeButtonStyle as string).to.equal("primary");
 	});
 
 	describe("closeModal", (): void => {
 		it("should dismiss the modal", (): void => {
 			ogModalAlertController.closeModal();
-			$uibModalInstance.dismiss.should.have.been.called;
+			expect($uibModalInstance.dismiss).to.have.been.called;
 		});
 	});
 });

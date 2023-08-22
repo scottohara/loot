@@ -36,9 +36,9 @@ describe("ogInputAutoselect", (): void => {
 	describe("isFocussed", (): void => {
 		beforeEach((): void => $timeout.flush());
 
-		it("should be true if the passed element is the document's active element", (): Chai.Assertion => scope.isFocussed(document.activeElement as Element).should.be.true);
+		it("should be true if the passed element is the document's active element", (): Chai.Assertion => expect(scope.isFocussed(document.activeElement as Element)).to.be.true);
 
-		it("should be false if the element is not the document's active element", (): Chai.Assertion => scope.isFocussed().should.be.false);
+		it("should be false if the element is not the document's active element", (): Chai.Assertion => expect(scope.isFocussed()).to.be.false);
 	});
 
 	describe("on focus", (): void => {
@@ -46,14 +46,14 @@ describe("ogInputAutoselect", (): void => {
 			sinon.stub(scope, "isFocussed").returns(true);
 			ogInputAutoselect["element"].triggerHandler("focus");
 			$timeout.flush();
-			mockJqueryInstance.select.should.have.been.called;
+			expect(mockJqueryInstance.select).to.have.been.called;
 		});
 
 		it("should not select the input value if the element does not have focus", (): void => {
 			sinon.stub(scope, "isFocussed").returns(false);
 			ogInputAutoselect["element"].triggerHandler("focus");
 			$timeout.flush();
-			mockJqueryInstance.select.should.not.have.been.called;
+			expect(mockJqueryInstance.select).to.not.have.been.called;
 		});
 	});
 
@@ -67,7 +67,7 @@ describe("ogInputAutoselect", (): void => {
 			sinon.stub(scope, "isFocussed").returns(true);
 			ogInputAutoselect["element"].triggerHandler("focus");
 			$timeout.flush();
-			mockJqueryInstance.select.should.not.have.been.called;
+			expect(mockJqueryInstance.select).to.not.have.been.called;
 		});
 	});
 

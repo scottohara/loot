@@ -58,12 +58,12 @@ describe("securityModel", (): void => {
 		$httpBackend.verifyNoOutstandingRequest();
 	});
 
-	it("should fetch the list of recent securities from localStorage", (): Chai.Assertion => $window.localStorage.getItem.should.have.been.calledWith("lootRecentSecurities"));
+	it("should fetch the list of recent securities from localStorage", (): Chai.Assertion => expect($window.localStorage.getItem).to.have.been.calledWith("lootRecentSecurities"));
 
-	it("should have a list of recent securities", (): Chai.Assertion => securityModel.recent.should.deep.equal([{ id: 1, name: "recent item" }]));
+	it("should have a list of recent securities", (): Chai.Assertion => expect(securityModel.recent).to.deep.equal([{ id: 1, name: "recent item" }]));
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
-		it("should be 'lootRecentSecurities'", (): Chai.Assertion => securityModel.LRU_LOCAL_STORAGE_KEY.should.equal("lootRecentSecurities"));
+		it("should be 'lootRecentSecurities'", (): Chai.Assertion => expect(securityModel.LRU_LOCAL_STORAGE_KEY).to.equal("lootRecentSecurities"));
 	});
 
 	describe("recentSecurities", (): void => {
@@ -75,22 +75,21 @@ describe("securityModel", (): void => {
 				$window.localStorage.getItem.withArgs("lootRecentSecurities").returns(JSON.stringify(recentSecurities));
 			});
 
-			it("should return an array of cache entries", (): Chai.Assertion => securityModel["recentSecurities"].should.deep.equal(recentSecurities));
+			it("should return an array of cache entries", (): Chai.Assertion => expect(securityModel["recentSecurities"]).to.deep.equal(recentSecurities));
 		});
 
 		describe("when localStorage is null", (): void => {
-			it("should return an empty array", (): Chai.Assertion => securityModel["recentSecurities"].should.deep.equal([]));
+			it("should return an empty array", (): Chai.Assertion => expect(securityModel["recentSecurities"]).to.deep.equal([]));
 		});
 	});
 
 	describe("type", (): void => {
-		it("should be 'security'", (): Chai.Assertion => securityModel.type.should.equal("security"));
+		it("should be 'security'", (): Chai.Assertion => expect(securityModel.type).to.equal("security"));
 	});
 
 	describe("path", (): void => {
-		it("should return the securities collection path when an id is not provided", (): Chai.Assertion => securityModel.path().should.equal("/securities"));
-
-		it("should return a specific security path when an id is provided", (): Chai.Assertion => securityModel.path(123).should.equal("/securities/123"));
+		it("should return the securities collection path when an id is not provided", (): Chai.Assertion => expect(securityModel.path()).to.equal("/securities"));
+		it("should return a specific security path when an id is provided", (): Chai.Assertion => expect(securityModel.path(123)).to.equal("/securities/123"));
 	});
 
 	describe("all", (): void => {
@@ -107,12 +106,12 @@ describe("securityModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			securityModel.all();
-			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
 		});
 
 		it("should return a list of all securities without their balances", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-			securityModel.all().then((securities: Security[]): Chai.Assertion => securities.should.equal(expectedResponse));
+			securityModel.all().then((securities: Security[]): Chai.Assertion => expect(securities).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 
@@ -132,12 +131,12 @@ describe("securityModel", (): void => {
 				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 				securityModel.all(true);
-				httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.false;
+				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.false;
 			});
 
 			it("should return a list of all securities including their balances", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-				securityModel.all(true).then((securities: Security[]): Chai.Assertion => securities.should.equal(expectedResponse));
+				securityModel.all(true).then((securities: Security[]): Chai.Assertion => expect(securities).to.equal(expectedResponse));
 				$httpBackend.flush();
 			});
 		});
@@ -148,10 +147,10 @@ describe("securityModel", (): void => {
 
 		it("should call securityModel.all(true)", (): void => {
 			securityModel.allWithBalances();
-			securityModel.all.should.have.been.calledWith(true);
+			expect(securityModel["all"]).to.have.been.calledWith(true);
 		});
 
-		it("should return a list of all securities including their balances", (): Chai.Assertion => securityModel.allWithBalances().should.equal(iPromise));
+		it("should return a list of all securities including their balances", (): Chai.Assertion => expect(securityModel.allWithBalances()).to.equal(iPromise));
 	});
 
 	describe("findLastTransaction", (): void => {
@@ -165,19 +164,19 @@ describe("securityModel", (): void => {
 			const lastTransaction = createBasicTransaction();
 
 			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(200, lastTransaction);
-			securityModel.findLastTransaction(1, "bank").then((transaction: Transaction): Chai.Assertion => transaction.should.deep.equal(lastTransaction));
+			securityModel.findLastTransaction(1, "bank").then((transaction: Transaction): Chai.Assertion => expect(transaction).to.deep.equal(lastTransaction));
 			$httpBackend.flush();
 		});
 
 		it("should return undefined when there are no transactions", (): void => {
 			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(404, "");
-			securityModel.findLastTransaction(1, "bank").then((transaction?: Transaction): Chai.Assertion => (undefined === transaction).should.be.true);
+			securityModel.findLastTransaction(1, "bank").then((transaction?: Transaction): Chai.Assertion => expect(transaction).to.be.undefined);
 			$httpBackend.flush();
 		});
 
 		it("should throw an error when the GET request fails", (): void => {
 			$httpBackend.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u).respond(500, "Forced error", {}, "Internal Server Error");
-			securityModel.findLastTransaction(1, "bank").catch((error: Error): Chai.Assertion => error.message.should.equal("500 Internal Server Error: Forced error"));
+			securityModel.findLastTransaction(1, "bank").catch((error: Error): Chai.Assertion => expect(error.message).to.equal("500 Internal Server Error: Forced error"));
 			$httpBackend.flush();
 		});
 	});
@@ -198,19 +197,19 @@ describe("securityModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			securityModel.find(123);
-			httpGet.firstCall.args[1].should.have.an.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
 		});
 
 		it("should add the security to the recent list", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			securityModel.find(123);
 			$httpBackend.flush();
-			securityModel.addRecent.should.have.been.calledWith(expectedResponse);
+			expect(securityModel["addRecent"]).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the security", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
-			securityModel.find(123).then((foundSecurity: Security): Chai.Assertion => foundSecurity.should.equal(expectedResponse));
+			securityModel.find(123).then((foundSecurity: Security): Chai.Assertion => expect(foundSecurity).to.equal(expectedResponse));
 			$httpBackend.flush();
 		});
 	});
@@ -228,7 +227,7 @@ describe("securityModel", (): void => {
 		it("should flush the security cache", (): void => {
 			$httpBackend.expectPATCH(expectedPatchUrl);
 			securityModel.save(security);
-			securityModel.flush.should.have.been.called;
+			expect(securityModel["flush"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -255,11 +254,11 @@ describe("securityModel", (): void => {
 			$httpBackend.flush();
 		});
 
-		it("should flush the security cache", (): Chai.Assertion => securityModel.flush.should.have.been.called);
+		it("should flush the security cache", (): Chai.Assertion => expect(securityModel["flush"]).to.have.been.called);
 
 		it("should dispatch a DELETE request to /securities/{id}", (): null => null);
 
-		it("should remove the securty from the recent list", (): Chai.Assertion => securityModel.removeRecent.should.have.been.calledWith(1));
+		it("should remove the securty from the recent list", (): Chai.Assertion => expect(securityModel["removeRecent"]).to.have.been.calledWith(1));
 	});
 
 	describe("toggleFavourite", (): void => {
@@ -273,20 +272,20 @@ describe("securityModel", (): void => {
 
 		it("should flush the security cache", (): void => {
 			securityModel.toggleFavourite(security);
-			securityModel.flush.should.have.been.called;
+			expect(securityModel["flush"]).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a DELETE request to /securities/{id}/favourite when the security is unfavourited", (): void => {
 			$httpBackend.expectDELETE(expectedUrl);
 			security.favourite = true;
-			securityModel.toggleFavourite(security).then((favourite: boolean): Chai.Assertion => favourite.should.be.false);
+			securityModel.toggleFavourite(security).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.false);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /securities/{id}/favourite when the security is favourited", (): void => {
 			$httpBackend.expectPUT(expectedUrl);
-			securityModel.toggleFavourite(security).then((favourite: boolean): Chai.Assertion => favourite.should.be.true);
+			securityModel.toggleFavourite(security).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.true);
 			$httpBackend.flush();
 		});
 	});
@@ -294,12 +293,12 @@ describe("securityModel", (): void => {
 	describe("flush", (): void => {
 		it("should remove the specified security from the security cache when an id is provided", (): void => {
 			securityModel.flush(1);
-			$cache.remove.should.have.been.calledWith("/securities/1");
+			expect($cache["remove"]).to.have.been.calledWith("/securities/1");
 		});
 
 		it("should flush the security cache when an id is not provided", (): void => {
 			securityModel.flush();
-			$cache.removeAll.should.have.been.called;
+			expect($cache["removeAll"]).to.have.been.called;
 		});
 	});
 
@@ -307,21 +306,21 @@ describe("securityModel", (): void => {
 		beforeEach((): void => securityModel.addRecent(security));
 
 		it("should add the security to the recent list", (): void => {
-			ogLruCache.put.should.have.been.calledWith(security);
-			securityModel.recent.should.equal("updated list");
+			expect(ogLruCache.put).to.have.been.calledWith(security);
+			expect(securityModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentSecurities", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentSecurities", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 
 	describe("removeRecent", (): void => {
 		beforeEach((): void => securityModel.removeRecent(1));
 
 		it("should remove the security from the recent list", (): void => {
-			ogLruCache.remove.should.have.been.calledWith(1);
-			securityModel.recent.should.equal("updated list");
+			expect(ogLruCache.remove).to.have.been.calledWith(1);
+			expect(securityModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => $window.localStorage.setItem.should.have.been.calledWith("lootRecentSecurities", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentSecurities", JSON.stringify([{ id: 1, name: "recent item" }])));
 	});
 });

@@ -66,25 +66,25 @@ describe("ScheduleIndexController", (): void => {
 		scheduleIndexController = controllerTest("ScheduleIndexController") as ScheduleIndexController;
 	}) as Mocha.HookFunction);
 
-	it("should make the passed schedules available to the view", (): Chai.Assertion => scheduleIndexController.schedules.should.deep.equal(schedules));
+	it("should make the passed schedules available to the view", (): Chai.Assertion => expect(scheduleIndexController.schedules).to.deep.equal(schedules));
 
-	it("should make today's date available to the view", (): Chai.Assertion => scheduleIndexController.today.should.deep.equal(startOfDay(new Date())));
+	it("should make today's date available to the view", (): Chai.Assertion => expect(scheduleIndexController.today).to.deep.equal(startOfDay(new Date())));
 
 	it("should focus the schedule when a schedule id is specified", (): void => {
 		$state.params.id = "1";
 		scheduleIndexController = controllerTest("ScheduleIndexController", { $state }) as ScheduleIndexController;
 		scheduleIndexController.tableActions.focusRow = sinon.stub();
 		$timeout.flush();
-		(scheduleIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(0);
+		expect((scheduleIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(0);
 	});
 
 	it("should not focus the schedule when a schedule id is not specified", (): void =>	$timeout.verifyNoPendingTasks());
 
-	it("should register a success transition hook", (): Chai.Assertion => $transitions.onSuccess.should.have.been.calledWith({ to: "root.schedules.schedule" }, sinon.match.func) as Chai.Assertion);
+	it("should register a success transition hook", (): Chai.Assertion => expect($transitions.onSuccess).to.have.been.calledWith({ to: "root.schedules.schedule" }, sinon.match.func));
 
 	it("should deregister the success transition hook when the scope is destroyed", (): void => {
 		(scheduleIndexController as angular.IController).$scope.$emit("$destroy");
-		deregisterTransitionSuccessHook.should.have.been.called;
+		expect(deregisterTransitionSuccessHook).to.have.been.called;
 	});
 
 	it("should ensure the schedule is focussed when the schedule id state param changes", (): void => {
@@ -92,7 +92,7 @@ describe("ScheduleIndexController", (): void => {
 
 		sinon.stub(scheduleIndexController, "focusSchedule" as keyof ScheduleIndexController);
 		$transitions.onSuccess.firstCall.args[1]({ params: sinon.stub().withArgs("to").returns(toParams) });
-		scheduleIndexController["focusSchedule"].should.have.been.calledWith(Number(toParams.id));
+		expect(scheduleIndexController["focusSchedule"]).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editSchedule", (): void => {
@@ -105,15 +105,15 @@ describe("ScheduleIndexController", (): void => {
 
 		it("should disable navigation on the table", (): void => {
 			scheduleIndexController["editSchedule"]();
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
 			it("should open the edit schedule modal with a schedule", (): void => {
 				scheduleIndexController["editSchedule"](1);
-				$uibModal.open.should.have.been.called;
-				(($uibModal.resolves as UibModalMockResolves).schedule as ScheduledTransaction).should.deep.equal(schedule);
-				transactionModel.findSubtransactions.should.not.have.been.called;
+				expect($uibModal.open).to.have.been.called;
+				expect(($uibModal.resolves as UibModalMockResolves).schedule as ScheduledTransaction).to.deep.equal(schedule);
+				expect(transactionModel.findSubtransactions).to.not.have.been.called;
 			});
 
 			const scenarios: SplitTransactionType[] = ["Split", "LoanRepayment", "Payslip"];
@@ -122,8 +122,8 @@ describe("ScheduleIndexController", (): void => {
 				it(`should prefetch the subtransactions for a ${scenario} transaction`, (): void => {
 					scheduleIndexController.schedules[1].transaction_type = scenario;
 					scheduleIndexController["editSchedule"](1);
-					transactionModel.findSubtransactions.should.have.been.calledWith(schedule.id);
-					(($uibModal.resolves as UibModalMockResolves).schedule as angular.IPromise<ScheduledTransaction>).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion => scheduledTransaction.should.have.property("subtransactions"));
+					expect(transactionModel.findSubtransactions).to.have.been.calledWith(schedule.id);
+					(($uibModal.resolves as UibModalMockResolves).schedule as angular.IPromise<ScheduledTransaction>).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion => expect(scheduledTransaction).to.have.property("subtransactions"));
 				});
 			});
 
@@ -131,7 +131,7 @@ describe("ScheduleIndexController", (): void => {
 				schedule.memo = "edited schedule";
 				scheduleIndexController["editSchedule"](1);
 				$uibModal.close({ data: schedule });
-				scheduleIndexController.schedules.should.include(schedule);
+				expect(scheduleIndexController.schedules).to.include(schedule);
 			});
 		});
 
@@ -142,13 +142,13 @@ describe("ScheduleIndexController", (): void => {
 			});
 
 			it("should open the edit schedule modal without a schedule", (): void => {
-				$uibModal.open.should.have.been.called;
-				(undefined === ($uibModal.resolves as UibModalMockResolves).schedule).should.be.true;
+				expect($uibModal.open).to.have.been.called;
+				expect(($uibModal.resolves as UibModalMockResolves).schedule).to.be.undefined;
 			});
 
 			it("should add the new schedule to the list of schedules when the modal is closed", (): void => {
 				$uibModal.close({ data: schedule });
-				(scheduleIndexController.schedules.pop() as ScheduledTransaction).should.deep.equal(schedule);
+				expect(scheduleIndexController.schedules.pop() as ScheduledTransaction).to.deep.equal(schedule);
 			});
 		});
 
@@ -157,21 +157,21 @@ describe("ScheduleIndexController", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
 			$uibModal.close({ data: schedule });
-			(scheduleIndexController.schedules.pop() as ScheduledTransaction).should.deep.equal(schedule);
+			expect(scheduleIndexController.schedules.pop() as ScheduledTransaction).to.deep.equal(schedule);
 		});
 
 		it("should focus the schedule when the modal is closed if the schedule was edited", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
 			$uibModal.close({ data: schedule });
-			scheduleIndexController["focusSchedule"].should.have.been.calledWith(schedule.id);
+			expect(scheduleIndexController["focusSchedule"]).to.have.been.calledWith(schedule.id);
 		});
 
 		it("should focus the schedule now at the original index when the modal is closed if the schedule was entered or skipped", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
 			$uibModal.close({ data: schedule, skipped: true });
-			scheduleIndexController["focusSchedule"].should.have.been.calledWith(scheduleIndexController.schedules[1].id);
+			expect(scheduleIndexController["focusSchedule"]).to.have.been.calledWith(scheduleIndexController.schedules[1].id);
 		});
 
 		it("should not change the schedules list when the modal is dismissed", (): void => {
@@ -179,19 +179,19 @@ describe("ScheduleIndexController", (): void => {
 
 			scheduleIndexController["editSchedule"]();
 			$uibModal.dismiss();
-			scheduleIndexController.schedules.should.deep.equal(originalSchedules);
+			expect(scheduleIndexController.schedules).to.deep.equal(originalSchedules);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			scheduleIndexController["editSchedule"]();
 			$uibModal.close({ data: schedule });
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			scheduleIndexController["editSchedule"]();
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -202,37 +202,37 @@ describe("ScheduleIndexController", (): void => {
 
 		it("should disable navigation on the table", (): void => {
 			scheduleIndexController["deleteSchedule"](1);
-			ogTableNavigableService.enabled.should.be.false;
+			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should open the delete schedule modal with a schedule", (): void => {
 			scheduleIndexController["deleteSchedule"](1);
-			$uibModal.open.should.have.been.called;
-			(($uibModal.resolves as UibModalMockResolves).schedule as ScheduledTransaction).should.deep.equal(schedule);
+			expect($uibModal.open).to.have.been.called;
+			expect(($uibModal.resolves as UibModalMockResolves).schedule as ScheduledTransaction).to.deep.equal(schedule);
 		});
 
 		it("should remove the schedule from the schedules list when the modal is closed", (): void => {
 			scheduleIndexController["deleteSchedule"](1);
 			$uibModal.close(schedule);
-			scheduleIndexController.schedules.should.not.include(schedule);
+			expect(scheduleIndexController.schedules).to.not.include(schedule);
 		});
 
 		it("should transition to the parent state", (): void => {
 			scheduleIndexController["deleteSchedule"](1);
 			$uibModal.close(schedule);
-			$state.go.should.have.been.calledWith("root.schedules");
+			expect($state.go).to.have.been.calledWith("root.schedules");
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
 			scheduleIndexController["deleteSchedule"](1);
 			$uibModal.close(schedule);
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
 			scheduleIndexController["deleteSchedule"](1);
 			$uibModal.dismiss();
-			ogTableNavigableService.enabled.should.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 	});
 
@@ -240,7 +240,7 @@ describe("ScheduleIndexController", (): void => {
 		it("should edit the schedule", (): void => {
 			sinon.stub(scheduleIndexController, "editSchedule" as keyof ScheduleIndexController);
 			scheduleIndexController.tableActions.selectAction(1);
-			scheduleIndexController["editSchedule"].should.have.been.calledWithExactly(1);
+			expect(scheduleIndexController["editSchedule"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
@@ -248,7 +248,7 @@ describe("ScheduleIndexController", (): void => {
 		it("should edit the schedule", (): void => {
 			sinon.stub(scheduleIndexController, "editSchedule" as keyof ScheduleIndexController);
 			scheduleIndexController.tableActions.editAction(1);
-			scheduleIndexController["editSchedule"].should.have.been.calledWithExactly(1);
+			expect(scheduleIndexController["editSchedule"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
@@ -256,7 +256,7 @@ describe("ScheduleIndexController", (): void => {
 		it("should insert a schedule", (): void => {
 			sinon.stub(scheduleIndexController, "editSchedule" as keyof ScheduleIndexController);
 			scheduleIndexController.tableActions.insertAction();
-			scheduleIndexController["editSchedule"].should.have.been.calledWithExactly();
+			expect(scheduleIndexController["editSchedule"]).to.have.been.calledWithExactly();
 		});
 	});
 
@@ -264,20 +264,20 @@ describe("ScheduleIndexController", (): void => {
 		it("should delete a schedule", (): void => {
 			sinon.stub(scheduleIndexController, "deleteSchedule" as keyof ScheduleIndexController);
 			scheduleIndexController.tableActions.deleteAction(1);
-			scheduleIndexController["deleteSchedule"].should.have.been.calledWithExactly(1);
+			expect(scheduleIndexController["deleteSchedule"]).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.focusAction", (): void => {
 		it("should focus a schedule when no schedule is currently focussed", (): void => {
 			scheduleIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith(".schedule", { id: 2 });
+			expect($state.go).to.have.been.calledWith(".schedule", { id: 2 });
 		});
 
 		it("should focus a schedule when another schedule is currently focussed", (): void => {
 			$state.currentState("**.schedule");
 			scheduleIndexController.tableActions.focusAction(1);
-			$state.go.should.have.been.calledWith("^.schedule", { id: 2 });
+			expect($state.go).to.have.been.calledWith("^.schedule", { id: 2 });
 		});
 	});
 
@@ -285,21 +285,21 @@ describe("ScheduleIndexController", (): void => {
 		beforeEach((): SinonStub => (scheduleIndexController.tableActions.focusRow = sinon.stub()));
 
 		it("should do nothing when the specific schedule row could not be found", (): void => {
-			scheduleIndexController["focusSchedule"](999).should.be.NaN;
-			(scheduleIndexController.tableActions as OgTableActionHandlers).focusRow.should.not.have.been.called;
+			expect(scheduleIndexController["focusSchedule"](999)).to.be.NaN;
+			expect((scheduleIndexController.tableActions as OgTableActionHandlers).focusRow).to.not.have.been.called;
 		});
 
 		it("should focus the schedule row for the specified schedule", (): void => {
 			const targetIndex: number = scheduleIndexController["focusSchedule"](1);
 
 			$timeout.flush();
-			(scheduleIndexController.tableActions as OgTableActionHandlers).focusRow.should.have.been.calledWith(targetIndex);
+			expect((scheduleIndexController.tableActions as OgTableActionHandlers).focusRow).to.have.been.calledWith(targetIndex);
 		});
 
 		it("should return the index of the specified schedule", (): void => {
 			const targetIndex: number = scheduleIndexController["focusSchedule"](1);
 
-			targetIndex.should.equal(0);
+			expect(targetIndex).to.equal(0);
 		});
 	});
 
@@ -314,12 +314,12 @@ describe("ScheduleIndexController", (): void => {
 
 		it("should toggle a flag on the schedule indicating whether subtransactions are shown", (): void => {
 			scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-			schedule.showSubtransactions.should.be.false;
+			expect(schedule.showSubtransactions).to.be.false;
 		});
 
 		it("should do nothing if we're not showing subtransactions", (): void => {
 			scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-			transactionModel.findSubtransactions.should.not.have.been.called;
+			expect(transactionModel.findSubtransactions).to.not.have.been.called;
 		});
 
 		describe("(on shown)", (): void => {
@@ -331,20 +331,20 @@ describe("ScheduleIndexController", (): void => {
 
 			it("should show a loading indicator", (): void => {
 				scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-				schedule.showSubtransactions.should.be.true;
-				schedule.loadingSubtransactions.should.be.true;
+				expect(schedule.showSubtransactions).to.be.true;
+				expect(schedule.loadingSubtransactions).to.be.true;
 			});
 
 			it("should clear the subtransactions for the schedule", (): void => {
 				scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-				schedule.subtransactions.should.be.an("array");
-				schedule.subtransactions.should.be.empty;
+				expect(schedule.subtransactions).to.be.an("array");
+				expect(schedule.subtransactions).to.be.empty;
 			});
 
 			it("should fetch the subtransactions", (): void => {
 				schedule.id = 1;
 				scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-				transactionModel.findSubtransactions.should.have.been.calledWith(schedule.id);
+				expect(transactionModel.findSubtransactions).to.have.been.calledWith(schedule.id);
 			});
 
 			it("should update the transaction with it's subtransactions", (): void => {
@@ -356,19 +356,19 @@ describe("ScheduleIndexController", (): void => {
 
 				schedule.id = 1;
 				scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-				schedule.subtransactions.should.deep.equal(subtransactions);
+				expect(schedule.subtransactions).to.deep.equal(subtransactions);
 			});
 
 			it("should hide the loading indicator", (): void => {
 				schedule.id = 1;
 				scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-				schedule.loadingSubtransactions.should.be.false;
+				expect(schedule.loadingSubtransactions).to.be.false;
 			});
 		});
 
 		it("should prevent the event from bubbling", (): void => {
 			scheduleIndexController.toggleSubtransactions(event as JQueryMouseEventObject, schedule);
-			(event.cancelBubble as boolean).should.be.true;
+			expect(event.cancelBubble as boolean).to.be.true;
 		});
 	});
 });

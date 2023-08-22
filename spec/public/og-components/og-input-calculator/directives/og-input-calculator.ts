@@ -50,29 +50,29 @@ describe("ogInputCalculator", (): void => {
 		scope = ogInputCalculator.scope as OgInputCalculatorScope;
 	}) as Mocha.HookFunction);
 
-	it("should default the position to left if unspecified", (): Chai.Assertion => scope.position.should.equal("left"));
+	it("should default the position to left if unspecified", (): Chai.Assertion => expect(scope.position).to.equal("left"));
 
 	it("should set the position if specified", (): void => {
 		ogInputCalculator.compile({ "og-input-calculator": "right" }, true);
 		scope.$digest();
-		scope.position.should.equal("right");
+		expect(scope.position).to.equal("right");
 	});
 
 	describe("(formatting)", (): void => {
-		it("should use currency formatting if the element includes an og-input-currency directive", (): Chai.Assertion => (scope.ogInput as OgInputCurrencyController & { type: string; }).type.should.equal("ogInputCurrencyController"));
+		it("should use currency formatting if the element includes an og-input-currency directive", (): Chai.Assertion => expect((scope.ogInput as OgInputCurrencyController & { type: string; }).type).to.equal("ogInputCurrencyController"));
 
 		it("should use number formatting if the element includes an og-input-number directive", (): void => {
 			ogInputCalculator.compile({ "og-input-number": undefined });
 			scope.$digest();
-			(scope.ogInput as OgInputNumberController & { type: string; }).type.should.equal("ogInputNumberController");
+			expect((scope.ogInput as OgInputNumberController & { type: string; }).type).to.equal("ogInputNumberController");
 		});
 
-		it("should throw an error if the element includes both og-input-currency and og-input-number directives", (): Chai.Assertion => ogInputCalculator.compile.bind(ogInputCalculator, { "og-input-currency": "", "og-input-number": "" }).should.throw("[$compile:multidir]"));
+		it("should throw an error if the element includes both og-input-currency and og-input-number directives", (): Chai.Assertion => expect(ogInputCalculator.compile.bind(ogInputCalculator, { "og-input-currency": "", "og-input-number": "" })).to.throw("[$compile:multidir]"));
 
 		it("should use no formatting if the element includes neither og-input-currency or og-input-number directives", (): void => {
 			ogInputCalculator.compile({});
 			scope.$digest();
-			(null === scope.ogInput as angular.IController | null).should.be.true;
+			expect(scope.ogInput as angular.IController | null).to.be.null;
 		});
 	});
 
@@ -91,14 +91,14 @@ describe("ogInputCalculator", (): void => {
 
 				scope.push(1, "+");
 				$timeout.flush();
-				scope.stack.length.should.equal(2);
+				expect(scope.stack.length).to.equal(2);
 			});
 
-			it("should push the operand onto the stack", (): Chai.Assertion => scope.stack[0].should.deep.equal({ operand: 1 }));
+			it("should push the operand onto the stack", (): Chai.Assertion => expect(scope.stack[0]).to.deep.equal({ operand: 1 }));
 
-			it("should show the popover", (): Chai.Assertion => mockAngularElement[0].dispatchEvent.should.have.been.calledWith(sinon.match((event: Event): boolean => "showCalculator" === event.type)));
+			it("should show the popover", (): Chai.Assertion => expect(mockAngularElement[0].dispatchEvent).to.have.been.calledWith(sinon.match((event: Event): boolean => "showCalculator" === event.type)));
 
-			it("should set operator and operand as the display expression", (): Chai.Assertion => scope.expression.should.equal("\n+ 1"));
+			it("should set operator and operand as the display expression", (): Chai.Assertion => expect(scope.expression).to.equal("\n+ 1"));
 
 			afterEach((): JQueryStatic => (angular.element = realAngularElement));
 		});
@@ -109,18 +109,18 @@ describe("ogInputCalculator", (): void => {
 				scope.expression = "\n* 2";
 				scope.push(1, "+");
 				$timeout.flush();
-				scope.stack.length.should.equal(3);
+				expect(scope.stack.length).to.equal(3);
 			});
 
-			it("should set the operand on the last entry on the stack", (): Chai.Assertion => scope.stack[1].should.deep.equal({ operator: "*", operand: 1 }));
+			it("should set the operand on the last entry on the stack", (): Chai.Assertion => expect(scope.stack[1]).to.deep.equal({ operator: "*", operand: 1 }));
 
-			it("should prepend operator and operand to the display expression", (): Chai.Assertion => scope.expression.should.equal("\n+ 1\n* 2"));
+			it("should prepend operator and operand to the display expression", (): Chai.Assertion => expect(scope.expression).to.equal("\n+ 1\n* 2"));
 		});
 
 		it("should push the operator onto the stack", (): void => {
 			scope.push(1, "+");
 			$timeout.flush();
-			(scope.stack.pop() as OgInputCalculatorOperation).should.deep.equal({ operator: "+" });
+			expect(scope.stack.pop() as OgInputCalculatorOperation).to.deep.equal({ operator: "+" });
 		});
 
 		afterEach((): void => $timeout.verifyNoPendingTasks());
@@ -129,14 +129,14 @@ describe("ogInputCalculator", (): void => {
 	describe("calculate", (): void => {
 		it("should set the passed value on the scope", (): void => {
 			scope.calculate("1");
-			scope.current.should.equal("1");
+			expect(scope.current).to.equal("1");
 		});
 
 		describe("(stack is empty)", (): void => {
 			it("should set the result to the input value", (): void => {
 				scope.stack = [];
 				scope.calculate("1");
-				scope.result.should.equal(1);
+				expect(scope.result).to.equal(1);
 			});
 		});
 
@@ -144,7 +144,7 @@ describe("ogInputCalculator", (): void => {
 			it("should set the result to the input value", (): void => {
 				scope.stack = [{ operand: 1 }];
 				scope.calculate("1");
-				scope.result.should.equal(1);
+				expect(scope.result).to.equal(1);
 			});
 		});
 
@@ -161,9 +161,9 @@ describe("ogInputCalculator", (): void => {
 				scope.calculate("1");
 			});
 
-			it("should calculate the result", (): Chai.Assertion => scope.result.should.equal(12));
+			it("should calculate the result", (): Chai.Assertion => expect(scope.result).to.equal(12));
 
-			it("should set the formatted result on the scope", (): Chai.Assertion => scope.formattedResult.should.equal("12"));
+			it("should set the formatted result on the scope", (): Chai.Assertion => expect(scope.formattedResult).to.equal("12"));
 		});
 	});
 
@@ -234,12 +234,12 @@ describe("ogInputCalculator", (): void => {
 			scenarios.forEach((scenario: { input: string; operand: number; operator: OgInputCalculatorOperator; residual: string; }): void => {
 				it(`should push the operand ${scenario.operand} and operator '${scenario.operator}' onto the stack when the input is '${scenario.input}'`, (): void => {
 					scope.inputChanged(scenario.input);
-					scope.push.should.have.been.calledWith(scenario.operand, scenario.operator);
+					expect(scope.push).to.have.been.calledWith(scenario.operand, scenario.operator);
 				});
 
 				it(`should set the view value to '${scenario.residual}' when then input is '${scenario.input}'`, (): void => {
 					scope.inputChanged(scenario.input);
-					(ogInputCalculator["element"].val() as string).should.equal(scenario.residual);
+					expect(ogInputCalculator["element"].val() as string).to.equal(scenario.residual);
 				});
 			});
 		});
@@ -247,13 +247,13 @@ describe("ogInputCalculator", (): void => {
 		describe("(value doesn't contain an operator)", (): void => {
 			beforeEach((): string => scope.inputChanged("1"));
 
-			it("should recalculate the result", (): Chai.Assertion => scope.calculate.should.have.been.calledWith("1"));
+			it("should recalculate the result", (): Chai.Assertion => expect(scope.calculate).to.have.been.calledWith("1"));
 		});
 
 		it("should return the current result", (): void => {
 			scope.inputChanged("1+2");
 			scope.result = 3;
-			scope.inputChanged("").should.equal("3");
+			expect(scope.inputChanged("")).to.equal("3");
 		});
 	});
 
@@ -266,11 +266,11 @@ describe("ogInputCalculator", (): void => {
 			scope.$digest();
 		});
 
-		it("should reset the stack", (): Chai.Assertion => scope.clear.should.have.been.called);
+		it("should reset the stack", (): Chai.Assertion => expect(scope.clear).to.have.been.called);
 
-		it("should update the input value and view value", (): Chai.Assertion => (ogInputCalculator["element"].val() as string).should.equal("1"));
+		it("should update the input value and view value", (): Chai.Assertion => expect(ogInputCalculator["element"].val() as string).to.equal("1"));
 
-		it("should close the calculator", (): Chai.Assertion => scope.close.should.have.been.called);
+		it("should close the calculator", (): Chai.Assertion => expect(scope.close).to.have.been.called);
 	});
 
 	describe("cancel", (): void => {
@@ -280,9 +280,9 @@ describe("ogInputCalculator", (): void => {
 			scope.cancel();
 		});
 
-		it("should clear the calculator", (): Chai.Assertion => scope.clear.should.have.been.called);
+		it("should clear the calculator", (): Chai.Assertion => expect(scope.clear).to.have.been.called);
 
-		it("should close the calculator", (): Chai.Assertion => scope.close.should.have.been.called);
+		it("should close the calculator", (): Chai.Assertion => expect(scope.close).to.have.been.called);
 	});
 
 	describe("clear", (): void => {
@@ -297,11 +297,11 @@ describe("ogInputCalculator", (): void => {
 		});
 
 		it("should reset the stack to an empty array", (): void => {
-			scope.stack.should.be.an("array");
-			scope.stack.should.be.empty;
+			expect(scope.stack).to.be.an("array");
+			expect(scope.stack).to.be.empty;
 		});
 
-		it("should reset the expression", (): Chai.Assertion => scope.expression.should.equal(" "));
+		it("should reset the expression", (): Chai.Assertion => expect(scope.expression).to.equal(" "));
 	});
 
 	describe("close", (): void => {
@@ -320,15 +320,15 @@ describe("ogInputCalculator", (): void => {
 			$timeout.flush();
 		});
 
-		it("should hide the popover", (): Chai.Assertion => mockAngularElement[0].dispatchEvent.should.have.been.calledWith(sinon.match((event: Event): boolean => "hideCalculator" === event.type)));
+		it("should hide the popover", (): Chai.Assertion => expect(mockAngularElement[0].dispatchEvent).to.have.been.calledWith(sinon.match((event: Event): boolean => "hideCalculator" === event.type)));
 
 		afterEach((): JQueryStatic => (angular.element = realAngularElement));
 	});
 
 	it("should start with a cleared calculator", (): void => {
-		scope.stack.should.be.an("array");
-		scope.stack.should.be.empty;
-		scope.expression.should.equal(" ");
+		expect(scope.stack).to.be.an("array");
+		expect(scope.stack).to.be.empty;
+		expect(scope.expression).to.equal(" ");
 	});
 
 	describe("keyhandler", (): void => {
@@ -351,7 +351,7 @@ describe("ogInputCalculator", (): void => {
 			};
 			(scope as DirectiveTestScope).model = 1;
 			scope.$digest();
-			(ogInputCalculator["element"].val() as string).should.equal("1");
+			expect(ogInputCalculator["element"].val() as string).to.equal("1");
 
 			mockJqueryInstance = {
 				select: sinon.stub()
@@ -370,9 +370,9 @@ describe("ogInputCalculator", (): void => {
 				actionHandler = sinon.stub(scope, key.handler as keyof OgInputCalculatorScope);
 				scope.keyHandler(event as JQueryKeyEventObject);
 				$timeout.flush();
-				actionHandler.should.not.have.been.called;
-				mockJqueryInstance.select.should.not.have.been.called;
-				(event.stopPropagation as SinonStub).should.not.have.been.called;
+				expect(actionHandler).to.not.have.been.called;
+				expect(mockJqueryInstance.select).to.not.have.been.called;
+				expect(event.stopPropagation as SinonStub).to.not.have.been.called;
 			});
 
 			it(`should do nothing when the ${key.name} key is pressed and the stack is empty`, (): void => {
@@ -380,10 +380,10 @@ describe("ogInputCalculator", (): void => {
 				actionHandler = sinon.stub(scope, key.handler as keyof OgInputCalculatorScope);
 				scope.keyHandler(event as JQueryKeyEventObject);
 				$timeout.flush();
-				actionHandler.should.not.have.been.called;
-				mockJqueryInstance.select.should.not.have.been.called;
-				(event.preventDefault as SinonStub).should.not.have.been.called;
-				(event.stopPropagation as SinonStub).should.not.have.been.called;
+				expect(actionHandler).to.not.have.been.called;
+				expect(mockJqueryInstance.select).to.not.have.been.called;
+				expect(event.preventDefault as SinonStub).to.not.have.been.called;
+				expect(event.stopPropagation as SinonStub).to.not.have.been.called;
 			});
 
 			it(`should invoke the ${key.handler} handler when the ${key.name} key is pressed`, (): void => {
@@ -392,10 +392,10 @@ describe("ogInputCalculator", (): void => {
 				actionHandler = sinon.stub(scope, key.handler as keyof OgInputCalculatorScope);
 				scope.keyHandler(event as JQueryKeyEventObject);
 				$timeout.flush();
-				actionHandler.should.have.been.called;
-				mockJqueryInstance.select.should.have.been.called;
-				(event.preventDefault as SinonStub).should.have.been.called;
-				(event.stopPropagation as SinonStub).should.have.been.called;
+				expect(actionHandler).to.have.been.called;
+				expect(mockJqueryInstance.select).to.have.been.called;
+				expect(event.preventDefault as SinonStub).to.have.been.called;
+				expect(event.stopPropagation as SinonStub).to.have.been.called;
 			});
 		});
 
@@ -406,7 +406,7 @@ describe("ogInputCalculator", (): void => {
 		it("should invoke the keydown handler", (): void => {
 			sinon.stub(scope, "keyHandler");
 			ogInputCalculator["element"].triggerHandler("keydown");
-			scope.keyHandler.should.have.been.called;
+			expect(scope.keyHandler).to.have.been.called;
 		});
 	});
 
@@ -415,13 +415,13 @@ describe("ogInputCalculator", (): void => {
 
 		it("should do nothing if the stack is empty", (): void => {
 			ogInputCalculator["element"].triggerHandler("blur");
-			scope.update.should.not.have.been.called;
+			expect(scope.update).to.not.have.been.called;
 		});
 
 		it("should invoke the blur handler", (): void => {
 			scope.stack = [{ operand: 1 }];
 			ogInputCalculator["element"].triggerHandler("blur");
-			scope.update.should.have.been.called;
+			expect(scope.update).to.have.been.called;
 		});
 	});
 
@@ -434,12 +434,12 @@ describe("ogInputCalculator", (): void => {
 
 		it("should remove the keydown handler from the element", (): void => {
 			ogInputCalculator["element"].triggerHandler("keydown");
-			scope.keyHandler.should.not.have.been.called;
+			expect(scope.keyHandler).to.not.have.been.called;
 		});
 
 		it("should remove the blur handler from the element", (): void => {
 			ogInputCalculator["element"].triggerHandler("blur");
-			scope.update.should.not.have.been.called;
+			expect(scope.update).to.not.have.been.called;
 		});
 	});
 });

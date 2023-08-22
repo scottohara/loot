@@ -10,7 +10,7 @@ describe("estimate", (): void => {
 	// Inject the object under test
 	beforeEach(angular.mock.inject((_estimateFilter_: EstimateFilter): EstimateFilter => (estimateFilter = _estimateFilter_)) as Mocha.HookFunction);
 
-	it("should prefix an estimate with ~", (): Chai.Assertion => (estimateFilter as (value: string, isEstimate: boolean) => string)("1", true).should.equal("~1"));
+	it("should prefix an estimate with ~", (): Chai.Assertion => expect((estimateFilter as (value: string, isEstimate: boolean) => string)("1", true)).to.equal("~1"));
 
-	it("should not prefix a non-estimate", (): Chai.Assertion => (estimateFilter as (value: string, isEstimate: boolean) => string)("1", false).should.equal("1"));
+	it("should not prefix a non-estimate", (): Chai.Assertion => expect((estimateFilter as (value: string, isEstimate: boolean) => string)("1", false)).to.equal("1"));
 });
