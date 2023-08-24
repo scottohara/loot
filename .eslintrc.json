@@ -1,11 +1,27 @@
 {
 	"extends": "oharagroup",
-	"env": {
-		"mocha": true
-	},
 	"rules": {
 		"camelcase": "off",																	// Disabled for camelcase in Typescript interfaces
 		"@typescript-eslint/no-unsafe-call": "off",					// Disabled due to too many any types in 3rd party dependencies
 		"@typescript-eslint/no-unsafe-member-access": "off"	// Disabled due to too many any types in 3rd party dependencies
-	}
+	},
+	"overrides": [
+		{
+			"files": [
+				"**/*.test.ts",
+				"spec/public/mocks/**/*"
+			],
+			"env": {
+				"mocha": true
+			},
+			"rules": {
+				// Stylistic issues
+				"object-property-newline": "off",									// Disable for readability of test fixtures (eg. categories)
+
+				// Typescript
+				"@typescript-eslint/no-floating-promises": "off",	// Disable to allow Chai-as-promised assertions
+				"@typescript-eslint/no-unused-expressions": "off" // Disable to allow Chai assertions (e.g. `expect(..).to.have.been.called`)
+			}
+		}
+	]
 }
