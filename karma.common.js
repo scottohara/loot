@@ -10,7 +10,7 @@ module.exports = {
 
 	// List of files / patterns to load in the browser
 	files: [
-		"spec/public/index.js"
+		"src/index.test.js"
 	],
 
 	mochaReporter: {
