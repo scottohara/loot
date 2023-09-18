@@ -27,7 +27,6 @@
 		// Backwards Compatibility
 
 		// Language and Environment
-		"target": "es2019"
 
 		// Compiler Diagnostics
 
