@@ -94,8 +94,8 @@
 		"swap:check": "fly ssh console --command 'free'"
   },
   "engines": {
-    "node": "20.2.0",
-    "npm": "9.6.7",
+    "node": "20.7.0",
+    "npm": "10.1.0",
 		"ruby": "3.2.2"
   }
 }
