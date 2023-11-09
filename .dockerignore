@@ -12,6 +12,7 @@ lib
 log
 node_modules
 public
+src/**/*.test.ts
 spec
 tmp
 vendor
