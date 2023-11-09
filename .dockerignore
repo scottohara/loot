@@ -13,6 +13,7 @@ log
 node_modules
 public
 src/**/*.test.ts
+src/mocks
 spec
 tmp
 vendor
