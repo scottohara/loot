@@ -1,11 +1,13 @@
 import type {
 	OgInputNumberControllerMock,
-	OgInputNumberControllerType
+	OgInputNumberControllerType,
 } from "~/mocks/og-components/og-input-number/types";
 import type { Mock } from "~/mocks/types";
 import sinon from "sinon";
 
-export default class OgInputNumberControllerMockProvider implements Mock<OgInputNumberControllerMock> {
+export default class OgInputNumberControllerMockProvider
+	implements Mock<OgInputNumberControllerMock>
+{
 	private readonly ogInputNumberController: OgInputNumberControllerMock;
 
 	// Mock input number controller object
@@ -13,7 +15,7 @@ export default class OgInputNumberControllerMockProvider implements Mock<OgInput
 		this.ogInputNumberController = (): OgInputNumberControllerType => ({
 			type: "ogInputNumberController",
 			formattedToRaw: sinon.stub(),
-			rawToFormatted: sinon.stub()
+			rawToFormatted: sinon.stub(),
 		});
 	}
 

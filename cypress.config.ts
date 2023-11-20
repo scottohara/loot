@@ -5,7 +5,10 @@ export default defineConfig({
 	viewportWidth: 1200,
 	chromeWebSecurity: false,
 	e2e: {
-		setupNodeEvents(_on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions): Cypress.PluginConfigOptions {
+		setupNodeEvents(
+			_on: Cypress.PluginEvents,
+			config: Cypress.PluginConfigOptions,
+		): Cypress.PluginConfigOptions {
 			const { LOOT_USERNAME, LOOT_PASSWORD } = process.env;
 
 			config.env = { ...config.env, LOOT_USERNAME, LOOT_PASSWORD };
@@ -13,6 +16,6 @@ export default defineConfig({
 			return config;
 		},
 		baseUrl: "http://localhost:3000",
-		experimentalRunAllSpecs: true
-	}
+		experimentalRunAllSpecs: true,
+	},
 });

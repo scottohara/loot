@@ -1,8 +1,4 @@
-import type {
-	Account,
-	AccountStatus,
-	AccountType
-} from "~/accounts/types";
+import type { Account, AccountStatus, AccountType } from "~/accounts/types";
 
 let id = 1;
 
@@ -21,6 +17,6 @@ export default function createAccount(props: Partial<Account> = {}): Account {
 		num_transactions: 0,
 		cleared_closing_balance: 0,
 		reconciled_closing_balance: 0,
-		...props
+		...props,
 	};
 }

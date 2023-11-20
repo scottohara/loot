@@ -2,7 +2,9 @@ import type { Security } from "~/securities/types";
 
 let id = 1;
 
-export default function createSecurity(props: Partial<Security> = {}): Security {
+export default function createSecurity(
+	props: Partial<Security> = {},
+): Security {
 	id++;
 
 	return {
@@ -14,6 +16,6 @@ export default function createSecurity(props: Partial<Security> = {}): Security 
 		favourite: false,
 		unused: false,
 		num_transactions: 0,
-		...props
+		...props,
 	};
 }

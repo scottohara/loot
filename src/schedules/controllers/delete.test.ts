@@ -7,23 +7,46 @@ import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("ScheduleDeleteController", (): void => {
-	let	scheduleDeleteController: ScheduleDeleteController,
-			$uibModalInstance: UibModalInstanceMock,
-			scheduleModel: ScheduleModelMock,
-			schedule: ScheduledTransaction;
+	let scheduleDeleteController: ScheduleDeleteController,
+		$uibModalInstance: UibModalInstanceMock,
+		scheduleModel: ScheduleModelMock,
+		schedule: ScheduledTransaction;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "scheduleModel", "schedule"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootSchedules",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"$uibModalInstance",
+					"scheduleModel",
+					"schedule",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _scheduleModel_: ScheduleModelMock, _schedule_: ScheduledTransaction): void => {
-		$uibModalInstance = _$uibModalInstance_;
-		scheduleModel = _scheduleModel_;
-		schedule = _schedule_;
-		scheduleDeleteController = controllerTest("ScheduleDeleteController") as ScheduleDeleteController;
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject(
+			(
+				controllerTest: ControllerTestFactory,
+				_$uibModalInstance_: UibModalInstanceMock,
+				_scheduleModel_: ScheduleModelMock,
+				_schedule_: ScheduledTransaction,
+			): void => {
+				$uibModalInstance = _$uibModalInstance_;
+				scheduleModel = _scheduleModel_;
+				schedule = _schedule_;
+				scheduleDeleteController = controllerTest(
+					"ScheduleDeleteController",
+				) as ScheduleDeleteController;
+			},
+		) as Mocha.HookFunction,
+	);
 
-	it("should make the passed schedule available to the view", (): Chai.Assertion => expect(scheduleDeleteController.schedule).to.deep.equal(schedule));
+	it("should make the passed schedule available to the view", (): Chai.Assertion =>
+		expect(scheduleDeleteController.schedule).to.deep.equal(schedule));
 
 	describe("deleteSchedule", (): void => {
 		it("should reset any previous error messages", (): void => {
@@ -45,7 +68,9 @@ describe("ScheduleDeleteController", (): void => {
 		it("should display an error message when the schedule delete is unsuccessful", (): void => {
 			scheduleDeleteController.schedule.id = -1;
 			scheduleDeleteController.deleteSchedule();
-			expect(scheduleDeleteController.errorMessage as string).to.equal("unsuccessful");
+			expect(scheduleDeleteController.errorMessage as string).to.equal(
+				"unsuccessful",
+			);
 		});
 	});
 

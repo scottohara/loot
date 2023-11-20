@@ -1,162 +1,146 @@
 const path = require("path"),
-			webpack = require("webpack"),
-			MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-			HtmlWebpackPlugin = require("html-webpack-plugin"),
-			CopyWebpackPlugin = require("copy-webpack-plugin");
+	webpack = require("webpack"),
+	MiniCssExtractPlugin = require("mini-css-extract-plugin"),
+	HtmlWebpackPlugin = require("html-webpack-plugin"),
+	CopyWebpackPlugin = require("copy-webpack-plugin");
 
 // Default entry
-const	entry = {
-				app: "~/loot"
+const entry = {
+		app: "~/loot",
+	},
+	// Default output
+	output = {
+		path: path.resolve(__dirname, "public"),
+		assetModuleFilename: "[name][ext]",
+		clean: true,
+	},
+	// Rule for *.ts processing
+	tsRule = {
+		test: /\.ts$/u,
+		loader: "ts-loader",
+	},
+	// Rule for *.less processing
+	lessRule = {
+		test: /\.less$/u,
+		use: [
+			MiniCssExtractPlugin.loader,
+			{
+				loader: "css-loader",
+				options: {
+					// Apply the next loader (less-loader) to any @imports
+					importLoaders: 1,
+				},
 			},
-
-			// Default output
-			output = {
-				path: path.resolve(__dirname, "public"),
-				assetModuleFilename: "[name][ext]",
-				clean: true
+			"less-loader",
+		],
+	},
+	// Rule for *.css processing
+	cssRule = {
+		test: /\.css$/u,
+		use: [MiniCssExtractPlugin.loader, "css-loader"],
+	},
+	// Rule for font processing
+	fontRule = {
+		test: /\.(?:ttf|woff|woff2|eot|svg)$/u,
+		type: "asset/resource",
+		generator: {
+			filename: "fonts/[name][ext]",
+		},
+	},
+	// Rule for *.ico processing
+	iconRule = {
+		test: /\.ico$/u,
+		type: "asset/resource",
+	},
+	// Rule for *.html processing
+	htmlRule = {
+		test: /\.html$/u,
+		include: /views/u,
+		use: [
+			{
+				loader: "ngtemplate-loader",
+				options: {
+					// Strip path prefixes up to (and including) 'src/'
+					relativeTo: "src/",
+				},
 			},
-
-			// Rule for *.ts processing
-			tsRule = {
-				test: /\.ts$/u,
-				loader: "ts-loader"
-			},
-
-			// Rule for *.less processing
-			lessRule = {
-				test: /\.less$/u,
-				use: [
-					MiniCssExtractPlugin.loader,
-					{
-						loader: "css-loader",
-						options: {
-							// Apply the next loader (less-loader) to any @imports
-							importLoaders: 1
-						}
-					},
-					"less-loader"
-				]
-			},
-
-			// Rule for *.css processing
-			cssRule = {
-				test: /\.css$/u,
-				use: [
-					MiniCssExtractPlugin.loader,
-					"css-loader"
-				]
-			},
-
-			// Rule for font processing
-			fontRule = {
-				test: /\.(?:ttf|woff|woff2|eot|svg)$/u,
-				type: "asset/resource",
-				generator: {
-					filename: "fonts/[name][ext]"
-				}
-			},
-
-			// Rule for *.ico processing
-			iconRule = {
-				test: /\.ico$/u,
-				type: "asset/resource"
-			},
-
-			// Rule for *.html processing
-			htmlRule = {
-				test: /\.html$/u,
-				include: /views/u,
-				use: [
-					{
-						loader: "ngtemplate-loader",
-						options: {
-							// Strip path prefixes up to (and including) 'src/'
-							relativeTo: "src/"
-						}
-					},
-					{
-						loader: "html-loader",
-						options: {
-							sources: {
-								list: [
-									"...",
-									{
-										tag: "input",
-										attribute: "typeahead-template-url",
-										type: "src"
-									}
-								]
+			{
+				loader: "html-loader",
+				options: {
+					sources: {
+						list: [
+							"...",
+							{
+								tag: "input",
+								attribute: "typeahead-template-url",
+								type: "src",
 							},
-							esModule: false
-						}
-					}
-				]
+						],
+					},
+					esModule: false,
+				},
 			},
+		],
+	},
+	/*
+	 * Exposes a global jQuery object (Bootstrap expects this global to exist)
+	 * window.jQuery is needed to prevent Angular from using jqLite
+	 */
+	providejQuery = new webpack.ProvidePlugin({
+		$: "jquery",
+		jQuery: "jquery",
+		"window.jQuery": "jquery",
+	}),
+	// Creates index.html with the bundled resources
+	createIndexHtml = new HtmlWebpackPlugin(),
+	// Copies static resources to the build directory
+	copyStaticAssets = new CopyWebpackPlugin({
+		patterns: [
+			{
+				from: "*.html",
+				context: "./src",
+				globOptions: { ignore: ["index.html"] },
+			},
+			{ from: "robots.txt", context: "./src" },
+		],
+	}),
+	// Default config
+	config = {
+		mode: "development",
 
-			/*
-			 * Exposes a global jQuery object (Bootstrap expects this global to exist)
-			 * window.jQuery is needed to prevent Angular from using jqLite
-			 */
-			providejQuery = new webpack.ProvidePlugin({
-				$: "jquery",
-				jQuery: "jquery",
-				"window.jQuery": "jquery"
-			}),
+		// Ensure that the context is the directory where the webpack.*.js config file is
+		context: path.resolve(__dirname),
 
-			// Creates index.html with the bundled resources
-			createIndexHtml = new HtmlWebpackPlugin(),
+		// Default rules for all environments
+		module: {
+			rules: [tsRule, htmlRule],
+		},
 
-			// Copies static resources to the build directory
-			copyStaticAssets = new CopyWebpackPlugin({
-				patterns: [
-					{ from: "*.html", context: "./src", globOptions: { ignore: ["index.html"] } },
-					{ from: "robots.txt", context: "./src" }
-				]
-			}),
+		// Default resolve paths
+		resolve: {
+			alias: {
+				"~": path.resolve(__dirname, "src"),
+			},
+			extensions: [".ts", "..."],
+		},
 
-			// Default config
-			config = {
-				mode: "development",
-
-				// Ensure that the context is the directory where the webpack.*.js config file is
-				context: path.resolve(__dirname),
-
-				// Default rules for all environments
-				module: {
-					rules: [
-						tsRule,
-						htmlRule
-					]
-				},
-
-				// Default resolve paths
-				resolve: {
-					alias: {
-						"~": path.resolve(__dirname, "src")
+		optimization: {
+			splitChunks: {
+				chunks: "all",
+				minSize: 0,
+				cacheGroups: {
+					defaultVendors: {
+						name: "vendor",
+						test: /[\\/]node_modules[\\/]/u,
 					},
-					extensions: [
-						".ts",
-						"..."
-					]
 				},
+			},
+			runtimeChunk: "single",
+		},
 
-				optimization: {
-					splitChunks: {
-						chunks: "all",
-						minSize: 0,
-						cacheGroups: {
-							defaultVendors: {
-								name: "vendor",
-								test: /[\\/]node_modules[\\/]/u
-							}
-						}
-					},
-					runtimeChunk: "single"
-				},
-
-				// Abort on first error
-				bail: true
-			};
+		// Abort on first error
+		bail: true,
+	};
 
 function extractCss(options = undefined) {
 	return new MiniCssExtractPlugin(options);
@@ -173,5 +157,5 @@ module.exports = {
 	extractCss,
 	createIndexHtml,
 	copyStaticAssets,
-	config
+	config,
 };

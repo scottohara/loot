@@ -5,20 +5,20 @@ import {
 	payeeEditForm,
 	payeeEditHeading,
 	populateFormWith,
-	saveButton
+	saveButton,
 } from "~/support/payees/edit";
 import {
 	checkRowMatches,
 	getValuesFrom,
-	payeesTableRows
+	payeesTableRows,
 } from "~/support/payees/index";
 import type { Payee } from "~/support/payees/types";
 
 describe("Payee Edit", (): void => {
-	let	expected: Payee,
-			originalRowCount: number,
-			firstPayee: Payee,
-			lastPayee: Payee;
+	let expected: Payee,
+		originalRowCount: number,
+		firstPayee: Payee,
+		lastPayee: Payee;
 
 	function commonBehaviour(): void {
 		it("should not save changes when the cancel button is clicked", (): void => {
@@ -29,13 +29,16 @@ describe("Payee Edit", (): void => {
 			cy.get(payeesTableRows).should("have.length", originalRowCount);
 
 			// Payee in the last row should not have changed
-			cy.get(payeesTableRows).last().within((): void => checkRowMatches(lastPayee));
+			cy.get(payeesTableRows)
+				.last()
+				.within((): void => checkRowMatches(lastPayee));
 		});
 
 		describe("invalid data", (): void => {
 			beforeEach((): void => invalidateForm());
 
-			it("should not enable the save button", (): Cypress.Chainable<JQuery> => cy.get(saveButton).should("not.be.enabled"));
+			it("should not enable the save button", (): Cypress.Chainable<JQuery> =>
+				cy.get(saveButton).should("not.be.enabled"));
 
 			// MISSING - payee name should show red cross when invalid
 
@@ -77,7 +80,9 @@ describe("Payee Edit", (): void => {
 			cy.get(payeesTableRows).should("have.length", originalRowCount + 1);
 
 			// Payee in the last row should be the new payee
-			cy.get(payeesTableRows).last().within((): void => checkRowMatches(expected));
+			cy.get(payeesTableRows)
+				.last()
+				.within((): void => checkRowMatches(expected));
 		});
 	});
 
@@ -101,7 +106,9 @@ describe("Payee Edit", (): void => {
 			cy.get(payeesTableRows).should("have.length", originalRowCount);
 
 			// Payee in the last row should be the new payee
-			cy.get(payeesTableRows).last().within((): void => checkRowMatches(expected));
+			cy.get(payeesTableRows)
+				.last()
+				.within((): void => checkRowMatches(expected));
 		});
 	});
 });

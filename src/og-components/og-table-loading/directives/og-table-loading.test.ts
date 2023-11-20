@@ -5,15 +5,19 @@ describe("ogTableLoading", (): void => {
 	let ogTableLoading: DirectiveTest;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction,
+	);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
-		ogTableLoading = directiveTest;
-		ogTableLoading.configure("og-table-loading", "tr");
-		ogTableLoading.scope.model = false;
-		ogTableLoading.compile({ "og-table-loading": "model" }, true);
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject((directiveTest: DirectiveTest): void => {
+			ogTableLoading = directiveTest;
+			ogTableLoading.configure("og-table-loading", "tr");
+			ogTableLoading.scope.model = false;
+			ogTableLoading.compile({ "og-table-loading": "model" }, true);
+		}) as Mocha.HookFunction,
+	);
 
 	it("should be hidden", (): void => {
 		ogTableLoading.scope.$digest();
@@ -31,10 +35,13 @@ describe("ogTableLoading", (): void => {
 		});
 
 		it("should include a TD spanning the specified number of columns", (): void => {
-			ogTableLoading.compile({
-				"og-table-loading": "model",
-				colspan: "3"
-			}, true);
+			ogTableLoading.compile(
+				{
+					"og-table-loading": "model",
+					colspan: "3",
+				},
+				true,
+			);
 			ogTableLoading.scope.$digest();
 			ogTableLoading["element"] = ogTableLoading["element"].find("tr");
 

@@ -1,8 +1,4 @@
-import type {
-	Cacheable,
-	Favouritable,
-	Persistable
-} from "~/loot/types";
+import type { Cacheable, Favouritable, Persistable } from "~/loot/types";
 import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
 import type OgLruCache from "~/og-components/og-lru-cache-factory/models/og-lru-cache";
 import type OgLruCacheFactory from "~/og-components/og-lru-cache-factory/models/og-lru-cache-factory";
@@ -13,7 +9,9 @@ import type { Transaction } from "~/transactions/types";
 // Number of payees to keep in the LRU cache
 const LRU_CAPACITY = 10;
 
-export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>, Persistable<Payee> {
+export default class PayeeModel
+	implements Cacheable<Payee>, Favouritable<Payee>, Persistable<Payee>
+{
 	public recent: OgCacheEntry[];
 
 	public readonly LRU_LOCAL_STORAGE_KEY = "lootRecentPayees";
@@ -24,10 +22,12 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 
 	private readonly lruCache: OgLruCache;
 
-	public constructor(private readonly $http: angular.IHttpService,
-						$cacheFactory: angular.ICacheFactoryService,
-						private readonly $window: angular.IWindowService,
-						ogLruCacheFactory: OgLruCacheFactory) {
+	public constructor(
+		private readonly $http: angular.IHttpService,
+		$cacheFactory: angular.ICacheFactoryService,
+		private readonly $window: angular.IWindowService,
+		ogLruCacheFactory: OgLruCacheFactory,
+	) {
 		this.cache = $cacheFactory("payees");
 
 		// Create an LRU cache and populate with the recent payee list from local storage
@@ -36,7 +36,9 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 	}
 
 	private get recentPayees(): OgCacheEntry[] {
-		const recentPayees: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
+		const recentPayees: string | null = this.$window.localStorage.getItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+		);
 
 		return JSON.parse(recentPayees ?? "[]") as OgCacheEntry[];
 	}
@@ -48,9 +50,13 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 
 	// Retrieves the list of payees
 	public all(list = false): angular.IPromise<Payee[]> {
-		return this.$http.get(`${this.path()}${list ? "?list" : ""}`, {
-			cache: list ? false : this.cache
-		}).then((response: angular.IHttpResponse<Payee[]>): Payee[] => response.data);
+		return this.$http
+			.get(`${this.path()}${list ? "?list" : ""}`, {
+				cache: list ? false : this.cache,
+			})
+			.then(
+				(response: angular.IHttpResponse<Payee[]>): Payee[] => response.data,
+			);
 	}
 
 	// Retrieves the list of payees for the index list
@@ -59,14 +65,22 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 	}
 
 	// Retrieves the most recent transaction for a payee
-	public findLastTransaction(payeeId: number, accountType: StoredAccountType): angular.IPromise<Transaction | undefined> {
+	public findLastTransaction(
+		payeeId: number,
+		accountType: StoredAccountType,
+	): angular.IPromise<Transaction | undefined> {
 		const NOT_FOUND = 404;
 
-		return this.$http.get(`${this.path(payeeId)}/transactions/last`, {
-			params: {
-				account_type: accountType
-			}
-		}).then((response: angular.IHttpResponse<Transaction>): Transaction => response.data)
+		return this.$http
+			.get(`${this.path(payeeId)}/transactions/last`, {
+				params: {
+					account_type: accountType,
+				},
+			})
+			.then(
+				(response: angular.IHttpResponse<Transaction>): Transaction =>
+					response.data,
+			)
 			.catch((error: angular.IHttpResponse<string>): undefined => {
 				const { status, statusText, data } = error;
 
@@ -81,13 +95,15 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 
 	// Retrieves a single payee
 	public find(id: number): angular.IPromise<Payee> {
-		return this.$http.get(this.path(id), {
-			cache: this.cache
-		}).then((response: angular.IHttpResponse<Payee>): Payee => {
-			this.addRecent(response.data);
+		return this.$http
+			.get(this.path(id), {
+				cache: this.cache,
+			})
+			.then((response: angular.IHttpResponse<Payee>): Payee => {
+				this.addRecent(response.data);
 
-			return response.data;
-		});
+				return response.data;
+			});
 	}
 
 	// Saves a payee
@@ -98,7 +114,7 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 		return this.$http({
 			method: undefined === payee.id ? "POST" : "PATCH",
 			url: this.path(payee.id),
-			data: payee
+			data: payee,
 		});
 	}
 
@@ -107,7 +123,9 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 		// Flush the $http cache
 		this.flush();
 
-		return this.$http.delete(this.path(payee.id)).then((): void => this.removeRecent(Number(payee.id)));
+		return this.$http
+			.delete(this.path(payee.id))
+			.then((): void => this.removeRecent(Number(payee.id)));
 	}
 
 	// Favourites/unfavourites a payee
@@ -117,7 +135,7 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 
 		return this.$http({
 			method: payee.favourite ? "DELETE" : "PUT",
-			url: `${this.path(payee.id)}/favourite`
+			url: `${this.path(payee.id)}/favourite`,
 		}).then((): boolean => !payee.favourite);
 	}
 
@@ -136,7 +154,10 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 		this.recent = this.lruCache.put(payee);
 
 		// Update local storage with the new list
-		this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.list));
+		this.$window.localStorage.setItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+			JSON.stringify(this.lruCache.list),
+		);
 	}
 
 	// Remove an item from the LRU cache
@@ -145,7 +166,10 @@ export default class PayeeModel implements Cacheable<Payee>, Favouritable<Payee>
 		this.recent = this.lruCache.remove(id);
 
 		// Update local storage with the new list
-		this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.list));
+		this.$window.localStorage.setItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+			JSON.stringify(this.lruCache.list),
+		);
 	}
 }
 

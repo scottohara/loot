@@ -9,17 +9,22 @@ export default class AuthenticationEditController {
 
 	public loginInProgress = false;
 
-	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
-						private readonly authenticationModel: AuthenticationModel) {}
+	public constructor(
+		private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
+		private readonly authenticationModel: AuthenticationModel,
+	) {}
 
 	// Login and close the modal
 	public login(): void {
 		this.errorMessage = null;
 		this.loginInProgress = true;
-		this.authenticationModel.login(this.userName, this.password).then((): void => this.$uibModalInstance.close(), (error: angular.IHttpResponse<string>): void => {
-			this.errorMessage = error.data;
-			this.loginInProgress = false;
-		});
+		this.authenticationModel.login(this.userName, this.password).then(
+			(): void => this.$uibModalInstance.close(),
+			(error: angular.IHttpResponse<string>): void => {
+				this.errorMessage = error.data;
+				this.loginInProgress = false;
+			},
+		);
 	}
 
 	// Dismiss the modal without logging in
@@ -28,4 +33,7 @@ export default class AuthenticationEditController {
 	}
 }
 
-AuthenticationEditController.$inject = ["$uibModalInstance", "authenticationModel"];
+AuthenticationEditController.$inject = [
+	"$uibModalInstance",
+	"authenticationModel",
+];

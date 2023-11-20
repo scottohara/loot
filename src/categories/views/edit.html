@@ -4,30 +4,90 @@
 	</div>
 	<div class="modal-body">
 		<!-- Name -->
-		<div class="form-group has-feedback" ng-class="{'has-error': categoryForm.name.$invalid}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': categoryForm.name.$invalid}"
+		>
 			<label for="name">Name</label>
-			<input id="name" name="name" class="form-control" ng-model="vm.category.name" placeholder="Category" required autofocus og-input-autoselect>
-			<span ng-show="categoryForm.name.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="name"
+				name="name"
+				class="form-control"
+				ng-model="vm.category.name"
+				placeholder="Category"
+				required
+				autofocus
+				og-input-autoselect
+			/>
+			<span
+				ng-show="categoryForm.name.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Parent -->
-		<div ng-if="::!vm.category.num_children" class="form-group has-feedback" ng-class="{'has-error': categoryForm.parent.$invalid}">
+		<div
+			ng-if="::!vm.category.num_children"
+			class="form-group has-feedback"
+			ng-class="{'has-error': categoryForm.parent.$invalid}"
+		>
 			<label for="parent">Parent</label>
-			<input name="parent" class="form-control" ng-model="vm.category.parent" uib-typeahead="parentCategory as parentCategory.name for parentCategory in vm.parentCategories($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Parent" og-input-autoselect>
-			<span ng-show="categoryForm.parent.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				name="parent"
+				class="form-control"
+				ng-model="vm.category.parent"
+				uib-typeahead="parentCategory as parentCategory.name for parentCategory in vm.parentCategories($viewValue, 10)"
+				typeahead-editable="false"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Parent"
+				og-input-autoselect
+			/>
+			<span
+				ng-show="categoryForm.parent.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Direction -->
 		<label ng-if="!vm.category.parent" for="direction">Type</label>
 		<div ng-if="!vm.category.parent" class="form-group">
 			<div class="btn-group">
-				<label class="btn btn-default" name="direction" ng-model="vm.category.direction" uib-btn-radio="'inflow'" required><i class="glyphicon glyphicon-plus-sign text-success"></i> Income</label>
-				<label class="btn btn-default" name="direction" ng-model="vm.category.direction" uib-btn-radio="'outflow'" required><i class="glyphicon glyphicon-minus-sign text-danger"></i> Expense</label>
+				<label
+					class="btn btn-default"
+					name="direction"
+					ng-model="vm.category.direction"
+					uib-btn-radio="'inflow'"
+					required
+					><i class="glyphicon glyphicon-plus-sign text-success"></i>
+					Income</label
+				>
+				<label
+					class="btn btn-default"
+					name="direction"
+					ng-model="vm.category.direction"
+					uib-btn-radio="'outflow'"
+					required
+					><i class="glyphicon glyphicon-minus-sign text-danger"></i>
+					Expense</label
+				>
 			</div>
-			<span ng-show="categoryForm.direction.$invalid" class="text-danger glyphicon glyphicon-remove"></span>
+			<span
+				ng-show="categoryForm.direction.$invalid"
+				class="text-danger glyphicon glyphicon-remove"
+			></span>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-		<button class="btn btn-primary" type="submit" ng-disabled="categoryForm.$invalid" ng-click="vm.save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-primary"
+			type="submit"
+			ng-disabled="categoryForm.$invalid"
+			ng-click="vm.save()"
+		>
+			<i class="glyphicon glyphicon-ok"></i> Save
+		</button>
 	</div>
 </form>

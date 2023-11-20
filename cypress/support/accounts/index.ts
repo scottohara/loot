@@ -23,14 +23,17 @@ export function getValuesFrom(row: JQuery<HTMLTableRowElement>): Account {
 	return {
 		name: row.find(accountName).text().trim(),
 		closingBalance: row.find(closingBalance).text().trim(),
-		favourite: row.find(favouriteButton).hasClass("active")
+		favourite: row.find(favouriteButton).hasClass("active"),
 	};
 }
 
 export function checkRowMatches(expectedValues: Account): void {
 	cy.get(accountName).should("have.text", expectedValues.name);
-	cy.get(closingBalance).should("have.text", expectedValues.closingBalance);
-	cy.get(favouriteButton).should(`${true === expectedValues.favourite ? "" : "not."}have.class`, "active");
+	cy.get(closingBalance).should("contain.text", expectedValues.closingBalance);
+	cy.get(favouriteButton).should(
+		`${true === expectedValues.favourite ? "" : "not."}have.class`,
+		"active",
+	);
 	cy.get(deleteButton).should("exist");
 	cy.get(editButton).should("exist");
 }

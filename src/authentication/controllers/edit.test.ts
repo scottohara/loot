@@ -6,19 +6,39 @@ import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AuthenticationEditController", (): void => {
-	let	authenticationEditController: AuthenticationEditController,
-			$uibModalInstance: UibModalInstanceMock,
-			authenticationModel: AuthenticationModelMock;
+	let authenticationEditController: AuthenticationEditController,
+		$uibModalInstance: UibModalInstanceMock,
+		authenticationModel: AuthenticationModelMock;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAuthentication", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "authenticationModel"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootAuthentication",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"$uibModalInstance",
+					"authenticationModel",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _authenticationModel_: AuthenticationModelMock): void => {
-		$uibModalInstance = _$uibModalInstance_;
-		authenticationModel = _authenticationModel_;
-		authenticationEditController = controllerTest("AuthenticationEditController") as AuthenticationEditController;
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject(
+			(
+				controllerTest: ControllerTestFactory,
+				_$uibModalInstance_: UibModalInstanceMock,
+				_authenticationModel_: AuthenticationModelMock,
+			): void => {
+				$uibModalInstance = _$uibModalInstance_;
+				authenticationModel = _authenticationModel_;
+				authenticationEditController = controllerTest(
+					"AuthenticationEditController",
+				) as AuthenticationEditController;
+			},
+		) as Mocha.HookFunction,
+	);
 
 	it("should set null authentication credentials to the view", (): void => {
 		expect(authenticationEditController.userName).to.be.null;
@@ -34,12 +54,16 @@ describe("AuthenticationEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			authenticationEditController.errorMessage = "error message";
 			authenticationEditController.login();
-			expect(authenticationEditController.errorMessage as string | null).to.be.null;
+			expect(authenticationEditController.errorMessage as string | null).to.be
+				.null;
 		});
 
 		it("should attempt to login with the username & password", (): void => {
 			authenticationEditController.login();
-			expect(authenticationModel.login).to.have.been.calledWith("gooduser", "goodpassword");
+			expect(authenticationModel.login).to.have.been.calledWith(
+				"gooduser",
+				"goodpassword",
+			);
 		});
 
 		it("should close the modal when login successful", (): void => {
@@ -51,7 +75,9 @@ describe("AuthenticationEditController", (): void => {
 			authenticationEditController.userName = "baduser";
 			authenticationEditController.password = "badpassword";
 			authenticationEditController.login();
-			expect(authenticationEditController.errorMessage as string).to.equal("unsuccessful");
+			expect(authenticationEditController.errorMessage as string).to.equal(
+				"unsuccessful",
+			);
 			expect(authenticationEditController.loginInProgress).to.be.false;
 		});
 	});

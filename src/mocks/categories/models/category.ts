@@ -1,6 +1,6 @@
 import type {
 	PromiseMockConfig,
-	QMock
+	QMock,
 } from "~/mocks/node-modules/angular/types";
 import type CategoriesMockProvider from "~/mocks/categories/providers/categories";
 import type { Category } from "~/categories/types";
@@ -11,19 +11,25 @@ import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 import type { SinonStub } from "sinon";
 import sinon from "sinon";
 
-export default class CategoryModelMockProvider implements Mock<CategoryModelMock> {
+export default class CategoryModelMockProvider
+	implements Mock<CategoryModelMock>
+{
 	private readonly categoryModel: CategoryModelMock;
 
-	public constructor(categoryMockProvider: CategoryMockProvider, categoriesMockProvider: CategoriesMockProvider, $qMockProvider: QMockProvider) {
+	public constructor(
+		categoryMockProvider: CategoryMockProvider,
+		categoriesMockProvider: CategoriesMockProvider,
+		$qMockProvider: QMockProvider,
+	) {
 		// Success/error = options for the stub promises
-		const	$q: QMock = $qMockProvider.$get(),
-					success: PromiseMockConfig<{ data: Category; }> = {
-						args: { id: 1 },
-						response: { data: categoryMockProvider.$get() }
-					},
-					error: PromiseMockConfig<void> = {
-						args: { id: -1 }
-					};
+		const $q: QMock = $qMockProvider.$get(),
+			success: PromiseMockConfig<{ data: Category }> = {
+				args: { id: 1 },
+				response: { data: categoryMockProvider.$get() },
+			},
+			error: PromiseMockConfig<void> = {
+				args: { id: -1 },
+			};
 
 		// Mock categoryModel object
 		this.categoryModel = {
@@ -33,7 +39,7 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 				return `/categories/${id}`;
 			},
 			all: $q.promisify({
-				response: categoriesMockProvider.$get()
+				response: categoriesMockProvider.$get(),
 			}),
 			allWithChildren: sinon.stub().returns(categoriesMockProvider.$get()),
 			find(id: number): SinonStub {
@@ -43,10 +49,12 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 				if (id < 10) {
 					category = categoriesMockProvider.$get()[id - 1];
 				} else {
-					const parentId: number = (id / 10) - 1,
-								childId: number = id % 10;
+					const parentId: number = id / 10 - 1,
+						childId: number = id % 10;
 
-					category = (categoriesMockProvider.$get()[parentId].children as Category[])[childId];
+					category = (
+						categoriesMockProvider.$get()[parentId].children as Category[]
+					)[childId];
 				}
 
 				// Return a promise-like object that resolves with the category
@@ -58,7 +66,7 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 				return $q.promisify({ response: !category.favourite })() as SinonStub;
 			},
 			flush: sinon.stub(),
-			addRecent: sinon.stub()
+			addRecent: sinon.stub(),
 		};
 
 		// Spy on find() and toggleFavourite()
@@ -72,4 +80,8 @@ export default class CategoryModelMockProvider implements Mock<CategoryModelMock
 	}
 }
 
-CategoryModelMockProvider.$inject = ["categoryMockProvider", "categoriesMockProvider", "$qMockProvider"];
+CategoryModelMockProvider.$inject = [
+	"categoryMockProvider",
+	"categoriesMockProvider",
+	"$qMockProvider",
+];

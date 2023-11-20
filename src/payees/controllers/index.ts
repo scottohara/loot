@@ -1,6 +1,6 @@
 import type {
 	OgTableActionHandlers,
-	OgTableActions
+	OgTableActions,
 } from "~/og-components/og-table-navigable/types";
 import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
 import OgModalAlertView from "~/og-components/og-modal-alert/views/alert.html";
@@ -17,15 +17,17 @@ export default class PayeeIndexController {
 
 	private readonly showError: (message?: string) => void;
 
-	public constructor($scope: angular.IScope,
-						$transitions: angular.ui.IStateParamsService,
-						private readonly $uibModal: angular.ui.bootstrap.IModalService,
-						private readonly $timeout: angular.ITimeoutService,
-						private readonly $state: angular.ui.IStateService,
-						private readonly payeeModel: PayeeModel,
-						private readonly ogTableNavigableService: OgTableNavigableService,
-						ogModalErrorService: OgModalErrorService,
-						public readonly payees: Payee[]) {
+	public constructor(
+		$scope: angular.IScope,
+		$transitions: angular.ui.IStateParamsService,
+		private readonly $uibModal: angular.ui.bootstrap.IModalService,
+		private readonly $timeout: angular.ITimeoutService,
+		private readonly $state: angular.ui.IStateService,
+		private readonly payeeModel: PayeeModel,
+		private readonly ogTableNavigableService: OgTableNavigableService,
+		ogModalErrorService: OgModalErrorService,
+		public readonly payees: Payee[],
+	) {
 		const self: this = this;
 
 		this.tableActions = {
@@ -42,8 +44,12 @@ export default class PayeeIndexController {
 				self.deletePayee(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.payee") ? "^" : ""}.payee`, { id: self.payees[index].id }).catch(self.showError);
-			}
+				$state
+					.go(`${$state.includes("**.payee") ? "^" : ""}.payee`, {
+						id: self.payees[index].id,
+					})
+					.catch(self.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -54,7 +60,14 @@ export default class PayeeIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.payees.payee" }, (transition: angular.ui.IState): number => this.focusPayee(Number(transition.params("to").id))) as () => void);
+		$scope.$on(
+			"$destroy",
+			$transitions.onSuccess(
+				{ to: "root.payees.payee" },
+				(transition: angular.ui.IState): number =>
+					this.focusPayee(Number(transition.params("to").id)),
+			) as () => void,
+		);
 	}
 
 	public editPayee(index?: number): void {
@@ -67,28 +80,29 @@ export default class PayeeIndexController {
 		this.ogTableNavigableService.enabled = false;
 
 		// Show the modal
-		this.$uibModal.open({
-			templateUrl: PayeeEditView,
-			controller: "PayeeEditController",
-			controllerAs: "vm",
-			backdrop: "static",
-			resolve: {
-				payee: (): Payee | undefined => {
-					let payee: Payee | undefined;
+		this.$uibModal
+			.open({
+				templateUrl: PayeeEditView,
+				controller: "PayeeEditController",
+				controllerAs: "vm",
+				backdrop: "static",
+				resolve: {
+					payee: (): Payee | undefined => {
+						let payee: Payee | undefined;
 
-					// If we didn't get an index, we're adding a new payee so just return null
-					if (!isNaN(Number(index))) {
-						payee = this.payees[Number(index)];
+						// If we didn't get an index, we're adding a new payee so just return null
+						if (!isNaN(Number(index))) {
+							payee = this.payees[Number(index)];
 
-						// Add the payee to the LRU cache
-						this.payeeModel.addRecent(payee);
-					}
+							// Add the payee to the LRU cache
+							this.payeeModel.addRecent(payee);
+						}
 
-					return payee;
-				}
-			}
-		}).result
-			.then((payee: Payee): void => {
+						return payee;
+					},
+				},
+			})
+			.result.then((payee: Payee): void => {
 				if (isNaN(Number(index))) {
 					// Add new payee to the end of the array
 					this.payees.push(payee);
@@ -112,54 +126,69 @@ export default class PayeeIndexController {
 
 	public deletePayee(index: number): void {
 		// Check if the payee can be deleted
-		this.payeeModel.find(Number(this.payees[index].id)).then((payee: Payee): void => {
-			// Disable navigation on the table
-			this.ogTableNavigableService.enabled = false;
+		this.payeeModel
+			.find(Number(this.payees[index].id))
+			.then((payee: Payee): void => {
+				// Disable navigation on the table
+				this.ogTableNavigableService.enabled = false;
 
-			let modalOptions: angular.ui.bootstrap.IModalSettings = {
-				backdrop: "static"
-			};
+				let modalOptions: angular.ui.bootstrap.IModalSettings = {
+					backdrop: "static",
+				};
 
-			// Check if the payee has any transactions
-			if (payee.num_transactions > 0) {
-				// Show an alert modal
-				modalOptions = angular.extend({
-					templateUrl: OgModalAlertView,
-					controller: "OgModalAlertController",
-					controllerAs: "vm",
-					resolve: {
-						alert: (): OgModalAlert => ({
-							header: "Payee has existing transactions",
-							message: "You must first delete these transactions, or reassign to another payee before attempting to delete this payee."
-						})
-					}
-				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
-			} else {
-				// Show the delete payee modal
-				modalOptions = angular.extend({
-					templateUrl: PayeeDeleteView,
-					controller: "PayeeDeleteController",
-					controllerAs: "vm",
-					resolve: {
-						payee: (): Payee => this.payees[index]
-					}
-				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
-			}
+				// Check if the payee has any transactions
+				if (payee.num_transactions > 0) {
+					// Show an alert modal
+					modalOptions = angular.extend(
+						{
+							templateUrl: OgModalAlertView,
+							controller: "OgModalAlertController",
+							controllerAs: "vm",
+							resolve: {
+								alert: (): OgModalAlert => ({
+									header: "Payee has existing transactions",
+									message:
+										"You must first delete these transactions, or reassign to another payee before attempting to delete this payee.",
+								}),
+							},
+						},
+						modalOptions,
+					) as angular.ui.bootstrap.IModalSettings;
+				} else {
+					// Show the delete payee modal
+					modalOptions = angular.extend(
+						{
+							templateUrl: PayeeDeleteView,
+							controller: "PayeeDeleteController",
+							controllerAs: "vm",
+							resolve: {
+								payee: (): Payee => this.payees[index],
+							},
+						},
+						modalOptions,
+					) as angular.ui.bootstrap.IModalSettings;
+				}
 
-			// Show the modal
-			this.$uibModal.open(modalOptions).result
-				.then((): void => {
-					this.payees.splice(index, 1);
-					this.$state.go("root.payees").catch(this.showError);
-				})
-				.finally((): true => (this.ogTableNavigableService.enabled = true))
-				.catch(this.showError);
-		}).catch(this.showError);
+				// Show the modal
+				this.$uibModal
+					.open(modalOptions)
+					.result.then((): void => {
+						this.payees.splice(index, 1);
+						this.$state.go("root.payees").catch(this.showError);
+					})
+					.finally((): true => (this.ogTableNavigableService.enabled = true))
+					.catch(this.showError);
+			})
+			.catch(this.showError);
 	}
 
 	public toggleFavourite(index: number): void {
-		this.payeeModel.toggleFavourite(this.payees[index])
-			.then((favourite: boolean): boolean => (this.payees[index].favourite = favourite))
+		this.payeeModel
+			.toggleFavourite(this.payees[index])
+			.then(
+				(favourite: boolean): boolean =>
+					(this.payees[index].favourite = favourite),
+			)
 			.catch(this.showError);
 	}
 
@@ -177,11 +206,25 @@ export default class PayeeIndexController {
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
+			this.$timeout(
+				(): void =>
+					(this.tableActions as OgTableActionHandlers).focusRow(targetIndex),
+				delay,
+			).catch(this.showError);
 		}
 
 		return targetIndex;
 	}
 }
 
-PayeeIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "payeeModel", "ogTableNavigableService", "ogModalErrorService", "payees"];
+PayeeIndexController.$inject = [
+	"$scope",
+	"$transitions",
+	"$uibModal",
+	"$timeout",
+	"$state",
+	"payeeModel",
+	"ogTableNavigableService",
+	"ogModalErrorService",
+	"payees",
+];

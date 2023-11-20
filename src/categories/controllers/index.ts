@@ -1,7 +1,7 @@
 import "~/categories/css/index.less";
 import type {
 	OgTableActionHandlers,
-	OgTableActions
+	OgTableActions,
 } from "~/og-components/og-table-navigable/types";
 import type { Category } from "~/categories/types";
 import CategoryDeleteView from "~/categories/views/delete.html";
@@ -20,24 +20,28 @@ export default class CategoryIndexController {
 
 	private readonly showError: (message?: string) => void;
 
-	public constructor($scope: angular.IScope,
-						$transitions: angular.ui.IStateParamsService,
-						private readonly $uibModal: angular.ui.bootstrap.IModalService,
-						private readonly $timeout: angular.ITimeoutService,
-						private readonly $state: angular.ui.IStateService,
-						private readonly categoryModel: CategoryModel,
-						private readonly ogTableNavigableService: OgTableNavigableService,
-						ogModalErrorService: OgModalErrorService,
-						categories: Category[]) {
+	public constructor(
+		$scope: angular.IScope,
+		$transitions: angular.ui.IStateParamsService,
+		private readonly $uibModal: angular.ui.bootstrap.IModalService,
+		private readonly $timeout: angular.ITimeoutService,
+		private readonly $state: angular.ui.IStateService,
+		private readonly categoryModel: CategoryModel,
+		private readonly ogTableNavigableService: OgTableNavigableService,
+		ogModalErrorService: OgModalErrorService,
+		categories: Category[],
+	) {
 		const self: this = this;
 
-		this.categories = angular.copy(categories).reduce((flattened: Category[], category: Category): Category[] => {
-			const { children }: { children?: Category[]; } = category;
+		this.categories = angular
+			.copy(categories)
+			.reduce((flattened: Category[], category: Category): Category[] => {
+				const { children }: { children?: Category[] } = category;
 
-			delete category.children;
+				delete category.children;
 
-			return flattened.concat(category, children ?? []);
-		}, []);
+				return flattened.concat(category, children ?? []);
+			}, []);
 
 		this.tableActions = {
 			selectAction(): void {
@@ -53,8 +57,12 @@ export default class CategoryIndexController {
 				self.deleteCategory(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.category") ? "^" : ""}.category`, { id: self.categories[index].id }).catch(self.showError);
-			}
+				$state
+					.go(`${$state.includes("**.category") ? "^" : ""}.category`, {
+						id: self.categories[index].id,
+					})
+					.catch(self.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -65,7 +73,14 @@ export default class CategoryIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.categories.category" }, (transition: angular.ui.IState): number => this.focusCategory(Number(transition.params("to").id))) as () => void);
+		$scope.$on(
+			"$destroy",
+			$transitions.onSuccess(
+				{ to: "root.categories.category" },
+				(transition: angular.ui.IState): number =>
+					this.focusCategory(Number(transition.params("to").id)),
+			) as () => void,
+		);
 	}
 
 	public editCategory(index?: number): void {
@@ -74,8 +89,14 @@ export default class CategoryIndexController {
 			let x: string, y: string;
 
 			if (a.direction === b.direction) {
-				x = undefined === a.parent || null === a.parent ? a.name : `${a.parent.name}#${a.name}`;
-				y = undefined === b.parent || null === b.parent ? b.name : `${b.parent.name}#${b.name}`;
+				x =
+					undefined === a.parent || null === a.parent
+						? a.name
+						: `${a.parent.name}#${a.name}`;
+				y =
+					undefined === b.parent || null === b.parent
+						? b.name
+						: `${b.parent.name}#${b.name}`;
 			} else {
 				x = a.direction;
 				y = b.direction;
@@ -88,28 +109,29 @@ export default class CategoryIndexController {
 		this.ogTableNavigableService.enabled = false;
 
 		// Show the modal
-		this.$uibModal.open({
-			templateUrl: CategoryEditView,
-			controller: "CategoryEditController",
-			controllerAs: "vm",
-			backdrop: "static",
-			resolve: {
-				category: (): Category | undefined => {
-					let category: Category | undefined;
+		this.$uibModal
+			.open({
+				templateUrl: CategoryEditView,
+				controller: "CategoryEditController",
+				controllerAs: "vm",
+				backdrop: "static",
+				resolve: {
+					category: (): Category | undefined => {
+						let category: Category | undefined;
 
-					// If we didn't get an index, we're adding a new category so just return null
-					if (!isNaN(Number(index))) {
-						category = this.categories[Number(index)];
+						// If we didn't get an index, we're adding a new category so just return null
+						if (!isNaN(Number(index))) {
+							category = this.categories[Number(index)];
 
-						// Add the category to the LRU cache
-						this.categoryModel.addRecent(category);
-					}
+							// Add the category to the LRU cache
+							this.categoryModel.addRecent(category);
+						}
 
-					return category;
-				}
-			}
-		}).result
-			.then((category: Category): void => {
+						return category;
+					},
+				},
+			})
+			.result.then((category: Category): void => {
 				let parentIndex: number;
 
 				if (isNaN(Number(index))) {
@@ -134,7 +156,9 @@ export default class CategoryIndexController {
 					if (category.parent_id !== this.categories[Number(index)].parent_id) {
 						// Decrement the original parent (if required)
 						if (null !== this.categories[Number(index)].parent_id) {
-							parentIndex = this.categoryIndexById(this.categories[Number(index)].parent_id);
+							parentIndex = this.categoryIndexById(
+								this.categories[Number(index)].parent_id,
+							);
 							if (!isNaN(parentIndex)) {
 								(this.categories[parentIndex].num_children as number)--;
 							}
@@ -165,80 +189,107 @@ export default class CategoryIndexController {
 
 	public deleteCategory(index: number): void {
 		// Check if the category can be deleted
-		this.categoryModel.find(Number(this.categories[index].id)).then((category: Category): void => {
-			// Disable navigation on the table
-			this.ogTableNavigableService.enabled = false;
+		this.categoryModel
+			.find(Number(this.categories[index].id))
+			.then((category: Category): void => {
+				// Disable navigation on the table
+				this.ogTableNavigableService.enabled = false;
 
-			let modalOptions: angular.ui.bootstrap.IModalSettings = {
-				backdrop: "static"
-			};
+				let modalOptions: angular.ui.bootstrap.IModalSettings = {
+					backdrop: "static",
+				};
 
-			// Check if the category has any transactions
-			if (category.num_transactions > 0) {
-				// Show an alert modal
-				modalOptions = angular.extend({
-					templateUrl: OgModalAlertView,
-					controller: "OgModalAlertController",
-					controllerAs: "vm",
-					resolve: {
-						alert: (): OgModalAlert => ({
-							header: "Category has existing transactions",
-							message: "You must first delete these transactions, or reassign to another category before attempting to delete this category."
-						})
-					}
-				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
-			} else {
-				// Show the delete category modal
-				modalOptions = angular.extend({
-					templateUrl: CategoryDeleteView,
-					controller: "CategoryDeleteController",
-					controllerAs: "vm",
-					resolve: {
-						category: (): Category => this.categories[index]
-					}
-				}, modalOptions) as angular.ui.bootstrap.IModalSettings;
-			}
+				// Check if the category has any transactions
+				if (category.num_transactions > 0) {
+					// Show an alert modal
+					modalOptions = angular.extend(
+						{
+							templateUrl: OgModalAlertView,
+							controller: "OgModalAlertController",
+							controllerAs: "vm",
+							resolve: {
+								alert: (): OgModalAlert => ({
+									header: "Category has existing transactions",
+									message:
+										"You must first delete these transactions, or reassign to another category before attempting to delete this category.",
+								}),
+							},
+						},
+						modalOptions,
+					) as angular.ui.bootstrap.IModalSettings;
+				} else {
+					// Show the delete category modal
+					modalOptions = angular.extend(
+						{
+							templateUrl: CategoryDeleteView,
+							controller: "CategoryDeleteController",
+							controllerAs: "vm",
+							resolve: {
+								category: (): Category => this.categories[index],
+							},
+						},
+						modalOptions,
+					) as angular.ui.bootstrap.IModalSettings;
+				}
 
-			// Show the modal
-			this.$uibModal.open(modalOptions).result
-				.then((): void => {
-					// If the deleted category has a parent, decrement the parent's children count
-					if (null !== this.categories[index].parent_id) {
-						// Find the parent category by it's id
-						const parentIndex = this.categoryIndexById(this.categories[index].parent_id);
+				// Show the modal
+				this.$uibModal
+					.open(modalOptions)
+					.result.then((): void => {
+						// If the deleted category has a parent, decrement the parent's children count
+						if (null !== this.categories[index].parent_id) {
+							// Find the parent category by it's id
+							const parentIndex = this.categoryIndexById(
+								this.categories[index].parent_id,
+							);
 
-						// If found, decrement the number of children
-						if (!isNaN(parentIndex)) {
-							(this.categories[parentIndex].num_children as number)--;
+							// If found, decrement the number of children
+							if (!isNaN(parentIndex)) {
+								(this.categories[parentIndex].num_children as number)--;
+							}
 						}
-					}
 
-					// Remove the category (and any children) from the array
-					this.categories.splice(index, 1 + (undefined === this.categories[index].num_children ? 0 : Number(this.categories[index].num_children)));
+						// Remove the category (and any children) from the array
+						this.categories.splice(
+							index,
+							1 +
+								(undefined === this.categories[index].num_children
+									? 0
+									: Number(this.categories[index].num_children)),
+						);
 
-					// Go back to the parent state
-					this.$state.go("root.categories").catch(this.showError);
-				})
-				.finally((): true => (this.ogTableNavigableService.enabled = true))
-				.catch(this.showError);
-		}).catch(this.showError);
+						// Go back to the parent state
+						this.$state.go("root.categories").catch(this.showError);
+					})
+					.finally((): true => (this.ogTableNavigableService.enabled = true))
+					.catch(this.showError);
+			})
+			.catch(this.showError);
 	}
 
 	public toggleFavourite(index: number): void {
-		this.categoryModel.toggleFavourite(this.categories[index])
-			.then((favourite: boolean): boolean => (this.categories[index].favourite = favourite))
+		this.categoryModel
+			.toggleFavourite(this.categories[index])
+			.then(
+				(favourite: boolean): boolean =>
+					(this.categories[index].favourite = favourite),
+			)
 			.catch(this.showError);
 	}
 
 	// Finds a specific category and focusses that row in the table
 	private focusCategory(categoryIdToFocus: number | string): number {
 		// Find the category by it's id
-		const	targetIndex: number = this.categoryIndexById(categoryIdToFocus),
-					delay = 50;
+		const targetIndex: number = this.categoryIndexById(categoryIdToFocus),
+			delay = 50;
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
+			this.$timeout(
+				(): void =>
+					(this.tableActions as OgTableActionHandlers).focusRow(targetIndex),
+				delay,
+			).catch(this.showError);
 		}
 
 		return targetIndex;
@@ -248,14 +299,27 @@ export default class CategoryIndexController {
 	private categoryIndexById(id: number | string | null): number {
 		let targetIndex = NaN;
 
-		angular.forEach(this.categories, (category: Category, index: number): void => {
-			if (isNaN(targetIndex) && category.id === id) {
-				targetIndex = index;
-			}
-		});
+		angular.forEach(
+			this.categories,
+			(category: Category, index: number): void => {
+				if (isNaN(targetIndex) && category.id === id) {
+					targetIndex = index;
+				}
+			},
+		);
 
 		return targetIndex;
 	}
 }
 
-CategoryIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "categoryModel", "ogTableNavigableService", "ogModalErrorService", "categories"];
+CategoryIndexController.$inject = [
+	"$scope",
+	"$transitions",
+	"$uibModal",
+	"$timeout",
+	"$state",
+	"categoryModel",
+	"ogTableNavigableService",
+	"ogModalErrorService",
+	"categories",
+];

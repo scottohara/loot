@@ -9,20 +9,35 @@
 			<dt ng-if="::vm.schedule.frequency">Frequency</dt>
 			<dd ng-if="::vm.schedule.frequency">{{::vm.schedule.frequency}}</dd>
 			<dt ng-if="::vm.schedule.primary_account.name">Account</dt>
-			<dd ng-if="::vm.schedule.primary_account.name">{{::vm.schedule.primary_account.name}}</dd>
+			<dd ng-if="::vm.schedule.primary_account.name">
+				{{::vm.schedule.primary_account.name}}
+			</dd>
 			<dt ng-if="::vm.schedule.payee.name">Payee</dt>
 			<dd ng-if="::vm.schedule.payee.name">{{::vm.schedule.payee.name}}</dd>
 			<dt ng-if="::vm.schedule.security.name">Security</dt>
-			<dd ng-if="::vm.schedule.security.name">{{::vm.schedule.security.name}}</dd>
+			<dd ng-if="::vm.schedule.security.name">
+				{{::vm.schedule.security.name}}
+			</dd>
 			<dt ng-if="::vm.schedule.amount">Amount</dt>
 			<dd ng-if="::vm.schedule.amount">{{::vm.schedule.amount | currency}}</dd>
 			<dt ng-if="::vm.schedule.quantity">Quantity</dt>
-			<dd ng-if="::vm.schedule.quantity">{{::vm.schedule.quantity | number:4}}</dd>
+			<dd ng-if="::vm.schedule.quantity">
+				{{::vm.schedule.quantity | number:4}}
+			</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">
-			<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-			<button class="btn btn-danger" type="submit" ng-click="vm.deleteSchedule()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
+		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-danger"
+			type="submit"
+			ng-click="vm.deleteSchedule()"
+			autofocus
+		>
+			<i class="glyphicon glyphicon-remove"></i> Delete
+		</button>
 	</div>
 </form>

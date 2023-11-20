@@ -1,15 +1,6 @@
-import type {
-	Account,
-	Accounts
-} from "~/accounts/types";
-import type {
-	Entity,
-	EntityModel
-} from "~/loot/types";
-import type {
-	Transaction,
-	TransactionBatch
-} from "~/transactions/types";
+import type { Account, Accounts } from "~/accounts/types";
+import type { Entity, EntityModel } from "~/loot/types";
+import type { Transaction, TransactionBatch } from "~/transactions/types";
 import type { StateMock } from "~/mocks/node-modules/angular/types";
 
 export interface Mock<T> {
@@ -17,11 +8,26 @@ export interface Mock<T> {
 }
 
 export interface ControllerTestLocals {
-	[key: string]: Account | Accounts | angular.IScope | Entity | EntityModel | StateMock | Transaction | TransactionBatch | string | null | undefined;
+	[key: string]:
+		| Account
+		| Accounts
+		| angular.IScope
+		| Entity
+		| EntityModel
+		| StateMock
+		| Transaction
+		| TransactionBatch
+		| string
+		| null
+		| undefined;
 	$scope?: angular.IScope;
 }
 
-export type ControllerTestFactory = (controller: string, locals?: ControllerTestLocals, bindings?: Record<string, unknown>) => angular.IController;
+export type ControllerTestFactory = (
+	controller: string,
+	locals?: ControllerTestLocals,
+	bindings?: Record<string, unknown>,
+) => angular.IController;
 
 export interface DirectiveTestModel {
 	context?: boolean;
@@ -61,8 +67,18 @@ interface EventMock {
 	readonly NONE?: number;
 	composedPath?: () => EventTarget[];
 	deepPath?: () => EventTarget[];
-	initEvent?: (eventTypeArg: string, canBubbleArg: boolean, cancelableArg: boolean) => void;
-	initUIEvent?: (typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number) => void;
+	initEvent?: (
+		eventTypeArg: string,
+		canBubbleArg: boolean,
+		cancelableArg: boolean,
+	) => void;
+	initUIEvent?: (
+		typeArg: string,
+		canBubbleArg: boolean,
+		cancelableArg: boolean,
+		viewArg: Window,
+		detailArg: number,
+	) => void;
 	preventDefault?: () => void;
 	stopImmediatePropagation?: () => void;
 	stopPropagation?: () => void;
@@ -85,7 +101,17 @@ export interface KeyboardEventMock extends EventMock {
 	readonly DOM_KEY_LOCATION_RIGHT?: number;
 	readonly DOM_KEY_LOCATION_STANDARD?: number;
 	getModifierState?: (keyArg: string) => boolean;
-	initKeyboardEvent?: (typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, keyArg: string, locationArg: number, modifiersListArg: string, repeat: boolean, locale: string) => void;
+	initKeyboardEvent?: (
+		typeArg: string,
+		canBubbleArg: boolean,
+		cancelableArg: boolean,
+		viewArg: Window,
+		keyArg: string,
+		locationArg: number,
+		modifiersListArg: string,
+		repeat: boolean,
+		locale: string,
+	) => void;
 }
 
 interface JQueryEventMock extends EventMock {
@@ -102,8 +128,9 @@ interface JQueryEventMock extends EventMock {
 	isPropagationStopped?: () => boolean;
 }
 
-export interface JQueryKeyEventObjectMock extends KeyboardEventMock, JQueryEventMock {
-}
+export interface JQueryKeyEventObjectMock
+	extends KeyboardEventMock,
+		JQueryEventMock {}
 
 export interface JQueryMouseEventObjectMock extends JQueryEventMock {
 	button?: number;

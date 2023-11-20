@@ -14,7 +14,9 @@ export interface OgTableActions {
 	focusAction: OgTableActionCallback;
 }
 
-export type OgTableActionHandlers = OgTableActions & { focusRow: OgTableActionCallback; };
+export type OgTableActionHandlers = OgTableActions & {
+	focusRow: OgTableActionCallback;
+};
 
 export interface OgTableNavigableScope extends angular.IScope {
 	focussedRow: number | null;

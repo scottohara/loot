@@ -19,33 +19,43 @@ export default class LayoutController {
 
 	private isLoadingState = false;
 
-	public constructor($scope: angular.IScope,
-						$window: angular.IWindowService,
-						$transitions: angular.ui.IStateParamsService,
-						private readonly $state: angular.ui.IStateService,
-						private readonly $uibModal: angular.ui.bootstrap.IModalService,
-						private readonly authenticationModel: AuthenticationModel,
-						private readonly accountModel: AccountModel,
-						private readonly payeeModel: PayeeModel,
-						private readonly categoryModel: CategoryModel,
-						private readonly securityModel: SecurityModel,
-						private readonly ogTableNavigableService: OgTableNavigableService,
-						ogViewScrollService: OgViewScrollService,
-						public readonly queryService: QueryService,
-						ogModalErrorService: OgModalErrorService,
-						public readonly authenticated: boolean) {
+	public constructor(
+		$scope: angular.IScope,
+		$window: angular.IWindowService,
+		$transitions: angular.ui.IStateParamsService,
+		private readonly $state: angular.ui.IStateService,
+		private readonly $uibModal: angular.ui.bootstrap.IModalService,
+		private readonly authenticationModel: AuthenticationModel,
+		private readonly accountModel: AccountModel,
+		private readonly payeeModel: PayeeModel,
+		private readonly categoryModel: CategoryModel,
+		private readonly securityModel: SecurityModel,
+		private readonly ogTableNavigableService: OgTableNavigableService,
+		ogViewScrollService: OgViewScrollService,
+		public readonly queryService: QueryService,
+		ogModalErrorService: OgModalErrorService,
+		public readonly authenticated: boolean,
+	) {
 		this.scrollTo = ogViewScrollService.scrollTo.bind(ogViewScrollService);
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
 		// Show/hide spinner on all transitions
-		$scope.$on("$destroy", $transitions.onStart({}, (transition: angular.ui.IStateParamsService): void => {
-			this.loadingState = true;
-			this.navCollapsed = true;
-			transition.promise.finally((): false => (this.loadingState = false));
-		}) as () => void);
+		$scope.$on(
+			"$destroy",
+			$transitions.onStart(
+				{},
+				(transition: angular.ui.IStateParamsService): void => {
+					this.loadingState = true;
+					this.navCollapsed = true;
+					transition.promise.finally((): false => (this.loadingState = false));
+				},
+			) as () => void,
+		);
 
-		$window.$("#transactionSearch").on("search", (): void => this.checkIfSearchCleared());
+		$window
+			.$("#transactionSearch")
+			.on("search", (): void => this.checkIfSearchCleared());
 	}
 
 	// Recently accessed lists
@@ -75,14 +85,15 @@ export default class LayoutController {
 
 	// Login
 	public login(): void {
-		this.$uibModal.open({
-			templateUrl: AuthenticationEditView,
-			controller: "AuthenticationEditController",
-			controllerAs: "vm",
-			backdrop: "static",
-			size: "sm"
-		}).result
-			.then((): angular.IPromise<void> => this.$state.reload())
+		this.$uibModal
+			.open({
+				templateUrl: AuthenticationEditView,
+				controller: "AuthenticationEditController",
+				controllerAs: "vm",
+				backdrop: "static",
+				size: "sm",
+			})
+			.result.then((): angular.IPromise<void> => this.$state.reload())
 			.catch(this.showError);
 	}
 
@@ -95,9 +106,11 @@ export default class LayoutController {
 	// Search
 	public search(): void {
 		if ("" !== this.queryService.query) {
-			this.$state.go("root.transactions", {
-				query: this.queryService.query
-			}).catch(this.showError);
+			this.$state
+				.go("root.transactions", {
+					query: this.queryService.query,
+				})
+				.catch(this.showError);
 		}
 	}
 
@@ -108,11 +121,35 @@ export default class LayoutController {
 
 	private checkIfSearchCleared(): void {
 		// When the search field is cleared, return to the previous state
-		if ("" === this.queryService.query && null !== this.queryService.previousState) {
-			this.$state.go(String(this.queryService.previousState.name), this.queryService.previousState.params as undefined).catch(this.showError);
+		if (
+			"" === this.queryService.query &&
+			null !== this.queryService.previousState
+		) {
+			this.$state
+				.go(
+					String(this.queryService.previousState.name),
+					this.queryService.previousState.params as undefined,
+				)
+				.catch(this.showError);
 			this.queryService.previousState = null;
 		}
 	}
 }
 
-LayoutController.$inject = ["$scope", "$window", "$transitions", "$state", "$uibModal", "authenticationModel", "accountModel", "payeeModel", "categoryModel", "securityModel", "ogTableNavigableService", "ogViewScrollService", "queryService", "ogModalErrorService", "authenticated"];
+LayoutController.$inject = [
+	"$scope",
+	"$window",
+	"$transitions",
+	"$state",
+	"$uibModal",
+	"authenticationModel",
+	"accountModel",
+	"payeeModel",
+	"categoryModel",
+	"securityModel",
+	"ogTableNavigableService",
+	"ogViewScrollService",
+	"queryService",
+	"ogModalErrorService",
+	"authenticated",
+];

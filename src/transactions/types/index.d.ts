@@ -1,15 +1,22 @@
-import type {
-	Category,
-	PsuedoCategory
-} from "~/categories/types";
+import type { Category, PsuedoCategory } from "~/categories/types";
 import type { Account } from "~/accounts/types";
 import type { Payee } from "~/payees/types";
 import type { Security } from "~/securities/types";
 
 export type TransactionFetchDirection = "next" | "prev";
-export type TransactionStatus = "" | "Cleared" | "Reconciled" | "Unreconciled" | null;
+export type TransactionStatus =
+	| ""
+	| "Cleared"
+	| "Reconciled"
+	| "Unreconciled"
+	| null;
 export type TransactionDirection = "inflow" | "outflow";
-export type TransactionFlagType = "followup" | "noreceipt" | "taxdeductible" | null | undefined;
+export type TransactionFlagType =
+	| "followup"
+	| "noreceipt"
+	| "taxdeductible"
+	| null
+	| undefined;
 export type TransactionFlag = string | null | undefined;
 
 /*
@@ -17,9 +24,17 @@ export type TransactionFlag = string | null | undefined;
  */
 export type PayeeTransactionType = "Basic" | "Transfer";
 export type SplitTransactionType = "LoanRepayment" | "Payslip" | "Split";
-export type SecurityTransactionType = "Dividend" | "SecurityHolding" | "SecurityInvestment" | "SecurityTransfer";
+export type SecurityTransactionType =
+	| "Dividend"
+	| "SecurityHolding"
+	| "SecurityInvestment"
+	| "SecurityTransfer";
 export type SubtransactionType = "Sub" | "Subtransfer";
-export type TransactionType = PayeeTransactionType | SecurityTransactionType | SplitTransactionType | SubtransactionType;
+export type TransactionType =
+	| PayeeTransactionType
+	| SecurityTransactionType
+	| SplitTransactionType
+	| SubtransactionType;
 
 /*
  * Transaction headers
@@ -62,12 +77,19 @@ export interface CashTransaction extends BaseTransaction {
 }
 
 // A transaction that has a payee
-export interface PayeeCashTransaction extends CashTransaction, PayeeTransactionHeader {
-	transaction_type: PayeeTransactionType | SplitTransactionType | SubtransactionType;
+export interface PayeeCashTransaction
+	extends CashTransaction,
+		PayeeTransactionHeader {
+	transaction_type:
+		| PayeeTransactionType
+		| SplitTransactionType
+		| SubtransactionType;
 }
 
 // A transaction that has a security
-export interface SecurityTransaction extends BaseTransaction, SecurityTransactionHeader {
+export interface SecurityTransaction
+	extends BaseTransaction,
+		SecurityTransactionHeader {
 	transaction_type: SecurityTransactionType;
 	primary_account: Account;
 	category: PsuedoCategory;
@@ -96,28 +118,40 @@ export interface SubcategorisableTransaction {
  */
 
 // Basic transaction
-export interface BasicTransaction extends PayeeCashTransaction, CategorisableTransaction, SubcategorisableTransaction {
+export interface BasicTransaction
+	extends PayeeCashTransaction,
+		CategorisableTransaction,
+		SubcategorisableTransaction {
 	transaction_type: "Basic";
 	category: Category | string;
 	status: TransactionStatus;
 }
 
 // Transfer transaction
-export interface TransferTransaction extends PayeeCashTransaction, CategorisableTransaction, TransferrableTransaction {
+export interface TransferTransaction
+	extends PayeeCashTransaction,
+		CategorisableTransaction,
+		TransferrableTransaction {
 	transaction_type: "Transfer";
 	category: PsuedoCategory;
 	status: TransactionStatus;
 }
 
 // Subtransaction
-export interface Subtransaction extends CashTransaction, CategorisableTransaction, SubcategorisableTransaction {
+export interface Subtransaction
+	extends CashTransaction,
+		CategorisableTransaction,
+		SubcategorisableTransaction {
 	transaction_type: "Sub";
 	category: Category | string;
 	parent_id: number | null;
 }
 
 // Subtransfer transaction
-export interface SubtransferTransaction extends PayeeCashTransaction, CategorisableTransaction, TransferrableTransaction {
+export interface SubtransferTransaction
+	extends PayeeCashTransaction,
+		CategorisableTransaction,
+		TransferrableTransaction {
 	transaction_type: "Subtransfer";
 	category: PsuedoCategory;
 	account: Account;
@@ -125,10 +159,15 @@ export interface SubtransferTransaction extends PayeeCashTransaction, Categorisa
 	parent_id: number;
 }
 
-export type SplitTransactionChild = Partial<Subtransaction | SubtransferTransaction> | Subtransaction | SubtransferTransaction;
+export type SplitTransactionChild =
+	| Partial<Subtransaction | SubtransferTransaction>
+	| Subtransaction
+	| SubtransferTransaction;
 
 // Split transaction
-export interface SplitTransaction extends PayeeCashTransaction, CategorisableTransaction {
+export interface SplitTransaction
+	extends PayeeCashTransaction,
+		CategorisableTransaction {
 	transaction_type: SplitTransactionType;
 	category: PsuedoCategory;
 	status: TransactionStatus;
@@ -158,7 +197,9 @@ export interface SecurityHoldingTransaction extends SecurityTransaction {
 }
 
 // Security investment transaction
-export interface SecurityInvestmentTransaction extends SecurityTransaction, TransferrableTransaction {
+export interface SecurityInvestmentTransaction
+	extends SecurityTransaction,
+		TransferrableTransaction {
 	transaction_type: "SecurityInvestment";
 	amount: number;
 	quantity: number;
@@ -167,19 +208,32 @@ export interface SecurityInvestmentTransaction extends SecurityTransaction, Tran
 }
 
 // Security transfer transaction
-export interface SecurityTransferTransaction extends SecurityTransaction, TransferrableTransaction {
+export interface SecurityTransferTransaction
+	extends SecurityTransaction,
+		TransferrableTransaction {
 	transaction_type: "SecurityTransfer";
 	quantity: number;
 }
 
 // Dividend transaction
-export interface DividendTransaction extends SecurityTransaction, TransferrableTransaction {
+export interface DividendTransaction
+	extends SecurityTransaction,
+		TransferrableTransaction {
 	transaction_type: "Dividend";
 	amount: number;
 }
 
 // All possible transaction types
-export type Transaction = BasicTransaction | DividendTransaction | LoanRepaymentTransaction | PayslipTransaction | SecurityHoldingTransaction | SecurityInvestmentTransaction | SecurityTransferTransaction | SplitTransaction | TransferTransaction;
+export type Transaction =
+	| BasicTransaction
+	| DividendTransaction
+	| LoanRepaymentTransaction
+	| PayslipTransaction
+	| SecurityHoldingTransaction
+	| SecurityInvestmentTransaction
+	| SecurityTransferTransaction
+	| SplitTransaction
+	| TransferTransaction;
 
 export interface TransactionBatch {
 	transactions: Transaction[];

@@ -1,4 +1,8 @@
-<table id="securities" class="table table-striped table-bordered table-hover" og-table-navigable="vm.tableActions">
+<table
+	id="securities"
+	class="table table-striped table-bordered table-hover"
+	og-table-navigable="vm.tableActions"
+>
 	<thead>
 		<tr>
 			<th>Name</th>
@@ -8,21 +12,51 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="security in vm.securities" ng-class="::{'text-muted': security.current_holding <= 0}">
+		<tr
+			ng-repeat="security in vm.securities"
+			ng-class="::{'text-muted': security.current_holding <= 0}"
+		>
 			<td class="has-action">
 				{{::security.name}}
-				<i og-favourite="{'context': security.favourite, 'type': 'security'}" ng-click="vm.toggleFavourite($index)"></i>
-				<i class="action glyphicon glyphicon-edit pull-right" uib-tooltip="Edit security" ng-click="vm.editSecurity($index)"></i>
-				<em ng-if="::security.unused" class="text-info pull-right">No transactions</em>
+				<i
+					og-favourite="{'context': security.favourite, 'type': 'security'}"
+					ng-click="vm.toggleFavourite($index)"
+				></i>
+				<i
+					class="action glyphicon glyphicon-edit pull-right"
+					uib-tooltip="Edit security"
+					ng-click="vm.editSecurity($index)"
+				></i>
+				<em ng-if="::security.unused" class="text-info pull-right"
+					>No transactions</em
+				>
 			</td>
 			<td>{{::security.code}}</td>
-			<td class="amount" ng-class="::{'text-danger': security.current_holding < 0}">{{::security.current_holding | number:4}}</td>
-			<td class="amount" ng-class="::{'text-danger': security.closing_balance < 0}">{{::security.closing_balance | currency}}</td>
+			<td
+				class="amount"
+				ng-class="::{'text-danger': security.current_holding < 0}"
+			>
+				{{::security.current_holding | number:4}}
+			</td>
+			<td
+				class="amount"
+				ng-class="::{'text-danger': security.closing_balance < 0}"
+			>
+				{{::security.closing_balance | currency}}
+			</td>
 		</tr>
-	<tbody>
+	</tbody>
+
+	<tbody></tbody>
 	<tfoot>
 		<tr>
-			<th colspan="4" class="amount" ng-class="::{'text-danger': vm.totalValue < 0}">Total: {{::vm.totalValue | currency}}</th>
+			<th
+				colspan="4"
+				class="amount"
+				ng-class="::{'text-danger': vm.totalValue < 0}"
+			>
+				Total: {{::vm.totalValue | currency}}
+			</th>
 		</tr>
 	</tfoot>
 </table>

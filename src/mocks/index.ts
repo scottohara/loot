@@ -15,17 +15,18 @@ import DirectiveTest from "~/mocks/loot/directivetest";
 import MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import angular from "angular";
 
-angular.module("lootMocks", [
-	"ogNodeModulesMocks",
-	"ogComponentsMocks",
-	"lootAccountsMocks",
-	"lootAuthenticationMocks",
-	"lootCategoriesMocks",
-	"lootPayeesMocks",
-	"lootSchedulesMocks",
-	"lootSecuritiesMocks",
-	"lootTransactionsMocks"
-])
+angular
+	.module("lootMocks", [
+		"ogNodeModulesMocks",
+		"ogComponentsMocks",
+		"lootAccountsMocks",
+		"lootAuthenticationMocks",
+		"lootCategoriesMocks",
+		"lootPayeesMocks",
+		"lootSchedulesMocks",
+		"lootSecuritiesMocks",
+		"lootTransactionsMocks",
+	])
 	.service("controllerTest", ControllerTest)
 	.service("directiveTest", DirectiveTest)
 	.provider("mockDependencies", MockDependenciesProvider);

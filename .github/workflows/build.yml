@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download CodeClimate test reporter
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
+      - name: Download CodeClimate test reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
 
-    - name: Notify CodeClimate of a pending report
-      run: ./cc-test-reporter before-build
+      - name: Notify CodeClimate of a pending report
+        run: ./cc-test-reporter before-build
 
   frontend:
     name: Test and lint frontend
@@ -30,26 +30,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Install node
-      uses: actions/setup-node@v3
-      with:
-        node-version-file: .tool-versions
-        cache: npm
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .tool-versions
+          cache: npm
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Lint and test
-      run: npm test
+      - name: Lint and test
+        run: npm test
 
-    - name: Upload test coverage artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: lcov.info
-        path: coverage/frontend/lcov.info
+      - name: Upload test coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lcov.info
+          path: coverage/frontend/lcov.info
 
   backend:
     name: Lint and test backend
@@ -64,32 +64,32 @@ jobs:
       postgres:
         image: postgres:11.3
         ports:
-        - 5432:5432
+          - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Install ruby and gem dependencies
-      uses: ruby/setup-ruby@v1
-      with:
-        bundler-cache: true
+      - name: Install ruby and gem dependencies
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
 
-    - name: Setup database
-      run: bundle exec rake db:create db:migrate
+      - name: Setup database
+        run: bundle exec rake db:create db:migrate
 
-    - name: Lint
-      run: bundle exec rubocop
+      - name: Lint
+        run: bundle exec rubocop
 
-    - name: Test
-      run: bundle exec rake
+      - name: Test
+        run: bundle exec rake
 
-    - name: Upload test coverage artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage.json
-        path: coverage/backend/coverage.json
+      - name: Upload test coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage.json
+          path: coverage/backend/coverage.json
 
   report:
     name: Send coverage report to CodeClimate
@@ -97,34 +97,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Download CodeClimate test reporter
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
+      - name: Download CodeClimate test reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
 
-    - name: Download frontend test coverage artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: lcov.info
-        path: coverage/frontend
+      - name: Download frontend test coverage artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: lcov.info
+          path: coverage/frontend
 
-    - name: Download backend test coverage artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: coverage.json
-        path: coverage/backend
+      - name: Download backend test coverage artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage.json
+          path: coverage/backend
 
-    - name: Format backend coverage
-      run: ./cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.backend.json coverage/backend/coverage.json
+      - name: Format backend coverage
+        run: ./cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.backend.json coverage/backend/coverage.json
 
-    - name: Format frontend coverage
-      run: ./cc-test-reporter format-coverage --input-type lcov --output coverage/codeclimate.frontend.json coverage/frontend/lcov.info
+      - name: Format frontend coverage
+        run: ./cc-test-reporter format-coverage --input-type lcov --output coverage/codeclimate.frontend.json coverage/frontend/lcov.info
 
-    - name: Merge backend and frontend coverage
-      run: ./cc-test-reporter sum-coverage --parts 2 coverage/codeclimate.*.json
+      - name: Merge backend and frontend coverage
+        run: ./cc-test-reporter sum-coverage --parts 2 coverage/codeclimate.*.json
 
-    - name: Upload coverage report
-      run: ./cc-test-reporter upload-coverage
+      - name: Upload coverage report
+        run: ./cc-test-reporter upload-coverage

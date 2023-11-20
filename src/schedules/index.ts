@@ -16,16 +16,17 @@ import ScheduleIndexController from "~/schedules/controllers/index";
 import ScheduleModel from "~/schedules/models/schedule";
 import angular from "angular";
 
-angular.module("lootSchedules", [
-	"ui.bootstrap",
-	"ui.router",
-	"ogComponents",
-	"lootAccounts",
-	"lootCategories",
-	"lootPayees",
-	"lootSecurities",
-	"lootTransactions"
-])
+angular
+	.module("lootSchedules", [
+		"ui.bootstrap",
+		"ui.router",
+		"ogComponents",
+		"lootAccounts",
+		"lootCategories",
+		"lootPayees",
+		"lootSecurities",
+		"lootTransactions",
+	])
 	.controller("ScheduleDeleteController", ScheduleDeleteController)
 	.controller("ScheduleEditController", ScheduleEditController)
 	.controller("ScheduleIndexController", ScheduleIndexController)

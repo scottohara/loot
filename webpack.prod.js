@@ -1,19 +1,19 @@
 const { merge } = require("webpack-merge"),
-			{ GenerateSW } = require("workbox-webpack-plugin"),
-			packageJson = require("./package"),
-			{
-				entry,
-				output,
-				lessRule,
-				cssRule,
-				fontRule,
-				iconRule,
-				providejQuery,
-				extractCss,
-				createIndexHtml,
-				copyStaticAssets,
-				config
-			} = require("./webpack.common");
+	{ GenerateSW } = require("workbox-webpack-plugin"),
+	packageJson = require("./package"),
+	{
+		entry,
+		output,
+		lessRule,
+		cssRule,
+		fontRule,
+		iconRule,
+		providejQuery,
+		extractCss,
+		createIndexHtml,
+		copyStaticAssets,
+		config,
+	} = require("./webpack.common");
 
 module.exports = merge(config, {
 	mode: "production",
@@ -25,7 +25,7 @@ module.exports = merge(config, {
 	output: merge(output, {
 		hashDigestLength: 6,
 		filename: "[name]-[chunkhash].js",
-		assetModuleFilename: "[name]-[contenthash][ext]"
+		assetModuleFilename: "[name]-[contenthash][ext]",
 	}),
 
 	module: {
@@ -35,11 +35,11 @@ module.exports = merge(config, {
 			merge(fontRule, {
 				generator: {
 					// Include hash in file names
-					filename: "fonts/[name]-[contenthash][ext]"
-				}
+					filename: "fonts/[name]-[contenthash][ext]",
+				},
 			}),
-			iconRule
-		]
+			iconRule,
+		],
 	},
 
 	// Extract full, separate source maps
@@ -53,14 +53,14 @@ module.exports = merge(config, {
 		new GenerateSW({
 			cacheId: packageJson.name,
 			skipWaiting: true,
-			clientsClaim: true
-		})
+			clientsClaim: true,
+		}),
 	],
 
 	// Fail if any chunks exceed performance budget
 	performance: {
 		hints: "error",
 		maxEntrypointSize: 900000,
-		maxAssetSize: 600000
-	}
+		maxAssetSize: 600000,
+	},
 });

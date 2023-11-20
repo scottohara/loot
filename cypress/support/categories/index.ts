@@ -1,12 +1,9 @@
-import type {
-	Category,
-	CategoryDirection
-} from "~/support/categories/types";
+import type { Category, CategoryDirection } from "~/support/categories/types";
 
 const subcategory = ":has(> td.subcategory)",
-			categoryDirection = "td.direction > i",
-			categoryName = "td.has-action",
-			parentCategory = ":not(:has(> td.subcategory)):first";
+	categoryDirection = "td.direction > i",
+	categoryName = "td.has-action",
+	parentCategory = ":not(:has(> td.subcategory)):first";
 
 export const categoriesTableRows = "#categories > tbody > tr";
 export const favouriteButton = "i[og-favourite]";
@@ -23,7 +20,9 @@ export const lastCategory = `${categoriesTableRows}:last`;
 export const DIRECTION_INFLOW = "glyphicon-plus-sign";
 export const DIRECTION_OUTFLOW = "glyphicon-minus-sign";
 
-function getDirectionClass(direction: JQuery<HTMLTableRowElement>): CategoryDirection {
+function getDirectionClass(
+	direction: JQuery<HTMLTableRowElement>,
+): CategoryDirection {
 	if (direction.hasClass(DIRECTION_INFLOW)) {
 		return DIRECTION_INFLOW;
 	}
@@ -42,14 +41,20 @@ export function getValuesFrom(row: JQuery<HTMLTableRowElement>): Category {
 		direction: getDirectionClass(row.find(categoryDirection)),
 		name: row.find(categoryName).text().trim(),
 		parent,
-		favourite: row.find(favouriteButton).hasClass("active")
+		favourite: row.find(favouriteButton).hasClass("active"),
 	};
 }
 
 export function checkRowMatches(expectedValues: Category): void {
 	cy.get(categoryDirection).should("have.class", expectedValues.direction);
 	cy.get(categoryName).should("contain.text", expectedValues.name);
-	cy.get(categoryName).should(`${undefined === expectedValues.parent ? "not." : ""}have.class`, "subcategory");
-	cy.get(favouriteButton).should(`${true === expectedValues.favourite ? "" : "not."}have.class`, "active");
+	cy.get(categoryName).should(
+		`${undefined === expectedValues.parent ? "not." : ""}have.class`,
+		"subcategory",
+	);
+	cy.get(favouriteButton).should(
+		`${true === expectedValues.favourite ? "" : "not."}have.class`,
+		"active",
+	);
 	cy.get(editButton).should("exist");
 }

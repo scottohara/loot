@@ -1,5 +1,9 @@
 <h3>{{::vm.context.name}}</h3>
-<table id="transactions" class="table table-striped table-bordered table-hover table-condensed" og-table-navigable="vm.tableActions">
+<table
+	id="transactions"
+	class="table table-striped table-bordered table-hover table-condensed"
+	og-table-navigable="vm.tableActions"
+>
 	<thead id="transactions-header" ng-switch="::vm.context.account_type">
 		<!-- Investment account column headings -->
 		<tr ng-switch-when="investment">
@@ -20,30 +24,61 @@
 		<tr>
 			<td colspan="5" class="has-dropdown">
 				<!-- Pagination -->
-				<button class="btn btn-primary" ng-click="vm.getTransactions('prev')">Previous</button>
-				<span>{{vm.firstTransactionDate | date:"dd/MM/yyyy"}} - {{vm.lastTransactionDate | date:"dd/MM/yyyy"}}</span>
+				<button class="btn btn-primary" ng-click="vm.getTransactions('prev')">
+					Previous
+				</button>
+				<span
+					>{{vm.firstTransactionDate | date:"dd/MM/yyyy"}} -
+					{{vm.lastTransactionDate | date:"dd/MM/yyyy"}}</span
+				>
 				<!-- Tools and options -->
 				<div class="btn-group pull-right" uib-dropdown>
-					<button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle>
+					<button
+						type="button"
+						class="btn btn-default dropdown-toggle"
+						uib-dropdown-toggle
+					>
 						<i class="glyphicon glyphicon-cog"></i> <span class="caret"></span>
 					</button>
 					<ul role="menu" uib-dropdown-menu>
 						<li>
-							<a ng-click="vm.toggleShowAllDetails(!vm.showAllDetails)" ng-switch="vm.showAllDetails">
-								<i ng-switch-when="true" class="glyphicon glyphicon-ok text-success"></i>
-								<i ng-switch-default class="glyphicon glyphicon-remove text-danger"></i>
-								 Show All Details
+							<a
+								ng-click="vm.toggleShowAllDetails(!vm.showAllDetails)"
+								ng-switch="vm.showAllDetails"
+							>
+								<i
+									ng-switch-when="true"
+									class="glyphicon glyphicon-ok text-success"
+								></i>
+								<i
+									ng-switch-default
+									class="glyphicon glyphicon-remove text-danger"
+								></i>
+								Show All Details
 							</a>
 						</li>
 						<li ng-class="{'disabled': !vm.reconcilable || vm.reconciling}">
-							<a ng-click="vm.toggleUnreconciledOnly(!vm.unreconciledOnly, 'prev')" ng-switch="vm.unreconciledOnly">
-								<i ng-switch-when="true" class="glyphicon glyphicon-ok text-success"></i>
-								<i ng-switch-default class="glyphicon glyphicon-remove text-danger"></i>
-								 Unreconciled Only
+							<a
+								ng-click="vm.toggleUnreconciledOnly(!vm.unreconciledOnly, 'prev')"
+								ng-switch="vm.unreconciledOnly"
+							>
+								<i
+									ng-switch-when="true"
+									class="glyphicon glyphicon-ok text-success"
+								></i>
+								<i
+									ng-switch-default
+									class="glyphicon glyphicon-remove text-danger"
+								></i>
+								Unreconciled Only
 							</a>
 						</li>
 						<li class="divider"></li>
-						<li ng-class="{'disabled': !vm.reconcilable || vm.reconciling}"><a ng-click="vm.reconcile()"><i class="glyphicon glyphicon-pencil"></i> Reconcile...</a></li>
+						<li ng-class="{'disabled': !vm.reconcilable || vm.reconciling}">
+							<a ng-click="vm.reconcile()"
+								><i class="glyphicon glyphicon-pencil"></i> Reconcile...</a
+							>
+						</li>
 					</ul>
 				</div>
 			</td>
@@ -52,7 +87,12 @@
 		<tr og-table-loading="vm.loading['prev']" colspan="5"></tr>
 	</thead>
 	<tbody ng-class="{'reconciling': vm.reconciling}">
-		<tr class="transaction" ng-repeat="transaction in vm.transactions" ng-switch="::vm.context.account_type" ng-class="{'cleared': transaction.status == 'Cleared', 'future': transaction.transaction_date > vm.today}">
+		<tr
+			class="transaction"
+			ng-repeat="transaction in vm.transactions"
+			ng-switch="::vm.context.account_type"
+			ng-class="{'cleared': transaction.status == 'Cleared', 'future': transaction.transaction_date > vm.today}"
+		>
 			<!-- Transaction date -->
 			<td class="has-action">
 				{{::transaction.transaction_date | date:'dd/MM/yyyy'}}
@@ -65,57 +105,122 @@
 					<tr ng-if="vm.contextType != 'account' && vm.showAllDetails">
 						<td colspan="2" class="has-action">
 							{{::transaction.primary_account.name}}
-							<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.primary_account.name}}" ng-click="vm.switchPrimaryAccount($event, transaction)"></i>
+							<i
+								class="action glyphicon glyphicon-share-alt pull-right"
+								uib-tooltip="Go to {{::transaction.primary_account.name}}"
+								ng-click="vm.switchPrimaryAccount($event, transaction)"
+							></i>
 						</td>
 					</tr>
 					<!-- Payee / Security -->
-					<tr ng-if="::vm.contextType != 'payee' && vm.contextType != 'security'">
+					<tr
+						ng-if="::vm.contextType != 'payee' && vm.contextType != 'security'"
+					>
 						<td colspan="2" class="has-action">
 							<!-- Transaction status -->
-							<small ng-if="::vm.reconcilable" ng-switch="vm.reconciling" class="transaction-status pull-right">
-								<input ng-switch-when="true" type="checkbox" ng-model="transaction.status" ng-true-value="'Cleared'" ng-false-value="''" ng-change="vm.toggleCleared(transaction)">
-								<span ng-switch-default transaction-status="::{'account': vm.context, 'transaction': transaction}"></span>
+							<small
+								ng-if="::vm.reconcilable"
+								ng-switch="vm.reconciling"
+								class="transaction-status pull-right"
+							>
+								<input
+									ng-switch-when="true"
+									type="checkbox"
+									ng-model="transaction.status"
+									ng-true-value="'Cleared'"
+									ng-false-value="''"
+									ng-change="vm.toggleCleared(transaction)"
+								/>
+								<span
+									ng-switch-default
+									transaction-status="::{'account': vm.context, 'transaction': transaction}"
+								></span>
 							</small>
 							<!-- Payee -->
 							<span ng-if="::transaction.payee.id">
 								{{::transaction.payee.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.payee.name}}" ng-click="vm.switchPayee($event, transaction)"></i>
+								<i
+									class="action glyphicon glyphicon-share-alt pull-right"
+									uib-tooltip="Go to {{::transaction.payee.name}}"
+									ng-click="vm.switchPayee($event, transaction)"
+								></i>
 							</span>
 							<!-- Security -->
 							<span ng-if="::transaction.security.id">
 								{{::transaction.security.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.security.name}}" ng-click="vm.switchSecurity($event, transaction)"></i>
+								<i
+									class="action glyphicon glyphicon-share-alt pull-right"
+									uib-tooltip="Go to {{::transaction.security.name}}"
+									ng-click="vm.switchSecurity($event, transaction)"
+								></i>
 							</span>
 						</td>
 					</tr>
 					<!-- Category / Subcategory / Transfer or Other Account -->
-					<tr ng-if="vm.showAllDetails || vm.contextType == 'payee' || vm.contextType == 'security'">
+					<tr
+						ng-if="vm.showAllDetails || vm.contextType == 'payee' || vm.contextType == 'security'"
+					>
 						<!-- Category -->
-						<td class="category has-action" ng-if="::vm.contextType != 'category' || (vm.contextType == 'category' && vm.context.parent)">
+						<td
+							class="category has-action"
+							ng-if="::vm.contextType != 'category' || (vm.contextType == 'category' && vm.context.parent)"
+						>
 							{{::transaction.category.name}}
-							<i ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1" class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.category.name}}" ng-click="vm.switchCategory($event, transaction)"></i>
+							<i
+								ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1"
+								class="action glyphicon glyphicon-share-alt pull-right"
+								uib-tooltip="Go to {{::transaction.category.name}}"
+								ng-click="vm.switchCategory($event, transaction)"
+							></i>
 						</td>
 						<!-- Subcategory / Transfer or Other Account -->
-						<td class="category has-action" ng-if="::vm.contextType != 'category' || (vm.contextType == 'category' && !vm.context.parent)">
-							<span ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1">
+						<td
+							class="category has-action"
+							ng-if="::vm.contextType != 'category' || (vm.contextType == 'category' && !vm.context.parent)"
+						>
+							<span
+								ng-if="::['Basic', 'Sub'].indexOf(transaction.transaction_type) != -1"
+							>
 								{{::transaction.subcategory.name}}
-								<i ng-if="::transaction.subcategory" class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.subcategory.name}}" ng-click="vm.switchSubcategory($event, transaction)"></i>
+								<i
+									ng-if="::transaction.subcategory"
+									class="action glyphicon glyphicon-share-alt pull-right"
+									uib-tooltip="Go to {{::transaction.subcategory.name}}"
+									ng-click="vm.switchSubcategory($event, transaction)"
+								></i>
 							</span>
 							<!-- Transfer / Other Account -->
-							<span ng-if="::['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1">
+							<span
+								ng-if="::['Transfer', 'Subtransfer', 'SecurityTransfer', 'Dividend', 'SecurityInvestment'].indexOf(transaction.transaction_type) != -1"
+							>
 								{{::transaction.account.name}}
-								<i class="action glyphicon glyphicon-share-alt pull-right" uib-tooltip="Go to {{::transaction.account.name}}" ng-click="vm.switchAccount($event, transaction)"></i>
+								<i
+									class="action glyphicon glyphicon-share-alt pull-right"
+									uib-tooltip="Go to {{::transaction.account.name}}"
+									ng-click="vm.switchAccount($event, transaction)"
+								></i>
 							</span>
 							<!-- Toggle subtransactions -->
-							<span ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1">
-								<button ng-click="vm.toggleSubtransactions($event, transaction)" class="btn btn-xs btn-default toggle-subtransactions">
-									<i class="glyphicon" ng-class="{'glyphicon-chevron-down': !transaction.showSubtransactions, 'glyphicon-chevron-up': transaction.showSubtransactions}"></i>
+							<span
+								ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1"
+							>
+								<button
+									ng-click="vm.toggleSubtransactions($event, transaction)"
+									class="btn btn-xs btn-default toggle-subtransactions"
+								>
+									<i
+										class="glyphicon"
+										ng-class="{'glyphicon-chevron-down': !transaction.showSubtransactions, 'glyphicon-chevron-up': transaction.showSubtransactions}"
+									></i>
 								</button>
 							</span>
 						</td>
 					</tr>
 					<!-- Subtransactions -->
-					<tr ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1 && vm.showAllDetails" ng-show="transaction.showSubtransactions">
+					<tr
+						ng-if="['Split', 'LoanRepayment', 'Payslip'].indexOf(transaction.transaction_type) != -1 && vm.showAllDetails"
+						ng-show="transaction.showSubtransactions"
+					>
 						<td colspan="2">
 							<table class="table-condensed">
 								<thead>
@@ -125,15 +230,30 @@
 										<th>Description</th>
 										<th class="amount">Amount</th>
 									</tr>
-									<tr og-table-loading="transaction.loadingSubtransactions" colspan="4"></tr>
+									<tr
+										og-table-loading="transaction.loadingSubtransactions"
+										colspan="4"
+									></tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="subtransaction in transaction.subtransactions">
 										<td>{{::subtransaction.category.name}}</td>
-										<td ng-if="::subtransaction.transaction_type == 'Sub'">{{::subtransaction.subcategory.name}}</td>
-										<td ng-if="::subtransaction.transaction_type == 'Subtransfer'">{{::subtransaction.account.name}}</td>
+										<td ng-if="::subtransaction.transaction_type == 'Sub'">
+											{{::subtransaction.subcategory.name}}
+										</td>
+										<td
+											ng-if="::subtransaction.transaction_type == 'Subtransfer'"
+										>
+											{{::subtransaction.account.name}}
+										</td>
 										<td>{{::subtransaction.memo}}</td>
-										<td class="amount" ng-class="::{'text-danger': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}">{{::subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1) | currency}}</td>
+										<td
+											class="amount"
+											ng-class="::{'text-danger': (subtransaction.amount * (subtransaction.direction == transaction.direction ? 1 : -1)) < 0}"
+										>
+											{{::subtransaction.amount * (subtransaction.direction ==
+											transaction.direction ? 1 : -1) | currency}}
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -149,7 +269,12 @@
 			</td>
 			<!-- Debit amount / Quantity -->
 			<td class="amount details">
-				<span ng-switch-default ng-if="::transaction.direction == 'outflow'" ng-class="::{'text-danger': transaction.amount < 0}">{{::transaction.amount | currency}}</span>
+				<span
+					ng-switch-default
+					ng-if="::transaction.direction == 'outflow'"
+					ng-class="::{'text-danger': transaction.amount < 0}"
+					>{{::transaction.amount | currency}}</span
+				>
 				<table class="table-condensed" ng-switch-when="investment">
 					<tr>
 						<td>{{::transaction.quantity | number:4}}</td>
@@ -161,8 +286,17 @@
 			</td>
 			<!-- Credit Amount / Price / Commission -->
 			<td class="amount details">
-				<span ng-switch-default ng-if="::transaction.direction == 'inflow'" ng-class="::{'text-danger': transaction.amount < 0}">{{::transaction.amount | currency}}</span>
-				<table class="table-condensed" ng-switch-when="investment" ng-if="::transaction.transaction_type == 'SecurityInvestment'">
+				<span
+					ng-switch-default
+					ng-if="::transaction.direction == 'inflow'"
+					ng-class="::{'text-danger': transaction.amount < 0}"
+					>{{::transaction.amount | currency}}</span
+				>
+				<table
+					class="table-condensed"
+					ng-switch-when="investment"
+					ng-if="::transaction.transaction_type == 'SecurityInvestment'"
+				>
 					<tr>
 						<td>${{::transaction.price | number}}</td>
 					</tr>
@@ -173,8 +307,14 @@
 			</td>
 			<!-- Balance / Investment Amount -->
 			<td class="amount">
-				<span ng-switch-default ng-class="{'text-danger': transaction.balance < 0}">{{transaction.balance | currency}}</span>
-				<span ng-switch-when="investment">{{::transaction.amount | currency}}</span>
+				<span
+					ng-switch-default
+					ng-class="{'text-danger': transaction.balance < 0}"
+					>{{transaction.balance | currency}}</span
+				>
+				<span ng-switch-when="investment"
+					>{{::transaction.amount | currency}}</span
+				>
 			</td>
 		</tr>
 	</tbody>
@@ -182,22 +322,55 @@
 		<tr>
 			<!-- Pagination -->
 			<td colspan="2">
-				<button class="btn btn-primary" ng-click="vm.getTransactions('next')">Next</button>
-				<span>{{vm.firstTransactionDate | date:"dd/MM/yyyy"}} - {{vm.lastTransactionDate | date:"dd/MM/yyyy"}}</span>
+				<button class="btn btn-primary" ng-click="vm.getTransactions('next')">
+					Next
+				</button>
+				<span
+					>{{vm.firstTransactionDate | date:"dd/MM/yyyy"}} -
+					{{vm.lastTransactionDate | date:"dd/MM/yyyy"}}</span
+				>
 			</td>
-			<td colspan="2"><strong ng-if="vm.contextType != null" class="pull-right">Closing Balance:</strong></td>
-			<td><strong class="pull-right" ng-class="{'text-danger': vm.context.closing_balance < 0}">{{vm.context.closing_balance | currency}}</strong></td>
+			<td colspan="2">
+				<strong ng-if="vm.contextType != null" class="pull-right"
+					>Closing Balance:</strong
+				>
+			</td>
+			<td>
+				<strong
+					class="pull-right"
+					ng-class="{'text-danger': vm.context.closing_balance < 0}"
+					>{{vm.context.closing_balance | currency}}</strong
+				>
+			</td>
 		</tr>
 		<!-- Loading indicator -->
 		<tr og-table-loading="vm.loading['next']" colspan="5"></tr>
 	</tfoot>
 </table>
 <!-- Account reconciliation progress -->
-<span id="reconciliation-progress" ng-if="vm.reconciling" class="alert alert-warning">
+<span
+	id="reconciliation-progress"
+	ng-if="vm.reconciling"
+	class="alert alert-warning"
+>
 	<h4>Reconciliation</h4>
 	<div class="text-right">Target: {{vm.reconcileTarget | currency}}</div>
 	<div class="text-right">Cleared: {{vm.clearedTotal | currency }}</div>
-	<div class="text-right" ng-class="{'text-danger': vm.unclearedTotal != 0, 'text-success': vm.unclearedTotal == 0}">Uncleared: {{vm.unclearedTotal | currency}}</div>
-	<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-	<button class="btn btn-success" type="submit" ng-click="vm.save()" ng-disabled="vm.unclearedTotal != 0"><i class="glyphicon glyphicon-ok"></i> Finished</button>
+	<div
+		class="text-right"
+		ng-class="{'text-danger': vm.unclearedTotal != 0, 'text-success': vm.unclearedTotal == 0}"
+	>
+		Uncleared: {{vm.unclearedTotal | currency}}
+	</div>
+	<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+		Cancel
+	</button>
+	<button
+		class="btn btn-success"
+		type="submit"
+		ng-click="vm.save()"
+		ng-disabled="vm.unclearedTotal != 0"
+	>
+		<i class="glyphicon glyphicon-ok"></i> Finished
+	</button>
 </span>

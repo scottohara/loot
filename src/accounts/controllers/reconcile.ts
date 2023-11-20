@@ -7,18 +7,27 @@ export default class AccountReconcileController {
 
 	private readonly LOCAL_STORAGE_KEY: string;
 
-	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
-						private readonly $window: angular.IWindowService,
-						account: Account) {
+	public constructor(
+		private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
+		private readonly $window: angular.IWindowService,
+		account: Account,
+	) {
 		this.LOCAL_STORAGE_KEY = `lootClosingBalance-${account.id}`;
-		this.closingBalance = Number(this.$window.localStorage.getItem(this.LOCAL_STORAGE_KEY));
-		this.expectNegativeBalance = ["credit", "loan"].includes(account.account_type);
+		this.closingBalance = Number(
+			this.$window.localStorage.getItem(this.LOCAL_STORAGE_KEY),
+		);
+		this.expectNegativeBalance = ["credit", "loan"].includes(
+			account.account_type,
+		);
 	}
 
 	// Save and close the modal
 	public start(): void {
 		// Store the closing balance in local storage
-		this.$window.localStorage.setItem(this.LOCAL_STORAGE_KEY, String(this.closingBalance));
+		this.$window.localStorage.setItem(
+			this.LOCAL_STORAGE_KEY,
+			String(this.closingBalance),
+		);
 
 		// Close the modal and return the balance
 		this.$uibModalInstance.close(this.closingBalance);
@@ -30,4 +39,8 @@ export default class AccountReconcileController {
 	}
 }
 
-AccountReconcileController.$inject = ["$uibModalInstance", "$window", "account"];
+AccountReconcileController.$inject = [
+	"$uibModalInstance",
+	"$window",
+	"account",
+];

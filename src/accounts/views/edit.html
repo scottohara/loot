@@ -4,48 +4,159 @@
 	</div>
 	<div class="modal-body">
 		<!-- Name -->
-		<div class="form-group has-feedback" ng-class="{'has-error': accountForm.name.$invalid}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': accountForm.name.$invalid}"
+		>
 			<label for="name">Name</label>
-			<input id="name" name="name" class="form-control" ng-model="vm.account.name" placeholder="Account" required autofocus og-input-autoselect>
-			<span ng-show="accountForm.name.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="name"
+				name="name"
+				class="form-control"
+				ng-model="vm.account.name"
+				placeholder="Account"
+				required
+				autofocus
+				og-input-autoselect
+			/>
+			<span
+				ng-show="accountForm.name.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Type -->
-		<div class="form-group has-feedback" ng-class="{'has-error': accountForm.accountType.$invalid}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': accountForm.accountType.$invalid}"
+		>
 			<label for="accountType">Type</label>
-			<input name="accountType" class="form-control" ng-model="vm.account.account_type" uib-typeahead="accountType for accountType in vm.accountTypes($viewValue)" ng-blur="vm.accountTypeSelected()" typeahead-editable="false" typeahead-min-length="0" typeahead-select-on-blur="true" placeholder="Account Type" required og-input-autoselect>
-			<span ng-show="accountForm.accountType.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				name="accountType"
+				class="form-control"
+				ng-model="vm.account.account_type"
+				uib-typeahead="accountType for accountType in vm.accountTypes($viewValue)"
+				ng-blur="vm.accountTypeSelected()"
+				typeahead-editable="false"
+				typeahead-min-length="0"
+				typeahead-select-on-blur="true"
+				placeholder="Account Type"
+				required
+				og-input-autoselect
+			/>
+			<span
+				ng-show="accountForm.accountType.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Opening balance -->
-		<div class="form-group has-feedback" ng-class="{'has-error': accountForm.openingBalance.$invalid}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': accountForm.openingBalance.$invalid}"
+		>
 			<label for="openingBalance">Opening Balance</label>
-			<input name="openingBalance" class="form-control" ng-class="{'negative': vm.account.opening_balance < 0}" ng-model="vm.account.opening_balance" placeholder="Opening Balance" required og-input-currency og-input-autoselect og-input-calculator>
-			<span ng-show="accountForm.openingBalance.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				name="openingBalance"
+				class="form-control"
+				ng-class="{'negative': vm.account.opening_balance < 0}"
+				ng-model="vm.account.opening_balance"
+				placeholder="Opening Balance"
+				required
+				og-input-currency
+				og-input-autoselect
+				og-input-calculator
+			/>
+			<span
+				ng-show="accountForm.openingBalance.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Opening cash balance -->
-		<div ng-if="vm.account.account_type.toLowerCase() == 'investment'" class="form-group has-feedback" ng-class="{'has-error': accountForm.openingCashBalance.$invalid}">
+		<div
+			ng-if="vm.account.account_type.toLowerCase() == 'investment'"
+			class="form-group has-feedback"
+			ng-class="{'has-error': accountForm.openingCashBalance.$invalid}"
+		>
 			<label for="openingCashBalance">Opening Cash Balance</label>
-			<input name="openingCashBalance" class="form-control" ng-class="{'negative': vm.account.related_account.opening_balance < 0}" ng-model="vm.account.related_account.opening_balance" placeholder="Opening Cash Balance" required og-input-currency og-input-autoselect og-input-calculator>
-			<span ng-show="accountForm.openingCashBalance.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				name="openingCashBalance"
+				class="form-control"
+				ng-class="{'negative': vm.account.related_account.opening_balance < 0}"
+				ng-model="vm.account.related_account.opening_balance"
+				placeholder="Opening Cash Balance"
+				required
+				og-input-currency
+				og-input-autoselect
+				og-input-calculator
+			/>
+			<span
+				ng-show="accountForm.openingCashBalance.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Status -->
 		<label for="status">Status</label>
 		<div class="form-group">
 			<div class="btn-group">
-				<label class="btn btn-default" name="status" ng-model="vm.account.status" uib-btn-radio="'Open'" required><i class="glyphicon glyphicon-plus-sign text-success"></i> Open</label>
-				<label class="btn btn-default" name="status" ng-model="vm.account.status" uib-btn-radio="'Closed'" required><i class="glyphicon glyphicon-minus-sign text-danger"></i> Closed</label>
+				<label
+					class="btn btn-default"
+					name="status"
+					ng-model="vm.account.status"
+					uib-btn-radio="'Open'"
+					required
+					><i class="glyphicon glyphicon-plus-sign text-success"></i>
+					Open</label
+				>
+				<label
+					class="btn btn-default"
+					name="status"
+					ng-model="vm.account.status"
+					uib-btn-radio="'Closed'"
+					required
+					><i class="glyphicon glyphicon-minus-sign text-danger"></i>
+					Closed</label
+				>
 			</div>
-			<span ng-show="accountForm.status.$invalid" class="text-danger glyphicon glyphicon-remove"></span>
+			<span
+				ng-show="accountForm.status.$invalid"
+				class="text-danger glyphicon glyphicon-remove"
+			></span>
 		</div>
 		<!-- Related Account -->
-		<div ng-if="vm.account.account_type.toLowerCase() == 'loan'" class="form-group has-feedback" ng-class="{'has-error': accountForm.relatedAccount.$invalid}">
+		<div
+			ng-if="vm.account.account_type.toLowerCase() == 'loan'"
+			class="form-group has-feedback"
+			ng-class="{'has-error': accountForm.relatedAccount.$invalid}"
+		>
 			<label for="relatedAccount">Related Asset</label>
-			<input name="relatedAccount" class="form-control" ng-model="vm.account.related_account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Asset" og-input-autoselect>
-			<span ng-show="accountForm.relatedAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				name="relatedAccount"
+				class="form-control"
+				ng-model="vm.account.related_account"
+				uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)"
+				typeahead-editable="false"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Asset"
+				og-input-autoselect
+			/>
+			<span
+				ng-show="accountForm.relatedAccount.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-		<button class="btn btn-primary" type="submit" ng-disabled="accountForm.$invalid" ng-click="vm.save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-primary"
+			type="submit"
+			ng-disabled="accountForm.$invalid"
+			ng-click="vm.save()"
+		>
+			<i class="glyphicon glyphicon-ok"></i> Save
+		</button>
 	</div>
 </form>

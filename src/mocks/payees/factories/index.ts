@@ -11,6 +11,6 @@ export default function createPayee(props: Partial<Payee> = {}): Payee {
 		closing_balance: 0,
 		favourite: false,
 		num_transactions: 0,
-		...props
+		...props,
 	};
 }

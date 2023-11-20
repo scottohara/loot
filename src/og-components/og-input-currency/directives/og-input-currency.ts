@@ -7,12 +7,17 @@ export default class OgInputCurrencyDirective {
 			priority: 1,
 			require: "ngModel",
 			scope: {
-				precision: "@ogInputCurrency"
+				precision: "@ogInputCurrency",
 			},
 			controller: "OgInputCurrencyController",
 			controllerAs: "vm",
 			bindToController: true,
-			link(scope: OgInputCurrencyScope, iElement: JQuery<Element>, _: angular.IAttributes, ngModel: angular.INgModelController): void {
+			link(
+				scope: OgInputCurrencyScope,
+				iElement: JQuery<Element>,
+				_: angular.IAttributes,
+				ngModel: angular.INgModelController,
+			): void {
 				// Set the decimal places
 				if (scope.vm.precision) {
 					scope.vm.decimalPlaces = Number(scope.vm.precision);
@@ -25,11 +30,20 @@ export default class OgInputCurrencyDirective {
 				ngModel.$formatters.unshift(scope.vm.rawToFormatted.bind(scope.vm));
 
 				function formattedToRaw(): void {
-					iElement.val(numberFilter(scope.vm.formattedToRaw(String(iElement.val())), scope.vm.decimalPlaces));
+					iElement.val(
+						numberFilter(
+							scope.vm.formattedToRaw(String(iElement.val())),
+							scope.vm.decimalPlaces,
+						),
+					);
 				}
 
 				function rawToFormatted(): void {
-					iElement.val(scope.vm.rawToFormatted(scope.vm.formattedToRaw(String(iElement.val()))));
+					iElement.val(
+						scope.vm.rawToFormatted(
+							scope.vm.formattedToRaw(String(iElement.val())),
+						),
+					);
 				}
 
 				// Update view when tabbing in/out of the field
@@ -41,13 +55,15 @@ export default class OgInputCurrencyDirective {
 					iElement.off("focus", formattedToRaw);
 					iElement.off("blur", rawToFormatted);
 				});
-			}
+			},
 		};
 
 		return directive;
 	}
 
-	public static factory(numberFilter: angular.IFilterNumber): OgInputCurrencyDirective {
+	public static factory(
+		numberFilter: angular.IFilterNumber,
+	): OgInputCurrencyDirective {
 		return new OgInputCurrencyDirective(numberFilter);
 	}
 }

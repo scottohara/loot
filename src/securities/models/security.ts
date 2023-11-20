@@ -1,8 +1,4 @@
-import type {
-	Cacheable,
-	Favouritable,
-	Persistable
-} from "~/loot/types";
+import type { Cacheable, Favouritable, Persistable } from "~/loot/types";
 import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
 import type OgLruCache from "~/og-components/og-lru-cache-factory/models/og-lru-cache";
 import type OgLruCacheFactory from "~/og-components/og-lru-cache-factory/models/og-lru-cache-factory";
@@ -13,7 +9,9 @@ import type { Transaction } from "~/transactions/types";
 // Number of securities to keep in the LRU cache
 const LRU_CAPACITY = 10;
 
-export default class SecurityModel implements Cacheable<Security>, Favouritable<Security>, Persistable<Security> {
+export default class SecurityModel
+	implements Cacheable<Security>, Favouritable<Security>, Persistable<Security>
+{
 	public recent: OgCacheEntry[];
 
 	public readonly LRU_LOCAL_STORAGE_KEY = "lootRecentSecurities";
@@ -24,10 +22,12 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 
 	private readonly lruCache: OgLruCache;
 
-	public constructor(private readonly $http: angular.IHttpService,
-						$cacheFactory: angular.ICacheFactoryService,
-						private readonly $window: angular.IWindowService,
-						ogLruCacheFactory: OgLruCacheFactory) {
+	public constructor(
+		private readonly $http: angular.IHttpService,
+		$cacheFactory: angular.ICacheFactoryService,
+		private readonly $window: angular.IWindowService,
+		ogLruCacheFactory: OgLruCacheFactory,
+	) {
 		this.cache = $cacheFactory("securities");
 
 		// Create an LRU cache and populate with the recent payee list from local storage
@@ -36,7 +36,9 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 	}
 
 	private get recentSecurities(): OgCacheEntry[] {
-		const recentSecurities: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
+		const recentSecurities: string | null = this.$window.localStorage.getItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+		);
 
 		return JSON.parse(recentSecurities ?? "[]") as OgCacheEntry[];
 	}
@@ -48,9 +50,14 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 
 	// Retrieves the list of securities
 	public all(includeBalances = false): angular.IPromise<Security[]> {
-		return this.$http.get(`${this.path()}${includeBalances ? "?include_balances" : ""}`, {
-			cache: includeBalances ? false : this.cache
-		}).then((response: angular.IHttpResponse<Security[]>): Security[] => response.data);
+		return this.$http
+			.get(`${this.path()}${includeBalances ? "?include_balances" : ""}`, {
+				cache: includeBalances ? false : this.cache,
+			})
+			.then(
+				(response: angular.IHttpResponse<Security[]>): Security[] =>
+					response.data,
+			);
 	}
 
 	// Retrieves the list of securities, including balances
@@ -59,14 +66,22 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 	}
 
 	// Retrieves the most recent transaction for a security
-	public findLastTransaction(securityId: number, accountType: StoredAccountType): angular.IPromise<Transaction | undefined> {
+	public findLastTransaction(
+		securityId: number,
+		accountType: StoredAccountType,
+	): angular.IPromise<Transaction | undefined> {
 		const NOT_FOUND = 404;
 
-		return this.$http.get(`${this.path(securityId)}/transactions/last`, {
-			params: {
-				account_type: accountType
-			}
-		}).then((response: angular.IHttpResponse<Transaction>): Transaction => response.data)
+		return this.$http
+			.get(`${this.path(securityId)}/transactions/last`, {
+				params: {
+					account_type: accountType,
+				},
+			})
+			.then(
+				(response: angular.IHttpResponse<Transaction>): Transaction =>
+					response.data,
+			)
 			.catch((error: angular.IHttpResponse<string>): undefined => {
 				const { status, statusText, data } = error;
 
@@ -81,13 +96,15 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 
 	// Retrieves a single security
 	public find(id: number): angular.IPromise<Security> {
-		return this.$http.get(this.path(id), {
-			cache: this.cache
-		}).then((response: angular.IHttpResponse<Security>): Security => {
-			this.addRecent(response.data);
+		return this.$http
+			.get(this.path(id), {
+				cache: this.cache,
+			})
+			.then((response: angular.IHttpResponse<Security>): Security => {
+				this.addRecent(response.data);
 
-			return response.data;
-		});
+				return response.data;
+			});
 	}
 
 	// Saves a security
@@ -98,7 +115,7 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 		return this.$http({
 			method: undefined === security.id ? "POST" : "PATCH",
 			url: this.path(security.id),
-			data: security
+			data: security,
 		});
 	}
 
@@ -107,7 +124,9 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 		// Flush the $http cache
 		this.flush();
 
-		return this.$http.delete(this.path(security.id)).then((): void => this.removeRecent(Number(security.id)));
+		return this.$http
+			.delete(this.path(security.id))
+			.then((): void => this.removeRecent(Number(security.id)));
 	}
 
 	// Favourites/unfavourites a security
@@ -117,7 +136,7 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 
 		return this.$http({
 			method: security.favourite ? "DELETE" : "PUT",
-			url: `${this.path(security.id)}/favourite`
+			url: `${this.path(security.id)}/favourite`,
 		}).then((): boolean => !security.favourite);
 	}
 
@@ -136,7 +155,10 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 		this.recent = this.lruCache.put(security);
 
 		// Update local storage with the new list
-		this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.list));
+		this.$window.localStorage.setItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+			JSON.stringify(this.lruCache.list),
+		);
 	}
 
 	// Remove an item from the LRU cache
@@ -145,8 +167,16 @@ export default class SecurityModel implements Cacheable<Security>, Favouritable<
 		this.recent = this.lruCache.remove(id);
 
 		// Update local storage with the new list
-		this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.list));
+		this.$window.localStorage.setItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+			JSON.stringify(this.lruCache.list),
+		);
 	}
 }
 
-SecurityModel.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
+SecurityModel.$inject = [
+	"$http",
+	"$cacheFactory",
+	"$window",
+	"ogLruCacheFactory",
+];

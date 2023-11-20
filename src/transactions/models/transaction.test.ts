@@ -7,18 +7,14 @@ import type {
 	SubtransferTransaction,
 	Transaction,
 	TransactionBatch,
-	TransferrableTransaction
+	TransferrableTransaction,
 } from "~/transactions/types";
 import {
 	createBasicTransaction,
 	createSubtransaction,
-	createSubtransferTransaction
+	createSubtransferTransaction,
 } from "~/mocks/transactions/factories";
-import {
-	lightFormat,
-	parseISO,
-	startOfDay
-} from "date-fns";
+import { lightFormat, parseISO, startOfDay } from "date-fns";
 import type { AccountModelMock } from "~/mocks/accounts/types";
 import type { CategoryModelMock } from "~/mocks/categories/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
@@ -34,29 +30,54 @@ import createSecurity from "~/mocks/securities/factories";
 import sinon from "sinon";
 
 describe("transactionModel", (): void => {
-	let	transactionModel: TransactionModel,
-			$httpBackend: angular.IHttpBackendService,
-			$window: WindowMock,
-			accountModel: AccountModelMock,
-			payeeModel: PayeeModel,
-			categoryModel: CategoryModelMock,
-			securityModel: SecurityModelMock;
+	let transactionModel: TransactionModel,
+		$httpBackend: angular.IHttpBackendService,
+		$window: WindowMock,
+		accountModel: AccountModelMock,
+		payeeModel: PayeeModel,
+		categoryModel: CategoryModelMock,
+		securityModel: SecurityModelMock;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootTransactions", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$window", "accountModel", "payeeModel", "categoryModel", "securityModel"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootTransactions",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"$window",
+					"accountModel",
+					"payeeModel",
+					"categoryModel",
+					"securityModel",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(angular.mock.inject((_transactionModel_: TransactionModel, _$httpBackend_: angular.IHttpBackendService, _$window_: WindowMock, _accountModel_: AccountModelMock, _payeeModel_: PayeeModel, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
-		transactionModel = _transactionModel_;
+	beforeEach(
+		angular.mock.inject(
+			(
+				_transactionModel_: TransactionModel,
+				_$httpBackend_: angular.IHttpBackendService,
+				_$window_: WindowMock,
+				_accountModel_: AccountModelMock,
+				_payeeModel_: PayeeModel,
+				_categoryModel_: CategoryModelMock,
+				_securityModel_: SecurityModelMock,
+			): void => {
+				transactionModel = _transactionModel_;
 
-		$httpBackend = _$httpBackend_;
-		$window = _$window_;
+				$httpBackend = _$httpBackend_;
+				$window = _$window_;
 
-		accountModel = _accountModel_;
-		payeeModel = _payeeModel_;
-		categoryModel = _categoryModel_;
-		securityModel = _securityModel_;
-	}) as Mocha.HookFunction);
+				accountModel = _accountModel_;
+				payeeModel = _payeeModel_;
+				categoryModel = _categoryModel_;
+				securityModel = _securityModel_;
+			},
+		) as Mocha.HookFunction,
+	);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {
@@ -65,9 +86,11 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("path", (): void => {
-		it("should return the transactions collection path when an id is not provided", (): Chai.Assertion => expect(transactionModel.path()).to.equal("/transactions"));
+		it("should return the transactions collection path when an id is not provided", (): Chai.Assertion =>
+			expect(transactionModel.path()).to.equal("/transactions"));
 
-		it("should return a specific transaction path when an id is provided", (): Chai.Assertion => expect(transactionModel.path(123)).to.equal("/transactions/123"));
+		it("should return a specific transaction path when an id is provided", (): Chai.Assertion =>
+			expect(transactionModel.path(123)).to.equal("/transactions/123"));
 	});
 
 	describe("fullPath", (): void => {
@@ -79,14 +102,22 @@ describe("transactionModel", (): void => {
 
 	describe("parse", (): void => {
 		it("should convert the transaction date from a string to a date", (): void => {
-			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss") }));
+			const transaction = transactionModel["parse"](
+				createBasicTransaction({
+					transaction_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss"),
+				}),
+			);
 
 			expect(transaction.transaction_date as Date).to.be.a("date");
-			expect(transaction.transaction_date as Date).to.deep.equal(startOfDay(new Date()));
+			expect(transaction.transaction_date as Date).to.deep.equal(
+				startOfDay(new Date()),
+			);
 		});
 
 		it("should do nothing if the transaction date is undefined", (): void => {
-			const transaction = transactionModel["parse"](createBasicTransaction({ transaction_date: undefined }));
+			const transaction = transactionModel["parse"](
+				createBasicTransaction({ transaction_date: undefined }),
+			);
 
 			expect(transaction.transaction_date).to.be.undefined;
 		});
@@ -94,14 +125,20 @@ describe("transactionModel", (): void => {
 
 	describe("stringify", (): void => {
 		it("should convert the transaction date from a date to a string", (): void => {
-			const transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: startOfDay(new Date()) }));
+			const transaction = transactionModel["stringify"](
+				createBasicTransaction({ transaction_date: startOfDay(new Date()) }),
+			);
 
 			expect(transaction.transaction_date as string).to.be.a("string");
-			expect(transaction.transaction_date as string).to.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
+			expect(transaction.transaction_date as string).to.deep.equal(
+				lightFormat(new Date(), "yyyy-MM-dd"),
+			);
 		});
 
 		it("should do nothing if the transaction date is undefined", (): void => {
-			const transaction = transactionModel["stringify"](createBasicTransaction({ transaction_date: undefined }));
+			const transaction = transactionModel["stringify"](
+				createBasicTransaction({ transaction_date: undefined }),
+			);
 
 			expect(transaction.transaction_date).to.be.undefined;
 		});
@@ -111,14 +148,21 @@ describe("transactionModel", (): void => {
 		const expectedResponse: TransactionBatch = {
 			transactions: [createBasicTransaction(), createBasicTransaction()],
 			openingBalance: 0,
-			atEnd: false
+			atEnd: false,
 		};
 		let fromDate: Date;
 
 		beforeEach((): void => {
 			fromDate = new Date();
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(new RegExp(`context/transactions\\?as_at=${fromDate.toISOString()}&direction=prev&unreconciled=true`, "u")).respond(200, expectedResponse);
+			$httpBackend
+				.expectGET(
+					new RegExp(
+						`context/transactions\\?as_at=${fromDate.toISOString()}&direction=prev&unreconciled=true`,
+						"u",
+					),
+				)
+				.respond(200, expectedResponse);
 		});
 
 		it("should dispatch a GET request to /{context}/transactions?as_at={fromDate}&direction={direction}&unreconciled={unreconciledOnly}", (): void => {
@@ -133,7 +177,12 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should return a list of transactions", (): void => {
-			transactionModel.all("context", fromDate, "prev", true).then((transactionBatch: TransactionBatch): Chai.Assertion => expect(transactionBatch).to.deep.equal(expectedResponse));
+			transactionModel
+				.all("context", fromDate, "prev", true)
+				.then(
+					(transactionBatch: TransactionBatch): Chai.Assertion =>
+						expect(transactionBatch).to.deep.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
@@ -142,12 +191,14 @@ describe("transactionModel", (): void => {
 		const expectedResponse: TransactionBatch = {
 			transactions: [createBasicTransaction(), createBasicTransaction()],
 			openingBalance: 0,
-			atEnd: false
+			atEnd: false,
 		};
 
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(/transactions\?direction=prev&query=query/u).respond(200, expectedResponse);
+			$httpBackend
+				.expectGET(/transactions\?direction=prev&query=query/u)
+				.respond(200, expectedResponse);
 		});
 
 		it("should dispatch a GET request to /transactions?direction={direction}&query={query}", (): void => {
@@ -162,7 +213,12 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should return a list of transactions", (): void => {
-			transactionModel.query("query", null, "prev").then((transactionBatch: TransactionBatch): Chai.Assertion => expect(transactionBatch).to.deep.equal(expectedResponse));
+			transactionModel
+				.query("query", null, "prev")
+				.then(
+					(transactionBatch: TransactionBatch): Chai.Assertion =>
+						expect(transactionBatch).to.deep.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
@@ -170,7 +226,12 @@ describe("transactionModel", (): void => {
 	describe("findSubtransactions", (): void => {
 		const expectedResponse = "subtransactions";
 
-		beforeEach((): angular.mock.IRequestHandler => $httpBackend.expectGET(/transactions\/123\/subtransactions/u).respond(200, expectedResponse));
+		beforeEach(
+			(): angular.mock.IRequestHandler =>
+				$httpBackend
+					.expectGET(/transactions\/123\/subtransactions/u)
+					.respond(200, expectedResponse),
+		);
 
 		it("should dispatch a GET request to /transactions/123/subtransactions", (): void => {
 			transactionModel.findSubtransactions(123);
@@ -178,7 +239,12 @@ describe("transactionModel", (): void => {
 		});
 
 		it("should return a list of subtransactions", (): void => {
-			transactionModel.findSubtransactions(123).then((subtransactions: SplitTransactionChild[]): Chai.Assertion => expect(subtransactions).to.equal(expectedResponse));
+			transactionModel
+				.findSubtransactions(123)
+				.then(
+					(subtransactions: SplitTransactionChild[]): Chai.Assertion =>
+						expect(subtransactions).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
@@ -188,7 +254,9 @@ describe("transactionModel", (): void => {
 
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
-			$httpBackend.expectGET(/transactions\/123/u).respond(200, expectedResponse);
+			$httpBackend
+				.expectGET(/transactions\/123/u)
+				.respond(200, expectedResponse);
 		});
 
 		it("should dispatch a GET request to /transactions/123", (): void => {
@@ -199,19 +267,26 @@ describe("transactionModel", (): void => {
 		it("should parse the transaction", (): void => {
 			transactionModel.find(123);
 			$httpBackend.flush();
-			expect(transactionModel["parse"]).to.have.been.calledWith(expectedResponse);
+			expect(transactionModel["parse"]).to.have.been.calledWith(
+				expectedResponse,
+			);
 		});
 
 		it("should return the transaction", (): void => {
-			transactionModel.find(123).then((transaction: Transaction): Chai.Assertion => expect(transaction).to.equal(expectedResponse));
+			transactionModel
+				.find(123)
+				.then(
+					(transaction: Transaction): Chai.Assertion =>
+						expect(transaction).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
 		const expectedResponse = "transaction",
-					expectedPostUrl = /transactions$/u,
-					expectedPatchUrl = /transactions\/1$/u;
+			expectedPostUrl = /transactions$/u,
+			expectedPatchUrl = /transactions\/1$/u;
 		let transaction: Transaction;
 
 		beforeEach((): void => {
@@ -231,7 +306,9 @@ describe("transactionModel", (): void => {
 
 		it("should stringify the transaction", (): void => {
 			transactionModel.save(transaction);
-			expect(transactionModel["stringify"]).to.have.been.calledWith(transaction);
+			expect(transactionModel["stringify"]).to.have.been.calledWith(
+				transaction,
+			);
 			$httpBackend.flush();
 		});
 
@@ -252,17 +329,26 @@ describe("transactionModel", (): void => {
 			transaction.transaction_date = parseISO("2000-01-01");
 			transactionModel.save(transaction);
 			$httpBackend.flush();
-			expect(transactionModel.lastTransactionDate as Date).to.deep.equal(transaction.transaction_date);
+			expect(transactionModel.lastTransactionDate as Date).to.deep.equal(
+				transaction.transaction_date,
+			);
 		});
 
 		it("should parse the transaction", (): void => {
 			transactionModel.save(transaction);
 			$httpBackend.flush();
-			expect(transactionModel["parse"]).to.have.been.calledWith(expectedResponse);
+			expect(transactionModel["parse"]).to.have.been.calledWith(
+				expectedResponse,
+			);
 		});
 
 		it("should return the transaction", (): void => {
-			transactionModel.save(transaction).then((savedTransaction: Transaction): Chai.Assertion => expect(savedTransaction).to.equal(expectedResponse));
+			transactionModel
+				.save(transaction)
+				.then(
+					(savedTransaction: Transaction): Chai.Assertion =>
+						expect(savedTransaction).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
@@ -296,28 +382,71 @@ describe("transactionModel", (): void => {
 		beforeEach((): void => {
 			(transaction as TransferrableTransaction).account = createAccount();
 			(transaction as SecurityTransaction).security = createSecurity();
-			(transaction as SplitTransaction).subtransactions = [createSubtransaction(), createSubtransferTransaction()];
+			(transaction as SplitTransaction).subtransactions = [
+				createSubtransaction(),
+				createSubtransferTransaction(),
+			];
 			transactionModel["invalidateCache"] = sinon.stub();
 			transactionModel["invalidateCaches"](transaction);
 		});
 
-		it("should invalidate the primary account from the account cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(accountModel, transaction.primary_account));
+		it("should invalidate the primary account from the account cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				accountModel,
+				transaction.primary_account,
+			));
 
-		it("should invalidate the payee from the payee cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(payeeModel, (transaction as BasicTransaction).payee));
+		it("should invalidate the payee from the payee cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				payeeModel,
+				(transaction as BasicTransaction).payee,
+			));
 
-		it("should invalidate the category from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, transaction.category));
+		it("should invalidate the category from the category cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				categoryModel,
+				transaction.category,
+			));
 
-		it("should invalidate the subcategory from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, (transaction as BasicTransaction).subcategory));
+		it("should invalidate the subcategory from the category cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				categoryModel,
+				(transaction as BasicTransaction).subcategory,
+			));
 
-		it("should invalidate the account from the account cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(accountModel, (transaction as TransferrableTransaction).account));
+		it("should invalidate the account from the account cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				accountModel,
+				(transaction as TransferrableTransaction).account,
+			));
 
-		it("should invalidate the security from the security cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(securityModel, (transaction as SecurityTransaction).security));
+		it("should invalidate the security from the security cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				securityModel,
+				(transaction as SecurityTransaction).security,
+			));
 
-		it("should invalidate any subtransaction categories from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, (transaction as SplitTransaction).subtransactions[0].category));
+		it("should invalidate any subtransaction categories from the category cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				categoryModel,
+				(transaction as SplitTransaction).subtransactions[0].category,
+			));
 
-		it("should invalidate any subtransaction subcategories from the category cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(categoryModel, ((transaction as SplitTransaction).subtransactions[0] as Subtransaction).subcategory));
+		it("should invalidate any subtransaction subcategories from the category cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				categoryModel,
+				((transaction as SplitTransaction).subtransactions[0] as Subtransaction)
+					.subcategory,
+			));
 
-		it("should invalidate any subtransfer accounts from the account cache", (): Chai.Assertion => expect(transactionModel["invalidateCache"]).to.have.been.calledWith(accountModel, ((transaction as SplitTransaction).subtransactions[1] as SubtransferTransaction).account));
+		it("should invalidate any subtransfer accounts from the account cache", (): Chai.Assertion =>
+			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+				accountModel,
+				(
+					(transaction as SplitTransaction)
+						.subtransactions[1] as SubtransferTransaction
+				).account,
+			));
 	});
 
 	describe("invalidateCache", (): void => {
@@ -357,7 +486,7 @@ describe("transactionModel", (): void => {
 
 	describe("updateStatus", (): void => {
 		const expectedPatchUrl = /context\/transactions\/1\/status\?Cleared$/u,
-					expectedDeleteUrl = /context\/transactions\/1\/status$/u;
+			expectedDeleteUrl = /context\/transactions\/1\/status$/u;
 
 		beforeEach((): void => {
 			$httpBackend.whenPATCH(expectedPatchUrl).respond(200);
@@ -389,8 +518,15 @@ describe("transactionModel", (): void => {
 
 	describe("flag", (): void => {
 		it("should dispatch a PUT request to /transactions/{id}/flag", (): void => {
-			$httpBackend.expectPUT(/transactions\/1\/flag/u, { flag_type: "noreceipt", memo: "flag" }).respond(200);
-			transactionModel.flag(createBasicTransaction({ id: 1, flag_type: "noreceipt", flag: "flag" }));
+			$httpBackend
+				.expectPUT(/transactions\/1\/flag/u, {
+					flag_type: "noreceipt",
+					memo: "flag",
+				})
+				.respond(200);
+			transactionModel.flag(
+				createBasicTransaction({ id: 1, flag_type: "noreceipt", flag: "flag" }),
+			);
 			$httpBackend.flush();
 		});
 	});
@@ -404,15 +540,20 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("allDetailsShown", (): void => {
-		it("should be true if the show all details setting is not present", (): Chai.Assertion => expect(transactionModel.allDetailsShown()).to.be.true);
+		it("should be true if the show all details setting is not present", (): Chai.Assertion =>
+			expect(transactionModel.allDetailsShown()).to.be.true);
 
 		it("should be true if the show all details setting is not set to false", (): void => {
-			$window.localStorage.getItem.withArgs("lootShowAllTransactionDetails").returns("true");
+			$window.localStorage.getItem
+				.withArgs("lootShowAllTransactionDetails")
+				.returns("true");
 			expect(transactionModel.allDetailsShown()).to.be.true;
 		});
 
 		it("should be false if the show all details setting is set to false", (): void => {
-			$window.localStorage.getItem.withArgs("lootShowAllTransactionDetails").returns("false");
+			$window.localStorage.getItem
+				.withArgs("lootShowAllTransactionDetails")
+				.returns("false");
 			expect(transactionModel.allDetailsShown()).to.be.false;
 		});
 	});
@@ -420,11 +561,17 @@ describe("transactionModel", (): void => {
 	describe("showAllDetails", (): void => {
 		it("should save the show all details setting", (): void => {
 			transactionModel.showAllDetails(true);
-			expect($window.localStorage.setItem).to.have.been.calledWith("lootShowAllTransactionDetails", "true");
+			expect($window.localStorage.setItem).to.have.been.calledWith(
+				"lootShowAllTransactionDetails",
+				"true",
+			);
 		});
 	});
 
 	describe("lastTransactionDate", (): void => {
-		it("should return the last used transaction date", (): Chai.Assertion => expect(transactionModel.lastTransactionDate as Date).to.deep.equal(startOfDay(new Date())));
+		it("should return the last used transaction date", (): Chai.Assertion =>
+			expect(transactionModel.lastTransactionDate as Date).to.deep.equal(
+				startOfDay(new Date()),
+			));
 	});
 });

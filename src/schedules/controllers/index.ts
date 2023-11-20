@@ -1,16 +1,13 @@
 import "~/transactions/css/index.less";
 import type {
 	OgTableActionHandlers,
-	OgTableActions
+	OgTableActions,
 } from "~/og-components/og-table-navigable/types";
 import type {
 	SplitTransaction,
-	SplitTransactionChild
+	SplitTransactionChild,
 } from "~/transactions/types";
-import {
-	isEqual,
-	startOfDay
-} from "date-fns";
+import { isEqual, startOfDay } from "date-fns";
 import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
 import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import ScheduleDeleteView from "~/schedules/views/delete.html";
@@ -27,15 +24,17 @@ export default class ScheduleIndexController {
 
 	private readonly showError: (message?: string) => void;
 
-	public constructor($scope: angular.IScope,
-						$transitions: angular.ui.IStateParamsService,
-						private readonly $uibModal: angular.ui.bootstrap.IModalService,
-						private readonly $timeout: angular.ITimeoutService,
-						private readonly $state: angular.ui.IStateService,
-						private readonly transactionModel: TransactionModel,
-						private readonly ogTableNavigableService: OgTableNavigableService,
-						ogModalErrorService: OgModalErrorService,
-						public readonly schedules: ScheduledTransaction[]) {
+	public constructor(
+		$scope: angular.IScope,
+		$transitions: angular.ui.IStateParamsService,
+		private readonly $uibModal: angular.ui.bootstrap.IModalService,
+		private readonly $timeout: angular.ITimeoutService,
+		private readonly $state: angular.ui.IStateService,
+		private readonly transactionModel: TransactionModel,
+		private readonly ogTableNavigableService: OgTableNavigableService,
+		ogModalErrorService: OgModalErrorService,
+		public readonly schedules: ScheduledTransaction[],
+	) {
 		const self: this = this;
 
 		this.tableActions = {
@@ -52,8 +51,12 @@ export default class ScheduleIndexController {
 				self.deleteSchedule(index);
 			},
 			focusAction(index: number): void {
-				$state.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, { id: self.schedules[index].id }).catch(self.showError);
-			}
+				$state
+					.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, {
+						id: self.schedules[index].id,
+					})
+					.catch(self.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -64,11 +67,21 @@ export default class ScheduleIndexController {
 		}
 
 		// When the id state parameter changes, focus the specified row
-		$scope.$on("$destroy", $transitions.onSuccess({ to: "root.schedules.schedule" }, (transition: angular.ui.IState): number => this.focusSchedule(Number(transition.params("to").id))) as () => void);
+		$scope.$on(
+			"$destroy",
+			$transitions.onSuccess(
+				{ to: "root.schedules.schedule" },
+				(transition: angular.ui.IState): number =>
+					this.focusSchedule(Number(transition.params("to").id)),
+			) as () => void,
+		);
 	}
 
 	// Shows/hides subtransactions
-	public toggleSubtransactions($event: Event, schedule: SplitTransaction): void {
+	public toggleSubtransactions(
+		$event: Event,
+		schedule: SplitTransaction,
+	): void {
 		// Toggle the show flag
 		schedule.showSubtransactions = !schedule.showSubtransactions;
 
@@ -81,12 +94,15 @@ export default class ScheduleIndexController {
 			schedule.subtransactions = [];
 
 			// Resolve the subtransactions
-			this.transactionModel.findSubtransactions(Number(schedule.id)).then((subtransactions: SplitTransactionChild[]): void => {
-				schedule.subtransactions = subtransactions;
+			this.transactionModel
+				.findSubtransactions(Number(schedule.id))
+				.then((subtransactions: SplitTransactionChild[]): void => {
+					schedule.subtransactions = subtransactions;
 
-				// Hide the loading indicator
-				schedule.loadingSubtransactions = false;
-			}).catch(this.showError);
+					// Hide the loading indicator
+					schedule.loadingSubtransactions = false;
+				})
+				.catch(this.showError);
 		}
 
 		$event.cancelBubble = true;
@@ -94,7 +110,10 @@ export default class ScheduleIndexController {
 
 	private editSchedule(index?: number): void {
 		// Helper function to sort by next due date, then by transaction id
-		function byNextDueDateAndId(a: ScheduledTransaction, b: ScheduledTransaction): number {
+		function byNextDueDateAndId(
+			a: ScheduledTransaction,
+			b: ScheduledTransaction,
+		): number {
 			let x: Date | number | string, y: Date | number | string;
 
 			if (isEqual(a.next_due_date as Date, b.next_due_date as Date)) {
@@ -112,55 +131,77 @@ export default class ScheduleIndexController {
 		this.ogTableNavigableService.enabled = false;
 
 		// Show the modal
-		this.$uibModal.open({
-			templateUrl: ScheduleEditView,
-			controller: "ScheduleEditController",
-			controllerAs: "vm",
-			backdrop: "static",
-			size: "lg",
-			resolve: {
-				schedule: (): angular.IPromise<ScheduledTransaction> | ScheduledTransaction | undefined => {
-					// If we didn't get an index, we're adding a new schedule so just return null
-					if (isNaN(Number(index))) {
-						return undefined;
-					}
+		this.$uibModal
+			.open({
+				templateUrl: ScheduleEditView,
+				controller: "ScheduleEditController",
+				controllerAs: "vm",
+				backdrop: "static",
+				size: "lg",
+				resolve: {
+					schedule: ():
+						| angular.IPromise<ScheduledTransaction>
+						| ScheduledTransaction
+						| undefined => {
+						// If we didn't get an index, we're adding a new schedule so just return null
+						if (isNaN(Number(index))) {
+							return undefined;
+						}
 
-					// If the selected schedule is a Split/Loan Repayment/Payslip; fetch the subtransactions first
-					switch (this.schedules[Number(index)].transaction_type) {
-						case "Split":
-						case "LoanRepayment":
-						case "Payslip":
-							(this.schedules[Number(index)] as SplitTransaction).subtransactions = [];
+						// If the selected schedule is a Split/Loan Repayment/Payslip; fetch the subtransactions first
+						switch (this.schedules[Number(index)].transaction_type) {
+							case "Split":
+							case "LoanRepayment":
+							case "Payslip":
+								(
+									this.schedules[Number(index)] as SplitTransaction
+								).subtransactions = [];
 
-							return this.transactionModel.findSubtransactions(Number(this.schedules[Number(index)].id)).then((subtransactions: SplitTransactionChild[]): ScheduledTransaction => {
-								(this.schedules[Number(index)] as SplitTransaction).subtransactions = subtransactions;
+								return this.transactionModel
+									.findSubtransactions(Number(this.schedules[Number(index)].id))
+									.then(
+										(
+											subtransactions: SplitTransactionChild[],
+										): ScheduledTransaction => {
+											(
+												this.schedules[Number(index)] as SplitTransaction
+											).subtransactions = subtransactions;
 
+											return this.schedules[Number(index)];
+										},
+									);
+							default:
 								return this.schedules[Number(index)];
-							});
-						default:
-							return this.schedules[Number(index)];
-					}
-				}
-			}
-		}).result
-			.then((schedule: { data: ScheduledTransaction; skipped: boolean; }): void => {
-				if (isNaN(Number(index))) {
-					// Add new schedule to the end of the array
-					this.schedules.push(schedule.data);
-				} else {
-					// Update the existing schedule in the array
-					this.schedules[Number(index)] = schedule.data;
-				}
-
-				// Resort the array
-				this.schedules.sort(byNextDueDateAndId);
-
-				/*
-				 * If we entered or skipped a transaction, refocus the schedule now at the original index,
-				 * otherwise refocus the schedule that was edited
-				 */
-				this.focusSchedule(Number(schedule.skipped ? this.schedules[Number(index)].id : schedule.data.id));
+						}
+					},
+				},
 			})
+			.result.then(
+				(schedule: { data: ScheduledTransaction; skipped: boolean }): void => {
+					if (isNaN(Number(index))) {
+						// Add new schedule to the end of the array
+						this.schedules.push(schedule.data);
+					} else {
+						// Update the existing schedule in the array
+						this.schedules[Number(index)] = schedule.data;
+					}
+
+					// Resort the array
+					this.schedules.sort(byNextDueDateAndId);
+
+					/*
+					 * If we entered or skipped a transaction, refocus the schedule now at the original index,
+					 * otherwise refocus the schedule that was edited
+					 */
+					this.focusSchedule(
+						Number(
+							schedule.skipped
+								? this.schedules[Number(index)].id
+								: schedule.data.id,
+						),
+					);
+				},
+			)
 			.finally((): true => (this.ogTableNavigableService.enabled = true))
 			.catch(this.showError);
 	}
@@ -170,16 +211,17 @@ export default class ScheduleIndexController {
 		this.ogTableNavigableService.enabled = false;
 
 		// Show the modal
-		this.$uibModal.open({
-			templateUrl: ScheduleDeleteView,
-			controller: "ScheduleDeleteController",
-			controllerAs: "vm",
-			backdrop: "static",
-			resolve: {
-				schedule: (): ScheduledTransaction => this.schedules[index]
-			}
-		}).result
-			.then((): void => {
+		this.$uibModal
+			.open({
+				templateUrl: ScheduleDeleteView,
+				controller: "ScheduleDeleteController",
+				controllerAs: "vm",
+				backdrop: "static",
+				resolve: {
+					schedule: (): ScheduledTransaction => this.schedules[index],
+				},
+			})
+			.result.then((): void => {
 				this.schedules.splice(index, 1);
 				this.$state.go("root.schedules").catch(this.showError);
 			})
@@ -193,19 +235,36 @@ export default class ScheduleIndexController {
 		let targetIndex = NaN;
 
 		// Find the schedule by it's id
-		angular.forEach(this.schedules, (schedule: ScheduledTransaction, index: number): void => {
-			if (isNaN(targetIndex) && schedule.id === scheduleIdToFocus) {
-				targetIndex = index;
-			}
-		});
+		angular.forEach(
+			this.schedules,
+			(schedule: ScheduledTransaction, index: number): void => {
+				if (isNaN(targetIndex) && schedule.id === scheduleIdToFocus) {
+					targetIndex = index;
+				}
+			},
+		);
 
 		// If found, focus the row
 		if (!isNaN(targetIndex)) {
-			this.$timeout((): void => (this.tableActions as OgTableActionHandlers).focusRow(targetIndex), delay).catch(this.showError);
+			this.$timeout(
+				(): void =>
+					(this.tableActions as OgTableActionHandlers).focusRow(targetIndex),
+				delay,
+			).catch(this.showError);
 		}
 
 		return targetIndex;
 	}
 }
 
-ScheduleIndexController.$inject = ["$scope", "$transitions", "$uibModal", "$timeout", "$state", "transactionModel", "ogTableNavigableService", "ogModalErrorService", "schedules"];
+ScheduleIndexController.$inject = [
+	"$scope",
+	"$transitions",
+	"$uibModal",
+	"$timeout",
+	"$state",
+	"transactionModel",
+	"ogTableNavigableService",
+	"ogModalErrorService",
+	"schedules",
+];

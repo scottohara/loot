@@ -1,14 +1,11 @@
-import type {
-	Account,
-	Accounts
-} from "~/accounts/types";
+import type { Account, Accounts } from "~/accounts/types";
 import type {
 	CacheFactoryMock,
-	WindowMock
+	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import type {
 	OgLruCacheFactoryMock,
-	OgLruCacheMock
+	OgLruCacheMock,
 } from "~/mocks/og-components/og-lru-cache-factory/types";
 import type AccountModel from "~/accounts/models/account";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
@@ -18,42 +15,75 @@ import angular from "angular";
 import sinon from "sinon";
 
 describe("accountModel", (): void => {
-	let	accountModel: AccountModel,
-			$httpBackend: angular.IHttpBackendService,
-			$http: angular.IHttpService,
-			$cache: angular.ICacheObject,
-			$window: WindowMock,
-			ogLruCache: OgLruCacheMock,
-			account: Account,
-			iPromise: angular.IPromise<never>,
-			iHttpPromise: angular.IHttpPromise<unknown>;
+	let accountModel: AccountModel,
+		$httpBackend: angular.IHttpBackendService,
+		$http: angular.IHttpService,
+		$cache: angular.ICacheObject,
+		$window: WindowMock,
+		ogLruCache: OgLruCacheMock,
+		account: Account,
+		iPromise: angular.IPromise<never>,
+		iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootAccounts", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "account", "iPromise", "iHttpPromise"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootAccounts",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"$cacheFactory",
+					"$window",
+					"ogLruCacheFactory",
+					"account",
+					"iPromise",
+					"iHttpPromise",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Inject any dependencies that need to be configured first
-	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
-		$window = _$window_;
-		$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(null);
-		$window.localStorage.getItem.withArgs("lootUnreconciledOnly-123").returns("true");
-		$window.localStorage.getItem.withArgs("lootUnreconciledOnly-456").returns("false");
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject((_$window_: WindowMock): void => {
+			$window = _$window_;
+			$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(null);
+			$window.localStorage.getItem
+				.withArgs("lootUnreconciledOnly-123")
+				.returns("true");
+			$window.localStorage.getItem
+				.withArgs("lootUnreconciledOnly-456")
+				.returns("false");
+		}) as Mocha.HookFunction,
+	);
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(angular.mock.inject((_accountModel_: AccountModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, _$cacheFactory_: CacheFactoryMock, _ogLruCacheFactory_: OgLruCacheFactoryMock, _account_: Account, _iPromise_: angular.IPromise<never>, _iHttpPromise_: angular.IHttpPromise<unknown>): void => {
-		accountModel = _accountModel_;
-		$httpBackend = _$httpBackend_;
-		$http = _$http_;
-		account = _account_;
-		iPromise = _iPromise_;
-		iHttpPromise = _iHttpPromise_;
+	beforeEach(
+		angular.mock.inject(
+			(
+				_accountModel_: AccountModel,
+				_$httpBackend_: angular.IHttpBackendService,
+				_$http_: angular.IHttpService,
+				_$cacheFactory_: CacheFactoryMock,
+				_ogLruCacheFactory_: OgLruCacheFactoryMock,
+				_account_: Account,
+				_iPromise_: angular.IPromise<never>,
+				_iHttpPromise_: angular.IHttpPromise<unknown>,
+			): void => {
+				accountModel = _accountModel_;
+				$httpBackend = _$httpBackend_;
+				$http = _$http_;
+				account = _account_;
+				iPromise = _iPromise_;
+				iHttpPromise = _iHttpPromise_;
 
-		const	$cacheFactory: CacheFactoryMock = _$cacheFactory_,
+				const $cacheFactory: CacheFactoryMock = _$cacheFactory_,
 					ogLruCacheFactory: OgLruCacheFactoryMock = _ogLruCacheFactory_;
 
-		$cache = $cacheFactory();
-		ogLruCache = ogLruCacheFactory.new();
-	}) as Mocha.HookFunction);
+				$cache = $cacheFactory();
+				ogLruCache = ogLruCacheFactory.new();
+			},
+		) as Mocha.HookFunction,
+	);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {
@@ -61,16 +91,28 @@ describe("accountModel", (): void => {
 		$httpBackend.verifyNoOutstandingRequest();
 	});
 
-	it("should fetch the list of recent accounts from localStorage", (): Chai.Assertion => expect($window.localStorage.getItem).to.have.been.calledWith("lootRecentAccounts"));
+	it("should fetch the list of recent accounts from localStorage", (): Chai.Assertion =>
+		expect($window.localStorage.getItem).to.have.been.calledWith(
+			"lootRecentAccounts",
+		));
 
-	it("should have a list of recent accounts", (): Chai.Assertion => expect(accountModel.recent).to.deep.equal([{ id: 1, name: "recent item" }]));
+	it("should have a list of recent accounts", (): Chai.Assertion =>
+		expect(accountModel.recent).to.deep.equal([
+			{ id: 1, name: "recent item" },
+		]));
 
 	describe("UNRECONCILED_ONLY_LOCAL_STORAGE_KEY", (): void => {
-		it("should be 'lootUnreconciledOnly-'", (): Chai.Assertion => expect(accountModel["UNRECONCILED_ONLY_LOCAL_STORAGE_KEY"]).to.equal("lootUnreconciledOnly-"));
+		it("should be 'lootUnreconciledOnly-'", (): Chai.Assertion =>
+			expect(accountModel["UNRECONCILED_ONLY_LOCAL_STORAGE_KEY"]).to.equal(
+				"lootUnreconciledOnly-",
+			));
 	});
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
-		it("should be 'lootRecentAccounts'", (): Chai.Assertion => expect(accountModel.LRU_LOCAL_STORAGE_KEY).to.equal("lootRecentAccounts"));
+		it("should be 'lootRecentAccounts'", (): Chai.Assertion =>
+			expect(accountModel.LRU_LOCAL_STORAGE_KEY).to.equal(
+				"lootRecentAccounts",
+			));
 	});
 
 	describe("recentAccounts", (): void => {
@@ -79,30 +121,37 @@ describe("accountModel", (): void => {
 
 			beforeEach((): void => {
 				recentAccounts = [{ id: 1, name: "recent item" }];
-				$window.localStorage.getItem.withArgs("lootRecentAccounts").returns(JSON.stringify(recentAccounts));
+				$window.localStorage.getItem
+					.withArgs("lootRecentAccounts")
+					.returns(JSON.stringify(recentAccounts));
 			});
 
-			it("should return an array of cache entries", (): Chai.Assertion => expect(accountModel["recentAccounts"]).to.deep.equal(recentAccounts));
+			it("should return an array of cache entries", (): Chai.Assertion =>
+				expect(accountModel["recentAccounts"]).to.deep.equal(recentAccounts));
 		});
 
 		describe("when localStorage is null", (): void => {
-			it("should return an empty array", (): Chai.Assertion => expect(accountModel["recentAccounts"]).to.deep.equal([]));
+			it("should return an empty array", (): Chai.Assertion =>
+				expect(accountModel["recentAccounts"]).to.deep.equal([]));
 		});
 	});
 
 	describe("type", (): void => {
-		it("should be 'account'", (): Chai.Assertion => expect(accountModel.type).to.equal("account"));
+		it("should be 'account'", (): Chai.Assertion =>
+			expect(accountModel.type).to.equal("account"));
 	});
 
 	describe("path", (): void => {
-		it("should return the accounts collection path when an id is not provided", (): Chai.Assertion => expect(accountModel.path()).to.equal("/accounts"));
+		it("should return the accounts collection path when an id is not provided", (): Chai.Assertion =>
+			expect(accountModel.path()).to.equal("/accounts"));
 
-		it("should return a specific account path when an id is provided", (): Chai.Assertion => expect(accountModel.path(123)).to.equal("/accounts/123"));
+		it("should return a specific account path when an id is provided", (): Chai.Assertion =>
+			expect(accountModel.path(123)).to.equal("/accounts/123"));
 	});
 
 	describe("all", (): void => {
 		let expectedUrl = /accounts$/u,
-				expectedResponse = "accounts without balances";
+			expectedResponse = "accounts without balances";
 
 		it("should dispatch a GET request to /accounts", (): void => {
 			$httpBackend.expectGET(expectedUrl).respond(200);
@@ -114,12 +163,18 @@ describe("accountModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			accountModel.all();
-			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
+				.not.false;
 		});
 
 		it("should return a list of all accounts without their balances", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-			accountModel.all().then((accounts: Account[] | Accounts): Chai.Assertion => expect(accounts).to.equal(expectedResponse));
+			accountModel
+				.all()
+				.then(
+					(accounts: Account[] | Accounts): Chai.Assertion =>
+						expect(accounts).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 
@@ -136,22 +191,32 @@ describe("accountModel", (): void => {
 			});
 
 			it("should not cache the response in the $http cache", (): void => {
-				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
+				const httpGet: SinonStub = sinon
+					.stub($http, "get")
+					.returns(iHttpPromise);
 
 				accountModel.all(true);
-				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.false;
+				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
+					.false;
 			});
 
 			it("should return a list of all accounts including their balances", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-				accountModel.all(true).then((accounts: Account[] | Accounts): Chai.Assertion => expect(accounts).to.equal(expectedResponse));
+				accountModel
+					.all(true)
+					.then(
+						(accounts: Account[] | Accounts): Chai.Assertion =>
+							expect(accounts).to.equal(expectedResponse),
+					);
 				$httpBackend.flush();
 			});
 		});
 	});
 
 	describe("allWithBalances", (): void => {
-		beforeEach((): SinonStub => sinon.stub(accountModel, "all").returns(iPromise));
+		beforeEach(
+			(): SinonStub => sinon.stub(accountModel, "all").returns(iPromise),
+		);
 
 		it("should call accountModel.all(true)", (): void => {
 			accountModel.allWithBalances();
@@ -165,7 +230,7 @@ describe("accountModel", (): void => {
 
 	describe("find", (): void => {
 		const expectedUrl = /accounts\/123/u,
-					expectedResponse = "account details";
+			expectedResponse = "account details";
 
 		beforeEach((): SinonStub => sinon.stub(accountModel, "addRecent"));
 
@@ -179,26 +244,34 @@ describe("accountModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			accountModel.find(123);
-			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
+				.not.false;
 		});
 
 		it("should add the account to the recent list", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			accountModel.find(123);
 			$httpBackend.flush();
-			expect(accountModel["addRecent"]).to.have.been.calledWith(expectedResponse);
+			expect(accountModel["addRecent"]).to.have.been.calledWith(
+				expectedResponse,
+			);
 		});
 
 		it("should return the account", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
-			accountModel.find(123).then((foundAccount: Account): Chai.Assertion => expect(foundAccount).to.equal(expectedResponse));
+			accountModel
+				.find(123)
+				.then(
+					(foundAccount: Account): Chai.Assertion =>
+						expect(foundAccount).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
 		const expectedPostUrl = /accounts$/u,
-					expectedPatchUrl = /accounts\/1$/u;
+			expectedPatchUrl = /accounts\/1$/u;
 
 		beforeEach((): void => {
 			sinon.stub(accountModel, "flush");
@@ -235,11 +308,13 @@ describe("accountModel", (): void => {
 			$httpBackend.flush();
 		});
 
-		it("should flush the account cache", (): Chai.Assertion => expect(accountModel["flush"]).to.have.been.called);
+		it("should flush the account cache", (): Chai.Assertion =>
+			expect(accountModel["flush"]).to.have.been.called);
 
 		it("should dispatch a DELETE request to /accounts/{id}", (): null => null);
 
-		it("should remove the account from the recent list", (): Chai.Assertion => expect(accountModel["removeRecent"]).to.have.been.calledWith(1));
+		it("should remove the account from the recent list", (): Chai.Assertion =>
+			expect(accountModel["removeRecent"]).to.have.been.calledWith(1));
 	});
 
 	describe("reconcile", (): void => {
@@ -270,27 +345,40 @@ describe("accountModel", (): void => {
 		it("should dispatch a DELETE request to /accounts/{id}/favourite when the account is unfavourited", (): void => {
 			$httpBackend.expectDELETE(expectedUrl);
 			account.favourite = true;
-			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.false);
+			accountModel
+				.toggleFavourite(account)
+				.then(
+					(favourite: boolean): Chai.Assertion => expect(favourite).to.be.false,
+				);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /accounts/{id}/favourite when the account is favourited", (): void => {
 			$httpBackend.expectPUT(expectedUrl);
-			accountModel.toggleFavourite(account).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.true);
+			accountModel
+				.toggleFavourite(account)
+				.then(
+					(favourite: boolean): Chai.Assertion => expect(favourite).to.be.true,
+				);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("isUnreconciledOnly", (): void => {
-		it("should be true if the account is configured to show unreconciled transactions only", (): Chai.Assertion => expect(accountModel.isUnreconciledOnly(123)).to.be.true);
+		it("should be true if the account is configured to show unreconciled transactions only", (): Chai.Assertion =>
+			expect(accountModel.isUnreconciledOnly(123)).to.be.true);
 
-		it("should be false if the account is not configured to show unreconciled transactions only", (): Chai.Assertion => expect(accountModel.isUnreconciledOnly(456)).to.be.false);
+		it("should be false if the account is not configured to show unreconciled transactions only", (): Chai.Assertion =>
+			expect(accountModel.isUnreconciledOnly(456)).to.be.false);
 	});
 
 	describe("unreconciledOnly", (): void => {
 		it("should save the unreconciledOnly setting for the specified account", (): void => {
 			accountModel.unreconciledOnly(123, true);
-			expect($window.localStorage.setItem).to.have.been.calledWith("lootUnreconciledOnly-123", "true");
+			expect($window.localStorage.setItem).to.have.been.calledWith(
+				"lootUnreconciledOnly-123",
+				"true",
+			);
 		});
 	});
 
@@ -314,7 +402,11 @@ describe("accountModel", (): void => {
 			expect(accountModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion =>
+			expect($window.localStorage.setItem).to.have.been.calledWith(
+				"lootRecentAccounts",
+				JSON.stringify([{ id: 1, name: "recent item" }]),
+			));
 	});
 
 	describe("removeRecent", (): void => {
@@ -325,6 +417,10 @@ describe("accountModel", (): void => {
 			expect(accountModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentAccounts", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion =>
+			expect($window.localStorage.setItem).to.have.been.calledWith(
+				"lootRecentAccounts",
+				JSON.stringify([{ id: 1, name: "recent item" }]),
+			));
 	});
 });

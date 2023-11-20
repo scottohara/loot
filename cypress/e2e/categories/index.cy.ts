@@ -4,19 +4,19 @@ import {
 	categoriesTableRows,
 	checkRowMatches,
 	editButton,
-	favouriteButton
+	favouriteButton,
 } from "~/support/categories/index";
 import {
 	categoryDeleteForm,
-	categoryDeleteHeading
+	categoryDeleteHeading,
 } from "~/support/categories/delete";
 import {
 	categoryEditForm,
-	categoryEditHeading
+	categoryEditHeading,
 } from "~/support/categories/edit";
 import {
 	transactionsIndexHeading,
-	transactionsTable
+	transactionsTable,
 } from "~/support/transactions";
 import type { Category } from "~/support/categories/types";
 import { testNavigableTable } from "~/support/og-components/og-table-navigable";
@@ -28,17 +28,37 @@ describe("Category Index", (): void => {
 		expected = [];
 		for (let i = 1; i <= 10; i += 3) {
 			expected.push({ direction: DIRECTION_INFLOW, name: `Category ${i}` });
-			expected.push({ direction: DIRECTION_INFLOW, name: `Category ${i + 1}`, parent: `Category ${i}` });
-			expected.push({ direction: DIRECTION_INFLOW, name: `Category ${i + 2}`, parent: `Category ${i}` });
+			expected.push({
+				direction: DIRECTION_INFLOW,
+				name: `Category ${i + 1}`,
+				parent: `Category ${i}`,
+			});
+			expected.push({
+				direction: DIRECTION_INFLOW,
+				name: `Category ${i + 2}`,
+				parent: `Category ${i}`,
+			});
 		}
 
 		for (let i = 13; i <= 19; i += 3) {
 			expected.push({ direction: DIRECTION_OUTFLOW, name: `Category ${i}` });
-			expected.push({ direction: DIRECTION_OUTFLOW, name: `Category ${i + 1}`, parent: `Category ${i}` });
-			expected.push({ direction: DIRECTION_OUTFLOW, name: `Category ${i + 2}`, parent: `Category ${i}` });
+			expected.push({
+				direction: DIRECTION_OUTFLOW,
+				name: `Category ${i + 1}`,
+				parent: `Category ${i}`,
+			});
+			expected.push({
+				direction: DIRECTION_OUTFLOW,
+				name: `Category ${i + 2}`,
+				parent: `Category ${i}`,
+			});
 		}
 
-		expected.push({ direction: DIRECTION_OUTFLOW, name: "Category 22", favourite: true });
+		expected.push({
+			direction: DIRECTION_OUTFLOW,
+			name: "Category 22",
+			favourite: true,
+		});
 		expected = expected.sort((a: Category, b: Category): number => {
 			let x: string, y: string;
 
@@ -65,19 +85,23 @@ describe("Category Index", (): void => {
 		// Number of rows
 		cy.get(categoriesTableRows).should("have.length", expected.length);
 
-		cy.get(categoriesTableRows).each((row: HTMLTableRowElement, index: number): void => {
-			cy.wrap(row).within((): void => checkRowMatches(expected[index]));
-		});
+		cy.get(categoriesTableRows).each(
+			(row: HTMLTableRowElement, index: number): void => {
+				cy.wrap(row).within((): void => checkRowMatches(expected[index]));
+			},
+		);
 	});
 
 	it("should toggle the favourite status of a category", (): void => {
-		cy.get(categoriesTableRows).first().within((): void => {
-			cy.get(favouriteButton).should("not.have.class", "active");
-			cy.get(favouriteButton).click();
-			cy.get(favouriteButton).should("have.class", "active");
-			cy.get(favouriteButton).click();
-			cy.get(favouriteButton).should("not.have.class", "active");
-		});
+		cy.get(categoriesTableRows)
+			.first()
+			.within((): void => {
+				cy.get(favouriteButton).should("not.have.class", "active");
+				cy.get(favouriteButton).click();
+				cy.get(favouriteButton).should("have.class", "active");
+				cy.get(favouriteButton).click();
+				cy.get(favouriteButton).should("not.have.class", "active");
+			});
 	});
 
 	testNavigableTable({
@@ -86,7 +110,7 @@ describe("Category Index", (): void => {
 			insert: {
 				heading: categoryEditHeading,
 				headingText: "Add Category",
-				view: categoryEditForm
+				view: categoryEditForm,
 			},
 			edit: {
 				heading: categoryEditHeading,
@@ -94,23 +118,27 @@ describe("Category Index", (): void => {
 				view: categoryEditForm,
 				mouseAction: {
 					name: "edit icon is clicked",
-					perform: (row: number): Cypress.Chainable<JQuery> => cy.get(categoriesTableRows).eq(row).within((): void => {
-						cy.get(editButton).click();
-					})
-				}
+					perform: (row: number): Cypress.Chainable<JQuery> =>
+						cy
+							.get(categoriesTableRows)
+							.eq(row)
+							.within((): void => {
+								cy.get(editButton).click();
+							}),
+				},
 			},
 			del: {
 				heading: categoryDeleteHeading,
 				headingText: "Delete Category?",
-				view: categoryDeleteForm
+				view: categoryDeleteForm,
 			},
 			select: {
 				heading: transactionsIndexHeading,
 				headingText: "Category 22",
 				headingText2: " Transactions",
 				view: transactionsTable,
-				url: /#!\/categories\/\d+\/transactions/u
-			}
-		}
+				url: /#!\/categories\/\d+\/transactions/u,
+			},
+		},
 	});
 });

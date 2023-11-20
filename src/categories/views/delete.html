@@ -18,7 +18,16 @@
 	</div>
 	<div class="modal-footer">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-		<button class="btn btn-danger" type="submit" ng-click="vm.deleteCategory()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-danger"
+			type="submit"
+			ng-click="vm.deleteCategory()"
+			autofocus
+		>
+			<i class="glyphicon glyphicon-remove"></i> Delete
+		</button>
 	</div>
 </form>

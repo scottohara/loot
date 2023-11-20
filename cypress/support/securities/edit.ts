@@ -4,7 +4,7 @@ export const securityEditForm = "form[name=securityForm]";
 export const securityEditHeading = `${securityEditForm} > div.modal-header > h4`;
 
 const securityNameInput = `${securityEditForm} #name`,
-			securityCodeInput = `${securityEditForm} #code`;
+	securityCodeInput = `${securityEditForm} #code`;
 
 export const cancelButton = `${securityEditForm} button[type=button]`;
 export const saveButton = `${securityEditForm} button[type=submit]`;

@@ -1,21 +1,20 @@
-import {
-	startOfDay,
-	subDays
-} from "date-fns";
+import { startOfDay, subDays } from "date-fns";
 import type { Mock } from "~/mocks/types";
 import type { ScheduledBasicTransaction } from "~/schedules/types";
 import { createScheduledBasicTransaction } from "~/mocks/schedules/factories";
 
-function *schedules(count: number): Iterable<ScheduledBasicTransaction> {
+function* schedules(count: number): Iterable<ScheduledBasicTransaction> {
 	for (let id = 1, daysAgo = count + 1; id < count + 1; id++, daysAgo--) {
 		yield createScheduledBasicTransaction({
 			id,
-			next_due_date: subDays(startOfDay(new Date()), daysAgo)
+			next_due_date: subDays(startOfDay(new Date()), daysAgo),
 		});
 	}
 }
 
-export default class SchedulesMockProvider implements Mock<ScheduledBasicTransaction[]> {
+export default class SchedulesMockProvider
+	implements Mock<ScheduledBasicTransaction[]>
+{
 	private readonly schedules: ScheduledBasicTransaction[];
 
 	// Mock schedules object

@@ -3,89 +3,323 @@
 		<h4>{{::vm.mode}} Transaction</h4>
 	</div>
 	<div class="modal-body">
-		<div ng-if="::vm.transaction.status == 'Reconciled' || vm.transaction.related_status == 'Reconciled'" class="alert alert-danger">
+		<div
+			ng-if="::vm.transaction.status == 'Reconciled' || vm.transaction.related_status == 'Reconciled'"
+			class="alert alert-danger"
+		>
 			<strong>Warning!</strong>
-			This transaction has been <span ng-if="::vm.transaction.status != 'Reconciled'">partially </span>reconciled
+			This transaction has been
+			<span ng-if="::vm.transaction.status != 'Reconciled'">partially </span
+			>reconciled
 		</div>
 		<!-- Transaction Date -->
-		<div class="form-group has-feedback" ng-class="{'has-error': transactionForm.transactionDate.$invalid}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.transactionDate.$invalid}"
+		>
 			<label for="transactionDate">Date</label>
-			<input id="transactionDate" name="transactionDate" class="form-control" type="date" ng-model="vm.transaction.transaction_date" required autofocus>
-			<span ng-show="transactionForm.transactionDate.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="transactionDate"
+				name="transactionDate"
+				class="form-control"
+				type="date"
+				ng-model="vm.transaction.transaction_date"
+				required
+				autofocus
+			/>
+			<span
+				ng-show="transactionForm.transactionDate.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Primary Account -->
-		<div class="form-group has-feedback" ng-class="{'has-error': transactionForm.primaryAccount.$invalid}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.primaryAccount.$invalid}"
+		>
 			<label for="primaryAccount">Account</label>
-			<input name="primaryAccount" class="form-control" ng-model="vm.transaction.primary_account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" ng-blur="vm.primaryAccountSelected()" typeahead-editable="false" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Account" required og-input-autoselect>
-			<span ng-show="transactionForm.primaryAccount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				name="primaryAccount"
+				class="form-control"
+				ng-model="vm.transaction.primary_account"
+				uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)"
+				ng-blur="vm.primaryAccountSelected()"
+				typeahead-editable="false"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Account"
+				required
+				og-input-autoselect
+			/>
+			<span
+				ng-show="transactionForm.primaryAccount.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Payee -->
-		<div ng-if="vm.transaction.primary_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(vm.transaction.payee), 'has-error': transactionForm.payee.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type != 'investment'"
+			class="form-group has-feedback"
+			ng-class="{'has-warning': vm.isString(vm.transaction.payee), 'has-error': transactionForm.payee.$invalid}"
+		>
 			<label for="payee">Payee</label>
-			<input name="payee" class="form-control" ng-model="vm.transaction.payee" uib-typeahead="payee as payee.name for payee in vm.payees($viewValue, 10)" ng-blur="vm.payeeSelected()" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Payee" required og-input-autoselect>
-			<span ng-show="vm.isString(vm.transaction.payee) || transactionForm.payee.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.payee), 'glyphicon-remove': transactionForm.payee.$invalid}"></span>
+			<input
+				name="payee"
+				class="form-control"
+				ng-model="vm.transaction.payee"
+				uib-typeahead="payee as payee.name for payee in vm.payees($viewValue, 10)"
+				ng-blur="vm.payeeSelected()"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Payee"
+				required
+				og-input-autoselect
+			/>
+			<span
+				ng-show="vm.isString(vm.transaction.payee) || transactionForm.payee.$invalid"
+				class="glyphicon form-control-feedback"
+				ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.payee), 'glyphicon-remove': transactionForm.payee.$invalid}"
+			></span>
 		</div>
 		<!-- Security -->
-		<div ng-if="vm.transaction.primary_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(vm.transaction.security), 'has-error': transactionForm.security.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type == 'investment'"
+			class="form-group has-feedback"
+			ng-class="{'has-warning': vm.isString(vm.transaction.security), 'has-error': transactionForm.security.$invalid}"
+		>
 			<label for="security">Security</label>
-			<input name="security" class="form-control" ng-model="vm.transaction.security" uib-typeahead="security as security.name for security in vm.securities($viewValue, 10)" ng-blur="vm.securitySelected()" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Security" required og-input-autoselect>
-			<span ng-show="vm.isString(vm.transaction.security) || transactionForm.security.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.security), 'glyphicon-remove': transactionForm.security.$invalid}"></span>
+			<input
+				name="security"
+				class="form-control"
+				ng-model="vm.transaction.security"
+				uib-typeahead="security as security.name for security in vm.securities($viewValue, 10)"
+				ng-blur="vm.securitySelected()"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Security"
+				required
+				og-input-autoselect
+			/>
+			<span
+				ng-show="vm.isString(vm.transaction.security) || transactionForm.security.$invalid"
+				class="glyphicon form-control-feedback"
+				ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.security), 'glyphicon-remove': transactionForm.security.$invalid}"
+			></span>
 		</div>
 		<!-- Investment Category -->
-		<div ng-if="vm.transaction.primary_account.account_type == 'investment'" class="form-group has-feedback" ng-class="{'has-error': transactionForm.category.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type == 'investment'"
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.category.$invalid}"
+		>
 			<label for="category">Category</label>
-			<input id="category" name="category" class="form-control" ng-model="vm.transaction.category" uib-typeahead="category as category.name for category in vm.investmentCategories($viewValue)" ng-blur="vm.investmentCategorySelected()" typeahead-editable="false" typeahead-min-length="0" typeahead-select-on-blur="true" placeholder="Category" required og-input-autoselect>
-			<span ng-show="transactionForm.category.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="category"
+				name="category"
+				class="form-control"
+				ng-model="vm.transaction.category"
+				uib-typeahead="category as category.name for category in vm.investmentCategories($viewValue)"
+				ng-blur="vm.investmentCategorySelected()"
+				typeahead-editable="false"
+				typeahead-min-length="0"
+				typeahead-select-on-blur="true"
+				placeholder="Category"
+				required
+				og-input-autoselect
+			/>
+			<span
+				ng-show="transactionForm.category.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Transaction Amount -->
-		<div ng-if="vm.transaction.primary_account.account_type != 'investment' || vm.transaction.category.id == 'DividendTo'" class="form-group has-feedback" ng-class="{'has-error': transactionForm.amount.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type != 'investment' || vm.transaction.category.id == 'DividendTo'"
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.amount.$invalid}"
+		>
 			<label for="amount">Amount</label>
-			<input id="amount" name="amount" class="form-control" ng-class="{'negative': vm.transaction.amount < 0}" ng-model="vm.transaction.amount" placeholder="Transaction Amount" required og-input-currency og-input-autoselect og-input-calculator>
-			<span ng-show="transactionForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="amount"
+				name="amount"
+				class="form-control"
+				ng-class="{'negative': vm.transaction.amount < 0}"
+				ng-model="vm.transaction.amount"
+				placeholder="Transaction Amount"
+				required
+				og-input-currency
+				og-input-autoselect
+				og-input-calculator
+			/>
+			<span
+				ng-show="transactionForm.amount.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Category -->
-		<div ng-if="vm.transaction.primary_account.account_type != 'investment'" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(vm.transaction.category), 'has-error': transactionForm.category.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type != 'investment'"
+			class="form-group has-feedback"
+			ng-class="{'has-warning': vm.isString(vm.transaction.category), 'has-error': transactionForm.category.$invalid}"
+		>
 			<label for="category">Category</label>
-			<input id="category" name="category" class="form-control" ng-model="vm.transaction.category" uib-typeahead="category as category.name for category in vm.categories($viewValue, 10, null, true)" ng-blur="vm.categorySelected()" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Category" required og-input-autoselect>
-			<span ng-show="vm.isString(vm.transaction.category) || transactionForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.category), 'glyphicon-remove': transactionForm.category.$invalid}"></span>
+			<input
+				id="category"
+				name="category"
+				class="form-control"
+				ng-model="vm.transaction.category"
+				uib-typeahead="category as category.name for category in vm.categories($viewValue, 10, null, true)"
+				ng-blur="vm.categorySelected()"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Category"
+				required
+				og-input-autoselect
+			/>
+			<span
+				ng-show="vm.isString(vm.transaction.category) || transactionForm.category.$invalid"
+				class="glyphicon form-control-feedback"
+				ng-class="{'glyphicon-warning-sign': vm.isString(vm.transaction.category), 'glyphicon-remove': transactionForm.category.$invalid}"
+			></span>
 		</div>
 		<!-- Subcategory -->
-		<div ng-if="vm.transaction.primary_account.account_type != 'investment' && ['TransferTo', 'TransferFrom', 'SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(vm.transaction.category.id) == -1" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(vm.transaction.subcategory)}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type != 'investment' && ['TransferTo', 'TransferFrom', 'SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(vm.transaction.category.id) == -1"
+			class="form-group has-feedback"
+			ng-class="{'has-warning': vm.isString(vm.transaction.subcategory)}"
+		>
 			<label for="subcategory">Subcategory</label>
-			<input id="subcategory" name="subcategory" class="form-control" ng-disabled="!(vm.isString(vm.transaction.category) || vm.transaction.category.id > 0)" ng-model="vm.transaction.subcategory" uib-typeahead="subcategory as subcategory.name for subcategory in vm.categories($viewValue, 10, vm.transaction.category)" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Subcategory" og-input-autoselect>
-			<span ng-show="vm.isString(vm.transaction.subcategory)" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+			<input
+				id="subcategory"
+				name="subcategory"
+				class="form-control"
+				ng-disabled="!(vm.isString(vm.transaction.category) || vm.transaction.category.id > 0)"
+				ng-model="vm.transaction.subcategory"
+				uib-typeahead="subcategory as subcategory.name for subcategory in vm.categories($viewValue, 10, vm.transaction.category)"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Subcategory"
+				og-input-autoselect
+			/>
+			<span
+				ng-show="vm.isString(vm.transaction.subcategory)"
+				class="glyphicon glyphicon-warning-sign form-control-feedback"
+			></span>
 		</div>
 		<!-- Account -->
-		<div ng-if="['TransferTo', 'TransferFrom', 'Buy', 'Sell', 'DividendTo'].indexOf(vm.transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.account.$invalid}">
+		<div
+			ng-if="['TransferTo', 'TransferFrom', 'Buy', 'Sell', 'DividendTo'].indexOf(vm.transaction.category.id) != -1"
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.account.$invalid}"
+		>
 			<label for="account">Account</label>
-			<input id="account" name="account" class="form-control" ng-model="vm.transaction.account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Account" required og-input-autoselect>
-			<span ng-show="transactionForm.account.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="account"
+				name="account"
+				class="form-control"
+				ng-model="vm.transaction.account"
+				uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)"
+				typeahead-editable="false"
+				typeahead-select-on-blur="true"
+				typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+				placeholder="Account"
+				required
+				og-input-autoselect
+			/>
+			<span
+				ng-show="transactionForm.account.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Quantity -->
-		<div ng-if="vm.transaction.primary_account.account_type == 'investment' && ['TransferTo', 'TransferFrom', 'AddShares', 'RemoveShares', 'Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.quantity.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type == 'investment' && ['TransferTo', 'TransferFrom', 'AddShares', 'RemoveShares', 'Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1"
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.quantity.$invalid}"
+		>
 			<label for="quantity">Quantity</label>
-			<input id="quantity" name="quantity" class="form-control" ng-class="{'negative': vm.transaction.quantity < 0}" ng-model="vm.transaction.quantity" ng-change="vm.updateInvestmentDetails()" placeholder="Quantity" required og-input-number og-input-autoselect og-input-calculator>
-			<span ng-show="transactionForm.quantity.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="quantity"
+				name="quantity"
+				class="form-control"
+				ng-class="{'negative': vm.transaction.quantity < 0}"
+				ng-model="vm.transaction.quantity"
+				ng-change="vm.updateInvestmentDetails()"
+				placeholder="Quantity"
+				required
+				og-input-number
+				og-input-autoselect
+				og-input-calculator
+			/>
+			<span
+				ng-show="transactionForm.quantity.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Price -->
-		<div ng-if="vm.transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.price.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1"
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.price.$invalid}"
+		>
 			<label for="price">Price</label>
-			<input id="price" name="price" class="form-control" ng-class="{'negative': vm.transaction.price < 0}" ng-model="vm.transaction.price" ng-change="vm.updateInvestmentDetails()" placeholder="Price" required og-input-currency="3" og-input-autoselect og-input-calculator>
-			<span ng-show="transactionForm.price.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="price"
+				name="price"
+				class="form-control"
+				ng-class="{'negative': vm.transaction.price < 0}"
+				ng-model="vm.transaction.price"
+				ng-change="vm.updateInvestmentDetails()"
+				placeholder="Price"
+				required
+				og-input-currency="3"
+				og-input-autoselect
+				og-input-calculator
+			/>
+			<span
+				ng-show="transactionForm.price.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Commission -->
-		<div ng-if="vm.transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1" class="form-group has-feedback" ng-class="{'has-error': transactionForm.commission.$invalid}">
+		<div
+			ng-if="vm.transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1"
+			class="form-group has-feedback"
+			ng-class="{'has-error': transactionForm.commission.$invalid}"
+		>
 			<label for="commission">Commission</label>
-			<input id="commission" name="commission" class="form-control" ng-class="{'negative': vm.transaction.commission < 0}" ng-model="vm.transaction.commission" ng-change="vm.updateInvestmentDetails()" placeholder="Commission" required og-input-currency og-input-autoselect og-input-calculator>
-			<span ng-show="transactionForm.commission.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="commission"
+				name="commission"
+				class="form-control"
+				ng-class="{'negative': vm.transaction.commission < 0}"
+				ng-model="vm.transaction.commission"
+				ng-change="vm.updateInvestmentDetails()"
+				placeholder="Commission"
+				required
+				og-input-currency
+				og-input-autoselect
+				og-input-calculator
+			/>
+			<span
+				ng-show="transactionForm.commission.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Investment Amount -->
-		<div ng-if="vm.transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1" class="form-group">
+		<div
+			ng-if="vm.transaction.primary_account.account_type == 'investment' && ['Buy', 'Sell'].indexOf(vm.transaction.category.id) != -1"
+			class="form-group"
+		>
 			<label>Amount</label>
-			<div ng-class="{'text-danger': vm.transaction.amount < 0}">{{vm.transaction.amount | currency}}</div>
+			<div ng-class="{'text-danger': vm.transaction.amount < 0}">
+				{{vm.transaction.amount | currency}}
+			</div>
 		</div>
 		<!-- Subtransactions -->
-		<div ng-if="['SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(vm.transaction.category.id) != -1">
+		<div
+			ng-if="['SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(vm.transaction.category.id) != -1"
+		>
 			<table class="table table-condensed">
 				<thead>
 					<tr>
@@ -102,47 +336,134 @@
 							<!-- Category -->
 							<ng-form name="categoryForm">
 								<div class="form-inline">
-									<div class="form-group has-feedback" ng-class="{'has-warning': vm.isString(subtransaction.category), 'has-error': categoryForm.category.$invalid}">
-										<input name="category" class="form-control" ng-model="subtransaction.category" uib-typeahead="category as category.name for category in vm.categories($viewValue, 10)" ng-blur="vm.categorySelected($index)" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Category" required og-input-autoselect>
-										<span ng-show="vm.isString(subtransaction.category) || categoryForm.category.$invalid" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': vm.isString(subtransaction.category), 'glyphicon-remove': categoryForm.category.$invalid}"></span>
+									<div
+										class="form-group has-feedback"
+										ng-class="{'has-warning': vm.isString(subtransaction.category), 'has-error': categoryForm.category.$invalid}"
+									>
+										<input
+											name="category"
+											class="form-control"
+											ng-model="subtransaction.category"
+											uib-typeahead="category as category.name for category in vm.categories($viewValue, 10)"
+											ng-blur="vm.categorySelected($index)"
+											typeahead-select-on-blur="true"
+											typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+											placeholder="Category"
+											required
+											og-input-autoselect
+										/>
+										<span
+											ng-show="vm.isString(subtransaction.category) || categoryForm.category.$invalid"
+											class="glyphicon form-control-feedback"
+											ng-class="{'glyphicon-warning-sign': vm.isString(subtransaction.category), 'glyphicon-remove': categoryForm.category.$invalid}"
+										></span>
 									</div>
 								</div>
 							</ng-form>
 						</td>
-						<td ng-switch="['TransferTo', 'TransferFrom'].indexOf(subtransaction.category.id)">
+						<td
+							ng-switch="['TransferTo', 'TransferFrom'].indexOf(subtransaction.category.id)"
+						>
 							<ng-form name="accountForm">
 								<div class="form-inline">
 									<!-- Subcategory -->
-									<div ng-switch-when="-1" class="form-group has-feedback" ng-class="{'has-warning': vm.isString(subtransaction.subcategory)}">
-										<input class="form-control" ng-disabled="!(vm.isString(subtransaction.category) || subtransaction.category.id > 0)" ng-model="subtransaction.subcategory" uib-typeahead="subcategory as subcategory.name for subcategory in vm.categories($viewValue, 10, subtransaction.category)" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Subcategory" og-input-autoselect>
-										<span ng-show="vm.isString(subtransaction.subcategory)" class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+									<div
+										ng-switch-when="-1"
+										class="form-group has-feedback"
+										ng-class="{'has-warning': vm.isString(subtransaction.subcategory)}"
+									>
+										<input
+											class="form-control"
+											ng-disabled="!(vm.isString(subtransaction.category) || subtransaction.category.id > 0)"
+											ng-model="subtransaction.subcategory"
+											uib-typeahead="subcategory as subcategory.name for subcategory in vm.categories($viewValue, 10, subtransaction.category)"
+											typeahead-select-on-blur="true"
+											typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+											placeholder="Subcategory"
+											og-input-autoselect
+										/>
+										<span
+											ng-show="vm.isString(subtransaction.subcategory)"
+											class="glyphicon glyphicon-warning-sign form-control-feedback"
+										></span>
 									</div>
 									<!-- Account -->
-									<div ng-switch-default class="form-group has-feedback" ng-class="{'has-error': accountForm.account.$invalid}">
-										<input name="account" class="form-control" ng-model="subtransaction.account" uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)" typeahead-editable="false" typeahead-select-on-blur="true" typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html" placeholder="Account" required og-input-autoselect>
-										<span ng-show="accountForm.account.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+									<div
+										ng-switch-default
+										class="form-group has-feedback"
+										ng-class="{'has-error': accountForm.account.$invalid}"
+									>
+										<input
+											name="account"
+											class="form-control"
+											ng-model="subtransaction.account"
+											uib-typeahead="account as account.name for account in vm.accounts($viewValue, 10)"
+											typeahead-editable="false"
+											typeahead-select-on-blur="true"
+											typeahead-template-url="../../og-components/og-favourite/views/typeahead-suggestion.html"
+											placeholder="Account"
+											required
+											og-input-autoselect
+										/>
+										<span
+											ng-show="accountForm.account.$invalid"
+											class="glyphicon glyphicon-remove form-control-feedback"
+										></span>
 									</div>
 								</div>
 							</ng-form>
 						</td>
 						<td>
 							<!-- Memo -->
-							<input class="form-control" ng-model="subtransaction.memo" placeholder="Memo" og-input-autoselect>
+							<input
+								class="form-control"
+								ng-model="subtransaction.memo"
+								placeholder="Memo"
+								og-input-autoselect
+							/>
 						</td>
 						<td>
 							<!-- Amount -->
 							<ng-form name="amountForm">
 								<div class="form-inline">
-									<div class="form-group has-feedback has-action" ng-class="{'has-error': amountForm.amount.$invalid}">
-										<input name="amount" class="form-control text-right" ng-class="{'negative': (subtransaction.amount * (subtransaction.direction == vm.transaction.direction ? 1 : -1)) < 0}" ng-model="subtransaction.amount" placeholder="Amount" required og-input-currency og-input-autoselect og-input-calculator="right">
-										<span ng-show="amountForm.amount.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
-										<span ng-show="!amountForm.amount.$invalid && vm.transaction.amount - vm.totalAllocated !== 0" class="form-control-feedback"><i class="action glyphicon glyphicon-plus-sign" uib-tooltip="Add unallocated amount here" ng-click="vm.addUnallocatedAmount($index)"></i></span>
+									<div
+										class="form-group has-feedback has-action"
+										ng-class="{'has-error': amountForm.amount.$invalid}"
+									>
+										<input
+											name="amount"
+											class="form-control text-right"
+											ng-class="{'negative': (subtransaction.amount * (subtransaction.direction == vm.transaction.direction ? 1 : -1)) < 0}"
+											ng-model="subtransaction.amount"
+											placeholder="Amount"
+											required
+											og-input-currency
+											og-input-autoselect
+											og-input-calculator="right"
+										/>
+										<span
+											ng-show="amountForm.amount.$invalid"
+											class="glyphicon glyphicon-remove form-control-feedback"
+										></span>
+										<span
+											ng-show="!amountForm.amount.$invalid && vm.transaction.amount - vm.totalAllocated !== 0"
+											class="form-control-feedback"
+											><i
+												class="action glyphicon glyphicon-plus-sign"
+												uib-tooltip="Add unallocated amount here"
+												ng-click="vm.addUnallocatedAmount($index)"
+											></i
+										></span>
 									</div>
 								</div>
 							</ng-form>
 						</td>
 						<td>
-							<button class="btn btn-default" type="button" ng-click="vm.deleteSubtransaction($index)">
+							<button
+								class="btn btn-default"
+								type="button"
+								ng-click="vm.deleteSubtransaction($index)"
+							>
 								<span class="glyphicon glyphicon-trash"></span>
 							</button>
 						</td>
@@ -151,7 +472,11 @@
 				<tfoot>
 					<tr>
 						<td>
-							<button class="btn btn-xs btn-success" type="button" ng-click="vm.addSubtransaction()">
+							<button
+								class="btn btn-xs btn-success"
+								type="button"
+								ng-click="vm.addSubtransaction()"
+							>
 								<span class="glyphicon glyphicon-plus"> Add</span>
 							</button>
 						</td>
@@ -159,8 +484,19 @@
 						<td class="text-right">{{vm.totalAllocated | currency}}</td>
 					</tr>
 					<tr>
-						<td colspan="3" class="text-right" ng-class="{'text-danger': vm.transaction.amount - vm.totalAllocated !== 0, 'text-success': vm.transaction.amount - vm.totalAllocated === 0}">Unallocated</td>
-						<td class="text-right" ng-class="{'text-danger': vm.transaction.amount - vm.totalAllocated !== 0, 'text-success': vm.transaction.amount - vm.totalAllocated === 0}">{{vm.transaction.amount - vm.totalAllocated | currency}}</td>
+						<td
+							colspan="3"
+							class="text-right"
+							ng-class="{'text-danger': vm.transaction.amount - vm.totalAllocated !== 0, 'text-success': vm.transaction.amount - vm.totalAllocated === 0}"
+						>
+							Unallocated
+						</td>
+						<td
+							class="text-right"
+							ng-class="{'text-danger': vm.transaction.amount - vm.totalAllocated !== 0, 'text-success': vm.transaction.amount - vm.totalAllocated === 0}"
+						>
+							{{vm.transaction.amount - vm.totalAllocated | currency}}
+						</td>
 					</tr>
 				</tfoot>
 			</table>
@@ -168,16 +504,43 @@
 		<!-- Memo -->
 		<div class="form-group has-feedback has-action">
 			<label for="memo">Memo</label>
-			<input id="memo" name="memo" class="form-control" ng-model="vm.transaction.memo" placeholder="Memo" og-input-autoselect>
-			<span ng-show="['SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(vm.transaction.category.id) != -1" class="form-control-feedback">
-				<i class="action glyphicon glyphicon-refresh" uib-tooltip="Use splits" ng-click="vm.memoFromSubtransactions()"></i>
+			<input
+				id="memo"
+				name="memo"
+				class="form-control"
+				ng-model="vm.transaction.memo"
+				placeholder="Memo"
+				og-input-autoselect
+			/>
+			<span
+				ng-show="['SplitTo', 'SplitFrom', 'LoanRepayment', 'Payslip'].indexOf(vm.transaction.category.id) != -1"
+				class="form-control-feedback"
+			>
+				<i
+					class="action glyphicon glyphicon-refresh"
+					uib-tooltip="Use splits"
+					ng-click="vm.memoFromSubtransactions()"
+				></i>
 			</span>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<span ng-if="vm.loadingLastTransaction" class="pull-left text-muted" og-loading-spinner="'Finding last transaction for ' + (vm.transaction.payee.name || vm.transaction.security.name)"></span>
-		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-		<button class="btn btn-primary" type="submit" ng-disabled="transactionForm.$invalid" ng-click="vm.save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+		<span
+			ng-if="vm.loadingLastTransaction"
+			class="pull-left text-muted"
+			og-loading-spinner="'Finding last transaction for ' + (vm.transaction.payee.name || vm.transaction.security.name)"
+		></span>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-primary"
+			type="submit"
+			ng-disabled="transactionForm.$invalid"
+			ng-click="vm.save()"
+		>
+			<i class="glyphicon glyphicon-ok"></i> Save
+		</button>
 	</div>
 </form>

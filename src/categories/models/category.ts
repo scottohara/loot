@@ -1,8 +1,4 @@
-import type {
-	Cacheable,
-	Favouritable,
-	Persistable
-} from "~/loot/types";
+import type { Cacheable, Favouritable, Persistable } from "~/loot/types";
 import type { Category } from "~/categories/types";
 import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
 import type OgLruCache from "~/og-components/og-lru-cache-factory/models/og-lru-cache";
@@ -11,7 +7,9 @@ import type OgLruCacheFactory from "~/og-components/og-lru-cache-factory/models/
 // Number of categories to keep in the LRU cache
 const LRU_CAPACITY = 10;
 
-export default class CategoryModel implements Cacheable<Category>, Favouritable<Category>, Persistable<Category> {
+export default class CategoryModel
+	implements Cacheable<Category>, Favouritable<Category>, Persistable<Category>
+{
 	public recent: OgCacheEntry[];
 
 	public readonly LRU_LOCAL_STORAGE_KEY = "lootRecentCategories";
@@ -22,10 +20,12 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 
 	private readonly lruCache: OgLruCache;
 
-	public constructor(private readonly $http: angular.IHttpService,
-						$cacheFactory: angular.ICacheFactoryService,
-						private readonly $window: angular.IWindowService,
-						ogLruCacheFactory: OgLruCacheFactory) {
+	public constructor(
+		private readonly $http: angular.IHttpService,
+		$cacheFactory: angular.ICacheFactoryService,
+		private readonly $window: angular.IWindowService,
+		ogLruCacheFactory: OgLruCacheFactory,
+	) {
 		this.cache = $cacheFactory("categories");
 
 		// Create an LRU cache and populate with the recent category list from local storage
@@ -34,7 +34,9 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 	}
 
 	private get recentCategories(): OgCacheEntry[] {
-		const recentCategories: string | null = this.$window.localStorage.getItem(this.LRU_LOCAL_STORAGE_KEY);
+		const recentCategories: string | null = this.$window.localStorage.getItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+		);
 
 		return JSON.parse(recentCategories ?? "[]") as OgCacheEntry[];
 	}
@@ -45,13 +47,21 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 	}
 
 	// Retrieves the list of categories
-	public all(parent?: number | null, includeChildren = false): angular.IPromise<Category[]> {
-		return this.$http.get(`${this.path()}${includeChildren ? "?include_children" : ""}`, {
-			params: {
-				parent
-			},
-			cache: !includeChildren && this.cache
-		}).then((response: angular.IHttpResponse<Category[]>): Category[] => response.data);
+	public all(
+		parent?: number | null,
+		includeChildren = false,
+	): angular.IPromise<Category[]> {
+		return this.$http
+			.get(`${this.path()}${includeChildren ? "?include_children" : ""}`, {
+				params: {
+					parent,
+				},
+				cache: !includeChildren && this.cache,
+			})
+			.then(
+				(response: angular.IHttpResponse<Category[]>): Category[] =>
+					response.data,
+			);
 	}
 
 	// Retrieves the list of categories, including children
@@ -61,13 +71,15 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 
 	// Retrieves a single category
 	public find(id: number): angular.IPromise<Category> {
-		return this.$http.get(this.path(id), {
-			cache: this.cache
-		}).then((response: angular.IHttpResponse<Category>): Category => {
-			this.addRecent(response.data);
+		return this.$http
+			.get(this.path(id), {
+				cache: this.cache,
+			})
+			.then((response: angular.IHttpResponse<Category>): Category => {
+				this.addRecent(response.data);
 
-			return response.data;
-		});
+				return response.data;
+			});
 	}
 
 	// Saves a category
@@ -78,7 +90,7 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 		return this.$http({
 			method: undefined === category.id ? "POST" : "PATCH",
 			url: this.path(category.id),
-			data: category
+			data: category,
 		});
 	}
 
@@ -87,7 +99,9 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 		// Flush the $http cache
 		this.flush();
 
-		return this.$http.delete(this.path(category.id)).then((): void => this.removeRecent(Number(category.id)));
+		return this.$http
+			.delete(this.path(category.id))
+			.then((): void => this.removeRecent(Number(category.id)));
 	}
 
 	// Favourites/unfavourites a category
@@ -97,7 +111,7 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 
 		return this.$http({
 			method: category.favourite ? "DELETE" : "PUT",
-			url: `${this.path(category.id)}/favourite`
+			url: `${this.path(category.id)}/favourite`,
 		}).then((): boolean => !category.favourite);
 	}
 
@@ -116,7 +130,10 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 		this.recent = this.lruCache.put(category);
 
 		// Update local storage with the new list
-		this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.list));
+		this.$window.localStorage.setItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+			JSON.stringify(this.lruCache.list),
+		);
 	}
 
 	// Remove an item from the LRU cache
@@ -125,8 +142,16 @@ export default class CategoryModel implements Cacheable<Category>, Favouritable<
 		this.recent = this.lruCache.remove(id);
 
 		// Update local storage with the new list
-		this.$window.localStorage.setItem(this.LRU_LOCAL_STORAGE_KEY, JSON.stringify(this.lruCache.list));
+		this.$window.localStorage.setItem(
+			this.LRU_LOCAL_STORAGE_KEY,
+			JSON.stringify(this.lruCache.list),
+		);
 	}
 }
 
-CategoryModel.$inject = ["$http", "$cacheFactory", "$window", "ogLruCacheFactory"];
+CategoryModel.$inject = [
+	"$http",
+	"$cacheFactory",
+	"$window",
+	"ogLruCacheFactory",
+];

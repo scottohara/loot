@@ -5,7 +5,8 @@ import AccountsMockProvider from "~/mocks/accounts/providers/accounts";
 import AccountsWithBalancesMockProvider from "~/mocks/accounts/providers/accountsWithBalances";
 import angular from "angular";
 
-angular.module("lootAccountsMocks", [])
+angular
+	.module("lootAccountsMocks", [])
 	.provider("accountMock", AccountMockProvider)
 	.provider("accountsMock", AccountsMockProvider)
 	.provider("accountsWithBalancesMock", AccountsWithBalancesMockProvider)

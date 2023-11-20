@@ -7,23 +7,46 @@ import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("SecurityDeleteController", (): void => {
-	let	securityDeleteController: SecurityDeleteController,
-			$uibModalInstance: UibModalInstanceMock,
-			securityModel: SecurityModelMock,
-			security: Security;
+	let securityDeleteController: SecurityDeleteController,
+		$uibModalInstance: UibModalInstanceMock,
+		securityModel: SecurityModelMock,
+		security: Security;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSecurities", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "securityModel", "security"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootSecurities",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"$uibModalInstance",
+					"securityModel",
+					"security",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _securityModel_: SecurityModelMock, _security_: Security): void => {
-		$uibModalInstance = _$uibModalInstance_;
-		securityModel = _securityModel_;
-		security = _security_;
-		securityDeleteController = controllerTest("SecurityDeleteController") as SecurityDeleteController;
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject(
+			(
+				controllerTest: ControllerTestFactory,
+				_$uibModalInstance_: UibModalInstanceMock,
+				_securityModel_: SecurityModelMock,
+				_security_: Security,
+			): void => {
+				$uibModalInstance = _$uibModalInstance_;
+				securityModel = _securityModel_;
+				security = _security_;
+				securityDeleteController = controllerTest(
+					"SecurityDeleteController",
+				) as SecurityDeleteController;
+			},
+		) as Mocha.HookFunction,
+	);
 
-	it("should make the passed security available to the view", (): Chai.Assertion => expect(securityDeleteController.security).to.deep.equal(security));
+	it("should make the passed security available to the view", (): Chai.Assertion =>
+		expect(securityDeleteController.security).to.deep.equal(security));
 
 	describe("deleteSecurity", (): void => {
 		it("should reset any previous error messages", (): void => {
@@ -45,7 +68,9 @@ describe("SecurityDeleteController", (): void => {
 		it("should display an error message when the security delete is unsuccessful", (): void => {
 			securityDeleteController.security.id = -1;
 			securityDeleteController.deleteSecurity();
-			expect(securityDeleteController.errorMessage as string).to.equal("unsuccessful");
+			expect(securityDeleteController.errorMessage as string).to.equal(
+				"unsuccessful",
+			);
 		});
 	});
 

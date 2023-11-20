@@ -6,7 +6,20 @@
 		<p>{{::vm.confirm.message}}</p>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-{{::vm.confirm.noButtonStyle}}" type="button" ng-click="vm.no()">No</button>
-		<button class="btn btn-{{::vm.confirm.yesButtonStyle}}" type="submit" ng-click="vm.yes()" autofocus>Yes</button>
+		<button
+			class="btn btn-{{::vm.confirm.noButtonStyle}}"
+			type="button"
+			ng-click="vm.no()"
+		>
+			No
+		</button>
+		<button
+			class="btn btn-{{::vm.confirm.yesButtonStyle}}"
+			type="submit"
+			ng-click="vm.yes()"
+			autofocus
+		>
+			Yes
+		</button>
 	</div>
 </form>

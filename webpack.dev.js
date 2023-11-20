@@ -1,17 +1,17 @@
 const { merge } = require("webpack-merge"),
-			{
-				entry,
-				output,
-				lessRule,
-				cssRule,
-				fontRule,
-				iconRule,
-				providejQuery,
-				extractCss,
-				createIndexHtml,
-				copyStaticAssets,
-				config
-			} = require("./webpack.common");
+	{
+		entry,
+		output,
+		lessRule,
+		cssRule,
+		fontRule,
+		iconRule,
+		providejQuery,
+		extractCss,
+		createIndexHtml,
+		copyStaticAssets,
+		config,
+	} = require("./webpack.common");
 
 module.exports = merge(config, {
 	// Use default entry
@@ -21,12 +21,7 @@ module.exports = merge(config, {
 	output,
 
 	module: {
-		rules: [
-			lessRule,
-			cssRule,
-			fontRule,
-			iconRule
-		]
+		rules: [lessRule, cssRule, fontRule, iconRule],
 	},
 
 	// Eval source maps
@@ -35,14 +30,9 @@ module.exports = merge(config, {
 	devServer: {
 		open: true,
 		proxy: {
-			"/": "http://localhost:3000"
-		}
+			"/": "http://localhost:3000",
+		},
 	},
 
-	plugins: [
-		providejQuery,
-		extractCss(),
-		createIndexHtml,
-		copyStaticAssets
-	]
+	plugins: [providejQuery, extractCss(), createIndexHtml, copyStaticAssets],
 });

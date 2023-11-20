@@ -4,20 +4,51 @@
 	</div>
 	<div class="modal-body">
 		<!-- Name -->
-		<div class="form-group has-feedback" ng-class="{'has-error': securityForm.name.$invalid}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': securityForm.name.$invalid}"
+		>
 			<label for="name">Name</label>
-			<input id="name" name="name" class="form-control" ng-model="vm.security.name" placeholder="Security" required autofocus og-input-autoselect>
-			<span ng-show="securityForm.name.$invalid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input
+				id="name"
+				name="name"
+				class="form-control"
+				ng-model="vm.security.name"
+				placeholder="Security"
+				required
+				autofocus
+				og-input-autoselect
+			/>
+			<span
+				ng-show="securityForm.name.$invalid"
+				class="glyphicon glyphicon-remove form-control-feedback"
+			></span>
 		</div>
 		<!-- Code -->
 		<div class="form-group">
 			<label for="code">Code</label>
-			<input id="code" name="code" class="form-control" ng-model="vm.security.code" placeholder="Code" og-input-autoselect>
+			<input
+				id="code"
+				name="code"
+				class="form-control"
+				ng-model="vm.security.code"
+				placeholder="Code"
+				og-input-autoselect
+			/>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-		<button class="btn btn-primary" type="submit" ng-disabled="securityForm.$invalid" ng-click="vm.save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-primary"
+			type="submit"
+			ng-disabled="securityForm.$invalid"
+			ng-click="vm.save()"
+		>
+			<i class="glyphicon glyphicon-ok"></i> Save
+		</button>
 	</div>
 </form>

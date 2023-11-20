@@ -1,6 +1,6 @@
 import {
 	DIRECTION_INFLOW,
-	DIRECTION_OUTFLOW
+	DIRECTION_OUTFLOW,
 } from "~/support/categories/index";
 import type { Category } from "~/support/categories/types";
 
@@ -8,9 +8,9 @@ export const categoryEditForm = "form[name=categoryForm]";
 export const categoryEditHeading = `${categoryEditForm} > div.modal-header > h4`;
 
 const categoryNameInput = `${categoryEditForm} #name`,
-			categoryParentTypeahead = `${categoryEditForm} input[name=parent]`,
-			categoryInflowRadioButton = `${categoryEditForm} i.${DIRECTION_INFLOW}`,
-			categoryOutflowRadioButton = `${categoryEditForm} i.${DIRECTION_OUTFLOW}`;
+	categoryParentTypeahead = `${categoryEditForm} input[name=parent]`,
+	categoryInflowRadioButton = `${categoryEditForm} i.${DIRECTION_INFLOW}`,
+	categoryOutflowRadioButton = `${categoryEditForm} i.${DIRECTION_OUTFLOW}`;
 
 export const cancelButton = `${categoryEditForm} button[type=button]`;
 export const saveButton = `${categoryEditForm} button[type=submit]`;
@@ -39,10 +39,16 @@ export function checkFormMatches(expectedValues: Category): void {
 	if (undefined === parent) {
 		if (direction === DIRECTION_INFLOW) {
 			cy.get(categoryInflowRadioButton).parent().should("have.class", "active");
-			cy.get(categoryOutflowRadioButton).parent().should("not.have.class", "active");
+			cy.get(categoryOutflowRadioButton)
+				.parent()
+				.should("not.have.class", "active");
 		} else {
-			cy.get(categoryInflowRadioButton).parent().should("not.have.class", "active");
-			cy.get(categoryOutflowRadioButton).parent().should("have.class", "active");
+			cy.get(categoryInflowRadioButton)
+				.parent()
+				.should("not.have.class", "active");
+			cy.get(categoryOutflowRadioButton)
+				.parent()
+				.should("have.class", "active");
 		}
 	} else {
 		cy.get(categoryParentTypeahead).should("have.value", parent);

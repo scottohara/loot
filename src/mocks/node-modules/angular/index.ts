@@ -10,7 +10,8 @@ import UibModalMockProvider from "~/mocks/node-modules/angular/services/uibmodal
 import WindowMockProvider from "~/mocks/node-modules/angular/services/window";
 import angular from "angular";
 
-angular.module("ogAngularMocks", [])
+angular
+	.module("ogAngularMocks", [])
 	.provider("$anchorScrollMock", AnchorScrollMockProvider)
 	.provider("$cacheFactoryMock", CacheFactoryMockProvider)
 	.provider("$qMock", QMockProvider)

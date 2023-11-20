@@ -1,6 +1,6 @@
 import type {
 	PromiseMockConfig,
-	QMock
+	QMock,
 } from "~/mocks/node-modules/angular/types";
 import type { Account } from "~/accounts/types";
 import type AccountMockProvider from "~/mocks/accounts/providers/account";
@@ -12,28 +12,35 @@ import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 import type { SinonStub } from "sinon";
 import sinon from "sinon";
 
-export default class AccountModelMockProvider implements Mock<AccountModelMock> {
+export default class AccountModelMockProvider
+	implements Mock<AccountModelMock>
+{
 	private readonly accountModel: AccountModelMock;
 
-	public constructor(accountMockProvider: AccountMockProvider, accountsMockProvider: AccountsMockProvider, accountsWithBalancesMockProvider: AccountsWithBalancesMockProvider, $qMockProvider: QMockProvider) {
+	public constructor(
+		accountMockProvider: AccountMockProvider,
+		accountsMockProvider: AccountsMockProvider,
+		accountsWithBalancesMockProvider: AccountsWithBalancesMockProvider,
+		$qMockProvider: QMockProvider,
+	) {
 		/*
 		 * Success/error = options for the stub promises
 		 * all/allWithBalances =  promise-like responses
 		 */
-		const	$q: QMock = $qMockProvider.$get(),
-					all: SinonStub = $q.promisify({
-						response: accountsMockProvider.$get()
-					}),
-					allWithBalances: SinonStub = $q.promisify({
-						response: accountsWithBalancesMockProvider.$get()
-					}),
-					success: PromiseMockConfig<{ data: Account; }> = {
-						args: { id: 1 },
-						response: { data: accountMockProvider.$get() }
-					},
-					error: PromiseMockConfig<void> = {
-						args: { id: -1 }
-					};
+		const $q: QMock = $qMockProvider.$get(),
+			all: SinonStub = $q.promisify({
+				response: accountsMockProvider.$get(),
+			}),
+			allWithBalances: SinonStub = $q.promisify({
+				response: accountsWithBalancesMockProvider.$get(),
+			}),
+			success: PromiseMockConfig<{ data: Account }> = {
+				args: { id: 1 },
+				response: { data: accountMockProvider.$get() },
+			},
+			error: PromiseMockConfig<void> = {
+				args: { id: -1 },
+			};
 
 		// Configure the different responses for all()
 		all.withArgs(true).returns(allWithBalances());
@@ -64,7 +71,7 @@ export default class AccountModelMockProvider implements Mock<AccountModelMock> 
 			unreconciledOnly: sinon.stub(),
 			flush: sinon.stub(),
 			addRecent: sinon.stub(),
-			accounts: accountsWithBalancesMockProvider.$get()
+			accounts: accountsWithBalancesMockProvider.$get(),
 		};
 
 		// Spy on find() and toggleFavourite()
@@ -78,4 +85,9 @@ export default class AccountModelMockProvider implements Mock<AccountModelMock> 
 	}
 }
 
-AccountModelMockProvider.$inject = ["accountMockProvider", "accountsMockProvider", "accountsWithBalancesMockProvider", "$qMockProvider"];
+AccountModelMockProvider.$inject = [
+	"accountMockProvider",
+	"accountsMockProvider",
+	"accountsWithBalancesMockProvider",
+	"$qMockProvider",
+];

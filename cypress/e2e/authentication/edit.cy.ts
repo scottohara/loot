@@ -4,7 +4,7 @@ import {
 	loginButton,
 	loginForm,
 	notLoggedInMessage,
-	populateFormWith
+	populateFormWith,
 } from "~/support/authentication/edit";
 
 describe("Authentication Edit", (): void => {
@@ -16,7 +16,10 @@ describe("Authentication Edit", (): void => {
 	});
 
 	it("should login if the credentials are valid", (): void => {
-		populateFormWith(String(Cypress.env("LOOT_USERNAME")), String(Cypress.env("LOOT_PASSWORD")));
+		populateFormWith(
+			String(Cypress.env("LOOT_USERNAME")),
+			String(Cypress.env("LOOT_PASSWORD")),
+		);
 		cy.get(loginButton).click();
 		cy.contains(errorMessage).should("not.exist");
 		cy.contains(notLoggedInMessage).should("not.exist");

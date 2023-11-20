@@ -1,6 +1,6 @@
 import type {
 	CategoryDirection,
-	CategoryDirectionLabel
+	CategoryDirectionLabel,
 } from "~/support/categories/types";
 import { DIRECTION_INFLOW } from "~/support/categories/index";
 
@@ -14,11 +14,12 @@ export const deleteButton = `${categoryDeleteForm} button[type=submit]`;
 export const warningMessage = "All subcategories will also be deleted";
 export const errorMessage = "";
 
-export function getDirectionLabel(direction: CategoryDirection): CategoryDirectionLabel {
+export function getDirectionLabel(
+	direction: CategoryDirection,
+): CategoryDirectionLabel {
 	if (DIRECTION_INFLOW === direction) {
 		return "Income";
 	}
 
 	return "Expense";
 }
-

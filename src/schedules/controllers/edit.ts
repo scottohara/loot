@@ -2,7 +2,7 @@ import type {
 	Account,
 	AccountType,
 	Accounts,
-	StoredAccountType
+	StoredAccountType,
 } from "~/accounts/types";
 import type {
 	CashTransaction,
@@ -16,22 +16,19 @@ import type {
 	Transaction,
 	TransactionDirection,
 	TransactionType,
-	TransferrableTransaction
+	TransferrableTransaction,
 } from "~/transactions/types";
-import type {
-	Category,
-	DisplayCategory
-} from "~/categories/types";
+import type { Category, DisplayCategory } from "~/categories/types";
 import type {
 	ScheduleFrequency,
-	ScheduledTransaction
+	ScheduledTransaction,
 } from "~/schedules/types";
 import {
 	addMonths,
 	addQuarters,
 	addWeeks,
 	addYears,
-	startOfDay
+	startOfDay,
 } from "date-fns";
 import type AccountModel from "~/accounts/models/account";
 import type CategoryModel from "~/categories/models/category";
@@ -59,33 +56,52 @@ export default class ScheduleEditController {
 
 	private account_type: AccountType | null = null;
 
-	private readonly scheduleFrequencies: ScheduleFrequency[] = ["Weekly", "Fortnightly", "Monthly", "Bimonthly", "Quarterly", "Yearly"];
+	private readonly scheduleFrequencies: ScheduleFrequency[] = [
+		"Weekly",
+		"Fortnightly",
+		"Monthly",
+		"Bimonthly",
+		"Quarterly",
+		"Yearly",
+	];
 
 	private readonly showError: (message?: string) => void;
 
-	public constructor($scope: angular.IScope,
-						private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
-						private readonly $timeout: angular.ITimeoutService,
-						private readonly filterFilter: angular.IFilterFilter,
-						private readonly limitToFilter: angular.IFilterLimitTo,
-						private readonly currencyFilter: angular.IFilterCurrency,
-						private readonly numberFilter: angular.IFilterNumber,
-						private readonly payeeModel: PayeeModel,
-						private readonly securityModel: SecurityModel,
-						private readonly categoryModel: CategoryModel,
-						private readonly accountModel: AccountModel,
-						private readonly transactionModel: TransactionModel,
-						private readonly scheduleModel: ScheduleModel,
-						ogModalErrorService: OgModalErrorService,
-						schedule: ScheduledTransaction | undefined) {
+	public constructor(
+		$scope: angular.IScope,
+		private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
+		private readonly $timeout: angular.ITimeoutService,
+		private readonly filterFilter: angular.IFilterFilter,
+		private readonly limitToFilter: angular.IFilterLimitTo,
+		private readonly currencyFilter: angular.IFilterCurrency,
+		private readonly numberFilter: angular.IFilterNumber,
+		private readonly payeeModel: PayeeModel,
+		private readonly securityModel: SecurityModel,
+		private readonly categoryModel: CategoryModel,
+		private readonly accountModel: AccountModel,
+		private readonly transactionModel: TransactionModel,
+		private readonly scheduleModel: ScheduleModel,
+		ogModalErrorService: OgModalErrorService,
+		schedule: ScheduledTransaction | undefined,
+	) {
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
-		this.transaction = angular.extend({ id: null, transaction_type: "Basic", next_due_date: startOfDay(new Date()) }, schedule) as ScheduledTransaction;
+		this.transaction = angular.extend(
+			{
+				id: null,
+				transaction_type: "Basic",
+				next_due_date: startOfDay(new Date()),
+			},
+			schedule,
+		) as ScheduledTransaction;
 
 		// When schedule is passed, start in "Enter Transaction" mode; otherwise start in "Add Schedule" mode
 		this.mode = undefined === schedule ? "Add Schedule" : "Enter Transaction";
 
 		// When schedule is passed, schedule & transaction are different objects; otherwise same object
-		this.schedule = undefined === schedule ? this.transaction : angular.copy(this.transaction);
+		this.schedule =
+			undefined === schedule
+				? this.transaction
+				: angular.copy(this.transaction);
 
 		if (undefined !== schedule) {
 			// Set the transaction id to null, so that on save a new transaction is created
@@ -106,57 +122,110 @@ export default class ScheduleEditController {
 		payeeModel.all().catch(this.showError);
 
 		// Watch the subtransactions array and recalculate the total allocated
-		$scope.$watch((): SplitTransactionChild[] => (this.transaction as SplitTransaction).subtransactions, (newValue: SplitTransactionChild[], oldValue: SplitTransactionChild[]): void => {
-			if (newValue !== oldValue && (this.transaction as SplitTransaction).subtransactions as SplitTransactionChild[] | undefined) {
-				this.totalAllocated = (this.transaction as SplitTransaction).subtransactions.reduce((total: number, subtransaction: SplitTransactionChild): number => total + (isNaN(Number(subtransaction.amount)) ? 0 : Number(subtransaction.amount) * (subtransaction.direction === this.transaction.direction ? 1 : -1)), 0);
+		$scope.$watch(
+			(): SplitTransactionChild[] =>
+				(this.transaction as SplitTransaction).subtransactions,
+			(
+				newValue: SplitTransactionChild[],
+				oldValue: SplitTransactionChild[],
+			): void => {
+				if (
+					newValue !== oldValue &&
+					((this.transaction as SplitTransaction).subtransactions as
+						| SplitTransactionChild[]
+						| undefined)
+				) {
+					this.totalAllocated = (
+						this.transaction as SplitTransaction
+					).subtransactions.reduce(
+						(total: number, subtransaction: SplitTransactionChild): number =>
+							total +
+							(isNaN(Number(subtransaction.amount))
+								? 0
+								: Number(subtransaction.amount) *
+								  (subtransaction.direction === this.transaction.direction
+										? 1
+										: -1)),
+						0,
+					);
 
-				// If we're adding a new transaction, join the subtransaction memos and update the parent memo
-				if (null === this.transaction.id) {
-					this.memoFromSubtransactions();
+					// If we're adding a new transaction, join the subtransaction memos and update the parent memo
+					if (null === this.transaction.id) {
+						this.memoFromSubtransactions();
+					}
 				}
-			}
-		}, true);
+			},
+			true,
+		);
 	}
 
 	// List of payees for the typeahead
 	public payees(filter: string, limit: number): angular.IPromise<Payee[]> {
-		return this.payeeModel.all().then((payees: Payee[]): Payee[] => this.limitToFilter(this.filterFilter(payees, { name: filter }), limit));
+		return this.payeeModel
+			.all()
+			.then((payees: Payee[]): Payee[] =>
+				this.limitToFilter(this.filterFilter(payees, { name: filter }), limit),
+			);
 	}
 
 	// List of securities for the typeahead
-	public securities(filter: string, limit: number): angular.IPromise<Security[]> {
-		return this.securityModel.all().then((securities: Security[]): Security[] => this.limitToFilter(this.filterFilter(securities, { name: filter }), limit));
+	public securities(
+		filter: string,
+		limit: number,
+	): angular.IPromise<Security[]> {
+		return this.securityModel
+			.all()
+			.then((securities: Security[]): Security[] =>
+				this.limitToFilter(
+					this.filterFilter(securities, { name: filter }),
+					limit,
+				),
+			);
 	}
 
 	// List of categories for the typeahead
-	public categories(filter: string, limit: number, parent?: Category | null, includeSplits = false): angular.IPromise<DisplayCategory[]> | DisplayCategory[] {
+	public categories(
+		filter: string,
+		limit: number,
+		parent?: Category | null,
+		includeSplits = false,
+	): angular.IPromise<DisplayCategory[]> | DisplayCategory[] {
 		// If a parent was specified but it doesn't have an id, return an empty array
 		if (undefined !== parent && null !== parent && isNaN(Number(parent.id))) {
 			return [];
 		}
 
-		return this.categoryModel.all(parent?.id).then((categories: Category[]): DisplayCategory[] => {
-			let psuedoCategories: DisplayCategory[] = categories;
+		return this.categoryModel
+			.all(parent?.id)
+			.then((categories: Category[]): DisplayCategory[] => {
+				let psuedoCategories: DisplayCategory[] = categories;
 
-			// For the category dropdown, include psuedo-categories that change the transaction type
-			if (undefined === parent || null === parent) {
-				if (includeSplits) {
-					psuedoCategories = ([
-						{ id: "SplitTo", name: "Split To" },
-						{ id: "SplitFrom", name: "Split From" },
-						{ id: "Payslip", name: "Payslip" },
-						{ id: "LoanRepayment", name: "Loan Repayment" }
-					] as DisplayCategory[]).concat(psuedoCategories);
+				// For the category dropdown, include psuedo-categories that change the transaction type
+				if (undefined === parent || null === parent) {
+					if (includeSplits) {
+						psuedoCategories = (
+							[
+								{ id: "SplitTo", name: "Split To" },
+								{ id: "SplitFrom", name: "Split From" },
+								{ id: "Payslip", name: "Payslip" },
+								{ id: "LoanRepayment", name: "Loan Repayment" },
+							] as DisplayCategory[]
+						).concat(psuedoCategories);
+					}
+
+					psuedoCategories = (
+						[
+							{ id: "TransferTo", name: "Transfer To" },
+							{ id: "TransferFrom", name: "Transfer From" },
+						] as DisplayCategory[]
+					).concat(psuedoCategories);
 				}
 
-				psuedoCategories = ([
-					{ id: "TransferTo", name: "Transfer To" },
-					{ id: "TransferFrom", name: "Transfer From" }
-				] as DisplayCategory[]).concat(psuedoCategories);
-			}
-
-			return this.limitToFilter(this.filterFilter(psuedoCategories, { name: filter }), limit);
-		});
+				return this.limitToFilter(
+					this.filterFilter(psuedoCategories, { name: filter }),
+					limit,
+				);
+			});
 	}
 
 	// List of investment categories for the typeahead
@@ -168,10 +237,12 @@ export default class ScheduleEditController {
 			{ id: "AddShares", name: "Add Shares" },
 			{ id: "RemoveShares", name: "Remove Shares" },
 			{ id: "TransferTo", name: "Transfer To" },
-			{ id: "TransferFrom", name: "Transfer From" }
+			{ id: "TransferFrom", name: "Transfer From" },
 		];
 
-		return undefined === filter ? categories : this.filterFilter(categories, { name: filter });
+		return undefined === filter
+			? categories
+			: this.filterFilter(categories, { name: filter });
 	}
 
 	// Returns true if the passed value is typeof string (and is not empty)
@@ -182,12 +253,22 @@ export default class ScheduleEditController {
 	// Handler for payee changes
 	public payeeSelected(): void {
 		// If we're adding a new schedule and an existing payee is selected
-		if (null === this.transaction.id && "object" === typeof (this.transaction as PayeeCashTransaction).payee && "Enter Transaction" !== this.mode) {
+		if (
+			null === this.transaction.id &&
+			"object" === typeof (this.transaction as PayeeCashTransaction).payee &&
+			"Enter Transaction" !== this.mode
+		) {
 			// Show the loading indicator
 			this.loadingLastTransaction = true;
 
 			// Get the previous transaction for the payee
-			this.payeeModel.findLastTransaction(Number(((this.transaction as PayeeCashTransaction).payee as Payee).id), this.transaction.primary_account.account_type as StoredAccountType)
+			this.payeeModel
+				.findLastTransaction(
+					Number(
+						((this.transaction as PayeeCashTransaction).payee as Payee).id,
+					),
+					this.transaction.primary_account.account_type as StoredAccountType,
+				)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
 				.then((): false => (this.loadingLastTransaction = false))
@@ -198,12 +279,22 @@ export default class ScheduleEditController {
 	// Handler for security changes
 	public securitySelected(): void {
 		// If we're adding a new schedule and an existing security is selected
-		if (null === this.transaction.id && "object" === typeof (this.transaction as SecurityTransaction).security && "Enter Transaction" !== this.mode) {
+		if (
+			null === this.transaction.id &&
+			"object" === typeof (this.transaction as SecurityTransaction).security &&
+			"Enter Transaction" !== this.mode
+		) {
 			// Show the loading indicator
 			this.loadingLastTransaction = true;
 
 			// Get the previous transaction for the security
-			this.securityModel.findLastTransaction(Number(((this.transaction as SecurityTransaction).security as Security).id), this.transaction.primary_account.account_type as StoredAccountType)
+			this.securityModel
+				.findLastTransaction(
+					Number(
+						((this.transaction as SecurityTransaction).security as Security).id,
+					),
+					this.transaction.primary_account.account_type as StoredAccountType,
+				)
 				.then(this.getSubtransactions.bind(this))
 				.then(this.useLastTransaction.bind(this))
 				.then((): false => (this.loadingLastTransaction = false))
@@ -213,13 +304,20 @@ export default class ScheduleEditController {
 
 	// Handler for category changes (`index` is the subtransaction index, or null for the main schedule)
 	public categorySelected(index?: number): void {
-		const transaction: SplitTransactionChild | Transaction = isNaN(Number(index)) ? this.transaction : (this.transaction as SplitTransaction).subtransactions[Number(index)];
-		let	type: SubtransactionType | TransactionType | undefined,
-				direction: TransactionDirection | undefined,
-				parentId: number | undefined;
+		const transaction: SplitTransactionChild | Transaction = isNaN(
+			Number(index),
+		)
+			? this.transaction
+			: (this.transaction as SplitTransaction).subtransactions[Number(index)];
+		let type: SubtransactionType | TransactionType | undefined,
+			direction: TransactionDirection | undefined,
+			parentId: number | undefined;
 
 		// Check the category selection
-		if (undefined !== transaction.category && "object" === typeof transaction.category) {
+		if (
+			undefined !== transaction.category &&
+			"object" === typeof transaction.category
+		) {
 			if (isNaN(Number(index))) {
 				switch (String(transaction.category.id)) {
 					case "TransferTo":
@@ -254,7 +352,9 @@ export default class ScheduleEditController {
 
 					default:
 						type = "Basic";
-						({ direction } = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
+						({ direction } = (
+							transaction as CategorisableTransaction & TransferrableTransaction
+						).category as Category);
 						break;
 				}
 
@@ -266,15 +366,20 @@ export default class ScheduleEditController {
 					case "Split":
 					case "Payslip":
 					case "LoanRepayment":
-						if (undefined === (transaction as SplitTransaction).subtransactions as SplitTransactionChild[] | undefined) {
+						if (
+							undefined ===
+							((transaction as SplitTransaction).subtransactions as
+								| SplitTransactionChild[]
+								| undefined)
+						) {
 							(transaction as SplitTransaction).subtransactions = [
 								{
 									memo: transaction.memo,
-									amount: (transaction as CashTransaction).amount
+									amount: (transaction as CashTransaction).amount,
 								},
 								{},
 								{},
-								{}
+								{},
 							];
 						}
 						break;
@@ -295,27 +400,37 @@ export default class ScheduleEditController {
 
 					default:
 						type = "Sub";
-						({ direction } = (transaction as CategorisableTransaction & TransferrableTransaction).category as Category);
+						({ direction } = (
+							transaction as CategorisableTransaction & TransferrableTransaction
+						).category as Category);
 						break;
 				}
 			}
 
-			parentId = ((transaction as CategorisableTransaction).category as Category).id;
+			parentId = (
+				(transaction as CategorisableTransaction).category as Category
+			).id;
 		}
 
 		// Update the transaction type & direction
-		transaction.transaction_type = type ?? (isNaN(Number(index)) ? "Basic" : "Sub");
+		transaction.transaction_type =
+			type ?? (isNaN(Number(index)) ? "Basic" : "Sub");
 		transaction.direction = direction ?? "outflow";
 
 		// Make sure the subcategory is still valid
-		if (undefined !== (transaction as SubcategorisableTransaction).subcategory && null !== (transaction as SubcategorisableTransaction).subcategory && ((transaction as SubcategorisableTransaction).subcategory as Category).parent_id !== parentId) {
+		if (
+			undefined !== (transaction as SubcategorisableTransaction).subcategory &&
+			null !== (transaction as SubcategorisableTransaction).subcategory &&
+			((transaction as SubcategorisableTransaction).subcategory as Category)
+				.parent_id !== parentId
+		) {
 			(transaction as SubcategorisableTransaction).subcategory = null;
 		}
 	}
 
 	// Handler for investment category changes
 	public investmentCategorySelected(): void {
-		let	{ transaction_type, direction } = this.transaction;
+		let { transaction_type, direction } = this.transaction;
 
 		// Check the category selection
 		if ("object" === typeof this.transaction.category) {
@@ -366,15 +481,29 @@ export default class ScheduleEditController {
 
 	// Handler for primary account changes
 	public primaryAccountSelected(): void {
-		const selectedAccountType: AccountType | null = (this.transaction.primary_account as Account | undefined)?.account_type ?? null;
+		const selectedAccountType: AccountType | null =
+			(this.transaction.primary_account as Account | undefined)?.account_type ??
+			null;
 
-		if (null !== this.account_type && this.account_type !== selectedAccountType) {
+		if (
+			null !== this.account_type &&
+			this.account_type !== selectedAccountType
+		) {
 			(this.transaction as CategorisableTransaction).category = null;
 			(this.transaction as SubcategorisableTransaction).subcategory = null;
 		}
 		this.account_type = selectedAccountType;
 
-		if (null !== (this.transaction as TransferrableTransaction).account && (undefined !== (this.transaction as TransferrableTransaction).account as Account | undefined) && undefined !== this.transaction.primary_account as Account | undefined && this.transaction.primary_account.id === ((this.transaction as TransferrableTransaction).account as Account).id) {
+		if (
+			null !== (this.transaction as TransferrableTransaction).account &&
+			undefined !==
+				((this.transaction as TransferrableTransaction).account as
+					| Account
+					| undefined) &&
+			undefined !== (this.transaction.primary_account as Account | undefined) &&
+			this.transaction.primary_account.id ===
+				((this.transaction as TransferrableTransaction).account as Account).id
+		) {
 			// Primary account and transfer account can't be the same, so clear the transfer account
 			(this.transaction as TransferrableTransaction).account = null;
 		}
@@ -382,12 +511,32 @@ export default class ScheduleEditController {
 
 	// Joins the subtransaction memos and updates the parent memo
 	public memoFromSubtransactions(): void {
-		this.transaction.memo = (this.transaction as SplitTransaction).subtransactions.reduce((memo: string, subtransaction: SplitTransactionChild): string => `${memo}${undefined === subtransaction.memo ? "" : `${memo ? "; " : ""}${subtransaction.memo}`}`, "");
+		this.transaction.memo = (
+			this.transaction as SplitTransaction
+		).subtransactions.reduce(
+			(memo: string, subtransaction: SplitTransactionChild): string =>
+				`${memo}${
+					undefined === subtransaction.memo
+						? ""
+						: `${memo ? "; " : ""}${subtransaction.memo}`
+				}`,
+			"",
+		);
 	}
 
 	// List of primary accounts for the typeahead
-	public primaryAccounts(filter: string, limit: number): angular.IPromise<Account[]> {
-		return this.accountModel.all().then((accounts: Account[] | Accounts): Account[] => this.limitToFilter(this.filterFilter(accounts as Account[], { name: filter }), limit));
+	public primaryAccounts(
+		filter: string,
+		limit: number,
+	): angular.IPromise<Account[]> {
+		return this.accountModel
+			.all()
+			.then((accounts: Account[] | Accounts): Account[] =>
+				this.limitToFilter(
+					this.filterFilter(accounts as Account[], { name: filter }),
+					limit,
+				),
+			);
 	}
 
 	// List of accounts for the typeahead
@@ -398,12 +547,18 @@ export default class ScheduleEditController {
 			// Exclude investment accounts by default
 			const accountFilter: angular.IFilterFilterPatternObject = {
 				name: filter,
-				account_type: "!investment"
+				account_type: "!investment",
 			};
 
 			// Filter the primary account from the results (can't transfer to self)
-			if (undefined !== this.transaction.primary_account as Account | undefined) {
-				filteredAccounts = this.filterFilter(filteredAccounts, { name: `!${this.transaction.primary_account.name}` }, true);
+			if (
+				undefined !== (this.transaction.primary_account as Account | undefined)
+			) {
+				filteredAccounts = this.filterFilter(
+					filteredAccounts,
+					{ name: `!${this.transaction.primary_account.name}` },
+					true,
+				);
 			}
 
 			// For security transfers, only include investment accounts
@@ -411,13 +566,18 @@ export default class ScheduleEditController {
 				accountFilter.account_type = "investment";
 			}
 
-			return this.limitToFilter(this.filterFilter(filteredAccounts, accountFilter), limit);
+			return this.limitToFilter(
+				this.filterFilter(filteredAccounts, accountFilter),
+				limit,
+			);
 		});
 	}
 
 	// List of frequencies for the typeahead
 	public frequencies(filter?: string): ScheduleFrequency[] {
-		return undefined === filter ? this.scheduleFrequencies : this.filterFilter(this.scheduleFrequencies, filter);
+		return undefined === filter
+			? this.scheduleFrequencies
+			: this.filterFilter(this.scheduleFrequencies, filter);
 	}
 
 	// Add a new subtransaction
@@ -432,21 +592,30 @@ export default class ScheduleEditController {
 
 	// Adds any unallocated amount to the specified subtransaction
 	public addUnallocatedAmount(index: number): void {
-		const amount: number | undefined = Number((this.transaction as SplitTransaction).subtransactions[index].amount);
+		const amount: number | undefined = Number(
+			(this.transaction as SplitTransaction).subtransactions[index].amount,
+		);
 
-		(this.transaction as SplitTransaction).subtransactions[index].amount = (isNaN(amount) ? 0 : amount) + ((this.transaction as SplitTransaction).amount - Number(this.totalAllocated));
+		(this.transaction as SplitTransaction).subtransactions[index].amount =
+			(isNaN(amount) ? 0 : amount) +
+			((this.transaction as SplitTransaction).amount -
+				Number(this.totalAllocated));
 	}
 
 	// Updates the transaction amount and memo when the quantity, price or commission change
 	public updateInvestmentDetails(): void {
 		const QUANTITY_DECIMAL_PLACES = 4,
-					PRICE_DECIMAL_PLACES = 3,
-					AMOUNT_DECIMAL_PLACES = 2;
+			PRICE_DECIMAL_PLACES = 3,
+			AMOUNT_DECIMAL_PLACES = 2;
 
 		if ("SecurityInvestment" === this.transaction.transaction_type) {
 			// Base amount is the quantity multiplied by the price
-			const amount = Number((Number(this.transaction.quantity) * Number(this.transaction.price)).toFixed(AMOUNT_DECIMAL_PLACES)),
-						commission = Number(this.transaction.commission);
+			const amount = Number(
+					(
+						Number(this.transaction.quantity) * Number(this.transaction.price)
+					).toFixed(AMOUNT_DECIMAL_PLACES),
+				),
+				commission = Number(this.transaction.commission);
 
 			this.transaction.amount = isNaN(amount) ? 0 : amount;
 
@@ -459,10 +628,31 @@ export default class ScheduleEditController {
 		}
 
 		// If we're adding a new buy or sell transaction, update the memo with the details
-		if (null === this.transaction.id && "SecurityInvestment" === this.transaction.transaction_type) {
-			const quantity: string = Number(this.transaction.quantity) > 0 ? this.numberFilter(this.transaction.quantity, QUANTITY_DECIMAL_PLACES) : "",
-						price: string = Number(this.transaction.price) > 0 ? ` @ ${this.currencyFilter(this.transaction.price, undefined, PRICE_DECIMAL_PLACES)}` : "",
-						commission: string = Number(this.transaction.commission) > 0 ? ` (${"inflow" === this.transaction.direction ? "plus" : "less"} ${this.currencyFilter(this.transaction.commission)} commission)` : "";
+		if (
+			null === this.transaction.id &&
+			"SecurityInvestment" === this.transaction.transaction_type
+		) {
+			const quantity: string =
+					Number(this.transaction.quantity) > 0
+						? this.numberFilter(
+								this.transaction.quantity,
+								QUANTITY_DECIMAL_PLACES,
+						  )
+						: "",
+				price: string =
+					Number(this.transaction.price) > 0
+						? ` @ ${this.currencyFilter(
+								this.transaction.price,
+								undefined,
+								PRICE_DECIMAL_PLACES,
+						  )}`
+						: "",
+				commission: string =
+					Number(this.transaction.commission) > 0
+						? ` (${
+								"inflow" === this.transaction.direction ? "plus" : "less"
+						  } ${this.currencyFilter(this.transaction.commission)} commission)`
+						: "";
 
 			this.transaction.memo = quantity + price + commission;
 		}
@@ -477,7 +667,11 @@ export default class ScheduleEditController {
 	// Enter a transaction based on the schedule, update the next due date and close the modal
 	public enter(): void {
 		this.errorMessage = null;
-		this.transactionModel.save(this.transaction).then((): void => this.skip(), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
+		this.transactionModel.save(this.transaction).then(
+			(): void => this.skip(),
+			(error: angular.IHttpResponse<string>): string =>
+				(this.errorMessage = error.data),
+		);
 	}
 
 	// Skip the next scheduled occurrence, update the next due date and close the modal
@@ -501,7 +695,15 @@ export default class ScheduleEditController {
 			this.schedule.flag = null;
 		}
 
-		this.scheduleModel.save(this.schedule).then((schedule: ScheduledTransaction): void => this.$uibModalInstance.close({ data: schedule, skipped: Boolean(skipped) }), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
+		this.scheduleModel.save(this.schedule).then(
+			(schedule: ScheduledTransaction): void =>
+				this.$uibModalInstance.close({
+					data: schedule,
+					skipped: Boolean(skipped),
+				}),
+			(error: angular.IHttpResponse<string>): string =>
+				(this.errorMessage = error.data),
+		);
 	}
 
 	// Dismiss the modal without saving
@@ -510,7 +712,9 @@ export default class ScheduleEditController {
 	}
 
 	// Fetches the subtransactions for a transaction
-	private getSubtransactions(transaction?: Transaction): angular.IPromise<SplitTransaction> | Transaction | undefined {
+	private getSubtransactions(
+		transaction?: Transaction,
+	): angular.IPromise<SplitTransaction> | Transaction | undefined {
 		if (undefined === transaction) {
 			return undefined;
 		}
@@ -522,23 +726,33 @@ export default class ScheduleEditController {
 			case "Payslip":
 				transaction.subtransactions = [];
 
-				return this.transactionModel.findSubtransactions(Number(transaction.id)).then((subtransactions: SplitTransactionChild[]): SplitTransaction => {
-					// Strip the subtransaction ids
-					transaction.subtransactions = subtransactions.map((subtransaction: SplitTransactionChild): SplitTransactionChild => {
-						subtransaction.id = null;
+				return this.transactionModel
+					.findSubtransactions(Number(transaction.id))
+					.then(
+						(subtransactions: SplitTransactionChild[]): SplitTransaction => {
+							// Strip the subtransaction ids
+							transaction.subtransactions = subtransactions.map(
+								(
+									subtransaction: SplitTransactionChild,
+								): SplitTransactionChild => {
+									subtransaction.id = null;
 
-						return subtransaction;
-					});
+									return subtransaction;
+								},
+							);
 
-					return transaction;
-				});
+							return transaction;
+						},
+					);
 			default:
 				return transaction;
 		}
 	}
 
 	// Merges the details of a previous transaction into the current one
-	private useLastTransaction(transaction?: Partial<ScheduledTransaction>): void {
+	private useLastTransaction(
+		transaction?: Partial<ScheduledTransaction>,
+	): void {
 		if (undefined === transaction) {
 			return;
 		}
@@ -557,27 +771,37 @@ export default class ScheduleEditController {
 		transaction.flag = this.transaction.flag;
 
 		// Merge the last transaction details into the transaction on the scope
-		this.transaction = angular.extend(this.transaction, transaction) as ScheduledTransaction;
+		this.transaction = angular.extend(
+			this.transaction,
+			transaction,
+		) as ScheduledTransaction;
 
 		// Depending on which field has focus, re-trigger the focus event handler to format/select the new value
-		angular.forEach(angular.element("#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo"), (field: Element): void => {
-			if (field === document.activeElement) {
-				this.$timeout((): void => angular.element(field).triggerHandler("focus")).catch(this.showError);
-			}
-		});
+		angular.forEach(
+			angular.element(
+				"#amount, #category, #subcategory, #account, #quantity, #price, #commission, #memo",
+			),
+			(field: Element): void => {
+				if (field === document.activeElement) {
+					this.$timeout((): void =>
+						angular.element(field).triggerHandler("focus"),
+					).catch(this.showError);
+				}
+			},
+		);
 	}
 
 	// Calculates the next due date
 	private calculateNextDue(): void {
 		const WEEK = 1,
-					FORTNIGHT = 2,
-					MONTH = 1,
-					BIMONTH = 2,
-					QUARTER = 1,
-					YEAR = 1;
+			FORTNIGHT = 2,
+			MONTH = 1,
+			BIMONTH = 2,
+			QUARTER = 1,
+			YEAR = 1;
 
 		let addFn = addWeeks,
-				amount = 0;
+			amount = 0;
 
 		switch (this.schedule.frequency) {
 			case "Weekly":
@@ -613,7 +837,10 @@ export default class ScheduleEditController {
 			// No default
 		}
 
-		this.schedule.next_due_date = addFn(this.schedule.next_due_date as Date, amount);
+		this.schedule.next_due_date = addFn(
+			this.schedule.next_due_date as Date,
+			amount,
+		);
 
 		if (this.schedule.overdue_count > 0) {
 			this.schedule.overdue_count--;
@@ -621,4 +848,20 @@ export default class ScheduleEditController {
 	}
 }
 
-ScheduleEditController.$inject = ["$scope", "$uibModalInstance", "$timeout", "filterFilter", "limitToFilter", "currencyFilter", "numberFilter", "payeeModel", "securityModel", "categoryModel", "accountModel", "transactionModel", "scheduleModel", "ogModalErrorService", "schedule"];
+ScheduleEditController.$inject = [
+	"$scope",
+	"$uibModalInstance",
+	"$timeout",
+	"filterFilter",
+	"limitToFilter",
+	"currencyFilter",
+	"numberFilter",
+	"payeeModel",
+	"securityModel",
+	"categoryModel",
+	"accountModel",
+	"transactionModel",
+	"scheduleModel",
+	"ogModalErrorService",
+	"schedule",
+];

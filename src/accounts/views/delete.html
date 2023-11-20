@@ -13,12 +13,23 @@
 			<dt>Status</dt>
 			<dd>{{::vm.account.status}}</dd>
 			<dt ng-if="::vm.account.related_account.id">Related Account</dt>
-			<dd ng-if="::vm.account.related_account.id">{{::vm.account.related_account.name}}</dd>
+			<dd ng-if="::vm.account.related_account.id">
+				{{::vm.account.related_account.name}}
+			</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">
 		<span ng-if="vm.errorMessage" class="text-danger">{{vm.errorMessage}}</span>
-		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-		<button class="btn btn-danger" type="submit" ng-click="vm.deleteAccount()" autofocus><i class="glyphicon glyphicon-remove"></i> Delete</button>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-danger"
+			type="submit"
+			ng-click="vm.deleteAccount()"
+			autofocus
+		>
+			<i class="glyphicon glyphicon-remove"></i> Delete
+		</button>
 	</div>
 </form>

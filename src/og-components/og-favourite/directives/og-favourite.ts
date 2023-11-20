@@ -7,9 +7,9 @@ export default class OgFavouriteDirective {
 			restrict: "A",
 			replace: true,
 			scope: {
-				favourite: "=ogFavourite"
+				favourite: "=ogFavourite",
 			},
-			templateUrl: OgFavouriteView
+			templateUrl: OgFavouriteView,
 		};
 
 		return directive;

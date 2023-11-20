@@ -1,6 +1,6 @@
 import type {
 	PromiseMockConfig,
-	QMock
+	QMock,
 } from "~/mocks/node-modules/angular/types";
 import type { Mock } from "~/mocks/types";
 import type { Payee } from "~/payees/types";
@@ -14,16 +14,20 @@ import sinon from "sinon";
 export default class PayeeModelMockProvider implements Mock<PayeeModelMock> {
 	private readonly payeeModel: PayeeModelMock;
 
-	public constructor(payeeMockProvider: PayeeMockProvider, payeesMockProvider: PayeesMockProvider, $qMockProvider: QMockProvider) {
+	public constructor(
+		payeeMockProvider: PayeeMockProvider,
+		payeesMockProvider: PayeesMockProvider,
+		$qMockProvider: QMockProvider,
+	) {
 		// Success/error = options for the stub promises
-		const	$q: QMock = $qMockProvider.$get(),
-					success: PromiseMockConfig<{ data: Payee; }> = {
-						args: { id: 1 },
-						response: { data: payeeMockProvider.$get() }
-					},
-					error: PromiseMockConfig<void> = {
-						args: { id: -1 }
-					};
+		const $q: QMock = $qMockProvider.$get(),
+			success: PromiseMockConfig<{ data: Payee }> = {
+				args: { id: 1 },
+				response: { data: payeeMockProvider.$get() },
+			},
+			error: PromiseMockConfig<void> = {
+				args: { id: -1 },
+			};
 
 		// Mock payeeModel object
 		this.payeeModel = {
@@ -48,7 +52,7 @@ export default class PayeeModelMockProvider implements Mock<PayeeModelMock> {
 				return $q.promisify({ response: !payee.favourite })() as SinonStub;
 			},
 			flush: sinon.stub(),
-			addRecent: sinon.stub()
+			addRecent: sinon.stub(),
 		};
 
 		// Spy on find() and toggleFavourite()
@@ -62,4 +66,8 @@ export default class PayeeModelMockProvider implements Mock<PayeeModelMock> {
 	}
 }
 
-PayeeModelMockProvider.$inject = ["payeeMockProvider", "payeesMockProvider", "$qMockProvider"];
+PayeeModelMockProvider.$inject = [
+	"payeeMockProvider",
+	"payeesMockProvider",
+	"$qMockProvider",
+];

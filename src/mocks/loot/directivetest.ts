@@ -13,7 +13,10 @@ export default class DirectiveTest {
 
 	private element!: JQuery<Element>;
 
-	public constructor(private readonly $rootScope: angular.IRootScopeService, private readonly $compile: angular.ICompileService) {}
+	public constructor(
+		private readonly $rootScope: angular.IRootScopeService,
+		private readonly $compile: angular.ICompileService,
+	) {}
 
 	// Configures the name of the directive and the element tag (and optionally, any contents)
 	public configure(directive: string, tagName = "div", content = ""): void {
@@ -44,17 +47,29 @@ export default class DirectiveTest {
 	 * - the DOM element into which the directive was compiled
 	 * - the scope object that it was compiled with
 	 */
-	public compile(options: Record<string, string | undefined> = {}, replace = false): void {
+	public compile(
+		options: Record<string, string | undefined> = {},
+		replace = false,
+	): void {
 		// Configure the directive with any passed options
-		let directive = `${this.directive}${undefined === Object.getOwnPropertyDescriptor(options, this.directive) ? "" : `="${options[this.directive]}"`}`;
+		let directive = `${this.directive}${
+			undefined === Object.getOwnPropertyDescriptor(options, this.directive)
+				? ""
+				: `="${options[this.directive]}"`
+		}`;
 
-		directive = Object.keys(options).reduce((memo: string, option: string): string => {
-			if (option !== this.directive) {
-				return `${memo} ${option}${undefined === options[option] ? "" : `="${options[option]}"`}`;
-			}
+		directive = Object.keys(options).reduce(
+			(memo: string, option: string): string => {
+				if (option !== this.directive) {
+					return `${memo} ${option}${
+						undefined === options[option] ? "" : `="${options[option]}"`
+					}`;
+				}
 
-			return memo;
-		}, directive);
+				return memo;
+			},
+			directive,
+		);
 
 		// Compile the directive into the specified element tag using the new scope
 		this.element = this.$compile(`<${this.container}>

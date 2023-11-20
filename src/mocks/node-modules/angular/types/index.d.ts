@@ -11,8 +11,13 @@ export interface CacheFactoryMock {
 	get?: SinonStub;
 }
 
-export type PromiseMockCallback<T> = (value?: PromiseMock<T> | T) => PromiseMock<T> | T;
-export type PromiseMockThen<T> = (successCallback: PromiseMockCallback<T>, errorCallback: PromiseMockCallback<T>) => PromiseMock<T> | T;
+export type PromiseMockCallback<T> = (
+	value?: PromiseMock<T> | T,
+) => PromiseMock<T> | T;
+export type PromiseMockThen<T> = (
+	successCallback: PromiseMockCallback<T>,
+	errorCallback: PromiseMockCallback<T>,
+) => PromiseMock<T> | T;
 
 export interface PromiseMock<T> {
 	then?: PromiseMockThen<T>;
@@ -22,19 +27,25 @@ export interface PromiseMock<T> {
 export interface DeferredMock<T> {
 	promise: PromiseMock<T>;
 	resolve: (value?: T | null) => void;
-	reject: (value?: T | { data: "unsuccessful"; }) => void;
+	reject: (value?: T | { data: "unsuccessful" }) => void;
 }
 
 export interface PromiseMockConfig<T> {
-	args?: number | string | {
-		id: number;
-	};
+	args?:
+		| number
+		| string
+		| {
+				id: number;
+		  };
 	response?: T;
 }
 
 export interface QMock {
 	defer: <T>() => DeferredMock<T>;
-	promisify: <T, U>(success?: PromiseMockConfig<T> | number | string, error?: PromiseMockConfig<U> | number | string) => SinonStub;
+	promisify: <T, U>(
+		success?: PromiseMockConfig<T> | number | string,
+		error?: PromiseMockConfig<U> | number | string,
+	) => SinonStub;
 }
 
 export interface StateMock {
@@ -51,10 +62,26 @@ export interface StateMock {
 	go: () => void;
 }
 
-export type UibModalMockResolve = angular.IPromise<ScheduledTransaction> | angular.IPromise<Transaction> | Entity | OgModalAlert | OgModalConfirm | ScheduledTransaction | Transaction | undefined;
+export type UibModalMockResolve =
+	| angular.IPromise<ScheduledTransaction>
+	| angular.IPromise<Transaction>
+	| Entity
+	| OgModalAlert
+	| OgModalConfirm
+	| ScheduledTransaction
+	| Transaction
+	| undefined;
 export type UibModalMockResolves = Record<string, UibModalMockResolve>;
-export type UibModalMockCloseResult = Entity | ScheduledTransaction | Transaction | boolean | number | { data: ScheduledTransaction; skipped?: boolean; };
-export type UibModalMockResultCallback = (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
+export type UibModalMockCloseResult =
+	| Entity
+	| ScheduledTransaction
+	| Transaction
+	| boolean
+	| number
+	| { data: ScheduledTransaction; skipped?: boolean };
+export type UibModalMockResultCallback = (
+	value?: UibModalMockCloseResult,
+) => UibModalMockCloseResult;
 
 export interface UibModalMockResult {
 	then: (callback: UibModalMockResultCallback) => UibModalMockResult;
@@ -67,8 +94,12 @@ export interface UibModalMock {
 	callbackResult?: UibModalMockCloseResult;
 	closeCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
 	catchCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
-	finallyCallback?: (value?: UibModalMockCloseResult) => UibModalMockCloseResult;
-	open: (options: angular.ui.bootstrap.IModalSettings) => { result: UibModalMockResult; };
+	finallyCallback?: (
+		value?: UibModalMockCloseResult,
+	) => UibModalMockCloseResult;
+	open: (options: angular.ui.bootstrap.IModalSettings) => {
+		result: UibModalMockResult;
+	};
 	close: (value?: UibModalMockCloseResult) => void;
 	dismiss: () => void;
 }

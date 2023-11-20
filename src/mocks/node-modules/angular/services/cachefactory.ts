@@ -9,20 +9,22 @@ function mockCache(): angular.ICacheObject {
 		info: sinon.stub(),
 		remove: sinon.stub(),
 		removeAll: sinon.stub(),
-		destroy: sinon.stub()
+		destroy: sinon.stub(),
 	};
 }
 
-export default class CacheFactoryMockProvider implements Mock<CacheFactoryMock> {
+export default class CacheFactoryMockProvider
+	implements Mock<CacheFactoryMock>
+{
 	private readonly $cacheFactory: CacheFactoryMock;
 
-	public constructor(private readonly $cache: angular.ICacheObject = mockCache(), private readonly templatesCache: angular.ICacheObject = mockCache()) {
+	public constructor(
+		private readonly $cache: angular.ICacheObject = mockCache(),
+		private readonly templatesCache: angular.ICacheObject = mockCache(),
+	) {
 		const factory: CacheFactoryMock = (): angular.ICacheObject => this.$cache;
 
-		factory.info = sinon.stub().returns([
-			{ id: "templates" },
-			{ id: "test" }
-		]);
+		factory.info = sinon.stub().returns([{ id: "templates" }, { id: "test" }]);
 
 		// Returns a cache by it's name
 		factory.get = sinon.stub();

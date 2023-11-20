@@ -8,9 +8,9 @@ export default class OgTableLoadingDirective {
 			replace: true,
 			scope: {
 				isLoading: "=ogTableLoading",
-				colspan: "@"
+				colspan: "@",
 			},
-			templateUrl: OgTableLoadingView
+			templateUrl: OgTableLoadingView,
 		};
 
 		return directive;

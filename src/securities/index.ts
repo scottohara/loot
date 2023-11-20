@@ -10,11 +10,8 @@ import SecurityIndexController from "~/securities/controllers/index";
 import SecurityModel from "~/securities/models/security";
 import angular from "angular";
 
-angular.module("lootSecurities", [
-	"ui.bootstrap",
-	"ui.router",
-	"ogComponents"
-])
+angular
+	.module("lootSecurities", ["ui.bootstrap", "ui.router", "ogComponents"])
 	.controller("SecurityDeleteController", SecurityDeleteController)
 	.controller("SecurityEditController", SecurityEditController)
 	.controller("SecurityIndexController", SecurityIndexController)

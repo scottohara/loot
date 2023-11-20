@@ -1,28 +1,38 @@
 import type {
 	OgTableActionCallback,
 	OgTableMovementKeys,
-	OgTableNavigableScope
+	OgTableNavigableScope,
 } from "~/og-components/og-table-navigable/types";
 import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
 
 export default class OgTableNavigableDirective {
-	public constructor($window: angular.IWindowService, ogTableNavigableService: OgTableNavigableService) {
+	public constructor(
+		$window: angular.IWindowService,
+		ogTableNavigableService: OgTableNavigableService,
+	) {
 		const directive: angular.IDirective = {
 			restrict: "A",
 			scope: {
-				handlers: "=ogTableNavigable"
+				handlers: "=ogTableNavigable",
 			},
 			link(scope: OgTableNavigableScope, iElement: JQuery<Element>): void {
 				// Helper function to return all TR elements in the table body
-				scope.getRows = (): JQuery<Element> => $window.$(iElement).children("tbody").children("tr") as JQuery<Element>;
+				scope.getRows = (): JQuery<Element> =>
+					$window
+						.$(iElement)
+						.children("tbody")
+						.children("tr") as JQuery<Element>;
 
 				// Helper function to return the TR element for the specified index
-				scope.getRowAtIndex = (index: number): JQuery<Element> => scope.getRows().eq(index);
+				scope.getRowAtIndex = (index: number): JQuery<Element> =>
+					scope.getRows().eq(index);
 
 				// Focus a row in the table
 				scope.focusRow = (row: JQuery<Element>): void => {
-					const rowIndex: number = angular.element(row).scope<angular.IRepeatScope>().$index;
+					const rowIndex: number = angular
+						.element(row)
+						.scope<angular.IRepeatScope>().$index;
 
 					// Highlight the row
 					scope.highlightRow(row);
@@ -39,7 +49,7 @@ export default class OgTableNavigableDirective {
 
 				// Highlight the focussed row in the table
 				scope.highlightRow = (row: JQuery<Element>): void => {
-					const	focusClass = "warning";
+					const focusClass = "warning";
 
 					// Clear highlighting on any previously focussed row
 					scope.getRows().removeClass(focusClass);
@@ -51,12 +61,12 @@ export default class OgTableNavigableDirective {
 				// Checks if a row is off screen, and if so scrolls it into view
 				scope.scrollToRow = (row: JQuery<Element>): void => {
 					// Get the top/bottom of the focussed row, and the top/bottom of the viewport
-					const	rowOffset: JQueryCoordinates | undefined = row.offset(),
-								viewTop = Number($window.$(document).scrollTop()),
-								rowTop: number = rowOffset?.top ?? viewTop,
-								rowBottom: number = rowTop + Number(row.height()),
-								viewBottom: number = viewTop + Number($window.$(window).height()),
-								scrollNeeded: boolean = rowTop < viewTop || rowBottom > viewBottom;
+					const rowOffset: JQueryCoordinates | undefined = row.offset(),
+						viewTop = Number($window.$(document).scrollTop()),
+						rowTop: number = rowOffset?.top ?? viewTop,
+						rowBottom: number = rowTop + Number(row.height()),
+						viewBottom: number = viewTop + Number($window.$(window).height()),
+						scrollNeeded: boolean = rowTop < viewTop || rowBottom > viewBottom;
 
 					// If we have somewhere to scroll, do it now
 					if (scrollNeeded) {
@@ -65,7 +75,10 @@ export default class OgTableNavigableDirective {
 				};
 
 				// Helper function to make sure we're not outside the bounds of the table
-				function checkTargetIndex(targetIndex: number, totalRows: number): number {
+				function checkTargetIndex(
+					targetIndex: number,
+					totalRows: number,
+				): number {
 					let checkedTargetIndex: number = targetIndex;
 
 					if (checkedTargetIndex < 0) {
@@ -85,9 +98,12 @@ export default class OgTableNavigableDirective {
 					}
 
 					// Determine the row index to focus
-					const	totalRows: number = scope.getRows().length,
-								targetIndex: number = checkTargetIndex(scope.focussedRow + offset, totalRows),
-								targetRow: JQuery<Element> = scope.getRowAtIndex(targetIndex);
+					const totalRows: number = scope.getRows().length,
+						targetIndex: number = checkTargetIndex(
+							scope.focussedRow + offset,
+							totalRows,
+						),
+						targetRow: JQuery<Element> = scope.getRowAtIndex(targetIndex);
 
 					if (targetRow.length) {
 						scope.focusRow(targetRow);
@@ -96,7 +112,9 @@ export default class OgTableNavigableDirective {
 
 				// Helper function to determine the parent TR element (that is a direct descendent of the element for this directive) where an event occurred
 				function closestRow(target: EventTarget): JQuery<Element> {
-					return $window.$(target).closest("[og-table-navigable] > tbody > tr") as JQuery<Element>;
+					return $window
+						.$(target)
+						.closest("[og-table-navigable] > tbody > tr") as JQuery<Element>;
 				}
 
 				// Declare a click handler to focus a row by clicking it
@@ -125,7 +143,10 @@ export default class OgTableNavigableDirective {
 
 						if (clickedRow.length) {
 							// Invoke the select action for the clicked row
-							scope.handlers.selectAction(angular.element(clickedRow).scope<angular.IRepeatScope>().$index);
+							scope.handlers.selectAction(
+								angular.element(clickedRow).scope<angular.IRepeatScope>()
+									.$index,
+							);
 						}
 					}
 				};
@@ -145,61 +166,67 @@ export default class OgTableNavigableDirective {
 					}
 				};
 
-				const	MOVEMENT_KEYS: Record<number, OgTableMovementKeys> = {
-								// Page up
-								33: -10,
+				const MOVEMENT_KEYS: Record<number, OgTableMovementKeys> = {
+						// Page up
+						33: -10,
 
-								// Page down
-								34: 10,
+						// Page down
+						34: 10,
 
-								// Arrow up
-								38: -1,
+						// Arrow up
+						38: -1,
 
-								// Arrow down
-								40: 1,
+						// Arrow down
+						40: 1,
 
-								// J
-								74: 1,
+						// J
+						74: 1,
 
-								// K
-								75: -1
-							},
-							ACTION_KEYS: Record<number, OgTableActionCallback | undefined> = {
-								// Backspace
-								8: scope.handlers.deleteAction,
+						// K
+						75: -1,
+					},
+					ACTION_KEYS: Record<number, OgTableActionCallback | undefined> = {
+						// Backspace
+						8: scope.handlers.deleteAction,
 
-								// Enter
-								13: scope.handlers.selectAction,
+						// Enter
+						13: scope.handlers.selectAction,
 
-								// Esc
-								27: scope.handlers.cancelAction,
+						// Esc
+						27: scope.handlers.cancelAction,
 
-								// Insert
-								45: scope.handlers.insertAction,
+						// Insert
+						45: scope.handlers.insertAction,
 
-								// Delete
-								46: scope.handlers.deleteAction
-							},
-							CTRL_ACTION_KEYS: Record<number, OgTableActionCallback> = {
-								// CTRL+E
-								69: scope.handlers.editAction,
+						// Delete
+						46: scope.handlers.deleteAction,
+					},
+					CTRL_ACTION_KEYS: Record<number, OgTableActionCallback> = {
+						// CTRL+E
+						69: scope.handlers.editAction,
 
-								// CTRL+N
-								78: scope.handlers.insertAction
-							};
+						// CTRL+N
+						78: scope.handlers.insertAction,
+					};
 
 				// Declare key handler to focus a row with the arrow keys
 				scope.keyHandler = (event: JQueryKeyEventObject): void => {
 					if (ogTableNavigableService.enabled) {
 						// Check if the key pressed was a movement key
-						if (undefined !== Object.getOwnPropertyDescriptor(MOVEMENT_KEYS, event.keyCode)) {
+						if (
+							undefined !==
+							Object.getOwnPropertyDescriptor(MOVEMENT_KEYS, event.keyCode)
+						) {
 							// Jump the specified number of rows for the key
 							scope.jumpToRow(MOVEMENT_KEYS[event.keyCode]);
 							event.preventDefault();
 						}
 
 						// Check if the key pressed was an action key
-						if (undefined !== Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode)) {
+						if (
+							undefined !==
+							Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode)
+						) {
 							const callback = ACTION_KEYS[event.keyCode];
 
 							// If an action is defined, invoke it for the focussed row
@@ -208,9 +235,17 @@ export default class OgTableNavigableDirective {
 						}
 
 						// Check if the key pressed was a CTRL action key
-						if (event.ctrlKey && Object.getOwnPropertyDescriptor(CTRL_ACTION_KEYS, event.keyCode)) {
+						if (
+							event.ctrlKey &&
+							Object.getOwnPropertyDescriptor(CTRL_ACTION_KEYS, event.keyCode)
+						) {
 							// If an action is defined, invoke it for the focussed row
-							if (undefined !== CTRL_ACTION_KEYS[event.keyCode] as OgTableActionCallback | undefined) {
+							if (
+								undefined !==
+								(CTRL_ACTION_KEYS[event.keyCode] as
+									| OgTableActionCallback
+									| undefined)
+							) {
 								CTRL_ACTION_KEYS[event.keyCode](Number(scope.focussedRow));
 							}
 							event.preventDefault();
@@ -241,15 +276,21 @@ export default class OgTableNavigableDirective {
 					iElement.off("dblclick", doubleClickHandler);
 					$window.$(document).off("keydown", keyHandler);
 				});
-			}
+			},
 		};
 
 		return directive;
 	}
 
-	public static factory($window: angular.IWindowService, ogTableNavigableService: OgTableNavigableService): OgTableNavigableDirective {
+	public static factory(
+		$window: angular.IWindowService,
+		ogTableNavigableService: OgTableNavigableService,
+	): OgTableNavigableDirective {
 		return new OgTableNavigableDirective($window, ogTableNavigableService);
 	}
 }
 
-OgTableNavigableDirective.factory.$inject = ["$window", "ogTableNavigableService"];
+OgTableNavigableDirective.factory.$inject = [
+	"$window",
+	"ogTableNavigableService",
+];

@@ -2,28 +2,34 @@ import type DirectiveTest from "~/mocks/loot/directivetest";
 import angular from "angular";
 
 describe("ogInputCurrency", (): void => {
-	let	ogInputCurrency: DirectiveTest,
-			expected: number | string;
+	let ogInputCurrency: DirectiveTest, expected: number | string;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction,
+	);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
-		ogInputCurrency = directiveTest;
-		ogInputCurrency.configure("og-input-currency", "input");
-		ogInputCurrency.compile();
-		ogInputCurrency.scope.$digest();
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject((directiveTest: DirectiveTest): void => {
+			ogInputCurrency = directiveTest;
+			ogInputCurrency.configure("og-input-currency", "input");
+			ogInputCurrency.compile();
+			ogInputCurrency.scope.$digest();
+		}) as Mocha.HookFunction,
+	);
 
 	describe("on model change", (): void => {
 		beforeEach((): string => (expected = "$0.00"));
 
-		it("should display $0.00 if the model is undefined", (): boolean => delete ogInputCurrency.scope.model);
+		it("should display $0.00 if the model is undefined", (): boolean =>
+			delete ogInputCurrency.scope.model);
 
-		it("should display $0.00 if the model is null", (): null => (ogInputCurrency.scope.model = null));
+		it("should display $0.00 if the model is null", (): null =>
+			(ogInputCurrency.scope.model = null));
 
-		it("should display $0.00 if the model is NaN", (): string => (ogInputCurrency.scope.model = "abc"));
+		it("should display $0.00 if the model is NaN", (): string =>
+			(ogInputCurrency.scope.model = "abc"));
 
 		it("should display the value formatted to 2 decimals if the model is a valid number", (): void => {
 			expected = "$100,000.00";
@@ -50,9 +56,11 @@ describe("ogInputCurrency", (): void => {
 	describe("on input change", (): void => {
 		beforeEach((): number => (expected = 0));
 
-		it("should store 0 if the input is blank", (): JQuery<Element> => ogInputCurrency["element"].val(""));
+		it("should store 0 if the input is blank", (): JQuery<Element> =>
+			ogInputCurrency["element"].val(""));
 
-		it("should store 0 if the input contains no numerics", (): JQuery<Element> => ogInputCurrency["element"].val("$-abcd.ef"));
+		it("should store 0 if the input contains no numerics", (): JQuery<Element> =>
+			ogInputCurrency["element"].val("$-abcd.ef"));
 
 		it("should strip any non-numerics (except periods & dashes) and store the remaining number", (): void => {
 			expected = -1234.56;
@@ -86,7 +94,9 @@ describe("ogInputCurrency", (): void => {
 	});
 
 	describe("on destroy", (): void => {
-		beforeEach((): void => ogInputCurrency["element"].triggerHandler("$destroy"));
+		beforeEach((): void =>
+			ogInputCurrency["element"].triggerHandler("$destroy"),
+		);
 
 		it("should remove the focus handler from the element", (): void => {
 			expected = "-$1,234.56";

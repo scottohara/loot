@@ -11,7 +11,11 @@ export interface Entity {
 
 export type NewOrExistingEntity = Entity | string | undefined;
 
-export type EntityModel = AccountModel | CategoryModel | PayeeModel | SecurityModel;
+export type EntityModel =
+	| AccountModel
+	| CategoryModel
+	| PayeeModel
+	| SecurityModel;
 
 export interface Cacheable<T> {
 	readonly LRU_LOCAL_STORAGE_KEY: string;

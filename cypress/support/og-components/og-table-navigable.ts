@@ -1,14 +1,18 @@
-import type {
-	Action,
-	OgTableNavigable
-} from "~/support/og-components/types";
+import type { Action, OgTableNavigable } from "~/support/og-components/types";
 
 export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 	describe("table navigation", (): void => {
-		let targetRow: number,
-				totalRows: number;
+		let targetRow: number, totalRows: number;
 
-		beforeEach((): Cypress.Chainable<number> => cy.get(rows).then((tableRows: JQuery<HTMLTableRowElement>): number => (totalRows = tableRows.length)));
+		beforeEach(
+			(): Cypress.Chainable<number> =>
+				cy
+					.get(rows)
+					.then(
+						(tableRows: JQuery<HTMLTableRowElement>): number =>
+							(totalRows = tableRows.length),
+					),
+		);
 
 		describe("forward", (): void => {
 			beforeEach((): void => {
@@ -23,38 +27,57 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 			describe("by one row", (): void => {
 				beforeEach((): number => (targetRow = 1));
 
-				it("should move the focus down by one row when the 'J' key is pressed", (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("j"));
-				it("should move the focus down by one row when the arrow down key is pressed", (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{downarrow}"));
+				it("should move the focus down by one row when the 'J' key is pressed", (): Cypress.Chainable<
+					JQuery<HTMLBodyElement>
+				> => cy.get("body").type("j"));
+				it("should move the focus down by one row when the arrow down key is pressed", (): Cypress.Chainable<
+					JQuery<HTMLBodyElement>
+				> => cy.get("body").type("{downarrow}"));
 			});
 
 			describe("by ten rows", (): void => {
-				beforeEach((): number => (targetRow = totalRows > 10 ? 10 : totalRows - 1));
+				beforeEach(
+					(): number => (targetRow = totalRows > 10 ? 10 : totalRows - 1),
+				);
 
-				it("should move the focus down by ten rows when the page down key is pressed", (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{pagedown}"));
+				it("should move the focus down by ten rows when the page down key is pressed", (): Cypress.Chainable<
+					JQuery<HTMLBodyElement>
+				> => cy.get("body").type("{pagedown}"));
 			});
 		});
 
 		describe("backward", (): void => {
 			beforeEach((): void => {
-				cy.get(rows).eq(totalRows - 1).click();
+				cy.get(rows)
+					.eq(totalRows - 1)
+					.click();
 
 				// Wait for the click, otherwise we sometimes get an aborted state transition
 				cy.wait(200);
 			});
 
-			it("should focus the last row", (): number => (targetRow = totalRows - 1));
+			it("should focus the last row", (): number =>
+				(targetRow = totalRows - 1));
 
 			describe("by one row", (): void => {
 				beforeEach((): number => (targetRow = totalRows - 2));
 
-				it("should move the focus up by one row when the 'K' key is pressed", (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("k"));
-				it("should move the focus up by one row when the arrow up key is pressed", (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{uparrow}"));
+				it("should move the focus up by one row when the 'K' key is pressed", (): Cypress.Chainable<
+					JQuery<HTMLBodyElement>
+				> => cy.get("body").type("k"));
+				it("should move the focus up by one row when the arrow up key is pressed", (): Cypress.Chainable<
+					JQuery<HTMLBodyElement>
+				> => cy.get("body").type("{uparrow}"));
 			});
 
 			describe("by ten rows", (): void => {
-				beforeEach((): number => (targetRow = totalRows > 10 ? totalRows - 11 : 0));
+				beforeEach(
+					(): number => (targetRow = totalRows > 10 ? totalRows - 11 : 0),
+				);
 
-				it("should move the focus up by ten rows when the page up key is pressed", (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{pageup}"));
+				it("should move the focus up by ten rows when the page up key is pressed", (): Cypress.Chainable<
+					JQuery<HTMLBodyElement>
+				> => cy.get("body").type("{pageup}"));
 			});
 		});
 
@@ -77,8 +100,12 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 
 			beforeEach((): Action => (action = "insert"));
 
-			it(`should display the ${headingText} view when the insert key is pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{insert}"));
-			it(`should display the ${headingText} view when the CTRL+N keys are pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{ctrl}n"));
+			it(`should display the ${headingText} view when the insert key is pressed`, (): Cypress.Chainable<
+				JQuery<HTMLBodyElement>
+			> => cy.get("body").type("{insert}"));
+			it(`should display the ${headingText} view when the CTRL+N keys are pressed`, (): Cypress.Chainable<
+				JQuery<HTMLBodyElement>
+			> => cy.get("body").type("{ctrl}n"));
 		});
 
 		describe("edit", (): void => {
@@ -87,10 +114,13 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 			beforeEach((): Action => (action = "edit"));
 
 			if (undefined !== mouseAction) {
-				it(`should display the ${headingText} view when the ${mouseAction.name}`, (): void => mouseAction.perform(0));
+				it(`should display the ${headingText} view when the ${mouseAction.name}`, (): void =>
+					mouseAction.perform(0));
 			}
 
-			it(`should display the ${headingText} view when the CTRL+E keys are pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{ctrl}e"));
+			it(`should display the ${headingText} view when the CTRL+E keys are pressed`, (): Cypress.Chainable<
+				JQuery<HTMLBodyElement>
+			> => cy.get("body").type("{ctrl}e"));
 		});
 
 		describe("delete", (): void => {
@@ -98,8 +128,12 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 
 			beforeEach((): Action => (action = "del"));
 
-			it(`should display the ${headingText} view when the delete key is pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{del}"));
-			it(`should display the ${headingText} view when the backspace key is pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{backspace}"));
+			it(`should display the ${headingText} view when the delete key is pressed`, (): Cypress.Chainable<
+				JQuery<HTMLBodyElement>
+			> => cy.get("body").type("{del}"));
+			it(`should display the ${headingText} view when the backspace key is pressed`, (): Cypress.Chainable<
+				JQuery<HTMLBodyElement>
+			> => cy.get("body").type("{backspace}"));
 		});
 
 		describe("select", (): void => {
@@ -107,8 +141,15 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 
 			beforeEach((): Action => (action = "select"));
 
-			it(`should display the ${headingText}${headingText2 ?? ""} view when a row is double clicked`, (): Cypress.Chainable<JQuery> => cy.get(rows).eq(0).dblclick());
-			it(`should display the ${headingText}${headingText2 ?? ""} view when the enter key is pressed`, (): Cypress.Chainable<JQuery<HTMLBodyElement>> => cy.get("body").type("{enter}"));
+			it(`should display the ${headingText}${
+				headingText2 ?? ""
+			} view when a row is double clicked`, (): Cypress.Chainable<JQuery> =>
+				cy.get(rows).eq(0).dblclick());
+			it(`should display the ${headingText}${
+				headingText2 ?? ""
+			} view when the enter key is pressed`, (): Cypress.Chainable<
+				JQuery<HTMLBodyElement>
+			> => cy.get("body").type("{enter}"));
 		});
 
 		afterEach((): void => {

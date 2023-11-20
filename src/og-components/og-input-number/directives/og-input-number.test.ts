@@ -2,28 +2,34 @@ import type DirectiveTest from "~/mocks/loot/directivetest";
 import angular from "angular";
 
 describe("ogInputNumber", (): void => {
-	let ogInputNumber: DirectiveTest,
-			expected: number | string;
+	let ogInputNumber: DirectiveTest, expected: number | string;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module("lootMocks", "ogComponents") as Mocha.HookFunction,
+	);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((directiveTest: DirectiveTest): void => {
-		ogInputNumber = directiveTest;
-		ogInputNumber.configure("og-input-number", "input");
-		ogInputNumber.compile();
-		ogInputNumber.scope.$digest();
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject((directiveTest: DirectiveTest): void => {
+			ogInputNumber = directiveTest;
+			ogInputNumber.configure("og-input-number", "input");
+			ogInputNumber.compile();
+			ogInputNumber.scope.$digest();
+		}) as Mocha.HookFunction,
+	);
 
 	describe("on model change", (): void => {
 		beforeEach((): string => (expected = "0.0000"));
 
-		it("should display 0.0000 if the model is undefined", (): boolean => delete ogInputNumber.scope.model);
+		it("should display 0.0000 if the model is undefined", (): boolean =>
+			delete ogInputNumber.scope.model);
 
-		it("should display 0.0000 if the model is null", (): null => (ogInputNumber.scope.model = null));
+		it("should display 0.0000 if the model is null", (): null =>
+			(ogInputNumber.scope.model = null));
 
-		it("should display 0.0000 if the model is NaN", (): string => (ogInputNumber.scope.model = "abc"));
+		it("should display 0.0000 if the model is NaN", (): string =>
+			(ogInputNumber.scope.model = "abc"));
 
 		it("should display the value formatted as a number if the model is a valid number", (): void => {
 			expected = "-123,456.7000";
@@ -45,9 +51,11 @@ describe("ogInputNumber", (): void => {
 	describe("on input change", (): void => {
 		beforeEach((): number => (expected = 0));
 
-		it("should store 0 if the input is blank", (): JQuery<Element> => ogInputNumber["element"].val(""));
+		it("should store 0 if the input is blank", (): JQuery<Element> =>
+			ogInputNumber["element"].val(""));
 
-		it("should store 0 if the input contains no numerics", (): JQuery<Element> => ogInputNumber["element"].val("-abcd.e"));
+		it("should store 0 if the input contains no numerics", (): JQuery<Element> =>
+			ogInputNumber["element"].val("-abcd.e"));
 
 		it("should strip any non-numerics (except periods & dashes) and store the remaining number", (): void => {
 			expected = -1234.5;

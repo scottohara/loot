@@ -18,15 +18,16 @@ import TransactionModel from "~/transactions/models/transaction";
 import TransactionStatusDirective from "~/transactions/directives/status";
 import angular from "angular";
 
-angular.module("lootTransactions", [
-	"ui.bootstrap",
-	"ui.router",
-	"ogComponents",
-	"lootAccounts",
-	"lootCategories",
-	"lootPayees",
-	"lootSecurities"
-])
+angular
+	.module("lootTransactions", [
+		"ui.bootstrap",
+		"ui.router",
+		"ogComponents",
+		"lootAccounts",
+		"lootCategories",
+		"lootPayees",
+		"lootSecurities",
+	])
 	.controller("TransactionDeleteController", TransactionDeleteController)
 	.controller("TransactionEditController", TransactionEditController)
 	.controller("TransactionFlagController", TransactionFlagController)

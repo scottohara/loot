@@ -18,7 +18,7 @@ plugins:
         - javascript
 
   eslint:
-    enabled: false        # Disabled due to lack of support for shared configs https://github.com/codeclimate/codeclimate-eslint/issues/86
+    enabled: false # Disabled due to lack of support for shared configs https://github.com/codeclimate/codeclimate-eslint/issues/86
     channel: "eslint-3"
 
   fixme:
@@ -31,4 +31,4 @@ plugins:
     enabled: false
 
   rubocop:
-    enabled: false        # Disabled due to lack of support for inherit_gem https://github.com/codeclimate/codeclimate-eslint/issues/86
+    enabled: false # Disabled due to lack of support for inherit_gem https://github.com/codeclimate/codeclimate-eslint/issues/86

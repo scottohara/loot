@@ -3,15 +3,46 @@
 		<h4>Reconcile Account</h4>
 	</div>
 	<div class="modal-body">
-		<div class="form-group has-feedback" ng-class="{'has-error': reconcileForm.balance.$invalid, 'has-warning': vm.closingBalance > 0 && vm.expectNegativeBalance}">
+		<div
+			class="form-group has-feedback"
+			ng-class="{'has-error': reconcileForm.balance.$invalid, 'has-warning': vm.closingBalance > 0 && vm.expectNegativeBalance}"
+		>
 			<label for="balance">Closing Balance</label>
-			<input name="balance" class="form-control" ng-class="{'negative': vm.closingBalance < 0}" ng-model="vm.closingBalance" placeholder="Amount" required og-input-currency autofocus og-input-autoselect>
-			<span ng-show="reconcileForm.balance.$invalid || (vm.closingBalance > 0 && vm.expectNegativeBalance)" class="glyphicon form-control-feedback" ng-class="{'glyphicon-warning-sign': vm.closingBalance > 0 && vm.expectNegativeBalance, 'glyphicon-remove': reconcileForm.balance.$invalid}"></span>
+			<input
+				name="balance"
+				class="form-control"
+				ng-class="{'negative': vm.closingBalance < 0}"
+				ng-model="vm.closingBalance"
+				placeholder="Amount"
+				required
+				og-input-currency
+				autofocus
+				og-input-autoselect
+			/>
+			<span
+				ng-show="reconcileForm.balance.$invalid || (vm.closingBalance > 0 && vm.expectNegativeBalance)"
+				class="glyphicon form-control-feedback"
+				ng-class="{'glyphicon-warning-sign': vm.closingBalance > 0 && vm.expectNegativeBalance, 'glyphicon-remove': reconcileForm.balance.$invalid}"
+			></span>
 		</div>
-		<div ng-if="vm.closingBalance > 0 && vm.expectNegativeBalance" class="small alert alert-warning">Is this correct? This account typically has a negative closing balance.</div>
+		<div
+			ng-if="vm.closingBalance > 0 && vm.expectNegativeBalance"
+			class="small alert alert-warning"
+		>
+			Is this correct? This account typically has a negative closing balance.
+		</div>
 	</div>
 	<div class="modal-footer">
-			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-			<button class="btn btn-primary" type="submit" ng-disabled="reconcileForm.$invalid" ng-click="vm.start()"><i class="glyphicon glyphicon-check"></i> Start</button>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			class="btn btn-primary"
+			type="submit"
+			ng-disabled="reconcileForm.$invalid"
+			ng-click="vm.start()"
+		>
+			<i class="glyphicon glyphicon-check"></i> Start
+		</button>
 	</div>
 </form>

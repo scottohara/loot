@@ -2,7 +2,9 @@ import type { Category } from "~/categories/types";
 
 let id = 1;
 
-export default function createCategory(props: Partial<Category> = {}): Category {
+export default function createCategory(
+	props: Partial<Category> = {},
+): Category {
 	id++;
 
 	return {
@@ -13,6 +15,6 @@ export default function createCategory(props: Partial<Category> = {}): Category 
 		parent_id: null,
 		favourite: false,
 		num_transactions: 0,
-		...props
+		...props,
 	};
 }

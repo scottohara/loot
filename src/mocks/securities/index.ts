@@ -4,7 +4,8 @@ import SecurityMockProvider from "~/mocks/securities/providers/security";
 import SecurityModelMockProvider from "~/mocks/securities/models/security";
 import angular from "angular";
 
-angular.module("lootSecuritiesMocks", [])
+angular
+	.module("lootSecuritiesMocks", [])
 	.provider("securitiesMock", SecuritiesMockProvider)
 	.provider("securityMock", SecurityMockProvider)
 	.provider("securityModelMock", SecurityModelMockProvider);

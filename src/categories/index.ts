@@ -10,11 +10,8 @@ import CategoryIndexController from "~/categories/controllers/index";
 import CategoryModel from "~/categories/models/category";
 import angular from "angular";
 
-angular.module("lootCategories", [
-	"ui.bootstrap",
-	"ui.router",
-	"ogComponents"
-])
+angular
+	.module("lootCategories", ["ui.bootstrap", "ui.router", "ogComponents"])
 	.controller("CategoryDeleteController", CategoryDeleteController)
 	.controller("CategoryEditController", CategoryEditController)
 	.controller("CategoryIndexController", CategoryIndexController)

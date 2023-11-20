@@ -3,6 +3,7 @@ import AuthenticatedMockProvider from "~/mocks/authentication/providers/authenti
 import AuthenticationModelMockProvider from "~/mocks/authentication/models/authentication";
 import angular from "angular";
 
-angular.module("lootAuthenticationMocks", [])
+angular
+	.module("lootAuthenticationMocks", [])
 	.provider("authenticationModelMock", AuthenticationModelMockProvider)
 	.provider("authenticatedMock", AuthenticatedMockProvider);

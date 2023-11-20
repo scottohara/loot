@@ -8,10 +8,10 @@
 	margin: 10px;
 }
 
-#transactions, #transactions-header {
+#transactions,
+#transactions-header {
 	// Background colours when reconciling
 	& > tbody.reconciling > tr.cleared {
-
 		&.warning > td {
 			background-color: rgba(128, 255, 0, 0.1);
 		}
@@ -25,7 +25,8 @@
 		border-top: 2px solid @state-warning-text;
 	}
 
-	td, th {
+	td,
+	th {
 		overflow-x: hidden;
 
 		&.has-dropdown {
@@ -52,7 +53,7 @@
 				}
 
 				td:first-child {
-					border-left: 0
+					border-left: 0;
 				}
 
 				td {
@@ -71,7 +72,7 @@
 					small.transaction-status {
 						padding-left: 5px;
 
-						input[type=checkbox] {
+						input[type="checkbox"] {
 							margin: 2px 0 0 10px;
 						}
 					}

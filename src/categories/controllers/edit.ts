@@ -9,18 +9,30 @@ export default class CategoryEditController {
 
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
-						private readonly filterFilter: angular.IFilterFilter,
-						private readonly limitToFilter: angular.IFilterLimitTo,
-						private readonly categoryModel: CategoryModel,
-						category: Category | undefined) {
+	public constructor(
+		private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
+		private readonly filterFilter: angular.IFilterFilter,
+		private readonly limitToFilter: angular.IFilterLimitTo,
+		private readonly categoryModel: CategoryModel,
+		category: Category | undefined,
+	) {
 		this.category = angular.extend({}, category) as Category;
 		this.mode = undefined === category ? "Add" : "Edit";
 	}
 
 	// List of parent categories for the typeahead
-	public parentCategories(filter: string, limit: number): angular.IPromise<Category[]> {
-		return this.categoryModel.all().then((categories: Category[]): Category[] => this.limitToFilter(this.filterFilter(categories, { name: filter }), limit));
+	public parentCategories(
+		filter: string,
+		limit: number,
+	): angular.IPromise<Category[]> {
+		return this.categoryModel
+			.all()
+			.then((categories: Category[]): Category[] =>
+				this.limitToFilter(
+					this.filterFilter(categories, { name: filter }),
+					limit,
+				),
+			);
 	}
 
 	// Save and close the modal
@@ -34,7 +46,12 @@ export default class CategoryEditController {
 		}
 
 		this.errorMessage = null;
-		this.categoryModel.save(this.category).then((category: angular.IHttpResponse<Category>): void => this.$uibModalInstance.close(category.data), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
+		this.categoryModel.save(this.category).then(
+			(category: angular.IHttpResponse<Category>): void =>
+				this.$uibModalInstance.close(category.data),
+			(error: angular.IHttpResponse<string>): string =>
+				(this.errorMessage = error.data),
+		);
 	}
 
 	// Dismiss the modal without saving
@@ -43,4 +60,10 @@ export default class CategoryEditController {
 	}
 }
 
-CategoryEditController.$inject = ["$uibModalInstance", "filterFilter", "limitToFilter", "categoryModel", "category"];
+CategoryEditController.$inject = [
+	"$uibModalInstance",
+	"filterFilter",
+	"limitToFilter",
+	"categoryModel",
+	"category",
+];

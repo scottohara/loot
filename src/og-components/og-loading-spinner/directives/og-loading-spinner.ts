@@ -7,10 +7,14 @@ export default class OgLoadingSpinnerDirective {
 		const directive: angular.IDirective = {
 			restrict: "A",
 			scope: {
-				message: "=ogLoadingSpinner"
+				message: "=ogLoadingSpinner",
 			},
 			templateUrl: OgLoadingSpinnerView,
-			link: (scope: OgLoadingSpinnerScope): string => (scope.loadingMessage = undefined === scope.message || "" === scope.message ? "Loading" : scope.message)
+			link: (scope: OgLoadingSpinnerScope): string =>
+				(scope.loadingMessage =
+					undefined === scope.message || "" === scope.message
+						? "Loading"
+						: scope.message),
 		};
 
 		return directive;

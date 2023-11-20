@@ -9,9 +9,11 @@ export default class SecurityEditController {
 
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
-						private readonly securityModel: SecurityModel,
-						security: Security | undefined) {
+	public constructor(
+		private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
+		private readonly securityModel: SecurityModel,
+		security: Security | undefined,
+	) {
 		this.security = angular.extend({}, security) as Security;
 		this.mode = undefined === security ? "Add" : "Edit";
 	}
@@ -19,7 +21,12 @@ export default class SecurityEditController {
 	// Save and close the modal
 	public save(): void {
 		this.errorMessage = null;
-		this.securityModel.save(this.security).then((security: angular.IHttpResponse<Security>): void => this.$uibModalInstance.close(security.data), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
+		this.securityModel.save(this.security).then(
+			(security: angular.IHttpResponse<Security>): void =>
+				this.$uibModalInstance.close(security.data),
+			(error: angular.IHttpResponse<string>): string =>
+				(this.errorMessage = error.data),
+		);
 	}
 
 	// Dismiss the modal without saving
@@ -28,4 +35,8 @@ export default class SecurityEditController {
 	}
 }
 
-SecurityEditController.$inject = ["$uibModalInstance", "securityModel", "security"];
+SecurityEditController.$inject = [
+	"$uibModalInstance",
+	"securityModel",
+	"security",
+];

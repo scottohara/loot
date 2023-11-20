@@ -32,11 +32,7 @@
 		// Backwards Compatibility
 
 		// Language and Environment
-		"lib": [
-			"DOM",
-			"ES2022",
-			"WebWorker"
-		],
+		"lib": ["DOM", "ES2022", "WebWorker"],
 		"target": "es2022",
 
 		// Compiler Diagnostics
@@ -52,8 +48,5 @@
 
 		// Watch Options
 	},
-	"exclude": [
-		"cypress",
-		"node_modules"
-	]
+	"exclude": ["cypress", "node_modules"]
 }

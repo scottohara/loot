@@ -1,7 +1,10 @@
 import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
 
 export default class OgLruCache {
-	public constructor(private readonly capacity: number, private items: OgCacheEntry[]) {}
+	public constructor(
+		private readonly capacity: number,
+		private items: OgCacheEntry[],
+	) {}
 
 	// List the cached items in order (MRU)
 	public get list(): OgCacheEntry[] {
@@ -15,7 +18,10 @@ export default class OgLruCache {
 			return this.items;
 		}
 
-		this.items = [item, ...this.remove(Number(item.id))].slice(0, this.capacity);
+		this.items = [item, ...this.remove(Number(item.id))].slice(
+			0,
+			this.capacity,
+		);
 
 		return this.list;
 	}

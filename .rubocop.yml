@@ -15,12 +15,12 @@ inherit_gem:
 
 AllCops:
   Exclude:
-    - 'bin/*'
-    - 'config/**/*'
-    - 'db/migrate/*'
-    - 'db/schema.rb'
-    - 'node_modules/**/*'
-    - 'vendor/**/*'
+    - "bin/*"
+    - "config/**/*"
+    - "db/migrate/*"
+    - "db/schema.rb"
+    - "node_modules/**/*"
+    - "vendor/**/*"
 
 # Can't fully qualify a private_constant
 Lint/ConstantResolution:

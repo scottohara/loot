@@ -10,10 +10,8 @@ import AccountModel from "~/accounts/models/account";
 import AccountReconcileController from "~/accounts/controllers/reconcile";
 import angular from "angular";
 
-angular.module("lootAccounts", [
-	"ui.bootstrap",
-	"ogComponents"
-])
+angular
+	.module("lootAccounts", ["ui.bootstrap", "ogComponents"])
 	.controller("AccountDeleteController", AccountDeleteController)
 	.controller("AccountEditController", AccountEditController)
 	.controller("AccountIndexController", AccountIndexController)

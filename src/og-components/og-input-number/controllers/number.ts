@@ -22,7 +22,10 @@ export default class OgInputNumberController {
 
 	// Converts raw value to formatted value
 	public rawToFormatted(value: number): string {
-		return this.numberFilter(isNaN(value) ? 0 : Number(value), this.decimalPlaces);
+		return this.numberFilter(
+			isNaN(value) ? 0 : Number(value),
+			this.decimalPlaces,
+		);
 	}
 }
 

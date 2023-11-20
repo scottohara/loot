@@ -10,11 +10,8 @@ import PayeeIndexController from "~/payees/controllers/index";
 import PayeeModel from "~/payees/models/payee";
 import angular from "angular";
 
-angular.module("lootPayees", [
-	"ui.bootstrap",
-	"ui.router",
-	"ogComponents"
-])
+angular
+	.module("lootPayees", ["ui.bootstrap", "ui.router", "ogComponents"])
 	.controller("PayeeDeleteController", PayeeDeleteController)
 	.controller("PayeeEditController", PayeeEditController)
 	.controller("PayeeIndexController", PayeeIndexController)

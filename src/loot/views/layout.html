@@ -2,80 +2,165 @@
 <nav class="navbar navbar-default" role="navigation">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" ng-click="vm.navCollapsed = !vm.navCollapsed">
+			<button
+				type="button"
+				class="navbar-toggle"
+				ng-click="vm.navCollapsed = !vm.navCollapsed"
+			>
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" ui-sref="root.accounts" ui-sref-opts="{reload: true}"><i class="glyphicon glyphicon-home"></i> Loot</a>
+			<a
+				class="navbar-brand"
+				ui-sref="root.accounts"
+				ui-sref-opts="{reload: true}"
+				><i class="glyphicon glyphicon-home"></i> Loot</a
+			>
 		</div>
-		<div ng-switch="vm.authenticated" class="collapse navbar-collapse" uib-collapse="vm.navCollapsed">
+		<div
+			ng-switch="vm.authenticated"
+			class="collapse navbar-collapse"
+			uib-collapse="vm.navCollapsed"
+		>
 			<ul class="nav navbar-nav">
 				<li uib-dropdown ui-sref-active="active">
-					<a uib-dropdown-toggle><i class="glyphicon glyphicon-list-alt"></i> Accounts <b class="caret"></b></a>
+					<a uib-dropdown-toggle
+						><i class="glyphicon glyphicon-list-alt"></i> Accounts
+						<b class="caret"></b
+					></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.accounts" ui-sref-opts="{reload: true}">Account List</a>
+							<a ui-sref="root.accounts" ui-sref-opts="{reload: true}"
+								>Account List</a
+							>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent accounts</li>
-						<li ng-repeat="account in vm.recentlyAccessedAccounts track by account.id">
-							<a ui-sref="root.accounts.account.transactions({id: {{::account.id}}})">{{::account.name}}</a>
+						<li
+							ng-repeat="account in vm.recentlyAccessedAccounts track by account.id"
+						>
+							<a
+								ui-sref="root.accounts.account.transactions({id: {{::account.id}}})"
+								>{{::account.name}}</a
+							>
 						</li>
 					</ul>
 				</li>
 				<li ui-sref-active="active">
-					<a ui-sref="root.schedules" ui-sref-opts="{reload: true}"><i class="glyphicon glyphicon-calendar"></i> Schedules</a>
+					<a ui-sref="root.schedules" ui-sref-opts="{reload: true}"
+						><i class="glyphicon glyphicon-calendar"></i> Schedules</a
+					>
 				</li>
 				<li uib-dropdown ui-sref-active="active">
-					<a uib-dropdown-toggle><i class="glyphicon glyphicon-user"></i> Payees <b class="caret"></b></a>
+					<a uib-dropdown-toggle
+						><i class="glyphicon glyphicon-user"></i> Payees
+						<b class="caret"></b
+					></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.payees" ui-sref-opts="{reload: true}">Payee List</a>
+							<a ui-sref="root.payees" ui-sref-opts="{reload: true}"
+								>Payee List</a
+							>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent payees</li>
-						<li ng-repeat="payee in vm.recentlyAccessedPayees track by payee.id">
-							<a ui-sref="root.payees.payee.transactions({id: {{::payee.id}}})">{{::payee.name}}</a>
+						<li
+							ng-repeat="payee in vm.recentlyAccessedPayees track by payee.id"
+						>
+							<a ui-sref="root.payees.payee.transactions({id: {{::payee.id}}})"
+								>{{::payee.name}}</a
+							>
 						</li>
 					</ul>
 				</li>
 				<li uib-dropdown ui-sref-active="active">
-					<a uib-dropdown-toggle><i class="glyphicon glyphicon-tags"></i> Categories <b class="caret"></b></a>
+					<a uib-dropdown-toggle
+						><i class="glyphicon glyphicon-tags"></i> Categories
+						<b class="caret"></b
+					></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.categories" ui-sref-opts="{reload: true}">Category List</a>
+							<a ui-sref="root.categories" ui-sref-opts="{reload: true}"
+								>Category List</a
+							>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent categories</li>
-						<li ng-repeat="category in vm.recentlyAccessedCategories track by category.id">
-							<a ui-sref="root.categories.category.transactions({id: {{::category.id}}})">{{::category.name}}</a>
+						<li
+							ng-repeat="category in vm.recentlyAccessedCategories track by category.id"
+						>
+							<a
+								ui-sref="root.categories.category.transactions({id: {{::category.id}}})"
+								>{{::category.name}}</a
+							>
 						</li>
 					</ul>
 				</li>
 				<li uib-dropdown ui-sref-active="active">
-					<a uib-dropdown-toggle><i class="glyphicon glyphicon-globe"></i> Securities <b class="caret"></b></a>
+					<a uib-dropdown-toggle
+						><i class="glyphicon glyphicon-globe"></i> Securities
+						<b class="caret"></b
+					></a>
 					<ul class="dropdown-menu">
 						<li>
-							<a ui-sref="root.securities" ui-sref-opts="{reload: true}">Security List</a>
+							<a ui-sref="root.securities" ui-sref-opts="{reload: true}"
+								>Security List</a
+							>
 						</li>
 						<li class="divider"></li>
 						<li class="dropdown-header">Recent securities</li>
-						<li ng-repeat="security in vm.recentlyAccessedSecurities track by security.id">
-							<a ui-sref="root.securities.security.transactions({id: {{::security.id}}})">{{::security.name}}</a>
+						<li
+							ng-repeat="security in vm.recentlyAccessedSecurities track by security.id"
+						>
+							<a
+								ui-sref="root.securities.security.transactions({id: {{::security.id}}})"
+								>{{::security.name}}</a
+							>
 						</li>
 					</ul>
 				</li>
 			</ul>
-			<button ng-switch-when="true" type="button" class="btn btn-default navbar-btn navbar-right" ng-click="vm.logout()"><i class="glyphicon glyphicon-log-out"></i> Logout</button>
-			<button ng-switch-default type="button" class="btn btn-primary navbar-btn navbar-right" ng-click="vm.login()"><i class="glyphicon glyphicon-log-in"></i> Login</button>
+			<button
+				ng-switch-when="true"
+				type="button"
+				class="btn btn-default navbar-btn navbar-right"
+				ng-click="vm.logout()"
+			>
+				<i class="glyphicon glyphicon-log-out"></i> Logout
+			</button>
+			<button
+				ng-switch-default
+				type="button"
+				class="btn btn-primary navbar-btn navbar-right"
+				ng-click="vm.login()"
+			>
+				<i class="glyphicon glyphicon-log-in"></i> Login
+			</button>
 			<div class="col-sm-3 col-md-3 pull-right">
 				<form class="navbar-form" role="search">
 					<div class="input-group">
-						<input id="transactionSearch" type="search" class="form-control" placeholder="Search" ng-model="vm.queryService.query" ng-focus="vm.toggleTableNavigationEnabled(false)" ng-blur="vm.toggleTableNavigationEnabled(true)" og-input-autoselect>
+						<input
+							id="transactionSearch"
+							type="search"
+							class="form-control"
+							placeholder="Search"
+							ng-model="vm.queryService.query"
+							ng-focus="vm.toggleTableNavigationEnabled(false)"
+							ng-blur="vm.toggleTableNavigationEnabled(true)"
+							og-input-autoselect
+						/>
 						<span class="input-group-btn">
-							<button type="submit" class="btn btn-default" ng-click="vm.search()" ng-focus="vm.toggleTableNavigationEnabled(false)" ng-blur="vm.toggleTableNavigationEnabled(true)"><i class="glyphicon glyphicon-search"></i></button>
+							<button
+								type="submit"
+								class="btn btn-default"
+								ng-click="vm.search()"
+								ng-focus="vm.toggleTableNavigationEnabled(false)"
+								ng-blur="vm.toggleTableNavigationEnabled(true)"
+							>
+								<i class="glyphicon glyphicon-search"></i>
+							</button>
 						</span>
 					</div>
 				</form>
@@ -83,9 +168,27 @@
 		</div>
 	</div>
 </nav>
-<div ng-if="!vm.authenticated" class="alert alert-danger">You are not logged in. Click the Login button above to proceed.</div>
-<div class="quickscroll bottom hidden-xs" uib-tooltip="Bottom" tooltip-placement="left"><a ng-click="vm.scrollTo('bottom')"><i class="glyphicon glyphicon-hand-down"></i></a></div>
-<div class="quickscroll top hidden-xs" uib-tooltip="Top" tooltip-placement="left"><a ng-click="vm.scrollTo('top')"><i class="glyphicon glyphicon-hand-up"></i></a></div>
+<div ng-if="!vm.authenticated" class="alert alert-danger">
+	You are not logged in. Click the Login button above to proceed.
+</div>
+<div
+	class="quickscroll bottom hidden-xs"
+	uib-tooltip="Bottom"
+	tooltip-placement="left"
+>
+	<a ng-click="vm.scrollTo('bottom')"
+		><i class="glyphicon glyphicon-hand-down"></i
+	></a>
+</div>
+<div
+	class="quickscroll top hidden-xs"
+	uib-tooltip="Top"
+	tooltip-placement="left"
+>
+	<a ng-click="vm.scrollTo('top')"
+		><i class="glyphicon glyphicon-hand-up"></i
+	></a>
+</div>
 <ui-view ng-if="vm.authenticated" autoscroll="false"></ui-view>
 <div ng-if="vm.loadingState" id="state-loading-spinner">
 	<div og-loading-spinner></div>

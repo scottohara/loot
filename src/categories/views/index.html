@@ -1,4 +1,8 @@
-<table id="categories" class="table table-striped table-bordered table-hover" og-table-navigable="vm.tableActions">
+<table
+	id="categories"
+	class="table table-striped table-bordered table-hover"
+	og-table-navigable="vm.tableActions"
+>
 	<thead>
 		<tr>
 			<th class="direction">Type</th>
@@ -8,13 +12,25 @@
 	<tbody>
 		<tr ng-repeat="category in vm.categories">
 			<td class="direction">
-				<i class="glyphicon" ng-class="::{'glyphicon-plus-sign': category.direction == 'inflow', 'text-success': category.direction == 'inflow', 'glyphicon-minus-sign': category.direction == 'outflow', 'text-danger': category.direction == 'outflow'}"></i>
+				<i
+					class="glyphicon"
+					ng-class="::{'glyphicon-plus-sign': category.direction == 'inflow', 'text-success': category.direction == 'inflow', 'glyphicon-minus-sign': category.direction == 'outflow', 'text-danger': category.direction == 'outflow'}"
+				></i>
 			</td>
 			<td class="has-action" ng-class="::{'subcategory': category.parent}">
 				{{::category.name}}
-				<i og-favourite="{'context': category.favourite, 'type': 'category'}" ng-click="vm.toggleFavourite($index)"></i>
-				<i class="action glyphicon glyphicon-edit pull-right" uib-tooltip="Edit category" ng-click="vm.editCategory($index)"></i>
+				<i
+					og-favourite="{'context': category.favourite, 'type': 'category'}"
+					ng-click="vm.toggleFavourite($index)"
+				></i>
+				<i
+					class="action glyphicon glyphicon-edit pull-right"
+					uib-tooltip="Edit category"
+					ng-click="vm.editCategory($index)"
+				></i>
 			</td>
 		</tr>
-	<tbody>
+	</tbody>
+
+	<tbody></tbody>
 </table>

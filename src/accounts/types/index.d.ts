@@ -1,10 +1,24 @@
 import type { Entity } from "~/loot/types";
 
-export type StoredAccountType =	"asset" | "bank" | "cash" | "credit" | "investment" | "liability" | "loan";
+export type StoredAccountType =
+	| "asset"
+	| "bank"
+	| "cash"
+	| "credit"
+	| "investment"
+	| "liability"
+	| "loan";
 
-export type DisplayAccountType =	"Asset" | "Bank" | "Cash" | "Credit" | "Investment" | "Liability" | "Loan";
+export type DisplayAccountType =
+	| "Asset"
+	| "Bank"
+	| "Cash"
+	| "Credit"
+	| "Investment"
+	| "Liability"
+	| "Loan";
 
-export type AccountType =	DisplayAccountType | StoredAccountType;
+export type AccountType = DisplayAccountType | StoredAccountType;
 
 export type StoredAccountStatus = "closed" | "open";
 
@@ -27,7 +41,10 @@ export interface Account extends Entity {
 	reconciled_closing_balance: number;
 }
 
-export type Accounts = Record<string, {
-	accounts: Account[];
-	total: number;
-}>;
+export type Accounts = Record<
+	string,
+	{
+		accounts: Account[];
+		total: number;
+	}
+>;

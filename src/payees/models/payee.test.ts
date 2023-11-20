@@ -1,10 +1,10 @@
 import type {
 	CacheFactoryMock,
-	WindowMock
+	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import type {
 	OgLruCacheFactoryMock,
-	OgLruCacheMock
+	OgLruCacheMock,
 } from "~/mocks/og-components/og-lru-cache-factory/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
@@ -18,39 +18,66 @@ import createPayee from "~/mocks/payees/factories";
 import sinon from "sinon";
 
 describe("payeeModel", (): void => {
-	let	payeeModel: PayeeModel,
-			$httpBackend: angular.IHttpBackendService,
-			$http: angular.IHttpService,
-			$cache: angular.ICacheObject,
-			$window: WindowMock,
-			ogLruCache: OgLruCacheMock,
-			payee: Payee,
-			iPromise: angular.IPromise<never>,
-			iHttpPromise: angular.IHttpPromise<unknown>;
+	let payeeModel: PayeeModel,
+		$httpBackend: angular.IHttpBackendService,
+		$http: angular.IHttpService,
+		$cache: angular.ICacheObject,
+		$window: WindowMock,
+		ogLruCache: OgLruCacheMock,
+		payee: Payee,
+		iPromise: angular.IPromise<never>,
+		iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$cacheFactory", "$window", "ogLruCacheFactory", "iPromise", "iHttpPromise"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootPayees",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"$cacheFactory",
+					"$window",
+					"ogLruCacheFactory",
+					"iPromise",
+					"iHttpPromise",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Inject any dependencies that need to be configured first
-	beforeEach(angular.mock.inject((_$window_: WindowMock): void => {
-		$window = _$window_;
-		$window.localStorage.getItem.withArgs("lootRecentPayees").returns(null);
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject((_$window_: WindowMock): void => {
+			$window = _$window_;
+			$window.localStorage.getItem.withArgs("lootRecentPayees").returns(null);
+		}) as Mocha.HookFunction,
+	);
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(angular.mock.inject((_payeeModel_: PayeeModel, _$httpBackend_: angular.IHttpBackendService, _$http_: angular.IHttpService, $cacheFactory: CacheFactoryMock, ogLruCacheFactory: OgLruCacheFactoryMock, _iPromise_: angular.IPromise<never>, _iHttpPromise_: angular.IHttpPromise<unknown>): void => {
-		payeeModel = _payeeModel_;
+	beforeEach(
+		angular.mock.inject(
+			(
+				_payeeModel_: PayeeModel,
+				_$httpBackend_: angular.IHttpBackendService,
+				_$http_: angular.IHttpService,
+				$cacheFactory: CacheFactoryMock,
+				ogLruCacheFactory: OgLruCacheFactoryMock,
+				_iPromise_: angular.IPromise<never>,
+				_iHttpPromise_: angular.IHttpPromise<unknown>,
+			): void => {
+				payeeModel = _payeeModel_;
 
-		$httpBackend = _$httpBackend_;
-		$http = _$http_;
+				$httpBackend = _$httpBackend_;
+				$http = _$http_;
 
-		$cache = $cacheFactory();
-		ogLruCache = ogLruCacheFactory.new();
-		iPromise = _iPromise_;
-		iHttpPromise = _iHttpPromise_;
+				$cache = $cacheFactory();
+				ogLruCache = ogLruCacheFactory.new();
+				iPromise = _iPromise_;
+				iHttpPromise = _iHttpPromise_;
 
-		payee = createPayee({ id: 1 });
-	}) as Mocha.HookFunction);
+				payee = createPayee({ id: 1 });
+			},
+		) as Mocha.HookFunction,
+	);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {
@@ -58,12 +85,17 @@ describe("payeeModel", (): void => {
 		$httpBackend.verifyNoOutstandingRequest();
 	});
 
-	it("should fetch the list of recent payees from localStorage", (): Chai.Assertion => expect($window.localStorage.getItem).to.have.been.calledWith("lootRecentPayees"));
+	it("should fetch the list of recent payees from localStorage", (): Chai.Assertion =>
+		expect($window.localStorage.getItem).to.have.been.calledWith(
+			"lootRecentPayees",
+		));
 
-	it("should have a list of recent payees", (): Chai.Assertion => expect(payeeModel.recent).to.deep.equal([{ id: 1, name: "recent item" }]));
+	it("should have a list of recent payees", (): Chai.Assertion =>
+		expect(payeeModel.recent).to.deep.equal([{ id: 1, name: "recent item" }]));
 
 	describe("LRU_LOCAL_STORAGE_KEY", (): void => {
-		it("should be 'lootRecentPayees'", (): Chai.Assertion => expect(payeeModel.LRU_LOCAL_STORAGE_KEY).to.equal("lootRecentPayees"));
+		it("should be 'lootRecentPayees'", (): Chai.Assertion =>
+			expect(payeeModel.LRU_LOCAL_STORAGE_KEY).to.equal("lootRecentPayees"));
 	});
 
 	describe("recentPayees", (): void => {
@@ -72,30 +104,37 @@ describe("payeeModel", (): void => {
 
 			beforeEach((): void => {
 				recentPayees = [{ id: 1, name: "recent item" }];
-				$window.localStorage.getItem.withArgs("lootRecentPayees").returns(JSON.stringify(recentPayees));
+				$window.localStorage.getItem
+					.withArgs("lootRecentPayees")
+					.returns(JSON.stringify(recentPayees));
 			});
 
-			it("should return an array of cache entries", (): Chai.Assertion => expect(payeeModel["recentPayees"]).to.deep.equal(recentPayees));
+			it("should return an array of cache entries", (): Chai.Assertion =>
+				expect(payeeModel["recentPayees"]).to.deep.equal(recentPayees));
 		});
 
 		describe("when localStorage is null", (): void => {
-			it("should return an empty array", (): Chai.Assertion => expect(payeeModel["recentPayees"]).to.deep.equal([]));
+			it("should return an empty array", (): Chai.Assertion =>
+				expect(payeeModel["recentPayees"]).to.deep.equal([]));
 		});
 	});
 
 	describe("type", (): void => {
-		it("should be 'payee'", (): Chai.Assertion => expect(payeeModel.type).to.equal("payee"));
+		it("should be 'payee'", (): Chai.Assertion =>
+			expect(payeeModel.type).to.equal("payee"));
 	});
 
 	describe("path", (): void => {
-		it("should return the payees collection path when an id is not provided", (): Chai.Assertion => expect(payeeModel.path()).to.equal("/payees"));
+		it("should return the payees collection path when an id is not provided", (): Chai.Assertion =>
+			expect(payeeModel.path()).to.equal("/payees"));
 
-		it("should return a specific payee path when an id is provided", (): Chai.Assertion => expect(payeeModel.path(123)).to.equal("/payees/123"));
+		it("should return a specific payee path when an id is provided", (): Chai.Assertion =>
+			expect(payeeModel.path(123)).to.equal("/payees/123"));
 	});
 
 	describe("all", (): void => {
 		let expectedUrl = /payees$/u,
-				expectedResponse = "payees";
+			expectedResponse = "payees";
 
 		it("should dispatch a GET request to /payees", (): void => {
 			$httpBackend.expectGET(expectedUrl).respond(200);
@@ -107,12 +146,18 @@ describe("payeeModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			payeeModel.all();
-			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
+				.not.false;
 		});
 
 		it("should return a list of all payees", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-			payeeModel.all().then((payees: Payee[]): Chai.Assertion => expect(payees).to.equal(expectedResponse));
+			payeeModel
+				.all()
+				.then(
+					(payees: Payee[]): Chai.Assertion =>
+						expect(payees).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 
@@ -129,34 +174,47 @@ describe("payeeModel", (): void => {
 			});
 
 			it("should not cache the response in the $http cache", (): void => {
-				const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
+				const httpGet: SinonStub = sinon
+					.stub($http, "get")
+					.returns(iHttpPromise);
 
 				payeeModel.all(true);
-				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.false;
+				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
+					.false;
 			});
 
 			it("should return a list of all payees for the index list", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-				payeeModel.all(true).then((payees: Payee[]): Chai.Assertion => expect(payees).to.equal(expectedResponse));
+				payeeModel
+					.all(true)
+					.then(
+						(payees: Payee[]): Chai.Assertion =>
+							expect(payees).to.equal(expectedResponse),
+					);
 				$httpBackend.flush();
 			});
 		});
 	});
 
 	describe("allList", (): void => {
-		beforeEach((): SinonStub => sinon.stub(payeeModel, "all").returns(iPromise));
+		beforeEach(
+			(): SinonStub => sinon.stub(payeeModel, "all").returns(iPromise),
+		);
 
 		it("should call payeeModel.all(true)", (): void => {
 			payeeModel.allList();
 			expect(payeeModel["all"]).to.have.been.calledWith(true);
 		});
 
-		it("should return a list of all payees for the index list", (): Chai.Assertion => expect(payeeModel.allList()).to.equal(iPromise));
+		it("should return a list of all payees for the index list", (): Chai.Assertion =>
+			expect(payeeModel.allList()).to.equal(iPromise));
 	});
 
 	describe("findLastTransaction", (): void => {
 		it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", (): void => {
-			$httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u).respond(200, {});
+			$httpBackend
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.respond(200, {});
 			payeeModel.findLastTransaction(1, "bank");
 			$httpBackend.flush();
 		});
@@ -164,27 +222,50 @@ describe("payeeModel", (): void => {
 		it("should return the last transaction when there are transactions", (): void => {
 			const lastTransaction = createBasicTransaction();
 
-			$httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u).respond(200, lastTransaction);
-			payeeModel.findLastTransaction(1, "bank").then((transaction: Transaction): Chai.Assertion => expect(transaction).to.deep.equal(lastTransaction));
+			$httpBackend
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.respond(200, lastTransaction);
+			payeeModel
+				.findLastTransaction(1, "bank")
+				.then(
+					(transaction: Transaction): Chai.Assertion =>
+						expect(transaction).to.deep.equal(lastTransaction),
+				);
 			$httpBackend.flush();
 		});
 
 		it("should return undefined when there are no transactions", (): void => {
-			$httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u).respond(404, "");
-			payeeModel.findLastTransaction(1, "bank").then((transaction?: Transaction): Chai.Assertion => expect(transaction).to.be.undefined);
+			$httpBackend
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.respond(404, "");
+			payeeModel
+				.findLastTransaction(1, "bank")
+				.then(
+					(transaction?: Transaction): Chai.Assertion =>
+						expect(transaction).to.be.undefined,
+				);
 			$httpBackend.flush();
 		});
 
 		it("should throw an error when the GET request fails", (): void => {
-			$httpBackend.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u).respond(500, "Forced error", {}, "Internal Server Error");
-			payeeModel.findLastTransaction(1, "bank").catch((error: Error): Chai.Assertion => expect(error.message).to.equal("500 Internal Server Error: Forced error"));
+			$httpBackend
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.respond(500, "Forced error", {}, "Internal Server Error");
+			payeeModel
+				.findLastTransaction(1, "bank")
+				.catch(
+					(error: Error): Chai.Assertion =>
+						expect(error.message).to.equal(
+							"500 Internal Server Error: Forced error",
+						),
+				);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("find", (): void => {
 		const expectedUrl = /payees\/123/u,
-					expectedResponse = "payee details";
+			expectedResponse = "payee details";
 
 		beforeEach((): SinonStub => sinon.stub(payeeModel, "addRecent"));
 
@@ -198,7 +279,8 @@ describe("payeeModel", (): void => {
 			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
 
 			payeeModel.find(123);
-			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is.not.false;
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
+				.not.false;
 		});
 
 		it("should add the payee to the recent list", (): void => {
@@ -210,14 +292,19 @@ describe("payeeModel", (): void => {
 
 		it("should return the payee", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
-			payeeModel.find(123).then((foundPayee: Payee): Chai.Assertion => expect(foundPayee).to.equal(expectedResponse));
+			payeeModel
+				.find(123)
+				.then(
+					(foundPayee: Payee): Chai.Assertion =>
+						expect(foundPayee).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
 		const expectedPostUrl = /payees$/u,
-					expectedPatchUrl = /payees\/1$/u;
+			expectedPatchUrl = /payees\/1$/u;
 
 		beforeEach((): void => {
 			sinon.stub(payeeModel, "flush");
@@ -255,11 +342,13 @@ describe("payeeModel", (): void => {
 			$httpBackend.flush();
 		});
 
-		it("should flush the payee cache", (): Chai.Assertion => expect(payeeModel["flush"]).to.have.been.called);
+		it("should flush the payee cache", (): Chai.Assertion =>
+			expect(payeeModel["flush"]).to.have.been.called);
 
 		it("should dispatch a DELETE request to /payees/{id}", (): null => null);
 
-		it("should remove the payee from the recent list", (): Chai.Assertion => expect(payeeModel["removeRecent"]).to.have.been.calledWith(1));
+		it("should remove the payee from the recent list", (): Chai.Assertion =>
+			expect(payeeModel["removeRecent"]).to.have.been.calledWith(1));
 	});
 
 	describe("toggleFavourite", (): void => {
@@ -280,13 +369,21 @@ describe("payeeModel", (): void => {
 		it("should dispatch a DELETE request to /payees/{id}/favourite when the payee is unfavourited", (): void => {
 			$httpBackend.expectDELETE(expectedUrl);
 			payee.favourite = true;
-			payeeModel.toggleFavourite(payee).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.false);
+			payeeModel
+				.toggleFavourite(payee)
+				.then(
+					(favourite: boolean): Chai.Assertion => expect(favourite).to.be.false,
+				);
 			$httpBackend.flush();
 		});
 
 		it("should dispatch a PUT request to /payees/{id}/favourite when the payee is favourited", (): void => {
 			$httpBackend.expectPUT(expectedUrl);
-			payeeModel.toggleFavourite(payee).then((favourite: boolean): Chai.Assertion => expect(favourite).to.be.true);
+			payeeModel
+				.toggleFavourite(payee)
+				.then(
+					(favourite: boolean): Chai.Assertion => expect(favourite).to.be.true,
+				);
 			$httpBackend.flush();
 		});
 	});
@@ -311,7 +408,11 @@ describe("payeeModel", (): void => {
 			expect(payeeModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentPayees", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion =>
+			expect($window.localStorage.setItem).to.have.been.calledWith(
+				"lootRecentPayees",
+				JSON.stringify([{ id: 1, name: "recent item" }]),
+			));
 	});
 
 	describe("removeRecent", (): void => {
@@ -322,6 +423,10 @@ describe("payeeModel", (): void => {
 			expect(payeeModel.recent).to.equal("updated list");
 		});
 
-		it("should save the updated recent list", (): Chai.Assertion => expect($window.localStorage.setItem).to.have.been.calledWith("lootRecentPayees", JSON.stringify([{ id: 1, name: "recent item" }])));
+		it("should save the updated recent list", (): Chai.Assertion =>
+			expect($window.localStorage.setItem).to.have.been.calledWith(
+				"lootRecentPayees",
+				JSON.stringify([{ id: 1, name: "recent item" }]),
+			));
 	});
 });

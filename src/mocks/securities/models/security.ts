@@ -1,6 +1,6 @@
 import type {
 	PromiseMockConfig,
-	QMock
+	QMock,
 } from "~/mocks/node-modules/angular/types";
 import type { Mock } from "~/mocks/types";
 import type QMockProvider from "~/mocks/node-modules/angular/services/q";
@@ -11,19 +11,25 @@ import type { SecurityModelMock } from "~/mocks/securities/types";
 import type { SinonStub } from "sinon";
 import sinon from "sinon";
 
-export default class SecurityModelMockProvider implements Mock<SecurityModelMock> {
+export default class SecurityModelMockProvider
+	implements Mock<SecurityModelMock>
+{
 	private readonly securityModel: SecurityModelMock;
 
-	public constructor(securityMockProvider: SecurityMockProvider, securitiesMockProvider: SecuritiesMockProvider, $qMockProvider: QMockProvider) {
+	public constructor(
+		securityMockProvider: SecurityMockProvider,
+		securitiesMockProvider: SecuritiesMockProvider,
+		$qMockProvider: QMockProvider,
+	) {
 		// Success/error = options for the stub promises
-		const	$q: QMock = $qMockProvider.$get(),
-					success: PromiseMockConfig<{ data: Security; }> = {
-						args: { id: 1 },
-						response: { data: securityMockProvider.$get() }
-					},
-					error: PromiseMockConfig<void> = {
-						args: { id: -1 }
-					};
+		const $q: QMock = $qMockProvider.$get(),
+			success: PromiseMockConfig<{ data: Security }> = {
+				args: { id: 1 },
+				response: { data: securityMockProvider.$get() },
+			},
+			error: PromiseMockConfig<void> = {
+				args: { id: -1 },
+			};
 
 		// Mock securityModel object
 		this.securityModel = {
@@ -33,7 +39,7 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 			recent: "recent securities list",
 			type: "security",
 			all: $q.promisify({
-				response: securitiesMockProvider.$get()
+				response: securitiesMockProvider.$get(),
 			}),
 			allWithBalances: sinon.stub().returns(securitiesMockProvider.$get()),
 			find(id: number): SinonStub {
@@ -50,7 +56,7 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 				return $q.promisify({ response: !security.favourite })() as SinonStub;
 			},
 			flush: sinon.stub(),
-			addRecent: sinon.stub()
+			addRecent: sinon.stub(),
 		};
 
 		// Spy on find() and toggleFavourite()
@@ -64,4 +70,8 @@ export default class SecurityModelMockProvider implements Mock<SecurityModelMock
 	}
 }
 
-SecurityModelMockProvider.$inject = ["securityMockProvider", "securitiesMockProvider", "$qMockProvider"];
+SecurityModelMockProvider.$inject = [
+	"securityMockProvider",
+	"securitiesMockProvider",
+	"$qMockProvider",
+];

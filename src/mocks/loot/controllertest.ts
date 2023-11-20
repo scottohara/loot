@@ -1,17 +1,28 @@
 import type {
 	ControllerTestFactory,
-	ControllerTestLocals
+	ControllerTestLocals,
 } from "~/mocks/types";
 
 export default class ControllerTest {
-	public constructor($rootScope: angular.IRootScopeService, $controller: angular.IControllerService) {
+	public constructor(
+		$rootScope: angular.IRootScopeService,
+		$controller: angular.IControllerService,
+	) {
 		// Loads the controller and returns a scope object
-		return ((controller: string, locals: ControllerTestLocals = {}, bindings: Record<string, unknown> = {}): angular.IController => {
+		return ((
+			controller: string,
+			locals: ControllerTestLocals = {},
+			bindings: Record<string, unknown> = {},
+		): angular.IController => {
 			// Create a new scope
 			locals.$scope = $rootScope.$new();
 
 			// Load the controller
-			const instance: angular.IController = $controller(controller, locals, bindings);
+			const instance: angular.IController = $controller(
+				controller,
+				locals,
+				bindings,
+			);
 
 			// Attach the scope to the returned instance as $scope
 			instance.$scope = locals.$scope;

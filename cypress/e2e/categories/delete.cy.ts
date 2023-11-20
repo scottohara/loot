@@ -7,7 +7,7 @@ import {
 	categoryToDeleteParent,
 	deleteButton,
 	getDirectionLabel,
-	warningMessage
+	warningMessage,
 } from "~/support/categories/delete";
 import {
 	categoriesTableRows,
@@ -19,32 +19,50 @@ import {
 	lastCategory,
 	lastSubcategory,
 	secondLastSubcategory,
-	secondSubcategory
+	secondSubcategory,
 } from "~/support/categories/index";
 import type { Category } from "~/support/categories/types";
 
 describe("Category Delete", (): void => {
 	let originalRowCount: number;
 
-	function commonBehaviour(targetRow: string, targetRowAfter: string, isSubcategory = false, hasChildren = false): void {
-		let	categoryToDelete: Category,
-				categoryAfterDelete: Category;
+	function commonBehaviour(
+		targetRow: string,
+		targetRowAfter: string,
+		isSubcategory = false,
+		hasChildren = false,
+	): void {
+		let categoryToDelete: Category, categoryAfterDelete: Category;
 
 		beforeEach((): void => {
-			cy.get(targetRow).then((row: JQuery<HTMLTableRowElement>): Category => (categoryToDelete = getValuesFrom(row)));
-			cy.get(targetRowAfter).then((row: JQuery<HTMLTableRowElement>): Category => (categoryAfterDelete = getValuesFrom(row)));
+			cy.get(targetRow).then(
+				(row: JQuery<HTMLTableRowElement>): Category =>
+					(categoryToDelete = getValuesFrom(row)),
+			);
+			cy.get(targetRowAfter).then(
+				(row: JQuery<HTMLTableRowElement>): Category =>
+					(categoryAfterDelete = getValuesFrom(row)),
+			);
 			cy.get(targetRow).click();
 			cy.get("body").type("{del}");
 			cy.get(categoryDeleteHeading).should("have.text", "Delete Category?");
 		});
 
 		it("should display the details of the category being deleted", (): void => {
-			cy.contains(warningMessage).should(hasChildren ? "be.visible" : "not.exist");
+			cy.contains(warningMessage).should(
+				hasChildren ? "be.visible" : "not.exist",
+			);
 			cy.get(categoryToDeleteName).should("have.text", categoryToDelete.name);
 			if (isSubcategory) {
-				cy.get(categoryToDeleteParent).should("have.text", categoryToDelete.parent);
+				cy.get(categoryToDeleteParent).should(
+					"have.text",
+					categoryToDelete.parent,
+				);
 			}
-			cy.get(categoryToDeleteDirection).should("have.text", getDirectionLabel(categoryToDelete.direction));
+			cy.get(categoryToDeleteDirection).should(
+				"have.text",
+				getDirectionLabel(categoryToDelete.direction),
+			);
 		});
 
 		it("should not save changes when the cancel button is clicked", (): void => {
@@ -63,10 +81,15 @@ describe("Category Delete", (): void => {
 			cy.get(categoryDeleteForm).should("not.exist");
 
 			// Row count should have decremented by one + the number of children
-			cy.get(categoriesTableRows).should("have.length", originalRowCount - (hasChildren ? 3 : 1));
+			cy.get(categoriesTableRows).should(
+				"have.length",
+				originalRowCount - (hasChildren ? 3 : 1),
+			);
 
 			// Category in the target row should have changed
-			cy.get(targetRow).within((): void => checkRowMatches(categoryAfterDelete));
+			cy.get(targetRow).within((): void =>
+				checkRowMatches(categoryAfterDelete),
+			);
 		});
 
 		// MISSING - error message should display when present
@@ -77,18 +100,25 @@ describe("Category Delete", (): void => {
 	beforeEach((): void => {
 		cy.login();
 		cy.visit("/#!/categories");
-		cy.get(categoriesTableRows).then((rows: JQuery<HTMLTableRowElement>): number => (originalRowCount = rows.length));
+		cy.get(categoriesTableRows).then(
+			(rows: JQuery<HTMLTableRowElement>): number =>
+				(originalRowCount = rows.length),
+		);
 	});
 
 	describe("deleting a category", (): void => {
 		describe("parent", (): void => {
-			describe("expense", (): void => commonBehaviour(lastCategory, lastSubcategory));
-			describe("income", (): void => commonBehaviour(firstCategory, firstParentCategory, false, true));
+			describe("expense", (): void =>
+				commonBehaviour(lastCategory, lastSubcategory));
+			describe("income", (): void =>
+				commonBehaviour(firstCategory, firstParentCategory, false, true));
 		});
 
 		describe("subcategory", (): void => {
-			describe("expense", (): void => commonBehaviour(lastSubcategory, secondLastSubcategory, true));
-			describe("income", (): void => commonBehaviour(firstSubcategory, secondSubcategory, true));
+			describe("expense", (): void =>
+				commonBehaviour(lastSubcategory, secondLastSubcategory, true));
+			describe("income", (): void =>
+				commonBehaviour(firstSubcategory, secondSubcategory, true));
 		});
 	});
 });

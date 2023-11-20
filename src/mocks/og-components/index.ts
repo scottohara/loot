@@ -8,11 +8,18 @@ import OgModalErrorServiceMockProvider from "~/mocks/og-components/og-modal-erro
 import OgNavigatorServiceWorkerServiceMockProvider from "~/mocks/og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
 import angular from "angular";
 
-angular.module("ogComponentsMocks", [])
-	.provider("ogInputCurrencyControllerMock", OgInputCurrencyControllerMockProvider)
+angular
+	.module("ogComponentsMocks", [])
+	.provider(
+		"ogInputCurrencyControllerMock",
+		OgInputCurrencyControllerMockProvider,
+	)
 	.provider("ogInputNumberControllerMock", OgInputNumberControllerMockProvider)
 	.provider("ogLruCacheFactoryMock", OgLruCacheFactoryMockProvider)
 	.provider("alertMock", AlertMockProvider)
 	.provider("confirmMock", ConfirmMockProvider)
 	.provider("ogModalErrorServiceMock", OgModalErrorServiceMockProvider)
-	.provider("ogNavigatorServiceWorkerServiceMock", OgNavigatorServiceWorkerServiceMockProvider);
+	.provider(
+		"ogNavigatorServiceWorkerServiceMock",
+		OgNavigatorServiceWorkerServiceMockProvider,
+	);

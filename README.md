@@ -1,20 +1,20 @@
-| Service					| Status																																																																																					|
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GitHub  				| [![Build Status](https://github.com/scottohara/loot/workflows/Build/badge.svg)](https://github.com/scottohara/loot/actions?workflow=Build)																																|
-| Code Climate		| [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)																								|
-| Code Climate		| [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)																					|
-| Snyk (npm)			| [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg)](https://snyk.io/test/github/scottohara/loot)																									|
-| Snyk (Gemfile)	| [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg?targetFile=Gemfile.lock)](https://snyk.io/test/github/scottohara/loot?targetFile=Gemfile.lock)	|
+| Service        | Status                                                                                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GitHub         | [![Build Status](https://github.com/scottohara/loot/workflows/Build/badge.svg)](https://github.com/scottohara/loot/actions?workflow=Build)                                     |
+| Code Climate   | [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)                                               |
+| Code Climate   | [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)                                         |
+| Snyk (npm)     | [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg)](https://snyk.io/test/github/scottohara/loot)                                                 |
+| Snyk (Gemfile) | [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg?targetFile=Gemfile.lock)](https://snyk.io/test/github/scottohara/loot?targetFile=Gemfile.lock) |
 
-Description
-===========
+# Description
+
 Loot is a web-based personal finance management application.
 Its main goal is to reproduce the core functionality of Microsoft Money 2008, for the web.
 
 Rails on the backend (JSON API); Angular.js + Bootstrap on the frontend
 
-Getting Started
-===============
+# Getting Started
+
 1. Clone the repository (`git clone git://github.com/scottohara/loot.git`) and switch to it (`cd loot`)
 2. Install the server-side dependencies (`bundle config --local path vendor/bundle && bundle install`) (`path vendor/bundle` ensures that gems are installed locally in the project)
 3. Install the client-side dev dependencies (`npm install`) (Note: you should have `./node_modules/.bin` in your shell path; so that locally installed packages are preferred over globally installed ones)
@@ -25,26 +25,26 @@ Getting Started
 8. Start the database server and app server in dev mode (`npm start`)
 9. Browse to http://localhost:8080/index.html and login using the credentials configured at step #8
 
-Exporting MS Money data
-=======================
+# Exporting MS Money data
+
 To get data out of MS Money and into Loot, I'm using the excellent [Sunriise](http://sourceforge.net/projects/sunriise/) project to access the underlying data from my \*.mny file, and export it as a set of CSV files.
 
 1. Download the latest [Sunriise](http://sourceforge.net/projects/sunriise/) build
 2. Launch the executable JAR file
 3. Choose the "MS Money file viewer" option
-4. File -> Open -> {your *.mny file}
+4. File -> Open -> {your \*.mny file}
 5. File -> Export DB -> To CSV
 6. Save to ~/Documents/sunriise/csv
 7. Run the importer (`rake db:seed`)
 
 (Note: this import tool has been tested using my MS Money file only. YMMV.)
 
-Building
-========
+# Building
+
 `npm run build`
 
-Running Tests
-=============
+# Running Tests
+
 Frontend specs are implemented using [mocha](http://mochajs.org/)+[chai](http://chaijs.com/)+[sinon](http://sinonjs.org/).
 
 Two npm scripts are available to run the frontend test suite:
@@ -62,8 +62,8 @@ Integration tests are implemented using [Cypress](http://cypress.io/):
 1. Start the database server and app server in test mode, and launch Cypress (`npm run test:e2e`)
 2. Optionally run Cypress in headless mode (`cypress run --browser chrome`)
 
-Code Quality
-============
+# Code Quality
+
 Frontend checks are implemented using [eslint](http://eslint.org):
 
 1. `npm run lint`
@@ -72,11 +72,11 @@ Backend checks are implemented using [rubocop](http://batsov.com/rubocop/):
 
 1. `bundle exec rubocop`
 
-Deployment (Staging/Production)
-===============================
+# Deployment (Staging/Production)
+
 Before deploying, you should first create an annotated tag (e.g. `git tag -am "Version 1.00" v1.00`).
 
 Then run:
 
-* `npm run deploy:staging` to deploy to the staging app
-* `npm run deploy:production` to deploy to the production app
+- `npm run deploy:staging` to deploy to the staging app
+- `npm run deploy:production` to deploy to the production app

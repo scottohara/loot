@@ -2,19 +2,13 @@ import {
 	checkRowMatches,
 	editButton,
 	favouriteButton,
-	payeesTableRows
+	payeesTableRows,
 } from "~/support/payees/index";
-import {
-	payeeDeleteForm,
-	payeeDeleteHeading
-} from "~/support/payees/delete";
-import {
-	payeeEditForm,
-	payeeEditHeading
-} from "~/support/payees/edit";
+import { payeeDeleteForm, payeeDeleteHeading } from "~/support/payees/delete";
+import { payeeEditForm, payeeEditHeading } from "~/support/payees/edit";
 import {
 	transactionsIndexHeading,
-	transactionsTable
+	transactionsTable,
 } from "~/support/transactions/index";
 import type { Payee } from "~/support/payees/types";
 import { testNavigableTable } from "~/support/og-components/og-table-navigable";
@@ -28,7 +22,9 @@ describe("Payee Index", (): void => {
 			expected.push({ name: `Payee ${i}`, favourite: false });
 		}
 		expected.push({ name: "Payee 20", favourite: true });
-		expected = expected.sort((a: Payee, b: Payee): number => a.name.localeCompare(b.name));
+		expected = expected.sort((a: Payee, b: Payee): number =>
+			a.name.localeCompare(b.name),
+		);
 
 		cy.createPayees();
 	});
@@ -42,19 +38,23 @@ describe("Payee Index", (): void => {
 		// Number of rows
 		cy.get(payeesTableRows).should("have.length", expected.length);
 
-		cy.get(payeesTableRows).each((row: HTMLTableRowElement, index: number): void => {
-			cy.wrap(row).within((): void => checkRowMatches(expected[index]));
-		});
+		cy.get(payeesTableRows).each(
+			(row: HTMLTableRowElement, index: number): void => {
+				cy.wrap(row).within((): void => checkRowMatches(expected[index]));
+			},
+		);
 	});
 
 	it("should toggle the favourite status of a payee", (): void => {
-		cy.get(payeesTableRows).first().within((): void => {
-			cy.get(favouriteButton).should("not.have.class", "active");
-			cy.get(favouriteButton).click();
-			cy.get(favouriteButton).should("have.class", "active");
-			cy.get(favouriteButton).click();
-			cy.get(favouriteButton).should("not.have.class", "active");
-		});
+		cy.get(payeesTableRows)
+			.first()
+			.within((): void => {
+				cy.get(favouriteButton).should("not.have.class", "active");
+				cy.get(favouriteButton).click();
+				cy.get(favouriteButton).should("have.class", "active");
+				cy.get(favouriteButton).click();
+				cy.get(favouriteButton).should("not.have.class", "active");
+			});
 	});
 
 	testNavigableTable({
@@ -63,7 +63,7 @@ describe("Payee Index", (): void => {
 			insert: {
 				heading: payeeEditHeading,
 				headingText: "Add Payee",
-				view: payeeEditForm
+				view: payeeEditForm,
 			},
 			edit: {
 				heading: payeeEditHeading,
@@ -71,23 +71,27 @@ describe("Payee Index", (): void => {
 				view: payeeEditForm,
 				mouseAction: {
 					name: "edit icon is clicked",
-					perform: (row: number): Cypress.Chainable<JQuery> => cy.get(payeesTableRows).eq(row).within((): void => {
-						cy.get(editButton).click();
-					})
-				}
+					perform: (row: number): Cypress.Chainable<JQuery> =>
+						cy
+							.get(payeesTableRows)
+							.eq(row)
+							.within((): void => {
+								cy.get(editButton).click();
+							}),
+				},
 			},
 			del: {
 				heading: payeeDeleteHeading,
 				headingText: "Delete Payee?",
-				view: payeeDeleteForm
+				view: payeeDeleteForm,
 			},
 			select: {
 				heading: transactionsIndexHeading,
 				headingText: "Payee 9",
 				headingText2: " Transactions",
 				view: transactionsTable,
-				url: /#!\/payees\/\d+\/transactions/u
-			}
-		}
+				url: /#!\/payees\/\d+\/transactions/u,
+			},
+		},
 	});
 });

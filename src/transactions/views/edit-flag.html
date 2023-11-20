@@ -12,12 +12,30 @@
 			</select>
 		</div>
 		<div class="form-group has-feedback">
-			<textarea name="flag" class="form-control" ng-model="vm.flag" placeholder="Memo" autofocus og-input-autoselect></textarea>
+			<textarea
+				name="flag"
+				class="form-control"
+				ng-model="vm.flag"
+				placeholder="Memo"
+				autofocus
+				og-input-autoselect
+			></textarea>
 		</div>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
-		<button ng-if="::vm.flagged" class="btn btn-danger" type="button" ng-click="vm.deleteFlag()"><i class="glyphicon glyphicon-remove"></i> Delete</button>
-		<button class="btn btn-primary" type="submit" ng-click="vm.save()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+		<button class="btn btn-default" type="button" ng-click="vm.cancel()">
+			Cancel
+		</button>
+		<button
+			ng-if="::vm.flagged"
+			class="btn btn-danger"
+			type="button"
+			ng-click="vm.deleteFlag()"
+		>
+			<i class="glyphicon glyphicon-remove"></i> Delete
+		</button>
+		<button class="btn btn-primary" type="submit" ng-click="vm.save()">
+			<i class="glyphicon glyphicon-ok"></i> Save
+		</button>
 	</div>
 </form>

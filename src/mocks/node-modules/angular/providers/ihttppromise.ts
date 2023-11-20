@@ -1,7 +1,9 @@
 import type { Mock } from "~/mocks/types";
 import angular from "angular";
 
-export default class IHttpPromiseMockProvider implements Mock<angular.IHttpPromise<unknown>> {
+export default class IHttpPromiseMockProvider
+	implements Mock<angular.IHttpPromise<unknown>>
+{
 	public $get(): angular.IHttpPromise<unknown> {
 		// Return the mock HTTP promise object
 		return {
@@ -15,7 +17,7 @@ export default class IHttpPromiseMockProvider implements Mock<angular.IHttpPromi
 				callback();
 
 				return this;
-			}
+			},
 		};
 	}
 }
@@ -29,18 +31,30 @@ describe("iHttpPromiseMock", (): void => {
 	beforeEach(angular.mock.module("lootMocks") as Mocha.HookFunction);
 
 	// Inject the object under test
-	beforeEach(angular.mock.inject((_iHttpPromiseMock_: angular.IHttpPromise<unknown>): angular.IHttpPromise<unknown> => (iHttpPromiseMock = _iHttpPromiseMock_)) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject(
+			(
+				_iHttpPromiseMock_: angular.IHttpPromise<unknown>,
+			): angular.IHttpPromise<unknown> =>
+				(iHttpPromiseMock = _iHttpPromiseMock_),
+		) as Mocha.HookFunction,
+	);
 
 	describe("then", (): void => {
-		it("should return itself", (): Chai.Assertion => expect(iHttpPromiseMock.then()).to.equal(iHttpPromiseMock));
+		it("should return itself", (): Chai.Assertion =>
+			expect(iHttpPromiseMock.then()).to.equal(iHttpPromiseMock));
 	});
 
 	describe("catch", (): void => {
-		it("should return itself", (): Chai.Assertion => expect(iHttpPromiseMock.catch()).to.equal(iHttpPromiseMock));
+		it("should return itself", (): Chai.Assertion =>
+			expect(iHttpPromiseMock.catch()).to.equal(iHttpPromiseMock));
 	});
 
 	describe("finally", (): void => {
-		it("should return itself", (): Chai.Assertion => expect(iHttpPromiseMock.finally((): void => undefined)).to.equal(iHttpPromiseMock));
+		it("should return itself", (): Chai.Assertion =>
+			expect(iHttpPromiseMock.finally((): void => undefined)).to.equal(
+				iHttpPromiseMock,
+			));
 	});
 });
 

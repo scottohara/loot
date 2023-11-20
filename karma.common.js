@@ -9,12 +9,10 @@ module.exports = {
 	frameworks: ["mocha", "chai-sinon", "webpack"],
 
 	// List of files / patterns to load in the browser
-	files: [
-		"src/index.test.js"
-	],
+	files: ["src/index.test.js"],
 
 	mochaReporter: {
-		showDiff: true
+		showDiff: true,
 	},
 
 	// Web server port
@@ -27,5 +25,5 @@ module.exports = {
 	 * Level of logging
 	 * possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
 	 */
-	logLevel: "INFO"
+	logLevel: "INFO",
 };

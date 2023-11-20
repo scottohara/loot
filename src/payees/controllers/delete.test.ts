@@ -7,23 +7,46 @@ import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("PayeeDeleteController", (): void => {
-	let	payeeDeleteController: PayeeDeleteController,
-			$uibModalInstance: UibModalInstanceMock,
-			payeeModel: PayeeModelMock,
-			payee: Payee;
+	let payeeDeleteController: PayeeDeleteController,
+		$uibModalInstance: UibModalInstanceMock,
+		payeeModel: PayeeModelMock,
+		payee: Payee;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootPayees", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["$uibModalInstance", "payeeModel", "payee"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootPayees",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"$uibModalInstance",
+					"payeeModel",
+					"payee",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Configure & compile the object under test
-	beforeEach(angular.mock.inject((controllerTest: ControllerTestFactory, _$uibModalInstance_: UibModalInstanceMock, _payeeModel_: PayeeModelMock, _payee_: Payee): void => {
-		$uibModalInstance = _$uibModalInstance_;
-		payeeModel = _payeeModel_;
-		payee = _payee_;
-		payeeDeleteController = controllerTest("PayeeDeleteController") as PayeeDeleteController;
-	}) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.inject(
+			(
+				controllerTest: ControllerTestFactory,
+				_$uibModalInstance_: UibModalInstanceMock,
+				_payeeModel_: PayeeModelMock,
+				_payee_: Payee,
+			): void => {
+				$uibModalInstance = _$uibModalInstance_;
+				payeeModel = _payeeModel_;
+				payee = _payee_;
+				payeeDeleteController = controllerTest(
+					"PayeeDeleteController",
+				) as PayeeDeleteController;
+			},
+		) as Mocha.HookFunction,
+	);
 
-	it("should make the passed payee available to the view", (): Chai.Assertion => expect(payeeDeleteController.payee).to.deep.equal(payee));
+	it("should make the passed payee available to the view", (): Chai.Assertion =>
+		expect(payeeDeleteController.payee).to.deep.equal(payee));
 
 	describe("deletePayee", (): void => {
 		it("should reset any previous error messages", (): void => {
@@ -45,7 +68,9 @@ describe("PayeeDeleteController", (): void => {
 		it("should display an error message when the payee delete is unsuccessful", (): void => {
 			payeeDeleteController.payee.id = -1;
 			payeeDeleteController.deletePayee();
-			expect(payeeDeleteController.errorMessage as string).to.equal("unsuccessful");
+			expect(payeeDeleteController.errorMessage as string).to.equal(
+				"unsuccessful",
+			);
 		});
 	});
 

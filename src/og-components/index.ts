@@ -21,9 +21,8 @@ import OgTableNavigableService from "~/og-components/og-table-navigable/services
 import OgViewScrollService from "~/og-components/og-view-scroll/services/og-view-scroll";
 import angular from "angular";
 
-angular.module("ogComponents", [
-	"ui.bootstrap"
-])
+angular
+	.module("ogComponents", ["ui.bootstrap"])
 	.directive("ogFavourite", OgFavouriteDirective.factory)
 	.directive("ogInputAutoselect", OgInputAutoSelectDirective.factory)
 	.directive("ogInputCalculator", OgInputCalculatorDirective.factory)

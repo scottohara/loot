@@ -1,7 +1,4 @@
-import type {
-	Account,
-	Accounts
-} from "~/accounts/types";
+import type { Account, Accounts } from "~/accounts/types";
 import type { SinonStub } from "sinon";
 
 export interface AccountModelMock {

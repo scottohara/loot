@@ -4,14 +4,20 @@ import type PayeeModel from "~/payees/models/payee";
 export default class PayeeDeleteController {
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
-						private readonly payeeModel: PayeeModel,
-						public readonly payee: Payee) {}
+	public constructor(
+		private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
+		private readonly payeeModel: PayeeModel,
+		public readonly payee: Payee,
+	) {}
 
 	// Delete and close the modal
 	public deletePayee(): void {
 		this.errorMessage = null;
-		this.payeeModel.destroy(this.payee).then((): void => this.$uibModalInstance.close(), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
+		this.payeeModel.destroy(this.payee).then(
+			(): void => this.$uibModalInstance.close(),
+			(error: angular.IHttpResponse<string>): string =>
+				(this.errorMessage = error.data),
+		);
 	}
 
 	// Dismiss the modal without deleting

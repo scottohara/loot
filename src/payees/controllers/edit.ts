@@ -9,9 +9,11 @@ export default class PayeeEditController {
 
 	public errorMessage: string | null = null;
 
-	public constructor(private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
-						private readonly payeeModel: PayeeModel,
-						payee: Payee | undefined) {
+	public constructor(
+		private readonly $uibModalInstance: angular.ui.bootstrap.IModalInstanceService,
+		private readonly payeeModel: PayeeModel,
+		payee: Payee | undefined,
+	) {
 		this.payee = angular.extend({}, payee) as Payee;
 		this.mode = undefined === payee ? "Add" : "Edit";
 	}
@@ -19,7 +21,12 @@ export default class PayeeEditController {
 	// Save and close the modal
 	public save(): void {
 		this.errorMessage = null;
-		this.payeeModel.save(this.payee).then((payee: angular.IHttpResponse<Payee>): void => this.$uibModalInstance.close(payee.data), (error: angular.IHttpResponse<string>): string => (this.errorMessage = error.data));
+		this.payeeModel.save(this.payee).then(
+			(payee: angular.IHttpResponse<Payee>): void =>
+				this.$uibModalInstance.close(payee.data),
+			(error: angular.IHttpResponse<string>): string =>
+				(this.errorMessage = error.data),
+		);
 	}
 
 	// Dismiss the modal without saving

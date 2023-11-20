@@ -7,12 +7,17 @@ export default class OgInputNumberDirective {
 			priority: 1,
 			require: "ngModel",
 			scope: {
-				precision: "@ogInputNumber"
+				precision: "@ogInputNumber",
 			},
 			controller: "OgInputNumberController",
 			controllerAs: "vm",
 			bindToController: true,
-			link(scope: OgInputNumberScope, iElement: JQuery<Element>, _: angular.IAttributes, ngModel: angular.INgModelController): void {
+			link(
+				scope: OgInputNumberScope,
+				iElement: JQuery<Element>,
+				_: angular.IAttributes,
+				ngModel: angular.INgModelController,
+			): void {
 				// Set the decimal places
 				if (scope.vm.precision) {
 					scope.vm.decimalPlaces = Number(scope.vm.precision);
@@ -25,7 +30,12 @@ export default class OgInputNumberDirective {
 				ngModel.$formatters.unshift(scope.vm.rawToFormatted.bind(scope.vm));
 
 				function formattedToRaw(): void {
-					iElement.val(numberFilter(scope.vm.formattedToRaw(String(iElement.val())), scope.vm.decimalPlaces));
+					iElement.val(
+						numberFilter(
+							scope.vm.formattedToRaw(String(iElement.val())),
+							scope.vm.decimalPlaces,
+						),
+					);
 				}
 
 				// Update view when tabbing in/out of the field
@@ -37,13 +47,15 @@ export default class OgInputNumberDirective {
 					iElement.off("focus", formattedToRaw);
 					iElement.off("blur", formattedToRaw);
 				});
-			}
+			},
 		};
 
 		return directive;
 	}
 
-	public static factory(numberFilter: angular.IFilterNumber): OgInputNumberDirective {
+	public static factory(
+		numberFilter: angular.IFilterNumber,
+	): OgInputNumberDirective {
 		return new OgInputNumberDirective(numberFilter);
 	}
 }

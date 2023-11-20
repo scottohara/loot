@@ -1,15 +1,12 @@
 import type {
 	ScheduledBasicTransaction,
-	ScheduledTransaction
+	ScheduledTransaction,
 } from "~/schedules/types";
 import {
 	createScheduledBasicTransaction,
-	createScheduledSecurityHoldingTransaction
+	createScheduledSecurityHoldingTransaction,
 } from "~/mocks/schedules/factories";
-import {
-	lightFormat,
-	startOfDay
-} from "date-fns";
+import { lightFormat, startOfDay } from "date-fns";
 import type { CategoryModelMock } from "~/mocks/categories/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { PayeeModelMock } from "~/mocks/payees/types";
@@ -19,25 +16,46 @@ import angular from "angular";
 import sinon from "sinon";
 
 describe("scheduleModel", (): void => {
-	let	scheduleModel: ScheduleModel,
-			$httpBackend: angular.IHttpBackendService,
-			payeeModel: PayeeModelMock,
-			categoryModel: CategoryModelMock,
-			securityModel: SecurityModelMock;
+	let scheduleModel: ScheduleModel,
+		$httpBackend: angular.IHttpBackendService,
+		payeeModel: PayeeModelMock,
+		categoryModel: CategoryModelMock,
+		securityModel: SecurityModelMock;
 
 	// Load the modules
-	beforeEach(angular.mock.module("lootMocks", "lootSchedules", (mockDependenciesProvider: MockDependenciesProvider): void => mockDependenciesProvider.load(["payeeModel", "categoryModel", "securityModel"])) as Mocha.HookFunction);
+	beforeEach(
+		angular.mock.module(
+			"lootMocks",
+			"lootSchedules",
+			(mockDependenciesProvider: MockDependenciesProvider): void =>
+				mockDependenciesProvider.load([
+					"payeeModel",
+					"categoryModel",
+					"securityModel",
+				]),
+		) as Mocha.HookFunction,
+	);
 
 	// Inject the object under test and it's remaining dependencies
-	beforeEach(angular.mock.inject((_scheduleModel_: ScheduleModel, _$httpBackend_: angular.IHttpBackendService, _payeeModel_: PayeeModelMock, _categoryModel_: CategoryModelMock, _securityModel_: SecurityModelMock): void => {
-		scheduleModel = _scheduleModel_;
+	beforeEach(
+		angular.mock.inject(
+			(
+				_scheduleModel_: ScheduleModel,
+				_$httpBackend_: angular.IHttpBackendService,
+				_payeeModel_: PayeeModelMock,
+				_categoryModel_: CategoryModelMock,
+				_securityModel_: SecurityModelMock,
+			): void => {
+				scheduleModel = _scheduleModel_;
 
-		$httpBackend = _$httpBackend_;
+				$httpBackend = _$httpBackend_;
 
-		payeeModel = _payeeModel_;
-		categoryModel = _categoryModel_;
-		securityModel = _securityModel_;
-	}) as Mocha.HookFunction);
+				payeeModel = _payeeModel_;
+				categoryModel = _categoryModel_;
+				securityModel = _securityModel_;
+			},
+		) as Mocha.HookFunction,
+	);
 
 	// After each spec, verify that there are no outstanding http expectations or requests
 	afterEach((): void => {
@@ -46,15 +64,24 @@ describe("scheduleModel", (): void => {
 	});
 
 	describe("path", (): void => {
-		it("should return the schedules collection path when an id is not provided", (): Chai.Assertion => expect(scheduleModel.path()).to.equal("/schedules"));
+		it("should return the schedules collection path when an id is not provided", (): Chai.Assertion =>
+			expect(scheduleModel.path()).to.equal("/schedules"));
 
-		it("should return a specific schedule path when an id is provided", (): Chai.Assertion => expect(scheduleModel.path(123)).to.equal("/schedules/123"));
+		it("should return a specific schedule path when an id is provided", (): Chai.Assertion =>
+			expect(scheduleModel.path(123)).to.equal("/schedules/123"));
 	});
 
 	describe("parse", (): void => {
 		let schedule: ScheduledTransaction;
 
-		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["parse"](createScheduledBasicTransaction({ next_due_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss") }))));
+		beforeEach(
+			(): ScheduledTransaction =>
+				(schedule = scheduleModel["parse"](
+					createScheduledBasicTransaction({
+						next_due_date: lightFormat(new Date(), "yyyy-MM-dd HH:mm:ss"),
+					}),
+				)),
+		);
 
 		it("should convert the next due date from a string to a date", (): void => {
 			expect(schedule.next_due_date).to.be.a("date");
@@ -65,17 +92,26 @@ describe("scheduleModel", (): void => {
 	describe("stringify", (): void => {
 		let schedule: ScheduledTransaction;
 
-		beforeEach((): ScheduledTransaction => (schedule = scheduleModel["stringify"](createScheduledBasicTransaction({ next_due_date: startOfDay(new Date()) }))));
+		beforeEach(
+			(): ScheduledTransaction =>
+				(schedule = scheduleModel["stringify"](
+					createScheduledBasicTransaction({
+						next_due_date: startOfDay(new Date()),
+					}),
+				)),
+		);
 
 		it("should convert the next due date from a date to a string", (): void => {
 			expect(schedule.next_due_date).to.be.a("string");
-			expect(schedule.next_due_date).to.deep.equal(lightFormat(new Date(), "yyyy-MM-dd"));
+			expect(schedule.next_due_date).to.deep.equal(
+				lightFormat(new Date(), "yyyy-MM-dd"),
+			);
 		});
 	});
 
 	describe("all", (): void => {
 		const expectedUrl = /schedules/u,
-					expectedResponse: string[] = ["schedule 1", "schedule 2"];
+			expectedResponse: string[] = ["schedule 1", "schedule 2"];
 
 		beforeEach((): void => {
 			scheduleModel["parse"] = sinon.stub().returnsArg(0);
@@ -95,15 +131,20 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should return a list of all schedules", (): void => {
-			scheduleModel.all().then((scheduledTransactions: ScheduledTransaction[]): Chai.Assertion => expect(scheduledTransactions).to.deep.equal(expectedResponse));
+			scheduleModel
+				.all()
+				.then(
+					(scheduledTransactions: ScheduledTransaction[]): Chai.Assertion =>
+						expect(scheduledTransactions).to.deep.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
 
 	describe("save", (): void => {
 		const expectedResponse = "schedule",
-					expectedPostUrl = /schedules$/u,
-					expectedPatchUrl = /schedules\/1$/u;
+			expectedPostUrl = /schedules$/u,
+			expectedPatchUrl = /schedules\/1$/u;
 
 		beforeEach((): void => {
 			scheduleModel["stringify"] = sinon.stub().returnsArg(0);
@@ -125,7 +166,9 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should flush the category cache when the schedule category is new", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({ id: 1, category: "" }));
+			scheduleModel.save(
+				createScheduledBasicTransaction({ id: 1, category: "" }),
+			);
 			expect(categoryModel.flush).to.have.been.called;
 			$httpBackend.flush();
 		});
@@ -137,7 +180,9 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should flush the category cache when the schedule subcategory is new", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({ id: 1, subcategory: "" }));
+			scheduleModel.save(
+				createScheduledBasicTransaction({ id: 1, subcategory: "" }),
+			);
 			expect(categoryModel.flush).to.have.been.called;
 			$httpBackend.flush();
 		});
@@ -149,7 +194,9 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should flush the security cache when the schedule security is new", (): void => {
-			scheduleModel.save(createScheduledSecurityHoldingTransaction({ id: 1, security: "" }));
+			scheduleModel.save(
+				createScheduledSecurityHoldingTransaction({ id: 1, security: "" }),
+			);
 			expect(securityModel.flush).to.have.been.called;
 			$httpBackend.flush();
 		});
@@ -161,7 +208,8 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should stringify the schedule", (): void => {
-			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({ id: 1 });
+			const schedule: ScheduledBasicTransaction =
+				createScheduledBasicTransaction({ id: 1 });
 
 			scheduleModel.save(schedule);
 			expect(scheduleModel["stringify"]).to.have.been.calledWith(schedule);
@@ -169,7 +217,8 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should dispatch a POST request to /schedules when an id is not provided", (): void => {
-			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction();
+			const schedule: ScheduledBasicTransaction =
+				createScheduledBasicTransaction();
 
 			schedule.id = null;
 			$httpBackend.expectPOST(expectedPostUrl, schedule);
@@ -178,7 +227,8 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should dispatch a PATCH request to /schedules/{id} when an id is provided", (): void => {
-			const schedule: ScheduledBasicTransaction = createScheduledBasicTransaction({ id: 1 });
+			const schedule: ScheduledBasicTransaction =
+				createScheduledBasicTransaction({ id: 1 });
 
 			$httpBackend.expectPATCH(expectedPatchUrl, schedule);
 			scheduleModel.save(schedule);
@@ -192,7 +242,12 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should return the schedule", (): void => {
-			scheduleModel.save(createScheduledBasicTransaction({ id: 1 })).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion => expect(scheduledTransaction).to.equal(expectedResponse));
+			scheduleModel
+				.save(createScheduledBasicTransaction({ id: 1 }))
+				.then(
+					(scheduledTransaction: ScheduledTransaction): Chai.Assertion =>
+						expect(scheduledTransaction).to.equal(expectedResponse),
+				);
 			$httpBackend.flush();
 		});
 	});
