@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 ::RSpec.describe ::SubtransactionsController do
-	describe 'GET index', json: true, request: true do
+	describe 'GET index', :json, :request do
 		let(:split_transaction) { ::SplitTransaction.new }
 		let(:json) { 'split transaction children' }
 

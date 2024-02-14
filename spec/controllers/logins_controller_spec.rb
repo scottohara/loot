@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 ::RSpec.describe ::LoginsController do
-	describe 'POST create', request: true do
+	describe 'POST create', :request do
 		let(:expected_status) { :created }
 
 		it 'should update the status' do

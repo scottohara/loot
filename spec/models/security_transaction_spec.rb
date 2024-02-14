@@ -139,7 +139,7 @@ require 'rails_helper'
 
 		shared_examples 'a match' do
 			it 'should return the match' do
-				match = transaction.validate_method? "validate_foo_#{type}".to_sym
+				match = transaction.validate_method? :"validate_foo_#{type}"
 				expect(match).to be_a ::MatchData
 				expect(match[1]).to eql 'foo'
 				expect(match[2]).to eql type

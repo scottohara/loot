@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 ::RSpec.describe ::TransactionsController do
-	describe 'GET index', json: true, request: true do
+	describe 'GET index', :json, :request do
 		let(:opening_balance) { 1 }
 		let(:transactions) { 'transactions' }
 		let(:at_end) { false }
@@ -27,28 +27,28 @@ require 'rails_helper'
 			get :index, params: request_params
 		end
 
-		context 'for account', instance: true do
+		context 'for account', :instance do
 			let(:context) { ::Account.new }
 			let(:request_params) { {'account_id' => '1'} }
 
 			it('should return the transaction ledger for the account') {} # Empty block
 		end
 
-		context 'for payee', instance: true do
+		context 'for payee', :instance do
 			let(:context) { ::Payee.new }
 			let(:request_params) { {'payee_id' => '1'} }
 
 			it('should return the transaction ledger for the payee') {} # Empty block
 		end
 
-		context 'for category', instance: true do
+		context 'for category', :instance do
 			let(:context) { ::Category.new }
 			let(:request_params) { {'category_id' => '1'} }
 
 			it('should return the transaction ledger for the category') {} # Empty block
 		end
 
-		context 'for security', instance: true do
+		context 'for security', :instance do
 			let(:context) { ::Security.new }
 			let(:request_params) { {'security_id' => '1'} }
 
@@ -63,7 +63,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET show', json: true, request: true do
+	describe 'GET show', :json, :request do
 		let(:transaction) { ::Transaction.new }
 		let(:json) { 'transaction details' }
 
@@ -74,7 +74,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', json: true, request: true do
+	describe 'POST create', :json, :request do
 		let(:json) { 'created transaction' }
 
 		it 'should create a new transaction of the specified type and return the details' do
@@ -84,7 +84,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'PATCH update', json: true, request: true do
+	describe 'PATCH update', :json, :request do
 		let(:transaction) { create(:basic_transaction) }
 		let(:json) { 'updated transaction' }
 
@@ -116,7 +116,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'DELETE destroy', request: true do
+	describe 'DELETE destroy', :request do
 		let(:transaction) { create(:basic_transaction) }
 
 		it 'should delete an existing transaction' do
@@ -127,7 +127,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET last', json: true, request: true do
+	describe 'GET last', :json, :request do
 		let(:account_type) { 'account type' }
 		let(:transaction_types) { 'transaction types' }
 
@@ -154,28 +154,28 @@ require 'rails_helper'
 				get :last, params: request_params.merge(account_type:)
 			end
 
-			context 'for account', instance: true do
+			context 'for account', :instance do
 				let(:context) { ::Account.new }
 				let(:request_params) { {'account_id' => '1'} }
 
 				it('should return the last transaction for the account') {} # Empty block
 			end
 
-			context 'for payee', instance: true do
+			context 'for payee', :instance do
 				let(:context) { ::Payee.new }
 				let(:request_params) { {'payee_id' => '1'} }
 
 				it('should return the last transaction for the payee') {} # Empty block
 			end
 
-			context 'for category', instance: true do
+			context 'for category', :instance do
 				let(:context) { ::Category.new }
 				let(:request_params) { {'category_id' => '1'} }
 
 				it('should return the last transaction for the category') {} # Empty block
 			end
 
-			context 'for security', instance: true do
+			context 'for security', :instance do
 				let(:context) { ::Security.new }
 				let(:request_params) { {'security_id' => '1'} }
 
@@ -196,28 +196,28 @@ require 'rails_helper'
 				get :last, params: request_params.merge(account_type:)
 			end
 
-			context 'for account', instance: true do
+			context 'for account', :instance do
 				let(:context) { ::Account.new }
 				let(:request_params) { {'account_id' => '1'} }
 
 				it('should respond with a 404 Not Found') {} # Empty block
 			end
 
-			context 'for payee', instance: true do
+			context 'for payee', :instance do
 				let(:context) { ::Payee.new }
 				let(:request_params) { {'payee_id' => '1'} }
 
 				it('should respond with a 404 Not Found') {} # Empty block
 			end
 
-			context 'for category', instance: true do
+			context 'for category', :instance do
 				let(:context) { ::Category.new }
 				let(:request_params) { {'category_id' => '1'} }
 
 				it('should respond with a 404 Not Found') {} # Empty block
 			end
 
-			context 'for security', instance: true do
+			context 'for security', :instance do
 				let(:context) { ::Security.new }
 				let(:request_params) { {'security_id' => '1'} }
 

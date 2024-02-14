@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 ::RSpec.describe ::SecuritiesController do
-	describe 'GET index', json: true, request: true do
+	describe 'GET index', :json, :request do
 		context 'for security list' do
 			let(:json) { 'security list with balances' }
 
@@ -32,7 +32,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'GET show', json: true, request: true do
+	describe 'GET show', :json, :request do
 		let(:json) { 'security details' }
 
 		it 'should return the details of the specified security' do
@@ -41,7 +41,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', json: true, request: true do
+	describe 'POST create', :json, :request do
 		let(:request_body) { {name: 'New security', code: 'ABC'} }
 		let(:json) { 'created security' }
 
@@ -51,7 +51,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'PATCH update', json: true, request: true do
+	describe 'PATCH update', :json, :request do
 		let(:security) { instance_double ::Security }
 		let(:request_body) { {name: 'Updated security', code: 'ABC'} }
 		let(:raw_json) { 'updated security' }
@@ -65,7 +65,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'DELETE destroy', request: true do
+	describe 'DELETE destroy', :request do
 		let(:security) { ::Security.new }
 
 		it 'should delete an existing security' do

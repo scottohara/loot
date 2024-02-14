@@ -8,9 +8,9 @@ require 'rails_helper'
 		expect(::TransactionAccount).to receive_message_chain(:where, :where, :update_all).with status:
 	end
 
-	describe 'PATCH update', request: true do
+	describe 'PATCH update', :request do
 		before do
-			patch :update, params: {account_id: '1', transaction_id: '1', (status || request_status) => true}
+			patch :update, params: {account_id: '1', transaction_id: '1', "#{status || request_status}": true}
 		end
 
 		context 'Cleared' do
@@ -33,7 +33,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'DELETE destroy', request: true do
+	describe 'DELETE destroy', :request do
 		let(:status) { nil }
 
 		it 'should clear the existing status' do

@@ -29,29 +29,29 @@ require 'rails_helper'
 		expect(context).to receive(:update!).with favourite:
 	end
 
-	describe 'PATCH update', request: true do
+	describe 'PATCH update', :request do
 		let(:favourite) { true }
 
 		before do
 			patch :update, params: request_params
 		end
 
-		it('should favourite an account', account: true) {} # Empty block
-		it('should favourite a payee', payee: true) {} # Empty block
-		it('should favourite a category', category: true) {} # Empty block
-		it('should favourite a security', security: true) {} # Empty block
+		it('should favourite an account', :account) {} # Empty block
+		it('should favourite a payee', :payee) {} # Empty block
+		it('should favourite a category', :category) {} # Empty block
+		it('should favourite a security', :security) {} # Empty block
 	end
 
-	describe 'DELETE destroy', request: true do
+	describe 'DELETE destroy', :request do
 		let(:favourite) { false }
 
 		before do
 			delete :destroy, params: request_params
 		end
 
-		it('should unfavourite an account', account: true) {} # Empty block
-		it('should favourite a payee', payee: true) {} # Empty block
-		it('should favourite a category', category: true) {} # Empty block
-		it('should favourite a security', security: true) {} # Empty block
+		it('should unfavourite an account', :account) {} # Empty block
+		it('should favourite a payee', :payee) {} # Empty block
+		it('should favourite a category', :category) {} # Empty block
+		it('should favourite a security', :security) {} # Empty block
 	end
 end

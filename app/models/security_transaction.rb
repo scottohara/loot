@@ -21,7 +21,7 @@ class SecurityTransaction < Transaction
 
 	def method_missing(method, *args, &)
 		validate_method?(method) do |match|
-			public_send "validate_#{match[2]}", match[1]
+			public_send :"validate_#{match[2]}", match[1]
 			true
 		end || super
 	end

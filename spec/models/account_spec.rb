@@ -275,7 +275,7 @@ require 'rails_helper'
 		end
 		let(:related_account) { nil }
 
-		context('standard account', account_create_from_json: true) {} # Empty block
+		context('standard account', :account_create_from_json) {} # Empty block
 
 		context 'investment account' do
 			let(:related_account) { described_class.new name: 'Test account (Cash)', account_type: 'bank', opening_balance: 200, status: 'open', favourite: true }
@@ -298,7 +298,7 @@ require 'rails_helper'
 				json['account_type'] = 'loan'
 			end
 
-			context 'with asset', account_create_from_json: true do
+			context 'with asset', :account_create_from_json do
 				let(:related_account) { create(:asset_account, :favourite) }
 
 				before do
@@ -306,7 +306,7 @@ require 'rails_helper'
 				end
 			end
 
-			context('without asset', account_create_from_json: true) {} # Empty block
+			context('without asset', :account_create_from_json) {} # Empty block
 		end
 	end
 
@@ -341,17 +341,17 @@ require 'rails_helper'
 				json['related_account'] = {'opening_balance' => 200}
 			end
 
-			context 'from investment account', account_update_from_json: true do
+			context 'from investment account', :account_update_from_json do
 				let(:account) { create(:investment_account, :favourite, related_account: create(:cash_account, :favourite)) }
 			end
 
-			context 'from non-investment account', account_update_from_json: true do
+			context 'from non-investment account', :account_update_from_json do
 				let(:account) { create(:bank_account, :favourite) }
 			end
 		end
 
 		context 'non-investment account' do
-			context 'from investment account', account_update_from_json: true do
+			context 'from investment account', :account_update_from_json do
 				let(:account) { create(:investment_account, :favourite, related_account: create(:cash_account, :favourite)) }
 
 				before do
@@ -367,7 +367,7 @@ require 'rails_helper'
 						json['account_type'] = 'loan'
 					end
 
-					context 'with asset', account_update_from_json: true do
+					context 'with asset', :account_update_from_json do
 						let(:related_account) { create(:asset_account, :favourite) }
 
 						before do
@@ -377,10 +377,10 @@ require 'rails_helper'
 						end
 					end
 
-					context('without asset', account_update_from_json: true) {} # Empty block
+					context('without asset', :account_update_from_json) {} # Empty block
 				end
 
-				context('standard account', account_update_from_json: true) {} # Empty block
+				context('standard account', :account_update_from_json) {} # Empty block
 			end
 		end
 	end

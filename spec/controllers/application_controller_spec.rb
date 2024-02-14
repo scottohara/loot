@@ -66,35 +66,35 @@ require 'rails_helper'
 		it('should response with no message and a 200 OK status') {} # Empty block
 	end
 
-	context 'internal error', json: true, request: true do
+	context 'internal error', :json, :request do
 		let(:expected_status) { :internal_server_error }
 		let(:json) { 'internal error' }
 
 		it('should respond with a JSON error message and a 500 Internal Server Error status') {} # Empty block
 	end
 
-	context 'record invalid', json: true, request: true do
+	context 'record invalid', :json, :request do
 		let(:expected_status) { :unprocessable_entity }
 		let(:json) { "Name can't be blank, Direction is not included in the list" }
 
 		it('should respond with a JSON error message and a 422 Unprocessable Entity status') {} # Empty block
 	end
 
-	context 'record not destroyed', json: true, request: true do
+	context 'record not destroyed', :json, :request do
 		let(:expected_status) { :conflict }
 		let(:json) { 'Cannot delete record because dependent transaction categories exist' }
 
 		it('should respond with a JSON error message and a 409 Conflict status') {} # Empty block
 	end
 
-	context 'record not found', json: true, request: true do
+	context 'record not found', :json, :request do
 		let(:expected_status) { :not_found }
 		let(:json) { 'record not found' }
 
 		it('should respond with a JSON error message and a 404 Not Found status') {} # Empty block
 	end
 
-	context 'routing error', json: true, request: true do
+	context 'routing error', :json, :request do
 		let(:expected_status) { :not_found }
 		let(:json) { 'Path routing error is not valid' }
 

@@ -331,7 +331,7 @@ module Loot
 			trx = @tmp_transactions[this_side]
 
 			# Only interested in transfers in/out
-			next unless transfer_types.include? trx[:type]
+			next if transfer_types.exclude? trx[:type]
 
 			this_security = @tmp_transactions[this_side][:security]
 			other_security = @tmp_transactions[other_side][:security]
@@ -356,7 +356,7 @@ module Loot
 
 		@tmp_transactions.sort_by { |_k, v| ::Date.parse v[:transaction_date] }.each_value do |trx|
 			# Only create transaction if the type and account are known, and it is not a void transaction
-			public_send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil? || trx[:account].nil? || void?(trx)
+			public_send :"create_#{trx[:type]}_transaction", trx unless trx[:type].nil? || trx[:account].nil? || void?(trx)
 			progress 'Loaded', index, 'transaction'
 		rescue ::StandardError
 			@logger.info trx
@@ -426,7 +426,7 @@ module Loot
 			trx[:auto_enter] = @tmp_bills[id][:auto]
 
 			# Create the template transaction
-			public_send "create_#{trx[:type]}_transaction".to_sym, trx unless trx[:type].nil? || trx[:account].nil?
+			public_send :"create_#{trx[:type]}_transaction", trx unless trx[:type].nil? || trx[:account].nil?
 
 			loaded += 1
 			progress 'Loaded', loaded, 'bill'

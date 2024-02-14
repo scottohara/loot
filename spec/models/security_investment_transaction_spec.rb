@@ -77,11 +77,11 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', direction: 'outflow', security_investment_transaction_create_from_json: true do
+		context 'outflow', :security_investment_transaction_create_from_json, direction: 'outflow' do
 			let(:amount) { 15 }
 		end
 
-		context 'inflow', direction: 'inflow', security_investment_transaction_create_from_json: true do
+		context 'inflow', :security_investment_transaction_create_from_json, direction: 'inflow' do
 			let(:amount) { 25 }
 		end
 	end
@@ -141,11 +141,11 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', direction: 'outflow', security_investment_transaction_update_from_json: true do
+		context 'outflow', :security_investment_transaction_update_from_json, direction: 'outflow' do
 			let(:amount) { 15 }
 		end
 
-		context 'inflow', direction: 'inflow', security_investment_transaction_update_from_json: true do
+		context 'inflow', :security_investment_transaction_update_from_json, direction: 'inflow' do
 			let(:amount) { 25 }
 		end
 	end
@@ -176,12 +176,12 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', direction: 'outflow', validate_amount: true do
+		context 'outflow', :validate_amount, direction: 'outflow' do
 			let(:error_message) { 'Amount must equal price times quantity less commission' }
 			let(:valid_amount) { 15 }
 		end
 
-		context 'inflow', direction: 'inflow', validate_amount: true do
+		context 'inflow', :validate_amount, direction: 'inflow' do
 			let(:error_message) { 'Amount must equal price times quantity plus commission' }
 			let(:valid_amount) { 25 }
 		end

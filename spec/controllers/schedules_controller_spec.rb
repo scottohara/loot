@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 ::RSpec.describe ::SchedulesController do
-	describe 'GET index', json: true, request: true do
+	describe 'GET index', :json, :request do
 		let(:json) { 'schedule ledger' }
 
 		it 'should return the schedule ledger' do
@@ -13,7 +13,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', json: true, request: true do
+	describe 'POST create', :json, :request do
 		let(:json) { 'created schedule' }
 
 		it 'should create a new schedule of the specified type and return the details' do
@@ -23,7 +23,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'PATCH update', json: true, request: true do
+	describe 'PATCH update', :json, :request do
 		let(:schedule) { create(:basic_transaction, :scheduled) }
 		let(:json) { 'updated schedule' }
 
@@ -55,7 +55,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'DELETE destroy', request: true do
+	describe 'DELETE destroy', :request do
 		let(:schedule) { create(:basic_transaction, :scheduled) }
 
 		it 'should delete an existing schedule' do

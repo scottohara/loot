@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 ::RSpec.describe ::FlagsController do
-	describe 'PATCH update', request: true do
+	describe 'PATCH update', :request do
 		let(:flag_type) { 'noreceipt' }
 		let(:memo) { 'Test flag' }
 
@@ -36,7 +36,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'DELETE destroy', request: true do
+	describe 'DELETE destroy', :request do
 		let(:transaction) { create(:transaction, :flagged) }
 
 		it 'should delete an existing flag' do
