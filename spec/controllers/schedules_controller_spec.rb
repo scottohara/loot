@@ -38,11 +38,9 @@ require 'rails_helper'
 
 		context "when transaction type hasn't changed" do
 			let(:request_body) { {id: '1', transaction_type: 'Basic', transaction_date: nil, account_id: '1', primary_account: {id: '1'}, controller: 'schedules', action: 'update'} }
-			let(:request_params) { ::ActionController::Parameters.new request_body }
 
 			it 'should update the existing transaction' do
-				request_params['primary_account'] = ::ActionController::Parameters.new request_body[:primary_account]
-				expect(::BasicTransaction).to receive(:update_from_json).with(request_params).and_return json
+				expect(::BasicTransaction).to receive(:update_from_json).with(::ActionController::Parameters.new request_body).and_return json
 			end
 		end
 

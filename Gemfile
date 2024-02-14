@@ -4,34 +4,34 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.2.2'
+ruby file: '.tool-versions'
 
 # Web application framework
-gem 'rails', '7.0.5'
+gem 'rails', '7.1.3'
 
 # Postgres
-gem 'pg', '1.5.3'
+gem 'pg', '1.5.4'
 
 group :development, :production do
 	# Use Puma as the app server
-	gem 'puma', '6.2.2'
+	gem 'puma', '6.4.2'
 end
 
 # For JSON serialisation
-gem 'active_model_serializers', '0.10.13'
+gem 'active_model_serializers', '0.10.14'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '1.16.0', require: false
+gem 'bootsnap', '1.18.3', require: false
 
 group :development, :test do
 	# Cleans database on each test run
 	gem 'database_cleaner', '2.0.2'
 
 	# Test factories
-	gem 'factory_bot_rails', '6.2.0'
+	gem 'factory_bot_rails', '6.4.3'
 
 	# BDD testing framework
-	gem 'rspec-rails', '6.0.2'
+	gem 'rspec-rails', '6.1.1'
 
 	# Code coverage
 	gem 'simplecov', '0.22.0', require: false
@@ -58,5 +58,5 @@ group :development, :test do
 	gem 'rubocop-config-oharagroup', '2.4.0', require: false
 
 	# Debugging
-	gem 'debug', '1.8.0'
+	gem 'debug', '1.9.1'
 end

@@ -38,10 +38,10 @@ class SchedulesController < ApplicationController
 		@schedule['transaction_date'] = nil
 
 		# Copy the primary_account.id to account_id
-		@schedule['account_id'] = @schedule['primary_account']['id']
+		@schedule['account_id'] = @schedule.fetch('primary_account').fetch 'id'
 	end
 
 	def create_schedule
-		::Transaction.class_for(params['transaction_type']).create_from_json(@schedule)
+		::Transaction.class_for(params['transaction_type']).create_from_json @schedule
 	end
 end
