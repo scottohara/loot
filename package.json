@@ -87,7 +87,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint 'src/**/*.{ts,js}' 'cypress/**/*.{ts,js}' '*.{ts,js}'",
     "cypress": "cypress open --e2e --browser chrome",
-    "test": "npm run format && npm run lint && npm run test:coverage",
+    "test": "npm run format:check && npm run lint && npm run test:coverage",
     "test:bdd": "karma start karma-bdd.conf.js",
     "test:coverage": "karma start",
     "test:e2e": "npm run build && concurrently --prefix-colors bgBlue.bold,bgYellow.bold,bgGreen.bold npm:web:test npm:db npm:cypress",
