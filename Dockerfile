@@ -38,7 +38,7 @@ RUN apk add --no-cache \
 WORKDIR /build
 ENV RACK_ENV=production
 
-COPY --link
+COPY --link \
 	.tool-versions \
 	Gemfile* ./
 
