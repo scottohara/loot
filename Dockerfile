@@ -38,7 +38,9 @@ RUN apk add --no-cache \
 WORKDIR /build
 ENV RACK_ENV=production
 
-COPY --link Gemfile* ./
+COPY --link
+	.tool-versions \
+	Gemfile* ./
 
 RUN --mount=type=cache,id=loot-bundler,target=tmp/vendor/bundle \
 	bundle config set --local without development:test; \
@@ -75,6 +77,7 @@ RUN \
 RUN mkdir -p tmp/pids
 
 COPY --link --chown=loot \
+	.tool-versions \
 	config.ru \
 	docker-entrypoint \
 	Gemfile* \
