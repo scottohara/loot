@@ -10,7 +10,7 @@ ruby file: '.tool-versions'
 gem 'rails', '7.1.3'
 
 # Postgres
-gem 'pg', '1.5.4'
+gem 'pg', '1.5.5'
 
 group :development, :production do
 	# Use Puma as the app server

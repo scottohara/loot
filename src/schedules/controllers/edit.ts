@@ -143,7 +143,7 @@ export default class ScheduleEditController {
 							(isNaN(Number(subtransaction.amount))
 								? 0
 								: Number(subtransaction.amount) *
-								  (subtransaction.direction === this.transaction.direction
+									(subtransaction.direction === this.transaction.direction
 										? 1
 										: -1)),
 						0,
@@ -637,7 +637,7 @@ export default class ScheduleEditController {
 						? this.numberFilter(
 								this.transaction.quantity,
 								QUANTITY_DECIMAL_PLACES,
-						  )
+							)
 						: "",
 				price: string =
 					Number(this.transaction.price) > 0
@@ -645,13 +645,13 @@ export default class ScheduleEditController {
 								this.transaction.price,
 								undefined,
 								PRICE_DECIMAL_PLACES,
-						  )}`
+							)}`
 						: "",
 				commission: string =
 					Number(this.transaction.commission) > 0
 						? ` (${
 								"inflow" === this.transaction.direction ? "plus" : "less"
-						  } ${this.currencyFilter(this.transaction.commission)} commission)`
+							} ${this.currencyFilter(this.transaction.commission)} commission)`
 						: "";
 
 			this.transaction.memo = quantity + price + commission;

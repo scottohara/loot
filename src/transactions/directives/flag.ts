@@ -32,7 +32,7 @@ export default class TransactionFlagDirective {
 							scope.transaction.flag_type
 								? `<strong class="${scope.transaction.flag_type}">${
 										FlagTypes[scope.transaction.flag_type]
-								  }</strong><br/>${scope.transaction.flag}`
+									}</strong><br/>${scope.transaction.flag}`
 								: "Flag transaction...",
 						) as string;
 					}
