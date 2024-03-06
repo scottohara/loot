@@ -10,7 +10,7 @@
 		"strictFunctionTypes": false,
 
 		// Modules
-		"module": "es2022",
+		"module": "esnext",
 		"moduleResolution": "bundler",
 		"paths": {
 			"~*": ["./src/*"]
@@ -24,7 +24,6 @@
 		// Editor Support
 
 		// Interop Constraints
-		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"isolatedModules": true,
 		"verbatimModuleSyntax": true,
