@@ -71,7 +71,6 @@ const entry = {
 						list: [
 							"...",
 							{
-								tag: "input",
 								attribute: "typeahead-template-url",
 								type: "src",
 							},

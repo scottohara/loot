@@ -29,9 +29,12 @@ module.exports = merge(config, {
 
 	devServer: {
 		open: true,
-		proxy: {
-			"/": "http://localhost:3000",
-		},
+		proxy: [
+			{
+				context: ["/"],
+				target: "http://localhost:3000",
+			},
+		],
 	},
 
 	plugins: [providejQuery, extractCss(), createIndexHtml, copyStaticAssets],
