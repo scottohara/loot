@@ -1,4 +1,4 @@
-import "~/transactions/css/flag.less";
+import "~/transactions/css/flag.css";
 import type { Transaction, TransactionFlagScope } from "~/transactions/types";
 import type OgModalErrorService from "~/og-components/og-modal-error/services/og-modal-error";
 import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";

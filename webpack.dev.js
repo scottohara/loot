@@ -2,7 +2,6 @@ const { merge } = require("webpack-merge"),
 	{
 		entry,
 		output,
-		lessRule,
 		cssRule,
 		fontRule,
 		iconRule,
@@ -21,7 +20,7 @@ module.exports = merge(config, {
 	output,
 
 	module: {
-		rules: [lessRule, cssRule, fontRule, iconRule],
+		rules: [cssRule, fontRule, iconRule],
 	},
 
 	// Eval source maps

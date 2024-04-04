@@ -1,4 +1,4 @@
-import "~/categories/css/index.less";
+import "~/categories/css/index.css";
 import type {
 	OgTableActionHandlers,
 	OgTableActions,

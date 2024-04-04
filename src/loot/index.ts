@@ -12,7 +12,7 @@ import "~/schedules";
 import "~/securities";
 import "~/transactions";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "~/loot/css/loot.less";
+import "~/loot/css/loot.css";
 
 // Components
 import $ from "jquery";

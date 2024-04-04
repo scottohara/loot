@@ -1,4 +1,4 @@
-import "~/og-components/og-table-loading/css/og-table-loading.less";
+import "~/og-components/og-table-loading/css/og-table-loading.css";
 import OgTableLoadingView from "~/og-components/og-table-loading/views/loading.html";
 
 export default class OgTableLoadingDirective {

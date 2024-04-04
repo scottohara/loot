@@ -1,5 +1,5 @@
 input.calculator {
-	& + .popover {
+	+ .popover {
 		text-align: right;
 		min-width: 150px;
 

@@ -1,4 +1,4 @@
-import "~/transactions/css/status.less";
+import "~/transactions/css/status.css";
 import type {
 	TransactionStatus,
 	TransactionStatusScope,

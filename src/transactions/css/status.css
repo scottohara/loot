@@ -1,0 +1,16 @@
+@import "~/loot/css/variables.css";
+
+strong,
+.has-action i.action.active {
+	&.unreconciled {
+		color: var(--text-muted);
+	}
+
+	&.reconciled {
+		color: var(--state-success-text);
+	}
+
+	&.cleared {
+		color: var(--state-warning-text);
+	}
+}

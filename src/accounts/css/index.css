@@ -1,8 +1,8 @@
-@import "bootstrap/less/variables.less";
+@import "~/loot/css/variables.css";
 
 table.accounts {
 	tr.closed-account {
-		color: @text-muted;
+		color: var(--text-muted);
 
 		a {
 			color: inherit;

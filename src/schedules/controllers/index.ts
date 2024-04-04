@@ -1,4 +1,4 @@
-import "~/transactions/css/index.less";
+import "~/transactions/css/index.css";
 import type {
 	OgTableActionHandlers,
 	OgTableActions,

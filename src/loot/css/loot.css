@@ -1,5 +1,4 @@
-@import "bootstrap/less/variables.less";
-@import "bootstrap/less/mixins.less";
+@import "~/loot/css/variables.css";
 
 html,
 body {
@@ -47,7 +46,7 @@ input[type="search"]::-webkit-search-cancel-button {
 	overflow-y: scroll;
 
 	input.negative {
-		.text-emphasis-variant(@state-danger-text) !important;
+		color: var(--state-danger-text) !important;
 	}
 
 	table {
@@ -71,13 +70,13 @@ input[type="search"]::-webkit-search-cancel-button {
 	i.action {
 		opacity: 0;
 		transition: all ease 0.6s;
-		color: @text-muted;
+		color: var(--text-muted);
 
 		&.active {
 			opacity: 1;
 		}
 
-		& ~ i.action {
+		~ i.action {
 			padding-right: 5px;
 		}
 	}

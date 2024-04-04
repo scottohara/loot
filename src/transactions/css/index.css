@@ -1,5 +1,4 @@
-@import "bootstrap/less/variables.less";
-@import "bootstrap/less/mixins.less";
+@import "~/loot/css/variables.css";
 
 #reconciliation-progress {
 	position: fixed;
@@ -10,19 +9,19 @@
 
 #transactions,
 #transactions-header {
-	// Background colours when reconciling
-	& > tbody.reconciling > tr.cleared {
+	/* Background colours when reconciling */
+	> tbody.reconciling > tr.cleared {
 		&.warning > td {
 			background-color: rgba(128, 255, 0, 0.1);
 		}
 
-		& > td {
+		> td {
 			background-color: rgba(0, 255, 0, 0.1);
 		}
 	}
 
 	tr:not(.future) + tr.future {
-		border-top: 2px solid @state-warning-text;
+		border-top: 2px solid var(--state-warning-text);
 	}
 
 	td,

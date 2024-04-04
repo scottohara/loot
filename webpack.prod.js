@@ -4,7 +4,6 @@ const { merge } = require("webpack-merge"),
 	{
 		entry,
 		output,
-		lessRule,
 		cssRule,
 		fontRule,
 		iconRule,
@@ -30,7 +29,6 @@ module.exports = merge(config, {
 
 	module: {
 		rules: [
-			lessRule,
 			cssRule,
 			merge(fontRule, {
 				generator: {

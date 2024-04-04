@@ -1,4 +1,4 @@
-import "~/og-components/og-favourite/css/og-favourite.less";
+import "~/og-components/og-favourite/css/og-favourite.css";
 import OgFavouriteView from "~/og-components/og-favourite/views/favourite.html";
 
 export default class OgFavouriteDirective {

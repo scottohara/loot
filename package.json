@@ -58,8 +58,6 @@
     "karma-sinon": "1.0.5",
     "karma-sourcemap-loader": "0.4.0",
     "karma-webpack": "5.0.1",
-    "less": "4.2.0",
-    "less-loader": "12.2.0",
     "mini-css-extract-plugin": "2.8.1",
     "mocha": "10.3.0",
     "ngtemplate-loader": "2.1.0",

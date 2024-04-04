@@ -1,0 +1,7 @@
+:root {
+	/* Copied from bootstrap/less/variables.less */
+	--text-muted: #777;
+	--state-danger-text: #a94442;
+	--state-warning-text: #8a6d3b;
+	--state-success-text: #3c763d;
+}

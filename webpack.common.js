@@ -19,21 +19,6 @@ const entry = {
 		test: /\.ts$/u,
 		loader: "ts-loader",
 	},
-	// Rule for *.less processing
-	lessRule = {
-		test: /\.less$/u,
-		use: [
-			MiniCssExtractPlugin.loader,
-			{
-				loader: "css-loader",
-				options: {
-					// Apply the next loader (less-loader) to any @imports
-					importLoaders: 1,
-				},
-			},
-			"less-loader",
-		],
-	},
 	// Rule for *.css processing
 	cssRule = {
 		test: /\.css$/u,
@@ -148,7 +133,6 @@ function extractCss(options = undefined) {
 module.exports = {
 	entry,
 	output,
-	lessRule,
 	cssRule,
 	fontRule,
 	iconRule,

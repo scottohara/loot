@@ -1,4 +1,4 @@
-import "~/accounts/css/index.less";
+import "~/accounts/css/index.css";
 import type { Account, Accounts } from "~/accounts/types";
 import AccountDeleteView from "~/accounts/views/delete.html";
 import AccountEditView from "~/accounts/views/edit.html";

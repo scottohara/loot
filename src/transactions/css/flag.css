@@ -1,0 +1,16 @@
+@import "~/loot/css/variables.css";
+
+strong,
+.has-action i.action.active {
+	&.followup {
+		color: var(--state-danger-text);
+	}
+
+	&.noreceipt {
+		color: var(--state-warning-text);
+	}
+
+	&.taxdeductible {
+		color: var(--state-success-text);
+	}
+}

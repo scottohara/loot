@@ -1,4 +1,4 @@
-import "../css/og-input-calculator.less";
+import "../css/og-input-calculator.css";
 import type {
 	OgInputCalculatorOperation,
 	OgInputCalculatorOperator,

@@ -1,0 +1,9 @@
+.has-action {
+	i.action {
+		&.active {
+			&.favourite {
+				color: #e81c4f;
+			}
+		}
+	}
+}

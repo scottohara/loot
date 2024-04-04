@@ -1,4 +1,4 @@
-import "~/og-components/og-loading-spinner/css/og-loading-spinner.less";
+import "~/og-components/og-loading-spinner/css/og-loading-spinner.css";
 import type { OgLoadingSpinnerScope } from "~/og-components/og-loading-spinner/types";
 import OgLoadingSpinnerView from "~/og-components/og-loading-spinner/views/loading.html";
 
