@@ -75,8 +75,8 @@
   },
   "scripts": {
     "start": "concurrently --prefix-colors auto npm:web:dev npm:db npm:dev",
-    "web:dev": "bundle exec rails server",
-    "web:test": "bundle exec rails server --environment=test",
+    "web:dev": "bundle exec op run -- rails server",
+    "web:test": "bundle exec op run -- rails server --environment=test",
     "db": "postgres -D /opt/homebrew/var/postgres",
     "build": "webpack --progress --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
