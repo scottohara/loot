@@ -22,6 +22,7 @@ vendor
 .DS_Store
 .dccache
 .editorconfig
+.env
 .eslintrc.json
 .gitattributes
 .gitignore
