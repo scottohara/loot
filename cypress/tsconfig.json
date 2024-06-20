@@ -8,10 +8,9 @@
 		"paths": {
 			"~*": ["cypress/*"]
 		},
-		"types": ["cypress", "node"],
+		"types": ["cypress", "node"]
 
 		// Emit
-		"sourceMap": false
 
 		// JavaScript Support
 
