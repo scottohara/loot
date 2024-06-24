@@ -1,4 +1,5 @@
 primary_region = "syd"
+swap_size_mb = 512
 
 [deploy]
 	release_command = "bundle exec rake db:migrate"

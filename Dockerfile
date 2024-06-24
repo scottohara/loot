@@ -54,11 +54,6 @@ RUN --mount=type=cache,id=loot-bundler,target=tmp/vendor/bundle \
 
 FROM ruby:${RUBY_VERSION}-alpine as app
 
-RUN \
-	fallocate -l 512M /swapfile; \
-	chmod 0600 /swapfile; \
-	mkswap /swapfile;
-
 RUN apk add --no-cache \
 	libpq \
 	tzdata
@@ -79,7 +74,6 @@ RUN mkdir -p tmp/pids
 COPY --link --chown=loot \
 	.tool-versions \
 	config.ru \
-	docker-entrypoint \
 	Gemfile* \
 	Rakefile ./
 
@@ -91,6 +85,4 @@ COPY --link --chown=loot --from=frontend build/public public/
 
 EXPOSE 3000
 
-USER root
-ENTRYPOINT ["/loot/docker-entrypoint"]
 CMD ["bundle", "exec", "puma"]
