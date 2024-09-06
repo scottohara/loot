@@ -118,10 +118,12 @@ export default class OgTableNavigableDirective {
 				}
 
 				// Declare a click handler to focus a row by clicking it
-				scope.clickHandler = (event: JQueryMouseEventObject): void => {
+				scope.clickHandler = (event: JQuery.ClickEvent): void => {
 					if (ogTableNavigableService.enabled) {
 						// The event target could be any element in the table (including nested tables), so we need the closest row
-						const clickedRow: JQuery<Element> = closestRow(event.target);
+						const clickedRow: JQuery<Element> = closestRow(
+							event.target as EventTarget,
+						);
 
 						if (clickedRow.length) {
 							// Focus the clicked row
@@ -131,7 +133,7 @@ export default class OgTableNavigableDirective {
 				};
 
 				// Declare a double-click handler to perform an action on a row
-				scope.doubleClickHandler = (event: JQueryMouseEventObject): void => {
+				scope.doubleClickHandler = (event: JQuery.DoubleClickEvent): void => {
 					if (ogTableNavigableService.enabled) {
 						// If the event target was a button, do nothing
 						if ("button" === event.target.localName) {
@@ -139,7 +141,9 @@ export default class OgTableNavigableDirective {
 						}
 
 						// The event target could be any element in the table (including nested tables), so we need the closest row
-						const clickedRow: JQuery<Element> = closestRow(event.target);
+						const clickedRow: JQuery<Element> = closestRow(
+							event.target as EventTarget,
+						);
 
 						if (clickedRow.length) {
 							// Invoke the select action for the clicked row
@@ -166,68 +170,47 @@ export default class OgTableNavigableDirective {
 					}
 				};
 
-				const MOVEMENT_KEYS: Record<number, OgTableMovementKeys> = {
-						// Page up
-						33: -10,
-
-						// Page down
-						34: 10,
-
-						// Arrow up
-						38: -1,
-
-						// Arrow down
-						40: 1,
-
-						// J
-						74: 1,
-
-						// K
-						75: -1,
+				const MOVEMENT_KEYS: Record<string, OgTableMovementKeys> = {
+						PageUp: -10,
+						PageDown: 10,
+						ArrowUp: -1,
+						ArrowDown: 1,
+						J: 1,
+						j: 1,
+						K: -1,
+						k: -1,
 					},
-					ACTION_KEYS: Record<number, OgTableActionCallback | undefined> = {
-						// Backspace
-						8: scope.handlers.deleteAction,
-
-						// Enter
-						13: scope.handlers.selectAction,
-
-						// Esc
-						27: scope.handlers.cancelAction,
-
-						// Insert
-						45: scope.handlers.insertAction,
-
-						// Delete
-						46: scope.handlers.deleteAction,
+					ACTION_KEYS: Record<string, OgTableActionCallback | undefined> = {
+						Backspace: scope.handlers.deleteAction,
+						Enter: scope.handlers.selectAction,
+						Escape: scope.handlers.cancelAction,
+						Insert: scope.handlers.insertAction,
+						Delete: scope.handlers.deleteAction,
 					},
-					CTRL_ACTION_KEYS: Record<number, OgTableActionCallback> = {
-						// CTRL+E
-						69: scope.handlers.editAction,
-
-						// CTRL+N
-						78: scope.handlers.insertAction,
+					CTRL_ACTION_KEYS: Record<string, OgTableActionCallback> = {
+						E: scope.handlers.editAction,
+						N: scope.handlers.insertAction,
 					};
 
 				// Declare key handler to focus a row with the arrow keys
-				scope.keyHandler = (event: JQueryKeyEventObject): void => {
+				scope.keyHandler = (event: JQuery.KeyDownEvent): void => {
 					if (ogTableNavigableService.enabled) {
 						// Check if the key pressed was a movement key
 						if (
 							undefined !==
-							Object.getOwnPropertyDescriptor(MOVEMENT_KEYS, event.keyCode)
+							Object.getOwnPropertyDescriptor(MOVEMENT_KEYS, event.key)
 						) {
 							// Jump the specified number of rows for the key
-							scope.jumpToRow(MOVEMENT_KEYS[event.keyCode]);
+							scope.jumpToRow(MOVEMENT_KEYS[event.key]);
 							event.preventDefault();
 						}
 
 						// Check if the key pressed was an action key
 						if (
 							undefined !==
-							Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode)
+							Object.getOwnPropertyDescriptor(ACTION_KEYS, event.key)
 						) {
-							const callback = ACTION_KEYS[event.keyCode];
+							const callback = ACTION_KEYS[event.key];
 
 							// If an action is defined, invoke it for the focussed row
 							callback?.(Number(scope.focussedRow));
@@ -237,16 +220,21 @@ export default class OgTableNavigableDirective {
 						// Check if the key pressed was a CTRL action key
 						if (
 							event.ctrlKey &&
-							Object.getOwnPropertyDescriptor(CTRL_ACTION_KEYS, event.keyCode)
+							Object.getOwnPropertyDescriptor(
+								CTRL_ACTION_KEYS,
+								event.key.toUpperCase(),
+							)
 						) {
 							// If an action is defined, invoke it for the focussed row
 							if (
 								undefined !==
-								(CTRL_ACTION_KEYS[event.keyCode] as
+								(CTRL_ACTION_KEYS[event.key.toUpperCase()] as
 									| OgTableActionCallback
 									| undefined)
 							) {
-								CTRL_ACTION_KEYS[event.keyCode](Number(scope.focussedRow));
+								CTRL_ACTION_KEYS[event.key.toUpperCase()](
+									Number(scope.focussedRow),
+								);
 							}
 							event.preventDefault();
 						}
@@ -254,15 +242,15 @@ export default class OgTableNavigableDirective {
 				};
 
 				// Attach the event handlers (the handlers are wrapped in functions to aid with unit testing)
-				function clickHandler(event: JQueryMouseEventObject): void {
+				function clickHandler(event: JQuery.ClickEvent): void {
 					scope.clickHandler(event);
 				}
 
-				function doubleClickHandler(event: JQueryMouseEventObject): void {
+				function doubleClickHandler(event: JQuery.DoubleClickEvent): void {
 					scope.doubleClickHandler(event);
 				}
 
-				function keyHandler(event: JQueryKeyEventObject): void {
+				function keyHandler(event: JQuery.KeyDownEvent): void {
 					scope.keyHandler(event);
 				}
 

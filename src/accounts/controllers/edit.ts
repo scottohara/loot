@@ -29,12 +29,12 @@ export default class AccountEditController {
 		if (undefined !== account) {
 			this.account.account_type = `${this.account.account_type
 				.charAt(0)
-				.toUpperCase()}${this.account.account_type.substr(
+				.toUpperCase()}${this.account.account_type.substring(
 				1,
 			)}` as DisplayAccountType;
 			this.account.status = `${this.account.status
 				.charAt(0)
-				.toUpperCase()}${this.account.status.substr(
+				.toUpperCase()}${this.account.status.substring(
 				1,
 			)}` as DisplayAccountStatus;
 		}
@@ -91,8 +91,8 @@ export default class AccountEditController {
 		this.accountModel.save(this.account).then(
 			(account: angular.IHttpResponse<Account>): void =>
 				this.$uibModalInstance.close(account.data),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

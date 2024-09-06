@@ -8,12 +8,12 @@ export default class MockDependenciesProvider {
 	) {}
 
 	// Replaces a given set of dependencies with mock versions
-	public load<T>(dependencies: string[]): void {
+	public load(dependencies: string[]): void {
 		// Process each dependency, replacing the original with the mock version
 		angular.forEach(
 			dependencies,
 			(dependency: string): void => {
-				const mockProvider: Mock<T> = this.$injector.get(
+				const mockProvider: Mock<unknown> = this.$injector.get(
 					`${dependency}MockProvider`,
 				);
 

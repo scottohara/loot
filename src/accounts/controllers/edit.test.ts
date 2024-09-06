@@ -52,10 +52,10 @@ describe("AccountEditController", (): void => {
 		it("should make the passed account available to the view", (): void => {
 			account.account_type = `${account.account_type
 				.charAt(0)
-				.toUpperCase()}${account.account_type.substr(1)}` as AccountType;
+				.toUpperCase()}${account.account_type.substring(1)}` as AccountType;
 			account.status = `${account.status
 				.charAt(0)
-				.toUpperCase()}${account.status.substr(1)}` as AccountStatus;
+				.toUpperCase()}${account.status.substring(1)}` as AccountStatus;
 			expect(accountEditController.account).to.deep.equal(account);
 		});
 

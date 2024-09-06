@@ -16,11 +16,7 @@ import type {
 	TransferTransaction,
 	TransferrableTransaction,
 } from "~/transactions/types";
-import type {
-	ControllerTestFactory,
-	EventMock,
-	JQueryMouseEventObjectMock,
-} from "~/mocks/types";
+import type { ControllerTestFactory, EventMock } from "~/mocks/types";
 import type { Entity, EntityModel } from "~/loot/types";
 import type {
 	StateMock,
@@ -1674,29 +1670,23 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("toggleSubtransactions", (): void => {
-		let event: JQueryMouseEventObjectMock, transaction: SplitTransaction;
+		let transaction: SplitTransaction;
 
-		beforeEach((): void => {
-			event = { cancelBubble: false };
-			transaction = createSplitTransaction({
-				id: -1,
-				showSubtransactions: true,
-			});
-		});
+		beforeEach(
+			(): SplitTransaction =>
+				(transaction = createSplitTransaction({
+					id: -1,
+					showSubtransactions: true,
+				})),
+		);
 
 		it("should toggle a flag on the transaction indicating whether subtransactions are shown", (): void => {
-			transactionIndexController.toggleSubtransactions(
-				event as JQueryMouseEventObject,
-				transaction,
-			);
+			transactionIndexController.toggleSubtransactions(transaction);
 			expect(transaction.showSubtransactions).to.be.false;
 		});
 
 		it("should do nothing if we're not showing subtransactions", (): void => {
-			transactionIndexController.toggleSubtransactions(
-				event as JQueryMouseEventObject,
-				transaction,
-			);
+			transactionIndexController.toggleSubtransactions(transaction);
 			expect(transactionModel.findSubtransactions).to.not.have.been.called;
 		});
 
@@ -1708,29 +1698,20 @@ describe("TransactionIndexController", (): void => {
 			});
 
 			it("should show a loading indicator", (): void => {
-				transactionIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					transaction,
-				);
+				transactionIndexController.toggleSubtransactions(transaction);
 				expect(transaction.showSubtransactions).to.be.true;
 				expect(transaction.loadingSubtransactions).to.be.true;
 			});
 
 			it("should clear the subtransactions for the transaction", (): void => {
-				transactionIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					transaction,
-				);
+				transactionIndexController.toggleSubtransactions(transaction);
 				expect(transaction.subtransactions).to.be.an("array");
 				expect(transaction.subtransactions).to.be.empty;
 			});
 
 			it("should fetch the subtransactions", (): void => {
 				transaction.id = 1;
-				transactionIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					transaction,
-				);
+				transactionIndexController.toggleSubtransactions(transaction);
 				expect(transactionModel.findSubtransactions).to.have.been.calledWith(
 					transaction.id,
 				);
@@ -1744,29 +1725,15 @@ describe("TransactionIndexController", (): void => {
 				];
 
 				transaction.id = 1;
-				transactionIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					transaction,
-				);
+				transactionIndexController.toggleSubtransactions(transaction);
 				expect(transaction.subtransactions).to.deep.equal(subtransactions);
 			});
 
 			it("should hide the loading indicator", (): void => {
 				transaction.id = 1;
-				transactionIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					transaction,
-				);
+				transactionIndexController.toggleSubtransactions(transaction);
 				expect(transaction.loadingSubtransactions).to.be.false;
 			});
-		});
-
-		it("should prevent the event from bubbling", (): void => {
-			transactionIndexController.toggleSubtransactions(
-				event as JQueryMouseEventObject,
-				transaction,
-			);
-			expect(event.cancelBubble as boolean).to.be.true;
 		});
 	});
 

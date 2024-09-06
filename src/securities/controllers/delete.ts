@@ -15,8 +15,8 @@ export default class SecurityDeleteController {
 		this.errorMessage = null;
 		this.securityModel.destroy(this.security).then(
 			(): void => this.$uibModalInstance.close(),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

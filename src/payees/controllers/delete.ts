@@ -15,8 +15,8 @@ export default class PayeeDeleteController {
 		this.errorMessage = null;
 		this.payeeModel.destroy(this.payee).then(
 			(): void => this.$uibModalInstance.close(),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

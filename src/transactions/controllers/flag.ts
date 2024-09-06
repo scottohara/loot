@@ -32,8 +32,8 @@ export default class TransactionFlagController {
 		this.transaction.flag = "" === this.flag ? "(no memo)" : this.flag;
 		this.transactionModel.flag(this.transaction).then(
 			(): void => this.$uibModalInstance.close(this.transaction),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 
@@ -46,8 +46,8 @@ export default class TransactionFlagController {
 				this.transaction.flag = null;
 				this.$uibModalInstance.close(this.transaction);
 			},
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

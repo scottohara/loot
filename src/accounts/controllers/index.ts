@@ -9,9 +9,9 @@ import type OgModalErrorService from "~/og-components/og-modal-error/services/og
 import angular from "angular";
 
 export default class AccountIndexController {
-	private readonly keydownHandler: (event: JQueryKeyEventObject) => void;
+	private readonly keydownHandler: (event: JQuery.KeyDownEvent) => void;
 
-	private readonly showError: (message?: string) => void;
+	private readonly showError: (message?: unknown) => void;
 
 	public constructor(
 		private readonly $scope: angular.IScope,
@@ -21,7 +21,7 @@ export default class AccountIndexController {
 		ogModalErrorService: OgModalErrorService,
 		public readonly accounts: Accounts,
 	) {
-		this.keydownHandler = (event: JQueryKeyEventObject): void =>
+		this.keydownHandler = (event: JQuery.KeyDownEvent): void =>
 			this.keyHandler(event);
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
 
@@ -179,14 +179,11 @@ export default class AccountIndexController {
 	}
 
 	// Declare key handler for inserting a new account
-	private keyHandler(event: JQueryKeyEventObject): void {
-		const INSERT_KEY = 45,
-			N_KEY = 78;
-
+	private keyHandler(event: JQuery.KeyDownEvent): void {
 		// Check if the Insert key or CTRL+N keys were pressed
 		if (
-			INSERT_KEY === event.keyCode ||
-			(event.ctrlKey && N_KEY === event.keyCode)
+			"Insert" === event.key ||
+			(event.ctrlKey && "N" === event.key.toUpperCase())
 		) {
 			this.editAccount();
 			event.preventDefault();

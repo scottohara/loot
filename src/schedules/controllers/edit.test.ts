@@ -1045,6 +1045,21 @@ describe("ScheduleEditController", (): void => {
 				});
 			},
 		);
+
+		it("should not set the transaction type or direction if the category is not recognised", (): void => {
+			const transactionType: SecurityTransactionType = "SecurityTransfer",
+				direction: TransactionDirection = "inflow";
+
+			(scheduleEditController.transaction.category as PsuedoCategory).id =
+				"unknown";
+			scheduleEditController.transaction.transaction_type = transactionType;
+			scheduleEditController.transaction.direction = direction;
+			scheduleEditController.investmentCategorySelected();
+			expect(scheduleEditController.transaction.transaction_type).to.equal(
+				transactionType,
+			);
+			expect(scheduleEditController.transaction.direction).to.equal(direction);
+		});
 	});
 
 	describe("primaryAccountSelected", (): void => {

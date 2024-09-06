@@ -94,8 +94,9 @@ describe("ogInputCurrency", (): void => {
 	});
 
 	describe("on destroy", (): void => {
-		beforeEach((): void =>
-			ogInputCurrency["element"].triggerHandler("$destroy"),
+		beforeEach(
+			(): void =>
+				ogInputCurrency["element"].triggerHandler("$destroy") as undefined,
 		);
 
 		it("should remove the focus handler from the element", (): void => {

@@ -254,8 +254,8 @@ describe("payeeModel", (): void => {
 			payeeModel
 				.findLastTransaction(1, "bank")
 				.catch(
-					(error: Error): Chai.Assertion =>
-						expect(error.message).to.equal(
+					(error: unknown): Chai.Assertion =>
+						expect((error as Error).message).to.equal(
 							"500 Internal Server Error: Forced error",
 						),
 				);

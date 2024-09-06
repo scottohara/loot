@@ -128,7 +128,7 @@ describe("Account Index", (): void => {
 			expected.accountTypes.length,
 		);
 		cy.get(accountsTableTotals).each(
-			(total: HTMLTableHeaderCellElement, index: number): void => {
+			(total: HTMLTableCellElement, index: number): void => {
 				cy.wrap(total).should(
 					"contain.text",
 					expected.accountTypes[index].total,

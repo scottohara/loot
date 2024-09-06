@@ -18,7 +18,7 @@ export default class CategoryIndexController {
 
 	public readonly tableActions: OgTableActions;
 
-	private readonly showError: (message?: string) => void;
+	private readonly showError: (message?: unknown) => void;
 
 	public constructor(
 		$scope: angular.IScope,

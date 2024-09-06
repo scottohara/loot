@@ -1,8 +1,4 @@
 import type {
-	ControllerTestFactory,
-	JQueryMouseEventObjectMock,
-} from "~/mocks/types";
-import type {
 	ScheduledSplitTransaction,
 	ScheduledTransaction,
 } from "~/schedules/types";
@@ -24,6 +20,7 @@ import {
 	createSubtransferTransaction,
 } from "~/mocks/transactions/factories";
 import { startOfDay, subDays } from "date-fns";
+import type { ControllerTestFactory } from "~/mocks/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgTableActionHandlers } from "~/og-components/og-table-navigable/types";
 import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
@@ -417,29 +414,23 @@ describe("ScheduleIndexController", (): void => {
 	});
 
 	describe("toggleSubtransactions", (): void => {
-		let event: JQueryMouseEventObjectMock, schedule: ScheduledSplitTransaction;
+		let schedule: ScheduledSplitTransaction;
 
-		beforeEach((): void => {
-			event = { cancelBubble: false };
-			schedule = createScheduledSplitTransaction({
-				id: -1,
-				showSubtransactions: true,
-			});
-		});
+		beforeEach(
+			(): ScheduledSplitTransaction =>
+				(schedule = createScheduledSplitTransaction({
+					id: -1,
+					showSubtransactions: true,
+				})),
+		);
 
 		it("should toggle a flag on the schedule indicating whether subtransactions are shown", (): void => {
-			scheduleIndexController.toggleSubtransactions(
-				event as JQueryMouseEventObject,
-				schedule,
-			);
+			scheduleIndexController.toggleSubtransactions(schedule);
 			expect(schedule.showSubtransactions).to.be.false;
 		});
 
 		it("should do nothing if we're not showing subtransactions", (): void => {
-			scheduleIndexController.toggleSubtransactions(
-				event as JQueryMouseEventObject,
-				schedule,
-			);
+			scheduleIndexController.toggleSubtransactions(schedule);
 			expect(transactionModel.findSubtransactions).to.not.have.been.called;
 		});
 
@@ -451,29 +442,20 @@ describe("ScheduleIndexController", (): void => {
 			});
 
 			it("should show a loading indicator", (): void => {
-				scheduleIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					schedule,
-				);
+				scheduleIndexController.toggleSubtransactions(schedule);
 				expect(schedule.showSubtransactions).to.be.true;
 				expect(schedule.loadingSubtransactions).to.be.true;
 			});
 
 			it("should clear the subtransactions for the schedule", (): void => {
-				scheduleIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					schedule,
-				);
+				scheduleIndexController.toggleSubtransactions(schedule);
 				expect(schedule.subtransactions).to.be.an("array");
 				expect(schedule.subtransactions).to.be.empty;
 			});
 
 			it("should fetch the subtransactions", (): void => {
 				schedule.id = 1;
-				scheduleIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					schedule,
-				);
+				scheduleIndexController.toggleSubtransactions(schedule);
 				expect(transactionModel.findSubtransactions).to.have.been.calledWith(
 					schedule.id,
 				);
@@ -487,29 +469,15 @@ describe("ScheduleIndexController", (): void => {
 				];
 
 				schedule.id = 1;
-				scheduleIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					schedule,
-				);
+				scheduleIndexController.toggleSubtransactions(schedule);
 				expect(schedule.subtransactions).to.deep.equal(subtransactions);
 			});
 
 			it("should hide the loading indicator", (): void => {
 				schedule.id = 1;
-				scheduleIndexController.toggleSubtransactions(
-					event as JQueryMouseEventObject,
-					schedule,
-				);
+				scheduleIndexController.toggleSubtransactions(schedule);
 				expect(schedule.loadingSubtransactions).to.be.false;
 			});
-		});
-
-		it("should prevent the event from bubbling", (): void => {
-			scheduleIndexController.toggleSubtransactions(
-				event as JQueryMouseEventObject,
-				schedule,
-			);
-			expect(event.cancelBubble as boolean).to.be.true;
 		});
 	});
 });

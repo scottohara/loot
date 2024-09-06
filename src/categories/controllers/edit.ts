@@ -49,8 +49,8 @@ export default class CategoryEditController {
 		this.categoryModel.save(this.category).then(
 			(category: angular.IHttpResponse<Category>): void =>
 				this.$uibModalInstance.close(category.data),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

@@ -16,12 +16,12 @@ export default class AccountDeleteController {
 		// Capitalise the account type and status
 		this.account.account_type = `${this.account.account_type
 			.charAt(0)
-			.toUpperCase()}${this.account.account_type.substr(
+			.toUpperCase()}${this.account.account_type.substring(
 			1,
 		)}` as DisplayAccountType;
 		this.account.status = `${this.account.status
 			.charAt(0)
-			.toUpperCase()}${this.account.status.substr(1)}` as DisplayAccountStatus;
+			.toUpperCase()}${this.account.status.substring(1)}` as DisplayAccountStatus;
 	}
 
 	// Delete and close the modal
@@ -29,8 +29,8 @@ export default class AccountDeleteController {
 		this.errorMessage = null;
 		this.accountModel.destroy(this.account).then(
 			(): void => this.$uibModalInstance.close(),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

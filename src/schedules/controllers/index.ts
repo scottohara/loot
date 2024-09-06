@@ -22,7 +22,7 @@ export default class ScheduleIndexController {
 	// Today's date (for checking if a schedule is overdue)
 	public readonly today: Date = startOfDay(new Date());
 
-	private readonly showError: (message?: string) => void;
+	private readonly showError: (message?: unknown) => void;
 
 	public constructor(
 		$scope: angular.IScope,
@@ -78,10 +78,7 @@ export default class ScheduleIndexController {
 	}
 
 	// Shows/hides subtransactions
-	public toggleSubtransactions(
-		$event: Event,
-		schedule: SplitTransaction,
-	): void {
+	public toggleSubtransactions(schedule: SplitTransaction): void {
 		// Toggle the show flag
 		schedule.showSubtransactions = !schedule.showSubtransactions;
 
@@ -104,8 +101,6 @@ export default class ScheduleIndexController {
 				})
 				.catch(this.showError);
 		}
-
-		$event.cancelBubble = true;
 	}
 
 	private editSchedule(index?: number): void {

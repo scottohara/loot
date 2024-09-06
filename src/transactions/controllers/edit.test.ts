@@ -985,6 +985,23 @@ describe("TransactionEditController", (): void => {
 				});
 			},
 		);
+
+		it("should not set the transaction type or direction if the category is not recognised", (): void => {
+			const transactionType: SecurityTransactionType = "SecurityTransfer",
+				direction: TransactionDirection = "inflow";
+
+			(transactionEditController.transaction.category as PsuedoCategory).id =
+				"unknown";
+			transactionEditController.transaction.transaction_type = transactionType;
+			transactionEditController.transaction.direction = direction;
+			transactionEditController.investmentCategorySelected();
+			expect(transactionEditController.transaction.transaction_type).to.equal(
+				transactionType,
+			);
+			expect(transactionEditController.transaction.direction).to.equal(
+				direction,
+			);
+		});
 	});
 
 	describe("$watch subtransations", (): void => {

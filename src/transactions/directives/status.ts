@@ -15,7 +15,7 @@ export default class TransactionStatusDirective {
 		accountModel: AccountModel,
 		ogModalErrorService: OgModalErrorService,
 	) {
-		const showError: (message?: string) => void =
+		const showError: (message?: unknown) => void =
 				ogModalErrorService.showError.bind(ogModalErrorService),
 			directive: angular.IDirective = {
 				restrict: "A",

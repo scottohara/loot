@@ -38,7 +38,7 @@ export default class TransactionEditController {
 
 	public errorMessage: string | null = null;
 
-	private readonly showError: (message?: string) => void;
+	private readonly showError: (message?: unknown) => void;
 
 	public constructor(
 		$scope: angular.IScope,
@@ -411,7 +411,7 @@ export default class TransactionEditController {
 					direction = "outflow";
 					break;
 
-				// No default
+				default:
 			}
 
 			// Update the transaction type & direction
@@ -575,8 +575,8 @@ export default class TransactionEditController {
 				this.$uibModalInstance.close(transaction),
 			)
 			.catch(
-				(error: angular.IHttpResponse<string>): string =>
-					(this.errorMessage = error.data),
+				(error: unknown): string =>
+					(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 			);
 	}
 
@@ -647,8 +647,9 @@ export default class TransactionEditController {
 			),
 			(field: Element): void => {
 				if (field === document.activeElement) {
-					this.$timeout((): void =>
-						angular.element(field).triggerHandler("focus"),
+					this.$timeout(
+						(): void =>
+							angular.element(field).triggerHandler("focus") as undefined,
 					).catch(this.showError);
 				}
 			},

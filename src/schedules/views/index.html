@@ -58,7 +58,7 @@
 							ng-if="::['Split', 'LoanRepayment', 'Payslip'].indexOf(schedule.transaction_type) != -1"
 						>
 							<button
-								ng-click="vm.toggleSubtransactions($event, schedule)"
+								ng-click="vm.toggleSubtransactions(schedule)"
 								class="btn btn-xs btn-default toggle-subtransactions"
 							>
 								<i

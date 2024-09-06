@@ -80,7 +80,7 @@ export default class TransactionIndexController {
 
 	private closingBalance = 0;
 
-	private readonly showError: (message?: string) => void;
+	private readonly showError: (message?: unknown) => void;
 
 	public constructor(
 		$scope: angular.IScope,
@@ -344,10 +344,7 @@ export default class TransactionIndexController {
 	}
 
 	// Shows/hides subtransactions
-	public toggleSubtransactions(
-		$event: Event,
-		transaction: SplitTransaction,
-	): void {
+	public toggleSubtransactions(transaction: SplitTransaction): void {
 		// Toggle the show flag
 		transaction.showSubtransactions = !transaction.showSubtransactions;
 
@@ -370,8 +367,6 @@ export default class TransactionIndexController {
 				})
 				.catch(this.showError);
 		}
-
-		$event.cancelBubble = true;
 	}
 
 	// Switch to the other side of a transaction

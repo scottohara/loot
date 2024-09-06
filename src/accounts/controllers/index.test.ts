@@ -237,36 +237,41 @@ describe("AccountIndexController", (): void => {
 	});
 
 	describe("keyHandler", (): void => {
-		const INSERT_KEY = 45,
-			N_KEY = 78;
-
 		let event: JQueryKeyEventObjectMock;
 
 		beforeEach((): void => {
 			event = {
-				keyCode: 13,
+				key: "Enter",
 				preventDefault: sinon.stub(),
 			};
 			sinon.stub(accountIndexController, "editAccount");
 		});
 
 		it("should invoke editAccount() with no account when the Insert key is pressed", (): void => {
-			event.keyCode = INSERT_KEY;
-			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
+			event.key = "Insert";
+			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
 			expect(accountIndexController["editAccount"]).to.have.been.called;
 			expect(event.preventDefault as SinonStub).to.have.been.called;
 		});
 
 		it("should invoke editAccount() with no account when the CTRL+N keys are pressed", (): void => {
-			event.keyCode = N_KEY;
+			event.key = "N";
 			event.ctrlKey = true;
-			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
+			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
+			expect(accountIndexController["editAccount"]).to.have.been.called;
+			expect(event.preventDefault as SinonStub).to.have.been.called;
+		});
+
+		it("should invoke editAccount() with no account when the CTRL+n keys are pressed", (): void => {
+			event.key = "n";
+			event.ctrlKey = true;
+			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
 			expect(accountIndexController["editAccount"]).to.have.been.called;
 			expect(event.preventDefault as SinonStub).to.have.been.called;
 		});
 
 		it("should do nothing when any other keys are pressed", (): void => {
-			accountIndexController["keyHandler"](event as JQueryKeyEventObject);
+			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
 			expect(accountIndexController["editAccount"]).to.not.have.been.called;
 			expect(event.preventDefault as SinonStub).to.not.have.been.called;
 		});

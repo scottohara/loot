@@ -24,8 +24,8 @@ export default class SecurityEditController {
 		this.securityModel.save(this.security).then(
 			(security: angular.IHttpResponse<Security>): void =>
 				this.$uibModalInstance.close(security.data),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

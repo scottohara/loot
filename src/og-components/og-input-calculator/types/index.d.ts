@@ -23,5 +23,5 @@ export interface OgInputCalculatorScope extends angular.IScope {
 	cancel: () => void;
 	clear: () => void;
 	close: () => void;
-	keyHandler: (event: JQueryKeyEventObject) => void;
+	keyHandler: (event: JQuery.KeyDownEvent) => void;
 }

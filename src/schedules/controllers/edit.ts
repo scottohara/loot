@@ -65,7 +65,7 @@ export default class ScheduleEditController {
 		"Yearly",
 	];
 
-	private readonly showError: (message?: string) => void;
+	private readonly showError: (message?: unknown) => void;
 
 	public constructor(
 		$scope: angular.IScope,
@@ -470,7 +470,7 @@ export default class ScheduleEditController {
 					direction = "outflow";
 					break;
 
-				// No default
+				default:
 			}
 
 			// Update the transaction type & direction
@@ -669,8 +669,8 @@ export default class ScheduleEditController {
 		this.errorMessage = null;
 		this.transactionModel.save(this.transaction).then(
 			(): void => this.skip(),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 
@@ -701,8 +701,8 @@ export default class ScheduleEditController {
 					data: schedule,
 					skipped: Boolean(skipped),
 				}),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 
@@ -783,8 +783,9 @@ export default class ScheduleEditController {
 			),
 			(field: Element): void => {
 				if (field === document.activeElement) {
-					this.$timeout((): void =>
-						angular.element(field).triggerHandler("focus"),
+					this.$timeout(
+						(): void =>
+							angular.element(field).triggerHandler("focus") as undefined,
 					).catch(this.showError);
 				}
 			},

@@ -15,7 +15,7 @@ export default class LayoutController {
 
 	public navCollapsed = true;
 
-	private readonly showError: (message?: string) => void;
+	private readonly showError: (message?: unknown) => void;
 
 	private isLoadingState = false;
 

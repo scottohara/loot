@@ -8,9 +8,9 @@ export default class OgNavigatorServiceWorkerService {
 					this.$window.console.log(
 						`ServiceWorker registration successful with scope: ${registration.scope}`,
 					) as unknown,
-				(error: string): unknown =>
+				(error: unknown): unknown =>
 					this.$window.console.log(
-						`ServiceWorker registration failed: ${error}`,
+						`ServiceWorker registration failed: ${String(error)}`,
 					) as unknown,
 			);
 		}

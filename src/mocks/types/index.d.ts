@@ -88,8 +88,9 @@ export interface KeyboardEventMock extends EventMock {
 	char?: string | null;
 	charCode?: number;
 	code?: string;
+	isComposing?: boolean;
 	key?: string;
-	keyCode: number;
+	keyCode?: number;
 	locale?: string;
 	location?: number;
 	repeat?: boolean;

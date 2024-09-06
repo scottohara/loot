@@ -87,7 +87,10 @@ describe("ogInputNumber", (): void => {
 	});
 
 	describe("on destroy", (): void => {
-		beforeEach((): void => ogInputNumber["element"].triggerHandler("$destroy"));
+		beforeEach(
+			(): void =>
+				ogInputNumber["element"].triggerHandler("$destroy") as undefined,
+		);
 
 		it("should remove the focus handler from the element", (): void => {
 			expected = "-1a,234.5";

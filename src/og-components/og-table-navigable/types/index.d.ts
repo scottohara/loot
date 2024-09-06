@@ -1,6 +1,6 @@
 export type OgTableActionCallback = (index?: number) => void;
-export type OgTableMouseEventCallback = (event: JQueryMouseEventObject) => void;
-export type OgTableKeyEventCallback = (event: JQueryKeyEventObject) => void;
+export type OgTableMouseEventCallback = (event: JQuery.MouseEventBase) => void;
+export type OgTableKeyEventCallback = (event: JQuery.KeyboardEventBase) => void;
 export type OgTableRowAction = (row: JQuery<Element>) => void;
 export type OgTableMovementKeys = -1 | -10 | 1 | 10;
 

@@ -7,7 +7,7 @@ export default class OgInputAutoSelectDirective {
 		$timeout: angular.ITimeoutService,
 		ogModalErrorService: OgModalErrorService,
 	) {
-		const showError: (message?: string) => void =
+		const showError: (message?: unknown) => void =
 				ogModalErrorService.showError.bind(ogModalErrorService),
 			directive: angular.IDirective = {
 				restrict: "A",

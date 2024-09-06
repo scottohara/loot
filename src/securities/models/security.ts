@@ -82,8 +82,9 @@ export default class SecurityModel
 				(response: angular.IHttpResponse<Transaction>): Transaction =>
 					response.data,
 			)
-			.catch((error: angular.IHttpResponse<string>): undefined => {
-				const { status, statusText, data } = error;
+			.catch((error: unknown): undefined => {
+				const { status, statusText, data } =
+					error as angular.IHttpResponse<string>;
 
 				// Ignore if no last transaction
 				if (NOT_FOUND === status) {

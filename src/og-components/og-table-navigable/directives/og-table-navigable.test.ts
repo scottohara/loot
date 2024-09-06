@@ -257,12 +257,12 @@ describe("ogTableNavigable", (): void => {
 
 		it("should do nothing when navigation is disabled", (): void => {
 			ogTableNavigableService.enabled = false;
-			isolateScope.clickHandler(event as JQueryMouseEventObject);
+			isolateScope.clickHandler(event as JQuery.ClickEvent);
 			expect(isolateScope.focusRow).to.not.have.been.called;
 		});
 
 		it("should do nothing if the closest parent TR element to where the event occurred could not be determined", (): void => {
-			isolateScope.clickHandler(event as JQueryMouseEventObject);
+			isolateScope.clickHandler(event as JQuery.ClickEvent);
 			expect(isolateScope.focusRow).to.not.have.been.called;
 		});
 
@@ -276,7 +276,7 @@ describe("ogTableNavigable", (): void => {
 					.closest("[og-table-navigable] > tbody > tr") as JQuery<Element>;
 
 			event.target = cellInLastRow;
-			isolateScope.clickHandler(event as JQueryMouseEventObject);
+			isolateScope.clickHandler(event as JQuery.ClickEvent);
 			expect(isolateScope.focusRow).to.have.been.calledWith(lastRow);
 		});
 	});
@@ -286,19 +286,19 @@ describe("ogTableNavigable", (): void => {
 
 		it("should do nothing when navigation is disabled", (): void => {
 			ogTableNavigableService.enabled = false;
-			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
+			isolateScope.doubleClickHandler(event as JQuery.DoubleClickEvent);
 			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
 		it("should do nothing if the event was triggered by a button click", (): void => {
 			event.target = { localName: "button" } as Element;
-			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
+			isolateScope.doubleClickHandler(event as JQuery.DoubleClickEvent);
 			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
 		it("should do nothing if the closest parent TR element to where the event occurred could not be determined", (): void => {
 			event.target = { localName: "td" } as Element;
-			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
+			isolateScope.doubleClickHandler(event as JQuery.DoubleClickEvent);
 			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
@@ -307,7 +307,7 @@ describe("ogTableNavigable", (): void => {
 				.$(ogTableNavigable["element"])
 				.find("tbody > tr > td")
 				.last() as Element;
-			isolateScope.doubleClickHandler(event as JQueryMouseEventObject);
+			isolateScope.doubleClickHandler(event as JQuery.DoubleClickEvent);
 			expect(scope.model.selectAction).to.have.been.calledWith(1);
 		});
 	});
@@ -350,35 +350,39 @@ describe("ogTableNavigable", (): void => {
 	});
 
 	describe("keyHandler", (): void => {
-		const TEST_MOVEMENT_KEYS: { code: number; name: string; amount: number }[] =
+		const TEST_MOVEMENT_KEYS: { key: string; name: string; amount: number }[] =
 				[
-					{ code: 33, name: "page up", amount: -10 },
-					{ code: 34, name: "page down", amount: 10 },
-					{ code: 38, name: "arrow up", amount: -1 },
-					{ code: 40, name: "arrow down", amount: 1 },
-					{ code: 74, name: "J", amount: 1 },
-					{ code: 75, name: "K", amount: -1 },
+					{ key: "PageUp", name: "page up", amount: -10 },
+					{ key: "PageDown", name: "page down", amount: 10 },
+					{ key: "ArrowUp", name: "arrow up", amount: -1 },
+					{ key: "ArrowDown", name: "arrow down", amount: 1 },
+					{ key: "J", name: "J", amount: 1 },
+					{ key: "j", name: "j", amount: 1 },
+					{ key: "K", name: "K", amount: -1 },
+					{ key: "k", name: "k", amount: -1 },
 				],
 			TEST_ACTION_KEYS: {
-				code: number;
+				key: string;
 				ctrl?: boolean;
 				name: string;
 				handler: string;
 			}[] = [
-				{ code: 8, name: "Backspace", handler: "deleteAction" },
-				{ code: 13, name: "Enter", handler: "selectAction" },
-				{ code: 27, name: "Esc", handler: "cancelAction" },
-				{ code: 45, name: "Insert", handler: "insertAction" },
-				{ code: 46, name: "Delete", handler: "deleteAction" },
-				{ code: 69, ctrl: true, name: "CTRL+E", handler: "editAction" },
-				{ code: 78, ctrl: true, name: "CTRL+N", handler: "insertAction" },
+				{ key: "Backspace", name: "Backspace", handler: "deleteAction" },
+				{ key: "Enter", name: "Enter", handler: "selectAction" },
+				{ key: "Escape", name: "Esc", handler: "cancelAction" },
+				{ key: "Insert", name: "Insert", handler: "insertAction" },
+				{ key: "Delete", name: "Delete", handler: "deleteAction" },
+				{ key: "E", ctrl: true, name: "CTRL+E", handler: "editAction" },
+				{ key: "e", ctrl: true, name: "CTRL+e", handler: "editAction" },
+				{ key: "N", ctrl: true, name: "CTRL+N", handler: "insertAction" },
+				{ key: "n", ctrl: true, name: "CTRL+n", handler: "insertAction" },
 			];
 
 		let event: JQueryKeyEventObjectMock;
 
 		beforeEach((): void => {
 			event = {
-				keyCode: 13,
+				key: "Enter",
 				preventDefault: sinon.stub(),
 			};
 			sinon.stub(isolateScope, "jumpToRow");
@@ -387,56 +391,63 @@ describe("ogTableNavigable", (): void => {
 
 		it("should do nothing when navigation is disabled", (): void => {
 			ogTableNavigableService.enabled = false;
-			isolateScope.keyHandler(event as JQueryKeyEventObject);
+			isolateScope.keyHandler(event as JQuery.KeyDownEvent);
 			expect(scope.model.selectAction).to.not.have.been.called;
 		});
 
 		TEST_MOVEMENT_KEYS.forEach(
-			(key: { code: number; name: string; amount: number }): void => {
-				it(`should jump ${key.amount < 0 ? "up" : "down"} ${Math.abs(
-					key.amount,
-				)} row${1 === Math.abs(key.amount) ? "" : "s"} when the ${
-					key.name
-				} key is pressed`, (): void => {
-					event.keyCode = key.code;
-					isolateScope.keyHandler(event as JQueryKeyEventObject);
-					expect(isolateScope.jumpToRow).to.have.been.calledWith(key.amount);
+			({
+				key,
+				name,
+				amount,
+			}: {
+				key: string;
+				name: string;
+				amount: number;
+			}): void => {
+				it(`should jump ${amount < 0 ? "up" : "down"} ${Math.abs(
+					amount,
+				)} row${1 === Math.abs(amount) ? "" : "s"} when the ${name} key is pressed`, (): void => {
+					event.key = key;
+					isolateScope.keyHandler(event as JQuery.KeyDownEvent);
+					expect(isolateScope.jumpToRow).to.have.been.calledWith(amount);
 					expect(event.preventDefault as SinonStub).to.have.been.called;
 				});
 			},
 		);
 
 		TEST_ACTION_KEYS.forEach(
-			(key: {
-				code: number;
+			({
+				key,
+				ctrl,
+				name,
+				handler,
+			}: {
+				key: string;
 				ctrl?: boolean;
 				name: string;
 				handler: string;
 			}): void => {
-				it(`should do nothing when the ${key.name} key${
-					undefined === key.ctrl ? " is" : "s are"
-				} pressed and a ${key.handler} handler is not defined`, (): void => {
-					event.keyCode = key.code;
-					event.ctrlKey = key.ctrl;
-					scope.model[key.handler] = undefined;
+				it(`should do nothing when the ${name} key${
+					undefined === ctrl ? " is" : "s are"
+				} pressed and a ${handler} handler is not defined`, (): void => {
+					event.key = key;
+					event.ctrlKey = ctrl;
+					scope.model[handler] = undefined;
 					ogTableNavigable.compile({ "og-table-navigable": "model" });
 					ogTableNavigable.scope.$digest();
 					isolateScope = ogTableNavigable["element"].isolateScope();
 					sinon.stub(isolateScope, "jumpToRow");
 					isolateScope.focussedRow = 1;
-					isolateScope.keyHandler(event as JQueryKeyEventObject);
+					isolateScope.keyHandler(event as JQuery.KeyDownEvent);
 					expect(event.preventDefault as SinonStub).to.have.been.called;
 				});
 
-				it(`should invoke the defined ${key.handler} handler when the ${
-					key.name
-				} key${undefined === key.ctrl ? " is" : "s are"} pressed`, (): void => {
-					event.keyCode = key.code;
-					event.ctrlKey = key.ctrl;
-					isolateScope.keyHandler(event as JQueryKeyEventObject);
-					expect(scope.model[key.handler] as SinonStub).to.have.been.calledWith(
-						1,
-					);
+				it(`should invoke the defined ${handler} handler when the ${name} key${undefined === ctrl ? " is" : "s are"} pressed`, (): void => {
+					event.key = key;
+					event.ctrlKey = ctrl;
+					isolateScope.keyHandler(event as JQuery.KeyDownEvent);
+					expect(scope.model[handler] as SinonStub).to.have.been.calledWith(1);
 					expect(event.preventDefault as SinonStub).to.have.been.called;
 				});
 			},

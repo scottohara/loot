@@ -24,8 +24,8 @@ export default class PayeeEditController {
 		this.payeeModel.save(this.payee).then(
 			(payee: angular.IHttpResponse<Payee>): void =>
 				this.$uibModalInstance.close(payee.data),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 

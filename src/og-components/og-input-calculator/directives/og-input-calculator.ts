@@ -16,7 +16,7 @@ export default class OgInputCalculatorDirective {
 		$timeout: angular.ITimeoutService,
 		ogModalErrorService: OgModalErrorService,
 	) {
-		const showError: (message?: string) => void =
+		const showError: (message?: unknown) => void =
 				ogModalErrorService.showError.bind(ogModalErrorService),
 			directive: angular.IDirective = {
 				restrict: "A",
@@ -40,16 +40,13 @@ export default class OgInputCalculatorDirective {
 						ogInputCurrency = 1,
 						ogInputNumber = 2,
 						ACTION_KEYS: Record<string, () => void> = {
-							13(): void {
-								// Enter
+							Enter(): void {
 								scope.update();
 							},
-							27(): void {
-								// Esc
+							Escape(): void {
 								scope.cancel();
 							},
-							187(): void {
-								// Equals
+							"="(): void {
 								scope.update();
 							},
 						};
@@ -218,7 +215,7 @@ export default class OgInputCalculatorDirective {
 					// Start with a cleared calculator
 					scope.clear();
 
-					function keyHandler(event: JQueryKeyEventObject): void {
+					function keyHandler(event: JQuery.KeyDownEvent): void {
 						scope.keyHandler(event);
 					}
 
@@ -229,16 +226,16 @@ export default class OgInputCalculatorDirective {
 					}
 
 					// Declare key handler to detect operators and actions
-					scope.keyHandler = (event: JQueryKeyEventObject): void => {
+					scope.keyHandler = (event: JQuery.KeyDownEvent): void => {
 						// Check if the key pressed was an action key, and there is a pending calculation (otherwise, let the event propagate)
 						if (
 							!event.shiftKey &&
 							undefined !==
-								Object.getOwnPropertyDescriptor(ACTION_KEYS, event.keyCode) &&
+								Object.getOwnPropertyDescriptor(ACTION_KEYS, event.key) &&
 							scope.stack.length
 						) {
 							// Invoke the action
-							ACTION_KEYS[event.keyCode]();
+							ACTION_KEYS[event.key]();
 
 							// Select the new input value
 							$timeout(

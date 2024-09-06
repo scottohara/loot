@@ -15,8 +15,8 @@ export default class ScheduleDeleteController {
 		this.errorMessage = null;
 		this.scheduleModel.destroy(this.schedule).then(
 			(): void => this.$uibModalInstance.close(),
-			(error: angular.IHttpResponse<string>): string =>
-				(this.errorMessage = error.data),
+			(error: unknown): string =>
+				(this.errorMessage = (error as angular.IHttpResponse<string>).data),
 		);
 	}
 
