@@ -83,7 +83,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint 'src/**/*.{ts,js}' 'cypress/**/*.{ts,js}' '*.{ts,js}'",
-    "cypress": "cypress open --e2e --browser chrome",
+    "cypress": "op run --env-file=.env -- cypress open --e2e --browser chrome",
     "test": "npm run format:check && npm run lint && npm run test:coverage",
     "test:bdd": "karma start karma-bdd.conf.js",
     "test:coverage": "karma start",
