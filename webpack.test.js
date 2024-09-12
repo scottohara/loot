@@ -14,10 +14,7 @@ module.exports = merge(config, {
 	},
 	resolve: {
 		alias: {
-			"~": [
-				path.resolve(__dirname, "src"),
-				path.resolve(__dirname, "spec", "public"),
-			],
+			"~": [path.resolve(__dirname, "src")],
 		},
 		fallback: {
 			"process/browser": require.resolve("process/browser.js"),
