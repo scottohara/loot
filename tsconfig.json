@@ -12,6 +12,7 @@
 		// Modules
 		"module": "esnext",
 		"moduleResolution": "bundler",
+		"noUncheckedSideEffectImports": true,
 		"paths": {
 			"~*": ["./src/*"]
 		},

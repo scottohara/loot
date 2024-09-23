@@ -4,3 +4,5 @@ declare module "*.html" {
 
 	export default html;
 }
+
+declare module "*.css" {}
