@@ -1,16 +1,19 @@
 require:
+  - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
+  - rubocop-rspec_rails
   - rubocop-rspec
-  - rubocop-factory_bot
 
 inherit_gem:
   rubocop-config-oharagroup:
     - default.yml
+    - factory_bot.yml
     - performance.yml
     - rails.yml
     - rake.yml
+    - rspec_rails.yml
     - rspec.yml
 
 AllCops:

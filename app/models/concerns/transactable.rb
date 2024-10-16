@@ -74,8 +74,7 @@ module Transactable
 					]
 				)
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
-				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where.not('transaction_headers.transaction_date': nil)
+				.where('transaction_headers.transaction_date': ..as_at)
 				.group(
 					'transaction_headers.security_id',
 					'transaction_accounts.direction'
@@ -109,8 +108,7 @@ module Transactable
 				)
 				.joins('JOIN categories ON transaction_categories.category_id = categories.id')
 				.where(transaction_type: %w[Basic Sub])
-				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where.not('transaction_headers.transaction_date': nil)
+				.where('transaction_headers.transaction_date': ..as_at)
 				.group 'categories.direction'
 
 			# Get the total Subtransfer transactions
@@ -130,8 +128,7 @@ module Transactable
 					]
 				)
 				.where(transaction_type: 'Subtransfer')
-				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where.not('transaction_headers.transaction_date': nil)
+				.where('transaction_headers.transaction_date': ..as_at)
 				.where('parent_transactions.transaction_type = \'Split\' or parent_transactions.transaction_type = \'LoanRepayment\' or parent_transactions.transaction_type = \'Payslip\'')
 				.group 'transaction_accounts.direction'
 
@@ -140,8 +137,7 @@ module Transactable
 				transactions
 				.for_closing_balance(balance_opts)
 				.where(transaction_type: %w[Split Payslip Transfer Dividend SecurityInvestment])
-				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where.not('transaction_headers.transaction_date': nil)
+				.where('transaction_headers.transaction_date': ..as_at)
 				.where(transaction_accounts: {direction: 'inflow'})
 				.sum 'amount'
 
@@ -150,8 +146,7 @@ module Transactable
 				transactions
 				.for_closing_balance(balance_opts)
 				.where(transaction_type: %w[Split LoanRepayment Transfer SecurityInvestment])
-				.where('transaction_headers.transaction_date <= ?', as_at)
-				.where.not('transaction_headers.transaction_date': nil)
+				.where('transaction_headers.transaction_date': ..as_at)
 				.where(transaction_accounts: {direction: 'outflow'})
 				.sum 'amount'
 

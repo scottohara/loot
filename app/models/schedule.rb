@@ -119,7 +119,7 @@ class Schedule < ApplicationRecord
 
 		def auto_enter_overdue
 			split_transaction_types = %w[Split Payslip LoanRepayment]
-			overdue = where(auto_enter: true).where 'next_due_date <= ?', ::Time.zone.today.to_s
+			overdue = where(auto_enter: true).where next_due_date: ..::Time.zone.today.to_s
 
 			overdue.each do |schedule|
 				# Find the associated transaction header

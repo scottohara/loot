@@ -63,6 +63,11 @@ require 'rspec/rails'
 	# https://relishapp.com/rspec/rspec-rails/docs
 	config.infer_spec_type_from_file_location!
 
+	# Filter lines from Rails gems in backtraces.
+	config.filter_rails_from_backtrace!
+	# arbitrary gems may also be filtered via:
+	# config.filter_gems_from_backtrace("gem name")
+
 	# FactoryBot configuration
 	config.include ::FactoryBot::Syntax::Methods
 
@@ -100,7 +105,7 @@ end
 	end
 
 	after do
-		expect(response).to have_http_status (defined?(expected_status) && expected_status) || 200
+		expect(response).to have_http_status (defined?(expected_status) && expected_status) || :ok
 	end
 
 	after :each, :json do
