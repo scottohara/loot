@@ -128,6 +128,7 @@ GEM
       net-smtp
     marcel (1.0.4)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.7)
     minitest (5.25.1)
     msgpack (1.7.3)
     net-imap (0.4.17)
@@ -140,7 +141,12 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.3)
+    nokogiri (1.16.7)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.16.7-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
     parallel (1.26.3)
     parser (3.3.5.0)
@@ -269,7 +275,9 @@ GEM
     zeitwerk (2.7.0)
 
 PLATFORMS
-  arm64-darwin-23
+  arm64-darwin
+  ruby
+  x86_64-linux
 
 DEPENDENCIES
   active_model_serializers (= 0.10.14)
