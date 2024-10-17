@@ -58,7 +58,7 @@ RUN apk add --no-cache \
 	libpq \
 	tzdata
 
-RUN adduser --system loot
+RUN adduser --system --uid 100 loot
 USER loot
 WORKDIR /loot
 ENV RACK_ENV=production
@@ -71,17 +71,17 @@ RUN \
 
 RUN mkdir -p tmp/pids
 
-COPY --link --chown=loot \
+COPY --link --chown=100 \
 	.tool-versions \
 	config.ru \
 	Gemfile* \
 	Rakefile ./
 
-COPY --link --chown=loot db db/
-COPY --link --chown=loot config config/
-COPY --link --chown=loot app app/
-COPY --link --chown=loot --from=backend build/vendor/bundle vendor/bundle/
-COPY --link --chown=loot --from=frontend build/public public/
+COPY --link --chown=100 db db/
+COPY --link --chown=100 config config/
+COPY --link --chown=100 app app/
+COPY --link --chown=100 --from=backend build/vendor/bundle vendor/bundle/
+COPY --link --chown=100 --from=frontend build/public public/
 
 EXPOSE 3000
 
