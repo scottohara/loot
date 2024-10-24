@@ -261,6 +261,48 @@ require 'models/concerns/categorisable'
 		end
 	end
 
+	describe '#ledger_range' do
+		subject { (defined?(as_class_method) && described_class) || described_class.new }
+
+		context 'when fetching backwards' do
+			let(:opts) { {direction: :prev, as_at: '2014-01-03'} }
+
+			it 'should return a beginless range excluding the as_at date' do
+				expect(subject.ledger_range opts).to cover '2014-01-01', '2014-01-02'
+				expect(subject.ledger_range opts).not_to cover '2014-01-03', '2014-01-04'
+			end
+		end
+
+		context 'when fetching forwards' do
+			let(:opts) { {direction: :next, as_at: '2014-01-02'} }
+
+			it 'should return an endless range excluding the as_at date' do
+				expect(subject.ledger_range opts).not_to cover '2014-01-01', '2014-01-02'
+				expect(subject.ledger_range opts).to cover '2014-01-03', '2014-01-04'
+			end
+		end
+	end
+
+	describe '#ledger_order' do
+		subject { (defined?(as_class_method) && described_class) || described_class.new }
+
+		context 'when fetching backwards' do
+			let(:opts) { {direction: :prev} }
+
+			it 'should sort in descending order' do
+				expect(subject.ledger_order opts).to eq :desc
+			end
+		end
+
+		context 'when fetching forwards' do
+			let(:opts) { {direction: :next} }
+
+			it 'should sort in ascending order' do
+				expect(subject.ledger_order opts).to eq :asc
+			end
+		end
+	end
+
 	describe '#drop_opening_date' do
 		subject { (defined?(as_class_method) && described_class) || described_class.new }
 

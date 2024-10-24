@@ -65,4 +65,7 @@ group :development, :test do
 
 	# Debugging
 	gem 'debug', '1.9.2', require: 'debug/prelude'
+
+	# Static analysis for security vulnerabilities
+	gem 'brakeman', '6.2.2', require: false
 end

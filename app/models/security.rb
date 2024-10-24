@@ -124,7 +124,7 @@ class Security < ApplicationRecord
 		latest =
 			prices
 			.select('price')
-			.where("as_at_date <= '#{as_at}'")
+			.where(as_at_date: ..as_at)
 			.order(as_at_date: :desc)
 			.limit(1)
 			.first

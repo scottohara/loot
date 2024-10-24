@@ -11,19 +11,6 @@ module Transactable
 	NUM_RESULTS = 150
 	private_constant :NUM_RESULTS
 
-	LEDGER_QUERY_OPTS = {
-		prev: {
-			operator: '<',
-			order: 'DESC'
-		},
-		next: {
-			operator: '>',
-			order: 'ASC'
-		}
-	}.freeze
-
-	private_constant :LEDGER_QUERY_OPTS
-
 	def ledger(ledger_opts = {})
 		# Check the options and set defaults where required
 		opts = ledger_options ledger_opts
@@ -176,7 +163,7 @@ module Transactable
 
 		# Default direction if not specified or invalid
 		ledger_opts[:direction] = (ledger_opts[:direction].present? && ledger_opts[:direction].to_sym) || :prev
-		ledger_opts[:direction] = :prev unless LEDGER_QUERY_OPTS.key? ledger_opts[:direction]
+		ledger_opts[:direction] = :prev unless ledger_opts[:direction].eql? :next
 
 		# Default unreconciled if not specified or invalid
 		ledger_opts[:unreconciled] = ledger_opts[:unreconciled].eql? 'true'
@@ -238,13 +225,21 @@ module Transactable
 					'LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id'
 				]
 			)
-			.where("transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[opts[:direction]][:operator]} ?", opts[:as_at])
+			.where('transaction_headers.transaction_date': ledger_range(opts))
 			.order(
-				"transaction_headers.transaction_date #{LEDGER_QUERY_OPTS[opts[:direction]][:order]}",
-				"transactions.id #{LEDGER_QUERY_OPTS[opts[:direction]][:order]}"
+				'transaction_headers.transaction_date': ledger_order(opts),
+				'transactions.id': ledger_order(opts)
 			)
 			.limit(NUM_RESULTS)
 			.to_a
+	end
+
+	def ledger_range(opts)
+		opts[:direction].eql?(:next) ? (::Date.parse(opts[:as_at]) + 1).to_s... : ...opts[:as_at]
+	end
+
+	def ledger_order(opts)
+		opts[:direction].eql?(:next) ? :asc : :desc
 	end
 
 	def drop_opening_date(transactions, at_end, opening_date)
