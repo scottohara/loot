@@ -13,6 +13,12 @@ swap_size_mb = 512
 		hard_limit = 100
 		soft_limit = 90
 
+	[[http_service.checks]]
+		grace_period = "5s"
+		interval = "10s"
+		timeout = "2s"
+		path = "/up"
+
 [[statics]]
 	guest_path = "/loot/public"
 	url_prefix = "/"
