@@ -1,8 +1,8 @@
-name: Build
+name: CI
 
 on:
   push:
-    branches: master
+    branches: [master]
 
 env:
   # CodeClimate only shows coverage for the default branch
@@ -81,6 +81,9 @@ jobs:
 
       - name: Lint
         run: bundle exec rubocop
+
+      - name: Scan
+        run: bundle exec brakeman
 
       - name: Test
         run: bundle exec rake

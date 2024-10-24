@@ -43,5 +43,6 @@
 	resources :schedules, except: [:show]
 	resources :logins, only: [:create]
 
+	get "up" => "rails/health#show", as: :rails_health_check
 	get '*unmatched_route', to: 'application#routing_error'
 end
