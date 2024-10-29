@@ -31,7 +31,6 @@ Lint/ConstantResolution:
     - Frequency
     - FREQUENCIES
     - NUM_RESULTS
-    - LEDGER_QUERY_OPTS
 
 # Allow reading of ENV vars for authentication
 Rails/EnvironmentVariableAccess:
