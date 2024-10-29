@@ -9,13 +9,11 @@ ruby file: '.tool-versions'
 # Web application framework
 gem 'rails', '7.2.1.1'
 
-# Postgres
+# Database
 gem 'pg', '1.5.8'
 
-group :development, :production do
-	# Use Puma as the app server
-	gem 'puma', '6.4.3'
-end
+# App server
+gem 'puma', '6.4.3'
 
 # For JSON serialisation
 gem 'active_model_serializers', '0.10.14'
