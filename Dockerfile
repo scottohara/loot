@@ -69,8 +69,6 @@ RUN \
 	bundle config set --local without development:test; \
 	bundle config set --local deployment true;
 
-RUN mkdir -p tmp/pids
-
 COPY --link --chown=100 \
 	.tool-versions \
 	config.ru \

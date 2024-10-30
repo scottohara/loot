@@ -31,7 +31,7 @@ vendor
 .rubocop.yml
 cypress.config.ts
 eslint.config.mjs
-fly*.toml
+fly.toml
 karma*.js
 LICENCE
 README.md
