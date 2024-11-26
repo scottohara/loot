@@ -4,6 +4,7 @@ export default defineConfig({
 	viewportHeight: 800,
 	viewportWidth: 1200,
 	chromeWebSecurity: false,
+	defaultBrowser: "chrome",
 	e2e: {
 		setupNodeEvents(
 			_on: Cypress.PluginEvents,
