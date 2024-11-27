@@ -9,14 +9,6 @@ class TransactionHeader < ApplicationRecord
 	belongs_to :schedule, dependent: :destroy, autosave: true, optional: true
 	self.primary_key = 'transaction_id'
 
-	def validate_transaction_date_or_schedule_presence
-		errors.add :base, "Either transaction date or schedule can't be blank" if transaction_date.blank? && schedule.blank?
-	end
-
-	def validate_transaction_date_or_schedule_absence
-		errors.add :base, 'Either transaction date or schedule must be blank' if transaction_date.present? && schedule.present?
-	end
-
 	def update_from_json(json)
 		self.transaction_date = json['transaction_date']
 
@@ -32,5 +24,19 @@ class TransactionHeader < ApplicationRecord
 
 	def as_json(_options = {})
 		((schedule.present? && schedule.as_json) || {}).merge(transaction_date:)
+	end
+
+	# :nocov:
+
+	private unless ::Rails.env.test?
+
+	# :nocov:end
+
+	def validate_transaction_date_or_schedule_presence
+		errors.add :base, "Either transaction date or schedule can't be blank" if transaction_date.blank? && schedule.blank?
+	end
+
+	def validate_transaction_date_or_schedule_absence
+		errors.add :base, 'Either transaction date or schedule must be blank' if transaction_date.present? && schedule.present?
 	end
 end

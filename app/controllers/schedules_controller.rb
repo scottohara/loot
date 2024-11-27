@@ -30,6 +30,12 @@ class SchedulesController < ApplicationController
 		head :no_content
 	end
 
+	# :nocov:
+
+	private unless ::Rails.env.test?
+
+	# :nocov:end
+
 	def clean
 		# Remove any blank values
 		@schedule = params.compact_blank

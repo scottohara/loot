@@ -12,6 +12,8 @@ class StatusesController < ApplicationController
 		update_status
 	end
 
+	private
+
 	def update_status(status = nil)
 		::TransactionAccount
 			.where(account_id: params[:account_id])

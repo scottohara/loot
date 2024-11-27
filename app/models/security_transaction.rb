@@ -19,9 +19,19 @@ class SecurityTransaction < Transaction
 		self
 	end
 
+	def as_json(options = {})
+		super.merge header.as_json
+	end
+
+	# :nocov:
+
+	private unless ::Rails.env.test?
+
+	# :nocov:end
+
 	def method_missing(method, *args, &)
 		validate_method?(method) do |match|
-			public_send :"validate_#{match[2]}", match[1]
+			__send__ :"validate_#{match[2]}", match[1]
 			true
 		end || super
 	end
@@ -30,25 +40,15 @@ class SecurityTransaction < Transaction
 		validate_method?(method) || super
 	end
 
+	def validate_method?(method, &)
+		/^validate_(.+)_(presence|absence)$/.match method.to_s, &
+	end
+
 	def validate_presence(attr)
 		errors.add :base, "#{attr.capitalize} can't be blank" if instance_eval "header.#{attr}.blank?", __FILE__, __LINE__ # e.g. header.quantity.blank?
 	end
 
 	def validate_absence(attr)
 		errors.add :base, "#{attr.capitalize} must be blank" unless instance_eval "header.#{attr}.blank?", __FILE__, __LINE__ # e.g. header.quantity.blank?
-	end
-
-	def as_json(options = {})
-		super.merge header.as_json
-	end
-
-	# :nocov:
-
-	private unless ::Rails.env.eql? 'test'
-
-	# :nocov:
-
-	def validate_method?(method, &)
-		/^validate_(.+)_(presence|absence)$/.match method.to_s, &
 	end
 end

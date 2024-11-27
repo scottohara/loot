@@ -21,6 +21,20 @@ module Measurable
 
 	# Methods for measuring things, in particular date periods
 	class_methods do
+		def periods_since(frequency, date)
+			public_send FREQUENCIES[frequency.to_sym].periods_since, date
+		end
+
+		def advance_by(frequency, date)
+			date.advance FREQUENCIES[frequency.to_sym].advance_by
+		end
+
+		# :nocov:
+
+		private unless ::Rails.env.test?
+
+		# :nocov:end
+
 		# Weeks since a given date
 		def weeks_since(date)
 			((::Time.zone.today - date) / 7).to_i
@@ -51,14 +65,6 @@ module Measurable
 		# Years since a given date
 		def years_since(date)
 			(months_since(date) / 12).to_i
-		end
-
-		def periods_since(frequency, date)
-			public_send FREQUENCIES[frequency.to_sym].periods_since, date
-		end
-
-		def advance_by(frequency, date)
-			date.advance FREQUENCIES[frequency.to_sym].advance_by
 		end
 	end
 end

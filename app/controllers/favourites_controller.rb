@@ -13,6 +13,8 @@ class FavouritesController < ApplicationController
 		update_favourite false
 	end
 
+	private
+
 	def update_favourite(favourite)
 		@context.update!(favourite:)
 		head :no_content

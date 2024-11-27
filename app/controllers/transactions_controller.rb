@@ -49,6 +49,12 @@ class TransactionsController < ApplicationController
 		end
 	end
 
+	# :nocov:
+
+	private unless ::Rails.env.test?
+
+	# :nocov:end
+
 	def clean
 		# Remove any blank values
 		@transaction = params.compact_blank

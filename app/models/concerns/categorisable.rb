@@ -43,14 +43,6 @@ module Categorisable
 			}
 		end
 
-		def basic_category(trx)
-			if trx['parent_category_id'].present?
-				[trx['parent_category_id'].to_s, trx['parent_category_name']]
-			else
-				[trx['category_id'].to_s, trx['category_name']]
-			end
-		end
-
 		def basic_subcategory(trx)
 			return if trx['parent_category_id'].blank?
 
@@ -59,6 +51,20 @@ module Categorisable
 				name: trx['category_name'],
 				parent_id: trx['parent_category_id'].to_s
 			}
+		end
+
+		# :nocov:
+
+		private unless ::Rails.env.test?
+
+		# :nocov:end
+
+		def basic_category(trx)
+			if trx['parent_category_id'].present?
+				[trx['parent_category_id'].to_s, trx['parent_category_name']]
+			else
+				[trx['category_id'].to_s, trx['category_name']]
+			end
 		end
 
 		def psuedo_category(type, direction, parent_type = nil)

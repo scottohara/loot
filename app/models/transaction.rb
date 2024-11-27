@@ -58,15 +58,6 @@ class Transaction < ApplicationRecord
 				.for_query opts
 		end
 
-		def for_query(opts)
-			term = opts[:query].downcase
-
-			case term
-			when 'is:flagged' then joins 'JOIN transaction_flags as is_flagged ON is_flagged.transaction_id = transactions.id'
-			else where 'LOWER(transactions.memo) LIKE ?', "%#{term}%"
-			end
-		end
-
 		def opening_balance
 			0
 		end
@@ -80,6 +71,21 @@ class Transaction < ApplicationRecord
 			s = new id: json[:id], memo: json['memo']
 			s.build_flag flag_type: json['flag_type'], memo: json['flag'] unless json['flag_type'].nil? && json['flag'].nil?
 			s
+		end
+
+		# :nocov:
+
+		private unless ::Rails.env.test?
+
+		# :nocov:end
+
+		def for_query(opts)
+			term = opts[:query].downcase
+
+			case term
+			when 'is:flagged' then joins 'JOIN transaction_flags as is_flagged ON is_flagged.transaction_id = transactions.id'
+			else where 'LOWER(transactions.memo) LIKE ?', "%#{term}%"
+			end
 		end
 	end
 

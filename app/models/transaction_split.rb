@@ -8,6 +8,12 @@ class TransactionSplit < ApplicationRecord
 	belongs_to :parent, class_name: 'SplitTransaction', inverse_of: :transaction_splits
 	before_destroy :destroy_transaction
 
+	# :nocov:
+
+	private unless ::Rails.env.test?
+
+	# :nocov:end
+
 	def validate_transaction_type_inclusion
 		errors.add :base, "Transaction type #{trx.transaction_type} is not valid in a split transaction" if %w[Sub Subtransfer].exclude? trx.transaction_type
 	end

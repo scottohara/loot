@@ -30,25 +30,6 @@ class SplitTransaction < PayeeCashTransaction
 		end
 	end
 
-	def create_children(children)
-		children.each do |child|
-			# Keys could be symbols or strings
-			child = child.with_indifferent_access if child.is_a?(::Hash)
-
-			# Clear the id and copy the header details from the parent
-			child['id'] = nil
-			child['transaction_date'] = header.transaction_date
-			child['payee'] = {id: header.payee.id}
-
-			unless header.schedule.nil?
-				child['next_due_date'] = header.schedule.next_due_date
-				child['frequency'] = header.schedule.frequency
-			end
-
-			transaction_splits.build.trx = ::Transaction.class_for(child['transaction_type']).create_from_json child
-		end
-	end
-
 	def update_from_json(json)
 		super
 		transaction_account.direction = json['direction']
@@ -124,6 +105,31 @@ class SplitTransaction < PayeeCashTransaction
 				flag_type: trx['flag_type'],
 				flag: trx['flag']
 			}
+		end
+	end
+
+	# :nocov:
+
+	private unless ::Rails.env.test?
+
+	# :nocov:end
+
+	def create_children(children)
+		children.each do |child|
+			# Keys could be symbols or strings
+			child = child.with_indifferent_access if child.is_a?(::Hash)
+
+			# Clear the id and copy the header details from the parent
+			child['id'] = nil
+			child['transaction_date'] = header.transaction_date
+			child['payee'] = {id: header.payee.id}
+
+			unless header.schedule.nil?
+				child['next_due_date'] = header.schedule.next_due_date
+				child['frequency'] = header.schedule.frequency
+			end
+
+			transaction_splits.build.trx = ::Transaction.class_for(child['transaction_type']).create_from_json child
 		end
 	end
 end
