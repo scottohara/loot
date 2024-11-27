@@ -3,8 +3,8 @@
 
 ::FactoryBot.define do
 	factory :security do
-		sequence(:name) { |n| "Security #{n}" }
-		sequence(:code, 'A') { |n| n }
+		sequence(:name) { "Security #{_1}" }
+		sequence(:code, 'A') { _1 }
 
 		transient do
 			transactions { 0 }

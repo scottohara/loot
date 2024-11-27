@@ -3,7 +3,7 @@
 
 ::FactoryBot.define do
 	trait :transaction_date do
-		sequence(:transaction_date) { |n| (::Date.parse('2013-12-31') + n).to_s }
+		sequence(:transaction_date) { (::Date.parse('2013-12-31') + _1).to_s }
 	end
 
 	trait :scheduled do

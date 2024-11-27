@@ -3,7 +3,7 @@
 
 ::FactoryBot.define do
 	factory :payee do
-		sequence(:name) { |n| "Payee #{n}" }
+		sequence(:name) { "Payee #{_1}" }
 
 		transient do
 			transactions { 0 }
