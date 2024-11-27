@@ -3,9 +3,6 @@
 
 # Payee serializer
 class PayeeSerializer < ::ActiveModel::Serializer
-	attributes :id, :name, :closing_balance, :num_transactions, :favourite
-
-	def num_transactions
-		object.transactions.count
-	end
+	attributes :id, :name, :closing_balance, :favourite
+	attribute(:num_transactions) { object.transactions.count }
 end
