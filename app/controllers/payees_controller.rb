@@ -28,6 +28,6 @@ class PayeesController < ApplicationController
 
 	def destroy
 		::Payee.find(params[:id]).destroy!
-		head :ok
+		head :no_content
 	end
 end

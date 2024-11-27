@@ -57,6 +57,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:schedule) { create(:basic_transaction, :scheduled) }
+		let(:expected_status) { :no_content }
 
 		it 'should delete an existing schedule' do
 			expect(::Transaction).to receive(:find).with('1').and_return schedule

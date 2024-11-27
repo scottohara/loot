@@ -27,6 +27,6 @@ class SecuritiesController < ApplicationController
 
 	def destroy
 		::Security.find(params[:id]).destroy!
-		head :ok
+		head :no_content
 	end
 end

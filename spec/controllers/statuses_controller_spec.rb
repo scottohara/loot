@@ -9,6 +9,8 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', :request do
+		let(:expected_status) { :no_content }
+
 		before do
 			patch :update, params: {account_id: '1', transaction_id: '1', "#{status || request_status}": true}
 		end
@@ -35,6 +37,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:status) { nil }
+		let(:expected_status) { :no_content }
 
 		it 'should clear the existing status' do
 			delete :destroy, params: {account_id: '1', transaction_id: '1'}

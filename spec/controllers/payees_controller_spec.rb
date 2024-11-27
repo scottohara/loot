@@ -61,6 +61,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:payee) { ::Payee.new }
+		let(:expected_status) { :no_content }
 
 		it 'should delete an existing payee' do
 			expect(::Payee).to receive(:find).with('1').and_return payee

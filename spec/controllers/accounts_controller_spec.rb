@@ -63,6 +63,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:account) { ::Account.new }
+		let(:expected_status) { :no_content }
 
 		it 'should delete an existing account' do
 			expect(::Account).to receive(:find).with('1').and_return account
@@ -73,6 +74,7 @@ require 'rails_helper'
 
 	describe 'PUT reconcile', :request do
 		let(:account) { ::Account.new }
+		let(:expected_status) { :no_content }
 
 		it 'should return the details of the specified account' do
 			expect(::Account).to receive(:find).with('1').and_return account

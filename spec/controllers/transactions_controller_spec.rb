@@ -118,6 +118,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:transaction) { create(:basic_transaction) }
+		let(:expected_status) { :no_content }
 
 		it 'should delete an existing transaction' do
 			expect(::Transaction).to receive(:find).with('1').and_return transaction

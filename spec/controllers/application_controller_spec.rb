@@ -16,7 +16,7 @@ require 'rails_helper'
 			when 'routing error'
 				params[:unmatched_route] = params['context']
 				routing_error
-			else head :ok
+			else head :no_content
 			end
 		end
 	end
@@ -62,8 +62,9 @@ require 'rails_helper'
 	context 'authenticated user' do
 		let(:user_name) { valid_user_name }
 		let(:password) { valid_password }
+		let(:expected_status) { :no_content }
 
-		it('should response with no message and a 200 OK status') {} # Empty block
+		it('should response with no message and a 204 No Content status') {} # Empty block
 	end
 
 	context 'internal error', :json, :request do

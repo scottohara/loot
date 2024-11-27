@@ -67,6 +67,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:category) { ::Category.new }
+		let(:expected_status) { :no_content }
 
 		it 'should delete an existing category' do
 			expect(::Category).to receive(:find).with('1').and_return category

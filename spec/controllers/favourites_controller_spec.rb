@@ -31,6 +31,7 @@ require 'rails_helper'
 
 	describe 'PATCH update', :request do
 		let(:favourite) { true }
+		let(:expected_status) { :no_content }
 
 		before do
 			patch :update, params: request_params
@@ -44,6 +45,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:favourite) { false }
+		let(:expected_status) { :no_content }
 
 		before do
 			delete :destroy, params: request_params

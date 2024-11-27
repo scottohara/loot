@@ -25,11 +25,11 @@ class AccountsController < ApplicationController
 
 	def destroy
 		::Account.find(params[:id]).destroy!
-		head :ok
+		head :no_content
 	end
 
 	def reconcile
 		::Account.find(params[:id]).reconcile
-		head :ok
+		head :no_content
 	end
 end

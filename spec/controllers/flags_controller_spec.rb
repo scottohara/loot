@@ -7,6 +7,7 @@ require 'rails_helper'
 	describe 'PATCH update', :request do
 		let(:flag_type) { 'noreceipt' }
 		let(:memo) { 'Test flag' }
+		let(:expected_status) { :no_content }
 
 		before do
 			expect(::Transaction).to receive(:find).with('1').and_return transaction
@@ -38,6 +39,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:transaction) { create(:transaction, :flagged) }
+		let(:expected_status) { :no_content }
 
 		it 'should delete an existing flag' do
 			expect(::Transaction).to receive(:find).with('1').and_return transaction

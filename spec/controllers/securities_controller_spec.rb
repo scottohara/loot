@@ -67,6 +67,7 @@ require 'rails_helper'
 
 	describe 'DELETE destroy', :request do
 		let(:security) { ::Security.new }
+		let(:expected_status) { :no_content }
 
 		it 'should delete an existing security' do
 			expect(::Security).to receive(:find).with('1').and_return security

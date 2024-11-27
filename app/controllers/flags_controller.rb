@@ -11,11 +11,11 @@ class FlagsController < ApplicationController
 		else
 			transaction.flag.update!(flag_type: params[:flag_type], memo: params[:memo])
 		end
-		head :ok
+		head :no_content
 	end
 
 	def destroy
 		::Transaction.find(params[:transaction_id]).flag.destroy!
-		head :ok
+		head :no_content
 	end
 end
