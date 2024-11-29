@@ -108,12 +108,6 @@ class SplitTransaction < PayeeCashTransaction
 		end
 	end
 
-	# :nocov:
-
-	private unless ::Rails.env.test?
-
-	# :nocov:end
-
 	def create_children(children)
 		children.each do |child|
 			# Keys could be symbols or strings

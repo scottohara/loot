@@ -29,12 +29,6 @@ module Measurable
 			date.advance FREQUENCIES[frequency.to_sym].advance_by
 		end
 
-		# :nocov:
-
-		private unless ::Rails.env.test?
-
-		# :nocov:end
-
 		# Weeks since a given date
 		def weeks_since(date)
 			((::Time.zone.today - date) / 7).to_i
