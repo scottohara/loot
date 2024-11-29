@@ -7,7 +7,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby file: '.tool-versions'
 
 # Web application framework
-gem 'rails', '7.2.1.1'
+gem 'rails', '8.0.0'
 
 # Database
 gem 'pg', '1.5.8'
@@ -16,7 +16,7 @@ gem 'pg', '1.5.8'
 gem 'puma', '6.4.3'
 
 # For JSON serialisation
-gem 'active_model_serializers', '0.10.14'
+gem 'active_model_serializers', '0.10.15'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '1.18.4', require: false
