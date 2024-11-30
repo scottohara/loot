@@ -18,8 +18,6 @@ swap_size_mb = 512
 		interval = "10s"
 		timeout = "2s"
 		path = "/up"
-		[http_service.checks.headers]
-			X-Forwarded-Proto = "https"
 
 [[statics]]
 	guest_path = "/loot/public"
