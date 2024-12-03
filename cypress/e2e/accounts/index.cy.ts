@@ -207,7 +207,7 @@ describe("Account Index", (): void => {
 			beforeEach((): void => {
 				view = transactionsTable;
 				heading = transactionsIndexHeading;
-				url = /#!\/accounts\/\d+\/transactions/u;
+				url = /#!\/accounts\/\d+\/transactions/v;
 			});
 
 			it("should display the Account Transactions view when the account name is clicked", (): void => {

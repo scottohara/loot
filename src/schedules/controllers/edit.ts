@@ -384,6 +384,8 @@ export default class ScheduleEditController {
 						}
 						break;
 
+					case "Basic":
+					case "Transfer":
 					default:
 				}
 			} else {
@@ -744,6 +746,13 @@ export default class ScheduleEditController {
 							return transaction;
 						},
 					);
+
+			case "Basic":
+			case "Dividend":
+			case "SecurityHolding":
+			case "SecurityInvestment":
+			case "SecurityTransfer":
+			case "Transfer":
 			default:
 				return transaction;
 		}

@@ -159,7 +159,7 @@ describe("transactionModel", (): void => {
 				.expectGET(
 					new RegExp(
 						`context/transactions\\?as_at=${fromDate.toISOString()}&direction=prev&unreconciled=true`,
-						"u",
+						"v",
 					),
 				)
 				.respond(200, expectedResponse);
@@ -197,7 +197,7 @@ describe("transactionModel", (): void => {
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
 			$httpBackend
-				.expectGET(/transactions\?direction=prev&query=query/u)
+				.expectGET(/transactions\?direction=prev&query=query/v)
 				.respond(200, expectedResponse);
 		});
 
@@ -229,7 +229,7 @@ describe("transactionModel", (): void => {
 		beforeEach(
 			(): angular.mock.IRequestHandler =>
 				$httpBackend
-					.expectGET(/transactions\/123\/subtransactions/u)
+					.expectGET(/transactions\/123\/subtransactions/v)
 					.respond(200, expectedResponse),
 		);
 
@@ -255,7 +255,7 @@ describe("transactionModel", (): void => {
 		beforeEach((): void => {
 			transactionModel["parse"] = sinon.stub().returnsArg(0);
 			$httpBackend
-				.expectGET(/transactions\/123/u)
+				.expectGET(/transactions\/123/v)
 				.respond(200, expectedResponse);
 		});
 
@@ -285,8 +285,8 @@ describe("transactionModel", (): void => {
 
 	describe("save", (): void => {
 		const expectedResponse = "transaction",
-			expectedPostUrl = /transactions$/u,
-			expectedPatchUrl = /transactions\/1$/u;
+			expectedPostUrl = /transactions$/v,
+			expectedPatchUrl = /transactions\/1$/v;
 		let transaction: Transaction;
 
 		beforeEach((): void => {
@@ -354,7 +354,7 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("destroy", (): void => {
-		const expectedUrl = /transactions\/1$/u;
+		const expectedUrl = /transactions\/1$/v;
 		let transaction: Transaction;
 
 		beforeEach((): void => {
@@ -485,8 +485,8 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("updateStatus", (): void => {
-		const expectedPatchUrl = /context\/transactions\/1\/status\?Cleared$/u,
-			expectedDeleteUrl = /context\/transactions\/1\/status$/u;
+		const expectedPatchUrl = /context\/transactions\/1\/status\?Cleared$/v,
+			expectedDeleteUrl = /context\/transactions\/1\/status$/v;
 
 		beforeEach((): void => {
 			$httpBackend.whenPATCH(expectedPatchUrl).respond(200);
@@ -519,7 +519,7 @@ describe("transactionModel", (): void => {
 	describe("flag", (): void => {
 		it("should dispatch a PUT request to /transactions/{id}/flag", (): void => {
 			$httpBackend
-				.expectPUT(/transactions\/1\/flag/u, {
+				.expectPUT(/transactions\/1\/flag/v, {
 					flag_type: "noreceipt",
 					memo: "flag",
 				})
@@ -533,7 +533,7 @@ describe("transactionModel", (): void => {
 
 	describe("unflag", (): void => {
 		it("should dispatch a DELETE request to /transactions/{id}/flag", (): void => {
-			$httpBackend.expectDELETE(/transactions\/1\/flag/u).respond(200);
+			$httpBackend.expectDELETE(/transactions\/1\/flag/v).respond(200);
 			transactionModel.unflag(1);
 			$httpBackend.flush();
 		});

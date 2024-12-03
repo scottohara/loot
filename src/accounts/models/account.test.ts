@@ -150,7 +150,7 @@ describe("accountModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl = /accounts$/u,
+		let expectedUrl = /accounts$/v,
 			expectedResponse = "accounts without balances";
 
 		it("should dispatch a GET request to /accounts", (): void => {
@@ -180,7 +180,7 @@ describe("accountModel", (): void => {
 
 		describe("(include balances)", (): void => {
 			beforeEach((): void => {
-				expectedUrl = /accounts\?include_balances/u;
+				expectedUrl = /accounts\?include_balances/v;
 				expectedResponse = "accounts with balances";
 			});
 
@@ -229,7 +229,7 @@ describe("accountModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedUrl = /accounts\/123/u,
+		const expectedUrl = /accounts\/123/v,
 			expectedResponse = "account details";
 
 		beforeEach((): SinonStub => sinon.stub(accountModel, "addRecent"));
@@ -270,8 +270,8 @@ describe("accountModel", (): void => {
 	});
 
 	describe("save", (): void => {
-		const expectedPostUrl = /accounts$/u,
-			expectedPatchUrl = /accounts\/1$/u;
+		const expectedPostUrl = /accounts$/v,
+			expectedPatchUrl = /accounts\/1$/v;
 
 		beforeEach((): void => {
 			sinon.stub(accountModel, "flush");
@@ -303,7 +303,7 @@ describe("accountModel", (): void => {
 		beforeEach((): void => {
 			sinon.stub(accountModel, "flush");
 			sinon.stub(accountModel, "removeRecent");
-			$httpBackend.expectDELETE(/accounts\/1$/u).respond(200);
+			$httpBackend.expectDELETE(/accounts\/1$/v).respond(200);
 			accountModel.destroy(account);
 			$httpBackend.flush();
 		});
@@ -318,7 +318,7 @@ describe("accountModel", (): void => {
 	});
 
 	describe("reconcile", (): void => {
-		const expectedUrl = /accounts\/123\/reconcile/u;
+		const expectedUrl = /accounts\/123\/reconcile/v;
 
 		it("should dispatch a PUT request to /account/{id}/reconcile", (): void => {
 			$httpBackend.expectPUT(expectedUrl).respond(200);
@@ -328,7 +328,7 @@ describe("accountModel", (): void => {
 	});
 
 	describe("toggleFavourite", (): void => {
-		const expectedUrl = /accounts\/1\/favourite$/u;
+		const expectedUrl = /accounts\/1\/favourite$/v;
 
 		beforeEach((): void => {
 			sinon.stub(accountModel, "flush");

@@ -40,6 +40,9 @@ export default class TransactionStatusDirective {
 								scope.icon = "tag";
 								break;
 
+							case "Unreconciled":
+							case "":
+							case null:
 							default:
 								scope.nextStatus = "Cleared";
 								scope.icon = "tag";

@@ -325,6 +325,8 @@ export default class TransactionEditController {
 						}
 						break;
 
+					case "Basic":
+					case "Transfer":
 					default:
 				}
 			} else {
@@ -614,6 +616,13 @@ export default class TransactionEditController {
 
 						return transaction;
 					});
+
+			case "Basic":
+			case "Dividend":
+			case "SecurityHolding":
+			case "SecurityInvestment":
+			case "SecurityTransfer":
+			case "Transfer":
 			default:
 				return transaction;
 		}
@@ -750,6 +759,12 @@ export default class TransactionEditController {
 					.catch(this.showError);
 				break;
 
+			case "Basic":
+			case "Dividend":
+			case "SecurityHolding":
+			case "SecurityInvestment":
+			case "SecurityTransfer":
+			case "Transfer":
 			default:
 		}
 
@@ -848,6 +863,7 @@ export default class TransactionEditController {
 					.catch(this.showError);
 				break;
 
+			case "SecurityHolding":
 			default:
 		}
 

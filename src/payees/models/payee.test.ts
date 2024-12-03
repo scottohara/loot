@@ -133,7 +133,7 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl = /payees$/u,
+		let expectedUrl = /payees$/v,
 			expectedResponse = "payees";
 
 		it("should dispatch a GET request to /payees", (): void => {
@@ -163,7 +163,7 @@ describe("payeeModel", (): void => {
 
 		describe("(list)", (): void => {
 			beforeEach((): void => {
-				expectedUrl = /payees\?list/u;
+				expectedUrl = /payees\?list/v;
 				expectedResponse = "payees list";
 			});
 
@@ -213,7 +213,7 @@ describe("payeeModel", (): void => {
 	describe("findLastTransaction", (): void => {
 		it("should dispatch a GET request to /payees/{id}/transactions/last?account_type={accountType}", (): void => {
 			$httpBackend
-				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(200, {});
 			payeeModel.findLastTransaction(1, "bank");
 			$httpBackend.flush();
@@ -223,7 +223,7 @@ describe("payeeModel", (): void => {
 			const lastTransaction = createBasicTransaction();
 
 			$httpBackend
-				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(200, lastTransaction);
 			payeeModel
 				.findLastTransaction(1, "bank")
@@ -236,7 +236,7 @@ describe("payeeModel", (): void => {
 
 		it("should return undefined when there are no transactions", (): void => {
 			$httpBackend
-				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(404, "");
 			payeeModel
 				.findLastTransaction(1, "bank")
@@ -249,7 +249,7 @@ describe("payeeModel", (): void => {
 
 		it("should throw an error when the GET request fails", (): void => {
 			$httpBackend
-				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/payees\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(500, "Forced error", {}, "Internal Server Error");
 			payeeModel
 				.findLastTransaction(1, "bank")
@@ -264,7 +264,7 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedUrl = /payees\/123/u,
+		const expectedUrl = /payees\/123/v,
 			expectedResponse = "payee details";
 
 		beforeEach((): SinonStub => sinon.stub(payeeModel, "addRecent"));
@@ -303,8 +303,8 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("save", (): void => {
-		const expectedPostUrl = /payees$/u,
-			expectedPatchUrl = /payees\/1$/u;
+		const expectedPostUrl = /payees$/v,
+			expectedPatchUrl = /payees\/1$/v;
 
 		beforeEach((): void => {
 			sinon.stub(payeeModel, "flush");
@@ -337,7 +337,7 @@ describe("payeeModel", (): void => {
 		beforeEach((): void => {
 			sinon.stub(payeeModel, "flush");
 			sinon.stub(payeeModel, "removeRecent");
-			$httpBackend.expectDELETE(/payees\/1$/u).respond(200);
+			$httpBackend.expectDELETE(/payees\/1$/v).respond(200);
 			payeeModel.destroy(payee);
 			$httpBackend.flush();
 		});
@@ -352,7 +352,7 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("toggleFavourite", (): void => {
-		const expectedUrl = /payees\/1\/favourite$/u;
+		const expectedUrl = /payees\/1\/favourite$/v;
 
 		beforeEach((): void => {
 			sinon.stub(payeeModel, "flush");

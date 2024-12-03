@@ -139,7 +139,7 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl = /categories\?parent=1$/u,
+		let expectedUrl = /categories\?parent=1$/v,
 			expectedResponse = "categories without children";
 
 		it("should dispatch a GET request to /categories?parent={parent}", (): void => {
@@ -169,7 +169,7 @@ describe("categoryModel", (): void => {
 
 		describe("(include children)", (): void => {
 			beforeEach((): void => {
-				expectedUrl = /categories\?include_children&parent=1/u;
+				expectedUrl = /categories\?include_children&parent=1/v;
 				expectedResponse = "categories with children";
 			});
 
@@ -217,7 +217,7 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedUrl = /categories\/123/u,
+		const expectedUrl = /categories\/123/v,
 			expectedResponse = "category details";
 
 		beforeEach((): SinonStub => sinon.stub(categoryModel, "addRecent"));
@@ -258,8 +258,8 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("save", (): void => {
-		const expectedPostUrl = /categories$/u,
-			expectedPatchUrl = /categories\/1$/u;
+		const expectedPostUrl = /categories$/v,
+			expectedPatchUrl = /categories\/1$/v;
 
 		beforeEach((): void => {
 			sinon.stub(categoryModel, "flush");
@@ -292,7 +292,7 @@ describe("categoryModel", (): void => {
 		beforeEach((): void => {
 			sinon.stub(categoryModel, "flush");
 			sinon.stub(categoryModel, "removeRecent");
-			$httpBackend.expectDELETE(/categories\/1$/u).respond(200);
+			$httpBackend.expectDELETE(/categories\/1$/v).respond(200);
 			categoryModel.destroy(category);
 			$httpBackend.flush();
 		});
@@ -308,7 +308,7 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("toggleFavourite", (): void => {
-		const expectedUrl = /categories\/1\/favourite$/u;
+		const expectedUrl = /categories\/1\/favourite$/v;
 
 		beforeEach((): void => {
 			sinon.stub(categoryModel, "flush");

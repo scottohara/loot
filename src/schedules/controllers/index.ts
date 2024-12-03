@@ -165,6 +165,13 @@ export default class ScheduleIndexController {
 											return this.schedules[Number(index)];
 										},
 									);
+
+							case "Basic":
+							case "Dividend":
+							case "SecurityHolding":
+							case "SecurityInvestment":
+							case "SecurityTransfer":
+							case "Transfer":
 							default:
 								return this.schedules[Number(index)];
 						}

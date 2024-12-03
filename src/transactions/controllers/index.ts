@@ -516,6 +516,7 @@ export default class TransactionIndexController {
 											: (this.context as Category);
 									break;
 
+								case undefined:
 								default:
 							}
 
@@ -544,6 +545,13 @@ export default class TransactionIndexController {
 											return this.transactions[Number(index)];
 										},
 									);
+
+							case "Basic":
+							case "Dividend":
+							case "SecurityHolding":
+							case "SecurityInvestment":
+							case "SecurityTransfer":
+							case "Transfer":
 							default:
 								return this.transactions[Number(index)];
 						}
@@ -639,12 +647,13 @@ export default class TransactionIndexController {
 				break;
 
 			// Search mode - check if the transaction memo still matches the search query
+			case undefined:
 			default:
 				return (
 					-1 ===
 					transaction.memo
 						.toLowerCase()
-						.indexOf(String(this.context).toLowerCase())
+						.indexOf(String(this.context as string).toLowerCase())
 				);
 		}
 
@@ -748,6 +757,14 @@ export default class TransactionIndexController {
 				}
 				break;
 
+			case "Basic":
+			case "LoanRepayment":
+			case "Payslip":
+			case "SecurityHolding":
+			case "SecurityTransfer":
+			case "Split":
+			case "Transfer":
+			case undefined:
 			default:
 		}
 

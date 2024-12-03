@@ -140,7 +140,7 @@ describe("securityModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl = /securities$/u,
+		let expectedUrl = /securities$/v,
 			expectedResponse = "securities without balances";
 
 		it("should dispatch a GET request to /securities", (): void => {
@@ -170,7 +170,7 @@ describe("securityModel", (): void => {
 
 		describe("(include balances)", (): void => {
 			beforeEach((): void => {
-				expectedUrl = /securities\?include_balances/u;
+				expectedUrl = /securities\?include_balances/v;
 				expectedResponse = "securities with balances";
 			});
 
@@ -220,7 +220,7 @@ describe("securityModel", (): void => {
 	describe("findLastTransaction", (): void => {
 		it("should dispatch a GET request to /securities/{id}/transactions/last?account_type={accountType}", (): void => {
 			$httpBackend
-				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(200, {});
 			securityModel.findLastTransaction(1, "bank");
 			$httpBackend.flush();
@@ -230,7 +230,7 @@ describe("securityModel", (): void => {
 			const lastTransaction = createBasicTransaction();
 
 			$httpBackend
-				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(200, lastTransaction);
 			securityModel
 				.findLastTransaction(1, "bank")
@@ -243,7 +243,7 @@ describe("securityModel", (): void => {
 
 		it("should return undefined when there are no transactions", (): void => {
 			$httpBackend
-				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(404, "");
 			securityModel
 				.findLastTransaction(1, "bank")
@@ -256,7 +256,7 @@ describe("securityModel", (): void => {
 
 		it("should throw an error when the GET request fails", (): void => {
 			$httpBackend
-				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/u)
+				.expectGET(/securities\/1\/transactions\/last\?account_type=bank$/v)
 				.respond(500, "Forced error", {}, "Internal Server Error");
 			securityModel
 				.findLastTransaction(1, "bank")
@@ -271,7 +271,7 @@ describe("securityModel", (): void => {
 	});
 
 	describe("find", (): void => {
-		const expectedUrl = /securities\/123/u,
+		const expectedUrl = /securities\/123/v,
 			expectedResponse = "security details";
 
 		beforeEach((): SinonStub => sinon.stub(securityModel, "addRecent"));
@@ -312,8 +312,8 @@ describe("securityModel", (): void => {
 	});
 
 	describe("save", (): void => {
-		const expectedPostUrl = /securities$/u,
-			expectedPatchUrl = /securities\/1$/u;
+		const expectedPostUrl = /securities$/v,
+			expectedPatchUrl = /securities\/1$/v;
 
 		beforeEach((): void => {
 			sinon.stub(securityModel, "flush");
@@ -346,7 +346,7 @@ describe("securityModel", (): void => {
 		beforeEach((): void => {
 			sinon.stub(securityModel, "flush");
 			sinon.stub(securityModel, "removeRecent");
-			$httpBackend.expectDELETE(/securities\/1$/u).respond(200);
+			$httpBackend.expectDELETE(/securities\/1$/v).respond(200);
 			securityModel.destroy(security);
 			$httpBackend.flush();
 		});
@@ -362,7 +362,7 @@ describe("securityModel", (): void => {
 	});
 
 	describe("toggleFavourite", (): void => {
-		const expectedUrl = /securities\/1\/favourite$/u;
+		const expectedUrl = /securities\/1\/favourite$/v;
 
 		beforeEach((): void => {
 			sinon.stub(securityModel, "flush");

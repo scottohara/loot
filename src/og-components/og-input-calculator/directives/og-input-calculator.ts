@@ -132,6 +132,7 @@ export default class OgInputCalculatorDirective {
 												result.operand /= Number(operation.operand);
 												break;
 
+											case undefined:
 											default:
 										}
 
@@ -150,7 +151,7 @@ export default class OgInputCalculatorDirective {
 					scope.inputChanged = (value: string): string => {
 						// Matches any number of digits, periods or commas, followed by +, -, * or /
 						const matches: RegExpExecArray | null =
-							/(?<operand>[-\d.,]+)(?<operator>[+\-*/])(?<residual>.*)/giu.exec(
+							/(?<operand>[\-\d.,]+)(?<operator>[+\-*\/])(?<residual>.*)/giv.exec(
 								value,
 							);
 

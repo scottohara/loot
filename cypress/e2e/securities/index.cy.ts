@@ -137,7 +137,7 @@ describe("Security Index", (): void => {
 				headingText: "Security 9",
 				headingText2: " Transactions",
 				view: transactionsTable,
-				url: /#!\/securities\/\d+\/transactions/u,
+				url: /#!\/securities\/\d+\/transactions/v,
 			},
 		},
 	});

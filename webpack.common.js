@@ -16,17 +16,17 @@ const entry = {
 	},
 	// Rule for *.ts processing
 	tsRule = {
-		test: /\.ts$/u,
+		test: /\.ts$/v,
 		loader: "ts-loader",
 	},
 	// Rule for *.css processing
 	cssRule = {
-		test: /\.css$/u,
+		test: /\.css$/v,
 		use: [MiniCssExtractPlugin.loader, "css-loader"],
 	},
 	// Rule for font processing
 	fontRule = {
-		test: /\.(?:ttf|woff|woff2|eot|svg)$/u,
+		test: /\.(?:ttf|woff|woff2|eot|svg)$/v,
 		type: "asset/resource",
 		generator: {
 			filename: "fonts/[name][ext]",
@@ -34,13 +34,13 @@ const entry = {
 	},
 	// Rule for *.ico processing
 	iconRule = {
-		test: /\.ico$/u,
+		test: /\.ico$/v,
 		type: "asset/resource",
 	},
 	// Rule for *.html processing
 	htmlRule = {
-		test: /\.html$/u,
-		include: /views/u,
+		test: /\.html$/v,
+		include: /views/v,
 		use: [
 			{
 				loader: "ngtemplate-loader",
@@ -115,7 +115,7 @@ const entry = {
 				cacheGroups: {
 					defaultVendors: {
 						name: "vendor",
-						test: /[\\/]node_modules[\\/]/u,
+						test: /\/node_modules\//v,
 					},
 				},
 			},

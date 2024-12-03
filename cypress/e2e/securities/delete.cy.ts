@@ -44,7 +44,7 @@ describe("Security Delete", (): void => {
 		it("should display the details of the security being deleted", (): void => {
 			cy.get(securityToDeleteName).should(
 				"have.text",
-				lastSecurity.name.replace(/\s+No transactions/u, ""),
+				lastSecurity.name.replace(/\s+No transactions/v, ""),
 			);
 			cy.get(securityToDeleteCode).should("have.text", lastSecurity.code);
 		});

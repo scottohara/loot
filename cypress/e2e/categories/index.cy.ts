@@ -137,7 +137,7 @@ describe("Category Index", (): void => {
 				headingText: "Category 22",
 				headingText2: " Transactions",
 				view: transactionsTable,
-				url: /#!\/categories\/\d+\/transactions/u,
+				url: /#!\/categories\/\d+\/transactions/v,
 			},
 		},
 	});

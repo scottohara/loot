@@ -21,7 +21,7 @@ export default class TransactionFlagController {
 	) {
 		this.flagType = transaction.flag_type ?? "followup";
 		this.flag =
-			"(no memo)" === String(transaction.flag) ? "" : transaction.flag ?? "";
+			"(no memo)" === String(transaction.flag) ? "" : (transaction.flag ?? "");
 		this.flagged = Boolean(transaction.flag);
 	}
 

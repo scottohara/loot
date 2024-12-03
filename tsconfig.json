@@ -32,8 +32,8 @@
 		// Backwards Compatibility
 
 		// Language and Environment
-		"lib": ["DOM", "ES2022", "WebWorker"],
-		"target": "es2022",
+		"lib": ["DOM", "ES2024", "WebWorker"],
+		"target": "es2024",
 
 		// Compiler Diagnostics
 

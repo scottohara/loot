@@ -110,7 +110,7 @@ describe("authenticationModel", (): void => {
 		beforeEach((): void => {
 			$httpBackend
 				.expectPOST(
-					/logins/u,
+					/logins/v,
 					"",
 					(headers: angular.IHttpRequestConfigHeaders): boolean =>
 						"Basic base64 encoded" === headers.Authorization,

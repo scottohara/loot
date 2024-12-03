@@ -15,7 +15,7 @@ export default class OgInputCurrencyController {
 
 	// Converts formatted value to raw value
 	public formattedToRaw(value: string): number {
-		const rawValue = Number(value.replace(/[^0-9\-.]/gu, ""));
+		const rawValue = Number(value.replace(/[^0-9\-.]/gv, ""));
 
 		return isNaN(rawValue) ? 0 : rawValue;
 	}

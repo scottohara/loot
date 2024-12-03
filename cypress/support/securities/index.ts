@@ -29,7 +29,7 @@ export function checkRowMatches(
 ): void {
 	if (noTransactions) {
 		cy.get(securityName)
-			.contains(new RegExp(`${expectedValues.name}\\s+No transactions`, "u"))
+			.contains(new RegExp(`${expectedValues.name}\\s+No transactions`, "v"))
 			.should("exist");
 	} else {
 		cy.get(securityName).should("contain.text", expectedValues.name);

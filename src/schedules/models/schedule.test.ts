@@ -110,7 +110,7 @@ describe("scheduleModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		const expectedUrl = /schedules/u,
+		const expectedUrl = /schedules/v,
 			expectedResponse: string[] = ["schedule 1", "schedule 2"];
 
 		beforeEach((): void => {
@@ -143,8 +143,8 @@ describe("scheduleModel", (): void => {
 
 	describe("save", (): void => {
 		const expectedResponse = "schedule",
-			expectedPostUrl = /schedules$/u,
-			expectedPatchUrl = /schedules\/1$/u;
+			expectedPostUrl = /schedules$/v,
+			expectedPatchUrl = /schedules\/1$/v;
 
 		beforeEach((): void => {
 			scheduleModel["stringify"] = sinon.stub().returnsArg(0);
@@ -254,7 +254,7 @@ describe("scheduleModel", (): void => {
 
 	describe("destroy", (): void => {
 		it("should dispatch a DELETE request to /schedules/{id}", (): void => {
-			$httpBackend.expectDELETE(/schedules\/1$/u).respond(200);
+			$httpBackend.expectDELETE(/schedules\/1$/v).respond(200);
 			scheduleModel.destroy(createScheduledBasicTransaction({ id: 1 }));
 			$httpBackend.flush();
 		});

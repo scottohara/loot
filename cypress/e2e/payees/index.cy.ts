@@ -90,7 +90,7 @@ describe("Payee Index", (): void => {
 				headingText: "Payee 9",
 				headingText2: " Transactions",
 				view: transactionsTable,
-				url: /#!\/payees\/\d+\/transactions/u,
+				url: /#!\/payees\/\d+\/transactions/v,
 			},
 		},
 	});
