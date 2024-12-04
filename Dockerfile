@@ -5,7 +5,7 @@ ARG RUBY_VERSION
 
 ### Frontend ###
 
-FROM node:${NODE_VERSION}-alpine as frontend
+FROM node:${NODE_VERSION}-alpine AS frontend
 
 ARG NPM_VERSION
 RUN --mount=type=cache,id=loot-npm,target=/root/.npm \
@@ -29,7 +29,7 @@ RUN npm run build
 
 ### Backend ###
 
-FROM ruby:${RUBY_VERSION}-alpine as backend
+FROM ruby:${RUBY_VERSION}-alpine AS backend
 
 RUN apk add --no-cache \
 	build-base \
@@ -52,7 +52,7 @@ RUN --mount=type=cache,id=loot-bundler,target=tmp/vendor/bundle \
 
 ### App ###
 
-FROM ruby:${RUBY_VERSION}-alpine as app
+FROM ruby:${RUBY_VERSION}-alpine AS app
 
 RUN apk add --no-cache \
 	libpq \
