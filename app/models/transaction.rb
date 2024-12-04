@@ -73,12 +73,6 @@ class Transaction < ApplicationRecord
 			s
 		end
 
-		# :nocov:
-
-		private unless ::Rails.env.test?
-
-		# :nocov:end
-
 		def for_query(opts)
 			term = opts[:query].downcase
 
