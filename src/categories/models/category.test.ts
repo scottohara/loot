@@ -6,14 +6,13 @@ import type {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock,
 } from "~/mocks/og-components/og-lru-cache-factory/types";
+import sinon, { type SinonStub } from "sinon";
 import type { Category } from "~/categories/types";
 import type CategoryModel from "~/categories/models/category";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
-import type { SinonStub } from "sinon";
 import angular from "angular";
 import createCategory from "~/mocks/categories/factories";
-import sinon from "sinon";
 
 describe("categoryModel", (): void => {
 	let categoryModel: CategoryModel,

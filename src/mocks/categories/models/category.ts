@@ -2,14 +2,13 @@ import type {
 	PromiseMockConfig,
 	QMock,
 } from "~/mocks/node-modules/angular/types";
+import sinon, { type SinonStub } from "sinon";
 import type CategoriesMockProvider from "~/mocks/categories/providers/categories";
 import type { Category } from "~/categories/types";
 import type CategoryMockProvider from "~/mocks/categories/providers/category";
 import type { CategoryModelMock } from "~/mocks/categories/types";
 import type { Mock } from "~/mocks/types";
 import type QMockProvider from "~/mocks/node-modules/angular/services/q";
-import type { SinonStub } from "sinon";
-import sinon from "sinon";
 
 export default class CategoryModelMockProvider
 	implements Mock<CategoryModelMock>

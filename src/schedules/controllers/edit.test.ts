@@ -43,6 +43,7 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction,
 } from "~/mocks/transactions/factories";
+import sinon, { type SinonStub } from "sinon";
 import type { AccountModelMock } from "~/mocks/accounts/types";
 import type { CategoryModelMock } from "~/mocks/categories/types";
 import type { ControllerTestFactory } from "~/mocks/types";
@@ -54,7 +55,6 @@ import type ScheduleEditController from "~/schedules/controllers/edit";
 import type { ScheduleModelMock } from "~/mocks/schedules/types";
 import type { Security } from "~/securities/types";
 import type { SecurityModelMock } from "~/mocks/securities/types";
-import type { SinonStub } from "sinon";
 import type { TransactionModelMock } from "~/mocks/transactions/types";
 import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
@@ -62,7 +62,6 @@ import createAccount from "~/mocks/accounts/factories";
 import createCategory from "~/mocks/categories/factories";
 import createPayee from "~/mocks/payees/factories";
 import createSecurity from "~/mocks/securities/factories";
-import sinon from "sinon";
 
 describe("ScheduleEditController", (): void => {
 	let scheduleEditController: ScheduleEditController,

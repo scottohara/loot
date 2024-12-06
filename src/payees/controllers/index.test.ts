@@ -3,6 +3,7 @@ import type {
 	UibModalMock,
 	UibModalMockResolves,
 } from "~/mocks/node-modules/angular/types";
+import sinon, { type SinonStub } from "sinon";
 import type { ControllerTestFactory } from "~/mocks/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
@@ -11,10 +12,8 @@ import type OgTableNavigableService from "~/og-components/og-table-navigable/ser
 import type { Payee } from "~/payees/types";
 import type PayeeIndexController from "~/payees/controllers";
 import type { PayeeModelMock } from "~/mocks/payees/types";
-import type { SinonStub } from "sinon";
 import angular from "angular";
 import createPayee from "~/mocks/payees/factories";
-import sinon from "sinon";
 
 describe("PayeeIndexController", (): void => {
 	let payeeIndexController: PayeeIndexController,

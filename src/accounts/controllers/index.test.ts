@@ -7,15 +7,14 @@ import type {
 	UibModalMock,
 	UibModalMockResolves,
 } from "~/mocks/node-modules/angular/types";
+import sinon, { type SinonStub } from "sinon";
 import $ from "jquery";
 import type AccountIndexController from "~/accounts/controllers";
 import type { AccountModelMock } from "~/mocks/accounts/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
-import type { SinonStub } from "sinon";
 import angular from "angular";
 import createAccount from "~/mocks/accounts/factories";
-import sinon from "sinon";
 
 describe("AccountIndexController", (): void => {
 	let accountIndexController: AccountIndexController,

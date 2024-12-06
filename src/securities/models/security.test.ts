@@ -6,16 +6,15 @@ import type {
 	OgLruCacheFactoryMock,
 	OgLruCacheMock,
 } from "~/mocks/og-components/og-lru-cache-factory/types";
+import sinon, { type SinonStub } from "sinon";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgCacheEntry } from "~/og-components/og-lru-cache-factory/types";
 import type { Security } from "~/securities/types";
 import type SecurityModel from "~/securities/models/security";
-import type { SinonStub } from "sinon";
 import type { Transaction } from "~/transactions/types";
 import angular from "angular";
 import { createBasicTransaction } from "~/mocks/transactions/factories";
 import createSecurity from "~/mocks/securities/factories";
-import sinon from "sinon";
 
 describe("securityModel", (): void => {
 	let securityModel: SecurityModel,

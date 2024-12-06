@@ -19,16 +19,15 @@ import {
 	createSubtransaction,
 	createSubtransferTransaction,
 } from "~/mocks/transactions/factories";
+import sinon, { type SinonStub } from "sinon";
 import { startOfDay, subDays } from "date-fns";
 import type { ControllerTestFactory } from "~/mocks/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgTableActionHandlers } from "~/og-components/og-table-navigable/types";
 import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import type ScheduleIndexController from "~/schedules/controllers";
-import type { SinonStub } from "sinon";
 import type { TransactionModelMock } from "~/mocks/transactions/types";
 import angular from "angular";
-import sinon from "sinon";
 
 describe("ScheduleIndexController", (): void => {
 	let scheduleIndexController: ScheduleIndexController,

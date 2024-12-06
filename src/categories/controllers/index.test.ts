@@ -3,6 +3,7 @@ import type {
 	UibModalMock,
 	UibModalMockResolves,
 } from "~/mocks/node-modules/angular/types";
+import sinon, { type SinonStub } from "sinon";
 import type { Category } from "~/categories/types";
 import type CategoryIndexController from "~/categories/controllers";
 import type { CategoryModelMock } from "~/mocks/categories/types";
@@ -11,10 +12,8 @@ import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { OgModalAlert } from "~/og-components/og-modal-alert/types";
 import type { OgTableActionHandlers } from "~/og-components/og-table-navigable/types";
 import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
-import type { SinonStub } from "sinon";
 import angular from "angular";
 import createCategory from "~/mocks/categories/factories";
-import sinon from "sinon";
 
 describe("CategoryIndexController", (): void => {
 	let categoryIndexController: CategoryIndexController,

@@ -7,6 +7,7 @@ import type {
 	OgInputCalculatorOperator,
 	OgInputCalculatorScope,
 } from "~/og-components/og-input-calculator/types";
+import sinon, { type SinonStub } from "sinon";
 import type DirectiveTest from "~/mocks/loot/directivetest";
 import type OgInputCurrencyController from "~/og-components/og-input-currency/controllers/currency";
 import type { OgInputCurrencyControllerMock } from "~/mocks/og-components/og-input-currency/types";
@@ -14,9 +15,7 @@ import type OgInputCurrencyDirective from "~/og-components/og-input-currency/dir
 import type OgInputNumberController from "~/og-components/og-input-number/controllers/number";
 import type { OgInputNumberControllerMock } from "~/mocks/og-components/og-input-number/types";
 import type OgInputNumberDirective from "~/og-components/og-input-number/directives/og-input-number";
-import type { SinonStub } from "sinon";
 import angular from "angular";
-import sinon from "sinon";
 
 describe("ogInputCalculator", (): void => {
 	let ogInputCalculator: DirectiveTest,

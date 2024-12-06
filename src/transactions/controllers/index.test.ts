@@ -32,6 +32,7 @@ import {
 	createSubtransferTransaction,
 	createTransferTransaction,
 } from "~/mocks/transactions/factories";
+import sinon, { type SinonStub } from "sinon";
 import type { Account } from "~/accounts/types";
 import type AccountModel from "~/accounts/models/account";
 import type { Category } from "~/categories/types";
@@ -44,7 +45,6 @@ import type OgViewScrollService from "~/og-components/og-view-scroll/services/og
 import type { Payee } from "~/payees/types";
 import type { Security } from "~/securities/types";
 import type SecurityModel from "~/securities/models/security";
-import type { SinonStub } from "sinon";
 import type TransactionIndexController from "~/transactions/controllers";
 import type { TransactionModelMock } from "~/mocks/transactions/types";
 import angular from "angular";
@@ -52,7 +52,6 @@ import createAccount from "~/mocks/accounts/factories";
 import createCategory from "~/mocks/categories/factories";
 import createPayee from "~/mocks/payees/factories";
 import createSecurity from "~/mocks/securities/factories";
-import sinon from "sinon";
 
 describe("TransactionIndexController", (): void => {
 	let transactionIndexController: TransactionIndexController,

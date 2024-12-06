@@ -7,11 +7,10 @@ import type {
 	OgTableActions,
 	OgTableNavigableScope,
 } from "~/og-components/og-table-navigable/types";
-import type { SinonMatcher, SinonStub } from "sinon";
+import sinon, { type SinonMatcher, type SinonStub } from "sinon";
 import type DirectiveTest from "~/mocks/loot/directivetest";
 import type OgTableNavigableService from "~/og-components/og-table-navigable/services/og-table-navigable";
 import angular from "angular";
-import sinon from "sinon";
 
 describe("ogTableNavigable", (): void => {
 	let ogTableNavigable: DirectiveTest,
