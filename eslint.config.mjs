@@ -26,8 +26,6 @@ export default tseslint.config(
 		name: "loot/tests",
 		files: ["**/*.test.ts", "**/mocks/**/*"],
 		rules: {
-			// Disable for readability of test fixtures (eg. categories)
-			"object-property-newline": "off",
 			// Disable to allow Chai-as-promised assertions
 			"@typescript-eslint/no-floating-promises": "off",
 			// Disable to allow Chai assertions (e.g. `expect(..).to.have.been.called`)
