@@ -14,7 +14,7 @@
 		"moduleResolution": "bundler",
 		"noUncheckedSideEffectImports": true,
 		"paths": {
-			"~*": ["./src/*"]
+			"~/*": ["./src/*"]
 		},
 
 		// Emit
