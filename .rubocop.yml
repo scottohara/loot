@@ -1,9 +1,11 @@
 require:
   - rubocop-factory_bot
+  - rubocop-rspec_rails
+
+plugins:
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
-  - rubocop-rspec_rails
   - rubocop-rspec
 
 inherit_gem:

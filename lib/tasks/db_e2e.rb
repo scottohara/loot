@@ -15,7 +15,7 @@ module DB
 			# Mixin factory bot syntax
 			include ::FactoryBot::Syntax::Methods
 
-			def create_test_data(name, &block)
+			def create_test_data(name, &)
 				namespace :db do
 					namespace :e2e do
 						desc "Load data for #{name} e2e tests"
@@ -27,7 +27,7 @@ module DB
 							::DatabaseCleaner.clean_with :truncation
 
 							# Create new data
-							instance_exec(*args[:args]&.split(','), &block)
+							instance_exec(*args[:args]&.split(','), &)
 						end
 					end
 				end
