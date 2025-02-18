@@ -45,10 +45,10 @@ class SecurityTransaction < Transaction
 	end
 
 	def validate_presence(attr)
-		errors.add :base, "#{attr.capitalize} can't be blank" if instance_eval "header.#{attr}.blank?", __FILE__, __LINE__ # e.g. header.quantity.blank?
+		errors.add :base, "#{attr.capitalize} can't be blank" if header.public_send(attr).blank? # e.g. header.quantity.blank?
 	end
 
 	def validate_absence(attr)
-		errors.add :base, "#{attr.capitalize} must be blank" unless instance_eval "header.#{attr}.blank?", __FILE__, __LINE__ # e.g. header.quantity.blank?
+		errors.add :base, "#{attr.capitalize} must be blank" if header.public_send(attr).present? # e.g. header.quantity.blank?
 	end
 end
