@@ -5,10 +5,5 @@
 class TransactionFlag < ApplicationRecord
 	belongs_to :trx, foreign_key: 'transaction_id', class_name: 'Transaction', inverse_of: :flag
 	self.primary_key = 'transaction_id'
-	enum :flag_type,
-						{
-							followup: 'followup',
-							noreceipt: 'noreceipt',
-							taxdeductible: 'taxdeductible'
-						}
+	enum :flag_type, %w[followup noreceipt taxdeductible].index_by(&:to_sym)
 end
