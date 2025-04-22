@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
-ARG NODE_VERSION
-ARG RUBY_VERSION
+ARG NODE_VERSION=error-version-not-specified
+ARG RUBY_VERSION=error-version-not-specified
 
 ### Frontend ###
 
@@ -33,7 +33,8 @@ FROM ruby:${RUBY_VERSION}-alpine AS backend
 
 RUN apk add --no-cache \
 	build-base \
-	postgresql-dev
+	postgresql-dev \
+	yaml-dev
 
 WORKDIR /build
 ENV RACK_ENV=production
@@ -43,11 +44,11 @@ COPY --link \
 	Gemfile* ./
 
 RUN --mount=type=cache,id=loot-bundler,target=tmp/vendor/bundle \
-	bundle config set --local without development:test; \
-	bundle config set --local deployment true; \
-	bundle config set --local clean true;\
-	bundle config set --local path tmp/vendor/bundle; \
-	bundle install --jobs=4; \
+	bundle config set --local without development:test && \
+	bundle config set --local deployment true && \
+	bundle config set --local clean true &&\
+	bundle config set --local path tmp/vendor/bundle && \
+	bundle install --jobs=4 && \
 	cp -a tmp/vendor ./;
 
 ### App ###
@@ -66,7 +67,7 @@ ENV RAILS_ENV=production
 ENV TZ=Australia/Sydney
 
 RUN \
-	bundle config set --local without development:test; \
+	bundle config set --local without development:test && \
 	bundle config set --local deployment true;
 
 COPY --link --chown=100 \

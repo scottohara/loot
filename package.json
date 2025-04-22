@@ -92,7 +92,8 @@
     "deploy": "fly deploy --build-arg NODE_VERSION=$npm_package_engines_node --build-arg NPM_VERSION=$npm_package_engines_npm --build-arg RUBY_VERSION=$npm_package_engines_ruby",
     "deploy:staging": "npm run deploy -- --app loottest",
     "deploy:production": "npm run deploy -- --app lootprod",
-    "swap:check": "fly ssh console --command 'free'"
+    "swap:check": "fly ssh console --command 'free'",
+    "docker:build": "docker build --build-arg NODE_VERSION=$npm_package_engines_node --build-arg NPM_VERSION=$npm_package_engines_npm --build-arg RUBY_VERSION=$npm_package_engines_ruby --tag loot ."
   },
   "engines": {
     "node": "22.14.0",
