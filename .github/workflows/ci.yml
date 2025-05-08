@@ -2,12 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 env:
   # CodeClimate only shows coverage for the default branch
-  # As this action is only triggered by tags, assume the branch is 'master'
-  GIT_BRANCH: master
+  # As this action is only triggered by tags, assume the branch is 'main'
+  GIT_BRANCH: main
   CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
 
 jobs:
