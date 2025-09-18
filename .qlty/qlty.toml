@@ -38,9 +38,6 @@ name = "radarlint"
 name = "ripgrep"
 
 [[plugin]]
-name = "semgrep"
-
-[[plugin]]
 name = "shellcheck"
 
 [[plugin]]
