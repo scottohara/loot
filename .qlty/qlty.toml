@@ -17,9 +17,6 @@ name = "checkov"
 name = "dotenv-linter"
 
 [[plugin]]
-name = "eslint"
-
-[[plugin]]
 name = "gitleaks"
 
 [[plugin]]
@@ -41,9 +38,6 @@ name = "radarlint"
 name = "ripgrep"
 
 [[plugin]]
-name = "rubocop"
-
-[[plugin]]
 name = "semgrep"
 
 [[plugin]]
@@ -54,9 +48,6 @@ name = "shfmt"
 
 [[plugin]]
 name = "sqlfluff"
-
-[[plugin]]
-name = "stylelint"
 
 [[plugin]]
 name = "trivy"
