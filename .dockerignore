@@ -1,6 +1,7 @@
 .bundle
 .git
 .github
+.qlty
 .vscode
 bin
 config/environments/development.rb
@@ -19,7 +20,6 @@ spec
 tmp
 vendor
 **/*~
-.codeclimate.yml
 .DS_Store
 .dccache
 .editorconfig

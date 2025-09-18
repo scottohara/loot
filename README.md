@@ -1,8 +1,8 @@
 | Service        | Status                                                                                                                                                                         |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | GitHub         | [![Build Status](https://github.com/scottohara/loot/workflows/CI/badge.svg)](https://github.com/scottohara/loot/actions?workflow=CI)                                           |
-| Code Climate   | [![Code Climate](https://codeclimate.com/github/scottohara/loot/badges/gpa.svg)](https://codeclimate.com/github/scottohara/loot)                                               |
-| Code Climate   | [![Test Coverage](https://codeclimate.com/github/scottohara/loot/badges/coverage.svg)](https://codeclimate.com/github/scottohara/loot)                                         |
+| Qlty           | [![Maintainability](https://qlty.sh/gh/scottohara/projects/loot/maintainability.svg)](https://qlty.sh/gh/scottohara/projects/loot)                                             |
+| Qlty           | [![Code Coverage](https://qlty.sh/gh/scottohara/projects/loot/coverage.svg)](https://qlty.sh/gh/scottohara/projects/loot)                                                      |
 | Snyk (npm)     | [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg)](https://snyk.io/test/github/scottohara/loot)                                                 |
 | Snyk (Gemfile) | [![Known Vulnerabilities](https://snyk.io/test/github/scottohara/loot/badge.svg?targetFile=Gemfile.lock)](https://snyk.io/test/github/scottohara/loot?targetFile=Gemfile.lock) |
 

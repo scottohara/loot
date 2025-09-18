@@ -4,26 +4,11 @@ on:
   push:
     branches: [main]
 
-env:
-  # CodeClimate only shows coverage for the default branch
-  # As this action is only triggered by tags, assume the branch is 'main'
-  GIT_BRANCH: main
-  CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
-  setup:
-    name: Setup test coverage reporting
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download CodeClimate test reporter
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-
-      - name: Notify CodeClimate of a pending report
-        run: ./cc-test-reporter before-build
-
   frontend:
     name: Test and lint frontend
     needs: setup
@@ -45,11 +30,15 @@ jobs:
       - name: Lint and test
         run: npm test
 
-      - name: Upload test coverage artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload test coverage
+        uses: qltysh/qlty-action/coverage@v2
         with:
-          name: lcov.info
-          path: coverage/frontend/lcov.info
+          oidc: true
+          tag: frontend
+          files: coverage/frontend/lcov.info
+          skip-errors: false
+          validate: true
+          validate-file-threshold: 100
 
   backend:
     name: Lint and test backend
@@ -88,46 +77,12 @@ jobs:
       - name: Test
         run: bundle exec rake
 
-      - name: Upload test coverage artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload test coverage
+        uses: qltysh/qlty-action/coverage@v2
         with:
-          name: coverage.json
-          path: coverage/backend/coverage.json
-
-  report:
-    name: Send coverage report to CodeClimate
-    needs: [frontend, backend]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download CodeClimate test reporter
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-
-      - name: Download frontend test coverage artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: lcov.info
-          path: coverage/frontend
-
-      - name: Download backend test coverage artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage.json
-          path: coverage/backend
-
-      - name: Format backend coverage
-        run: ./cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.backend.json coverage/backend/coverage.json
-
-      - name: Format frontend coverage
-        run: ./cc-test-reporter format-coverage --input-type lcov --output coverage/codeclimate.frontend.json coverage/frontend/lcov.info
-
-      - name: Merge backend and frontend coverage
-        run: ./cc-test-reporter sum-coverage --parts 2 coverage/codeclimate.*.json
-
-      - name: Upload coverage report
-        run: ./cc-test-reporter upload-coverage
+          oidc: true
+          tag: backend
+          files: coverage/backend/coverage.json
+          skip-errors: false
+          validate: true
+          validate-file-threshold: 100
