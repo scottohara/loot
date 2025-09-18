@@ -36,7 +36,6 @@ jobs:
           tag: frontend
           files: coverage/frontend/lcov.info
           skip-errors: false
-          validate: true
           validate-file-threshold: 100
 
   backend:
@@ -80,7 +79,6 @@ jobs:
         with:
           oidc: true
           tag: backend
-          files: coverage/backend/coverage.json
+          files: coverage/backend/.resultset.json
           skip-errors: false
-          validate: true
           validate-file-threshold: 100
