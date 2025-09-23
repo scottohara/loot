@@ -40,7 +40,7 @@
     "copy-webpack-plugin": "13.0.1",
     "coverage-istanbul-loader": "3.0.5",
     "css-loader": "7.1.2",
-    "cypress": "15.2.0",
+    "cypress": "15.3.0",
     "eslint": "9.16.0",
     "eslint-config-oharagroup": "5.1.0",
     "html-loader": "5.1.0",
