@@ -57,9 +57,9 @@ FROM ruby:${RUBY_VERSION}-alpine AS app
 
 RUN apk add --no-cache \
 	libpq \
-	tzdata
+	tzdata; \
+	adduser --system --uid 100 loot
 
-RUN adduser --system --uid 100 loot
 USER loot
 WORKDIR /loot
 ENV RACK_ENV=production
@@ -85,3 +85,5 @@ COPY --link --chown=100 --from=frontend build/public public/
 EXPOSE 3000
 
 CMD ["bundle", "exec", "puma"]
+
+HEALTHCHECK NONE

@@ -1,0 +1,4 @@
+---
+ignored:
+  # Pin versions in apk add
+  - DL3018
