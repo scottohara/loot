@@ -35,28 +35,17 @@ export default class ScheduleIndexController {
 		ogModalErrorService: OgModalErrorService,
 		public readonly schedules: ScheduledTransaction[],
 	) {
-		const self: this = this;
-
 		this.tableActions = {
-			selectAction(index: number): void {
-				self.editSchedule(index);
-			},
-			editAction(index: number): void {
-				self.editSchedule(index);
-			},
-			insertAction(): void {
-				self.editSchedule();
-			},
-			deleteAction(index: number): void {
-				self.deleteSchedule(index);
-			},
-			focusAction(index: number): void {
+			selectAction: (index: number): void => this.editSchedule(index),
+			editAction: (index: number): void => this.editSchedule(index),
+			insertAction: (): void => this.editSchedule(),
+			deleteAction: (index: number): void => this.deleteSchedule(index),
+			focusAction: (index: number): angular.IPromise<void> =>
 				$state
 					.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, {
-						id: self.schedules[index].id,
+						id: this.schedules[index].id,
 					})
-					.catch(self.showError);
-			},
+					.catch(this.showError),
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);

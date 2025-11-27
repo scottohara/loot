@@ -33,6 +33,7 @@
 
 		// Language and Environment
 		"lib": ["DOM", "ES2024", "WebWorker"],
+		"libReplacement": false,
 		"target": "es2024",
 
 		// Compiler Diagnostics

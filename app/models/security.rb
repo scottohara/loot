@@ -94,8 +94,8 @@ class Security < ApplicationRecord
 						name: security['name'],
 						code: security['code'],
 						favourite: security['favourite'],
-						current_holding: security['current_holding'],
-						closing_balance: security['closing_balance'],
+						current_holding: security['current_holding'].to_f,
+						closing_balance: security['closing_balance'].to_f,
 						unused: false
 					}
 				end

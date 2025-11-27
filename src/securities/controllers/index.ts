@@ -31,35 +31,26 @@ export default class SecurityIndexController {
 		ogModalErrorService: OgModalErrorService,
 		public readonly securities: Security[],
 	) {
-		const self: this = this,
-			decimalPlaces = 2;
+		const decimalPlaces = 2;
 
 		this.totalValue = securities.reduce(
 			(memo: number, security: Security): number =>
-				memo + Number(Number(security.closing_balance).toFixed(decimalPlaces)),
+				memo + Number(security.closing_balance.toFixed(decimalPlaces)),
 			0,
 		);
 
 		this.tableActions = {
-			selectAction(): void {
-				$state.go(".transactions").catch(self.showError);
-			},
-			editAction(index: number): void {
-				self.editSecurity(index);
-			},
-			insertAction(): void {
-				self.editSecurity();
-			},
-			deleteAction(index: number): void {
-				self.deleteSecurity(index);
-			},
-			focusAction(index: number): void {
+			selectAction: (): angular.IPromise<void> =>
+				$state.go(".transactions").catch(this.showError),
+			editAction: (index: number): void => this.editSecurity(index),
+			insertAction: (): void => this.editSecurity(),
+			deleteAction: (index: number): void => this.deleteSecurity(index),
+			focusAction: (index: number): angular.IPromise<void> =>
 				$state
 					.go(`${$state.includes("**.security") ? "^" : ""}.security`, {
-						id: self.securities[index].id,
+						id: this.securities[index].id,
 					})
-					.catch(self.showError);
-			},
+					.catch(this.showError),
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -80,7 +71,7 @@ export default class SecurityIndexController {
 		);
 	}
 
-	public editSecurity(index?: number): void {
+	private editSecurity(index?: number): void {
 		// Helper function to sort by security current holding and name
 		function byHoldingAndName(a: Security, b: Security): number {
 			let x: boolean, y: boolean;
@@ -148,7 +139,7 @@ export default class SecurityIndexController {
 			.catch(this.showError);
 	}
 
-	public deleteSecurity(index: number): void {
+	private deleteSecurity(index: number): void {
 		// Check if the security can be deleted
 		this.securityModel
 			.find(Number(this.securities[index].id))

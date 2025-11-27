@@ -203,22 +203,22 @@ export default class ScheduleEditController {
 				// For the category dropdown, include psuedo-categories that change the transaction type
 				if (undefined === parent || null === parent) {
 					if (includeSplits) {
-						psuedoCategories = (
-							[
-								{ id: "SplitTo", name: "Split To" },
-								{ id: "SplitFrom", name: "Split From" },
-								{ id: "Payslip", name: "Payslip" },
-								{ id: "LoanRepayment", name: "Loan Repayment" },
-							] as DisplayCategory[]
-						).concat(psuedoCategories);
+						const splitCategories: DisplayCategory[] = [
+							{ id: "SplitTo", name: "Split To" },
+							{ id: "SplitFrom", name: "Split From" },
+							{ id: "Payslip", name: "Payslip" },
+							{ id: "LoanRepayment", name: "Loan Repayment" },
+						];
+
+						psuedoCategories = splitCategories.concat(psuedoCategories);
 					}
 
-					psuedoCategories = (
-						[
-							{ id: "TransferTo", name: "Transfer To" },
-							{ id: "TransferFrom", name: "Transfer From" },
-						] as DisplayCategory[]
-					).concat(psuedoCategories);
+					const transferCategories: DisplayCategory[] = [
+						{ id: "TransferTo", name: "Transfer To" },
+						{ id: "TransferFrom", name: "Transfer From" },
+					];
+
+					psuedoCategories = transferCategories.concat(psuedoCategories);
 				}
 
 				return this.limitToFilter(
@@ -613,11 +613,11 @@ export default class ScheduleEditController {
 		if ("SecurityInvestment" === this.transaction.transaction_type) {
 			// Base amount is the quantity multiplied by the price
 			const amount = Number(
-					(
-						Number(this.transaction.quantity) * Number(this.transaction.price)
-					).toFixed(AMOUNT_DECIMAL_PLACES),
+					(this.transaction.quantity * this.transaction.price).toFixed(
+						AMOUNT_DECIMAL_PLACES,
+					),
 				),
-				commission = Number(this.transaction.commission);
+				{ commission } = this.transaction;
 
 			this.transaction.amount = isNaN(amount) ? 0 : amount;
 
@@ -635,14 +635,14 @@ export default class ScheduleEditController {
 			"SecurityInvestment" === this.transaction.transaction_type
 		) {
 			const quantity: string =
-					Number(this.transaction.quantity) > 0
+					this.transaction.quantity > 0
 						? this.numberFilter(
 								this.transaction.quantity,
 								QUANTITY_DECIMAL_PLACES,
 							)
 						: "",
 				price: string =
-					Number(this.transaction.price) > 0
+					this.transaction.price > 0
 						? ` @ ${this.currencyFilter(
 								this.transaction.price,
 								undefined,
@@ -650,7 +650,7 @@ export default class ScheduleEditController {
 							)}`
 						: "",
 				commission: string =
-					Number(this.transaction.commission) > 0
+					this.transaction.commission > 0
 						? ` (${
 								"inflow" === this.transaction.direction ? "plus" : "less"
 							} ${this.currencyFilter(this.transaction.commission)} commission)`

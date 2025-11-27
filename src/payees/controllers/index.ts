@@ -28,28 +28,18 @@ export default class PayeeIndexController {
 		ogModalErrorService: OgModalErrorService,
 		public readonly payees: Payee[],
 	) {
-		const self: this = this;
-
 		this.tableActions = {
-			selectAction(): void {
-				$state.go(".transactions").catch(self.showError);
-			},
-			editAction(index: number): void {
-				self.editPayee(index);
-			},
-			insertAction(): void {
-				self.editPayee();
-			},
-			deleteAction(index: number): void {
-				self.deletePayee(index);
-			},
-			focusAction(index: number): void {
+			selectAction: (): angular.IPromise<void> =>
+				$state.go(".transactions").catch(this.showError),
+			editAction: (index: number): void => this.editPayee(index),
+			insertAction: (): void => this.editPayee(),
+			deleteAction: (index: number): void => this.deletePayee(index),
+			focusAction: (index: number): angular.IPromise<void> =>
 				$state
 					.go(`${$state.includes("**.payee") ? "^" : ""}.payee`, {
-						id: self.payees[index].id,
+						id: this.payees[index].id,
 					})
-					.catch(self.showError);
-			},
+					.catch(this.showError),
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -70,7 +60,7 @@ export default class PayeeIndexController {
 		);
 	}
 
-	public editPayee(index?: number): void {
+	private editPayee(index?: number): void {
 		// Helper function to sort by payee name
 		function byName(a: Payee, b: Payee): number {
 			return a.name.localeCompare(b.name);
@@ -124,7 +114,7 @@ export default class PayeeIndexController {
 			.catch(this.showError);
 	}
 
-	public deletePayee(index: number): void {
+	private deletePayee(index: number): void {
 		// Check if the payee can be deleted
 		this.payeeModel
 			.find(Number(this.payees[index].id))

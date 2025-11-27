@@ -98,8 +98,6 @@ export default class TransactionIndexController {
 		public readonly context: Entity | string,
 		public readonly transactionBatch: TransactionBatch,
 	) {
-		const self: this = this;
-
 		this.contextType = contextModel?.type;
 		this.firstTransactionDate = this.today;
 		this.lastTransactionDate = this.today;
@@ -110,35 +108,28 @@ export default class TransactionIndexController {
 			accountModel.isUnreconciledOnly(Number((this.context as Entity).id));
 
 		this.tableActions = {
-			selectAction(index: number): void {
-				if (self.reconciling) {
+			selectAction: (index: number): void => {
+				if (this.reconciling) {
 					// When reconciling, select action is to toggle the cleared status
-					const transaction: Transaction = self.transactions[index];
+					const transaction: Transaction = this.transactions[index];
 
 					transaction.status =
 						"Cleared" === transaction.status ? "" : "Cleared";
-					self.toggleCleared(transaction);
+					this.toggleCleared(transaction);
 				} else {
 					// When not reconciling, select action is to edit the transaction
-					self.editTransaction(index);
+					this.editTransaction(index);
 				}
 			},
-			editAction(index: number): void {
-				self.editTransaction(index);
-			},
-			insertAction(): void {
-				self.editTransaction();
-			},
-			deleteAction(index: number): void {
-				self.deleteTransaction(index);
-			},
-			focusAction(index: number): void {
+			editAction: (index: number): void => this.editTransaction(index),
+			insertAction: (): void => this.editTransaction(),
+			deleteAction: (index: number): void => this.deleteTransaction(index),
+			focusAction: (index: number): angular.IPromise<void> =>
 				$state
 					.go(`${$state.includes("**.transaction") ? "^" : ""}.transaction`, {
-						transactionId: self.transactions[index].id,
+						transactionId: this.transactions[index].id,
 					})
-					.catch(self.showError);
-			},
+					.catch(this.showError),
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -653,7 +644,7 @@ export default class TransactionIndexController {
 					-1 ===
 					transaction.memo
 						.toLowerCase()
-						.indexOf(String(this.context as string).toLowerCase())
+						.indexOf((this.context as string).toLowerCase())
 				);
 		}
 
@@ -713,18 +704,16 @@ export default class TransactionIndexController {
 		) {
 			// If there was an original transaction, exclude it's amount from the closing balance
 			if (undefined !== originalTransaction) {
-				this.context.closing_balance =
-					Number(this.context.closing_balance) -
-					Number((originalTransaction as CashTransaction).amount) *
-						("inflow" === originalTransaction.direction ? 1 : -1);
+				this.context.closing_balance -=
+					(originalTransaction as CashTransaction).amount *
+					("inflow" === originalTransaction.direction ? 1 : -1);
 			}
 
 			// If there is a new transaction, include it's amount in the closing balance
 			if (undefined !== newTransaction) {
-				this.context.closing_balance =
-					Number(this.context.closing_balance) +
-					Number((newTransaction as CashTransaction).amount) *
-						("inflow" === newTransaction.direction ? 1 : -1);
+				this.context.closing_balance +=
+					(newTransaction as CashTransaction).amount *
+					("inflow" === newTransaction.direction ? 1 : -1);
 			}
 		}
 	}

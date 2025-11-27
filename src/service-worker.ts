@@ -1,9 +1,12 @@
 // No-op service worker used for development
-declare const self: ServiceWorkerGlobalScope;
+const worker = self as unknown as ServiceWorkerGlobalScope;
 
-self.addEventListener("install", async (): Promise<void> => self.skipWaiting());
+worker.addEventListener(
+	"install",
+	async (): Promise<void> => worker.skipWaiting(),
+);
 self.addEventListener("activate", (event: ExtendableEvent): void =>
-	event.waitUntil(self.clients.claim()),
+	event.waitUntil(worker.clients.claim()),
 );
 
 export default null;

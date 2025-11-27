@@ -1,7 +1,7 @@
+import { defineConfig } from "eslint/config";
 import oharagroup from "eslint-config-oharagroup";
-import tseslint from "typescript-eslint";
 
-export default tseslint.config(
+export default defineConfig(
 	...oharagroup.ts,
 	{
 		name: "loot/base",

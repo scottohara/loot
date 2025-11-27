@@ -10,7 +10,7 @@ export default class OgNavigatorServiceWorkerService {
 					) as unknown,
 				(error: unknown): unknown =>
 					this.$window.console.log(
-						`ServiceWorker registration failed: ${String(error)}`,
+						`ServiceWorker registration failed: ${error as string}`,
 					) as unknown,
 			);
 		}

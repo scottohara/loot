@@ -31,8 +31,6 @@ export default class CategoryIndexController {
 		ogModalErrorService: OgModalErrorService,
 		categories: Category[],
 	) {
-		const self: this = this;
-
 		this.categories = angular
 			.copy(categories)
 			.reduce((flattened: Category[], category: Category): Category[] => {
@@ -44,25 +42,17 @@ export default class CategoryIndexController {
 			}, []);
 
 		this.tableActions = {
-			selectAction(): void {
-				$state.go(".transactions").catch(self.showError);
-			},
-			editAction(index: number): void {
-				self.editCategory(index);
-			},
-			insertAction(): void {
-				self.editCategory();
-			},
-			deleteAction(index: number): void {
-				self.deleteCategory(index);
-			},
-			focusAction(index: number): void {
+			selectAction: (): angular.IPromise<void> =>
+				$state.go(".transactions").catch(this.showError),
+			editAction: (index: number): void => this.editCategory(index),
+			insertAction: (): void => this.editCategory(),
+			deleteAction: (index: number): void => this.deleteCategory(index),
+			focusAction: (index: number): angular.IPromise<void> =>
 				$state
 					.go(`${$state.includes("**.category") ? "^" : ""}.category`, {
-						id: self.categories[index].id,
+						id: this.categories[index].id,
 					})
-					.catch(self.showError);
-			},
+					.catch(this.showError),
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -83,7 +73,7 @@ export default class CategoryIndexController {
 		);
 	}
 
-	public editCategory(index?: number): void {
+	private editCategory(index?: number): void {
 		// Helper function to sort by direction, then by category name, then by subcategory name
 		function byDirectionAndName(a: Category, b: Category): number {
 			let x: string, y: string;
@@ -187,7 +177,7 @@ export default class CategoryIndexController {
 			.catch(this.showError);
 	}
 
-	public deleteCategory(index: number): void {
+	private deleteCategory(index: number): void {
 		// Check if the category can be deleted
 		this.categoryModel
 			.find(Number(this.categories[index].id))
@@ -252,10 +242,7 @@ export default class CategoryIndexController {
 						// Remove the category (and any children) from the array
 						this.categories.splice(
 							index,
-							1 +
-								(undefined === this.categories[index].num_children
-									? 0
-									: Number(this.categories[index].num_children)),
+							1 + (this.categories[index].num_children ?? 0),
 						);
 
 						// Go back to the parent state

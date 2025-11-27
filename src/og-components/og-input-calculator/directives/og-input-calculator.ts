@@ -93,10 +93,10 @@ export default class OgInputCalculatorDirective {
 					// Perform the calculation
 					scope.calculate = (value: string): void => {
 						// Default the result to the current view value
-						scope.result = Number(scope.ogInput.formattedToRaw(value));
+						scope.result = scope.ogInput.formattedToRaw(value);
 
 						// Make the current view value available on the scope
-						scope.current = scope.ogInput.rawToFormatted(Number(scope.result));
+						scope.current = scope.ogInput.rawToFormatted(scope.result);
 
 						if (scope.stack.length > 1) {
 							scope.result = Number(

@@ -142,12 +142,12 @@ describe("CategoryIndexController", (): void => {
 		});
 
 		it("should disable navigation on the table", (): void => {
-			categoryIndexController.editCategory();
+			categoryIndexController["editCategory"]();
 			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
-			beforeEach((): void => categoryIndexController.editCategory(1));
+			beforeEach((): void => categoryIndexController["editCategory"](1));
 
 			it("should open the edit category modal with a category", (): void => {
 				expect($uibModal.open).to.have.been.called;
@@ -261,7 +261,7 @@ describe("CategoryIndexController", (): void => {
 					name: "new category",
 					direction: "outflow",
 				});
-				categoryIndexController.editCategory();
+				categoryIndexController["editCategory"]();
 			});
 
 			it("should open the edit category modal without a category", (): void => {
@@ -327,7 +327,7 @@ describe("CategoryIndexController", (): void => {
 				categoryIndexController.categories[13],
 			);
 
-			categoryIndexController.editCategory();
+			categoryIndexController["editCategory"]();
 			$uibModal.close(category);
 			expect(
 				categoryIndexController.categories.pop() as Category,
@@ -335,7 +335,7 @@ describe("CategoryIndexController", (): void => {
 		});
 
 		it("should focus the category when the modal is closed", (): void => {
-			categoryIndexController.editCategory();
+			categoryIndexController["editCategory"]();
 			$uibModal.close(category);
 			expect(categoryIndexController["focusCategory"]).to.have.been.calledWith(
 				category.id,
@@ -347,7 +347,7 @@ describe("CategoryIndexController", (): void => {
 				categoryIndexController.categories,
 			);
 
-			categoryIndexController.editCategory();
+			categoryIndexController["editCategory"]();
 			$uibModal.dismiss();
 			expect(categoryIndexController.categories).to.deep.equal(
 				originalCategories,
@@ -355,13 +355,13 @@ describe("CategoryIndexController", (): void => {
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
-			categoryIndexController.editCategory();
+			categoryIndexController["editCategory"]();
 			$uibModal.close(category);
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
-			categoryIndexController.editCategory();
+			categoryIndexController["editCategory"]();
 			$uibModal.dismiss();
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
@@ -376,17 +376,17 @@ describe("CategoryIndexController", (): void => {
 		);
 
 		it("should fetch the category", (): void => {
-			categoryIndexController.deleteCategory(3);
+			categoryIndexController["deleteCategory"](3);
 			expect(categoryModel.find).to.have.been.calledWith(category.id);
 		});
 
 		it("should disable navigation on the table", (): void => {
-			categoryIndexController.deleteCategory(3);
+			categoryIndexController["deleteCategory"](3);
 			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should show an alert if the category has transactions", (): void => {
-			categoryIndexController.deleteCategory(6);
+			categoryIndexController["deleteCategory"](6);
 			expect($uibModal.open).to.have.been.called;
 			expect(
 				(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert)
@@ -395,7 +395,7 @@ describe("CategoryIndexController", (): void => {
 		});
 
 		it("should show the delete category modal if the category has no transactions", (): void => {
-			categoryIndexController.deleteCategory(3);
+			categoryIndexController["deleteCategory"](3);
 			expect($uibModal.open).to.have.been.called;
 			expect(
 				($uibModal.resolves as UibModalMockResolves).category as Category,
@@ -403,7 +403,7 @@ describe("CategoryIndexController", (): void => {
 		});
 
 		it("should decrement the parent's children count for a subcategory", (): void => {
-			categoryIndexController.deleteCategory(1);
+			categoryIndexController["deleteCategory"](1);
 			$uibModal.close(category);
 			expect(
 				Number(categoryIndexController.categories[0].num_children),
@@ -417,7 +417,7 @@ describe("CategoryIndexController", (): void => {
 			);
 
 			originalCategories.splice(9, 1);
-			categoryIndexController.deleteCategory(9);
+			categoryIndexController["deleteCategory"](9);
 			$uibModal.close(category);
 			expect(categoryIndexController.categories).to.deep.equal(
 				originalCategories,
@@ -431,7 +431,7 @@ describe("CategoryIndexController", (): void => {
 			);
 
 			originalCategories.splice(9, 1);
-			categoryIndexController.deleteCategory(9);
+			categoryIndexController["deleteCategory"](9);
 			$uibModal.close(category);
 			expect(categoryIndexController.categories).to.deep.equal(
 				originalCategories,
@@ -442,7 +442,7 @@ describe("CategoryIndexController", (): void => {
 			const [, , , , child1, child2]: Category[] =
 				categoryIndexController.categories;
 
-			categoryIndexController.deleteCategory(3);
+			categoryIndexController["deleteCategory"](3);
 			$uibModal.close(category);
 			expect(categoryIndexController.categories).to.not.include(category);
 			expect(categoryIndexController.categories).to.not.include(child1);
@@ -451,25 +451,25 @@ describe("CategoryIndexController", (): void => {
 
 		it("should remove a subcategory from the categories list when the modal is closed", (): void => {
 			[, category] = categoryIndexController.categories;
-			categoryIndexController.deleteCategory(1);
+			categoryIndexController["deleteCategory"](1);
 			$uibModal.close(category);
 			expect(categoryIndexController.categories).to.not.include(category);
 		});
 
 		it("should transition to the categories list when the modal is closed", (): void => {
-			categoryIndexController.deleteCategory(3);
+			categoryIndexController["deleteCategory"](3);
 			$uibModal.close(category);
 			expect($state.go).to.have.been.calledWith("root.categories");
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
-			categoryIndexController.deleteCategory(3);
+			categoryIndexController["deleteCategory"](3);
 			$uibModal.close(category);
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
-			categoryIndexController.deleteCategory(3);
+			categoryIndexController["deleteCategory"](3);
 			$uibModal.dismiss();
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
@@ -509,7 +509,10 @@ describe("CategoryIndexController", (): void => {
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the category", (): void => {
-			sinon.stub(categoryIndexController, "editCategory");
+			sinon.stub(
+				categoryIndexController,
+				"editCategory" as keyof CategoryIndexController,
+			);
 			categoryIndexController.tableActions.editAction(1);
 			expect(
 				categoryIndexController["editCategory"],
@@ -519,7 +522,10 @@ describe("CategoryIndexController", (): void => {
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a category", (): void => {
-			sinon.stub(categoryIndexController, "editCategory");
+			sinon.stub(
+				categoryIndexController,
+				"editCategory" as keyof CategoryIndexController,
+			);
 			categoryIndexController.tableActions.insertAction();
 			expect(
 				categoryIndexController["editCategory"],
@@ -529,7 +535,10 @@ describe("CategoryIndexController", (): void => {
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a category", (): void => {
-			sinon.stub(categoryIndexController, "deleteCategory");
+			sinon.stub(
+				categoryIndexController,
+				"deleteCategory" as keyof CategoryIndexController,
+			);
 			categoryIndexController.tableActions.deleteAction(1);
 			expect(
 				categoryIndexController["deleteCategory"],

@@ -268,7 +268,7 @@ describe("TransactionIndexController", (): void => {
 					)
 					.returns(false);
 				transactionIndexController["editTransaction"](1);
-				expect(Boolean(ogTableNavigableService.enabled)).to.be.true;
+				expect(ogTableNavigableService.enabled).to.be.true;
 				expect($uibModal.open).to.not.have.been.called;
 			});
 
@@ -428,14 +428,11 @@ describe("TransactionIndexController", (): void => {
 			});
 
 			it("should update the closing balance when the modal is closed", (): void => {
-				// No original transaction, leave uninitialised
-				let originalTransaction;
-
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(newTransaction as Transaction);
 				expect(
 					transactionIndexController["updateClosingBalance"],
-				).to.have.been.calledWith(originalTransaction, newTransaction);
+				).to.have.been.calledWith(undefined, newTransaction);
 			});
 
 			it("should add the new transaction to the list of transactions when the modal is closed", (): void => {
@@ -708,7 +705,7 @@ describe("TransactionIndexController", (): void => {
 				)
 				.returns(false);
 			transactionIndexController["deleteTransaction"](1);
-			expect(Boolean(ogTableNavigableService.enabled)).to.be.true;
+			expect(ogTableNavigableService.enabled).to.be.true;
 			expect($uibModal.open).to.not.have.been.called;
 		});
 

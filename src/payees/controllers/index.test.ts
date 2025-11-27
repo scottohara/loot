@@ -130,12 +130,12 @@ describe("PayeeIndexController", (): void => {
 		});
 
 		it("should disable navigation on the table", (): void => {
-			payeeIndexController.editPayee();
+			payeeIndexController["editPayee"]();
 			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
-			beforeEach((): void => payeeIndexController.editPayee(1));
+			beforeEach((): void => payeeIndexController["editPayee"](1));
 
 			it("should open the edit payee modal with a payee", (): void => {
 				expect($uibModal.open).to.have.been.called;
@@ -158,7 +158,7 @@ describe("PayeeIndexController", (): void => {
 					id: 999,
 					name: "new payee",
 				});
-				payeeIndexController.editPayee();
+				payeeIndexController["editPayee"]();
 			});
 
 			it("should open the edit payee modal without a payee", (): void => {
@@ -184,7 +184,7 @@ describe("PayeeIndexController", (): void => {
 				payeeIndexController.payees[2],
 			);
 
-			payeeIndexController.editPayee();
+			payeeIndexController["editPayee"]();
 			$uibModal.close(payee);
 			expect(payeeIndexController.payees.pop() as Payee).to.deep.equal(
 				payeeWithHighestName,
@@ -192,7 +192,7 @@ describe("PayeeIndexController", (): void => {
 		});
 
 		it("should focus the payee when the modal is closed", (): void => {
-			payeeIndexController.editPayee();
+			payeeIndexController["editPayee"]();
 			$uibModal.close(payee);
 			expect(payeeIndexController["focusPayee"]).to.have.been.calledWith(
 				payee.id,
@@ -202,19 +202,19 @@ describe("PayeeIndexController", (): void => {
 		it("should not change the payees list when the modal is dismissed", (): void => {
 			const originalPayees = angular.copy(payeeIndexController.payees);
 
-			payeeIndexController.editPayee();
+			payeeIndexController["editPayee"]();
 			$uibModal.dismiss();
 			expect(payeeIndexController.payees).to.deep.equal(originalPayees);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
-			payeeIndexController.editPayee();
+			payeeIndexController["editPayee"]();
 			$uibModal.close(payee);
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
-			payeeIndexController.editPayee();
+			payeeIndexController["editPayee"]();
 			$uibModal.dismiss();
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
@@ -228,17 +228,17 @@ describe("PayeeIndexController", (): void => {
 		);
 
 		it("should fetch the payee", (): void => {
-			payeeIndexController.deletePayee(1);
+			payeeIndexController["deletePayee"](1);
 			expect(payeeModel.find).to.have.been.calledWith(payee.id);
 		});
 
 		it("should disable navigation on the table", (): void => {
-			payeeIndexController.deletePayee(1);
+			payeeIndexController["deletePayee"](1);
 			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should show an alert if the payee has transactions", (): void => {
-			payeeIndexController.deletePayee(2);
+			payeeIndexController["deletePayee"](2);
 			expect($uibModal.open).to.have.been.called;
 			expect(
 				(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert)
@@ -247,7 +247,7 @@ describe("PayeeIndexController", (): void => {
 		});
 
 		it("should show the delete payee modal if the payee has no transactions", (): void => {
-			payeeIndexController.deletePayee(1);
+			payeeIndexController["deletePayee"](1);
 			expect($uibModal.open).to.have.been.called;
 			expect(
 				($uibModal.resolves as UibModalMockResolves).payee as Payee,
@@ -255,25 +255,25 @@ describe("PayeeIndexController", (): void => {
 		});
 
 		it("should remove the payee from the payees list when the modal is closed", (): void => {
-			payeeIndexController.deletePayee(1);
+			payeeIndexController["deletePayee"](1);
 			$uibModal.close(payee);
 			expect(payeeIndexController.payees).to.not.include(payee);
 		});
 
 		it("should transition to the payees list when the modal is closed", (): void => {
-			payeeIndexController.deletePayee(1);
+			payeeIndexController["deletePayee"](1);
 			$uibModal.close(payee);
 			expect($state.go).to.have.been.calledWith("root.payees");
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
-			payeeIndexController.deletePayee(1);
+			payeeIndexController["deletePayee"](1);
 			$uibModal.close(payee);
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
-			payeeIndexController.deletePayee(1);
+			payeeIndexController["deletePayee"](1);
 			$uibModal.dismiss();
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
@@ -311,7 +311,10 @@ describe("PayeeIndexController", (): void => {
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the payee", (): void => {
-			sinon.stub(payeeIndexController, "editPayee");
+			sinon.stub(
+				payeeIndexController,
+				"editPayee" as keyof PayeeIndexController,
+			);
 			payeeIndexController.tableActions.editAction(1);
 			expect(payeeIndexController["editPayee"]).to.have.been.calledWithExactly(
 				1,
@@ -321,7 +324,10 @@ describe("PayeeIndexController", (): void => {
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a payee", (): void => {
-			sinon.stub(payeeIndexController, "editPayee");
+			sinon.stub(
+				payeeIndexController,
+				"editPayee" as keyof PayeeIndexController,
+			);
 			payeeIndexController.tableActions.insertAction();
 			expect(
 				payeeIndexController["editPayee"],
@@ -331,7 +337,10 @@ describe("PayeeIndexController", (): void => {
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a payee", (): void => {
-			sinon.stub(payeeIndexController, "deletePayee");
+			sinon.stub(
+				payeeIndexController,
+				"deletePayee" as keyof PayeeIndexController,
+			);
 			payeeIndexController.tableActions.deleteAction(1);
 			expect(
 				payeeIndexController["deletePayee"],

@@ -21,9 +21,9 @@ export default class OgInputCurrencyController {
 	}
 
 	// Converts raw value to formatted value
-	public rawToFormatted(value: number): string {
+	public rawToFormatted(value: number | string | null): string {
 		const formatted: string = this.numberFilter(
-			isNaN(value) ? 0 : Number(value),
+			isNaN(Number(value)) ? 0 : Number(value),
 			this.decimalPlaces,
 		);
 

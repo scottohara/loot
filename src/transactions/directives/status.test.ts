@@ -108,9 +108,9 @@ describe("transactionStatus", (): void => {
 			tooltip: string;
 		}): void => {
 			if ("" === scenario.currentStatus) {
-				it(`should set the current status to 'Unreconciled' when the transaction status is ${String(
-					scenario.currentStatus,
-				)}`, (): void => {
+				it(`should set the current status to 'Unreconciled' when the transaction status is ${
+					scenario.currentStatus
+				}`, (): void => {
 					setup(scenario);
 					expect(String(isolateScope.currentStatus)).to.equal("Unreconciled");
 				});

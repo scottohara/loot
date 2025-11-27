@@ -133,12 +133,12 @@ describe("SecurityIndexController", (): void => {
 		});
 
 		it("should disable navigation on the table", (): void => {
-			securityIndexController.editSecurity();
+			securityIndexController["editSecurity"]();
 			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		describe("(edit existing)", (): void => {
-			beforeEach((): void => securityIndexController.editSecurity(1));
+			beforeEach((): void => securityIndexController["editSecurity"](1));
 
 			it("should open the edit security modal with a security", (): void => {
 				expect($uibModal.open).to.have.been.called;
@@ -158,7 +158,7 @@ describe("SecurityIndexController", (): void => {
 		describe("(add new)", (): void => {
 			beforeEach((): void => {
 				security = createSecurity({ id: 999, unused: true });
-				securityIndexController.editSecurity();
+				securityIndexController["editSecurity"]();
 			});
 
 			it("should open the edit security modal without a security", (): void => {
@@ -186,7 +186,7 @@ describe("SecurityIndexController", (): void => {
 				securityIndexController.securities[6],
 			);
 
-			securityIndexController.editSecurity();
+			securityIndexController["editSecurity"]();
 			$uibModal.close(security);
 			expect(
 				securityIndexController.securities.pop() as Security,
@@ -194,7 +194,7 @@ describe("SecurityIndexController", (): void => {
 		});
 
 		it("should focus the security when the modal is closed", (): void => {
-			securityIndexController.editSecurity();
+			securityIndexController["editSecurity"]();
 			$uibModal.close(security);
 			expect(securityIndexController["focusSecurity"]).to.have.been.calledWith(
 				security.id,
@@ -206,7 +206,7 @@ describe("SecurityIndexController", (): void => {
 				securityIndexController.securities,
 			);
 
-			securityIndexController.editSecurity();
+			securityIndexController["editSecurity"]();
 			$uibModal.dismiss();
 			expect(securityIndexController.securities).to.deep.equal(
 				originalSecurities,
@@ -214,13 +214,13 @@ describe("SecurityIndexController", (): void => {
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
-			securityIndexController.editSecurity();
+			securityIndexController["editSecurity"]();
 			$uibModal.close(security);
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
-			securityIndexController.editSecurity();
+			securityIndexController["editSecurity"]();
 			$uibModal.dismiss();
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
@@ -235,17 +235,17 @@ describe("SecurityIndexController", (): void => {
 		);
 
 		it("should fetch the security", (): void => {
-			securityIndexController.deleteSecurity(1);
+			securityIndexController["deleteSecurity"](1);
 			expect(securityModel.find).to.have.been.calledWith(security.id);
 		});
 
 		it("should disable navigation on the table", (): void => {
-			securityIndexController.deleteSecurity(1);
+			securityIndexController["deleteSecurity"](1);
 			expect(ogTableNavigableService.enabled).to.be.false;
 		});
 
 		it("should show an alert if the security has transactions", (): void => {
-			securityIndexController.deleteSecurity(2);
+			securityIndexController["deleteSecurity"](2);
 			expect($uibModal.open).to.have.been.called;
 			expect(
 				(($uibModal.resolves as UibModalMockResolves).alert as OgModalAlert)
@@ -254,7 +254,7 @@ describe("SecurityIndexController", (): void => {
 		});
 
 		it("should show the delete security modal if the security has no transactions", (): void => {
-			securityIndexController.deleteSecurity(1);
+			securityIndexController["deleteSecurity"](1);
 			expect($uibModal.open).to.have.been.called;
 			expect(
 				($uibModal.resolves as UibModalMockResolves).security as Security,
@@ -262,25 +262,25 @@ describe("SecurityIndexController", (): void => {
 		});
 
 		it("should remove the security from the securities list when the modal is closed", (): void => {
-			securityIndexController.deleteSecurity(1);
+			securityIndexController["deleteSecurity"](1);
 			$uibModal.close(security);
 			expect(securityIndexController.securities).to.not.include(security);
 		});
 
 		it("should transition to the securities list when the modal is closed", (): void => {
-			securityIndexController.deleteSecurity(1);
+			securityIndexController["deleteSecurity"](1);
 			$uibModal.close(security);
 			expect($state.go).to.have.been.calledWith("root.securities");
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
-			securityIndexController.deleteSecurity(1);
+			securityIndexController["deleteSecurity"](1);
 			$uibModal.close(security);
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
 
 		it("should enable navigation on the table when the modal is dimissed", (): void => {
-			securityIndexController.deleteSecurity(1);
+			securityIndexController["deleteSecurity"](1);
 			$uibModal.dismiss();
 			expect(ogTableNavigableService.enabled).to.be.true;
 		});
@@ -320,7 +320,10 @@ describe("SecurityIndexController", (): void => {
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the security", (): void => {
-			sinon.stub(securityIndexController, "editSecurity");
+			sinon.stub(
+				securityIndexController,
+				"editSecurity" as keyof SecurityIndexController,
+			);
 			securityIndexController.tableActions.editAction(1);
 			expect(
 				securityIndexController["editSecurity"],
@@ -330,7 +333,10 @@ describe("SecurityIndexController", (): void => {
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a security", (): void => {
-			sinon.stub(securityIndexController, "editSecurity");
+			sinon.stub(
+				securityIndexController,
+				"editSecurity" as keyof SecurityIndexController,
+			);
 			securityIndexController.tableActions.insertAction();
 			expect(
 				securityIndexController["editSecurity"],
@@ -340,7 +346,10 @@ describe("SecurityIndexController", (): void => {
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a security", (): void => {
-			sinon.stub(securityIndexController, "deleteSecurity");
+			sinon.stub(
+				securityIndexController,
+				"deleteSecurity" as keyof SecurityIndexController,
+			);
 			securityIndexController.tableActions.deleteAction(1);
 			expect(
 				securityIndexController["deleteSecurity"],
