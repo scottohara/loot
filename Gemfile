@@ -7,29 +7,29 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby file: '.tool-versions'
 
 # Web application framework
-gem 'rails', '8.0.1'
+gem 'rails', '8.1.2'
 
 # Database
-gem 'pg', '1.5.9'
+gem 'pg', '1.6.3'
 
 # App server
-gem 'puma', '6.6.0'
+gem 'puma', '7.2.0'
 
 # For JSON serialisation
-gem 'active_model_serializers', '0.10.15'
+gem 'active_model_serializers', '0.10.16'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '1.18.4', require: false
+gem 'bootsnap', '1.22.0', require: false
 
 group :development, :test do
 	# Cleans database on each test run
 	gem 'database_cleaner', '2.1.0'
 
 	# Test factories
-	gem 'factory_bot_rails', '6.4.4'
+	gem 'factory_bot_rails', '6.5.1'
 
 	# BDD testing framework
-	gem 'rspec-rails', '7.1.1'
+	gem 'rspec-rails', '8.0.2'
 
 	# Code coverage
 	gem 'simplecov', '0.22.0', require: false
@@ -62,8 +62,8 @@ group :development, :test do
 	gem 'rubocop-config-oharagroup', '2.5.0', require: false
 
 	# Debugging
-	gem 'debug', '1.10.0', require: 'debug/prelude'
+	gem 'debug', '1.11.1', require: 'debug/prelude'
 
 	# Static analysis for security vulnerabilities
-	gem 'brakeman', '7.0.0', require: false
+	gem 'brakeman', '8.0.2', require: false
 end

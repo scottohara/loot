@@ -75,10 +75,10 @@ require 'rails_helper'
 	end
 
 	context 'record invalid', :json, :request do
-		let(:expected_status) { :unprocessable_entity }
+		let(:expected_status) { :unprocessable_content }
 		let(:json) { "Name can't be blank, Direction is not included in the list" }
 
-		it('should respond with a JSON error message and a 422 Unprocessable Entity status') {} # Empty block
+		it('should respond with a JSON error message and a 422 Unprocessable Content status') {} # Empty block
 	end
 
 	context 'record not destroyed', :json, :request do
