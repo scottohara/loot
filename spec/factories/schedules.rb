@@ -3,7 +3,7 @@
 
 ::FactoryBot.define do
 	factory :schedule do
-		sequence(:next_due_date) { (::Date.parse('2013-12-31') + _1).to_s }
+		sequence(:next_due_date) { (::Date.parse('2013-12-31') + it).to_s }
 		frequency { 'Monthly' }
 		estimate { true }
 		auto_enter { true }

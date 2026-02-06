@@ -1,13 +1,11 @@
 ---
-require:
-  - rubocop-factory_bot
-  - rubocop-rspec_rails
-
 plugins:
+  - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-rspec_rails
 
 inherit_gem:
   rubocop-config-oharagroup:

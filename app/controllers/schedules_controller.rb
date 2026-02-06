@@ -44,7 +44,7 @@ class SchedulesController < ApplicationController
 		@schedule['transaction_date'] = nil
 
 		# Copy the primary_account.id to account_id
-		@schedule['account_id'] = @schedule.fetch('primary_account').fetch 'id'
+		@schedule['account_id'] = @schedule.fetch('primary_account', nil)['id']
 	end
 
 	def create_schedule

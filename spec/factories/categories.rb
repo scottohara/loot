@@ -3,7 +3,7 @@
 
 ::FactoryBot.define do
 	factory :category, aliases: [:outflow_category] do
-		sequence(:name) { "Category #{_1}" }
+		sequence(:name) { "Category #{it}" }
 		outflow
 
 		transient do

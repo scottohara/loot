@@ -38,28 +38,28 @@ group :development, :test do
 	gem 'rails-controller-testing', '1.0.5'
 
 	# Code style checker
-	gem 'rubocop', '1.72.2', require: false
+	gem 'rubocop', '1.84.1', require: false
 
 	# Rubocop Rails cops
-	gem 'rubocop-rails', '2.30.1', require: false
+	gem 'rubocop-rails', '2.34.3', require: false
 
 	# Rubocop Performance cops
-	gem 'rubocop-performance', '1.24.0', require: false
+	gem 'rubocop-performance', '1.26.1', require: false
 
 	# Rubocop RSpec cops
-	gem 'rubocop-rspec', '3.5.0', require: false
+	gem 'rubocop-rspec', '3.9.0', require: false
 
 	# Rubocop RSpec Rails cops
-	gem 'rubocop-rspec_rails', '2.30.0', require: false
+	gem 'rubocop-rspec_rails', '2.32.0', require: false
 
 	# Rubocop FactoryBot cops
-	gem 'rubocop-factory_bot', '2.26.1', require: false
+	gem 'rubocop-factory_bot', '2.28.0', require: false
 
 	# Rubocop Rake cops
 	gem 'rubocop-rake', '0.7.1', require: false
 
 	# Shared Rubocop config
-	gem 'rubocop-config-oharagroup', '2.5.0', require: false
+	gem 'rubocop-config-oharagroup', '2.6.0', require: false
 
 	# Debugging
 	gem 'debug', '1.11.1', require: 'debug/prelude'

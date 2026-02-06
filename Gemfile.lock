@@ -244,7 +244,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.7)
-    rubocop (1.72.2)
+    rubocop (1.84.1)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -252,34 +252,36 @@ GEM
       parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 2.9.3, < 3.0)
-      rubocop-ast (>= 1.38.0, < 2.0)
+      rubocop-ast (>= 1.49.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
     rubocop-ast (1.49.0)
       parser (>= 3.3.7.2)
       prism (~> 1.7)
-    rubocop-config-oharagroup (2.5.0)
-    rubocop-factory_bot (2.26.1)
-      rubocop (~> 1.61)
-    rubocop-performance (1.24.0)
+    rubocop-config-oharagroup (2.6.0)
+    rubocop-factory_bot (2.28.0)
       lint_roller (~> 1.1)
-      rubocop (>= 1.72.1, < 2.0)
-      rubocop-ast (>= 1.38.0, < 2.0)
-    rubocop-rails (2.30.1)
+      rubocop (~> 1.72, >= 1.72.1)
+    rubocop-performance (1.26.1)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.75.0, < 2.0)
+      rubocop-ast (>= 1.47.1, < 2.0)
+    rubocop-rails (2.34.3)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
-      rubocop (>= 1.72.1, < 2.0)
-      rubocop-ast (>= 1.38.0, < 2.0)
+      rubocop (>= 1.75.0, < 2.0)
+      rubocop-ast (>= 1.44.0, < 2.0)
     rubocop-rake (0.7.1)
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1)
-    rubocop-rspec (3.5.0)
+    rubocop-rspec (3.9.0)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.81)
+    rubocop-rspec_rails (2.32.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-rspec_rails (2.30.0)
-      rubocop (~> 1.61)
-      rubocop-rspec (~> 3, >= 3.0.1)
+      rubocop-rspec (~> 3.5)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
     simplecov (0.22.0)
@@ -322,14 +324,14 @@ DEPENDENCIES
   rails (= 8.1.2)
   rails-controller-testing (= 1.0.5)
   rspec-rails (= 8.0.2)
-  rubocop (= 1.72.2)
-  rubocop-config-oharagroup (= 2.5.0)
-  rubocop-factory_bot (= 2.26.1)
-  rubocop-performance (= 1.24.0)
-  rubocop-rails (= 2.30.1)
+  rubocop (= 1.84.1)
+  rubocop-config-oharagroup (= 2.6.0)
+  rubocop-factory_bot (= 2.28.0)
+  rubocop-performance (= 1.26.1)
+  rubocop-rails (= 2.34.3)
   rubocop-rake (= 0.7.1)
-  rubocop-rspec (= 3.5.0)
-  rubocop-rspec_rails (= 2.30.0)
+  rubocop-rspec (= 3.9.0)
+  rubocop-rspec_rails (= 2.32.0)
   simplecov (= 0.22.0)
 
 CHECKSUMS
@@ -422,15 +424,15 @@ CHECKSUMS
   rspec-mocks (3.13.7) sha256=0979034e64b1d7a838aaaddf12bf065ea4dc40ef3d4c39f01f93ae2c66c62b1c
   rspec-rails (8.0.2) sha256=113139a53f5d068d4f48d1c29ad5f982013ed9b0daa69d7f7b266eda5d433ace
   rspec-support (3.13.7) sha256=0640e5570872aafefd79867901deeeeb40b0c9875a36b983d85f54fb7381c47c
-  rubocop (1.72.2) sha256=0259a32d89fee60882bf4c4d8847e696357719c9db4971839da742bf053ae96b
+  rubocop (1.84.1) sha256=14cc626f355141f5a2ef53c10a68d66b13bb30639b26370a76559096cc6bcc1a
   rubocop-ast (1.49.0) sha256=49c3676d3123a0923d333e20c6c2dbaaae2d2287b475273fddee0c61da9f71fd
-  rubocop-config-oharagroup (2.5.0) sha256=2ab62af1e4e78738824c620e3dc91e0e343a3a2203e90ae2b1373345d7659aee
-  rubocop-factory_bot (2.26.1) sha256=8de13cd4edcee5ca800f255188167ecef8dbfc3d1fae9f15734e9d2e755392aa
-  rubocop-performance (1.24.0) sha256=e5bd39ff3e368395b9af886927cc37f5892f43db4bd6c8526594352d5b4440b5
-  rubocop-rails (2.30.1) sha256=5eb39fbfce4e63fb0d79d48ba9a3fbc23d33dd9fa4585b8f9c811056fe156c10
+  rubocop-config-oharagroup (2.6.0) sha256=caadf174dabaa18e4fad8f3f90c7a80110705bb3398bb55b8f80d82948a43473
+  rubocop-factory_bot (2.28.0) sha256=4b17fc02124444173317e131759d195b0d762844a71a29fe8139c1105d92f0cb
+  rubocop-performance (1.26.1) sha256=cd19b936ff196df85829d264b522fd4f98b6c89ad271fa52744a8c11b8f71834
+  rubocop-rails (2.34.3) sha256=10d37989024865ecda8199f311f3faca990143fbac967de943f88aca11eb9ad2
   rubocop-rake (0.7.1) sha256=3797f2b6810c3e9df7376c26d5f44f3475eda59eb1adc38e6f62ecf027cbae4d
-  rubocop-rspec (3.5.0) sha256=710c942fe1af884ba8eea75cbb8bdbb051929a2208880a6fc2e2dce1eed5304c
-  rubocop-rspec_rails (2.30.0) sha256=888112e83f9d7ef7ad2397e9d69a0b9614a4bae24f072c399804a180f80c4c46
+  rubocop-rspec (3.9.0) sha256=8fa70a3619408237d789aeecfb9beef40576acc855173e60939d63332fdb55e2
+  rubocop-rspec_rails (2.32.0) sha256=4a0d641c72f6ebb957534f539d9d0a62c47abd8ce0d0aeee1ef4701e892a9100
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
   simplecov (0.22.0) sha256=fe2622c7834ff23b98066bb0a854284b2729a569ac659f82621fc22ef36213a5

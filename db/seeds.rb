@@ -776,6 +776,7 @@ module Loot
 
 	def verify_balances
 		include ::ActionView::Helpers::NumberHelper
+
 		balance_mismatches = []
 
 		# Process each account.json file

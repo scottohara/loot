@@ -4,7 +4,7 @@
 ::FactoryBot.define do
 	factory :account, aliases: [:bank_account] do
 		account_type { 'bank' }
-		sequence(:name) { "#{account_type} account #{_1}" }
+		sequence(:name) { "#{account_type} account #{it}" }
 		opening_balance { 1000 }
 		status { 'open' }
 

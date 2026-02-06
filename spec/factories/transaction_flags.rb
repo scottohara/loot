@@ -3,7 +3,7 @@
 
 ::FactoryBot.define do
 	factory :transaction_flag do
-		sequence(:memo) { "Flag #{_1}" }
+		sequence(:memo) { "Flag #{it}" }
 
 		transient do
 			trx { ::FactoryBot.build(:transaction) }

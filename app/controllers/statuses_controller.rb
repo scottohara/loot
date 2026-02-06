@@ -4,7 +4,7 @@
 # Statuses controller
 class StatusesController < ApplicationController
 	def update
-		status = params.keys.keep_if { %w[Cleared Reconciled].include? _1 }.first
+		status = params.keys.keep_if { %w[Cleared Reconciled].include? it }.first
 		update_status status
 	end
 
