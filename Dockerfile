@@ -33,7 +33,6 @@ FROM ruby:${RUBY_VERSION}-alpine AS backend
 
 RUN apk add --no-cache \
 	build-base \
-	postgresql-dev \
 	yaml-dev
 
 WORKDIR /build

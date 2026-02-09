@@ -155,6 +155,8 @@ GEM
     nokogiri (1.19.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    nokogiri (1.19.0-aarch64-linux-musl)
+      racc (~> 1.4)
     nokogiri (1.19.0-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.19.0-x86_64-linux-gnu)
@@ -166,6 +168,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.6.3)
+    pg (1.6.3-aarch64-linux-musl)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
     pg (1.6.3-x86_64-linux-musl)
@@ -311,6 +314,7 @@ GEM
     zeitwerk (2.7.4)
 
 PLATFORMS
+  aarch64-linux-musl
   arm64-darwin
   ruby
   x86_64-linux
@@ -396,12 +400,14 @@ CHECKSUMS
   net-smtp (0.5.1) sha256=ed96a0af63c524fceb4b29b0d352195c30d82dd916a42f03c62a3a70e5b70736
   nio4r (2.7.5) sha256=6c90168e48fb5f8e768419c93abb94ba2b892a1d0602cb06eef16d8b7df1dca1
   nokogiri (1.19.0) sha256=e304d21865f62518e04f2bf59f93bd3a97ca7b07e7f03952946d8e1c05f45695
+  nokogiri (1.19.0-aarch64-linux-musl) sha256=eb70507f5e01bc23dad9b8dbec2b36ad0e61d227b42d292835020ff754fb7ba9
   nokogiri (1.19.0-arm64-darwin) sha256=0811dfd936d5f6dd3f6d32ef790568bf29b2b7bead9ba68866847b33c9cf5810
   nokogiri (1.19.0-x86_64-linux-gnu) sha256=f482b95c713d60031d48c44ce14562f8d2ce31e3a9e8dd0ccb131e9e5a68b58c
   nokogiri (1.19.0-x86_64-linux-musl) sha256=1c4ca6b381622420073ce6043443af1d321e8ed93cc18b08e2666e5bd02ffae4
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
   parser (3.3.10.1) sha256=06f6a725d2cd91e5e7f2b7c32ba143631e1f7c8ae2fb918fc4cebec187e6a688
   pg (1.6.3) sha256=1388d0563e13d2758c1089e35e973a3249e955c659592d10e5b77c468f628a99
+  pg (1.6.3-aarch64-linux-musl) sha256=06a75f4ea04b05140146f2a10550b8e0d9f006a79cdaf8b5b130cde40e3ecc2c
   pg (1.6.3-arm64-darwin) sha256=7240330b572e6355d7c75a7de535edb5dfcbd6295d9c7777df4d9dddfb8c0e5f
   pg (1.6.3-x86_64-linux) sha256=5d9e188c8f7a0295d162b7b88a768d8452a899977d44f3274d1946d67920ae8d
   pg (1.6.3-x86_64-linux-musl) sha256=9c9c90d98c72f78eb04c0f55e9618fe55d1512128e411035fe229ff427864009
