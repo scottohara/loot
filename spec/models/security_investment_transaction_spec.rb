@@ -56,7 +56,7 @@ require 'rails_helper'
 			expect(described_class.create_from_json json).to match_json json, investment_account, cash_account
 		end
 
-		shared_examples 'create from json', :security_investment_transaction_create_from_json do
+		shared_examples 'create from json' do
 			before do |example|
 				json['direction'] = example.metadata[:direction]
 			end
@@ -77,12 +77,16 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', :security_investment_transaction_create_from_json, direction: 'outflow' do
+		context 'outflow', direction: 'outflow' do
 			let(:amount) { 15 }
+
+			it_behaves_like 'create from json'
 		end
 
-		context 'inflow', :security_investment_transaction_create_from_json, direction: 'inflow' do
+		context 'inflow', direction: 'inflow' do
 			let(:amount) { 25 }
+
+			it_behaves_like 'create from json'
 		end
 	end
 
@@ -120,7 +124,7 @@ require 'rails_helper'
 			expect(described_class.update_from_json json).to match_json json, investment_account, cash_account
 		end
 
-		shared_examples 'update from json', :security_investment_transaction_update_from_json do
+		shared_examples 'update from json' do
 			before do |example|
 				json['direction'] = example.metadata[:direction]
 			end
@@ -141,12 +145,16 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', :security_investment_transaction_update_from_json, direction: 'outflow' do
+		context 'outflow', direction: 'outflow' do
 			let(:amount) { 15 }
+
+			it_behaves_like 'update from json'
 		end
 
-		context 'inflow', :security_investment_transaction_update_from_json, direction: 'inflow' do
+		context 'inflow', direction: 'inflow' do
 			let(:amount) { 25 }
+
+			it_behaves_like 'update from json'
 		end
 	end
 
@@ -158,7 +166,7 @@ require 'rails_helper'
 			transaction.transaction_accounts.build(direction: example.metadata[:direction]).account = create :investment_account
 		end
 
-		shared_examples 'validate amount', :validate_amount do
+		shared_examples 'validate amount' do
 			context "when amount doesn't match the investment details" do
 				it 'should be an error' do
 					transaction.amount = 1
@@ -176,14 +184,18 @@ require 'rails_helper'
 			end
 		end
 
-		context 'outflow', :validate_amount, direction: 'outflow' do
+		context 'outflow', direction: 'outflow' do
 			let(:error_message) { 'Amount must equal price times quantity less commission' }
 			let(:valid_amount) { 15 }
+
+			it_behaves_like 'validate amount'
 		end
 
-		context 'inflow', :validate_amount, direction: 'inflow' do
+		context 'inflow', direction: 'inflow' do
 			let(:error_message) { 'Amount must equal price times quantity plus commission' }
 			let(:valid_amount) { 25 }
+
+			it_behaves_like 'validate amount'
 		end
 	end
 

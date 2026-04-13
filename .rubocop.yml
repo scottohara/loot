@@ -24,6 +24,7 @@ AllCops:
     - "db/migrate/*"
     - "db/schema.rb"
     - "node_modules/**/*"
+    - "spec/*_helper.rb"
     - "vendor/**/*"
 
 # Can't fully qualify a private_constant

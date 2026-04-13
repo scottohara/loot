@@ -258,7 +258,7 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		shared_examples 'create from json', :account_create_from_json do
+		shared_examples 'create from json' do
 			it 'should create an account from a JSON representation' do
 				expect(described_class.create_from_json json).to match_json json, related_account
 			end
@@ -275,7 +275,7 @@ require 'rails_helper'
 		end
 		let(:related_account) { nil }
 
-		context('standard account', :account_create_from_json) {} # Empty block
+		context('standard account') { it_behaves_like 'create from json' }
 
 		context 'investment account' do
 			let(:related_account) { described_class.new name: 'Test account (Cash)', account_type: 'bank', opening_balance: 200, status: 'open', favourite: true }
@@ -298,20 +298,22 @@ require 'rails_helper'
 				json['account_type'] = 'loan'
 			end
 
-			context 'with asset', :account_create_from_json do
+			context 'with asset' do
 				let(:related_account) { create(:asset_account, :favourite) }
 
 				before do
 					json['related_account'] = {'id' => related_account.id}
 				end
+
+				it_behaves_like 'create from json'
 			end
 
-			context('without asset', :account_create_from_json) {} # Empty block
+			context('without asset') { it_behaves_like 'create from json' }
 		end
 	end
 
 	describe '::update_from_json' do
-		shared_examples 'update from json', :account_update_from_json do
+		shared_examples 'update from json' do
 			it 'should update an account from a JSON representation' do
 				expect(described_class.update_from_json json).to match_json json, related_account
 			end
@@ -341,22 +343,28 @@ require 'rails_helper'
 				json['related_account'] = {'opening_balance' => 200}
 			end
 
-			context 'from investment account', :account_update_from_json do
+			context 'from investment account' do
 				let(:account) { create(:investment_account, :favourite, related_account: create(:cash_account, :favourite)) }
+
+				it_behaves_like 'update from json'
 			end
 
-			context 'from non-investment account', :account_update_from_json do
+			context 'from non-investment account' do
 				let(:account) { create(:bank_account, :favourite) }
+
+				it_behaves_like 'update from json'
 			end
 		end
 
 		context 'non-investment account' do
-			context 'from investment account', :account_update_from_json do
+			context 'from investment account' do
 				let(:account) { create(:investment_account, :favourite, related_account: create(:cash_account, :favourite)) }
 
 				before do
 					expect(account.related_account).to receive :destroy!
 				end
+
+				it_behaves_like 'update from json'
 			end
 
 			context 'from non-investment account' do
@@ -367,7 +375,7 @@ require 'rails_helper'
 						json['account_type'] = 'loan'
 					end
 
-					context 'with asset', :account_update_from_json do
+					context 'with asset' do
 						let(:related_account) { create(:asset_account, :favourite) }
 
 						before do
@@ -375,12 +383,14 @@ require 'rails_helper'
 
 							expect(described_class).to receive(:find).with(related_account.id).and_return related_account
 						end
+
+						it_behaves_like 'update from json'
 					end
 
-					context('without asset', :account_update_from_json) {} # Empty block
+					context('without asset') { it_behaves_like 'update from json' }
 				end
 
-				context('standard account', :account_update_from_json) {} # Empty block
+				context('standard account') { it_behaves_like 'update from json' }
 			end
 		end
 	end

@@ -24,6 +24,11 @@ require 'rails_helper'
 		let(:request_params) { {'security_id' => '1'} }
 	end
 
+	include_context 'for account', :account
+	include_context 'for payee', :payee
+	include_context 'for category', :category
+	include_context 'for security', :security
+
 	before do
 		expect(context.class).to receive(:find).with('1').and_return context
 		expect(context).to receive(:update!).with favourite:
