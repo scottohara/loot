@@ -22,9 +22,6 @@ gem 'active_model_serializers', '0.10.16'
 gem 'bootsnap', '1.22.0', require: false
 
 group :development, :test do
-	# Cleans database on each test run
-	gem 'database_cleaner', '2.1.0'
-
 	# Test factories
 	gem 'factory_bot_rails', '6.5.1'
 

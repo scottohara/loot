@@ -21,6 +21,7 @@ import {
 	transactionsTableRows,
 } from "~/support/transactions/index";
 import { lightFormat, startOfDay } from "date-fns";
+import { accountsTableRows } from "~/support/accounts/index";
 
 describe("Transaction Edit", (): void => {
 	const today: Date = startOfDay(new Date()),
@@ -28,7 +29,6 @@ describe("Transaction Edit", (): void => {
 		rawTransactionDate = lightFormat(today, "yyyy-MM-dd"),
 		contexts: TransactionsContext[] = [
 			{
-				id: "1",
 				heading: "bank account 1",
 				transactions: [
 					{
@@ -160,7 +160,6 @@ describe("Transaction Edit", (): void => {
 				],
 			},
 			{
-				id: "4",
 				heading: "investment account 3",
 				transactions: [
 					{
@@ -319,97 +318,93 @@ describe("Transaction Edit", (): void => {
 
 	before((): void => cy.createTransactions());
 
-	contexts.forEach(
-		({ id, heading, transactions }: TransactionsContext): void => {
-			describe(heading, (): void => {
+	contexts.forEach(({ heading, transactions }: TransactionsContext): void => {
+		describe(heading, (): void => {
+			beforeEach((): void => {
+				cy.login();
+				cy.visit("/#!/accounts");
+				cy.contains(`${accountsTableRows} > td > a`, heading).click();
+				cy.get(transactionsTableRows).then(
+					(rows: JQuery<HTMLTableRowElement>): void => {
+						originalRowCount = rows.length;
+						lastTransaction = getValuesFrom(rows.last());
+					},
+				);
+				cy.get(transactionsClosingBalance).then(
+					(closingBalance: JQuery<HTMLTableCellElement>): void => {
+						originalClosingBalance = closingBalance.text().trim();
+					},
+				);
+			});
+
+			describe("adding a transaction", (): void => {
 				beforeEach((): void => {
-					cy.login();
-					cy.visit(`/#!/accounts/${id}/transactions`);
-					cy.get(transactionsTableRows).then(
-						(rows: JQuery<HTMLTableRowElement>): void => {
-							originalRowCount = rows.length;
-							lastTransaction = getValuesFrom(rows.last());
-						},
-					);
-					cy.get(transactionsClosingBalance).then(
-						(closingBalance: JQuery<HTMLTableCellElement>): void => {
-							originalClosingBalance = closingBalance.text().trim();
-						},
-					);
+					cy.get("body").type("{insert}");
+					cy.get(transactionEditHeading).should("have.text", "Add Transaction");
 				});
 
-				describe("adding a transaction", (): void => {
-					beforeEach((): void => {
-						cy.get("body").type("{insert}");
-						cy.get(transactionEditHeading).should(
-							"have.text",
-							"Add Transaction",
-						);
-					});
+				transactions.forEach((transaction: TransactionEdit): void => {
+					describe(transaction.type ?? transaction.memo, (): void => {
+						beforeEach((): void => {
+							expected = transaction;
+							populateFormWith(expected);
+						});
 
-					transactions.forEach((transaction: TransactionEdit): void => {
-						describe(transaction.type ?? transaction.memo, (): void => {
-							beforeEach((): void => {
-								expected = transaction;
-								populateFormWith(expected);
-							});
+						commonBehaviour();
 
-							commonBehaviour();
+						it("should insert a new transaction when the save button is clicked", (): void => {
+							cy.get(saveButton).click();
+							cy.get(transactionEditForm).should("not.exist");
 
-							it("should insert a new transaction when the save button is clicked", (): void => {
-								cy.get(saveButton).click();
-								cy.get(transactionEditForm).should("not.exist");
+							// Row count should have incremented by one
+							cy.get(transactionsTableRows).should(
+								"have.length",
+								originalRowCount + 1,
+							);
 
-								// Row count should have incremented by one
-								cy.get(transactionsTableRows).should(
-									"have.length",
-									originalRowCount + 1,
-								);
+							// Transaction in the last row should be the new transaction
+							cy.get(transactionsTableRows)
+								.last()
+								.within((): void => {
+									const { subtransactions } = expected;
 
-								// Transaction in the last row should be the new transaction
-								cy.get(transactionsTableRows)
-									.last()
-									.within((): void => {
-										const { subtransactions } = expected;
+									checkRowMatches(expected);
 
-										checkRowMatches(expected);
+									if (undefined !== subtransactions) {
+										cy.get(transactionSubtransactionsToggleButton).click();
 
-										if (undefined !== subtransactions) {
-											cy.get(transactionSubtransactionsToggleButton).click();
+										// Number of rows
+										cy.get(transactionSubtransactionsTableRows).should(
+											"have.length",
+											subtransactions.length,
+										);
 
-											// Number of rows
-											cy.get(transactionSubtransactionsTableRows).should(
-												"have.length",
-												subtransactions.length,
-											);
+										cy.get(transactionSubtransactionsTableRows).each(
+											(
+												subtransactionRow: HTMLTableRowElement,
+												subIndex: number,
+											): void => {
+												cy.wrap(subtransactionRow).within((): void =>
+													checkSubtransactionRowValues(
+														subtransactions[subIndex],
+													),
+												);
+											},
+										);
+									}
+								});
 
-											cy.get(transactionSubtransactionsTableRows).each(
-												(
-													subtransactionRow: HTMLTableRowElement,
-													subIndex: number,
-												): void => {
-													cy.wrap(subtransactionRow).within((): void =>
-														checkSubtransactionRowValues(
-															subtransactions[subIndex],
-														),
-													);
-												},
-											);
-										}
-									});
-
-								// Closing balance should match the new closing balance
-								cy.get(transactionsClosingBalance).should(
-									"contain.text",
-									expected.closingBalance,
-								);
-							});
+							// Closing balance should match the new closing balance
+							cy.get(transactionsClosingBalance).should(
+								"contain.text",
+								expected.closingBalance,
+							);
 						});
 					});
 				});
-
-				// MISSING - editing a schedule
 			});
-		},
-	);
+
+			// MISSING - editing a schedule
+		});
+	});
 });

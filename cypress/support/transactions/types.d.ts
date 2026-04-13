@@ -39,7 +39,6 @@ export interface TransactionEdit extends Transaction {
 }
 
 export interface TransactionsContext {
-	id: string;
 	heading: string;
 	transactions: (Transaction | TransactionEdit)[];
 	closingBalance?: string;

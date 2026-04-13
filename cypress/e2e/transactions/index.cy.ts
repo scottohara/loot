@@ -16,12 +16,12 @@ import {
 	transactionEditHeading,
 } from "~/support/transactions/edit";
 import type { TransactionsContext } from "~/support/transactions/types";
+import { accountsTableRows } from "~/support/accounts/index";
 import { testNavigableTable } from "~/support/og-components/og-table-navigable";
 
 describe("Transaction Index", (): void => {
 	const expected: TransactionsContext[] = [
 		{
-			id: "1",
 			heading: "bank account 1",
 			transactions: [
 				{
@@ -121,7 +121,6 @@ describe("Transaction Index", (): void => {
 			closingBalance: "$997.00",
 		},
 		{
-			id: "2",
 			heading: "bank account 2",
 			transactions: [
 				{
@@ -146,32 +145,6 @@ describe("Transaction Index", (): void => {
 			closingBalance: "$1,002.00",
 		},
 		{
-			id: "3",
-			heading: "bank account 4",
-			transactions: [
-				{
-					transactionDate: "07/01/2014",
-					payeeOrSecurityName: "Security 1",
-					categoryName: "Transfer To",
-					subcategoryOrAccountName: "investment account 3",
-					memo: "SecurityInvestment transaction",
-					debitAmount: "$2.00",
-					balanceOrAmount: "$998.00",
-				},
-				{
-					transactionDate: "08/01/2014",
-					payeeOrSecurityName: "Security 1",
-					categoryName: "Transfer From",
-					subcategoryOrAccountName: "investment account 3",
-					memo: "SecurityInvestment transaction",
-					creditAmount: "$0.00",
-					balanceOrAmount: "$998.00",
-				},
-			],
-			closingBalance: "$998.00",
-		},
-		{
-			id: "4",
 			heading: "investment account 3",
 			transactions: [
 				{
@@ -230,13 +203,30 @@ describe("Transaction Index", (): void => {
 			closingBalance: "$988.00",
 		},
 		{
-			id: "5",
-			heading: "bank account 9",
-			transactions: [],
-			closingBalance: "$1,000.00",
+			heading: "bank account 4",
+			transactions: [
+				{
+					transactionDate: "07/01/2014",
+					payeeOrSecurityName: "Security 1",
+					categoryName: "Transfer To",
+					subcategoryOrAccountName: "investment account 3",
+					memo: "SecurityInvestment transaction",
+					debitAmount: "$2.00",
+					balanceOrAmount: "$998.00",
+				},
+				{
+					transactionDate: "08/01/2014",
+					payeeOrSecurityName: "Security 1",
+					categoryName: "Transfer From",
+					subcategoryOrAccountName: "investment account 3",
+					memo: "SecurityInvestment transaction",
+					creditAmount: "$0.00",
+					balanceOrAmount: "$998.00",
+				},
+			],
+			closingBalance: "$998.00",
 		},
 		{
-			id: "6",
 			heading: "investment account 8",
 			transactions: [
 				{
@@ -250,19 +240,25 @@ describe("Transaction Index", (): void => {
 			],
 			closingBalance: "$1,010.00",
 		},
+		{
+			heading: "bank account 9",
+			transactions: [],
+			closingBalance: "$1,000.00",
+		},
 	];
 
 	before((): void => cy.createTransactions());
 
 	expected.forEach(
 		(
-			{ id, heading, transactions, closingBalance }: TransactionsContext,
+			{ heading, transactions, closingBalance }: TransactionsContext,
 			index: number,
 		): void => {
 			describe(heading, (): void => {
 				beforeEach((): void => {
 					cy.login();
-					cy.visit(`/#!/accounts/${id}/transactions`);
+					cy.visit("/#!/accounts");
+					cy.get(`${accountsTableRows} > td a`).eq(index).click();
 				});
 
 				it("should display the context name", (): Cypress.Chainable<JQuery> =>

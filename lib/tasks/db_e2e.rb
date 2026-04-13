@@ -24,7 +24,7 @@ module DB
 							::ActiveRecord::Base.establish_connection :test
 
 							# Truncate any existing data
-							::DatabaseCleaner.clean_with :truncation
+							::ActiveRecord::Tasks::DatabaseTasks.truncate_all 'test'
 
 							# Create new data
 							instance_exec(*args[:args]&.split(','), &)
