@@ -50,8 +50,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		other_account = cash_account
 		primary_account, other_account = other_account, primary_account if options[:primary_account].eql? other_account.account_id
 
-		super.merge(
-			primary_account: primary_account.account.as_json,
+		super.merge primary_account: primary_account.account.as_json,
 			category: self.class.transaction_category({'transaction_type' => transaction_type, 'direction' => primary_account.direction}, primary_account.account.account_type),
 			account: other_account.account.as_json,
 			amount:,
@@ -61,7 +60,6 @@ class SecurityInvestmentTransaction < SecurityTransaction
 			quantity: header.quantity,
 			price: header.price,
 			commission: header.commission
-		)
 	end
 
 	def investment_account

@@ -3,7 +3,7 @@
 
 require_relative 'db_e2e'
 
-::DB::E2E.create_test_data(:accounts) do
+::DB::E2E.create_test_data :accounts do
 	# Create accounts of all types (1 favourite)
 	create :bank_account, opening_balance: 500
 	create :favourite_account

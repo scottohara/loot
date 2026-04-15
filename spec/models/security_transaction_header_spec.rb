@@ -14,9 +14,9 @@ require 'rails_helper'
 	end
 
 	describe '#update_from_json' do
-		let(:security) { create(:security) }
-		let(:header) { create(:security_transaction_header) }
-		let(:json) do
+		let(:security) { create :security }
+		let(:header) { create :security_transaction_header }
+		let :json do
 			{
 				'quantity' => 1,
 				'price' => 1,
@@ -37,7 +37,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction_header) { create(:security_transaction_header) }
+		subject(:transaction_header) { create :security_transaction_header }
 
 		let(:json) { transaction_header.as_json }
 

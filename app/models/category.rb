@@ -17,7 +17,7 @@ class Category < ApplicationRecord
 					'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
 				]
 			)
-				.where('transactions.transaction_type != \'Subtransfer\'')
+				.where 'transactions.transaction_type != \'Subtransfer\''
 		end
 
 		def for_closing_balance(_opts)

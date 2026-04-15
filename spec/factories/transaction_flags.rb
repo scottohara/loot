@@ -6,7 +6,7 @@
 		sequence(:memo) { "Flag #{it}" }
 
 		transient do
-			trx { ::FactoryBot.build(:transaction) }
+			trx { ::FactoryBot.build :transaction }
 		end
 
 		after :build do |flag, evaluator|

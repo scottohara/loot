@@ -111,7 +111,7 @@ class SplitTransaction < PayeeCashTransaction
 	def create_children(children)
 		children.each do |child|
 			# Keys could be symbols or strings
-			child = child.with_indifferent_access if child.is_a?(::Hash)
+			child = child.with_indifferent_access if child.is_a? ::Hash
 
 			# Clear the id and copy the header details from the parent
 			child['id'] = nil

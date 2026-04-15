@@ -14,9 +14,9 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:category) { create(:category) }
-		let(:subcategory) { create(:subcategory, parent: category) }
-		let(:json) do
+		let(:category) { create :category }
+		let(:subcategory) { create :subcategory, parent: category }
+		let :json do
 			{
 				'amount' => 1,
 				'memo' => 'Test json',
@@ -61,7 +61,7 @@ require 'rails_helper'
 		end
 
 		context 'with category' do
-			subject(:transaction) { create(:sub_transaction) }
+			subject(:transaction) { create :sub_transaction }
 
 			before do
 				expect(transaction.category).to receive(:as_json).and_return 'category json'
@@ -74,7 +74,7 @@ require 'rails_helper'
 		end
 
 		context 'with subcategory' do
-			subject(:transaction) { create(:sub_transaction, category: create(:subcategory)) }
+			subject(:transaction) { create :sub_transaction, category: create(:subcategory) }
 
 			before do
 				expect(transaction.category.parent).to receive(:as_json).and_return 'category json'

@@ -16,6 +16,6 @@ class SecurityTransactionHeader < TransactionHeader
 	end
 
 	def as_json(options = {})
-		super.merge(security: security.as_json)
+		super.merge security: security.as_json
 	end
 end

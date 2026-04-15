@@ -13,7 +13,7 @@ require 'rails_helper'
 
 	describe '::find_or_new' do
 		context 'existing payee' do
-			let(:payee) { create(:payee) }
+			let(:payee) { create :payee }
 
 			it 'should return the existing payee' do
 				expect(described_class.find_or_new 'id' => payee.id).to eq payee
@@ -30,7 +30,7 @@ require 'rails_helper'
 	end
 
 	describe '#opening_balance' do
-		subject(:payee) { create(:payee) }
+		subject(:payee) { create :payee }
 
 		it 'should return zero' do
 			expect(payee.opening_balance).to eq 0
@@ -38,7 +38,7 @@ require 'rails_helper'
 	end
 
 	describe '#account_type' do
-		subject(:payee) { create(:payee) }
+		subject(:payee) { create :payee }
 
 		it 'should return nil' do
 			expect(payee.account_type).to be_nil
@@ -46,7 +46,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:payee) { create(:payee, name: 'Test Payee', transactions: 1) }
+		subject(:payee) { create :payee, name: 'Test Payee', transactions: 1 }
 
 		let(:json) { payee.as_json }
 

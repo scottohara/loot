@@ -23,7 +23,7 @@ require 'rails_helper'
 
 	describe '::find_or_new' do
 		context 'existing category' do
-			let(:category) { create(:category) }
+			let(:category) { create :category }
 
 			it 'should return the existing category' do
 				expect(described_class.find_or_new 'id' => category.id).to eq category
@@ -41,7 +41,7 @@ require 'rails_helper'
 			end
 
 			context 'with parent' do
-				let(:parent) { create(:inflow_category) }
+				let(:parent) { create :inflow_category }
 
 				it 'should return a newly created category' do
 					category = described_class.find_or_new category_name, parent
@@ -54,7 +54,7 @@ require 'rails_helper'
 	end
 
 	describe '#opening_balance' do
-		subject(:category) { create(:category) }
+		subject(:category) { create :category }
 
 		it 'should return zero' do
 			expect(category.opening_balance).to eq 0
@@ -62,7 +62,7 @@ require 'rails_helper'
 	end
 
 	describe '#account_type' do
-		subject(:category) { create(:category) }
+		subject(:category) { create :category }
 
 		it 'should return nil' do
 			expect(category.account_type).to be_nil
@@ -93,7 +93,7 @@ require 'rails_helper'
 			end
 
 			context 'category' do
-				subject(:category) { create(:category, name: 'Test Category', children: 1, transactions: 1) }
+				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
 
 				it 'should return a JSON representation excluding children' do
 					expect(json).to include parent_id: nil
@@ -101,7 +101,7 @@ require 'rails_helper'
 			end
 
 			context 'subcategory' do
-				subject(:category) { create(:subcategory, name: 'Test Category', transactions: 1) }
+				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
 
 				it 'should return a JSON representation excluding parent' do
 					expect(json).to include parent_id: category.parent.id
@@ -124,7 +124,7 @@ require 'rails_helper'
 			end
 
 			context 'category' do
-				subject(:category) { create(:category, name: 'Test Category', children: 1, transactions: 1) }
+				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
 
 				let(:child) { json[:children].first }
 				let(:child_parent) { child[:parent] }
@@ -159,7 +159,7 @@ require 'rails_helper'
 			end
 
 			context 'subcategory' do
-				subject(:category) { create(:subcategory, name: 'Test Category', transactions: 1) }
+				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
 
 				let(:parent) { json[:parent] }
 

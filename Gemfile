@@ -56,7 +56,7 @@ group :development, :test do
 	gem 'rubocop-rake', '0.7.1', require: false
 
 	# Shared Rubocop config
-	gem 'rubocop-config-oharagroup', '2.6.0', require: false
+	gem 'rubocop-config-oharagroup', '2.7.3', require: false
 
 	# Debugging
 	gem 'debug', '1.11.1', require: 'debug/prelude'

@@ -8,12 +8,10 @@ require 'rails_helper'
 		let(:opening_balance) { 1 }
 		let(:transactions) { 'transactions' }
 		let(:at_end) { false }
-		let(:json) do
-			::JSON.dump(
-				openingBalance: opening_balance.to_f,
+		let :json do
+			::JSON.dump openingBalance: opening_balance.to_f,
 				transactions:,
 				atEnd: at_end
-			)
 		end
 
 		before :each, :instance do
@@ -21,7 +19,7 @@ require 'rails_helper'
 		end
 
 		after do
-			request_params.merge!('controller' => 'transactions', 'action' => 'index')
+			request_params.merge! 'controller' => 'transactions', 'action' => 'index'
 			expect(controller).to receive(:context).and_call_original
 			expect(context).to receive(:ledger).with(::ActionController::Parameters.new request_params).and_return [opening_balance, transactions, at_end]
 			get :index, params: request_params
@@ -85,7 +83,7 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', :json, :request do
-		let(:transaction) { create(:basic_transaction) }
+		let(:transaction) { create :basic_transaction }
 		let(:json) { 'updated transaction' }
 
 		before do
@@ -117,7 +115,7 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', :request do
-		let(:transaction) { create(:basic_transaction) }
+		let(:transaction) { create :basic_transaction }
 		let(:expected_status) { :no_content }
 
 		it 'should delete an existing transaction' do
@@ -137,8 +135,8 @@ require 'rails_helper'
 		end
 
 		context 'when there are transactions' do
-			let(:last_transaction) { create(:basic_transaction) }
-			let(:transactions) do
+			let(:last_transaction) { create :basic_transaction }
+			let :transactions do
 				[
 					create(:transaction),
 					create(:transaction),
@@ -229,12 +227,7 @@ require 'rails_helper'
 
 	describe '#clean' do
 		it 'should remove any empty or nil values from the passed parameters' do
-			controller.params = ::ActionController::Parameters.new(
-				a: 'a',
-				b: '',
-				c: nil
-			)
-
+			controller.params = ::ActionController::Parameters.new a: 'a', b: '', c: nil
 			controller.clean
 
 			expect(assigns(:transaction).to_unsafe_h).to eq 'a' => 'a'

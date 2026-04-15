@@ -185,7 +185,7 @@ module Loot
 			s = ::Security.find sec[:id]
 			last_price = nil
 			sec[:prices].sort_by { |price| ::Date.parse price[:as_at_date] }.each do |price|
-				s.prices.build(price: price[:price], as_at_date: price[:as_at_date]) unless price[:price].eql? last_price
+				s.prices.build price: price[:price], as_at_date: price[:as_at_date] unless price[:price].eql? last_price
 				last_price = price[:price]
 				loaded += 1
 				progress 'Loaded', loaded, 'security price' if (loaded % 10).zero?
@@ -456,11 +456,11 @@ module Loot
 	end
 
 	def create_split_out_transaction(trx)
-		create_split_transaction(trx, 'outflow')
+		create_split_transaction trx, 'outflow'
 	end
 
 	def create_split_in_transaction(trx)
-		create_split_transaction(trx, 'inflow')
+		create_split_transaction trx, 'inflow'
 	end
 
 	def create_split_transaction(trx, direction)

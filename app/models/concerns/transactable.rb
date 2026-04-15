@@ -62,14 +62,12 @@ module Transactable
 				)
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
 				.where('transaction_headers.transaction_date': ..as_at)
-				.group(
-					'transaction_headers.security_id',
+				.group 'transaction_headers.security_id',
 					'transaction_accounts.direction'
-				)
 
 			# Reduce to a unique set of securities with the current quantity held
 			securities =
-				security_quantities.each_with_object(::Hash.new(0)) do |s, secs|
+				security_quantities.each_with_object ::Hash.new(0) do |s, secs|
 					secs[s.security_id] += s.total_quantity * (s.direction.eql?('inflow') ? 1 : -1)
 				end
 

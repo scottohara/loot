@@ -3,7 +3,7 @@
 
 require_relative 'db_e2e'
 
-::DB::E2E.create_test_data(:schedules) do
+::DB::E2E.create_test_data :schedules do
 	# Create associated entities
 	bank_account = create :bank_account
 	investment_account = create :investment_account

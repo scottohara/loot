@@ -3,7 +3,7 @@
 
 require_relative 'db_e2e'
 
-::DB::E2E.create_test_data(:securities) do
+::DB::E2E.create_test_data :securities do
 	# Create 20 securities (1 favourite)
 	security1 = create :security
 	security2 = create :favourite_security

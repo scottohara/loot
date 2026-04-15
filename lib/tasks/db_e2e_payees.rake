@@ -3,7 +3,7 @@
 
 require_relative 'db_e2e'
 
-::DB::E2E.create_test_data(:payees) do
+::DB::E2E.create_test_data :payees do
 	# Create 20 payees (1 favourite)
 	create_list :payee, 19
 	create :favourite_payee

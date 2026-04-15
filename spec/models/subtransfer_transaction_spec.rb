@@ -16,8 +16,8 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:account) { create(:bank_account) }
-		let(:json) do
+		let(:account) { create :bank_account }
+		let :json do
 			{
 				'amount' => 1,
 				'memo' => 'Test json',
@@ -71,7 +71,7 @@ require 'rails_helper'
 		end
 
 		context 'outflow' do
-			subject(:transaction) { create(:subtransfer_to_transaction, status: 'Reconciled') }
+			subject(:transaction) { create :subtransfer_to_transaction, status: 'Reconciled' }
 
 			let(:json) { transaction.as_json direction: 'outflow' }
 
@@ -82,7 +82,7 @@ require 'rails_helper'
 		end
 
 		context 'inflow' do
-			subject(:transaction) { create(:subtransfer_from_transaction, status: 'Reconciled') }
+			subject(:transaction) { create :subtransfer_from_transaction, status: 'Reconciled' }
 
 			let(:json) { transaction.as_json direction: 'inflow' }
 

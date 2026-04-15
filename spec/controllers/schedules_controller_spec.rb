@@ -24,7 +24,7 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', :json, :request do
-		let(:schedule) { create(:basic_transaction, :scheduled) }
+		let(:schedule) { create :basic_transaction, :scheduled }
 		let(:json) { 'updated schedule' }
 
 		before do
@@ -56,7 +56,7 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', :request do
-		let(:schedule) { create(:basic_transaction, :scheduled) }
+		let(:schedule) { create :basic_transaction, :scheduled }
 		let(:expected_status) { :no_content }
 
 		it 'should delete an existing schedule' do
@@ -69,13 +69,11 @@ require 'rails_helper'
 
 	describe '#clean' do
 		it 'should remove any empty or nil values from the passed parameters, clear the transaction date and copy the account id' do
-			controller.params = ::ActionController::Parameters.new(
-				a: 'a',
+			controller.params = ::ActionController::Parameters.new a: 'a',
 				b: '',
 				c: nil,
 				'transaction_date' => ::Time.zone.today.to_s,
 				'primary_account' => {'id' => 1}
-			)
 
 			controller.clean
 			expect(assigns(:schedule).to_unsafe_h).to eq(
@@ -89,7 +87,7 @@ require 'rails_helper'
 
 	describe '#create_schedule' do
 		it 'should create a schedule from the JSON in the request body' do
-			controller.params = ::ActionController::Parameters.new('transaction_type' => 'Basic', 'primary_account' => {'id' => 1})
+			controller.params = ::ActionController::Parameters.new 'transaction_type' => 'Basic', 'primary_account' => {'id' => 1}
 			expect(::BasicTransaction).to receive(:create_from_json).with controller.params.merge(transaction_date: nil, account_id: 1)
 
 			controller.clean

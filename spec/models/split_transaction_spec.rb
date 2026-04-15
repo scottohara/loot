@@ -23,9 +23,9 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:account) { create(:bank_account) }
-		let(:header) { create(:payee_transaction_header) }
-		let(:json) do
+		let(:account) { create :bank_account }
+		let(:header) { create :payee_transaction_header }
+		let :json do
 			{
 				id: 1,
 				'amount' => 1,
@@ -52,9 +52,9 @@ require 'rails_helper'
 	end
 
 	describe '::update_from_json' do
-		let(:account) { create(:bank_account) }
-		let(:transaction) { create(:split_transaction, subtransactions: 1, subtransfers: 1) }
-		let(:json) do
+		let(:account) { create :bank_account }
+		let(:transaction) { create :split_transaction, subtransactions: 1, subtransfers: 1 }
+		let :json do
 			{
 				id: transaction.id,
 				'amount' => 1,
@@ -76,11 +76,11 @@ require 'rails_helper'
 	end
 
 	describe '#create_children' do
-		let(:subcategory) { create(:subcategory) }
-		let(:account) { create(:account) }
+		let(:subcategory) { create :subcategory }
+		let(:account) { create :account }
 
 		# Examples include keys that are both symbols and strings, and both hash and ActionController::Parameters
-		let(:children) do
+		let :children do
 			[
 				{
 					id: 'child 1',
@@ -154,7 +154,7 @@ require 'rails_helper'
 		end
 
 		context 'unscheduled' do
-			subject(:transaction) { create(:split_transaction) }
+			subject(:transaction) { create :split_transaction }
 
 			it 'should build child transactions of the appropriate types' do
 				expect(transaction.subtransfers.first.header.transaction_date).to eq transaction.header.transaction_date
@@ -163,7 +163,7 @@ require 'rails_helper'
 		end
 
 		context 'scheduled' do
-			subject(:transaction) { create(:split_transaction, :scheduled) }
+			subject(:transaction) { create :split_transaction, :scheduled }
 
 			it 'should build child transactions of the appropriate types' do
 				expect(transaction.subtransfers.first.header.transaction_date).to be_nil
@@ -186,7 +186,7 @@ require 'rails_helper'
 		end
 
 		context 'outflow' do
-			subject(:transaction) { create(:split_to_transaction, status: 'Reconciled') }
+			subject(:transaction) { create :split_to_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'SplitTo', name: 'Split To'}
@@ -195,7 +195,7 @@ require 'rails_helper'
 		end
 
 		context 'inflow' do
-			subject(:transaction) { create(:split_from_transaction, status: 'Reconciled') }
+			subject(:transaction) { create :split_from_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'SplitFrom', name: 'Split From'}
@@ -229,9 +229,9 @@ require 'rails_helper'
 		end
 
 		context 'split transaction' do
-			subject(:transaction) { create(:split_transaction) }
+			subject(:transaction) { create :split_transaction }
 
-			let!(:expected_children) do
+			let! :expected_children do
 				[
 					create(:sub_expense_transaction, :flagged, parent: transaction).as_json,
 					create(:subtransfer_to_transaction, parent: transaction).as_json,
@@ -247,7 +247,7 @@ require 'rails_helper'
 		end
 
 		context 'payslip transaction' do
-			subject(:transaction) { create(:payslip_transaction, subtransfers: 1) }
+			subject(:transaction) { create :payslip_transaction, subtransfers: 1 }
 
 			it "should set any subtransfer directions to 'outflow'" do
 				expect(transaction.children.first[:direction]).to eq 'outflow'

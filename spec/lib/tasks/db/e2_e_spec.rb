@@ -8,7 +8,7 @@ require 'tasks/db_e2e'
 ::RSpec.describe ::DB::E2E do
 	describe '::create_test_data' do
 		before do
-			::Rake::Task.define_task(:environment) unless ::Rake::Task.task_defined? :environment
+			::Rake::Task.define_task :environment unless ::Rake::Task.task_defined? :environment
 		end
 
 		after do
@@ -16,14 +16,14 @@ require 'tasks/db_e2e'
 		end
 
 		it 'should define a new rake task' do
-			described_class.create_test_data(:example)
+			described_class.create_test_data :example
 			expect(::Rake::Task.task_defined? 'db:e2e:example').to be true
 		end
 
 		it 'should handle a block with no arguments' do
 			expected = ''
 
-			described_class.create_test_data(:example) do
+			described_class.create_test_data :example do
 				expected = nil
 			end
 
@@ -35,7 +35,7 @@ require 'tasks/db_e2e'
 		it 'should handle a block with one argument' do
 			expected = nil
 
-			described_class.create_test_data(:example) do |arg|
+			described_class.create_test_data :example do |arg|
 				expected = arg
 			end
 
@@ -47,7 +47,7 @@ require 'tasks/db_e2e'
 		it 'should handle a block with many arguments' do
 			expected = nil
 
-			described_class.create_test_data(:example) do |*args|
+			described_class.create_test_data :example do |*args|
 				expected = *args
 			end
 

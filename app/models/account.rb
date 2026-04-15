@@ -34,7 +34,7 @@ class Account < ApplicationRecord
 
 		def for_status(opts)
 			if opts[:status]
-				where(transaction_accounts: {status: opts[:status]})
+				where transaction_accounts: {status: opts[:status]}
 			else
 				all
 			end
@@ -241,7 +241,7 @@ class Account < ApplicationRecord
 				related_account.account_type = 'bank'
 				related_account.opening_balance = json['related_account']['opening_balance']
 				related_account.status = json['status']
-				related_account.favourite = json['favourite'].eql?(true)
+				related_account.favourite = json['favourite'].eql? true
 			else
 				# Create a new cash account
 				self.related_account = ::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: self
@@ -261,7 +261,7 @@ class Account < ApplicationRecord
 		# Mark all cleared transactions for the account as reconciled
 		transaction_accounts
 			.where(status: 'Cleared')
-			.update_all(status: 'Reconciled')
+			.update_all status: 'Reconciled'
 	end
 
 	def as_json(options = {fields: %i[id name account_type opening_balance status favourite]})

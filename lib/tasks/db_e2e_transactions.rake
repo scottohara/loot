@@ -3,7 +3,7 @@
 
 require_relative 'db_e2e'
 
-::DB::E2E.create_test_data(:transactions) do
+::DB::E2E.create_test_data :transactions do
 	# Create associated entities
 	bank_account = create :bank_account
 	another_bank_account = create :bank_account

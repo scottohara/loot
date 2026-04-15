@@ -71,8 +71,8 @@ require 'rails_helper'
 	end
 
 	describe '#update_from_json' do
-		let(:header) { create(:transaction_header) }
-		let(:json) do
+		let(:header) { create :transaction_header }
+		let :json do
 			{
 				'next_due_date' => ::Time.zone.today,
 				'frequency' => 'Weekly',
@@ -93,7 +93,7 @@ require 'rails_helper'
 			it('should update a transaction header from a JSON representation') {} # Empty block
 
 			context 'when previously scheduled' do
-				let(:header) { create(:transaction_header, :scheduled) }
+				let(:header) { create :transaction_header, :scheduled }
 
 				it 'should destroy the previous schedule' do
 					expect(header.schedule).to receive :destroy!
@@ -113,7 +113,7 @@ require 'rails_helper'
 			end
 
 			context 'when previously scheduled' do
-				let(:header) { create(:transaction_header, :scheduled) }
+				let(:header) { create :transaction_header, :scheduled }
 
 				it 'should update the existing schedule' do
 					expect(header).not_to receive :build_schedule
@@ -130,13 +130,13 @@ require 'rails_helper'
 		end
 
 		context 'unscheduled' do
-			subject(:transaction_header) { create(:transaction_header) }
+			subject(:transaction_header) { create :transaction_header }
 
 			it('should return a JSON representation') {} # Empty block
 		end
 
 		context 'scheduled' do
-			subject(:transaction_header) { create(:transaction_header, :scheduled) }
+			subject(:transaction_header) { create :transaction_header, :scheduled }
 
 			before do
 				expect(transaction_header.schedule).to receive(:as_json).and_return schedule: 'schedule json'

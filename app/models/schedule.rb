@@ -123,7 +123,7 @@ class Schedule < ApplicationRecord
 
 			overdue.each do |schedule|
 				# Find the associated transaction header
-				header = ::TransactionHeader.includes(:trx).find_by(schedule_id: schedule.id)
+				header = ::TransactionHeader.includes(:trx).find_by schedule_id: schedule.id
 
 				# What type of transaction is it?
 				transaction_class = ::Transaction.class_for header.trx.transaction_type

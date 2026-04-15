@@ -14,7 +14,7 @@ class Payee < ApplicationRecord
 					'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
 				]
 			)
-				.where('transactions.transaction_type != \'Subtransfer\'')
+				.where 'transactions.transaction_type != \'Subtransfer\''
 		end
 
 		def for_closing_balance(_opts)

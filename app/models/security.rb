@@ -138,7 +138,7 @@ class Security < ApplicationRecord
 
 		if security_price.present?
 			# Update the existing price if the transaction_id is highest of all for this security/date (best guess at this being the 'most recent' price)
-			security_price.update_column(:price, price) unless security_transaction_headers.where(transaction_date: as_at_date).exists?(['transaction_id > ?', transaction_id])
+			security_price.update_column :price, price unless security_transaction_headers.where(transaction_date: as_at_date).exists? ['transaction_id > ?', transaction_id]
 		else
 			# No existing price for this date, so create one
 			prices.create! price:, as_at_date:

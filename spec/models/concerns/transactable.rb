@@ -54,7 +54,7 @@ require 'models/concerns/categorisable'
 					"expected #{expected.distinct { |t| t[:id] }.size} #{'transaction'.pluralize} but got #{actual.uniq { |t| t[:id] }.size}"
 				else
 					# Content mismatch
-					differences.reduce('') do |message, diff|
+					differences.reduce '' do |message, diff|
 						message += "Transaction #:\t#{diff[:id]} (#{diff[:type]})\n"
 						message += "Expected:\t#{diff[:expected]}\n"
 						message + "Actual:\t\t#{diff[:actual]}\n\n"
@@ -116,7 +116,7 @@ require 'models/concerns/categorisable'
 			::FactoryBot.reload
 
 			# Create the context with 15 basic transactions
-			context = create(context_factory, transactions: 15)
+			context = create context_factory, transactions: 15
 			subject = (defined?(as_class_method) && described_class) || context
 			query = defined?(search_term) && search_term
 
@@ -133,18 +133,18 @@ require 'models/concerns/categorisable'
 		end
 
 		it 'should handle all types of transactions and ignore scheduled transactions' do
-			context = create(context_factory, :with_all_transaction_types, scheduled: 1)
+			context = create context_factory, :with_all_transaction_types, scheduled: 1
 			subject = (defined?(as_class_method) && described_class) || context
 			query = defined?(search_term) && search_term
 
 			_, transactions = subject.ledger(query:)
-			expected_transactions = subject.transactions.for_ledger(query:).where.not('transaction_headers.transaction_date': nil)
+			expected_transactions = subject.transactions.for_ledger(query:).where.not 'transaction_headers.transaction_date': nil
 
 			expect(transactions).to match_ledger_transactions expected_transactions
 		end
 
 		it 'should only include transactions belonging to the context' do
-			context = create(context_factory, transactions: 2)
+			context = create context_factory, transactions: 2
 			if defined? as_class_method
 				# Another transaction with a memo that doesn't contain the search term ("transaction")
 				create :basic_transaction, memo: 'Other context'
@@ -203,7 +203,7 @@ require 'models/concerns/categorisable'
 	describe '#closing_balance' do
 		subject { (defined?(as_class_method) && described_class) || context }
 
-		let(:context) { create(context_factory, :with_all_transaction_types, scheduled: 1) }
+		let(:context) { create context_factory, :with_all_transaction_types, scheduled: 1 }
 		let(:query) { defined?(search_term) && search_term }
 
 		before do
@@ -237,11 +237,9 @@ require 'models/concerns/categorisable'
 		end
 
 		it 'should set default values for invalid options' do
-			opts = subject.ledger_options(
-				as_at: 'invalid',
+			opts = subject.ledger_options as_at: 'invalid',
 				direction: 'invalid',
 				unreconciled: 'invalid'
-			)
 
 			expect(opts[:as_at]).to eq '2400-12-31'
 			expect(opts[:direction]).to eq :prev
@@ -249,11 +247,9 @@ require 'models/concerns/categorisable'
 		end
 
 		it 'should retain any valid options provided' do
-			opts = subject.ledger_options(
-				as_at: '2014-01-01',
+			opts = subject.ledger_options as_at: '2014-01-01',
 				direction: 'next',
 				unreconciled: 'true'
-			)
 
 			expect(opts[:as_at]).to eq '2014-01-01'
 			expect(opts[:direction]).to eq :next
@@ -306,7 +302,7 @@ require 'models/concerns/categorisable'
 	describe '#drop_opening_date' do
 		subject { (defined?(as_class_method) && described_class) || described_class.new }
 
-		let(:transactions) do
+		let :transactions do
 			[
 				{'transaction_date' => '2014-01-02'},
 				{'transaction_date' => '2014-01-01'},
@@ -375,15 +371,13 @@ require 'models/concerns/categorisable'
 		transactions = []
 
 		before do
-			opening_balance, transactions = subject.exclude_reconciled(
-				100,
+			opening_balance, transactions = subject.exclude_reconciled 100,
 				[
 					{'status' => 'Reconciled', 'amount' => 10, 'direction' => 'inflow'}, # +$10 inflow
 					{'status' => 'Reconciled', 'amount' => 5, 'direction' => 'outflow'}, # -$5	outflow
 					{'status' => 'Reconciled', 'amount' => nil, 'direction' => 'inflow'}, # ignore, amount is nil
 					{'status' => nil, 'amount' => 10, 'direction' => 'inflow'} # ignore, unreconciled
 				]
-			)
 		end
 
 		it 'should update the opening balance with the amounts of any reconciled transactions' do

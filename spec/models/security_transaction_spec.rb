@@ -121,7 +121,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction) { create(:security_holding_transaction) }
+		subject(:transaction) { create :security_holding_transaction }
 
 		let(:json) { transaction.as_json }
 

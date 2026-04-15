@@ -56,8 +56,7 @@ class TransferTransaction < PayeeCashTransaction
 
 		primary_account, other_account, category_direction, status, related_status = other_account, primary_account, 'From', related_status, status if options[:direction].eql? 'inflow'
 
-		super.merge(
-			primary_account: primary_account.as_json,
+		super.merge primary_account: primary_account.as_json,
 			category: {
 				id: "Transfer#{category_direction}",
 				name: "Transfer #{category_direction}"
@@ -66,7 +65,6 @@ class TransferTransaction < PayeeCashTransaction
 			direction: options[:direction],
 			status:,
 			related_status:
-		)
 	end
 
 	# :nocov:

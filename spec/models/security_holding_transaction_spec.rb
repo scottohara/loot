@@ -20,9 +20,9 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:account) { create(:investment_account) }
-		let(:header) { create(:security_transaction_header) }
-		let(:json) do
+		let(:account) { create :investment_account }
+		let(:header) { create :security_transaction_header }
+		let :json do
 			{
 				id: 1,
 				'memo' => 'Test json',
@@ -65,9 +65,9 @@ require 'rails_helper'
 	end
 
 	describe '::update_from_json' do
-		let(:account) { create(:investment_account) }
-		let(:transaction) { create(:security_holding_transaction) }
-		let(:json) do
+		let(:account) { create :investment_account }
+		let(:transaction) { create :security_holding_transaction }
+		let :json do
 			{
 				id: transaction.id,
 				'memo' => 'Test json',
@@ -114,7 +114,7 @@ require 'rails_helper'
 		end
 
 		context 'add shares' do
-			subject(:transaction) { create(:security_add_transaction, status: 'Reconciled') }
+			subject(:transaction) { create :security_add_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'AddShares', name: 'Add Shares'}
@@ -123,7 +123,7 @@ require 'rails_helper'
 		end
 
 		context 'remove shares' do
-			subject(:transaction) { create(:security_remove_transaction, status: 'Reconciled') }
+			subject(:transaction) { create :security_remove_transaction, status: 'Reconciled' }
 
 			it 'should return a JSON representation' do
 				expect(json).to include category: {id: 'RemoveShares', name: 'Remove Shares'}

@@ -8,11 +8,9 @@ class PayslipTransaction < SplitTransaction
 	end
 
 	def as_json(options = {})
-		super.merge(
-			category: {
-				id: transaction_type,
-				name: transaction_type
-			}
-		)
+		super.merge category: {
+			id: transaction_type,
+			name: transaction_type
+		}
 	end
 end

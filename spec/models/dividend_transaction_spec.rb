@@ -25,10 +25,10 @@ require 'rails_helper'
 	end
 
 	describe '::create_from_json' do
-		let(:investment_account) { create(:investment_account) }
-		let(:cash_account) { create(:bank_account) }
-		let(:header) { create(:security_transaction_header) }
-		let(:json) do
+		let(:investment_account) { create :investment_account }
+		let(:cash_account) { create :bank_account }
+		let(:header) { create :security_transaction_header }
+		let :json do
 			{
 				id: 1,
 				'amount' => 1,
@@ -66,10 +66,10 @@ require 'rails_helper'
 	end
 
 	describe '::update_from_json' do
-		let(:investment_account) { create(:investment_account) }
-		let(:cash_account) { create(:bank_account) }
-		let(:transaction) { create(:dividend_transaction) }
-		let(:json) do
+		let(:investment_account) { create :investment_account }
+		let(:cash_account) { create :bank_account }
+		let(:transaction) { create :dividend_transaction }
+		let :json do
 			{
 				id: transaction.id,
 				'amount' => 1,
@@ -96,7 +96,7 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		subject(:transaction) { create(:dividend_transaction, status: 'Reconciled') }
+		subject(:transaction) { create :dividend_transaction, status: 'Reconciled' }
 
 		before do
 			expect(transaction.investment_account.account).to receive(:as_json).and_return 'investment account json'
@@ -132,9 +132,9 @@ require 'rails_helper'
 	end
 
 	describe '#investment_account' do
-		subject(:transaction) { create(:dividend_transaction, investment_account: account) }
+		subject(:transaction) { create :dividend_transaction, investment_account: account }
 
-		let(:account) { create(:investment_account) }
+		let(:account) { create :investment_account }
 
 		it "should return the first account of type 'investment'" do
 			expect(transaction.investment_account.account).to eq account
@@ -142,9 +142,9 @@ require 'rails_helper'
 	end
 
 	describe '#cash_account' do
-		subject(:transaction) { create(:dividend_transaction, cash_account: account) }
+		subject(:transaction) { create :dividend_transaction, cash_account: account }
 
-		let(:account) { create(:bank_account) }
+		let(:account) { create :bank_account }
 
 		it "should return the first account of type 'bank'" do
 			expect(transaction.cash_account.account).to eq account

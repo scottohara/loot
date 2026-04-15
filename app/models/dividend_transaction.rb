@@ -46,15 +46,13 @@ class DividendTransaction < SecurityTransaction
 		other_account = cash_account
 		primary_account, other_account = other_account, primary_account if options[:primary_account].eql? other_account.account_id
 
-		super.merge(
-			primary_account: primary_account.account.as_json,
+		super.merge primary_account: primary_account.account.as_json,
 			category: self.class.transaction_category('transaction_type' => transaction_type, 'direction' => primary_account.direction),
 			account: other_account.account.as_json,
 			amount:,
 			direction: primary_account.direction,
 			status: primary_account.status,
 			related_status: other_account.status
-		)
 	end
 
 	def investment_account
