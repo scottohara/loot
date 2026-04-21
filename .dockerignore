@@ -14,9 +14,9 @@ lib
 log
 node_modules
 public
+spec
 src/**/*.test.ts
 src/mocks
-spec
 tmp
 vendor
 **/*~
