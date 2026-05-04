@@ -213,9 +213,9 @@ require 'rails_helper'
 
 					actual_trx[:id].eql?(expected_trx[:id]) &&
 						actual_trx[:transaction_type].eql?(expected_trx[:transaction_type]) &&
-						actual_trx[:category][:id].eql?(expected_trx[:category] && expected_trx[:category][:id].to_s) &&
+						actual_trx[:category][:id].eql?(expected_trx[:category] && expected_trx[:category][:id]) &&
 						actual_trx[:category][:name].eql?(expected_trx[:category] && expected_trx[:category][:name]) &&
-						(actual_trx[:subcategory] && actual_trx[:subcategory][:id]).eql?(expected_trx[:subcategory] && expected_trx[:subcategory][:id].to_s) &&
+						(actual_trx[:subcategory] && actual_trx[:subcategory][:id]).eql?(expected_trx[:subcategory] && expected_trx[:subcategory][:id]) &&
 						(actual_trx[:subcategory] && actual_trx[:subcategory][:name]).eql?(expected_trx[:subcategory] && expected_trx[:subcategory][:name]) &&
 						actual_trx[:account][:id].eql?((expected_trx[:transaction_type].eql?('Subtransfer') && expected_trx[:primary_account][:id]) || nil) &&
 						actual_trx[:account][:name].eql?((expected_trx[:transaction_type].eql?('Subtransfer') && expected_trx[:primary_account][:name]) || nil) &&

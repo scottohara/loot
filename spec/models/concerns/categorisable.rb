@@ -153,7 +153,7 @@
 			it 'should return the category details' do
 				id, name = subject.basic_category trx
 
-				expect(id).to eq trx['category_id'].to_s
+				expect(id).to eq trx['category_id']
 				expect(name).to eq trx['category_name']
 			end
 		end
@@ -165,7 +165,7 @@
 
 				id, name = subject.basic_category trx
 
-				expect(id).to eq trx['parent_category_id'].to_s
+				expect(id).to eq trx['parent_category_id']
 				expect(name).to eq trx['parent_category_name']
 			end
 		end
@@ -184,11 +184,11 @@
 
 		context 'subcategory' do
 			it 'should not be nil' do
-				trx['parent_category_id'] = 'parent_id'
+				trx['parent_category_id'] = 2
 
 				result = subject.basic_subcategory trx
 
-				expect(result[:id]).to eq trx['category_id'].to_s
+				expect(result[:id]).to eq trx['category_id']
 				expect(result[:name]).to eq trx['category_name']
 				expect(result[:parent_id]).to eq trx['parent_category_id']
 			end

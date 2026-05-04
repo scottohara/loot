@@ -47,9 +47,9 @@ module Categorisable
 			return if trx['parent_category_id'].blank?
 
 			{
-				id: trx['category_id'].to_s,
+				id: trx['category_id'],
 				name: trx['category_name'],
-				parent_id: trx['parent_category_id'].to_s
+				parent_id: trx['parent_category_id']
 			}
 		end
 
@@ -61,9 +61,9 @@ module Categorisable
 
 		def basic_category(trx)
 			if trx['parent_category_id'].present?
-				[trx['parent_category_id'].to_s, trx['parent_category_name']]
+				[trx['parent_category_id'], trx['parent_category_name']]
 			else
-				[trx['category_id'].to_s, trx['category_name']]
+				[trx['category_id'], trx['category_name']]
 			end
 		end
 

@@ -81,10 +81,6 @@ require 'rails_helper'
 				transaction[nested_key] = nil if transaction[nested_key].empty?
 			end
 
-			# Category/subcategory IDs need to be strings
-			transaction[:category][:id] = transaction[:category][:id].to_s if transaction[:category]
-			transaction[:subcategory][:id] = transaction[:subcategory][:id].to_s if transaction[:subcategory]
-
 			# Remove any nil values
 			transaction.compact
 		end
