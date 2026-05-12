@@ -264,8 +264,22 @@ class Account < ApplicationRecord
 			.update_all status: 'Reconciled'
 	end
 
-	def as_json(options = {fields: %i[id name account_type opening_balance status favourite]})
-		# Defer to serializer
-		::ActiveModelSerializers::SerializableResource.new(self, options).as_json
+	def as_json(options = {only: %i[id name account_type]})
+		json = {
+			id:,
+			name:,
+			account_type:,
+			status:,
+			favourite:,
+			opening_balance: opening_balance.to_f
+		}
+
+		json[:closing_balance] = closing_balance.to_f if options[:only].include? :closing_balance
+		json[:cleared_closing_balance] = closing_balance(status: 'Cleared').to_f - opening_balance.to_f if options[:only].include? :cleared_closing_balance
+		json[:reconciled_closing_balance] = closing_balance(status: 'Reconciled').to_f if options[:only].include? :reconciled_closing_balance
+		json[:related_account] = related_account&.as_json only: %i[id name opening_balance] if options[:only].include? :related_account
+		json[:num_transactions] = transactions.count if options[:only].include? :num_transactions
+
+		json.slice(*options[:only])
 	end
 end

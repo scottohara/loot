@@ -157,8 +157,19 @@ class Security < ApplicationRecord
 		nil
 	end
 
-	def as_json(*)
-		# Defer to serializer
-		::ActiveModelSerializers::SerializableResource.new(self).as_json
+	def as_json(options = {only: %i[id name]})
+		json = {
+			id:,
+			name:,
+			code:,
+			favourite:
+		}
+
+		json[:closing_balance] = closing_balance if options[:only].include? :closing_balance
+		json[:current_holding] = transactions.for_current_holding.reduce(0) { |acc, elem| acc + (elem.total_quantity * (elem.direction.eql?('inflow') ? 1 : -1)) } if options[:only].include? :current_holding
+		json[:num_transactions] = transactions.count if options[:only].include? :num_transactions
+		json[:unused] = transactions.count.eql? 0 if options[:only].include? :unused
+
+		json.slice(*options[:only])
 	end
 end

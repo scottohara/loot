@@ -33,20 +33,26 @@ require 'rails_helper'
 	end
 
 	describe 'GET show', :json, :request do
-		let(:json) { 'category details' }
+		let(:category) { instance_double ::Category }
+		let(:raw_json) { 'category details' }
+		let(:json) { ::JSON.dump raw_json }
 
 		it 'should return the details of the specified category' do
-			expect(::Category).to receive(:find).with('1').and_return json
+			expect(::Category).to receive(:find).with('1').and_return category
+			expect(category).to receive(:as_json).with({only: described_class.const_get(:SHOW_FIELDS)}).and_return raw_json
 			get :show, params: {id: '1'}
 		end
 	end
 
 	describe 'POST create', :json, :request do
+		let(:category) { instance_double ::Category }
 		let(:request_body) { {name: 'New category', direction: 'outflow', parent_id: '1'} }
-		let(:json) { 'created category' }
+		let(:raw_json) { 'created category' }
+		let(:json) { ::JSON.dump raw_json }
 
 		it 'should create a new category and return the details' do
-			expect(::Category).to receive(:create!).with(request_body).and_return json
+			expect(::Category).to receive(:create!).with(request_body).and_return category
+			expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
 			post :create, params: request_body
 		end
 	end
@@ -60,7 +66,7 @@ require 'rails_helper'
 		it 'should update an existing category and return the details' do
 			expect(::Category).to receive(:find).with('1').and_return category
 			expect(category).to receive(:update!).with request_body
-			expect(category).to receive(:as_json).and_return raw_json
+			expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
 			patch :update, params: request_body.merge(id: '1')
 		end
 	end

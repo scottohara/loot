@@ -3,17 +3,20 @@
 
 # Payees controller
 class PayeesController < ApplicationController
+	SHOW_FIELDS = %i[id name closing_balance num_transactions].freeze
+	private_constant :SHOW_FIELDS
+
 	def index
 		sort = [:name]
 
 		# Only first by favourite for typeaheads
 		sort.unshift favourite: :desc unless params.key? :list
 
-		render json: ::Payee.order(*sort), fields: %i[id name favourite]
+		render json: ::Payee.order(*sort)
 	end
 
 	def show
-		render json: ::Payee.find(params[:id])
+		render json: ::Payee.find(params[:id]), only: SHOW_FIELDS
 	end
 
 	def create

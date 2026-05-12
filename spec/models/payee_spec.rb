@@ -48,14 +48,30 @@ require 'rails_helper'
 	describe '#as_json' do
 		subject(:payee) { create :payee, name: 'Test Payee', transactions: 1 }
 
-		let(:json) { payee.as_json }
+		context 'with no options' do
+			let(:json) { payee.as_json }
 
-		it 'should return a JSON representation' do
-			expect(json).to include id: payee.id
-			expect(json).to include name: 'Test Payee'
-			expect(json).to include closing_balance: payee.closing_balance
-			expect(json).to include num_transactions: 1
-			expect(json).to include favourite: false
+			it 'should include only the default fields' do
+				expect(json).to eq(id: payee.id, name: payee.name, favourite: payee.favourite)
+			end
+		end
+
+		context 'with options' do
+			context 'closing_balance' do
+				let(:json) { payee.as_json only: %i[id closing_balance] }
+
+				it 'should include closing_balance' do
+					expect(json).to eq(id: payee.id, closing_balance: payee.closing_balance)
+				end
+			end
+
+			context 'num_transactions' do
+				let(:json) { payee.as_json only: %i[name num_transactions] }
+
+				it 'should include num_transactions' do
+					expect(json).to eq(name: payee.name, num_transactions: 1)
+				end
+			end
 		end
 	end
 end

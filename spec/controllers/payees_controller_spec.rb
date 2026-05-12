@@ -27,20 +27,26 @@ require 'rails_helper'
 	end
 
 	describe 'GET show', :json, :request do
-		let(:json) { 'payee details' }
+		let(:payee) { instance_double ::Payee }
+		let(:raw_json) { 'payee details' }
+		let(:json) { ::JSON.dump raw_json }
 
 		it 'should return the details of the specified payee' do
-			expect(::Payee).to receive(:find).with('1').and_return json
+			expect(::Payee).to receive(:find).with('1').and_return payee
+			expect(payee).to receive(:as_json).with({only: described_class.const_get(:SHOW_FIELDS)}).and_return raw_json
 			get :show, params: {id: '1'}
 		end
 	end
 
 	describe 'POST create', :json, :request do
+		let(:payee) { instance_double ::Payee }
 		let(:request_body) { {name: 'New payee'} }
-		let(:json) { 'created payee' }
+		let(:raw_json) { 'created payee' }
+		let(:json) { ::JSON.dump raw_json }
 
 		it 'should create a new payee and return the details' do
-			expect(::Payee).to receive(:create!).with(request_body).and_return json
+			expect(::Payee).to receive(:create!).with(request_body).and_return payee
+			expect(payee).to receive(:as_json).and_return raw_json
 			post :create, params: request_body
 		end
 	end

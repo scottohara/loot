@@ -15,9 +15,6 @@ gem 'pg', '1.6.3'
 # App server
 gem 'puma', '7.2.0'
 
-# For JSON serialisation
-gem 'active_model_serializers', '0.10.16'
-
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '1.22.0', require: false
 

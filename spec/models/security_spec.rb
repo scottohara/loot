@@ -204,17 +204,72 @@ require 'rails_helper'
 	describe '#as_json' do
 		subject(:security) { create :security, name: 'Test Security', code: 'TEST', transactions: 1 }
 
-		let(:json) { security.as_json }
+		context 'with no options' do
+			let(:json) { security.as_json }
 
-		it 'should return a JSON representation' do
-			expect(json).to include id: security.id
-			expect(json).to include name: 'Test Security'
-			expect(json).to include code: 'TEST'
-			expect(json).to include current_holding: 10
-			expect(json).to include closing_balance: security.closing_balance
-			expect(json).to include num_transactions: 1
-			expect(json).to include unused: false
-			expect(json).to include favourite: false
+			it 'should include only the default fields' do
+				expect(json).to eq(id: security.id, name: security.name)
+			end
+		end
+
+		context 'with options' do
+			context 'code' do
+				let(:json) { security.as_json only: %i[id code] }
+
+				it 'should include code' do
+					expect(json).to eq(id: security.id, code: 'TEST')
+				end
+			end
+
+			context 'favourite' do
+				let(:json) { security.as_json only: %i[name favourite] }
+
+				it 'should include favourite' do
+					expect(json).to eq(name: security.name, favourite: false)
+				end
+			end
+
+			context 'closing_balance' do
+				let(:json) { security.as_json only: %i[id closing_balance] }
+
+				it 'should include closing_balance' do
+					expect(json).to eq(id: security.id, closing_balance: security.closing_balance)
+				end
+			end
+
+			context 'current_holding' do
+				let(:json) { security.as_json only: %i[name current_holding] }
+
+				it 'should include current_holding' do
+					expect(json).to eq(name: security.name, current_holding: 10)
+				end
+
+				context 'with an outflow transaction' do
+					subject(:security) { create :security, name: 'Test Security', code: 'TEST' }
+
+					before { create :security_remove_transaction, security: }
+
+					it 'should subtract outflow quantities' do
+						expect(json).to eq(name: security.name, current_holding: -10)
+					end
+				end
+			end
+
+			context 'num_transactions' do
+				let(:json) { security.as_json only: %i[id num_transactions] }
+
+				it 'should include num_transactions' do
+					expect(json).to eq(id: security.id, num_transactions: 1)
+				end
+			end
+
+			context 'unused' do
+				let(:json) { security.as_json only: %i[name unused] }
+
+				it 'should include unused' do
+					expect(json).to eq(name: security.name, unused: false)
+				end
+			end
 		end
 	end
 end

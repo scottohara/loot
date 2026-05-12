@@ -33,6 +33,8 @@ Lint/ConstantResolution:
     - Frequency
     - FREQUENCIES
     - NUM_RESULTS
+    - SHOW_FIELDS
+    - EDIT_FIELDS
 
 # Allow reading of ENV vars for authentication
 Rails/EnvironmentVariableAccess:

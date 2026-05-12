@@ -46,8 +46,16 @@ class Payee < ApplicationRecord
 		nil
 	end
 
-	def as_json(*)
-		# Defer to serializer
-		::ActiveModelSerializers::SerializableResource.new(self).as_json
+	def as_json(options = {only: %i[id name favourite]})
+		json = {
+			id:,
+			name:,
+			favourite:
+		}
+
+		json[:closing_balance] = closing_balance if options[:only].include? :closing_balance
+		json[:num_transactions] = transactions.count if options[:only].include? :num_transactions
+
+		json.slice(*options[:only])
 	end
 end

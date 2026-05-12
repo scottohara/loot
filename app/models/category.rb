@@ -52,8 +52,21 @@ class Category < ApplicationRecord
 		nil
 	end
 
-	def as_json(options = {fields: %i[id name direction parent_id favourite]})
-		# Defer to serializer
-		::ActiveModelSerializers::SerializableResource.new(self, options).as_json
+	def as_json(options = {only: %i[id name direction parent_id favourite]})
+		json = {
+			id:,
+			name:,
+			direction:,
+			parent_id:,
+			favourite:
+		}
+
+		json[:closing_balance] = closing_balance if options[:only].include? :closing_balance
+		json[:parent] = parent&.as_json only: %i[id name direction] if options[:only].include? :parent
+		json[:num_children] = children.size if options[:only].include? :num_children
+		json[:num_transactions] = transactions.count if options[:only].include? :num_transactions
+		json[:children] = children.as_json only: %i[id name direction parent_id parent num_transactions favourite] if options[:only].include?(:children) && !parent && children.loaded?
+
+		json.slice(*options[:only])
 	end
 end

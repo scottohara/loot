@@ -432,59 +432,86 @@ require 'rails_helper'
 	describe '#as_json' do
 		subject(:account) { create :account, name: 'Test Account', transactions: 1 }
 
-		after do
-			expect(json).to include id: account.id
-			expect(json).to include name: 'Test Account'
-			expect(json).to include account_type: 'bank'
-			expect(json).to include opening_balance: 1000
-			expect(json).to include status: 'open'
-			expect(json).to include favourite: false
-		end
-
-		context 'with default options' do
+		context 'with no options' do
 			let(:json) { account.as_json }
 
-			before do
-				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account, {fields: %i[id name account_type opening_balance status favourite]}).and_call_original
-			end
-
-			it 'should return a JSON representation' do
-				expect(json).not_to include :related_account
+			it 'should include only the default fields' do
+				expect(json).to eq(id: account.id, name: account.name, account_type: 'bank')
 			end
 		end
 
-		context 'with empty options' do
-			let(:json) { account.as_json({}) }
+		context 'with options' do
+			context 'status' do
+				let(:json) { account.as_json only: %i[id status] }
 
-			before do
-				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account, {}).and_call_original
-			end
-
-			after do
-				expect(json).to include closing_balance: account.closing_balance
-				expect(json).to include num_transactions: 1
-			end
-
-			context 'without related account' do
-				it 'should return a JSON representation with no related account' do
-					expect(json).to include related_account: nil
+				it 'should include status' do
+					expect(json).to eq(id: account.id, status: 'open')
 				end
 			end
 
-			context 'with related account' do
-				let(:related_account) { json[:related_account] }
+			context 'opening_balance' do
+				let(:json) { account.as_json only: %i[name opening_balance] }
 
-				before do
-					account.related_account = create :account, name: 'Related Account'
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(account.related_account, {fields: %i[id name account_type opening_balance status]}).and_call_original
+				it 'should include opening_balance' do
+					expect(json).to eq(name: account.name, opening_balance: account.opening_balance.to_f)
+				end
+			end
+
+			context 'favourite' do
+				let(:json) { account.as_json only: %i[id favourite] }
+
+				it 'should include favourite' do
+					expect(json).to eq(id: account.id, favourite: false)
+				end
+			end
+
+			context 'closing_balance' do
+				let(:json) { account.as_json only: %i[name closing_balance] }
+
+				it 'should include closing_balance' do
+					expect(json).to eq(name: account.name, closing_balance: account.closing_balance.to_f)
+				end
+			end
+
+			context 'cleared_closing_balance' do
+				let(:json) { account.as_json only: %i[id cleared_closing_balance] }
+
+				it 'should include cleared_closing_balance' do
+					expect(json).to eq(id: account.id, cleared_closing_balance: account.closing_balance(status: 'Cleared').to_f - account.opening_balance.to_f)
+				end
+			end
+
+			context 'reconciled_closing_balance' do
+				let(:json) { account.as_json only: %i[name reconciled_closing_balance] }
+
+				it 'should include reconciled_closing_balance' do
+					expect(json).to eq(name: account.name, reconciled_closing_balance: account.closing_balance(status: 'Reconciled').to_f)
+				end
+			end
+
+			context 'num_transactions' do
+				let(:json) { account.as_json only: %i[id num_transactions] }
+
+				it 'should include num_transactions' do
+					expect(json).to eq(id: account.id, num_transactions: 1)
+				end
+			end
+
+			context 'related_account' do
+				let(:json) { account.as_json only: %i[related_account] }
+
+				context 'without a related account' do
+					it 'should include related_account as nil' do
+						expect(json).to eq(related_account: nil)
+					end
 				end
 
-				it 'should return a JSON representation including related account' do
-					expect(related_account).to include id: account.related_account.id
-					expect(related_account).to include name: 'Related Account'
-					expect(related_account).to include account_type: 'bank'
-					expect(related_account).to include opening_balance: 1000
-					expect(related_account).to include status: 'open'
+				context 'with a related account' do
+					before { account.related_account = create :account, name: 'Related Account' }
+
+					it 'should include the related account with id, name and opening_balance only' do
+						expect(json[:related_account]).to eq(id: account.related_account.id, name: account.related_account.name, opening_balance: account.related_account.opening_balance.to_f)
+					end
 				end
 			end
 		end

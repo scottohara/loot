@@ -70,109 +70,119 @@ require 'rails_helper'
 	end
 
 	describe '#as_json' do
-		after do
-			expect(json).to include id: category.id
-			expect(json).to include name: 'Test Category'
-			expect(json).to include direction: 'outflow'
-			expect(json).to include favourite: false
-		end
-
-		context 'with default options' do
-			let(:json) { category.as_json }
-
-			before do
-				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {fields: %i[id name direction parent_id favourite]}).and_call_original
-			end
-
-			after do
-				expect(json).not_to include :num_children
-				expect(json).not_to include :parent
-				expect(json).not_to include :closing_balance
-				expect(json).not_to include :num_transactions
-				expect(json).not_to include :children
-			end
-
+		context 'with no options' do
 			context 'category' do
 				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
 
-				it 'should return a JSON representation excluding children' do
-					expect(json).to include parent_id: nil
+				let(:json) { category.as_json }
+
+				it 'should include only the default fields' do
+					expect(json).to eq(id: category.id, name: category.name, direction: 'outflow', favourite: false, parent_id: nil)
 				end
 			end
 
 			context 'subcategory' do
 				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
 
-				it 'should return a JSON representation excluding parent' do
-					expect(json).to include parent_id: category.parent.id
+				let(:json) { category.as_json }
+
+				it 'should include only the default fields' do
+					expect(json).to eq(id: category.id, name: category.name, direction: 'outflow', favourite: false, parent_id: category.parent_id)
 				end
 			end
 		end
 
-		context 'with empty options' do
-			let(:json) { category.as_json({}) }
+		context 'with options' do
+			context 'closing_balance' do
+				subject(:category) { create :category, name: 'Test Category', transactions: 1 }
 
-			before do
-				# Access the children association to ensure it is loaded
-				category.children.length
-				expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {}).and_call_original
-			end
+				let(:json) { category.as_json only: %i[id closing_balance] }
 
-			after do
-				expect(json).to include closing_balance: category.closing_balance
-				expect(json).to include num_transactions: 1
-			end
-
-			context 'category' do
-				subject(:category) { create :category, name: 'Test Category', children: 1, transactions: 1 }
-
-				let(:child) { json[:children].first }
-				let(:child_parent) { child[:parent] }
-
-				before do
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.children.first, {fields: %i[id name direction parent_id parent num_transactions favourite]}).and_call_original
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category, {fields: %i[id name direction]}).and_call_original
-				end
-
-				it 'should return a JSON representation including children' do
-					expect(json).to include parent_id: nil
-					expect(json).to include num_children: 1
-					expect(json).to include parent: nil
-
-					expect(child).to include id: category.children.first.id
-					expect(child).to include name: category.children.first.name
-					expect(child).to include direction: 'outflow'
-					expect(child).to include favourite: false
-					expect(child).to include parent_id: category.id
-					expect(child).to include num_transactions: 0
-					expect(child).not_to include :children
-
-					expect(child_parent).to include id: category.id
-					expect(child_parent).to include name: category.name
-					expect(child_parent).to include direction: category.direction
-					expect(child_parent).not_to include :num_children
-					expect(child_parent).not_to include :parent
-					expect(child_parent).not_to include :closing_balance
-					expect(child_parent).not_to include :num_transactions
-					expect(child_parent).not_to include :children
+				it 'should include closing_balance' do
+					expect(json).to eq(id: category.id, closing_balance: category.closing_balance)
 				end
 			end
 
-			context 'subcategory' do
-				subject(:category) { create :subcategory, name: 'Test Category', transactions: 1 }
+			context 'num_transactions' do
+				subject(:category) { create :category, name: 'Test Category', transactions: 1 }
 
-				let(:parent) { json[:parent] }
+				let(:json) { category.as_json only: %i[name num_transactions] }
 
-				before do
-					expect(::ActiveModelSerializers::SerializableResource).to receive(:new).with(category.parent, {fields: %i[id name direction]}).and_call_original
+				it 'should include num_transactions' do
+					expect(json).to eq(name: category.name, num_transactions: 1)
+				end
+			end
+
+			context 'num_children' do
+				subject(:category) { create :category, name: 'Test Category', children: 1 }
+
+				let(:json) { category.as_json only: %i[id num_children] }
+
+				it 'should include num_children' do
+					expect(json).to eq(id: category.id, num_children: 1)
+				end
+			end
+
+			context 'parent on a subcategory' do
+				subject(:category) { create :subcategory, name: 'Test Category' }
+
+				let(:json) { category.as_json only: %i[parent] }
+
+				it 'should include the parent with id, name and direction only' do
+					expect(json[:parent]).to eq(id: category.parent.id, name: category.parent.name, direction: 'outflow')
+				end
+			end
+
+			context 'parent on a top-level category' do
+				subject(:category) { create :category, name: 'Test Category' }
+
+				let(:json) { category.as_json only: %i[parent] }
+
+				it 'should include parent as nil' do
+					expect(json).to eq(parent: nil)
+				end
+			end
+
+			context 'children' do
+				context 'on a category with loaded children' do
+					subject(:category) { create :category, name: 'Test Category', children: 1 }
+
+					let :json do
+						category.children.load
+						category.as_json only: %i[children]
+					end
+
+					it 'should include each child shaped with the nested fields' do
+						expect(json[:children].first).to include id: category.children.first.id
+						expect(json[:children].first).to include name: category.children.first.name
+						expect(json[:children].first).to include direction: 'outflow'
+						expect(json[:children].first).to include parent_id: category.id
+						expect(json[:children].first).to include num_transactions: 0
+						expect(json[:children].first).to include favourite: false
+						expect(json[:children].first[:parent]).to eq(id: category.id, name: category.name, direction: category.direction)
+						expect(json[:children].first).not_to include :children
+					end
 				end
 
-				it 'should return a JSON representation including parent' do
-					expect(json).to include parent_id: category.parent.id
-					expect(json).not_to include :children
-					expect(parent).to include id: category.parent.id
-					expect(parent).to include name: category.parent.name
-					expect(parent).to include direction: 'outflow'
+				context 'on a subcategory' do
+					subject(:category) { create :subcategory, name: 'Test Category' }
+
+					let(:json) { category.as_json only: %i[children] }
+
+					it 'should not include children' do
+						expect(json).not_to include :children
+					end
+				end
+
+				context 'on a category with unloaded children' do
+					subject(:category) { create :category, name: 'Test Category', children: 1 }
+
+					let(:json) { category.as_json only: %i[children] }
+
+					it 'should not include children' do
+						expect(category.children.loaded?).to be false
+						expect(json).not_to include :children
+					end
 				end
 			end
 		end

@@ -33,20 +33,26 @@ require 'rails_helper'
 	end
 
 	describe 'GET show', :json, :request do
-		let(:json) { 'security details' }
+		let(:security) { instance_double ::Security }
+		let(:raw_json) { 'security details' }
+		let(:json) { ::JSON.dump raw_json }
 
 		it 'should return the details of the specified security' do
-			expect(::Security).to receive(:find).with('1').and_return json
+			expect(::Security).to receive(:find).with('1').and_return security
+			expect(security).to receive(:as_json).with({only: described_class.const_get(:SHOW_FIELDS)}).and_return raw_json
 			get :show, params: {id: '1'}
 		end
 	end
 
 	describe 'POST create', :json, :request do
+		let(:security) { instance_double ::Security }
 		let(:request_body) { {name: 'New security', code: 'ABC'} }
-		let(:json) { 'created security' }
+		let(:raw_json) { 'created security' }
+		let(:json) { ::JSON.dump raw_json }
 
 		it 'should create a new security and return the details' do
-			expect(::Security).to receive(:create!).with(request_body).and_return json
+			expect(::Security).to receive(:create!).with(request_body).and_return security
+			expect(security).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
 			post :create, params: request_body
 		end
 	end
@@ -60,7 +66,7 @@ require 'rails_helper'
 		it 'should update an existing security and return the details' do
 			expect(::Security).to receive(:find).with('1').and_return security
 			expect(security).to receive(:update!).with request_body
-			expect(security).to receive(:as_json).and_return raw_json
+			expect(security).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
 			patch :update, params: request_body.merge(id: '1')
 		end
 	end

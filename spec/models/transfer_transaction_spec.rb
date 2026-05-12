@@ -11,7 +11,6 @@ require 'rails_helper'
 				actual[:amount].eql?(expected['amount']) &&
 				actual[:memo].eql?(expected['memo']) &&
 				actual[:primary_account][:id].eql?(source_account.id) &&
-				actual[:primary_account][:status].eql?(source_account.status) &&
 				actual[:status].eql?(expected['status']) &&
 				actual[:account][:id].eql?(destination_account.id) &&
 				actual[:related_status].eql?(expected['related_status']) &&
