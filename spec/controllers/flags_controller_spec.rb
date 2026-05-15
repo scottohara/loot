@@ -18,7 +18,7 @@ require 'rails_helper'
 		end
 
 		context "when a flag doesn't already exist" do
-			let(:transaction) { create :transaction }
+			let(:transaction) { instance_double ::Transaction, flag: nil }
 
 			it 'should create a new flag' do
 				expect(transaction).to receive(:build_flag).with(flag_type:, memo:)
@@ -27,7 +27,7 @@ require 'rails_helper'
 		end
 
 		context 'when a flag already exists' do
-			let(:transaction) { create :transaction, :flagged }
+			let(:transaction) { instance_double ::Transaction, flag: instance_double(::TransactionFlag) }
 
 			it 'should update the existing flag' do
 				expect(transaction).not_to receive :build_flag
@@ -38,7 +38,7 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', :request do
-		let(:transaction) { create :transaction, :flagged }
+		let(:transaction) { instance_double ::Transaction, flag: instance_double(::TransactionFlag) }
 		let(:expected_status) { :no_content }
 
 		it 'should delete an existing flag' do

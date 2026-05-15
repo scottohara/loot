@@ -10,19 +10,19 @@ require 'rails_helper'
 		let(:error_message) { "Transaction type #{split.trx.transaction_type} is not valid in a split transaction" }
 
 		it "should not be an error if the transaction type is 'Sub'" do
-			split.trx = build :sub_transaction
+			allow(split).to receive(:trx).and_return instance_double(::SubTransaction, transaction_type: 'Sub')
 			split.validate_transaction_type_inclusion
 			expect(split.errors[:base]).not_to include error_message
 		end
 
 		it "should not be an error if the transaction type is 'Subtransfer'" do
-			split.trx = build :subtransfer_transaction
+			allow(split).to receive(:trx).and_return instance_double(::SubtransferTransaction, transaction_type: 'Subtransfer')
 			split.validate_transaction_type_inclusion
 			expect(split.errors[:base]).not_to include error_message
 		end
 
 		it "should be an error if the transaction type is neither 'Sub' nor 'Subtransfer'" do
-			split.trx = build :basic_transaction
+			allow(split).to receive(:trx).and_return instance_double(::BasicTransaction, transaction_type: 'Basic')
 			split.validate_transaction_type_inclusion
 			expect(split.errors[:base]).to include error_message
 		end

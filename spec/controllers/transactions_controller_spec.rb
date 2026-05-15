@@ -14,8 +14,10 @@ require 'rails_helper'
 				atEnd: at_end
 		end
 
+		let(:context) { instance_double context_class }
+
 		before :each, :instance do
-			expect(context.class).to receive(:find).with('1').and_return context
+			expect(context_class).to receive(:find).with('1').and_return context
 		end
 
 		after do
@@ -26,28 +28,28 @@ require 'rails_helper'
 		end
 
 		context 'for account', :instance do
-			let(:context) { ::Account.new }
+			let(:context_class) { ::Account }
 			let(:request_params) { {'account_id' => '1'} }
 
 			it('should return the transaction ledger for the account') {} # Empty block
 		end
 
 		context 'for payee', :instance do
-			let(:context) { ::Payee.new }
+			let(:context_class) { ::Payee }
 			let(:request_params) { {'payee_id' => '1'} }
 
 			it('should return the transaction ledger for the payee') {} # Empty block
 		end
 
 		context 'for category', :instance do
-			let(:context) { ::Category.new }
+			let(:context_class) { ::Category }
 			let(:request_params) { {'category_id' => '1'} }
 
 			it('should return the transaction ledger for the category') {} # Empty block
 		end
 
 		context 'for security', :instance do
-			let(:context) { ::Security.new }
+			let(:context_class) { ::Security }
 			let(:request_params) { {'security_id' => '1'} }
 
 			it('should return the transaction ledger for the security') {} # Empty block
@@ -62,7 +64,7 @@ require 'rails_helper'
 	end
 
 	describe 'GET show', :json, :request do
-		let(:transaction) { ::Transaction.new }
+		let(:transaction) { instance_double ::Transaction }
 		let(:json) { 'transaction details' }
 
 		it 'should return the details of the specified transaction' do
@@ -83,7 +85,7 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', :json, :request do
-		let(:transaction) { create :basic_transaction }
+		let(:transaction) { instance_double ::BasicTransaction, transaction_type: 'Basic' }
 		let(:json) { 'updated transaction' }
 
 		before do
@@ -115,7 +117,7 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', :request do
-		let(:transaction) { create :basic_transaction }
+		let(:transaction) { instance_double ::BasicTransaction }
 		let(:expected_status) { :no_content }
 
 		it 'should delete an existing transaction' do
@@ -129,53 +131,56 @@ require 'rails_helper'
 	describe 'GET last', :json, :request do
 		let(:account_type) { 'account type' }
 		let(:transaction_types) { 'transaction types' }
+		let(:relation) { instance_double ::ActiveRecord::Relation }
+		let(:context) { instance_double context_class, transactions: relation }
 
 		before :each, :instance do
-			expect(context.class).to receive(:find).with('1').and_return context
+			expect(context_class).to receive(:find).with('1').and_return context
 		end
 
 		context 'when there are transactions' do
-			let(:last_transaction) { create :basic_transaction }
+			let(:raw_json) { 'last transaction' }
+			let(:last_transaction) { instance_double ::BasicTransaction, as_json: raw_json }
 			let :transactions do
 				[
-					create(:transaction),
-					create(:transaction),
+					instance_double(::Transaction),
+					instance_double(::Transaction),
 					last_transaction
 				]
 			end
-			let(:json) { ::JSON.dump last_transaction.as_json }
+			let(:json) { ::JSON.dump raw_json }
 
 			after do
 				expect(controller).to receive(:context).and_call_original
 				expect(::Transaction).to receive(:types_for).with(account_type).and_return transaction_types
-				expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
+				expect(relation).to receive(:where).with(transaction_type: transaction_types).and_return transactions
 				expect(last_transaction).to receive(:as_subclass).and_return last_transaction
 				get :last, params: request_params.merge(account_type:)
 			end
 
 			context 'for account', :instance do
-				let(:context) { ::Account.new }
+				let(:context_class) { ::Account }
 				let(:request_params) { {'account_id' => '1'} }
 
 				it('should return the last transaction for the account') {} # Empty block
 			end
 
 			context 'for payee', :instance do
-				let(:context) { ::Payee.new }
+				let(:context_class) { ::Payee }
 				let(:request_params) { {'payee_id' => '1'} }
 
 				it('should return the last transaction for the payee') {} # Empty block
 			end
 
 			context 'for category', :instance do
-				let(:context) { ::Category.new }
+				let(:context_class) { ::Category }
 				let(:request_params) { {'category_id' => '1'} }
 
 				it('should return the last transaction for the category') {} # Empty block
 			end
 
 			context 'for security', :instance do
-				let(:context) { ::Security.new }
+				let(:context_class) { ::Security }
 				let(:request_params) { {'security_id' => '1'} }
 
 				it('should return the last transaction for the security') {} # Empty block
@@ -191,33 +196,33 @@ require 'rails_helper'
 			after do
 				expect(controller).to receive(:context).and_call_original
 				expect(::Transaction).to receive(:types_for).with(account_type).and_return transaction_types
-				expect(context.transactions).to receive(:where).with(transaction_type: transaction_types).and_return transactions
+				expect(relation).to receive(:where).with(transaction_type: transaction_types).and_return transactions
 				get :last, params: request_params.merge(account_type:)
 			end
 
 			context 'for account', :instance do
-				let(:context) { ::Account.new }
+				let(:context_class) { ::Account }
 				let(:request_params) { {'account_id' => '1'} }
 
 				it('should respond with a 404 Not Found') {} # Empty block
 			end
 
 			context 'for payee', :instance do
-				let(:context) { ::Payee.new }
+				let(:context_class) { ::Payee }
 				let(:request_params) { {'payee_id' => '1'} }
 
 				it('should respond with a 404 Not Found') {} # Empty block
 			end
 
 			context 'for category', :instance do
-				let(:context) { ::Category.new }
+				let(:context_class) { ::Category }
 				let(:request_params) { {'category_id' => '1'} }
 
 				it('should respond with a 404 Not Found') {} # Empty block
 			end
 
 			context 'for security', :instance do
-				let(:context) { ::Security.new }
+				let(:context_class) { ::Security }
 				let(:request_params) { {'security_id' => '1'} }
 
 				it('should respond with a 404 Not Found') {} # Empty block

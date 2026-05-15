@@ -4,23 +4,25 @@
 require 'rails_helper'
 
 ::RSpec.describe ::FavouritesController do
+	let(:context) { instance_double context_class }
+
 	shared_context 'for account', :account do
-		let(:context) { create :account }
+		let(:context_class) { ::Account }
 		let(:request_params) { {'account_id' => '1'} }
 	end
 
 	shared_context 'for payee', :payee do
-		let(:context) { ::Payee.new }
+		let(:context_class) { ::Payee }
 		let(:request_params) { {'payee_id' => '1'} }
 	end
 
 	shared_context 'for category', :category do
-		let(:context) { ::Category.new }
+		let(:context_class) { ::Category }
 		let(:request_params) { {'category_id' => '1'} }
 	end
 
 	shared_context 'for security', :security do
-		let(:context) { ::Security.new }
+		let(:context_class) { ::Security }
 		let(:request_params) { {'security_id' => '1'} }
 	end
 
@@ -30,7 +32,7 @@ require 'rails_helper'
 	include_context 'for security', :security
 
 	before do
-		expect(context.class).to receive(:find).with('1').and_return context
+		expect(context_class).to receive(:find).with('1').and_return context
 		expect(context).to receive(:update!).with favourite:
 	end
 

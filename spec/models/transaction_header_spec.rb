@@ -8,6 +8,7 @@ require 'rails_helper'
 		subject(:transaction_header) { described_class.new }
 
 		let(:error_message) { "Either transaction date or schedule can't be blank" }
+		let(:schedule) { instance_double ::Schedule, blank?: false }
 
 		it 'should be an error if both transaction date and schedule are blank' do
 			transaction_header.validate_transaction_date_or_schedule_presence
@@ -21,14 +22,14 @@ require 'rails_helper'
 		end
 
 		it 'should not be an error if schedule is not blank' do
-			transaction_header.schedule = build :schedule
+			allow(transaction_header).to receive(:schedule).and_return schedule
 			transaction_header.validate_transaction_date_or_schedule_presence
 			expect(transaction_header.errors[:base]).not_to include error_message
 		end
 
 		it 'should not be an error if both transaction date and schedule are not blank' do
 			transaction_header.transaction_date = ::Time.zone.today
-			transaction_header.schedule = build :schedule
+			allow(transaction_header).to receive(:schedule).and_return schedule
 			transaction_header.validate_transaction_date_or_schedule_presence
 			expect(transaction_header.errors[:base]).not_to include error_message
 		end
@@ -38,16 +39,17 @@ require 'rails_helper'
 		subject(:transaction_header) { described_class.new }
 
 		let(:error_message) { 'Either transaction date or schedule must be blank' }
+		let(:schedule) { instance_double ::Schedule, blank?: false }
 
 		it 'should be an error if both transaction date and schedule are not blank' do
 			transaction_header.transaction_date = ::Time.zone.today
-			transaction_header.schedule = build :schedule
+			allow(transaction_header).to receive(:schedule).and_return schedule
 			transaction_header.validate_transaction_date_or_schedule_absence
 			expect(transaction_header.errors[:base]).to include error_message
 		end
 
 		it 'should not be an error if transaction date is blank' do
-			transaction_header.schedule = build :schedule
+			allow(transaction_header).to receive(:schedule).and_return schedule
 			transaction_header.validate_transaction_date_or_schedule_absence
 			expect(transaction_header.errors[:base]).not_to include error_message
 		end

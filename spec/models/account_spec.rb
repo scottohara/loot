@@ -42,12 +42,12 @@ require 'rails_helper'
 	end
 
 	describe 'before_destroy' do
-		subject(:account) { create(:bank_account, account_type:, related_account:) }
+		subject(:account) { create :bank_account, account_type: }
 
-		let!(:related_account) { create :cash_account }
+		let(:related_account) { instance_double described_class, destroy!: nil, present?: true }
 
 		before do
-			allow(related_account).to receive :destroy!
+			allow(account).to receive(:related_account).and_return related_account
 			account.destroy!
 		end
 

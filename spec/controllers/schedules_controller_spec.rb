@@ -24,7 +24,7 @@ require 'rails_helper'
 	end
 
 	describe 'PATCH update', :json, :request do
-		let(:schedule) { create :basic_transaction, :scheduled }
+		let(:schedule) { instance_double ::BasicTransaction, transaction_type: 'Basic' }
 		let(:json) { 'updated schedule' }
 
 		before do
@@ -56,7 +56,7 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', :request do
-		let(:schedule) { create :basic_transaction, :scheduled }
+		let(:schedule) { instance_double ::BasicTransaction }
 		let(:expected_status) { :no_content }
 
 		it 'should delete an existing schedule' do
