@@ -1,4 +1,4 @@
-import type { Account, AccountStatus, AccountType } from "~/accounts/types";
+import type { Account } from "~/accounts/types";
 
 let id = 1;
 
@@ -9,8 +9,8 @@ export default function createAccount(props: Partial<Account> = {}): Account {
 		id,
 		name: `Account ${id}`,
 		closing_balance: 0,
-		account_type: "bank" as AccountType,
-		status: "open" as AccountStatus,
+		account_type: "bank",
+		status: "open",
 		favourite: false,
 		related_account: null,
 		opening_balance: 0,

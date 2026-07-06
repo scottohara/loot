@@ -1,6 +1,5 @@
 import type {
 	Schedule,
-	ScheduleFrequency,
 	ScheduledBasicTransaction,
 	ScheduledSecurityHoldingTransaction,
 	ScheduledSplitTransaction,
@@ -20,7 +19,7 @@ function createSchedule(
 	},
 ): Schedule & { transaction_date: Date } {
 	return {
-		frequency: "Monthly" as ScheduleFrequency,
+		frequency: "Monthly",
 		next_due_date: addDays(startOfDay(new Date()), 3),
 		auto_enter: false,
 		autoFlag: false,

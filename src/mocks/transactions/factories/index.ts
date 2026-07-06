@@ -4,12 +4,8 @@ import type {
 	SplitTransaction,
 	SplitTransactionChild,
 	Subtransaction,
-	SubtransactionType,
 	SubtransferTransaction,
 	Transaction,
-	TransactionDirection,
-	TransactionStatus,
-	TransactionType,
 	TransferTransaction,
 } from "~/transactions/types";
 import { startOfDay, subDays } from "date-fns";
@@ -32,9 +28,9 @@ function createPartialTransaction(
 		flag: null,
 		balance: 0,
 		transaction_date: subDays(startOfDay(new Date()), 1),
-		status: "" as TransactionStatus,
+		status: "",
 		...props,
-	} as Partial<Transaction>;
+	};
 }
 
 function createPartialCashTransaction(
@@ -53,7 +49,7 @@ function createPartialCashTransaction(
 	return createPartialTransaction({
 		amount: 0,
 		primary_account: createAccount({ id: 1, name: "Account 1" }),
-		direction: "inflow" as TransactionDirection,
+		direction: "inflow",
 		...props,
 	}) as Partial<
 		| BasicTransaction
@@ -92,7 +88,7 @@ function createPartialSecurityTransaction(
 			id: "AddShares",
 			name: "Add Shares",
 		},
-		direction: "inflow" as TransactionDirection,
+		direction: "inflow",
 		...props,
 	}) as Partial<SecurityHoldingTransaction>;
 }
@@ -101,26 +97,26 @@ export function createBasicTransaction(
 	props: Partial<BasicTransaction> = {},
 ): BasicTransaction {
 	return createPartialPayeeTransaction({
-		transaction_type: "Basic" as TransactionType,
+		transaction_type: "Basic",
 		category: createCategory({ id: 1, name: "Category 1" }),
 		subcategory: createCategory({ id: 2, name: "Category 2", parent_id: 1 }),
 		...props,
-	} as Partial<BasicTransaction>) as BasicTransaction;
+	}) as BasicTransaction;
 }
 
 export function createTransferTransaction(
 	props: Partial<TransferTransaction> = {},
 ): TransferTransaction {
 	return createPartialPayeeTransaction({
-		transaction_type: "Transfer" as TransactionType,
+		transaction_type: "Transfer",
 		category: {
 			id: "TransferTo",
 			name: "Transfer To",
 		},
 		account: createAccount({ id: 2, name: "Account 2" }),
-		related_status: "" as TransactionStatus,
+		related_status: "",
 		...props,
-	} as Partial<TransferTransaction>) as TransferTransaction;
+	}) as TransferTransaction;
 }
 
 export function createSplitTransaction(
@@ -144,28 +140,26 @@ export function createSubtransferTransaction(
 	props: Partial<SubtransferTransaction> = {},
 ): SubtransferTransaction {
 	return createPartialPayeeTransaction({
-		transaction_type: "Subtransfer" as SubtransactionType,
+		transaction_type: "Subtransfer",
 		category: {
 			id: "TransferTo",
 			name: "Transfer To",
 		},
 		account: createAccount({ id: 2, name: "Account 2" }),
 		related_status: "",
-		parent_id: null,
 		...props,
-	} as Partial<SubtransferTransaction>) as SubtransferTransaction;
+	}) as SubtransferTransaction;
 }
 
 export function createSubtransaction(
 	props: Partial<Subtransaction> = {},
 ): Subtransaction {
 	return createPartialTransaction({
-		transaction_type: "Sub" as SubtransactionType,
+		transaction_type: "Sub",
 		category: createCategory({ id: 1, name: "Category 1" }),
 		subcategory: createCategory({ id: 2, name: "Category 2", parent_id: 1 }),
-		parent_id: null,
 		...props,
-	} as Partial<Subtransaction>) as Subtransaction;
+	}) as Subtransaction;
 }
 
 export function createSecurityHoldingTransaction(
