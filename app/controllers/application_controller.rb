@@ -18,7 +18,7 @@ class ApplicationController < ::ActionController::API
 
 	def authenticate_user
 		render plain: 'Invalid login and/or password', status: :unauthorized unless authenticate_with_http_basic do |username, password|
-			username.eql?(::ENV[:LOOT_USERNAME.to_s]) && password.eql?(::ENV[:LOOT_PASSWORD.to_s])
+			::ActiveSupport::SecurityUtils.secure_compare(username, ::ENV['LOOT_USERNAME']) & ::ActiveSupport::SecurityUtils.secure_compare(password, ::ENV['LOOT_PASSWORD'])
 		end
 	end
 
