@@ -44,6 +44,6 @@ Rails/EnvironmentVariableAccess:
 Rails/InverseOf:
   Enabled: false
 
-# Needed for update_all and update_column used in a few places
+# Needed for update_all for bulk updating transaction statuses during reconciliation
 Rails/SkipsModelValidations:
   Enabled: false
