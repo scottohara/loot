@@ -4,6 +4,7 @@
 # Schedules controller
 class SchedulesController < ApplicationController
 	before_action :clean, only: %i[create update]
+	before_action :klass, only: %i[create update]
 
 	def index
 		render json: ::Schedule.ledger
@@ -17,10 +18,11 @@ class SchedulesController < ApplicationController
 		schedule = ::Transaction.find params[:id]
 		if schedule.transaction_type.eql? params['transaction_type']
 			# Type hasn't changed, so just update
-			render json: ::Transaction.class_for(params['transaction_type']).update_from_json(@schedule)
+			render json: @klass.update_from_json(@schedule)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			schedule.as_subclass.destroy!
+			clear_invalid_attributes
 			render json: create_schedule
 		end
 	end
@@ -47,7 +49,17 @@ class SchedulesController < ApplicationController
 		@schedule['account_id'] = @schedule.fetch('primary_account', nil)['id']
 	end
 
+	def klass
+		@klass = ::Transaction.class_for params['transaction_type']
+	end
+
+	def clear_invalid_attributes
+		# Clear any attributes that don't apply to the new type but were carried
+		# over from the old one (e.g. price/commission when converting to a transfer)
+		@klass.clear_invalid_attributes @schedule if @klass.respond_to? :clear_invalid_attributes
+	end
+
 	def create_schedule
-		::Transaction.class_for(params['transaction_type']).create_from_json @schedule
+		@klass.create_from_json @schedule
 	end
 end

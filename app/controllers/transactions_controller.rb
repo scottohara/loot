@@ -5,6 +5,7 @@
 class TransactionsController < ApplicationController
 	before_action :clean, only: %i[create update]
 	before_action :context, only: %i[index last]
+	before_action :klass, only: %i[create update]
 
 	def index
 		opening_balance, transactions, at_end = @context.ledger params
@@ -27,10 +28,11 @@ class TransactionsController < ApplicationController
 		transaction = ::Transaction.find params[:id]
 		if transaction.transaction_type.eql? params['transaction_type']
 			# Type hasn't changed, so just update
-			render json: ::Transaction.class_for(params['transaction_type']).update_from_json(@transaction)
+			render json: @klass.update_from_json(@transaction)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			transaction.as_subclass.destroy!
+			clear_invalid_attributes
 			render json: create_transaction
 		end
 	end
@@ -76,7 +78,17 @@ class TransactionsController < ApplicationController
 			end
 	end
 
+	def klass
+		@klass = ::Transaction.class_for params['transaction_type']
+	end
+
+	def clear_invalid_attributes
+		# Clear any attributes that don't apply to the new type but were carried
+		# over from the old one (e.g. price/commission when converting to a transfer)
+		@klass.clear_invalid_attributes @transaction if @klass.respond_to? :clear_invalid_attributes
+	end
+
 	def create_transaction
-		::Transaction.class_for(params['transaction_type']).create_from_json @transaction
+		@klass.create_from_json @transaction
 	end
 end

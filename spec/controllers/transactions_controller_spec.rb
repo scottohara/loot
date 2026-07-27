@@ -114,6 +114,17 @@ require 'rails_helper'
 				expect(controller).to receive(:create_transaction).and_return json
 			end
 		end
+
+		context 'when transaction type has changed to one that clears invalid attributes' do
+			let(:request_body) { {id: '1', transaction_type: 'SecurityTransfer'} }
+
+			it 'should clear invalid attributes before recreating the transaction' do
+				expect(transaction).to receive(:as_subclass).and_return transaction
+				expect(transaction).to receive :destroy!
+				expect(::SecurityTransferTransaction).to receive :clear_invalid_attributes
+				expect(controller).to receive(:create_transaction).and_return json
+			end
+		end
 	end
 
 	describe 'DELETE destroy', :request do
@@ -245,6 +256,7 @@ require 'rails_helper'
 			expect(::BasicTransaction).to receive(:create_from_json).with controller.params
 
 			controller.clean
+			controller.klass
 			controller.create_transaction
 		end
 	end
