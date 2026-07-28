@@ -15,12 +15,12 @@ class Security < ApplicationRecord
 
 		def for_current_holding
 			select(
-					'transaction_accounts.direction',
-					'SUM(transaction_headers.quantity) AS total_quantity'
+				'transaction_accounts.direction',
+				'SUM(transaction_headers.quantity) AS total_quantity'
 			)
 				.joins(
-						'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
-						'JOIN accounts ON accounts.id = transaction_accounts.account_id'
+					'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+					'JOIN accounts ON accounts.id = transaction_accounts.account_id'
 				)
 				.where('accounts.account_type = \'investment\'')
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
@@ -30,8 +30,8 @@ class Security < ApplicationRecord
 
 		def for_closing_balance(_opts)
 			joins(
-					'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
-					'JOIN accounts ON accounts.id = transaction_accounts.account_id'
+				'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+				'JOIN accounts ON accounts.id = transaction_accounts.account_id'
 			)
 				.where 'accounts.account_type = \'investment\''
 		end
@@ -113,15 +113,7 @@ class Security < ApplicationRecord
 	end
 
 	def price(as_at = ::Time.zone.today.to_s)
-		latest =
-			prices
-			.select('price')
-			.where(as_at_date: ..as_at)
-			.order(as_at_date: :desc)
-			.limit(1)
-			.first
-
-		latest&.price || 0
+		::SecurityPrice.as_at([id], as_at)[id]
 	end
 
 	def update_price!(price, as_at_date, transaction_id)

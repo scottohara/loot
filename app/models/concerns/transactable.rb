@@ -54,9 +54,9 @@ module Transactable
 				transactions
 				.for_closing_balance(balance_opts)
 				.select(
-						'transaction_headers.security_id',
-						'transaction_accounts.direction',
-						'SUM(transaction_headers.quantity) AS total_quantity'
+					'transaction_headers.security_id',
+					'transaction_accounts.direction',
+					'SUM(transaction_headers.quantity) AS total_quantity'
 				)
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
 				.where('transaction_headers.transaction_date': ..as_at)
@@ -70,7 +70,8 @@ module Transactable
 				end
 
 			# Calculate the current value of the securities held
-			total_security_value = securities.sum { |(security, qty)| ::Security.find(security).price(as_at) * qty }
+			latest_prices = ::SecurityPrice.as_at securities.keys, as_at
+			total_security_value = securities.sum { |(security, qty)| latest_prices[security] * qty }
 
 			# Add the balance from the associated cash account
 			total_security_value += related_account.closing_balance balance_opts unless related_account.nil?
@@ -84,8 +85,8 @@ module Transactable
 				transactions
 				.for_basic_closing_balance(balance_opts)
 				.select(
-						'categories.direction',
-						'SUM(transactions.amount) AS total_amount'
+					'categories.direction',
+					'SUM(transactions.amount) AS total_amount'
 				)
 				.joins('JOIN categories ON transaction_categories.category_id = categories.id')
 				.where(transaction_type: %w[Basic Sub])
@@ -97,12 +98,12 @@ module Transactable
 				transactions
 				.for_closing_balance(balance_opts)
 				.select(
-						'transaction_accounts.direction',
-						'SUM(transactions.amount) AS total_amount'
+					'transaction_accounts.direction',
+					'SUM(transactions.amount) AS total_amount'
 				)
 				.joins(
-						'JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
-						'JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id'
+					'JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+					'JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id'
 				)
 				.where(transaction_type: 'Subtransfer')
 				.where('transaction_headers.transaction_date': ..as_at)
@@ -166,50 +167,50 @@ module Transactable
 		transactions
 			.for_ledger(opts)
 			.select(
-					'transactions.id',
-					'transactions.transaction_type',
-					'transaction_headers.transaction_date',
-					'transaction_headers.payee_id',
-					'accounts.id AS primary_account_id',
-					'accounts.name AS primary_account_name',
-					'accounts.account_type AS primary_account_type',
-					'payees.name AS payee_name',
-					'transaction_headers.security_id',
-					'securities.name AS security_name',
-					'categories.id AS category_id',
-					'categories.name AS category_name',
-					'parent_categories.id AS parent_category_id',
-					'parent_categories.name AS parent_category_name',
-					'transfer_accounts.id AS transfer_account_id',
-					'transfer_accounts.name AS transfer_account_name',
-					'transfer_transaction_accounts.status AS transfer_status',
-					'transaction_splits.parent_id AS split_parent_id',
-					'split_accounts.id AS split_account_id',
-					'split_accounts.name AS split_account_name',
-					'split_accounts.account_type AS split_account_type',
-					'split_transaction_accounts.direction AS split_parent_direction',
-					'split_transaction_accounts.status AS split_parent_status',
-					'transactions.amount',
-					'transaction_headers.quantity',
-					'transaction_headers.price',
-					'transaction_headers.commission',
-					'transaction_accounts.direction',
-					'transaction_accounts.status',
-					'transactions.memo',
-					'transaction_flags.flag_type',
-					'transaction_flags.memo AS flag'
+				'transactions.id',
+				'transactions.transaction_type',
+				'transaction_headers.transaction_date',
+				'transaction_headers.payee_id',
+				'accounts.id AS primary_account_id',
+				'accounts.name AS primary_account_name',
+				'accounts.account_type AS primary_account_type',
+				'payees.name AS payee_name',
+				'transaction_headers.security_id',
+				'securities.name AS security_name',
+				'categories.id AS category_id',
+				'categories.name AS category_name',
+				'parent_categories.id AS parent_category_id',
+				'parent_categories.name AS parent_category_name',
+				'transfer_accounts.id AS transfer_account_id',
+				'transfer_accounts.name AS transfer_account_name',
+				'transfer_transaction_accounts.status AS transfer_status',
+				'transaction_splits.parent_id AS split_parent_id',
+				'split_accounts.id AS split_account_id',
+				'split_accounts.name AS split_account_name',
+				'split_accounts.account_type AS split_account_type',
+				'split_transaction_accounts.direction AS split_parent_direction',
+				'split_transaction_accounts.status AS split_parent_status',
+				'transactions.amount',
+				'transaction_headers.quantity',
+				'transaction_headers.price',
+				'transaction_headers.commission',
+				'transaction_accounts.direction',
+				'transaction_accounts.status',
+				'transactions.memo',
+				'transaction_flags.flag_type',
+				'transaction_flags.memo AS flag'
 			)
 			.joins(
-					'LEFT OUTER JOIN accounts ON accounts.id = transaction_accounts.account_id',
-					'LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id',
-					'LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id',
-					'LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id',
-					'LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id',
-					'LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id',
-					'LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id',
-					'LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id',
-					'LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id',
-					'LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id'
+				'LEFT OUTER JOIN accounts ON accounts.id = transaction_accounts.account_id',
+				'LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id',
+				'LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id',
+				'LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id',
+				'LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id',
+				'LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id',
+				'LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id',
+				'LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id',
+				'LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id',
+				'LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id'
 			)
 			.where('transaction_headers.transaction_date': ledger_range(opts))
 			.order(
