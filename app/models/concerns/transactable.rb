@@ -116,7 +116,7 @@ module Transactable
 				.where(transaction_type: %w[Split Payslip Transfer Dividend SecurityInvestment])
 				.where('transaction_headers.transaction_date': ..as_at)
 				.where(transaction_accounts: {direction: 'inflow'})
-				.sum 'amount'
+				.sum 'transactions.amount'
 
 			# Get the total other outflows
 			total_outflows =
@@ -125,7 +125,7 @@ module Transactable
 				.where(transaction_type: %w[Split LoanRepayment Transfer SecurityInvestment])
 				.where('transaction_headers.transaction_date': ..as_at)
 				.where(transaction_accounts: {direction: 'outflow'})
-				.sum 'amount'
+				.sum 'transactions.amount'
 
 			totals.each do |t|
 				total_outflows += t.total_amount if t.direction.eql? 'outflow'
