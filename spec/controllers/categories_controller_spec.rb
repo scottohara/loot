@@ -9,7 +9,7 @@ require 'rails_helper'
 			let(:json) { 'category list with children' }
 
 			before do
-				expect(::Category).to receive_message_chain(:where, :includes, :order).with(:direction, :name).and_return json
+				expect(::Category).to receive_message_chain(:includes, :where, :order).with(:direction, :name).and_return json
 				get :index, params: {include_children: true}
 			end
 

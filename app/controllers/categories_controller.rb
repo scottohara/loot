@@ -10,7 +10,7 @@ class CategoriesController < ApplicationController
 
 	def index
 		if params.key? :include_children
-			render json: ::Category.where(parent_id: params[:parent]).includes(:parent, :children).order(:direction, :name), only: %i[id name direction parent_id num_children parent num_transactions favourite children]
+			render json: ::Category.includes(:parent, :children).where(parent_id: params[:parent]).order(:direction, :name), only: %i[id name direction parent_id num_children parent num_transactions favourite children]
 		else
 			render json: ::Category.where(parent_id: params[:parent]).order({favourite: :desc}, :direction, :name)
 		end
