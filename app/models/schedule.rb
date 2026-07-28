@@ -117,17 +117,14 @@ class Schedule < ApplicationRecord
 
 		def auto_enter_overdue
 			split_transaction_types = %w[Split Payslip LoanRepayment]
-			overdue = where(auto_enter: true).where next_due_date: ..::Time.zone.today.to_s
+			overdue = includes(transaction_header: :trx).where(auto_enter: true).where next_due_date: ..::Time.zone.today.to_s
 
 			overdue.each do |schedule|
-				# Find the associated transaction header
-				header = ::TransactionHeader.includes(:trx).find_by schedule_id: schedule.id
-
 				# What type of transaction is it?
-				transaction_class = ::Transaction.class_for header.trx.transaction_type
+				transaction_class = ::Transaction.class_for schedule.transaction_header.trx.transaction_type
 
 				# Find the transaction
-				transaction = transaction_class.includes(header: [:schedule]).find header.trx.id
+				transaction = transaction_class.includes(:header).find schedule.transaction_header.trx.id
 
 				# Clear the schedule info
 				transaction.header.schedule = nil
