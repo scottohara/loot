@@ -10,11 +10,9 @@ class Account < ApplicationRecord
 	has_many :transaction_accounts, dependent: :restrict_with_error
 	has_many :transactions, through: :transaction_accounts, source: :trx do
 		def for_ledger(_opts)
-			joins [
-				'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
+			joins 'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
 				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
 				'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
-			]
 		end
 
 		def for_closing_balance(opts)
@@ -24,10 +22,8 @@ class Account < ApplicationRecord
 
 		def for_basic_closing_balance(opts)
 			joins(
-				[
-					'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
-					'JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
-				]
+				'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
+				'JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
 			)
 				.for_status opts
 		end

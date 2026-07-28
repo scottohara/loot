@@ -54,11 +54,9 @@ module Transactable
 				transactions
 				.for_closing_balance(balance_opts)
 				.select(
-					[
 						'transaction_headers.security_id',
 						'transaction_accounts.direction',
 						'SUM(transaction_headers.quantity) AS total_quantity'
-					]
 				)
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
 				.where('transaction_headers.transaction_date': ..as_at)
@@ -86,10 +84,8 @@ module Transactable
 				transactions
 				.for_basic_closing_balance(balance_opts)
 				.select(
-					[
 						'categories.direction',
 						'SUM(transactions.amount) AS total_amount'
-					]
 				)
 				.joins('JOIN categories ON transaction_categories.category_id = categories.id')
 				.where(transaction_type: %w[Basic Sub])
@@ -101,16 +97,12 @@ module Transactable
 				transactions
 				.for_closing_balance(balance_opts)
 				.select(
-					[
 						'transaction_accounts.direction',
 						'SUM(transactions.amount) AS total_amount'
-					]
 				)
 				.joins(
-					[
 						'JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
 						'JOIN transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id'
-					]
 				)
 				.where(transaction_type: 'Subtransfer')
 				.where('transaction_headers.transaction_date': ..as_at)
@@ -174,7 +166,6 @@ module Transactable
 		transactions
 			.for_ledger(opts)
 			.select(
-				[
 					'transactions.id',
 					'transactions.transaction_type',
 					'transaction_headers.transaction_date',
@@ -207,10 +198,8 @@ module Transactable
 					'transactions.memo',
 					'transaction_flags.flag_type',
 					'transaction_flags.memo AS flag'
-				]
 			)
 			.joins(
-				[
 					'LEFT OUTER JOIN accounts ON accounts.id = transaction_accounts.account_id',
 					'LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id',
 					'LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id',
@@ -221,7 +210,6 @@ module Transactable
 					'LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id',
 					'LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id',
 					'LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id'
-				]
 			)
 			.where('transaction_headers.transaction_date': ledger_range(opts))
 			.order(

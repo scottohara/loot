@@ -26,12 +26,10 @@ class Transaction < ApplicationRecord
 
 		def for_ledger(opts)
 			joins(
-				[
-					'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
-					'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
-					'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id',
-					'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
-				]
+				'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+				'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id',
+				'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
 			)
 				.where('transactions.transaction_type != \'Subtransfer\'')
 				.for_query opts
@@ -39,21 +37,17 @@ class Transaction < ApplicationRecord
 
 		def for_closing_balance(opts)
 			joins(
-				[
-					'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
-					'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id'
-				]
+				'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+				'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id'
 			)
 				.for_query opts
 		end
 
 		def for_basic_closing_balance(opts)
 			joins(
-				[
-					'JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id',
-					'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
-					'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
-				]
+				'JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id',
+				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+				'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
 			)
 				.for_query opts
 		end

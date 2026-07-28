@@ -11,27 +11,21 @@ class Category < ApplicationRecord
 	has_many :transactions, through: :transaction_categories, source: :trx do
 		def for_ledger(_opts)
 			joins(
-				[
-					'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
-					'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
-					'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
-				]
+				'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+				'LEFT OUTER JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
 			)
 				.where 'transactions.transaction_type != \'Subtransfer\''
 		end
 
 		def for_closing_balance(_opts)
-			joins [
-				'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
+			joins 'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id',
 				'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id'
-			]
 		end
 
 		def for_basic_closing_balance(_opts)
-			joins [
-				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+			joins 'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
 				'JOIN transaction_headers ON transaction_headers.transaction_id = transactions.id OR transaction_headers.transaction_id = transaction_splits.parent_id'
-			]
 		end
 	end
 

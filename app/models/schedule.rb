@@ -46,23 +46,21 @@ class Schedule < ApplicationRecord
 					'transaction_flags.memo AS flag'
 				)
 				.joins(
-					[
-						'JOIN transaction_headers ON transaction_headers.schedule_id = schedules.id',
-						'JOIN transactions ON transactions.id = transaction_headers.transaction_id',
-						'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
-						'LEFT OUTER JOIN accounts ON accounts.id = transaction_accounts.account_id',
-						'LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id',
-						'LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id',
-						'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id',
-						'LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id',
-						'LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id',
-						'LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id',
-						'LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id',
-						'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
-						'LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id',
-						'LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id',
-						'LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id'
-					]
+					'JOIN transaction_headers ON transaction_headers.schedule_id = schedules.id',
+					'JOIN transactions ON transactions.id = transaction_headers.transaction_id',
+					'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+					'LEFT OUTER JOIN accounts ON accounts.id = transaction_accounts.account_id',
+					'LEFT OUTER JOIN payees ON payees.id = transaction_headers.payee_id',
+					'LEFT OUTER JOIN securities ON securities.id = transaction_headers.security_id',
+					'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id',
+					'LEFT OUTER JOIN categories ON categories.id = transaction_categories.category_id',
+					'LEFT OUTER JOIN categories parent_categories ON parent_categories.id = categories.parent_id',
+					'LEFT OUTER JOIN transaction_accounts transfer_transaction_accounts ON transfer_transaction_accounts.transaction_id = transactions.id AND transfer_transaction_accounts.account_id != transaction_accounts.account_id',
+					'LEFT OUTER JOIN accounts transfer_accounts ON transfer_accounts.id = transfer_transaction_accounts.account_id',
+					'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
+					'LEFT OUTER JOIN transaction_accounts split_transaction_accounts ON split_transaction_accounts.transaction_id = transaction_splits.parent_id',
+					'LEFT OUTER JOIN accounts split_accounts ON split_accounts.id = split_transaction_accounts.account_id',
+					'LEFT OUTER JOIN transaction_flags ON transaction_flags.transaction_id = transactions.id'
 				)
 				.where('transactions.transaction_type != \'Subtransfer\'')
 				.order(

@@ -8,25 +8,19 @@ class Security < ApplicationRecord
 	has_many :security_transaction_headers, dependent: :restrict_with_error
 	has_many :transactions, through: :security_transaction_headers, source: :trx do
 		def for_ledger(_opts)
-			joins [
-				'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
+			joins 'LEFT OUTER JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
 				'LEFT OUTER JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id',
 				'LEFT OUTER JOIN transaction_categories ON transaction_categories.transaction_id = transactions.id'
-			]
 		end
 
 		def for_current_holding
 			select(
-				[
 					'transaction_accounts.direction',
 					'SUM(transaction_headers.quantity) AS total_quantity'
-				]
 			)
 				.joins(
-					[
 						'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
 						'JOIN accounts ON accounts.id = transaction_accounts.account_id'
-					]
 				)
 				.where('accounts.account_type = \'investment\'')
 				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
@@ -36,10 +30,8 @@ class Security < ApplicationRecord
 
 		def for_closing_balance(_opts)
 			joins(
-				[
 					'JOIN transaction_accounts ON transaction_accounts.transaction_id = transactions.id',
 					'JOIN accounts ON accounts.id = transaction_accounts.account_id'
-				]
 			)
 				.where 'accounts.account_type = \'investment\''
 		end
