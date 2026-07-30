@@ -21,17 +21,23 @@ class CategoriesController < ApplicationController
 	end
 
 	def create
-		render json: ::Category.create!(name: params['name'], direction: params['direction'], parent_id: params['parent_id']), only: EDIT_FIELDS
+		render json: ::Category.create!(name: params['name'], direction: params['direction'], parent:), only: EDIT_FIELDS
 	end
 
 	def update
 		category = ::Category.find params[:id]
-		category.update! name: params['name'], direction: params['direction'], parent_id: params['parent_id']
+		category.update!(name: params['name'], direction: params['direction'], parent:)
 		render json: category, only: EDIT_FIELDS
 	end
 
 	def destroy
 		::Category.find(params[:id]).destroy!
 		head :no_content
+	end
+
+	private
+
+	def parent
+		params['parent_id'] && ::Category.find(params['parent_id'])
 	end
 end

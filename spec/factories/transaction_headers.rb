@@ -11,7 +11,12 @@
 		transaction_date { nil }
 	end
 
+	trait :trx do
+		trx { ::FactoryBot.build :transaction }
+	end
+
 	factory :transaction_header do
 		transaction_date
+		trx
 	end
 end

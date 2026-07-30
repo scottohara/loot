@@ -7,6 +7,7 @@ class Account < ApplicationRecord
 	validates :account_type, presence: true, inclusion: {in: %w[bank credit cash asset liability investment loan]}
 	validates :status, inclusion: {in: %w[open closed]}
 	belongs_to :related_account, class_name: 'Account', autosave: true, optional: true
+	has_one :referencing_account, class_name: 'Account', foreign_key: 'related_account_id', dependent: :nullify
 	has_many :transaction_accounts, dependent: :restrict_with_error
 	has_many :transactions, through: :transaction_accounts, source: :trx do
 		def for_ledger(_opts)
@@ -208,8 +209,11 @@ class Account < ApplicationRecord
 
 		def create_from_json(json)
 			account = ::Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true)
-			account.related_account_id = json['related_account']['id'] if account.account_type.eql?('loan') && !json['related_account'].nil?
-			account.related_account = ::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: account if account.account_type.eql? 'investment'
+			account.related_account =
+				case account.account_type
+				when 'loan' then json.dig('related_account', 'id') && ::Account.find(json['related_account']['id'])
+				when 'investment' then ::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: account
+				end
 			account.save!
 			account
 		end

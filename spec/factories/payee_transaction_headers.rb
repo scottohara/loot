@@ -5,5 +5,6 @@
 	factory :payee_transaction_header do
 		transaction_date
 		payee
+		trx
 	end
 end

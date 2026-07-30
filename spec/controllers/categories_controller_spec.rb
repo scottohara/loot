@@ -46,28 +46,78 @@ require 'rails_helper'
 
 	describe 'POST create', :json, :request do
 		let(:category) { instance_double ::Category }
-		let(:request_body) { {name: 'New category', direction: 'outflow', parent_id: '1'} }
+		let(:parent) { instance_double ::Category }
+		let(:name) { 'New category' }
+		let(:direction) { 'outflow' }
+		let(:request_body) { {name:, direction:, parent_id: '1'} }
 		let(:raw_json) { 'created category' }
 		let(:json) { ::JSON.dump raw_json }
 
-		it 'should create a new category and return the details' do
-			expect(::Category).to receive(:create!).with(request_body).and_return category
-			expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
-			post :create, params: request_body
+		context 'with a parent' do
+			it 'should create a new child category and return the details' do
+				expect(::Category).to receive(:find).with('1').and_return parent
+				expect(::Category).to receive(:create!).with({name:, direction:, parent:}).and_return category
+				expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
+				post :create, params: request_body
+			end
+		end
+
+		context 'without a parent' do
+			it 'should create a new top level category and return the details' do
+				expect(::Category).to receive(:create!).with({name:, direction:, parent: nil}).and_return category
+				expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
+				post :create, params: request_body.except(:parent_id)
+			end
+		end
+
+		context 'with a non-existent parent' do
+			let(:expected_status) { :not_found }
+			let(:json) { 'category not found' }
+
+			it 'should return a 404 Not Found status' do
+				expect(::Category).to receive(:find).with('1').and_raise ::ActiveRecord::RecordNotFound, json
+				post :create, params: request_body
+			end
 		end
 	end
 
 	describe 'PATCH update', :json, :request do
 		let(:category) { instance_double ::Category }
-		let(:request_body) { {name: 'Updated category', direction: 'outflow', parent_id: '1'} }
+		let(:parent) { instance_double ::Category }
+		let(:name) { 'Updated category' }
+		let(:direction) { 'outflow' }
+		let(:request_body) { {name:, direction:, parent_id: '2'} }
 		let(:raw_json) { 'updated category' }
 		let(:json) { ::JSON.dump raw_json }
 
-		it 'should update an existing category and return the details' do
-			expect(::Category).to receive(:find).with('1').and_return category
-			expect(category).to receive(:update!).with request_body
-			expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
-			patch :update, params: request_body.merge(id: '1')
+		context 'with a parent' do
+			it 'should update an existing child category and return the details' do
+				expect(::Category).to receive(:find).with('1').and_return category
+				expect(::Category).to receive(:find).with('2').and_return parent
+				expect(category).to receive(:update!).with({name:, direction:, parent:})
+				expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
+				patch :update, params: request_body.merge(id: '1')
+			end
+		end
+
+		context 'without a parent' do
+			it 'should update an existing top level category and return the details' do
+				expect(::Category).to receive(:find).with('1').and_return category
+				expect(category).to receive(:update!).with({name:, direction:, parent: nil})
+				expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
+				patch :update, params: request_body.except(:parent_id).merge(id: '1')
+			end
+		end
+
+		context 'with a non-existent parent' do
+			let(:expected_status) { :not_found }
+			let(:json) { 'category not found' }
+
+			it 'should return a 404 Not Found status' do
+				expect(::Category).to receive(:find).with('1').and_return category
+				expect(::Category).to receive(:find).with('2').and_raise ::ActiveRecord::RecordNotFound, json
+				patch :update, params: request_body.merge(id: '1')
+			end
 		end
 	end
 

@@ -10,6 +10,7 @@ require 'rails_helper'
 		def index
 			case params['context']
 			when 'internal error' then raise ::StandardError, params['context']
+			when 'invalid foreign key' then raise ::ActiveRecord::InvalidForeignKey, params['context']
 			when 'record invalid' then raise ::ActiveRecord::RecordInvalid, create(:category, name: nil, direction: 'invalid')
 			when 'record not destroyed' then raise ::ActiveRecord::RecordNotDestroyed, create(:category, transactions: 1).destroy!
 			when 'record not found' then raise ::ActiveRecord::RecordNotFound, params['context']
@@ -72,6 +73,13 @@ require 'rails_helper'
 		let(:json) { 'internal error' }
 
 		it('should respond with a JSON error message and a 500 Internal Server Error status') {} # Empty block
+	end
+
+	context 'invalid foreign key', :json, :request do
+		let(:expected_status) { :unprocessable_content }
+		let(:json) { 'invalid foreign key' }
+
+		it('should respond with a JSON error message and a 422 Unprocessable Content status') {} # Empty block
 	end
 
 	context 'record invalid', :json, :request do

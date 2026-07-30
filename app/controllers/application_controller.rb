@@ -5,6 +5,7 @@
 class ApplicationController < ::ActionController::API
 	before_action :authenticate_user, except: [:routing_error]
 	rescue_from ::StandardError, with: :internal_error
+	rescue_from ::ActiveRecord::InvalidForeignKey, with: :invalid_foreign_key
 	rescue_from ::ActiveRecord::RecordInvalid, with: :record_invalid
 	rescue_from ::ActiveRecord::RecordNotDestroyed, with: :record_not_destroyed
 	rescue_from ::ActiveRecord::RecordNotFound, with: :record_not_found
@@ -24,6 +25,10 @@ class ApplicationController < ::ActionController::API
 
 	def internal_error(exception)
 		render json: exception.message, status: :internal_server_error
+	end
+
+	def invalid_foreign_key(exception)
+		render json: exception.message, status: :unprocessable_content
 	end
 
 	def record_invalid(exception)

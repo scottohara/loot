@@ -5,5 +5,6 @@
 	factory :security_transaction_header do
 		transaction_date
 		security
+		trx
 	end
 end

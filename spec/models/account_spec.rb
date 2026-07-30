@@ -309,6 +309,18 @@ require 'rails_helper'
 			end
 
 			context('without asset') { it_behaves_like 'create from json' }
+
+			context 'with a non-existent asset' do
+				before do
+					json['related_account'] = {'id' => 1}
+
+					expect(described_class).to receive(:find).with(json['related_account']['id']).and_raise ::ActiveRecord::RecordNotFound
+				end
+
+				it 'should raise a record not found error' do
+					expect { described_class.create_from_json json }.to raise_error ::ActiveRecord::RecordNotFound
+				end
+			end
 		end
 	end
 
