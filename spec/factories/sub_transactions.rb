@@ -6,17 +6,8 @@
 		# Default attributes for cash transaction
 		cash_transaction
 		transaction_type { 'Sub' }
-
-		# Default account, subtransactions and subtransfers if none specified
-		transient do
-			parent { ::FactoryBot.build :split_transaction }
-			category { ::FactoryBot.build :category }
-		end
-
-		after :build do |trx, evaluator|
-			trx.parent = evaluator.parent
-			trx.category = evaluator.category
-		end
+		parent { ::FactoryBot.build :split_transaction }
+		category { ::FactoryBot.build :category }
 
 		trait :inflow do
 			category { ::FactoryBot.build :inflow_category }

@@ -64,14 +64,7 @@
 		trait :investment do
 			account_type { 'investment' }
 			opening_balance { 0 }
-
-			transient do
-				related_account { ::FactoryBot.build :bank_account }
-			end
-
-			after :build do |account, evaluator|
-				account.related_account = evaluator.related_account
-			end
+			related_account { ::FactoryBot.build :bank_account }
 		end
 
 		trait :cash do
@@ -80,14 +73,7 @@
 
 		trait :loan do
 			account_type { 'loan' }
-
-			transient do
-				related_account { nil }
-			end
-
-			after :build do |account, evaluator|
-				account.related_account = evaluator.related_account
-			end
+			related_account { nil }
 		end
 
 		trait :closed do

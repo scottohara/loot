@@ -4,13 +4,6 @@
 ::FactoryBot.define do
 	factory :transaction_flag do
 		sequence(:memo) { "Flag #{it}" }
-
-		transient do
-			trx { ::FactoryBot.build :transaction }
-		end
-
-		after :build do |flag, evaluator|
-			flag.trx = evaluator.trx
-		end
+		trx { ::FactoryBot.build :transaction }
 	end
 end
