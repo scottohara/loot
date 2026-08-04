@@ -212,7 +212,7 @@ class Account < ApplicationRecord
 			account.related_account =
 				case account.account_type
 				when 'loan' then json.dig('related_account', 'id') && ::Account.find(json['related_account']['id'])
-				when 'investment' then ::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: account
+				when 'investment' then account.cash_account_from_json json
 				end
 			account.save!
 			account
@@ -239,12 +239,12 @@ class Account < ApplicationRecord
 				# Update the related cash account
 				related_account.name = "#{json['name']} (Cash)"
 				related_account.account_type = 'bank'
-				related_account.opening_balance = json['related_account']['opening_balance']
+				related_account.opening_balance = json.dig 'related_account', 'opening_balance'
 				related_account.status = json['status']
 				related_account.favourite = json['favourite'].eql? true
 			else
 				# Create a new cash account
-				self.related_account = ::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json['related_account']['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true), related_account: self
+				self.related_account = cash_account_from_json json
 			end
 		else
 			# If changing from an investment account, delete the related cash account
@@ -255,6 +255,10 @@ class Account < ApplicationRecord
 		end
 
 		save!
+	end
+
+	def cash_account_from_json(json)
+		::Account.new name: "#{json['name']} (Cash)", account_type: 'bank', opening_balance: json.dig('related_account', 'opening_balance'), status: json['status'], favourite: json['favourite'].eql?(true), related_account: self
 	end
 
 	def reconcile
