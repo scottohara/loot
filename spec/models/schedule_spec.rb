@@ -9,6 +9,26 @@ require 'rails_helper'
 	it_behaves_like ::Categorisable
 	it_behaves_like ::Measurable
 
+	describe 'frequency' do
+		subject(:schedule) { build :schedule }
+
+		let(:error_message) { 'is not included in the list' }
+
+		it 'should be an error if the frequency is not one that can be measured' do
+			schedule.frequency = 'Daily'
+			schedule.validate
+			expect(schedule.errors[:frequency]).to include error_message
+		end
+
+		it 'should not be an error if the frequency is one that can be measured' do
+			described_class.frequencies.each do |frequency|
+				schedule.frequency = frequency
+				schedule.validate
+				expect(schedule.errors[:frequency]).not_to include error_message
+			end
+		end
+	end
+
 	# Custom matcher that compares a set of transactions against another set
 	matcher :match_ledger_transactions do |expected|
 		diffs = []

@@ -21,6 +21,10 @@ module Measurable
 
 	# Methods for measuring things, in particular date periods
 	class_methods do
+		def frequencies
+			FREQUENCIES.keys.map(&:to_s)
+		end
+
 		def periods_since(frequency, date)
 			public_send FREQUENCIES[frequency.to_sym].periods_since, date
 		end

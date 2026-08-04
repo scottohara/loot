@@ -3,12 +3,13 @@
 
 # Schedule
 class Schedule < ApplicationRecord
-	validates :next_due_date, :frequency, presence: true
-	validates :estimate, :auto_enter, inclusion: {in: [true, false]}
-	has_one :transaction_header, dependent: :destroy
-
 	include ::Categorisable
 	include ::Measurable
+
+	validates :next_due_date, presence: true
+	validates :frequency, presence: true, inclusion: {in: frequencies}
+	validates :estimate, :auto_enter, inclusion: {in: [true, false]}
+	has_one :transaction_header, dependent: :destroy
 
 	class << self
 		def ledger

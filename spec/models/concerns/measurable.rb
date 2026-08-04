@@ -2,6 +2,14 @@
 # frozen_string_literal: true
 
 ::RSpec.shared_examples ::Measurable do
+	describe '::frequencies' do
+		subject { described_class }
+
+		it 'should return the frequencies that can be measured' do
+			expect(subject.frequencies).to eq %w[Weekly Fortnightly Monthly Bimonthly Quarterly Yearly]
+		end
+	end
+
 	describe '::weeks_since' do
 		subject { described_class }
 
