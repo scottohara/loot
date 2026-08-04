@@ -6,6 +6,10 @@ class Schedule < ApplicationRecord
 	include ::Categorisable
 	include ::Measurable
 
+	# Transaction types that have subtransactions
+	SPLIT_TRANSACTION_TYPES = %w[Split Payslip LoanRepayment].freeze
+	private_constant :SPLIT_TRANSACTION_TYPES
+
 	validates :next_due_date, presence: true
 	validates :frequency, presence: true, inclusion: {in: frequencies}
 	validates :estimate, :auto_enter, inclusion: {in: [true, false]}
@@ -117,49 +121,55 @@ class Schedule < ApplicationRecord
 		end
 
 		def auto_enter_overdue
-			split_transaction_types = %w[Split Payslip LoanRepayment]
 			overdue = includes(transaction_header: :trx).where(auto_enter: true).where next_due_date: ..::Time.zone.today.to_s
 
 			overdue.each do |schedule|
-				# What type of transaction is it?
-				transaction_class = ::Transaction.class_for schedule.transaction_header.trx.transaction_type
+				transaction do
+					# Extract a new transaction from the schedule
+					transaction_class, transaction_json = transaction_from_schedule schedule
 
-				# Find the transaction
-				transaction = transaction_class.includes(:header).find schedule.transaction_header.trx.id
+					# Create new instances of the transaction until the next due date is in the future
+					create_overdue_transaction schedule, transaction_class, transaction_json until schedule.next_due_date.future?
 
-				# Clear the schedule info
-				transaction.header.schedule = nil
-
-				# Get the JSON representation of the scheduled transaction
-				transaction_json = transaction.as_json direction: 'outflow'
-
-				# Find the appropriate account to use
-				transaction_json[:account_id] =
-					case transaction.transaction_type
-					when 'Transfer', 'SecurityTransfer' then transaction.source_account.id
-					when 'SecurityInvestment', 'Dividend' then transaction.investment_account.id
-					else transaction.account.id
-					end
-
-				# For Splits, we need to get the subtransactions as well
-				transaction_json['subtransactions'] = transaction.children if split_transaction_types.include? transaction.transaction_type
-
-				# Clear the id
-				transaction_json[:id] = nil
-
-				# The 'json' is actually a hash, with symbols for keys
-				# The models are expecting string-based keys
-				transaction_json = transaction_json.with_indifferent_access
-
-				# Create new instances of the transaction until the next due date is in the future
-				create_overdue_transaction schedule, transaction_class, transaction_json until schedule.next_due_date.future?
-
-				# Save the schedule
-				schedule.save!
+					# Save the schedule
+					schedule.save!
+				end
 			end
 		end
 
 		private
+
+		def transaction_from_schedule(schedule)
+			# What type of transaction is it?
+			transaction_class = ::Transaction.class_for schedule.transaction_header.trx.transaction_type
+
+			# Find the transaction
+			transaction = transaction_class.includes(:header).find schedule.transaction_header.trx.id
+
+			# Clear the schedule info
+			transaction.header.schedule = nil
+
+			# Get the JSON representation of the scheduled transaction
+			transaction_json = transaction.as_json direction: 'outflow'
+
+			# Find the appropriate account to use
+			transaction_json[:account_id] =
+				case transaction.transaction_type
+				when 'Transfer', 'SecurityTransfer' then transaction.source_account.id
+				when 'SecurityInvestment', 'Dividend' then transaction.investment_account.id
+				else transaction.account.id
+				end
+
+			# For Splits, we need to get the subtransactions as well
+			transaction_json['subtransactions'] = transaction.children if SPLIT_TRANSACTION_TYPES.include? transaction.transaction_type
+
+			# Clear the id
+			transaction_json[:id] = nil
+
+			# The 'json' is actually a hash, with symbols for keys
+			# The models are expecting string-based keys
+			[transaction_class, transaction_json.with_indifferent_access]
+		end
 
 		def create_overdue_transaction(schedule, transaction_class, transaction_json)
 			# Set the transaction date to the next due date

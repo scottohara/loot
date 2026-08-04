@@ -35,6 +35,7 @@ Lint/ConstantResolution:
     - NUM_RESULTS
     - SHOW_FIELDS
     - EDIT_FIELDS
+    - SPLIT_TRANSACTION_TYPES
 
 # Allow reading of ENV vars for authentication
 Rails/EnvironmentVariableAccess:
