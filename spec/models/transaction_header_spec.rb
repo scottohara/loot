@@ -93,14 +93,6 @@ require 'rails_helper'
 			end
 
 			it('should update a transaction header from a JSON representation') {} # Empty block
-
-			context 'when previously scheduled' do
-				let(:header) { create :transaction_header, :scheduled }
-
-				it 'should destroy the previous schedule' do
-					expect(header.schedule).to receive :destroy!
-				end
-			end
 		end
 
 		context 'scheduled' do

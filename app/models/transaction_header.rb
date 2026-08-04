@@ -3,6 +3,7 @@
 
 # Transaction header
 class TransactionHeader < ApplicationRecord
+	validate :validate_transaction_date_or_schedule_presence, :validate_transaction_date_or_schedule_absence
 	# trx is not really optional, but because the inverse has_one association is defined on a subclass of Transaction,
 	# when we build of of these (trx.build_header), this association is not automatically populated
 	belongs_to :trx, foreign_key: 'transaction_id', class_name: 'Transaction', optional: true
@@ -15,8 +16,6 @@ class TransactionHeader < ApplicationRecord
 		if json['transaction_date'].nil?
 			self.schedule ||= build_schedule
 			schedule.assign_attributes next_due_date: json['next_due_date'], frequency: json['frequency'], estimate: json['estimate'].eql?(true), auto_enter: json['auto_enter'].eql?(true)
-		else
-			schedule&.destroy!
 		end
 
 		self
