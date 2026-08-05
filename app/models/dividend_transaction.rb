@@ -5,6 +5,7 @@
 class DividendTransaction < SecurityTransaction
 	validates :amount, presence: true
 	validate :validate_quantity_absence, :validate_price_absence, :validate_commission_absence
+	validate :validate_cash_account_type
 	has_many :transaction_accounts, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
 	has_many :accounts, through: :transaction_accounts
 	after_initialize do |t|
@@ -61,5 +62,15 @@ class DividendTransaction < SecurityTransaction
 
 	def cash_account
 		transaction_accounts.find { |trx_account| trx_account.account.account_type.eql? 'bank' }
+	end
+
+	# :nocov:
+
+	private unless ::Rails.env.test?
+
+	# :nocov:end
+
+	def validate_cash_account_type
+		errors.add :base, 'Cash account must be a bank account' if cash_account.nil?
 	end
 end

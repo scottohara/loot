@@ -6,6 +6,7 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	validates :amount, presence: true
 	validate :validate_quantity_presence, :validate_price_presence, :validate_commission_presence
 	validate :validate_amount_matches_investment_details
+	validate :validate_cash_account_type
 	has_many :transaction_accounts, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
 	has_many :accounts, through: :transaction_accounts
 	after_initialize do |t|
@@ -78,5 +79,9 @@ class SecurityInvestmentTransaction < SecurityTransaction
 
 	def validate_amount_matches_investment_details
 		errors.add :base, "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.round(2).eql?(((header.price * header.quantity) + (header.commission * (investment_account.direction.eql?('inflow') ? 1 : -1))).round 2)
+	end
+
+	def validate_cash_account_type
+		errors.add :base, 'Cash account must be a bank account' if cash_account.nil?
 	end
 end

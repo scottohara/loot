@@ -38,9 +38,12 @@
 					create(:subtransfer_from_transaction, account:)
 					create :payslip_transaction, account:, subtransactions: 1, subtransfers: 1
 					create :loan_repayment_transaction, account:, subtransactions: 1, subtransfers: 1
-					create :security_purchase_transaction, cash_account: account
-					create :security_sale_transaction, cash_account: account
-					create :dividend_transaction, cash_account: account
+
+					if account.account_type.eql? 'bank'
+						create :security_purchase_transaction, cash_account: account
+						create :security_sale_transaction, cash_account: account
+						create :dividend_transaction, cash_account: account
+					end
 
 					# Create any scheduled transactions
 					create_list :basic_transaction, evaluator.scheduled, :scheduled, account:

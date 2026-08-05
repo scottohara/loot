@@ -199,6 +199,28 @@ require 'rails_helper'
 		end
 	end
 
+	describe '#validate_cash_account_type' do
+		subject(:transaction) { described_class.new }
+
+		let(:error_message) { 'Cash account must be a bank account' }
+
+		before do
+			transaction.transaction_accounts.build(direction: 'inflow').account = create :investment_account
+		end
+
+		it 'should be an error if the cash account is not a bank account' do
+			transaction.transaction_accounts.build(direction: 'outflow').account = create :cash_account
+			transaction.validate_cash_account_type
+			expect(transaction.errors[:base]).to include error_message
+		end
+
+		it 'should not be an error if the cash account is a bank account' do
+			transaction.transaction_accounts.build(direction: 'outflow').account = create :bank_account
+			transaction.validate_cash_account_type
+			expect(transaction.errors[:base]).not_to include error_message
+		end
+	end
+
 	describe '#as_json' do
 		subject(:transaction) { create :security_investment_transaction, status: 'Reconciled' }
 
