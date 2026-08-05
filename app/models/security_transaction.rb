@@ -29,26 +29,13 @@ class SecurityTransaction < Transaction
 
 	# :nocov:end
 
-	def method_missing(method, *args, &)
-		validate_method?(method) do |match|
-			__send__ :"validate_#{match[2]}", match[1]
-			true
-		end || super
-	end
+	%i[quantity price commission].each do |attr|
+		define_method :"validate_#{attr}_presence" do
+			errors.add :base, "#{attr.capitalize} can't be blank" if header.public_send(attr).blank?
+		end
 
-	def respond_to_missing?(method, include_all = false)
-		validate_method?(method) || super
-	end
-
-	def validate_method?(method, &)
-		/^validate_(.+)_(presence|absence)$/.match method.to_s, &
-	end
-
-	def validate_presence(attr)
-		errors.add :base, "#{attr.capitalize} can't be blank" if header.public_send(attr).blank? # e.g. header.quantity.blank?
-	end
-
-	def validate_absence(attr)
-		errors.add :base, "#{attr.capitalize} must be blank" if header.public_send(attr).present? # e.g. header.quantity.blank?
+		define_method :"validate_#{attr}_absence" do
+			errors.add :base, "#{attr.capitalize} must be blank" if header.public_send(attr).present?
+		end
 	end
 end

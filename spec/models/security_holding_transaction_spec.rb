@@ -42,9 +42,9 @@ require 'rails_helper'
 		before do
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
-			expect_any_instance_of(::SecurityTransaction).to receive(:validate_presence).with 'quantity'
-			expect_any_instance_of(::SecurityTransaction).to receive(:validate_absence).with 'price'
-			expect_any_instance_of(::SecurityTransaction).to receive(:validate_absence).with 'commission'
+			expect_any_instance_of(::SecurityTransaction).to receive :validate_quantity_presence
+			expect_any_instance_of(::SecurityTransaction).to receive :validate_price_absence
+			expect_any_instance_of(::SecurityTransaction).to receive :validate_commission_absence
 		end
 
 		after do
