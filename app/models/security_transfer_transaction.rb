@@ -13,9 +13,8 @@ class SecurityTransferTransaction < SecurityTransaction
 	end
 
 	class << self
-		def clear_invalid_attributes(json)
-			json['price'] = nil
-			json['commission'] = nil
+		def strip_invalid_attributes(json)
+			json.except 'price', 'commission'
 		end
 	end
 

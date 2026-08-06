@@ -32,7 +32,7 @@ class TransactionsController < ApplicationController
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
 			transaction.as_subclass.destroy!
-			clear_invalid_attributes
+			strip_invalid_attributes
 			render json: create_transaction
 		end
 	end
@@ -82,10 +82,10 @@ class TransactionsController < ApplicationController
 		@klass = ::Transaction.class_for params['transaction_type']
 	end
 
-	def clear_invalid_attributes
-		# Clear any attributes that don't apply to the new type but were carried
+	def strip_invalid_attributes
+		# Strip any attributes that don't apply to the new type but were carried
 		# over from the old one (e.g. price/commission when converting to a transfer)
-		@klass.clear_invalid_attributes @transaction if @klass.respond_to? :clear_invalid_attributes
+		@transaction = @klass.strip_invalid_attributes @transaction if @klass.respond_to? :strip_invalid_attributes
 	end
 
 	def create_transaction

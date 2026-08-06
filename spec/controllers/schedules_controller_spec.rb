@@ -54,14 +54,15 @@ require 'rails_helper'
 			end
 		end
 
-		context 'when transaction type has changed to one that clears invalid attributes' do
+		context 'when transaction type has changed to one that strips invalid attributes' do
 			let(:request_body) { {id: '1', transaction_type: 'SecurityTransfer', primary_account: {id: '1'}} }
+			let(:valid_attributes) { 'valid attributes' }
 
-			it 'should clear invalid attributes before recreating the transaction' do
+			it 'should recreate the schedule with only valid attributes' do
 				expect(schedule).to receive(:as_subclass).and_return schedule
 				expect(schedule).to receive :destroy!
-				expect(::SecurityTransferTransaction).to receive :clear_invalid_attributes
-				expect(controller).to receive(:create_schedule).and_return json
+				expect(::SecurityTransferTransaction).to receive(:strip_invalid_attributes).and_return valid_attributes
+				expect(::SecurityTransferTransaction).to receive(:create_from_json).with(valid_attributes).and_return json
 			end
 		end
 	end

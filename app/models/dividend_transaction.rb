@@ -14,10 +14,8 @@ class DividendTransaction < SecurityTransaction
 
 	class << self
 		def create_from_json(json)
-			# Make sure quantity, price and commission are nil
-			json['quantity'] = nil
-			json['price'] = nil
-			json['commission'] = nil
+			# Remove quantity, price and commission if present
+			json = json.except 'quantity', 'price', 'commission'
 
 			s = super
 			s.amount = json['amount']

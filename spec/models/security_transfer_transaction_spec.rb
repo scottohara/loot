@@ -60,17 +60,21 @@ require 'rails_helper'
 		end
 	end
 
-	describe '::clear_invalid_attributes' do
-		let(:json) { {'price' => 1.23, 'commission' => 4.56} }
+	describe '::strip_invalid_attributes' do
+		subject(:stripped) { described_class.strip_invalid_attributes json }
 
-		before { described_class.clear_invalid_attributes json }
+		let(:json) { {'memo' => 'Test json', 'price' => 1.23, 'commission' => 4.56} }
 
-		it 'should clear the price' do
-			expect(json['price']).to be_nil
+		it 'should strip the price' do
+			expect(stripped).not_to have_key 'price'
 		end
 
-		it 'should clear the commission' do
-			expect(json['commission']).to be_nil
+		it 'should strip the commission' do
+			expect(stripped).not_to have_key 'commission'
+		end
+
+		it 'should retain any other attributes' do
+			expect(stripped).to include 'memo' => 'Test json'
 		end
 	end
 

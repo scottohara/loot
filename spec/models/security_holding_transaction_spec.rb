@@ -34,6 +34,7 @@ require 'rails_helper'
 				},
 				'transaction_date' => header.transaction_date,
 				'status' => 'Cleared',
+				'direction' => direction,
 				'price' => 1,
 				'commission' => 2
 			}
@@ -41,7 +42,7 @@ require 'rails_helper'
 
 		before do
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
-			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with(json.except('price', 'commission')).and_call_original
 			expect_any_instance_of(::SecurityTransaction).to receive :validate_quantity_presence
 			expect_any_instance_of(::SecurityTransaction).to receive :validate_price_absence
 			expect_any_instance_of(::SecurityTransaction).to receive :validate_commission_absence
@@ -52,15 +53,15 @@ require 'rails_helper'
 		end
 
 		context 'add shares' do
-			it 'should create a transaction from a JSON representation' do
-				json['direction'] = 'inflow'
-			end
+			let(:direction) { 'inflow' }
+
+			it('should create a transaction from a JSON representation') {} # Empty block
 		end
 
 		context 'remove shares' do
-			it 'should create a transaction from a JSON representation' do
-				json['direction'] = 'outflow'
-			end
+			let(:direction) { 'outflow' }
+
+			it('should create a transaction from a JSON representation') {} # Empty block
 		end
 	end
 
