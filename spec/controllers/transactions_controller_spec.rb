@@ -4,62 +4,86 @@
 require 'rails_helper'
 
 ::RSpec.describe ::TransactionsController do
-	describe 'GET index', :json, :request do
-		let(:opening_balance) { 1 }
-		let(:transactions) { 'transactions' }
-		let(:at_end) { false }
-		let :json do
-			::JSON.dump openingBalance: opening_balance.to_f,
-				transactions:,
-				atEnd: at_end
-		end
-
+	describe 'GET index', :request do
 		let(:context) { instance_double context_class }
 
 		before :each, :instance do
 			expect(context_class).to receive(:find).with('1').and_return context
 		end
 
-		after do
-			request_params.merge! 'controller' => 'transactions', 'action' => 'index'
-			expect(controller).to receive(:context).and_call_original
-			expect(context).to receive(:ledger).with(::ActionController::Parameters.new request_params).and_return [opening_balance, transactions, at_end]
-			get :index, params: request_params
+		context 'when the request is valid', :json do
+			let(:opening_balance) { 1 }
+			let(:transactions) { 'transactions' }
+			let(:at_end) { false }
+			let :json do
+				::JSON.dump openingBalance: opening_balance.to_f,
+					transactions:,
+					atEnd: at_end
+			end
+
+			after do
+				request_params.merge! 'controller' => 'transactions', 'action' => 'index'
+				expect(controller).to receive(:context).and_call_original
+				expect(context).to receive(:ledger).with(::ActionController::Parameters.new request_params).and_return [opening_balance, transactions, at_end]
+				get :index, params: request_params
+			end
+
+			context 'for account', :instance do
+				let(:context_class) { ::Account }
+				let(:request_params) { {'account_id' => '1'} }
+
+				it('should return the transaction ledger for the account') {} # Empty block
+			end
+
+			context 'for payee', :instance do
+				let(:context_class) { ::Payee }
+				let(:request_params) { {'payee_id' => '1'} }
+
+				it('should return the transaction ledger for the payee') {} # Empty block
+			end
+
+			context 'for category', :instance do
+				let(:context_class) { ::Category }
+				let(:request_params) { {'category_id' => '1'} }
+
+				it('should return the transaction ledger for the category') {} # Empty block
+			end
+
+			context 'for security', :instance do
+				let(:context_class) { ::Security }
+				let(:request_params) { {'security_id' => '1'} }
+
+				it('should return the transaction ledger for the security') {} # Empty block
+			end
+
+			context 'for search' do
+				let(:context) { ::Transaction }
+				let(:request_params) { {'query' => 'Transactions'} }
+
+				it('should return the transaction ledger for the search query') {} # Empty block
+			end
 		end
 
-		context 'for account', :instance do
-			let(:context_class) { ::Account }
-			let(:request_params) { {'account_id' => '1'} }
+		context 'when the request is invalid' do
+			let(:expected_status) { :bad_request }
 
-			it('should return the transaction ledger for the account') {} # Empty block
-		end
+			after do
+				expect(controller).to receive(:context).and_call_original
+				expect(::Transaction).not_to receive(:ledger)
+				get :index, params: request_params
+			end
 
-		context 'for payee', :instance do
-			let(:context_class) { ::Payee }
-			let(:request_params) { {'payee_id' => '1'} }
+			context 'with no query' do
+				let(:request_params) { {} }
 
-			it('should return the transaction ledger for the payee') {} # Empty block
-		end
+				it('should respond with a 400 Bad Request') {} # Empty block
+			end
 
-		context 'for category', :instance do
-			let(:context_class) { ::Category }
-			let(:request_params) { {'category_id' => '1'} }
+			context 'with a blank query' do
+				let(:request_params) { {'query' => ''} }
 
-			it('should return the transaction ledger for the category') {} # Empty block
-		end
-
-		context 'for security', :instance do
-			let(:context_class) { ::Security }
-			let(:request_params) { {'security_id' => '1'} }
-
-			it('should return the transaction ledger for the security') {} # Empty block
-		end
-
-		context 'for search' do
-			let(:context) { ::Transaction }
-			let(:request_params) { {'query' => 'Transactions'} }
-
-			it('should return the transaction ledger for the search query') {} # Empty block
+				it('should respond with a 400 Bad Request') {} # Empty block
+			end
 		end
 	end
 

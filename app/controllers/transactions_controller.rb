@@ -5,6 +5,7 @@
 class TransactionsController < ApplicationController
 	before_action :clean, only: %i[create update]
 	before_action :context, only: %i[index last]
+	before_action :require_query, only: :index
 	before_action :klass, only: %i[create update]
 
 	def index
@@ -76,6 +77,10 @@ class TransactionsController < ApplicationController
 			else
 				::Transaction
 			end
+	end
+
+	def require_query
+		head :bad_request if @context.eql?(::Transaction) && params[:query].blank?
 	end
 
 	def klass
