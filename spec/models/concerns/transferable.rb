@@ -59,25 +59,49 @@
 		let(:source_account) { create :account }
 		let(:error_message) { "Source and destination account can't be the same" }
 
-		before do
-			transaction.build_source_transaction_account(direction: 'outflow').account = source_account
-			transaction.build_destination_transaction_account(direction: 'inflow').account = destination_account
-			transaction.validate_account_uniqueness
-		end
+		context 'when both accounts are present' do
+			before do
+				transaction.build_source_transaction_account(direction: 'outflow').account = source_account
+				transaction.build_destination_transaction_account(direction: 'inflow').account = destination_account
+				transaction.validate_account_uniqueness
+			end
 
-		context 'when the source and destination accounts are the same' do
-			let(:destination_account) { source_account }
+			context 'when the source and destination accounts are the same' do
+				let(:destination_account) { source_account }
 
-			it 'should be an error' do
-				expect(transaction.errors[:base]).to include error_message
+				it 'should be an error' do
+					expect(transaction.errors[:base]).to include error_message
+				end
+			end
+
+			context 'when the source and destination accounts are not the same' do
+				let(:destination_account) { create :account }
+
+				it 'should not be an error' do
+					expect(transaction.errors[:base]).not_to include error_message
+				end
 			end
 		end
 
-		context 'when the source and destination accounts are not the same' do
-			let(:destination_account) { create :account }
+		context 'when only the source account is present' do
+			before do
+				transaction.build_source_transaction_account(direction: 'outflow').account = source_account
+			end
 
 			it 'should not be an error' do
-				expect(transaction.errors[:base]).not_to include error_message
+				expect { transaction.validate_account_uniqueness }.not_to raise_error
+			end
+		end
+
+		context 'when only the destination account is present' do
+			let(:destination_account) { create :account }
+
+			before do
+				transaction.build_destination_transaction_account(direction: 'inflow').account = destination_account
+			end
+
+			it 'should not be an error' do
+				expect { transaction.validate_account_uniqueness }.not_to raise_error
 			end
 		end
 	end

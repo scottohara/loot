@@ -10,6 +10,7 @@ module Transferable
 		has_one :source_account, class_name: 'Account', through: :source_transaction_account, source: :account
 		has_one :destination_transaction_account, -> { where direction: 'inflow' }, class_name: 'TransactionAccount', foreign_key: 'transaction_id', dependent: :destroy
 		has_one :destination_account, class_name: 'Account', through: :destination_transaction_account, source: :account
+		validates :source_transaction_account, :destination_transaction_account, presence: true
 		validate :validate_account_uniqueness
 	end
 
@@ -75,6 +76,8 @@ module Transferable
 	# :nocov:end
 
 	def validate_account_uniqueness
-		errors.add :base, "Source and destination account can't be the same" if (source_transaction_account || destination_transaction_account) && source_transaction_account.account.eql?(destination_transaction_account.account)
+		return if source_transaction_account.nil? || destination_transaction_account.nil?
+
+		errors.add :base, "Source and destination account can't be the same" if source_transaction_account.account.eql? destination_transaction_account.account
 	end
 end
