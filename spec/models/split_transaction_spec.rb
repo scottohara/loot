@@ -75,6 +75,46 @@ require 'rails_helper'
 		end
 	end
 
+	describe '#update_from_json' do
+		subject(:transaction) { create :split_transaction, subtransactions: 1, subtransfers: 1 }
+
+		let :json do
+			{
+				'amount' => 1,
+				'memo' => 'Test json',
+				'primary_account' => {
+					'id' => transaction.account.id
+				},
+				'payee' => {
+					'id' => transaction.header.payee.id
+				},
+				'transaction_date' => transaction.header.transaction_date,
+				'direction' => 'outflow',
+				'subtransactions' => [
+					{
+						'transaction_type' => 'Sub',
+						'amount' => 1,
+						'category' => {
+							'id' => 1
+						}
+					}
+				]
+			}
+		end
+
+		context 'with a non-existent category' do
+			before do
+				expect(transaction.transaction_splits.count).to eq 2
+				expect(::Category).to receive(:find).with(1).and_raise ::ActiveRecord::RecordNotFound
+			end
+
+			it 'should not destroy the existing children' do
+				expect { transaction.update_from_json json }.to raise_error ::ActiveRecord::RecordNotFound
+				expect(transaction.reload.transaction_splits.count).to eq 2
+			end
+		end
+	end
+
 	describe '#create_children' do
 		let(:subcategory) { create :subcategory }
 		let(:account) { create :account }

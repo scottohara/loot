@@ -31,13 +31,15 @@ class SplitTransaction < PayeeCashTransaction
 	end
 
 	def update_from_json(json)
-		super
-		transaction_account.direction = json['direction']
-		self.account = ::Account.find json['primary_account']['id']
-		subtransactions.each(&:destroy)
-		subtransfers.each(&:destroy)
-		create_children json['subtransactions']
-		save!
+		transaction do
+			super
+			transaction_account.direction = json['direction']
+			self.account = ::Account.find json['primary_account']['id']
+			subtransactions.each(&:destroy!)
+			subtransfers.each(&:destroy!)
+			create_children json['subtransactions']
+			save!
+		end
 	end
 
 	def as_json(options = {})
