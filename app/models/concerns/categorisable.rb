@@ -23,15 +23,15 @@ module Categorisable
 			id, name =
 				case trx['transaction_type']
 				when 'Basic', 'Sub' then basic_category trx
-				when 'Transfer', 'Subtransfer', 'SecurityTransfer' then psuedo_category 'Transfer', trx['direction'], trx['parent_transaction_type']
-				when 'Split', 'Dividend' then psuedo_category trx['transaction_type'], trx['direction']
+				when 'Transfer', 'Subtransfer', 'SecurityTransfer' then pseudo_category 'Transfer', trx['direction'], trx['parent_transaction_type']
+				when 'Split', 'Dividend' then pseudo_category trx['transaction_type'], trx['direction']
 				when 'LoanRepayment' then [trx['transaction_type'], 'Loan Repayment']
 				when 'SecurityHolding' then (trx['direction'].eql?('outflow') && ['RemoveShares', 'Remove Shares']) || ['AddShares', 'Add Shares']
 				when 'SecurityInvestment'
 					if account_type.eql? 'investment'
 						(trx['direction'].eql?('outflow') && %w[Sell Sell]) || %w[Buy Buy]
 					else
-						psuedo_category 'Transfer', trx['direction']
+						pseudo_category 'Transfer', trx['direction']
 					end
 
 				else [trx['transaction_type'], trx['transaction_type']]
@@ -67,7 +67,7 @@ module Categorisable
 			end
 		end
 
-		def psuedo_category(type, direction, parent_type = nil)
+		def pseudo_category(type, direction, parent_type = nil)
 			direction = 'outflow' if parent_type.eql? 'Payslip'
 			suffix = (direction.eql?('outflow') && 'To') || 'From'
 			[type + suffix, "#{type} #{suffix}"]

@@ -198,9 +198,9 @@ export default class ScheduleEditController {
 		return this.categoryModel
 			.all(parent?.id)
 			.then((categories: Category[]): DisplayCategory[] => {
-				let psuedoCategories: DisplayCategory[] = categories;
+				let pseudoCategories: DisplayCategory[] = categories;
 
-				// For the category dropdown, include psuedo-categories that change the transaction type
+				// For the category dropdown, include pseudo-categories that change the transaction type
 				if (undefined === parent || null === parent) {
 					if (includeSplits) {
 						const splitCategories: DisplayCategory[] = [
@@ -210,7 +210,7 @@ export default class ScheduleEditController {
 							{ id: "LoanRepayment", name: "Loan Repayment" },
 						];
 
-						psuedoCategories = splitCategories.concat(psuedoCategories);
+						pseudoCategories = splitCategories.concat(pseudoCategories);
 					}
 
 					const transferCategories: DisplayCategory[] = [
@@ -218,11 +218,11 @@ export default class ScheduleEditController {
 						{ id: "TransferFrom", name: "Transfer From" },
 					];
 
-					psuedoCategories = transferCategories.concat(psuedoCategories);
+					pseudoCategories = transferCategories.concat(pseudoCategories);
 				}
 
 				return this.limitToFilter(
-					this.filterFilter(psuedoCategories, { name: filter }),
+					this.filterFilter(pseudoCategories, { name: filter }),
 					limit,
 				);
 			});

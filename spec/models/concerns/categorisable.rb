@@ -37,7 +37,7 @@
 				trx['direction'] = 'outflow'
 				trx['parent_transaction_type'] = 'parent_type'
 
-				expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction'], trx['parent_transaction_type']).and_return %w[transfer transfer]
+				expect(subject).to receive(:pseudo_category).with('Transfer', trx['direction'], trx['parent_transaction_type']).and_return %w[transfer transfer]
 				expected[:id] = 'transfer'
 				expected[:name] = 'transfer'
 			end
@@ -59,7 +59,7 @@
 			after do
 				trx['direction'] = 'outflow'
 
-				expect(subject).to receive(:psuedo_category).with(*trx.values).and_return %w[split split]
+				expect(subject).to receive(:pseudo_category).with(*trx.values).and_return %w[split split]
 				expected[:id] = 'split'
 				expected[:name] = 'split'
 			end
@@ -127,7 +127,7 @@
 					trx['direction'] = 'outflow'
 					account[:type] = 'cash'
 
-					expect(subject).to receive(:psuedo_category).with('Transfer', trx['direction']).and_return %w[transfer transfer]
+					expect(subject).to receive(:pseudo_category).with('Transfer', trx['direction']).and_return %w[transfer transfer]
 					expected[:id] = 'transfer'
 					expected[:name] = 'transfer'
 				end
@@ -195,12 +195,12 @@
 		end
 	end
 
-	describe '::psuedo_category' do
+	describe '::pseudo_category' do
 		subject { described_class }
 
 		context 'outflow' do
 			it "should append the suffix 'To'" do
-				id, name = subject.psuedo_category 'Test', 'outflow'
+				id, name = subject.pseudo_category 'Test', 'outflow'
 				expect(id).to eq 'TestTo'
 				expect(name).to eq 'Test To'
 			end
@@ -208,7 +208,7 @@
 
 		context 'inflow' do
 			it "should append the suffix 'From'" do
-				id, name = subject.psuedo_category 'Test', 'inflow'
+				id, name = subject.pseudo_category 'Test', 'inflow'
 				expect(id).to eq 'TestFrom'
 				expect(name).to eq 'Test From'
 			end
@@ -216,7 +216,7 @@
 
 		context 'Payslip' do
 			it 'should be treated as an outflow' do
-				id, name = subject.psuedo_category 'Test', nil, 'Payslip'
+				id, name = subject.pseudo_category 'Test', nil, 'Payslip'
 				expect(id).to eq 'TestTo'
 				expect(name).to eq 'Test To'
 			end
