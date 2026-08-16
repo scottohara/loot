@@ -22,6 +22,12 @@ require 'rails_helper'
 	end
 
 	describe '::find_or_new' do
+		context 'missing category' do
+			it 'should return nil' do
+				expect(described_class.find_or_new nil).to be_nil
+			end
+		end
+
 		context 'existing category' do
 			let(:category) { create :category }
 

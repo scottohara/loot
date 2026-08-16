@@ -35,9 +35,7 @@ require 'rails_helper'
 				'payee' => {
 					'id' => header.payee.id
 				},
-				'category' => {
-					'id' => category.id
-				},
+				'category' => category && {'id' => category.id},
 				'transaction_date' => header.transaction_date,
 				'status' => 'Cleared'
 			}
@@ -62,6 +60,14 @@ require 'rails_helper'
 				expect(described_class.create_from_json json).to match_json json, account, subcategory, header
 			end
 		end
+
+		context 'without category' do
+			let(:category) { nil }
+
+			it 'should not create a transaction' do
+				expect { described_class.create_from_json json }.to raise_error ::ActiveRecord::RecordInvalid
+			end
+		end
 	end
 
 	describe '::update_from_json' do
@@ -77,9 +83,7 @@ require 'rails_helper'
 				'primary_account' => {
 					'id' => account.id
 				},
-				'category' => {
-					'id' => category.id
-				}
+				'category' => category && {'id' => category.id}
 			}
 		end
 
@@ -101,6 +105,14 @@ require 'rails_helper'
 				json['subcategory'] = {'id' => subcategory.id}
 				expect(::Category).to receive(:find_or_new).with(json['subcategory'], category).and_return subcategory
 				expect(described_class.update_from_json json).to match_json json, account, subcategory, transaction.header
+			end
+		end
+
+		context 'without category' do
+			let(:category) { nil }
+
+			it 'should not update a transaction' do
+				expect { described_class.update_from_json json }.to raise_error ::ActiveRecord::RecordInvalid
 			end
 		end
 	end

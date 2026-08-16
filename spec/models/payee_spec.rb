@@ -12,6 +12,12 @@ require 'rails_helper'
 	end
 
 	describe '::find_or_new' do
+		context 'missing payee' do
+			it 'should return nil' do
+				expect(described_class.find_or_new nil).to be_nil
+			end
+		end
+
 		context 'existing payee' do
 			let(:payee) { create :payee }
 

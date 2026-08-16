@@ -34,6 +34,8 @@ class Category < ApplicationRecord
 
 	class << self
 		def find_or_new(category, parent = nil)
+			return if category.nil?
+
 			!category.is_a?(::String) && category['id'].present? ? find(category['id']) : new(name: category, direction: parent&.direction || 'outflow', parent:)
 		end
 	end

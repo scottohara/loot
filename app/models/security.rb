@@ -42,6 +42,8 @@ class Security < ApplicationRecord
 
 	class << self
 		def find_or_new(security)
+			return if security.nil?
+
 			!security.is_a?(::String) && security['id'].present? ? find(security['id']) : new(name: security)
 		end
 

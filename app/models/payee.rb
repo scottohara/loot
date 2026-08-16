@@ -30,6 +30,8 @@ class Payee < ApplicationRecord
 
 	class << self
 		def find_or_new(payee)
+			return if payee.nil?
+
 			!payee.is_a?(::String) && payee['id'].present? ? find(payee['id']) : new(name: payee)
 		end
 	end

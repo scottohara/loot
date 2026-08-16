@@ -16,6 +16,12 @@ require 'rails_helper'
 	end
 
 	describe '::find_or_new' do
+		context 'missing security' do
+			it 'should return nil' do
+				expect(described_class.find_or_new nil).to be_nil
+			end
+		end
+
 		context 'existing security' do
 			let(:security) { create :security }
 
