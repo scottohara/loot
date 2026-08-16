@@ -64,11 +64,11 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	end
 
 	def investment_account
-		transaction_accounts.find { |trx_account| trx_account.account.account_type.eql? 'investment' }
+		transaction_accounts.find { |trx_account| trx_account.account&.account_type.eql? 'investment' }
 	end
 
 	def cash_account
-		transaction_accounts.find { |trx_account| trx_account.account.account_type.eql? 'bank' }
+		transaction_accounts.find { |trx_account| trx_account.account&.account_type.eql? 'bank' }
 	end
 
 	# :nocov:

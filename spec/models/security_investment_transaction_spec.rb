@@ -271,6 +271,11 @@ require 'rails_helper'
 		it "should return the first account of type 'investment'" do
 			expect(transaction.investment_account.account).to eq account
 		end
+
+		it 'should return nil when a transaction account has no account' do
+			transaction.transaction_accounts.each { |trx_account| trx_account.account = nil }
+			expect(transaction.investment_account).to be_nil
+		end
 	end
 
 	describe '#cash_account' do
@@ -280,6 +285,11 @@ require 'rails_helper'
 
 		it "should return the first account of type 'bank'" do
 			expect(transaction.cash_account.account).to eq account
+		end
+
+		it 'should return nil when a transaction account has no account' do
+			transaction.transaction_accounts.each { |trx_account| trx_account.account = nil }
+			expect(transaction.cash_account).to be_nil
 		end
 	end
 end
