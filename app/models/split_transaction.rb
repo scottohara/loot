@@ -3,9 +3,10 @@
 
 # Split transaction
 class SplitTransaction < PayeeCashTransaction
+	validates :transaction_splits, presence: true
 	has_one :transaction_account, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
 	has_one :account, through: :transaction_account
-	has_many :transaction_splits, foreign_key: 'parent_id', inverse_of: :parent, dependent: :destroy
+	has_many :transaction_splits, inverse_of: :parent, dependent: :destroy
 	has_many :subtransactions, -> { where transaction_type: 'Sub' }, class_name: 'SubTransaction', through: :transaction_splits, source: :trx
 	has_many :subtransfers, -> { where transaction_type: 'Subtransfer' }, class_name: 'SubtransferTransaction', through: :transaction_splits, source: :trx
 	after_initialize do |t|
@@ -109,14 +110,14 @@ class SplitTransaction < PayeeCashTransaction
 	end
 
 	def create_children(children)
-		children.each do |child|
+		children.to_a.each do |child|
 			# Keys could be symbols or strings
 			child = child.with_indifferent_access if child.is_a? ::Hash
 
 			# Clear the id and copy the header details from the parent
 			child['id'] = nil
 			child['transaction_date'] = header.transaction_date
-			child['payee'] = {id: header.payee.id}
+			child['payee'] = header.payee && {id: header.payee.id}
 
 			unless header.schedule.nil?
 				child['next_due_date'] = header.schedule.next_due_date

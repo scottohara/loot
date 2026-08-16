@@ -11,7 +11,7 @@
 			account { ::FactoryBot.build :account }
 			direction { 'outflow' }
 			category { ::FactoryBot.build(:category, direction:) }
-			subtransactions { 0 }
+			subtransactions { 1 }
 			subtransfers { 0 }
 			subtransfer_account { ::FactoryBot.build :account }
 			status { nil }

@@ -18,12 +18,13 @@ require 'rails_helper'
 				actual.account.eql?(account) &&
 				actual.header.payee.eql?(header.payee) &&
 				actual.header.transaction_date.eql?(header.transaction_date) &&
-				actual.transaction_splits.size.eql?(expected['subtransactions'].size)
+				actual.transaction_splits.count.eql?(expected['subtransactions'].size)
 		end
 	end
 
 	describe '::create_from_json' do
 		let(:account) { create :bank_account }
+		let(:category) { create :category }
 		let(:header) { create :payee_transaction_header }
 		let :json do
 			{
@@ -39,20 +40,31 @@ require 'rails_helper'
 				'direction' => 'outflow',
 				'transaction_date' => header.transaction_date,
 				'status' => 'Cleared',
-				'subtransactions' => []
+				'subtransactions' => [{'transaction_type' => 'Sub', 'amount' => 1, 'category' => {'id' => category.id}}]
 			}
 		end
 
-		it 'should create a transaction from a JSON representation' do
-			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
-			expect_any_instance_of(::PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
-			expect_any_instance_of(described_class).to receive(:create_children).with json['subtransactions']
-			expect(described_class.create_from_json json).to match_json json, account, header
+		context 'with a payee' do
+			it 'should create a transaction from a JSON representation' do
+				expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
+				expect_any_instance_of(::PayeeTransactionHeader).to receive(:update_from_json).with(json).and_call_original
+				expect_any_instance_of(described_class).to receive(:create_children).with(json['subtransactions']).and_call_original
+				expect(described_class.create_from_json json).to match_json json, account, header
+			end
+		end
+
+		context 'without a payee' do
+			let(:json) { super().except 'payee' }
+
+			it 'should not create a transaction' do
+				expect { described_class.create_from_json json }.to raise_error ::ActiveRecord::RecordInvalid
+			end
 		end
 	end
 
 	describe '::update_from_json' do
 		let(:account) { create :bank_account }
+		let(:category) { create :category }
 		let(:transaction) { create :split_transaction, subtransactions: 1, subtransfers: 1 }
 		let :json do
 			{
@@ -63,7 +75,7 @@ require 'rails_helper'
 					'id' => account.id
 				},
 				'direction' => 'outflow',
-				'subtransactions' => []
+				'subtransactions' => [{'transaction_type' => 'Sub', 'amount' => 1, 'category' => {'id' => category.id}}]
 			}
 		end
 
@@ -194,7 +206,7 @@ require 'rails_helper'
 		end
 
 		context 'unscheduled' do
-			subject(:transaction) { create :split_transaction }
+			subject(:transaction) { build :split_transaction, subtransactions: 0, payee: create(:payee) }
 
 			it 'should build child transactions of the appropriate types' do
 				expect(transaction.subtransfers.first.header.transaction_date).to eq transaction.header.transaction_date
@@ -203,7 +215,7 @@ require 'rails_helper'
 		end
 
 		context 'scheduled' do
-			subject(:transaction) { create :split_transaction, :scheduled }
+			subject(:transaction) { build :split_transaction, :scheduled, subtransactions: 0, payee: create(:payee) }
 
 			it 'should build child transactions of the appropriate types' do
 				expect(transaction.subtransfers.first.header.transaction_date).to be_nil
@@ -273,6 +285,7 @@ require 'rails_helper'
 
 			let! :expected_children do
 				[
+					transaction.subtransactions.first.as_json,
 					create(:sub_expense_transaction, :flagged, parent: transaction).as_json,
 					create(:subtransfer_to_transaction, parent: transaction).as_json,
 					create(:sub_income_transaction, parent: transaction).as_json,
@@ -287,7 +300,7 @@ require 'rails_helper'
 		end
 
 		context 'payslip transaction' do
-			subject(:transaction) { create :payslip_transaction, subtransfers: 1 }
+			subject(:transaction) { create :payslip_transaction, subtransactions: 0, subtransfers: 1 }
 
 			it "should set any subtransfer directions to 'outflow'" do
 				expect(transaction.children.first[:direction]).to eq 'outflow'
