@@ -38,13 +38,24 @@ require 'rails_helper'
 	end
 
 	describe 'DELETE destroy', :request do
-		let(:transaction) { instance_double ::Transaction, flag: instance_double(::TransactionFlag) }
-		let(:expected_status) { :no_content }
+		context 'when a flag exists' do
+			let(:flag) { instance_double ::TransactionFlag }
+			let(:expected_status) { :no_content }
 
-		it 'should delete an existing flag' do
-			expect(::Transaction).to receive(:find).with('1').and_return transaction
-			expect(transaction.flag).to receive :destroy!
-			delete :destroy, params: {transaction_id: '1'}
+			it 'should delete the existing flag' do
+				expect(::TransactionFlag).to receive(:find).with('1').and_return flag
+				expect(flag).to receive :destroy!
+				delete :destroy, params: {transaction_id: '1'}
+			end
+		end
+
+		context "when a flag doesn't exist" do
+			let(:transaction) { create :basic_transaction }
+			let(:expected_status) { :not_found }
+
+			it 'should not delete anything' do
+				delete :destroy, params: {transaction_id: transaction.id}
+			end
 		end
 	end
 end

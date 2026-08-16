@@ -15,7 +15,7 @@ class FlagsController < ApplicationController
 	end
 
 	def destroy
-		::Transaction.find(params[:transaction_id]).flag.destroy!
+		::TransactionFlag.find(params[:transaction_id]).destroy!
 		head :no_content
 	end
 end
