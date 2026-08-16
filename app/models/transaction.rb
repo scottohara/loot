@@ -3,7 +3,11 @@
 
 # Transaction
 class Transaction < ApplicationRecord
-	validates :transaction_type, presence: true, inclusion: {in: %w[Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend]}
+	TRANSACTION_TYPES = %w[Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend].freeze
+
+	private_constant :TRANSACTION_TYPES
+
+	validates :transaction_type, presence: true, inclusion: {in: TRANSACTION_TYPES}
 	has_one :flag, class_name: 'TransactionFlag', dependent: :destroy, autosave: true, inverse_of: :trx
 
 	include ::Categorisable
@@ -12,6 +16,8 @@ class Transaction < ApplicationRecord
 		include ::Transactable
 
 		def class_for(type)
+			raise ::ActiveRecord::SubclassNotFound, "Invalid transaction type: #{type}" if TRANSACTION_TYPES.exclude? type
+
 			"#{type}Transaction".constantize
 		end
 

@@ -17,6 +17,7 @@ require 'rails_helper'
 			when 'routing error'
 				params[:unmatched_route] = params['context']
 				routing_error
+			when 'subclass not found' then raise ::ActiveRecord::SubclassNotFound, params['context']
 			else head :no_content
 			end
 		end
@@ -108,5 +109,12 @@ require 'rails_helper'
 		let(:json) { 'Path routing error is not valid' }
 
 		it('should respond with a JSON error message and a 404 Not Found status') {} # Empty block
+	end
+
+	context 'subclass not found', :json, :request do
+		let(:expected_status) { :bad_request }
+		let(:json) { 'subclass not found' }
+
+		it('should respond with a JSON error message and a 400 Bad Request status') {} # Empty block
 	end
 end

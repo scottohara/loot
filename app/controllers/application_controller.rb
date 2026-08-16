@@ -9,6 +9,7 @@ class ApplicationController < ::ActionController::API
 	rescue_from ::ActiveRecord::RecordInvalid, with: :record_invalid
 	rescue_from ::ActiveRecord::RecordNotDestroyed, with: :record_not_destroyed
 	rescue_from ::ActiveRecord::RecordNotFound, with: :record_not_found
+	rescue_from ::ActiveRecord::SubclassNotFound, with: :subclass_not_found
 	include ::ActionController::HttpAuthentication::Basic::ControllerMethods
 
 	def routing_error
@@ -41,5 +42,9 @@ class ApplicationController < ::ActionController::API
 
 	def record_not_found(exception)
 		render json: exception.message, status: :not_found
+	end
+
+	def subclass_not_found(exception)
+		render json: exception.message, status: :bad_request
 	end
 end

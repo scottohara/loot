@@ -104,7 +104,7 @@ require 'rails_helper'
 		it 'should create a new transaction of the specified type and return the details' do
 			expect(controller).to receive(:clean).and_call_original
 			expect(controller).to receive(:create_transaction).and_return json
-			post :create
+			post :create, params: {transaction_type: 'Basic'}
 		end
 	end
 

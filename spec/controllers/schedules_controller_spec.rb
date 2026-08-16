@@ -19,7 +19,7 @@ require 'rails_helper'
 		it 'should create a new schedule of the specified type and return the details' do
 			expect(controller).to receive(:clean).and_call_original
 			expect(controller).to receive(:create_schedule).and_return json
-			post :create, params: {primary_account: {id: 1}}
+			post :create, params: {transaction_type: 'Basic', primary_account: {id: 1}}
 		end
 	end
 

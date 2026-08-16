@@ -42,6 +42,14 @@ require 'rails_helper'
 		it 'should return the transaction class for a given type' do
 			expect(transaction.class_for 'Basic').to be ::BasicTransaction
 		end
+
+		it 'should raise an error for an unknown type' do
+			expect { transaction.class_for 'Bogus' }.to raise_error ::ActiveRecord::SubclassNotFound, 'Invalid transaction type: Bogus'
+		end
+
+		it 'should raise an error when the type is missing' do
+			expect { transaction.class_for nil }.to raise_error ::ActiveRecord::SubclassNotFound, 'Invalid transaction type: '
+		end
 	end
 
 	describe '::types_for' do
