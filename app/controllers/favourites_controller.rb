@@ -3,6 +3,8 @@
 
 # Favourites controller
 class FavouritesController < ApplicationController
+	include ::Contextable
+
 	before_action :context
 
 	def update
@@ -21,18 +23,6 @@ class FavouritesController < ApplicationController
 	end
 
 	def context
-		# Map param names to models
-		contexts = {
-			account_id: ::Account,
-			payee_id: ::Payee,
-			category_id: ::Category,
-			security_id: ::Security
-		}.with_indifferent_access
-
-		# Get the first pair that matches a param name
-		type, id = params.permit(contexts.keys).to_h.first
-
-		# Instantiate the parent resource based on the matched param
-		@context = contexts[type].find id
+		@context = parent_context
 	end
 end

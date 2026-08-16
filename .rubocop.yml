@@ -30,6 +30,7 @@ AllCops:
 # Can't fully qualify a private_constant
 Lint/ConstantResolution:
   Ignore:
+    - CONTEXTS
     - Frequency
     - FREQUENCIES
     - NUM_RESULTS

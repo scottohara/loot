@@ -3,6 +3,8 @@
 
 # Transactions controller
 class TransactionsController < ApplicationController
+	include ::Contextable
+
 	before_action :clean, only: %i[create update]
 	before_action :context, only: %i[index last]
 	before_action :require_query, only: :index
@@ -64,19 +66,7 @@ class TransactionsController < ApplicationController
 	end
 
 	def context
-		# Instantiate the parent resource based on what params were passed
-		@context =
-			if params[:account_id]
-				::Account.find params[:account_id]
-			elsif params[:payee_id]
-				::Payee.find params[:payee_id]
-			elsif params[:category_id]
-				::Category.find params[:category_id]
-			elsif params[:security_id]
-				::Security.find params[:security_id]
-			else
-				::Transaction
-			end
+		@context = parent_context || ::Transaction
 	end
 
 	def require_query
