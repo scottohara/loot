@@ -66,7 +66,7 @@ require 'rails_helper'
 	end
 
 	describe '#clean' do
-		it 'should remove any empty or nil values from the passed parameters, clear the transaction date and copy the account id' do
+		it 'should remove any empty or nil values from the passed parameters and clear the transaction date' do
 			controller.params = ::ActionController::Parameters.new a: 'a',
 				b: '',
 				c: nil,
@@ -77,7 +77,6 @@ require 'rails_helper'
 			expect(assigns(:schedule).to_unsafe_h).to eq(
 				'a' => 'a',
 				'transaction_date' => nil,
-				'account_id' => 1,
 				'primary_account' => {'id' => 1}
 			)
 		end
@@ -86,7 +85,7 @@ require 'rails_helper'
 	describe '#create_schedule' do
 		it 'should create a schedule from the JSON in the request body' do
 			controller.params = ::ActionController::Parameters.new 'transaction_type' => 'Basic', 'primary_account' => {'id' => 1}
-			expect(::BasicTransaction).to receive(:create_from_json).with controller.params.merge(transaction_date: nil, account_id: 1)
+			expect(::BasicTransaction).to receive(:create_from_json).with controller.params.merge(transaction_date: nil)
 
 			controller.clean
 			controller.klass

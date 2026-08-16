@@ -42,9 +42,6 @@ class SchedulesController < ApplicationController
 
 		# Ensure that transaction date is nil
 		@schedule['transaction_date'] = nil
-
-		# Copy the primary_account.id to account_id
-		@schedule['account_id'] = @schedule.fetch('primary_account', nil)['id']
 	end
 
 	def klass

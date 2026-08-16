@@ -152,14 +152,6 @@ class Schedule < ApplicationRecord
 			# Get the JSON representation of the scheduled transaction
 			transaction_json = transaction.as_json direction: 'outflow'
 
-			# Find the appropriate account to use
-			transaction_json[:account_id] =
-				case transaction.transaction_type
-				when 'Transfer', 'SecurityTransfer' then transaction.source_account.id
-				when 'SecurityInvestment', 'Dividend' then transaction.investment_account.id
-				else transaction.account.id
-				end
-
 			# For Splits, we need to get the subtransactions as well
 			transaction_json['subtransactions'] = transaction.children if SPLIT_TRANSACTION_TYPES.include? transaction.transaction_type
 

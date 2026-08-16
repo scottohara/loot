@@ -137,12 +137,11 @@ require 'rails_helper'
 
 	describe '::auto_enter_overdue' do
 		# Custom matcher that checks if a transaction was created from json
-		matcher :be_created_from do |json, account_id, next_due_date|
+		matcher :be_created_from do |json, next_due_date|
 			match do |transaction_class|
 				# JSON passed is the schedule, so we need to update it to be a transaction instance
 				json[:id] = nil
 				json[:transaction_date] = next_due_date
-				json[:account_id] = account_id
 
 				# Remove scheduled related properties
 				json.delete :next_due_date
@@ -163,12 +162,12 @@ require 'rails_helper'
 			security_transfer_transaction = create :security_transfer_transaction, :scheduled
 			dividend_transaction = create :dividend_transaction, :scheduled
 
-			expect(::BasicTransaction).to be_created_from basic_transaction.as_json, basic_transaction.account.id, basic_transaction.header.schedule.next_due_date
-			expect(::TransferTransaction).to be_created_from transfer_transaction.as_subclass.as_json(direction: 'outflow'), transfer_transaction.source_account.id, transfer_transaction.header.schedule.next_due_date
-			expect(::SplitTransaction).to be_created_from split_transaction.as_subclass.as_json.merge(subtransactions: split_transaction.children), split_transaction.account.id, split_transaction.header.schedule.next_due_date
-			expect(::SecurityInvestmentTransaction).to be_created_from security_investment_transaction.as_subclass.as_json, security_investment_transaction.investment_account.id, security_investment_transaction.header.schedule.next_due_date
-			expect(::SecurityTransferTransaction).to be_created_from security_transfer_transaction.as_subclass.as_json(direction: 'outflow'), security_transfer_transaction.source_account.id, security_transfer_transaction.header.schedule.next_due_date
-			expect(::DividendTransaction).to be_created_from dividend_transaction.as_subclass.as_json, dividend_transaction.investment_account.id, dividend_transaction.header.schedule.next_due_date
+			expect(::BasicTransaction).to be_created_from basic_transaction.as_json, basic_transaction.header.schedule.next_due_date
+			expect(::TransferTransaction).to be_created_from transfer_transaction.as_subclass.as_json(direction: 'outflow'), transfer_transaction.header.schedule.next_due_date
+			expect(::SplitTransaction).to be_created_from split_transaction.as_subclass.as_json.merge(subtransactions: split_transaction.children), split_transaction.header.schedule.next_due_date
+			expect(::SecurityInvestmentTransaction).to be_created_from security_investment_transaction.as_subclass.as_json, security_investment_transaction.header.schedule.next_due_date
+			expect(::SecurityTransferTransaction).to be_created_from security_transfer_transaction.as_subclass.as_json(direction: 'outflow'), security_transfer_transaction.header.schedule.next_due_date
+			expect(::DividendTransaction).to be_created_from dividend_transaction.as_subclass.as_json, dividend_transaction.header.schedule.next_due_date
 
 			described_class.auto_enter_overdue
 		end
@@ -203,12 +202,12 @@ require 'rails_helper'
 			quarterly = create :basic_transaction, :scheduled, frequency: 'Quarterly', next_due_date: months_ago(3)
 			yearly = create :basic_transaction, :scheduled, frequency: 'Yearly', next_due_date: ::Time.zone.tomorrow.advance(years: -1)
 
-			expect(::BasicTransaction).to be_created_from weekly.as_json, weekly.account.id, weekly.header.schedule.next_due_date
-			expect(::BasicTransaction).to be_created_from fortnightly.as_json, fortnightly.account.id, fortnightly.header.schedule.next_due_date
-			expect(::BasicTransaction).to be_created_from monthly.as_json, monthly.account.id, monthly.header.schedule.next_due_date
-			expect(::BasicTransaction).to be_created_from bimonthly.as_json, bimonthly.account.id, bimonthly.header.schedule.next_due_date
-			expect(::BasicTransaction).to be_created_from quarterly.as_json, quarterly.account.id, quarterly.header.schedule.next_due_date
-			expect(::BasicTransaction).to be_created_from yearly.as_json, yearly.account.id, yearly.header.schedule.next_due_date
+			expect(::BasicTransaction).to be_created_from weekly.as_json, weekly.header.schedule.next_due_date
+			expect(::BasicTransaction).to be_created_from fortnightly.as_json, fortnightly.header.schedule.next_due_date
+			expect(::BasicTransaction).to be_created_from monthly.as_json, monthly.header.schedule.next_due_date
+			expect(::BasicTransaction).to be_created_from bimonthly.as_json, bimonthly.header.schedule.next_due_date
+			expect(::BasicTransaction).to be_created_from quarterly.as_json, quarterly.header.schedule.next_due_date
+			expect(::BasicTransaction).to be_created_from yearly.as_json, yearly.header.schedule.next_due_date
 
 			described_class.auto_enter_overdue
 
@@ -222,9 +221,9 @@ require 'rails_helper'
 		it 'should create as many transactions as are overdue' do
 			three_overdue = create :basic_transaction, :scheduled, frequency: 'Fortnightly', next_due_date: ::Time.zone.tomorrow.advance(weeks: -6)
 
-			expect(::BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, ::Time.zone.tomorrow.advance(weeks: -6)
-			expect(::BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, ::Time.zone.tomorrow.advance(weeks: -4)
-			expect(::BasicTransaction).to be_created_from three_overdue.as_json, three_overdue.account.id, ::Time.zone.tomorrow.advance(weeks: -2)
+			expect(::BasicTransaction).to be_created_from three_overdue.as_json, ::Time.zone.tomorrow.advance(weeks: -6)
+			expect(::BasicTransaction).to be_created_from three_overdue.as_json, ::Time.zone.tomorrow.advance(weeks: -4)
+			expect(::BasicTransaction).to be_created_from three_overdue.as_json, ::Time.zone.tomorrow.advance(weeks: -2)
 
 			described_class.auto_enter_overdue
 
