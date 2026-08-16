@@ -21,9 +21,7 @@ class SchedulesController < ApplicationController
 			render json: @klass.update_from_json(@schedule)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
-			schedule.as_subclass.destroy!
-			strip_invalid_attributes
-			render json: create_schedule
+			render json: recreate_schedule(schedule)
 		end
 	end
 
@@ -61,5 +59,13 @@ class SchedulesController < ApplicationController
 
 	def create_schedule
 		@klass.create_from_json @schedule
+	end
+
+	def recreate_schedule(schedule)
+		::ActiveRecord::Base.transaction do
+			schedule.as_subclass.destroy!
+			strip_invalid_attributes
+			create_schedule
+		end
 	end
 end

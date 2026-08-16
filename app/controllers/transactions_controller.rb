@@ -34,9 +34,7 @@ class TransactionsController < ApplicationController
 			render json: @klass.update_from_json(@transaction)
 		else
 			# Type has changed, so delete and recreate (maintaining previous transaction_id)
-			transaction.as_subclass.destroy!
-			strip_invalid_attributes
-			render json: create_transaction
+			render json: recreate_transaction(transaction)
 		end
 	end
 
@@ -85,5 +83,13 @@ class TransactionsController < ApplicationController
 
 	def create_transaction
 		@klass.create_from_json @transaction
+	end
+
+	def recreate_transaction(transaction)
+		::ActiveRecord::Base.transaction do
+			transaction.as_subclass.destroy!
+			strip_invalid_attributes
+			create_transaction
+		end
 	end
 end

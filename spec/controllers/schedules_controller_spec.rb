@@ -47,22 +47,8 @@ require 'rails_helper'
 		context 'when transaction type has changed' do
 			let(:request_body) { {id: '1', transaction_type: 'Transfer', primary_account: {id: '1'}} }
 
-			it 'should destroy and recreate the transaction' do
-				expect(schedule).to receive(:as_subclass).and_return schedule
-				expect(schedule).to receive :destroy!
-				expect(controller).to receive(:create_schedule).and_return json
-			end
-		end
-
-		context 'when transaction type has changed to one that strips invalid attributes' do
-			let(:request_body) { {id: '1', transaction_type: 'SecurityTransfer', primary_account: {id: '1'}} }
-			let(:valid_attributes) { 'valid attributes' }
-
-			it 'should recreate the schedule with only valid attributes' do
-				expect(schedule).to receive(:as_subclass).and_return schedule
-				expect(schedule).to receive :destroy!
-				expect(::SecurityTransferTransaction).to receive(:strip_invalid_attributes).and_return valid_attributes
-				expect(::SecurityTransferTransaction).to receive(:create_from_json).with(valid_attributes).and_return json
+			it 'should recreate the schedule' do
+				expect(controller).to receive(:recreate_schedule).with(schedule).and_return json
 			end
 		end
 	end
@@ -105,6 +91,53 @@ require 'rails_helper'
 			controller.clean
 			controller.klass
 			controller.create_schedule
+		end
+	end
+
+	describe '#recreate_schedule' do
+		let(:schedule) { instance_double ::BasicTransaction }
+		let(:json) { 'recreated schedule' }
+
+		before do
+			controller.params = ::ActionController::Parameters.new 'transaction_type' => transaction_type, 'primary_account' => {'id' => 1}
+			controller.clean
+			controller.klass
+		end
+
+		context 'for a type that keeps all of its attributes' do
+			let(:transaction_type) { 'Transfer' }
+
+			it 'should destroy the existing schedule and recreate it' do
+				expect(schedule).to receive(:as_subclass).and_return schedule
+				expect(schedule).to receive :destroy!
+				expect(::TransferTransaction).to receive(:create_from_json).with(controller.params.merge(transaction_date: nil)).and_return json
+				expect(controller.recreate_schedule schedule).to eq json
+			end
+		end
+
+		context 'for a type that strips invalid attributes' do
+			let(:transaction_type) { 'SecurityTransfer' }
+			let(:valid_attributes) { 'valid attributes' }
+
+			it 'should recreate the schedule with only valid attributes' do
+				expect(schedule).to receive(:as_subclass).and_return schedule
+				expect(schedule).to receive :destroy!
+				expect(::SecurityTransferTransaction).to receive(:strip_invalid_attributes).and_return valid_attributes
+				expect(::SecurityTransferTransaction).to receive(:create_from_json).with(valid_attributes).and_return json
+				expect(controller.recreate_schedule schedule).to eq json
+			end
+		end
+
+		context 'when the replacement cannot be created' do
+			subject(:schedule) { create :basic_transaction, :scheduled }
+
+			let(:transaction_type) { 'Transfer' }
+
+			it 'should not destroy the existing schedule' do
+				expect(controller).to receive(:create_schedule).and_raise ::ActiveRecord::RecordInvalid
+				expect { controller.recreate_schedule schedule }.to raise_error ::ActiveRecord::RecordInvalid
+				expect(::Transaction).to exist schedule.id
+			end
 		end
 	end
 end
