@@ -257,6 +257,22 @@ require 'rails_helper'
 		end
 	end
 
+	describe '::find_from_json' do
+		let(:account) { create :bank_account }
+
+		it 'should return the account referenced in the JSON representation' do
+			expect(described_class.find_from_json 'id' => account.id).to eq account
+		end
+
+		it 'should return nil when the account is absent' do
+			expect(described_class.find_from_json nil).to be_nil
+		end
+
+		it 'should return nil when the account id is absent' do
+			expect(described_class.find_from_json 'name' => account.name).to be_nil
+		end
+	end
+
 	describe '::create_from_json' do
 		shared_examples 'create from json' do
 			it 'should create an account from a JSON representation' do

@@ -16,8 +16,8 @@ module Transferable
 
 	class_methods do
 		def create_from_json(json)
-			source = ::Account.find json['primary_account']['id']
-			destination = ::Account.find json['account']['id']
+			source = ::Account.find_from_json json['primary_account']
+			destination = ::Account.find_from_json json['account']
 			source_status = json['status']
 			destination_status = json['related_status']
 
@@ -38,8 +38,8 @@ module Transferable
 	end
 
 	def update_from_json(json)
-		source = ::Account.find json['primary_account']['id']
-		destination = ::Account.find json['account']['id']
+		source = ::Account.find_from_json json['primary_account']
+		destination = ::Account.find_from_json json['account']
 
 		source, destination = destination, source if json['direction'].eql? 'inflow'
 

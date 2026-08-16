@@ -17,7 +17,7 @@ class SplitTransaction < PayeeCashTransaction
 	class << self
 		def create_from_json(json)
 			s = super
-			s.build_transaction_account(direction: json['direction'], status: json['status']).account = ::Account.find json['primary_account']['id']
+			s.build_transaction_account(direction: json['direction'], status: json['status']).account = ::Account.find_from_json json['primary_account']
 			s.create_children json['subtransactions']
 			s.save!
 			s
@@ -34,7 +34,7 @@ class SplitTransaction < PayeeCashTransaction
 		transaction do
 			super
 			transaction_account.direction = json['direction']
-			self.account = ::Account.find json['primary_account']['id']
+			self.account = ::Account.find_from_json json['primary_account']
 			subtransactions.each(&:destroy!)
 			subtransfers.each(&:destroy!)
 			create_children json['subtransactions']

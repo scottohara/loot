@@ -19,8 +19,8 @@ class DividendTransaction < SecurityTransaction
 
 			s = super
 			s.amount = json['amount']
-			s.transaction_accounts.build(direction: 'outflow', status: json['status']).account = ::Account.find json['primary_account']['id']
-			s.transaction_accounts.build(direction: 'inflow', status: json['related_status']).account = ::Account.find json['account']['id']
+			s.transaction_accounts.build(direction: 'outflow', status: json['status']).account = ::Account.find_from_json json['primary_account']
+			s.transaction_accounts.build(direction: 'inflow', status: json['related_status']).account = ::Account.find_from_json json['account']
 			s.save!
 			s
 		end
@@ -35,8 +35,8 @@ class DividendTransaction < SecurityTransaction
 	def update_from_json(json)
 		super
 		self.amount = json['amount']
-		investment_account.account = ::Account.find json['primary_account']['id']
-		cash_account.account = ::Account.find json['account']['id']
+		investment_account.account = ::Account.find_from_json json['primary_account']
+		cash_account.account = ::Account.find_from_json json['account']
 		save!
 	end
 

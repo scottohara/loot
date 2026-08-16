@@ -17,7 +17,7 @@ class BasicTransaction < PayeeCashTransaction
 			category = ::Category.find_or_new(json['subcategory'], category) if json['subcategory'].present?
 
 			s = super
-			s.build_transaction_account(direction: category.direction, status: json['status']).account = ::Account.find json['primary_account']['id']
+			s.build_transaction_account(direction: category&.direction, status: json['status']).account = ::Account.find_from_json json['primary_account']
 			s.build_transaction_category.category = category
 			s.save!
 			s
@@ -35,8 +35,8 @@ class BasicTransaction < PayeeCashTransaction
 		category = ::Category.find_or_new(json['subcategory'], category) if json['subcategory'].present?
 
 		super
-		transaction_account.direction = category.direction
-		self.account = ::Account.find json['primary_account']['id']
+		transaction_account.direction = category&.direction
+		self.account = ::Account.find_from_json json['primary_account']
 		self.category = category
 		save!
 	end

@@ -207,11 +207,15 @@ class Account < ApplicationRecord
 			end
 		end
 
+		def find_from_json(account_json)
+			find account_json['id'] if account_json&.dig('id').present?
+		end
+
 		def create_from_json(json)
 			account = ::Account.new name: json['name'], account_type: json['account_type'], opening_balance: json['opening_balance'], status: json['status'], favourite: json['favourite'].eql?(true)
 			account.related_account =
 				case account.account_type
-				when 'loan' then json.dig('related_account', 'id') && ::Account.find(json['related_account']['id'])
+				when 'loan' then ::Account.find_from_json json['related_account']
 				when 'investment' then account.cash_account_from_json json
 				end
 			account.save!
@@ -251,7 +255,7 @@ class Account < ApplicationRecord
 			related_account.destroy! if original_account_type.eql? 'investment'
 
 			# If changing to a loan account, set the related asset account
-			self.related_account = (account_type.eql?('loan') && json.dig('related_account', 'id') && ::Account.find(json['related_account']['id'])) || nil
+			self.related_account = (account_type.eql?('loan') && ::Account.find_from_json(json['related_account'])) || nil
 		end
 
 		save!
