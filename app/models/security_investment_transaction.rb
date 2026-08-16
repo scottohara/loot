@@ -78,6 +78,8 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	# :nocov:end
 
 	def validate_amount_matches_investment_details
+		return if [amount, header.price, header.quantity, header.commission, investment_account].any?(&:nil?)
+
 		errors.add :base, "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.round(2).eql?(((header.price * header.quantity) + (header.commission * (investment_account.direction.eql?('inflow') ? 1 : -1))).round 2)
 	end
 

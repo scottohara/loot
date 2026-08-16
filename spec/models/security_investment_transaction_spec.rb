@@ -197,6 +197,15 @@ require 'rails_helper'
 
 			it_behaves_like 'validate amount'
 		end
+
+		context 'when the investment details are missing', direction: 'outflow' do
+			it 'should not be an error' do
+				transaction.amount = 1
+				transaction.header.price = nil
+				transaction.validate_amount_matches_investment_details
+				expect(transaction.errors[:base]).to be_empty
+			end
+		end
 	end
 
 	describe '#validate_cash_account_type' do
