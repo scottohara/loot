@@ -92,6 +92,16 @@ require 'rails_helper'
 		end
 	end
 
+	describe '::strip_invalid_attributes' do
+		subject(:transaction) { described_class }
+
+		let(:json) { {'memo' => 'Test json', 'price' => 1.23, 'commission' => 4.56} }
+
+		it 'should return the json unchanged' do
+			expect(transaction.strip_invalid_attributes json).to eq json
+		end
+	end
+
 	describe '::create_from_json' do
 		let :json do
 			{

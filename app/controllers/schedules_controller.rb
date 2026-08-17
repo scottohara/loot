@@ -48,12 +48,6 @@ class SchedulesController < ApplicationController
 		@klass = ::Transaction.class_for params['transaction_type']
 	end
 
-	def strip_invalid_attributes
-		# Strip any attributes that don't apply to the new type but were carried
-		# over from the old one (e.g. price/commission when converting to a transfer)
-		@schedule = @klass.strip_invalid_attributes @schedule if @klass.respond_to? :strip_invalid_attributes
-	end
-
 	def create_schedule
 		@klass.create_from_json @schedule
 	end
@@ -61,7 +55,7 @@ class SchedulesController < ApplicationController
 	def recreate_schedule(schedule)
 		::ActiveRecord::Base.transaction do
 			schedule.as_subclass.destroy!
-			strip_invalid_attributes
+			@schedule = @klass.strip_invalid_attributes @schedule
 			create_schedule
 		end
 	end

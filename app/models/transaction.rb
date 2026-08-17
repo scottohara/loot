@@ -66,6 +66,12 @@ class Transaction < ApplicationRecord
 			nil
 		end
 
+		# Subclasses override to strip attributes that don't apply to their type but were
+		# carried over from the old one (e.g. price/commission when converting to a transfer)
+		def strip_invalid_attributes(json)
+			json
+		end
+
 		def create_from_json(json)
 			# id included for the case where we destroy & recreate on transaction type change
 			s = new id: json[:id], memo: json['memo']
