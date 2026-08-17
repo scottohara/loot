@@ -221,6 +221,22 @@ require 'models/concerns/categorisable'
 		end
 	end
 
+	describe '#parse_as_at' do
+		subject { (defined?(as_class_method) && described_class) || described_class.new }
+
+		it 'should parse a valid date' do
+			expect(subject.parse_as_at '2014-01-01').to eq '2014-01-01'
+		end
+
+		it 'should default when no date is passed' do
+			expect(subject.parse_as_at nil).to eq '2400-12-31'
+		end
+
+		it 'should default when an invalid date is passed' do
+			expect(subject.parse_as_at 'invalid').to eq '2400-12-31'
+		end
+	end
+
 	describe '#ledger_options' do
 		subject { (defined?(as_class_method) && described_class) || described_class.new }
 

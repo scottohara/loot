@@ -33,6 +33,7 @@ Lint/ConstantResolution:
     - CONTEXTS
     - Frequency
     - FREQUENCIES
+    - MAX_TRANSACTION_DATE
     - NUM_RESULTS
     - SHOW_FIELDS
     - EDIT_FIELDS

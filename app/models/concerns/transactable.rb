@@ -11,6 +11,10 @@ module Transactable
 	NUM_RESULTS = 150
 	private_constant :NUM_RESULTS
 
+	# Default if missing or unparseable as_at date
+	MAX_TRANSACTION_DATE = '2400-12-31'
+	private_constant :MAX_TRANSACTION_DATE
+
 	def ledger(ledger_opts = {})
 		# Check the options and set defaults where required
 		opts = ledger_options ledger_opts
@@ -41,12 +45,7 @@ module Transactable
 	end
 
 	def closing_balance(balance_opts = {})
-		as_at =
-			begin
-				::Date.parse(balance_opts[:as_at]).to_s
-			rescue ::TypeError, ::ArgumentError
-				'2400-12-31'
-			end
+		as_at = parse_as_at balance_opts[:as_at]
 
 		if account_type.eql? 'investment'
 			# Get the total quantity of security inflows
@@ -143,14 +142,15 @@ module Transactable
 
 	# :nocov:end
 
+	def parse_as_at(as_at)
+		::Date.parse(as_at).to_s
+	rescue ::TypeError, ::ArgumentError
+		MAX_TRANSACTION_DATE
+	end
+
 	def ledger_options(ledger_opts = {})
 		# Default as_at if not specified or invalid
-		ledger_opts[:as_at] =
-			begin
-				::Date.parse(ledger_opts[:as_at]).to_s
-			rescue ::TypeError, ::ArgumentError
-				'2400-12-31'
-			end
+		ledger_opts[:as_at] = parse_as_at ledger_opts[:as_at]
 
 		# Default direction if not specified or invalid
 		ledger_opts[:direction] = (ledger_opts[:direction].present? && ledger_opts[:direction].to_sym) || :prev
