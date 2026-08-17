@@ -5,8 +5,8 @@
 class Category < ApplicationRecord
 	validates :name, presence: true
 	validates :direction, presence: true, inclusion: {in: %w[inflow outflow]}
-	belongs_to :parent, class_name: 'Category', optional: true
-	has_many :children, -> { order :name }, class_name: 'Category', foreign_key: 'parent_id', dependent: :destroy
+	belongs_to :parent, class_name: 'Category', inverse_of: :children, optional: true
+	has_many :children, -> { order :name }, class_name: 'Category', inverse_of: :parent, dependent: :destroy
 	has_many :transaction_categories, ->(object) { rewhere(category_id: object.children.ids.unshift(object.id)) }, dependent: :restrict_with_error
 	has_many :transactions, through: :transaction_categories, source: :trx do
 		def for_ledger(_opts)
@@ -61,7 +61,7 @@ class Category < ApplicationRecord
 		json[:parent] = parent&.as_json only: %i[id name direction] if options[:only].include? :parent
 		json[:num_children] = children.size if options[:only].include? :num_children
 		json[:num_transactions] = transactions.count if options[:only].include? :num_transactions
-		json[:children] = children.as_json only: %i[id name direction parent_id parent num_transactions favourite] if options[:only].include?(:children) && !parent && children.loaded?
+		json[:children] = children.as_json only: %i[id name direction parent_id parent favourite] if options[:only].include?(:children) && !parent && children.loaded?
 
 		json.slice(*options[:only])
 	end

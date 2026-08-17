@@ -14,7 +14,6 @@ export default function createCategory(
 		direction: "inflow" as const,
 		parent_id: null,
 		favourite: false,
-		num_transactions: 0,
 		...props,
 	};
 }

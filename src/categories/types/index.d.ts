@@ -7,7 +7,7 @@ export interface Category extends Entity {
 	children?: Category[];
 	favourite: boolean;
 	num_children?: number;
-	num_transactions: number;
+	num_transactions?: number;
 }
 
 interface PsuedoCategory {

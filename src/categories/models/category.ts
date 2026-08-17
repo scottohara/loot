@@ -47,9 +47,18 @@ export default class CategoryModel
 	}
 
 	// Retrieves the list of categories
-	public all(
+	public all(parent?: number | null): angular.IPromise<Category[]> {
+		return this.list(false, parent);
+	}
+
+	// Retrieves the list of top-level categories, including their children
+	public allWithChildren(): angular.IPromise<Category[]> {
+		return this.list(true);
+	}
+
+	private list(
+		includeChildren: boolean,
 		parent?: number | null,
-		includeChildren = false,
 	): angular.IPromise<Category[]> {
 		return this.$http
 			.get(`${this.path()}${includeChildren ? "?include_children" : ""}`, {
@@ -62,11 +71,6 @@ export default class CategoryModel
 				(response: angular.IHttpResponse<Category[]>): Category[] =>
 					response.data,
 			);
-	}
-
-	// Retrieves the list of categories, including children
-	public allWithChildren(parent?: number): angular.IPromise<Category[]> {
-		return this.all(parent, true);
 	}
 
 	// Retrieves a single category

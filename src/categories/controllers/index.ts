@@ -190,7 +190,7 @@ export default class CategoryIndexController {
 				};
 
 				// Check if the category has any transactions
-				if (category.num_transactions > 0) {
+				if ((category.num_transactions ?? 0) > 0) {
 					// Show an alert modal
 					modalOptions = angular.extend(
 						{

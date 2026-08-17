@@ -163,10 +163,10 @@ require 'rails_helper'
 						expect(json[:children].first).to include name: category.children.first.name
 						expect(json[:children].first).to include direction: 'outflow'
 						expect(json[:children].first).to include parent_id: category.id
-						expect(json[:children].first).to include num_transactions: 0
 						expect(json[:children].first).to include favourite: false
 						expect(json[:children].first[:parent]).to eq(id: category.id, name: category.name, direction: category.direction)
 						expect(json[:children].first).not_to include :children
+						expect(json[:children].first).not_to include :num_transactions
 					end
 				end
 

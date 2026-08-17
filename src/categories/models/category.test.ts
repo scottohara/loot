@@ -22,7 +22,6 @@ describe("categoryModel", (): void => {
 		$window: WindowMock,
 		ogLruCache: OgLruCacheMock,
 		category: Category,
-		iPromise: angular.IPromise<never>,
 		iHttpPromise: angular.IHttpPromise<unknown>;
 
 	// Load the modules
@@ -35,7 +34,6 @@ describe("categoryModel", (): void => {
 					"$cacheFactory",
 					"$window",
 					"ogLruCacheFactory",
-					"iPromise",
 					"iHttpPromise",
 				]),
 		) as Mocha.HookFunction,
@@ -60,7 +58,6 @@ describe("categoryModel", (): void => {
 				_$http_: angular.IHttpService,
 				$cacheFactory: CacheFactoryMock,
 				ogLruCacheFactory: OgLruCacheFactoryMock,
-				_iPromise_: angular.IPromise<never>,
 				_iHttpPromise_: angular.IHttpPromise<unknown>,
 			): void => {
 				categoryModel = _categoryModel_;
@@ -70,7 +67,6 @@ describe("categoryModel", (): void => {
 
 				$cache = $cacheFactory();
 				ogLruCache = ogLruCacheFactory.new();
-				iPromise = _iPromise_;
 				iHttpPromise = _iHttpPromise_;
 
 				category = createCategory({ id: 1 });
@@ -138,7 +134,7 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("all", (): void => {
-		let expectedUrl = /categories\?parent=1$/v,
+		const expectedUrl = /categories\?parent=1$/v,
 			expectedResponse = "categories without children";
 
 		it("should dispatch a GET request to /categories?parent={parent}", (): void => {
@@ -165,54 +161,36 @@ describe("categoryModel", (): void => {
 				);
 			$httpBackend.flush();
 		});
-
-		describe("(include children)", (): void => {
-			beforeEach((): void => {
-				expectedUrl = /categories\?include_children&parent=1/v;
-				expectedResponse = "categories with children";
-			});
-
-			it("should dispatch a GET request to /categories?include_children&parent={parent}", (): void => {
-				$httpBackend.expectGET(expectedUrl).respond(200);
-				categoryModel.all(1, true);
-				$httpBackend.flush();
-			});
-
-			it("should not cache the response in the $http cache", (): void => {
-				const httpGet: SinonStub = sinon
-					.stub($http, "get")
-					.returns(iHttpPromise);
-
-				categoryModel.all(1, true);
-				expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
-					.false;
-			});
-
-			it("should return a list of all categories including their children", (): void => {
-				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
-				categoryModel
-					.all(1, true)
-					.then(
-						(categories: Category[]): Chai.Assertion =>
-							expect(categories).to.equal(expectedResponse),
-					);
-				$httpBackend.flush();
-			});
-		});
 	});
 
 	describe("allWithChildren", (): void => {
-		beforeEach(
-			(): SinonStub => sinon.stub(categoryModel, "all").returns(iPromise),
-		);
+		const expectedUrl = /categories\?include_children$/v,
+			expectedResponse = "categories with children";
 
-		it("should fetch the list of categories with children", (): void => {
-			categoryModel.allWithChildren(1);
-			expect(categoryModel["all"]).to.have.been.calledWith(1, true);
+		it("should dispatch a GET request to /categories?include_children", (): void => {
+			$httpBackend.expectGET(expectedUrl).respond(200);
+			categoryModel.allWithChildren();
+			$httpBackend.flush();
 		});
 
-		it("should return a list of all categories including their children", (): Chai.Assertion =>
-			expect(categoryModel.allWithChildren(1)).to.equal(iPromise));
+		it("should not cache the response in the $http cache", (): void => {
+			const httpGet: SinonStub = sinon.stub($http, "get").returns(iHttpPromise);
+
+			categoryModel.allWithChildren();
+			expect(httpGet.firstCall.args[1]).to.have.own.property("cache").that.is
+				.false;
+		});
+
+		it("should return a list of all categories including their children", (): void => {
+			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
+			categoryModel
+				.allWithChildren()
+				.then(
+					(categories: Category[]): Chai.Assertion =>
+						expect(categories).to.equal(expectedResponse),
+				);
+			$httpBackend.flush();
+		});
 	});
 
 	describe("find", (): void => {
