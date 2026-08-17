@@ -4,7 +4,10 @@
 # Statuses controller
 class StatusesController < ApplicationController
 	def update
-		status = params.keys.keep_if { %w[Cleared Reconciled].include? it }.first
+		status = params.keys.find { %w[Cleared Reconciled].include? it }
+
+		return head :bad_request if status.nil?
+
 		update_status status
 	end
 
@@ -16,9 +19,8 @@ class StatusesController < ApplicationController
 
 	def update_status(status = nil)
 		::TransactionAccount
-			.where(account_id: params[:account_id])
-			.where(transaction_id: params[:transaction_id])
-			.update_all(status:)
+			.find_by!(account_id: params[:account_id], transaction_id: params[:transaction_id])
+			.update!(status:)
 
 		head :no_content
 	end
