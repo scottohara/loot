@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_29_035909) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_17_234741) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,6 +24,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_035909) do
     t.string "status", limit: 255, null: false
     t.datetime "updated_at", precision: nil
     t.index ["related_account_id"], name: "index_accounts_on_related_account_id"
+    t.check_constraint "account_type::text = ANY (ARRAY['bank'::character varying, 'credit'::character varying, 'cash'::character varying, 'asset'::character varying, 'liability'::character varying, 'investment'::character varying, 'loan'::character varying]::text[])", name: "accounts_account_type_check"
+    t.check_constraint "status::text = ANY (ARRAY['open'::character varying, 'closed'::character varying]::text[])", name: "accounts_status_check"
   end
 
   create_table "categories", id: :serial, force: :cascade do |t|
@@ -34,6 +36,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_035909) do
     t.integer "parent_id"
     t.datetime "updated_at", precision: nil
     t.index ["parent_id"], name: "index_categories_on_parent_id"
+    t.check_constraint "direction::text = ANY (ARRAY['inflow'::character varying, 'outflow'::character varying]::text[])", name: "categories_direction_check"
   end
 
   create_table "payees", id: :serial, force: :cascade do |t|
@@ -50,6 +53,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_035909) do
     t.string "frequency", limit: 255, null: false
     t.date "next_due_date", null: false
     t.datetime "updated_at", precision: nil
+    t.check_constraint "frequency::text = ANY (ARRAY['Weekly'::character varying, 'Fortnightly'::character varying, 'Monthly'::character varying, 'Bimonthly'::character varying, 'Quarterly'::character varying, 'Yearly'::character varying]::text[])", name: "schedules_frequency_check"
   end
 
   create_table "securities", id: :serial, force: :cascade do |t|
@@ -78,6 +82,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_035909) do
     t.datetime "updated_at", precision: nil
     t.index ["account_id", "transaction_id"], name: "index_transaction_accounts_on_account_id_and_transaction_id"
     t.index ["transaction_id", "account_id"], name: "index_transaction_accounts_on_transaction_id_and_account_id"
+    t.check_constraint "direction::text = ANY (ARRAY['inflow'::character varying, 'outflow'::character varying]::text[])", name: "transaction_accounts_direction_check"
+    t.check_constraint "status IS NULL OR (status::text = ANY (ARRAY['Cleared'::character varying, 'Reconciled'::character varying]::text[]))", name: "transaction_accounts_status_check"
   end
 
   create_table "transaction_categories", primary_key: "transaction_id", id: :serial, force: :cascade do |t|
@@ -92,6 +98,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_035909) do
     t.string "flag_type", default: "followup", null: false
     t.string "memo", limit: 255
     t.datetime "updated_at", precision: nil
+    t.check_constraint "flag_type::text = ANY (ARRAY['followup'::character varying, 'noreceipt'::character varying, 'taxdeductible'::character varying]::text[])", name: "transaction_flags_flag_type_check"
   end
 
   create_table "transaction_headers", primary_key: "transaction_id", id: :serial, force: :cascade do |t|
@@ -125,6 +132,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_035909) do
     t.text "memo"
     t.string "transaction_type", limit: 255, null: false
     t.datetime "updated_at", precision: nil
+    t.check_constraint "transaction_type::text = ANY (ARRAY['Basic'::character varying, 'Split'::character varying, 'Transfer'::character varying, 'Payslip'::character varying, 'LoanRepayment'::character varying, 'Sub'::character varying, 'Subtransfer'::character varying, 'SecurityTransfer'::character varying, 'SecurityHolding'::character varying, 'SecurityInvestment'::character varying, 'Dividend'::character varying]::text[])", name: "transactions_transaction_type_check"
   end
 
   add_foreign_key "accounts", "accounts", column: "related_account_id"
