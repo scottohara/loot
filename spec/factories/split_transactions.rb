@@ -15,9 +15,18 @@
 			subtransfers { 0 }
 			subtransfer_account { ::FactoryBot.build :account }
 			status { nil }
+
+			# Next due date should only be non-nil for the :scheduled trait
+			next_due_date { nil }
 		end
 
 		after :build do |trx, evaluator|
+			# If a next due date is specified, replace transaction date with a schedule
+			unless evaluator.next_due_date.nil?
+				trx.header.transaction_date = nil
+				trx.header.schedule = ::FactoryBot.build :schedule, next_due_date: evaluator.next_due_date
+			end
+
 			trx.transaction_account = ::FactoryBot.build :transaction_account, account: evaluator.account, direction: evaluator.direction, status: evaluator.status
 			create_list (evaluator.direction.eql?('outflow') ? :sub_expense_transaction : :sub_income_transaction), evaluator.subtransactions, parent: trx, category: evaluator.category
 			create_list :subtransfer_transaction, evaluator.subtransfers, parent: trx, payee: evaluator.payee, account: evaluator.subtransfer_account
@@ -31,11 +40,6 @@
 		trait :scheduled do
 			transient do
 				next_due_date { ::Time.zone.tomorrow.advance weeks: -4 }
-			end
-
-			after :build do |trx, evaluator|
-				trx.header.transaction_date = nil
-				trx.header.schedule = build :schedule, next_due_date: evaluator.next_due_date
 			end
 		end
 

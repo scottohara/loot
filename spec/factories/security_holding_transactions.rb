@@ -6,7 +6,7 @@
 		# Default attributes for security transaction
 		security_transaction
 
-		# Default accounts if none specified
+		# Default accounts if none specified, transaction date defaults to the header sequence if none specified
 		transient do
 			account { ::FactoryBot.build :investment_account }
 			direction { 'Add' }

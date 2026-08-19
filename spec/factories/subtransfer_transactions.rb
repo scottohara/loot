@@ -17,7 +17,12 @@
 		after :build do |trx, evaluator|
 			trx.parent = evaluator.parent
 			trx.parent.amount = trx.amount
+			trx.header.transaction_date = trx.parent.header.transaction_date
 			trx.transaction_account = ::FactoryBot.build :transaction_account, account: evaluator.account, direction: (evaluator.parent.transaction_account.direction.eql?('inflow') && 'outflow') || 'inflow', status: evaluator.status
+
+			# If the parent is scheduled, copy the schedule details from the parent
+			parent_schedule = trx.parent.header.schedule
+			trx.header.schedule = ::FactoryBot.build(:schedule, next_due_date: parent_schedule.next_due_date, frequency: parent_schedule.frequency) unless parent_schedule.nil?
 		end
 
 		trait :inflow do

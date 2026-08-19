@@ -7,7 +7,7 @@
 		security_transaction
 		amount { (price * quantity) + (commission * (direction.eql?('Buy') ? 1 : -1)) }
 
-		# Default accounts if none specified
+		# Default accounts if none specified, transaction date defaults to the header sequence if none specified
 		transient do
 			investment_account { ::FactoryBot.build :investment_account, related_account: cash_account }
 			cash_account { ::FactoryBot.build :bank_account }
@@ -16,9 +16,11 @@
 			quantity { 1 }
 			commission { 1 }
 			status { nil }
+			transaction_date { nil }
 		end
 
 		after :build do |trx, evaluator|
+			trx.header.transaction_date = evaluator.transaction_date unless evaluator.transaction_date.nil?
 			trx.header.price = evaluator.price
 			trx.header.quantity = evaluator.quantity
 			trx.header.commission = evaluator.commission
