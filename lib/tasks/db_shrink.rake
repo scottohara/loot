@@ -3,6 +3,8 @@
 
 # Helper functions
 module Shrink
+	module_function
+
 	def progress(action, count, type)
 		reset_line = "\r\e[0K"
 		print "#{reset_line}#{action} #{::ActionController::Base.helpers.pluralize count, type}"
