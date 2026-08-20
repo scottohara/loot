@@ -14,6 +14,8 @@ end
 namespace :db do
 	desc 'Purge transactions earlier than [:cutoff_date] (rake db:shrink[2001-12-31])'
 	task :shrink, [:cutoff_date] => :environment do |_t, args|
+		original_log_level = ::ActiveRecord::Base.logger.level
+
 		abort 'You must provide a :cutoff_date as YYYY-MM-DD (eg. rake db:shrink[2001-12-31])' if args[:cutoff_date].nil?
 
 		# Turn off verbose logging
@@ -65,5 +67,7 @@ namespace :db do
 
 		puts
 		puts 'Shrink done'
+	ensure
+		::ActiveRecord::Base.logger.level = original_log_level
 	end
 end

@@ -12,10 +12,13 @@ require 'rails_helper'
 	def invoke(date = cutoff_date, purge: 'purge', confirm: 'n')
 		allow($stdin).to receive(:gets).and_return "#{purge}\n", "#{confirm}\n"
 		original_stdout = $stdout
+		original_stderr = $stderr
 		$stdout = ::StringIO.new
+		$stderr = ::StringIO.new
 		date.nil? ? task.invoke : task.invoke(date)
 	ensure
 		$stdout = original_stdout
+		$stderr = original_stderr
 	end
 
 	describe 'preconditions' do
@@ -104,5 +107,19 @@ require 'rails_helper'
 				expect(::Security.exists?(security.id)).to be true
 			end
 		end
+	end
+
+	it 'should restore the original log level after purging' do
+		create :basic_transaction, transaction_date: before_cutoff
+
+		expect { invoke }.not_to change(::ActiveRecord::Base.logger, :level)
+	end
+
+	it 'should restore the original log level after aborting' do
+		original_log_level = ::ActiveRecord::Base.logger.level
+		create :basic_transaction, transaction_date: after_cutoff
+
+		expect { invoke }.to raise_error ::SystemExit
+		expect(::ActiveRecord::Base.logger.level).to eq original_log_level
 	end
 end
