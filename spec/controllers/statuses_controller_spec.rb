@@ -42,10 +42,12 @@ require 'rails_helper'
 			end
 		end
 
-		context "when the transaction doesn't belong to the account" do
+		context "when the transaction doesn't belong to the account", :json do
 			let(:expected_status) { :not_found }
+			let(:json) { 'transaction not found' }
 
 			it 'should not update anything' do
+				expect(::TransactionAccount).to receive(:find_by!).with(account_id: (transaction_account.account_id + 1).to_s, transaction_id: transaction.id.to_s).and_raise ::ActiveRecord::RecordNotFound, json
 				patch :update, params: {account_id: transaction_account.account_id + 1, transaction_id: transaction.id, Reconciled: true}
 				expect(transaction_account.reload.status).to eq 'Cleared'
 			end
@@ -62,10 +64,12 @@ require 'rails_helper'
 			end
 		end
 
-		context "when the transaction doesn't belong to the account" do
+		context "when the transaction doesn't belong to the account", :json do
 			let(:expected_status) { :not_found }
+			let(:json) { 'transaction not found' }
 
 			it 'should not update anything' do
+				expect(::TransactionAccount).to receive(:find_by!).with(account_id: (transaction_account.account_id + 1).to_s, transaction_id: transaction.id.to_s).and_raise ::ActiveRecord::RecordNotFound, json
 				delete :destroy, params: {account_id: transaction_account.account_id + 1, transaction_id: transaction.id}
 				expect(transaction_account.reload.status).to eq 'Cleared'
 			end
