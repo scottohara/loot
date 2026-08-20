@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe 'payees routes' do
+::RSpec.describe 'payees routes' do
 	# Collection routes
 	it 'should route GET /payees to payees#index' do
 		expect(get: '/payees').to route_to controller: 'payees', action: 'index'
