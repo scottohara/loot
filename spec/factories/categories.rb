@@ -13,7 +13,7 @@
 		end
 
 		trait :with_all_transaction_types do
-			after :build do |category, evaluator|
+			after :create do |category, evaluator|
 				create :basic_transaction, :flagged, category:, status: 'Cleared' # flagged and cleared
 				create :split_transaction, direction: category.direction, category:, subtransactions: 1
 
@@ -22,7 +22,7 @@
 			end
 		end
 
-		after :build do |category, evaluator|
+		after :create do |category, evaluator|
 			create_list(:basic_transaction, evaluator.transactions, category:)
 			create_list :category, evaluator.children, parent: category, direction: category.direction
 		end

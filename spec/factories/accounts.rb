@@ -15,7 +15,7 @@
 		end
 
 		trait :with_all_transaction_types do
-			after :build do |account, evaluator|
+			after :create do |account, evaluator|
 				if account.account_type.eql? 'investment'
 					create :security_purchase_transaction, :flagged, investment_account: account, cash_account: account.related_account, status: 'Cleared' # flagged and cleared
 					create :security_sale_transaction, investment_account: account, cash_account: account.related_account
@@ -51,7 +51,7 @@
 			end
 		end
 
-		after :build do |account, evaluator|
+		after :create do |account, evaluator|
 			create_list(:basic_transaction, evaluator.transactions, :flagged, account:)
 			create_list :basic_transaction, evaluator.reconciled, account:, status: 'Reconciled'
 		end

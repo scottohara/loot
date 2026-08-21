@@ -11,7 +11,7 @@
 		end
 
 		trait :with_all_transaction_types do
-			after :build do |payee, evaluator|
+			after :create do |payee, evaluator|
 				create :basic_expense_transaction, :flagged, payee:, status: 'Cleared' # flagged and cleared
 				create(:basic_income_transaction, payee:)
 				create(:transfer_transaction, payee:)
@@ -25,7 +25,7 @@
 			end
 		end
 
-		after :build do |payee, evaluator|
+		after :create do |payee, evaluator|
 			create_list :basic_transaction, evaluator.transactions, payee:
 		end
 

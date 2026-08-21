@@ -28,9 +28,13 @@
 			end
 
 			trx.transaction_account = ::FactoryBot.build :transaction_account, account: evaluator.account, direction: evaluator.direction, status: evaluator.status
-			create_list (evaluator.direction.eql?('outflow') ? :sub_expense_transaction : :sub_income_transaction), evaluator.subtransactions, parent: trx, category: evaluator.category
-			create_list :subtransfer_transaction, evaluator.subtransfers, parent: trx, payee: evaluator.payee, account: evaluator.subtransfer_account
-			trx.amount = trx.subtransactions.pluck(:amount).sum + trx.subtransfers.pluck(:amount).sum
+
+			children =
+				build_list((evaluator.direction.eql?('outflow') ? :sub_expense_transaction : :sub_income_transaction), evaluator.subtransactions, parent: trx, category: evaluator.category) +
+				build_list(:subtransfer_transaction, evaluator.subtransfers, parent: trx, payee: evaluator.payee, account: evaluator.subtransfer_account)
+
+			children.each { it.transaction_split.trx = it }
+			trx.amount = children.sum(&:amount)
 		end
 
 		trait :inflow do

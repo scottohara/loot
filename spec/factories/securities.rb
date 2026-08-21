@@ -12,7 +12,7 @@
 		end
 
 		trait :with_all_transaction_types do
-			after :build do |security, evaluator|
+			after :create do |security, evaluator|
 				create :security_purchase_transaction, :flagged, security:, status: 'Cleared' # flagged and cleared
 				create(:security_sale_transaction, security:)
 				create(:security_transfer_transaction, security:)
@@ -25,7 +25,7 @@
 			end
 		end
 
-		after :build do |security, evaluator|
+		after :create do |security, evaluator|
 			create_list :security_holding_transaction, evaluator.transactions, security:
 		end
 

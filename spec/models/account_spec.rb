@@ -146,7 +146,7 @@ require 'rails_helper'
 								status: nil
 							}
 						}
-					],
+					].sort_by { it[:name] },
 					total: bank_account.closing_balance.to_f + another_bank_account.closing_balance.to_f
 				},
 				'Investment accounts' => {
@@ -207,7 +207,7 @@ require 'rails_helper'
 								status: nil
 							}
 						}
-					],
+					].sort_by { it[:name] },
 					total: loan_account.closing_balance.to_f + another_loan_account.closing_balance.to_f
 				}
 			}
