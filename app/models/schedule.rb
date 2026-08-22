@@ -6,10 +6,6 @@ class Schedule < ApplicationRecord
 	include ::Categorisable
 	include ::Measurable
 
-	# Transaction types that have subtransactions
-	SPLIT_TRANSACTION_TYPES = %w[Split Payslip LoanRepayment].freeze
-	private_constant :SPLIT_TRANSACTION_TYPES
-
 	validates :next_due_date, presence: true
 	validates :frequency, presence: true, inclusion: {in: frequencies}
 	validates :estimate, :auto_enter, inclusion: {in: [true, false]}
@@ -153,7 +149,7 @@ class Schedule < ApplicationRecord
 			transaction_json = transaction.as_json direction: 'outflow'
 
 			# For Splits, we need to get the subtransactions as well
-			transaction_json['subtransactions'] = transaction.children if SPLIT_TRANSACTION_TYPES.include? transaction.transaction_type
+			transaction_json['subtransactions'] = transaction.children if ::Transaction::SPLIT_TYPES.include? transaction.transaction_type
 
 			# Clear the id
 			transaction_json[:id] = nil

@@ -3,14 +3,19 @@
 
 # Transaction
 class Transaction < ApplicationRecord
+	include ::Categorisable
+
 	TRANSACTION_TYPES = %w[Basic Split Transfer Payslip LoanRepayment Sub Subtransfer SecurityTransfer SecurityHolding SecurityInvestment Dividend].freeze
+	SECURITY_TYPES = %w[SecurityInvestment SecurityTransfer SecurityHolding].freeze
+	INFLOW_TYPES = %w[Split Payslip Transfer Dividend SecurityInvestment].freeze
+	OUTFLOW_TYPES = %w[Split LoanRepayment Transfer SecurityInvestment].freeze
+	SPLIT_TYPES = %w[Split LoanRepayment Payslip].freeze
 
 	private_constant :TRANSACTION_TYPES
+	public_constant :SECURITY_TYPES, :INFLOW_TYPES, :OUTFLOW_TYPES, :SPLIT_TYPES
 
 	validates :transaction_type, presence: true, inclusion: {in: TRANSACTION_TYPES}
 	has_one :flag, class_name: 'TransactionFlag', dependent: :destroy, autosave: true, inverse_of: :trx
-
-	include ::Categorisable
 
 	class << self
 		include ::Transactable

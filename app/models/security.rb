@@ -23,7 +23,7 @@ class Security < ApplicationRecord
 					'JOIN accounts ON accounts.id = transaction_accounts.account_id'
 				)
 				.where('accounts.account_type = \'investment\'')
-				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
+				.where(transaction_type: ::Transaction::SECURITY_TYPES)
 				.where.not('transaction_headers.transaction_date': nil)
 				.group 'transaction_accounts.direction'
 		end
@@ -72,7 +72,7 @@ class Security < ApplicationRecord
 																				) d ON sp.security_id = d.security_id AND sp.as_at_date = d.as_at_date
 														) p ON securities.id = p.security_id
 						WHERE						transaction_headers.transaction_date IS NOT NULL AND
-														transactions.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
+														transactions.transaction_type IN (#{sanitize_sql_array ['?', ::Transaction::SECURITY_TYPES]}) AND
 														accounts.account_type = 'investment'
 						GROUP BY				securities.id
 						ORDER BY				CASE WHEN ROUND(SUM(CASE transaction_accounts.direction WHEN 'inflow' THEN transaction_headers.quantity ELSE transaction_headers.quantity * -1.0 END),4) > 0 THEN 0 ELSE 1 END,

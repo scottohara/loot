@@ -57,7 +57,7 @@ module Transactable
 					'transaction_accounts.direction',
 					'SUM(transaction_headers.quantity) AS total_quantity'
 				)
-				.where(transaction_type: %w[SecurityInvestment SecurityTransfer SecurityHolding])
+				.where(transaction_type: ::Transaction::SECURITY_TYPES)
 				.where('transaction_headers.transaction_date': ..as_at)
 				.group 'transaction_headers.security_id',
 					'transaction_accounts.direction'
@@ -106,14 +106,14 @@ module Transactable
 				)
 				.where(transaction_type: 'Subtransfer')
 				.where('transaction_headers.transaction_date': ..as_at)
-				.where('parent_transactions.transaction_type = \'Split\' or parent_transactions.transaction_type = \'LoanRepayment\' or parent_transactions.transaction_type = \'Payslip\'')
+				.where(parent_transactions: {transaction_type: ::Transaction::SPLIT_TYPES})
 				.group 'transaction_accounts.direction'
 
 			# Get the total other inflows
 			total_inflows =
 				transactions
 				.for_closing_balance(balance_opts)
-				.where(transaction_type: %w[Split Payslip Transfer Dividend SecurityInvestment])
+				.where(transaction_type: ::Transaction::INFLOW_TYPES)
 				.where('transaction_headers.transaction_date': ..as_at)
 				.where(transaction_accounts: {direction: 'inflow'})
 				.sum 'transactions.amount'
@@ -122,7 +122,7 @@ module Transactable
 			total_outflows =
 				transactions
 				.for_closing_balance(balance_opts)
-				.where(transaction_type: %w[Split LoanRepayment Transfer SecurityInvestment])
+				.where(transaction_type: ::Transaction::OUTFLOW_TYPES)
 				.where('transaction_headers.transaction_date': ..as_at)
 				.where(transaction_accounts: {direction: 'outflow'})
 				.sum 'transactions.amount'

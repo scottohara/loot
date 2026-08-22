@@ -82,7 +82,7 @@ class Account < ApplicationRecord
 																											GROUP BY	security_id
 																										) latest_price_dates ON security_prices.security_id = latest_price_dates.security_id AND security_prices.as_at_date = latest_price_dates.as_at_date
 																				) latest_prices ON transaction_headers.security_id = latest_prices.security_id
-															WHERE			transactions.transaction_type IN ('SecurityInvestment', 'SecurityTransfer', 'SecurityHolding') AND
+															WHERE			transactions.transaction_type IN (#{sanitize_sql_array ['?', ::Transaction::SECURITY_TYPES]}) AND
 																				transaction_headers.transaction_date IS NOT NULL AND
 																				accounts.account_type = 'investment'
 															GROUP BY	accounts.id,
@@ -135,7 +135,7 @@ class Account < ApplicationRecord
 															JOIN			transaction_splits ON transaction_splits.transaction_id = transactions.id
 															JOIN			transactions parent_transactions ON parent_transactions.id = transaction_splits.parent_id
 															WHERE			transactions.transaction_type = 'Subtransfer' AND
-																				parent_transactions.transaction_type IN ('Split', 'LoanRepayment', 'Payslip') AND
+																				parent_transactions.transaction_type IN (#{sanitize_sql_array ['?', ::Transaction::SPLIT_TYPES]}) AND
 																				transaction_headers.transaction_date IS NOT NULL AND
 																				accounts.account_type != 'investment'
 															GROUP BY	accounts.id
@@ -146,7 +146,7 @@ class Account < ApplicationRecord
 															JOIN			transaction_accounts ON transaction_accounts.account_id = accounts.id
 															JOIN			transactions ON transactions.id = transaction_accounts.transaction_id
 															JOIN			transaction_headers ON transaction_headers.transaction_id = transactions.id
-															WHERE			transactions.transaction_type IN ('Split', 'Payslip', 'Transfer', 'Dividend', 'SecurityInvestment') AND
+															WHERE			transactions.transaction_type IN (#{sanitize_sql_array ['?', ::Transaction::INFLOW_TYPES]}) AND
 																				transaction_accounts.direction = 'inflow' AND
 																				transaction_headers.transaction_date IS NOT NULL AND
 																				accounts.account_type != 'investment'
@@ -158,7 +158,7 @@ class Account < ApplicationRecord
 															JOIN			transaction_accounts ON transaction_accounts.account_id = accounts.id
 															JOIN			transactions ON transactions.id = transaction_accounts.transaction_id
 															JOIN			transaction_headers ON transaction_headers.transaction_id = transactions.id
-															WHERE			transactions.transaction_type IN ('Split', 'LoanRepayment', 'Transfer', 'SecurityInvestment') AND
+															WHERE			transactions.transaction_type IN (#{sanitize_sql_array ['?', ::Transaction::OUTFLOW_TYPES]}) AND
 																				transaction_accounts.direction = 'outflow' AND
 																				transaction_headers.transaction_date IS NOT NULL AND
 																				accounts.account_type != 'investment'
