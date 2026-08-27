@@ -2,13 +2,9 @@
 # frozen_string_literal: true
 
 # Security investment transaction
-class SecurityInvestmentTransaction < SecurityTransaction
-	validates :amount, presence: true
+class SecurityInvestmentTransaction < SecurityCashTransaction
 	validate :validate_quantity_presence, :validate_price_presence, :validate_commission_presence
 	validate :validate_amount_matches_investment_details
-	validate :validate_cash_account_type
-	has_many :transaction_accounts, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
-	has_many :accounts, through: :transaction_accounts
 	after_initialize do |t|
 		t.transaction_type = 'SecurityInvestment'
 	end
@@ -23,12 +19,6 @@ class SecurityInvestmentTransaction < SecurityTransaction
 			s.transaction_accounts.build(direction: cash_direction, status: json['related_status']).account = ::Account.find_from_json json['account']
 			s.save!
 			s.header.security.update_price! json['price'], json['transaction_date'], json[:id] unless json['transaction_date'].nil?
-			s
-		end
-
-		def update_from_json(json)
-			s = includes(:header, :accounts).find json[:id]
-			s.update_from_json json
 			s
 		end
 	end
@@ -47,28 +37,9 @@ class SecurityInvestmentTransaction < SecurityTransaction
 	end
 
 	def as_json(options = {})
-		primary_account = investment_account
-		other_account = cash_account
-		primary_account, other_account = other_account, primary_account if options[:primary_account].eql? other_account.account_id
-
-		super.merge primary_account: primary_account.account.as_json,
-			category: self.class.transaction_category({'transaction_type' => transaction_type, 'direction' => primary_account.direction}, primary_account.account.account_type),
-			account: other_account.account.as_json,
-			amount:,
-			direction: primary_account.direction,
-			status: primary_account.status,
-			related_status: other_account.status,
-			quantity: header.quantity,
+		super.merge quantity: header.quantity,
 			price: header.price,
 			commission: header.commission
-	end
-
-	def investment_account
-		transaction_accounts.find { |trx_account| trx_account.account&.account_type.eql? 'investment' }
-	end
-
-	def cash_account
-		transaction_accounts.find { |trx_account| trx_account.account&.account_type.eql? 'bank' }
 	end
 
 	# :nocov:
@@ -81,9 +52,5 @@ class SecurityInvestmentTransaction < SecurityTransaction
 		return if [amount, header.price, header.quantity, header.commission, investment_account].any?(&:nil?)
 
 		errors.add :base, "Amount must equal price times quantity #{investment_account.direction.eql?('inflow') ? 'plus' : 'less'} commission" unless amount.round(2).eql?(((header.price * header.quantity) + (header.commission * (investment_account.direction.eql?('inflow') ? 1 : -1))).round 2)
-	end
-
-	def validate_cash_account_type
-		errors.add :base, 'Cash account must be a bank account' if cash_account.nil?
 	end
 end

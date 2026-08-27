@@ -3,19 +3,16 @@
 
 ::FactoryBot.define do
 	factory :security_investment_transaction, aliases: [:security_purchase_transaction] do
-		# Default attributes for security transaction
-		security_transaction
-		amount { (price * quantity) + (commission * (direction.eql?('Buy') ? 1 : -1)) }
+		# Default attributes for a security cash transaction
+		security_cash_transaction
+		amount { (price * quantity) + (commission * (direction.eql?('inflow') ? 1 : -1)) }
 
-		# Default accounts if none specified, transaction date defaults to the header sequence if none specified
+		# Buying moves shares into the investment account; transaction date defaults to the header sequence if none specified
 		transient do
-			investment_account { ::FactoryBot.build :investment_account, related_account: cash_account }
-			cash_account { ::FactoryBot.build :bank_account }
-			direction { 'Buy' }
+			direction { 'inflow' }
 			price { 1 }
 			quantity { 1 }
 			commission { 1 }
-			status { nil }
 			transaction_date { nil }
 		end
 
@@ -24,16 +21,15 @@
 			trx.header.price = evaluator.price
 			trx.header.quantity = evaluator.quantity
 			trx.header.commission = evaluator.commission
-			trx.transaction_accounts << ::FactoryBot.build(:transaction_account, account: evaluator.investment_account, direction: (evaluator.direction.eql?('Buy') ? 'inflow' : 'outflow'), status: evaluator.status)
-			trx.transaction_accounts << ::FactoryBot.build(:transaction_account, account: evaluator.cash_account, direction: (evaluator.direction.eql?('Buy') ? 'outflow' : 'inflow'))
 		end
 
 		after :create do |trx|
 			trx.header.security.update_price! trx.header.price, trx.header.transaction_date, trx.id unless trx.header.transaction_date.nil?
 		end
 
-		trait :inflow do
-			direction { 'Sell' }
+		# Selling moves shares out of the investment account
+		trait :outflow do
+			direction { 'outflow' }
 		end
 
 		trait :scheduled do
@@ -47,6 +43,6 @@
 			end
 		end
 
-		factory :security_sale_transaction, traits: [:inflow]
+		factory :security_sale_transaction, traits: [:outflow]
 	end
 end

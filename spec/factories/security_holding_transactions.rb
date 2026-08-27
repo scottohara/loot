@@ -6,10 +6,10 @@
 		# Default attributes for security transaction
 		security_transaction
 
-		# Default accounts if none specified, transaction date defaults to the header sequence if none specified
+		# Adding shares moves them into the investment account; transaction date defaults to the header sequence if none specified
 		transient do
 			account { ::FactoryBot.build :investment_account }
-			direction { 'Add' }
+			direction { 'inflow' }
 			quantity { 10 }
 			status { nil }
 			transaction_date { nil }
@@ -18,11 +18,12 @@
 		after :build do |trx, evaluator|
 			trx.header.transaction_date = evaluator.transaction_date unless evaluator.transaction_date.nil?
 			trx.header.quantity = evaluator.quantity
-			trx.transaction_account = ::FactoryBot.build :transaction_account, account: evaluator.account, direction: (evaluator.direction.eql?('Add') ? 'inflow' : 'outflow'), status: evaluator.status
+			trx.transaction_account = ::FactoryBot.build :transaction_account, account: evaluator.account, direction: evaluator.direction, status: evaluator.status
 		end
 
+		# Removing shares moves them out of the investment account
 		trait :outflow do
-			direction { 'Remove' }
+			direction { 'outflow' }
 		end
 
 		trait :scheduled do

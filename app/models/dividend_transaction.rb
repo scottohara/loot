@@ -2,12 +2,8 @@
 # frozen_string_literal: true
 
 # Dividend transaction
-class DividendTransaction < SecurityTransaction
-	validates :amount, presence: true
+class DividendTransaction < SecurityCashTransaction
 	validate :validate_quantity_absence, :validate_price_absence, :validate_commission_absence
-	validate :validate_cash_account_type
-	has_many :transaction_accounts, foreign_key: 'transaction_id', autosave: true, dependent: :destroy
-	has_many :accounts, through: :transaction_accounts
 	after_initialize do |t|
 		t.transaction_type = 'Dividend'
 	end
@@ -24,12 +20,6 @@ class DividendTransaction < SecurityTransaction
 			s.save!
 			s
 		end
-
-		def update_from_json(json)
-			s = includes(:header, :accounts).find json[:id]
-			s.update_from_json json
-			s
-		end
 	end
 
 	def update_from_json(json)
@@ -38,37 +28,5 @@ class DividendTransaction < SecurityTransaction
 		investment_account.account = ::Account.find_from_json json['primary_account']
 		cash_account.account = ::Account.find_from_json json['account']
 		save!
-	end
-
-	def as_json(options = {})
-		primary_account = investment_account
-		other_account = cash_account
-		primary_account, other_account = other_account, primary_account if options[:primary_account].eql? other_account.account_id
-
-		super.merge primary_account: primary_account.account.as_json,
-			category: self.class.transaction_category('transaction_type' => transaction_type, 'direction' => primary_account.direction),
-			account: other_account.account.as_json,
-			amount:,
-			direction: primary_account.direction,
-			status: primary_account.status,
-			related_status: other_account.status
-	end
-
-	def investment_account
-		transaction_accounts.find { |trx_account| trx_account.account&.account_type.eql? 'investment' }
-	end
-
-	def cash_account
-		transaction_accounts.find { |trx_account| trx_account.account&.account_type.eql? 'bank' }
-	end
-
-	# :nocov:
-
-	private unless ::Rails.env.test?
-
-	# :nocov:end
-
-	def validate_cash_account_type
-		errors.add :base, 'Cash account must be a bank account' if cash_account.nil?
 	end
 end
