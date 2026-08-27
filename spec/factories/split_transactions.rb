@@ -3,8 +3,8 @@
 
 ::FactoryBot.define do
 	factory :split_transaction, aliases: [:split_to_transaction] do
-		# Default attributes for payee cash transaction
 		payee_cash_transaction
+		schedulable
 
 		# Default account, subtransactions and subtransfers if none specified
 		transient do
@@ -15,18 +15,9 @@
 			subtransfers { 0 }
 			subtransfer_account { ::FactoryBot.build :account }
 			status { nil }
-
-			# Next due date should only be non-nil for the :scheduled trait
-			next_due_date { nil }
 		end
 
 		after :build do |trx, evaluator|
-			# If a next due date is specified, replace transaction date with a schedule
-			unless evaluator.next_due_date.nil?
-				trx.header.transaction_date = nil
-				trx.header.schedule = ::FactoryBot.build :schedule, next_due_date: evaluator.next_due_date
-			end
-
 			trx.transaction_account = ::FactoryBot.build :transaction_account, account: evaluator.account, direction: evaluator.direction, status: evaluator.status
 
 			children =
@@ -39,12 +30,6 @@
 
 		trait :inflow do
 			direction { 'inflow' }
-		end
-
-		trait :scheduled do
-			transient do
-				next_due_date { ::Time.zone.tomorrow.advance weeks: -4 }
-			end
 		end
 
 		factory :split_from_transaction, traits: [:inflow]

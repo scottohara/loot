@@ -3,25 +3,14 @@
 
 ::FactoryBot.define do
 	factory :transfer_transaction do
-		# Default attributes for payee cash transaction
 		payee_cash_transaction
+		schedulable
 
 		# Default accounts if none specified
 		transient do
 			source_account { ::FactoryBot.build :account }
 			destination_account { ::FactoryBot.build :account }
 			status { nil }
-		end
-
-		trait :scheduled do
-			transient do
-				next_due_date { ::Time.zone.tomorrow.advance weeks: -4 }
-			end
-
-			after :build do |trx, evaluator|
-				trx.header.transaction_date = nil
-				trx.header.schedule = build :schedule, next_due_date: evaluator.next_due_date
-			end
 		end
 
 		after :build do |trx, evaluator|

@@ -3,8 +3,8 @@
 
 ::FactoryBot.define do
 	factory :security_investment_transaction, aliases: [:security_purchase_transaction] do
-		# Default attributes for a security cash transaction
 		security_cash_transaction
+		schedulable
 		amount { (price * quantity) + (commission * (direction.eql?('inflow') ? 1 : -1)) }
 
 		# Buying moves shares into the investment account; transaction date defaults to the header sequence if none specified
@@ -30,17 +30,6 @@
 		# Selling moves shares out of the investment account
 		trait :outflow do
 			direction { 'outflow' }
-		end
-
-		trait :scheduled do
-			transient do
-				next_due_date { ::Time.zone.tomorrow.advance weeks: -4 }
-			end
-
-			after :build do |trx, evaluator|
-				trx.header.transaction_date = nil
-				trx.header.schedule = build :schedule, next_due_date: evaluator.next_due_date
-			end
 		end
 
 		factory :security_sale_transaction, traits: [:outflow]

@@ -3,8 +3,8 @@
 
 ::FactoryBot.define do
 	factory :security_holding_transaction, aliases: [:security_add_transaction] do
-		# Default attributes for security transaction
 		security_transaction
+		schedulable
 
 		# Adding shares moves them into the investment account; transaction date defaults to the header sequence if none specified
 		transient do
@@ -24,17 +24,6 @@
 		# Removing shares moves them out of the investment account
 		trait :outflow do
 			direction { 'outflow' }
-		end
-
-		trait :scheduled do
-			transient do
-				next_due_date { ::Time.zone.tomorrow.advance weeks: -4 }
-			end
-
-			after :build do |trx, evaluator|
-				trx.header.transaction_date = nil
-				trx.header.schedule = build :schedule, next_due_date: evaluator.next_due_date
-			end
 		end
 
 		factory :security_remove_transaction, traits: [:outflow]

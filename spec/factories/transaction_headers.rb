@@ -6,11 +6,6 @@
 		sequence(:transaction_date) { (::Date.parse('2013-12-31') + it).to_s }
 	end
 
-	trait :scheduled do
-		schedule
-		transaction_date { nil }
-	end
-
 	trait :trx do
 		trx { ::FactoryBot.build :transaction }
 	end
@@ -18,5 +13,10 @@
 	factory :transaction_header do
 		transaction_date
 		trx
+
+		trait :scheduled do
+			schedule
+			transaction_date { nil }
+		end
 	end
 end
