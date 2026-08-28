@@ -31,10 +31,10 @@ AllCops:
 Lint/ConstantResolution:
   Ignore:
     - CONTEXTS
-    - Frequency
     - FREQUENCIES
     - MAX_TRANSACTION_DATE
     - NUM_RESULTS
+    - Period
     - SHOW_FIELDS
     - EDIT_FIELDS
     - TRANSACTION_TYPES

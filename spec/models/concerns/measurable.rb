@@ -157,4 +157,16 @@
 			expect(subject.advance_by 'Yearly', date).to eq date.advance({years: 1})
 		end
 	end
+
+	describe '::period_for' do
+		subject { described_class }
+
+		it 'should return the period for a known frequency' do
+			expect(subject.period_for('Weekly').periods_since).to be :weeks_since
+		end
+
+		it 'should raise an error for an unknown frequency' do
+			expect { subject.period_for 'Unknown' }.to raise_error ::ArgumentError, 'Invalid frequency: Unknown'
+		end
+	end
 end

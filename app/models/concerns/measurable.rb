@@ -5,16 +5,16 @@
 module Measurable
 	extend ::ActiveSupport::Concern
 
-	Frequency = ::Struct.new :advance_by, :periods_since
-	private_constant :Frequency
+	Period = ::Struct.new :advance_by, :periods_since
+	private_constant :Period
 
 	FREQUENCIES = {
-		Weekly: Frequency.new({weeks: 1}, :weeks_since),
-		Fortnightly: Frequency.new({weeks: 2}, :fortnights_since),
-		Monthly: Frequency.new({months: 1}, :months_since),
-		Bimonthly: Frequency.new({months: 2}, :bimonths_since),
-		Quarterly: Frequency.new({months: 3}, :quarters_since),
-		Yearly: Frequency.new({years: 1}, :years_since)
+		Weekly: Period.new({weeks: 1}, :weeks_since),
+		Fortnightly: Period.new({weeks: 2}, :fortnights_since),
+		Monthly: Period.new({months: 1}, :months_since),
+		Bimonthly: Period.new({months: 2}, :bimonths_since),
+		Quarterly: Period.new({months: 3}, :quarters_since),
+		Yearly: Period.new({years: 1}, :years_since)
 	}.freeze
 
 	private_constant :FREQUENCIES
@@ -26,11 +26,11 @@ module Measurable
 		end
 
 		def periods_since(frequency, date)
-			public_send FREQUENCIES[frequency.to_sym].periods_since, date
+			public_send period_for(frequency).periods_since, date
 		end
 
 		def advance_by(frequency, date)
-			date.advance FREQUENCIES[frequency.to_sym].advance_by
+			date.advance period_for(frequency).advance_by
 		end
 
 		# Weeks since a given date
@@ -63,6 +63,16 @@ module Measurable
 		# Years since a given date
 		def years_since(date)
 			(months_since(date) / 12).to_i
+		end
+
+		# :nocov:
+
+		private unless ::Rails.env.test?
+
+		# :nocov:end
+
+		def period_for(frequency)
+			FREQUENCIES.fetch(frequency.to_sym) { raise ::ArgumentError, "Invalid frequency: #{frequency}" }
 		end
 	end
 end
