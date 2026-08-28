@@ -14,6 +14,7 @@ require 'rails_helper'
 				actual.account.eql?(account) &&
 				actual.header.security.eql?(header.security) &&
 				actual.header.transaction_date.eql?(header.transaction_date) &&
+				actual.header.quantity.eql?(header.quantity) &&
 				actual.header.price.nil? &&
 				actual.header.commission.nil?
 		end
@@ -21,7 +22,7 @@ require 'rails_helper'
 
 	describe '::create_from_json' do
 		let(:account) { create :investment_account }
-		let(:header) { create :security_transaction_header }
+		let(:header) { create :security_transaction_header, quantity: 3 }
 		let :json do
 			{
 				id: 1,
@@ -35,6 +36,7 @@ require 'rails_helper'
 				'transaction_date' => header.transaction_date,
 				'status' => 'Cleared',
 				'direction' => direction,
+				'quantity' => header.quantity,
 				'price' => 1,
 				'commission' => 2
 			}
@@ -43,9 +45,6 @@ require 'rails_helper'
 		before do
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with(json.except('price', 'commission')).and_call_original
-			expect_any_instance_of(::SecurityTransaction).to receive :validate_quantity_presence
-			expect_any_instance_of(::SecurityTransaction).to receive :validate_price_absence
-			expect_any_instance_of(::SecurityTransaction).to receive :validate_commission_absence
 		end
 
 		after do

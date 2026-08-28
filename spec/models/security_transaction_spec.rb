@@ -31,53 +31,6 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'attribute validations' do
-		subject(:transaction) { described_class.new }
-
-		before do
-			transaction.build_header
-		end
-
-		shared_examples 'a presence validation' do
-			let(:error_message) { "#{attr.capitalize} can't be blank" }
-
-			it 'should be an error if the attribute is blank' do
-				transaction.public_send :"validate_#{attr}_presence"
-				expect(transaction.errors[:base]).to include error_message
-			end
-
-			it 'should not be an error if the attribute is not blank' do
-				transaction.header.public_send :"#{attr}=", 1
-				transaction.public_send :"validate_#{attr}_presence"
-				expect(transaction.errors[:base]).not_to include error_message
-			end
-		end
-
-		shared_examples 'an absence validation' do
-			let(:error_message) { "#{attr.capitalize} must be blank" }
-
-			it 'should be an error if the attribute is not blank' do
-				transaction.header.public_send :"#{attr}=", 1
-				transaction.public_send :"validate_#{attr}_absence"
-				expect(transaction.errors[:base]).to include error_message
-			end
-
-			it 'should not be an error if the attribute is blank' do
-				transaction.public_send :"validate_#{attr}_absence"
-				expect(transaction.errors[:base]).not_to include error_message
-			end
-		end
-
-		%w[quantity price commission].each do |attribute|
-			context attribute do
-				let(:attr) { attribute }
-
-				it_behaves_like 'a presence validation'
-				it_behaves_like 'an absence validation'
-			end
-		end
-	end
-
 	describe '#as_json' do
 		subject(:transaction) { create :security_holding_transaction }
 

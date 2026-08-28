@@ -3,7 +3,7 @@
 
 # Dividend transaction
 class DividendTransaction < SecurityCashTransaction
-	validate :validate_quantity_absence, :validate_price_absence, :validate_commission_absence
+	validates :quantity, :price, :commission, absence: true
 	after_initialize do |t|
 		t.transaction_type = 'Dividend'
 	end

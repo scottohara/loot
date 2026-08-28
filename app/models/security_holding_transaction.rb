@@ -4,7 +4,8 @@
 # Security holding transaction
 class SecurityHoldingTransaction < SecurityTransaction
 	validates :amount, absence: true
-	validate :validate_quantity_presence, :validate_price_absence, :validate_commission_absence
+	validates :quantity, presence: true
+	validates :price, :commission, absence: true
 	has_one :transaction_account, foreign_key: 'transaction_id', dependent: :destroy
 	has_one :account, through: :transaction_account
 	after_initialize do |t|

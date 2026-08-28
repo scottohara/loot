@@ -47,9 +47,6 @@ require 'rails_helper'
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(::Account).to receive(:find).with(json['account']['id']).and_return cash_account
 			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with(json).and_call_original
-			expect_any_instance_of(::SecurityTransaction).to receive :validate_quantity_presence
-			expect_any_instance_of(::SecurityTransaction).to receive :validate_price_presence
-			expect_any_instance_of(::SecurityTransaction).to receive :validate_commission_presence
 		end
 
 		after do

@@ -6,7 +6,8 @@ class SecurityTransferTransaction < SecurityTransaction
 	include ::Transferable
 
 	validates :amount, absence: true
-	validate :validate_quantity_presence, :validate_price_absence, :validate_commission_absence
+	validates :quantity, presence: true
+	validates :price, :commission, absence: true
 
 	after_initialize do |t|
 		t.transaction_type = 'SecurityTransfer'

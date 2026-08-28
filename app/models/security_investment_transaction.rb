@@ -3,7 +3,7 @@
 
 # Security investment transaction
 class SecurityInvestmentTransaction < SecurityCashTransaction
-	validate :validate_quantity_presence, :validate_price_presence, :validate_commission_presence
+	validates :quantity, :price, :commission, presence: true
 	validate :validate_amount_matches_investment_details
 	after_initialize do |t|
 		t.transaction_type = 'SecurityInvestment'
