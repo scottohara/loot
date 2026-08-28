@@ -63,13 +63,8 @@ class Transaction < ApplicationRecord
 				.for_query opts
 		end
 
-		def opening_balance
-			0
-		end
-
-		def account_type
-			nil
-		end
+		def opening_balance = 0
+		def account_type = nil
 
 		# Subclasses override to strip attributes that don't apply to their type but were
 		# carried over from the old one (e.g. price/commission when converting to a transfer)

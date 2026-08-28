@@ -40,13 +40,8 @@ class Category < ApplicationRecord
 		end
 	end
 
-	def opening_balance
-		0
-	end
-
-	def account_type
-		nil
-	end
+	def opening_balance = 0
+	def account_type = nil
 
 	def as_json(options = {only: %i[id name direction parent_id favourite]})
 		json = {
