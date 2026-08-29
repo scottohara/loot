@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_29_063052) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_29_065210) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,7 +70,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_063052) do
     t.decimal "price", null: false
     t.integer "security_id", null: false
     t.datetime "updated_at", precision: nil
-    t.index ["security_id", "as_at_date", "id"], name: "index_security_prices_on_security_id_and_as_at_date_and_id", order: { as_at_date: :desc, id: :desc }
+    t.index ["security_id", "as_at_date"], name: "index_security_prices_on_security_id_and_as_at_date", unique: true, order: { as_at_date: :desc }
   end
 
   create_table "transaction_accounts", id: :serial, force: :cascade do |t|

@@ -119,16 +119,12 @@ class Security < ApplicationRecord
 	end
 
 	def update_price!(price, as_at_date, transaction_id)
-		# Check if a price already exists for the transaction date
-		security_price = prices.find_by(as_at_date:)
+		security_price = prices.find_or_initialize_by(as_at_date:)
 
-		if security_price.present?
-			# Update the existing price if the transaction_id is highest of all for this security/date (best guess at this being the 'most recent' price)
-			security_price.update!(price:) unless security_transaction_headers.where(transaction_date: as_at_date).exists? ['transaction_id > ?', transaction_id]
-		else
-			# No existing price for this date, so create one
-			prices.create! price:, as_at_date:
-		end
+		# Only update an existing price if the transaction_id is highest of all for this security/date (best guess at this being the 'most recent' price)
+		return if security_price.persisted? && security_transaction_headers.where(transaction_date: as_at_date).exists?(['transaction_id > ?', transaction_id])
+
+		security_price.update! price:
 	end
 
 	def opening_balance = 0
