@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_17_234741) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_29_063052) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -132,6 +132,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_234741) do
     t.text "memo"
     t.string "transaction_type", limit: 255, null: false
     t.datetime "updated_at", precision: nil
+    t.index ["transaction_type"], name: "index_transactions_on_transaction_type"
     t.check_constraint "transaction_type::text = ANY (ARRAY['Basic'::character varying, 'Split'::character varying, 'Transfer'::character varying, 'Payslip'::character varying, 'LoanRepayment'::character varying, 'Sub'::character varying, 'Subtransfer'::character varying, 'SecurityTransfer'::character varying, 'SecurityHolding'::character varying, 'SecurityInvestment'::character varying, 'Dividend'::character varying]::text[])", name: "transactions_transaction_type_check"
   end
 
