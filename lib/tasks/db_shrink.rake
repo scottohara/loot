@@ -22,7 +22,7 @@ namespace :db do
 		::ActiveRecord::Base.logger.level = 1
 
 		# Get the transaction headers
-		transaction_headers = ::TransactionHeader.where transaction_date: ::Date.new(0)...::Date.parse(args[:cutoff_date])
+		transaction_headers = ::TransactionHeader.includes(:trx).where transaction_date: ::Date.new(0)...::Date.parse(args[:cutoff_date])
 
 		# Early exit if no transactions found
 		abort "No transactions earlier than #{args[:cutoff_date]} found" if transaction_headers.size.eql? 0
@@ -45,11 +45,12 @@ namespace :db do
 		%w[category payee security].each do |entity|
 			table = (entity.eql?('category') && 'categories') || 'headers'
 			where = (entity.eql?('category') && 'categories.parent_id IS NOT NULL') || ''
-			entities = entity.capitalize.constantize.joins("LEFT OUTER JOIN transaction_#{table} ON transaction_#{table}.#{entity}_id = #{::ActiveSupport::Inflector.pluralize entity}.id").where(where).group(:id).having "COUNT(transaction_#{table}.transaction_id) = 0"
+			entities = entity.capitalize.constantize.joins("LEFT OUTER JOIN transaction_#{table} ON transaction_#{table}.#{entity}_id = #{::ActiveSupport::Inflector.pluralize entity}.id").where(where).where "transaction_#{table}.transaction_id IS NULL"
+			num_entities = entities.count
 
-			next if entities.length.eql? 0
+			next if num_entities.eql? 0
 
-			print "Purge #{::ActionController::Base.helpers.pluralize entities.length, entity} that no longer #{::ActionController::Base.helpers.pluralize entities.length, 'has', 'have'} any transactions? (y)es or (n)o [enter = no]: "
+			print "Purge #{::ActionController::Base.helpers.pluralize num_entities, entity} that no longer #{::ActionController::Base.helpers.pluralize num_entities, 'has', 'have'} any transactions? (y)es or (n)o [enter = no]: "
 			if $stdin.gets.chomp.casecmp('y').zero?
 				entities.each_with_index do |e, index|
 					# Destroy the entity
@@ -59,7 +60,7 @@ namespace :db do
 					::Shrink.progress 'Deleted', index, entity
 				end
 			else
-				print "Skipped purging #{::ActionController::Base.helpers.pluralize entities.length, entity}"
+				print "Skipped purging #{::ActionController::Base.helpers.pluralize num_entities, entity}"
 			end
 
 			puts
