@@ -13,10 +13,11 @@ class SecurityHoldingTransaction < SecurityTransaction
 	end
 
 	class << self
-		def create_from_json(json)
-			# Remove price and commission if present
-			json = json.except 'price', 'commission'
+		def strip_invalid_attributes(json)
+			json.except 'price', 'commission'
+		end
 
+		def create_from_json(json)
 			s = super
 			s.build_transaction_account(direction: json['direction'], status: json['status']).account = ::Account.find_from_json json['primary_account']
 			s.save!

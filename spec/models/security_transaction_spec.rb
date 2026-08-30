@@ -5,10 +5,12 @@ require 'rails_helper'
 
 ::RSpec.describe ::SecurityTransaction do
 	describe '::create_from_json' do
-		let(:json) { {} }
+		let(:json) { {'price' => 1.23} }
+		let(:stripped_json) { {} }
 
 		before do
-			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with json
+			expect(described_class).to receive(:strip_invalid_attributes).with(json).and_return stripped_json
+			expect_any_instance_of(::SecurityTransactionHeader).to receive(:update_from_json).with stripped_json
 		end
 
 		it 'should create a transaction from a JSON representation' do
@@ -19,11 +21,13 @@ require 'rails_helper'
 	describe '#update_from_json' do
 		subject(:transaction) { described_class.new }
 
-		let(:json) { {} }
+		let(:json) { {'price' => 1.23} }
+		let(:stripped_json) { {} }
 
 		before do
 			transaction.build_header
-			expect(transaction.header).to receive(:update_from_json).with json
+			expect(described_class).to receive(:strip_invalid_attributes).with(json).and_return stripped_json
+			expect(transaction.header).to receive(:update_from_json).with stripped_json
 		end
 
 		it 'should update a transaction from a JSON representation' do

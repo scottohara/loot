@@ -82,7 +82,6 @@ class TransactionsController < ApplicationController
 	def recreate_transaction(transaction)
 		::ActiveRecord::Base.transaction do
 			transaction.as_subclass.destroy!
-			@transaction = @klass.strip_invalid_attributes @transaction
 			create_transaction
 		end
 	end

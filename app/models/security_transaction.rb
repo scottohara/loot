@@ -8,6 +8,8 @@ class SecurityTransaction < Transaction
 
 	class << self
 		def create_from_json(json)
+			json = strip_invalid_attributes json
+
 			s = super
 			s.build_header.update_from_json json
 			s
@@ -15,6 +17,8 @@ class SecurityTransaction < Transaction
 	end
 
 	def update_from_json(json)
+		json = self.class.strip_invalid_attributes json
+
 		super
 		header.update_from_json json
 		self

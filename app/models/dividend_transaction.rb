@@ -9,10 +9,11 @@ class DividendTransaction < SecurityCashTransaction
 	end
 
 	class << self
-		def create_from_json(json)
-			# Remove quantity, price and commission if present
-			json = json.except 'quantity', 'price', 'commission'
+		def strip_invalid_attributes(json)
+			json.except 'quantity', 'price', 'commission'
+		end
 
+		def create_from_json(json)
 			s = super
 			s.amount = json['amount']
 			s.transaction_accounts.build(direction: 'outflow', status: json['status']).account = ::Account.find_from_json json['primary_account']

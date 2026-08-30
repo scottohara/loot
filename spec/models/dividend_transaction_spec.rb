@@ -24,6 +24,28 @@ require 'rails_helper'
 		end
 	end
 
+	describe '::strip_invalid_attributes' do
+		subject(:stripped) { described_class.strip_invalid_attributes json }
+
+		let(:json) { {'memo' => 'Test json', 'quantity' => 1, 'price' => 1.23, 'commission' => 4.56} }
+
+		it 'should strip the quantity' do
+			expect(stripped).not_to have_key 'quantity'
+		end
+
+		it 'should strip the price' do
+			expect(stripped).not_to have_key 'price'
+		end
+
+		it 'should strip the commission' do
+			expect(stripped).not_to have_key 'commission'
+		end
+
+		it 'should retain any other attributes' do
+			expect(stripped).to include 'memo' => 'Test json'
+		end
+	end
+
 	describe '::create_from_json' do
 		let(:investment_account) { create :investment_account }
 		let(:cash_account) { create :bank_account }

@@ -55,7 +55,6 @@ class SchedulesController < ApplicationController
 	def recreate_schedule(schedule)
 		::ActiveRecord::Base.transaction do
 			schedule.as_subclass.destroy!
-			@schedule = @klass.strip_invalid_attributes @schedule
 			create_schedule
 		end
 	end

@@ -293,19 +293,6 @@ require 'rails_helper'
 			end
 		end
 
-		context 'for a type that strips invalid attributes' do
-			let(:transaction_type) { 'SecurityTransfer' }
-			let(:valid_attributes) { 'valid attributes' }
-
-			it 'should recreate the transaction with only valid attributes' do
-				expect(transaction).to receive(:as_subclass).and_return transaction
-				expect(transaction).to receive :destroy!
-				expect(::SecurityTransferTransaction).to receive(:strip_invalid_attributes).and_return valid_attributes
-				expect(::SecurityTransferTransaction).to receive(:create_from_json).with(valid_attributes).and_return json
-				expect(controller.recreate_transaction transaction).to eq json
-			end
-		end
-
 		context 'when the replacement cannot be created' do
 			subject(:transaction) { create :basic_transaction }
 
