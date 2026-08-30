@@ -178,7 +178,7 @@ class Account < ApplicationRecord
 
 				cash_account.merge! account
 				cash_account['related_account_closing_balance'] = cash_account['closing_balance']
-				cash_account['closing_balance'] = (cash_account['closing_balance'].to_f + cash_account['total_value'].to_f) || 0
+				cash_account['closing_balance'] = cash_account['closing_balance'].to_f + cash_account['total_value'].to_f
 			end
 
 			account_list.values.sort_by { |a| a['account_type'] }.group_by { |a| "#{a['account_type'].capitalize} account".pluralize }.transform_values do |accounts|
