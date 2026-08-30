@@ -139,8 +139,8 @@ class Security < ApplicationRecord
 			favourite:
 		}
 
-		json[:closing_balance] = closing_balance if options[:only].include? :closing_balance
-		json[:current_holding] = transactions.for_current_holding.reduce(0) { |acc, elem| acc + (elem.total_quantity * (elem.direction.eql?('inflow') ? 1 : -1)) } if options[:only].include? :current_holding
+		json[:closing_balance] = closing_balance.to_f if options[:only].include? :closing_balance
+		json[:current_holding] = transactions.for_current_holding.reduce(0) { |acc, elem| acc + (elem.total_quantity * (elem.direction.eql?('inflow') ? 1 : -1)) }.to_f if options[:only].include? :current_holding
 		json[:num_transactions] = num_transactions if options[:only].include? :num_transactions
 		json[:unused] = num_transactions.eql? 0 if options[:only].include? :unused
 

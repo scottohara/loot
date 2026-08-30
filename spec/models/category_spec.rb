@@ -105,7 +105,7 @@ require 'rails_helper'
 				let(:json) { category.as_json only: %i[id closing_balance] }
 
 				it 'should include closing_balance' do
-					expect(json).to eq(id: category.id, closing_balance: category.closing_balance)
+					expect(json).to eq(id: category.id, closing_balance: category.closing_balance.to_f)
 				end
 			end
 

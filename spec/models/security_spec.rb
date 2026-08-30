@@ -239,7 +239,7 @@ require 'rails_helper'
 				let(:json) { security.as_json only: %i[id closing_balance] }
 
 				it 'should include closing_balance' do
-					expect(json).to eq(id: security.id, closing_balance: security.closing_balance)
+					expect(json).to eq(id: security.id, closing_balance: security.closing_balance.to_f)
 				end
 			end
 

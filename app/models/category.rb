@@ -52,7 +52,7 @@ class Category < ApplicationRecord
 			favourite:
 		}
 
-		json[:closing_balance] = closing_balance if options[:only].include? :closing_balance
+		json[:closing_balance] = closing_balance.to_f if options[:only].include? :closing_balance
 		json[:parent] = parent&.as_json only: %i[id name direction] if options[:only].include? :parent
 		json[:num_children] = children.size if options[:only].include? :num_children
 		json[:num_transactions] = transactions.count if options[:only].include? :num_transactions
