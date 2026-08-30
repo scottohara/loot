@@ -1,11 +1,14 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
+require 'English'
 require 'csv'
 require 'json'
 
 # Seed Loot database
 module Loot
+	module_function
+
 	@logger = ::Logger.new $stdout
 	@logger.formatter = proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
 
@@ -45,6 +48,8 @@ module Loot
 	alias create_subtransfer_transaction noop
 	alias create_payslip_beforetax_transaction noop
 	alias create_payslip_tax_transaction noop
+
+	module_function :create_subtransaction_transaction, :create_subtransfer_transaction, :create_payslip_beforetax_transaction, :create_payslip_tax_transaction
 
 	def progress(action, count, type)
 		@logger.info "\r#{action} #{count} #{type}".pluralize $INPUT_LINE_NUMBER
@@ -774,8 +779,13 @@ module Loot
 		trx[:grftt].to_i >= 2_097_152
 	end
 
+	def confirm!
+		@logger.warn "WARNING: You are about to DELETE ALL DATA and reimport it from the sunriise export at #{@export_dir}. Type 'seed' and hit enter to proceed:"
+		abort 'Seed aborted' if $stdin.gets.to_s.chomp.casecmp('seed').nonzero?
+	end
+
 	def verify_balances
-		include ::ActionView::Helpers::NumberHelper
+		extend ::ActionView::Helpers::NumberHelper
 
 		balance_mismatches = []
 
@@ -812,6 +822,7 @@ module Loot
 	end
 end
 
+::Loot.confirm!
 ::Loot.load_accounts
 ::Loot.load_payees
 ::Loot.load_categories

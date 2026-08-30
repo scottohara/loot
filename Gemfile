@@ -18,6 +18,9 @@ gem 'puma', '7.2.0'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '1.22.0', require: false
 
+# CSV parsing for the db/seeds.rb importer; not a default gem since Ruby 3.4
+gem 'csv', '3.3.6', require: false
+
 group :development, :test do
 	# Test factories
 	gem 'factory_bot_rails', '6.5.1'
