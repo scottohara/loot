@@ -67,6 +67,7 @@ require 'rails_helper'
 	describe '::update_from_json' do
 		let(:account) { create :investment_account }
 		let(:transaction) { create :security_holding_transaction }
+		let(:relation) { instance_double ::ActiveRecord::Relation }
 		let :json do
 			{
 				id: transaction.id,
@@ -78,7 +79,8 @@ require 'rails_helper'
 		end
 
 		before do
-			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+			expect(described_class).to receive(:includes).with(:header).and_return relation
+			expect(relation).to receive(:find).with(json[:id]).and_return transaction
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
 		end

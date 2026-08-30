@@ -28,9 +28,11 @@
 
 	describe '::update_from_json' do
 		let(:transaction) { create factory }
+		let(:relation) { instance_double ::ActiveRecord::Relation }
 
 		before do
-			expect(described_class).to receive_message_chain(:includes, :find).with(update_json[:id]).and_return transaction
+			expect(described_class).to receive(:includes).with(:header, :source_account, :destination_account).and_return relation
+			expect(relation).to receive(:find).with(update_json[:id]).and_return transaction
 			expect(::Account).to receive(:find).with(update_json['primary_account']['id']).and_return primary_account
 			expect(::Account).to receive(:find).with(update_json['account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with update_json

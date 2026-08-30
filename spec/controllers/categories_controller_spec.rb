@@ -5,11 +5,15 @@ require 'rails_helper'
 
 ::RSpec.describe ::CategoriesController do
 	describe 'GET index', :json, :request do
+		let(:relation) { instance_double ::ActiveRecord::Relation }
+
 		context 'for category list' do
 			let(:json) { 'category list with children' }
 
 			before do
-				expect(::Category).to receive_message_chain(:includes, :where, :order).with(:direction, :name).and_return json
+				expect(::Category).to receive(:includes).with(:children).and_return relation
+				expect(relation).to receive(:where).with(parent_id: nil).and_return relation
+				expect(relation).to receive(:order).with(:direction, :name).and_return json
 				get :index, params: {include_children: true}
 			end
 
@@ -22,8 +26,9 @@ require 'rails_helper'
 			let(:json) { 'category list without children' }
 
 			before do
-				expect(::Category).to receive_message_chain(:where, :order).with({favourite: :desc}, :direction, :name).and_return json
-				get :index
+				expect(::Category).to receive(:where).with(parent_id: '1').and_return relation
+				expect(relation).to receive(:order).with({favourite: :desc}, :direction, :name).and_return json
+				get :index, params: {parent: '1'}
 			end
 
 			it 'should return the category list without children' do

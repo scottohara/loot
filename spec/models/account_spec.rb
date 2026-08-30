@@ -358,9 +358,11 @@ require 'rails_helper'
 			}
 		end
 		let(:related_account) { nil }
+		let(:relation) { instance_double ::ActiveRecord::Relation }
 
 		before do
-			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return account
+			expect(described_class).to receive(:includes).with(:related_account).and_return relation
+			expect(relation).to receive(:find).with(json[:id]).and_return account
 		end
 
 		context 'investment account' do

@@ -92,6 +92,7 @@ require 'rails_helper'
 		let(:investment_account) { create :investment_account }
 		let(:cash_account) { create :bank_account }
 		let(:transaction) { create :security_investment_transaction }
+		let(:relation) { instance_double ::ActiveRecord::Relation }
 		let :json do
 			{
 				id: transaction.id,
@@ -110,7 +111,8 @@ require 'rails_helper'
 		end
 
 		before do
-			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+			expect(described_class).to receive(:includes).with(:header, :accounts).and_return relation
+			expect(relation).to receive(:find).with(json[:id]).and_return transaction
 			expect(::Security).to receive(:find_or_new).with(json['security']).and_return security
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return investment_account
 			expect(::Account).to receive(:find).with(json['account']['id']).and_return cash_account

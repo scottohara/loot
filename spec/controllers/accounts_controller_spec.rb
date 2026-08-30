@@ -22,7 +22,7 @@ require 'rails_helper'
 			let(:json) { 'account list without balances' }
 
 			before do
-				expect(::Account).to receive_message_chain(:all, :order).with({favourite: :desc}, :account_type, :name).and_return json
+				expect(::Account).to receive(:order).with({favourite: :desc}, :account_type, :name).and_return json
 				get :index
 			end
 

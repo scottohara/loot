@@ -75,6 +75,7 @@ require 'rails_helper'
 		let(:category) { create :category }
 		let(:subcategory) { create :subcategory, parent: category }
 		let(:transaction) { create :basic_transaction }
+		let(:relation) { instance_double ::ActiveRecord::Relation }
 		let :json do
 			{
 				id: transaction.id,
@@ -88,7 +89,8 @@ require 'rails_helper'
 		end
 
 		before do
-			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+			expect(described_class).to receive(:includes).with(:header).and_return relation
+			expect(relation).to receive(:find).with(json[:id]).and_return transaction
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect(::Category).to receive(:find_or_new).with(json['category']).and_return category
 			expect(transaction.header).to receive(:update_from_json).with json

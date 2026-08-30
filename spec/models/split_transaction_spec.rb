@@ -66,6 +66,7 @@ require 'rails_helper'
 		let(:account) { create :bank_account }
 		let(:category) { create :category }
 		let(:transaction) { create :split_transaction, subtransactions: 1, subtransfers: 1 }
+		let(:relation) { instance_double ::ActiveRecord::Relation }
 		let :json do
 			{
 				id: transaction.id,
@@ -80,7 +81,8 @@ require 'rails_helper'
 		end
 
 		it 'should update a transaction from a JSON representation' do
-			expect(described_class).to receive_message_chain(:includes, :find).with(json[:id]).and_return transaction
+			expect(described_class).to receive(:includes).with(:header, :transaction_account).and_return relation
+			expect(relation).to receive(:find).with(json[:id]).and_return transaction
 			expect(::Account).to receive(:find).with(json['primary_account']['id']).and_return account
 			expect(transaction.header).to receive(:update_from_json).with json
 			expect(described_class.update_from_json json).to match_json json, account, transaction.header
