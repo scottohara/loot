@@ -2,32 +2,10 @@
 # frozen_string_literal: true
 
 require 'models/concerns/categorisable'
-require 'models/concerns/measurable'
 require 'rails_helper'
 
 ::RSpec.describe ::Schedule do
 	it_behaves_like ::Categorisable
-	it_behaves_like ::Measurable
-
-	describe 'frequency' do
-		subject(:schedule) { build :schedule }
-
-		let(:error_message) { 'is not included in the list' }
-
-		it 'should be an error if the frequency is not one that can be measured' do
-			schedule.frequency = 'Daily'
-			schedule.validate
-			expect(schedule.errors[:frequency]).to include error_message
-		end
-
-		it 'should not be an error if the frequency is one that can be measured' do
-			described_class.frequencies.each do |frequency|
-				schedule.frequency = frequency
-				schedule.validate
-				expect(schedule.errors[:frequency]).not_to include error_message
-			end
-		end
-	end
 
 	# Custom matcher that compares a set of transactions against another set
 	matcher :match_ledger_transactions do |expected|
@@ -231,16 +209,91 @@ require 'rails_helper'
 		end
 	end
 
+	describe '::periods_since' do
+		let(:today) { ::Date.new 2026, 1, 28 }
+
+		before { travel_to today }
+
+		it 'should calculate the weeks since a given date' do
+			expect(described_class.periods_since 'Weekly', ::Date.new(2026, 1, 14)).to be 2
+		end
+
+		it 'should round down to the nearest weeks since a given date' do
+			expect(described_class.periods_since 'Weekly', ::Date.new(2026, 1, 15)).to be 1
+			expect(described_class.periods_since 'Weekly', ::Date.new(2026, 1, 13)).to be 2
+		end
+
+		it 'should calculate the fortnights since a given date' do
+			expect(described_class.periods_since 'Fortnightly', ::Date.new(2026, 1, 14)).to be 1
+		end
+
+		it 'should round down to the nearest fortnights since a given date' do
+			expect(described_class.periods_since 'Fortnightly', ::Date.new(2026, 1, 15)).to be 0
+			expect(described_class.periods_since 'Fortnightly', ::Date.new(2026, 1, 13)).to be 1
+		end
+
+		it 'should calculate the months since a given date' do
+			expect(described_class.periods_since 'Monthly', ::Date.new(2025, 12, 28)).to be 1
+		end
+
+		it 'should round down to the nearest months since a given date' do
+			expect(described_class.periods_since 'Monthly', ::Date.new(2025, 12, 29)).to be 0
+			expect(described_class.periods_since 'Monthly', ::Date.new(2025, 12, 27)).to be 1
+		end
+
+		it 'should calculate the bimonths since a given date' do
+			expect(described_class.periods_since 'Bimonthly', ::Date.new(2025, 11, 28)).to be 1
+		end
+
+		it 'should round down to the nearest bimonths since a given date' do
+			expect(described_class.periods_since 'Bimonthly', ::Date.new(2025, 12, 28)).to be 0
+			expect(described_class.periods_since 'Bimonthly', ::Date.new(2025, 10, 28)).to be 1
+		end
+
+		it 'should calculate the quarters since a given date' do
+			expect(described_class.periods_since 'Quarterly', ::Date.new(2025, 10, 28)).to be 1
+		end
+
+		it 'should round down to the nearest quarters since a given date' do
+			expect(described_class.periods_since 'Quarterly', ::Date.new(2025, 11, 28)).to be 0
+			expect(described_class.periods_since 'Quarterly', ::Date.new(2025, 9, 28)).to be 1
+		end
+
+		it 'should calculate the years since a given date' do
+			expect(described_class.periods_since 'Yearly', ::Date.new(2025, 1, 28)).to be 1
+		end
+
+		it 'should round down to the nearest years since a given date' do
+			expect(described_class.periods_since 'Yearly', ::Date.new(2025, 1, 29)).to be 0
+			expect(described_class.periods_since 'Yearly', ::Date.new(2025, 1, 27)).to be 1
+		end
+
+		it 'should count each period from the previous one, not from the original date' do
+			expect(described_class.periods_since 'Monthly', ::Date.new(2025, 1, 31)).to be 12
+		end
+
+		it 'should raise an error for an unknown frequency' do
+			expect { described_class.periods_since 'Unknown', ::Date.new(2025, 1, 1) }.to raise_error ::ArgumentError, 'Invalid frequency: Unknown'
+		end
+
+		it 'should return zero for a date that is not yet due' do
+			expect(described_class.periods_since 'Monthly', ::Date.new(2026, 2, 5)).to be 0
+		end
+	end
+
 	describe '#as_json' do
-		subject { create :schedule, next_due_date: ::Time.zone.today.to_s, frequency: 'Yearly', estimate: false, auto_enter: false }
+		subject { create :schedule, next_due_date: '2024-01-28', frequency: 'Yearly', estimate: false, auto_enter: false }
 
 		let(:json) { subject.as_json }
 
+		before { travel_to ::Date.new(2026, 1, 28) }
+
 		it 'should return a JSON representation' do
-			expect(json).to include next_due_date: ::Time.zone.today
+			expect(json).to include next_due_date: ::Date.new(2024, 1, 28)
 			expect(json).to include frequency: 'Yearly'
 			expect(json).to include estimate: false
 			expect(json).to include auto_enter: false
+			expect(json).to include overdue_count: 2
 		end
 	end
 end

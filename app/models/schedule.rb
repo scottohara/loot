@@ -4,10 +4,20 @@
 # Schedule
 class Schedule < ApplicationRecord
 	include ::Categorisable
-	include ::Measurable
+
+	FREQUENCIES = {
+		Weekly: {weeks: 1},
+		Fortnightly: {weeks: 2},
+		Monthly: {months: 1},
+		Bimonthly: {months: 2},
+		Quarterly: {months: 3},
+		Yearly: {years: 1}
+	}.freeze
+
+	private_constant :FREQUENCIES
 
 	validates :next_due_date, presence: true
-	validates :frequency, presence: true, inclusion: {in: frequencies}
+	validates :frequency, presence: true, inclusion: {in: FREQUENCIES.keys.map(&:to_s)}
 	validates :estimate, :auto_enter, inclusion: {in: [true, false]}
 	has_one :transaction_header, dependent: :destroy
 
@@ -133,7 +143,18 @@ class Schedule < ApplicationRecord
 			end
 		end
 
+		def periods_since(frequency, date)
+			period = period_for frequency
+			count = 0
+			count += 1 while (date = date.advance period) <= ::Time.zone.today
+			count
+		end
+
 		private
+
+		def period_for(frequency)
+			FREQUENCIES.fetch(frequency.to_sym) { raise ::ArgumentError, "Invalid frequency: #{frequency}" }
+		end
 
 		def transaction_from_schedule(schedule)
 			# What type of transaction is it?
@@ -167,7 +188,7 @@ class Schedule < ApplicationRecord
 			transaction_class.create_from_json transaction_json
 
 			# Update the schedule's next due date
-			schedule.next_due_date = advance_by schedule.frequency, schedule.next_due_date
+			schedule.next_due_date = schedule.next_due_date.advance period_for(schedule.frequency)
 		end
 	end
 

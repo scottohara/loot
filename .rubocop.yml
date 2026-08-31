@@ -34,7 +34,6 @@ Lint/ConstantResolution:
     - FREQUENCIES
     - MAX_TRANSACTION_DATE
     - NUM_RESULTS
-    - Period
     - SHOW_FIELDS
     - EDIT_FIELDS
     - TRANSACTION_TYPES
