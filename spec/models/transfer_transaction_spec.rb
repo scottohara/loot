@@ -28,7 +28,7 @@ require 'rails_helper'
 		let :create_json do
 			{
 				id: 1,
-				'amount' => 1,
+				'amount' => 1.0,
 				'memo' => 'Test json',
 				'primary_account' => {
 					'id' => primary_account.id
@@ -47,7 +47,7 @@ require 'rails_helper'
 		let :update_json do
 			{
 				id: transaction.id,
-				'amount' => 1,
+				'amount' => 1.0,
 				'memo' => 'Test json',
 				'primary_account' => {
 					'id' => primary_account.id

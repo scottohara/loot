@@ -37,9 +37,9 @@ class SecurityInvestmentTransaction < SecurityCashTransaction
 	end
 
 	def as_json(options = {})
-		super.merge quantity: header.quantity,
-			price: header.price,
-			commission: header.commission
+		super.merge quantity: header.quantity.to_f,
+			price: header.price.to_f,
+			commission: header.commission.to_f
 	end
 
 	# :nocov:

@@ -18,10 +18,12 @@
 			<dd ng-if="::vm.schedule.security.name">
 				{{::vm.schedule.security.name}}
 			</dd>
-			<dt ng-if="::vm.schedule.amount">Amount</dt>
-			<dd ng-if="::vm.schedule.amount">{{::vm.schedule.amount | currency}}</dd>
-			<dt ng-if="::vm.schedule.quantity">Quantity</dt>
-			<dd ng-if="::vm.schedule.quantity">
+			<dt ng-if="::vm.schedule.amount != null">Amount</dt>
+			<dd ng-if="::vm.schedule.amount != null">
+				{{::vm.schedule.amount | currency}}
+			</dd>
+			<dt ng-if="::vm.schedule.quantity != null">Quantity</dt>
+			<dd ng-if="::vm.schedule.quantity != null">
 				{{::vm.schedule.quantity | number:4}}
 			</dd>
 		</dl>

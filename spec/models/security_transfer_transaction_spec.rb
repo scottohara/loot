@@ -16,7 +16,7 @@ require 'rails_helper'
 				actual[:related_status].eql?(expected['related_status']) &&
 				actual[:security][:id].eql?(header.security.id) &&
 				actual[:transaction_date].eql?(header.transaction_date) &&
-				actual[:quantity].eql?(header.quantity) &&
+				actual[:quantity].eql?(quantity) &&
 				actual[:price].nil? &&
 				actual[:commission].nil?
 		end
@@ -26,7 +26,8 @@ require 'rails_helper'
 		let(:factory) { :security_transfer_transaction }
 		let(:primary_account) { create :investment_account }
 		let(:account) { create :investment_account }
-		let(:header) { create :security_transaction_header, quantity: 1 }
+		let(:quantity) { 10.0 }
+		let(:header) { create :security_transaction_header, quantity: }
 		let :create_json do
 			{
 				id: 1,

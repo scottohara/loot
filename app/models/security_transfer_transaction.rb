@@ -21,6 +21,6 @@ class SecurityTransferTransaction < SecurityTransaction
 
 	def as_json(options = {})
 		# Super here refers to the Transferrable concern
-		super.merge quantity: header.quantity
+		super.merge quantity: header.quantity.to_f
 	end
 end

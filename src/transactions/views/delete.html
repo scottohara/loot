@@ -37,12 +37,12 @@
 					: {{::vm.transaction.account.name}}</span
 				>
 			</dd>
-			<dt ng-if="::vm.transaction.amount">Amount</dt>
-			<dd ng-if="::vm.transaction.amount">
+			<dt ng-if="::vm.transaction.amount != null">Amount</dt>
+			<dd ng-if="::vm.transaction.amount != null">
 				{{::vm.transaction.amount | currency}}
 			</dd>
-			<dt ng-if="::vm.transaction.quantity">Quantity</dt>
-			<dd ng-if="::vm.transaction.quantity">
+			<dt ng-if="::vm.transaction.quantity != null">Quantity</dt>
+			<dd ng-if="::vm.transaction.quantity != null">
 				{{::vm.transaction.quantity | number:4}}
 			</dd>
 		</dl>

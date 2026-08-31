@@ -47,7 +47,7 @@ class SecurityHoldingTransaction < SecurityTransaction
 			},
 			direction: transaction_account.direction,
 			status: transaction_account.status,
-			quantity: header.quantity
+			quantity: header.quantity.to_f
 		)
 	end
 end

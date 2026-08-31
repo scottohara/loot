@@ -100,7 +100,7 @@ class SplitTransaction < PayeeCashTransaction
 					id: trx['account_id'],
 					name: trx['account_name']
 				},
-				amount: trx['amount'],
+				amount: trx['amount'].to_f,
 				direction: (trx['transaction_type'].eql?('Subtransfer') && ((trx['parent_transaction_type'].eql?('Payslip') && 'outflow') || trx['direction'])) || trx['category_direction'],
 				memo: trx['memo'],
 				flag_type: trx['flag_type'],
