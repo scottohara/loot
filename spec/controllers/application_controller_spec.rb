@@ -27,9 +27,13 @@ require 'rails_helper'
 	let(:valid_password) { 'valid password' }
 	let(:invalid_user_name) { 'invalid username' }
 	let(:invalid_password) { 'invalid password' }
+	let(:env_user_name) { valid_user_name }
+	let(:env_password) { valid_password }
 
 	before do |example|
-		stub_const 'ENV', 'LOOT_USERNAME' => valid_user_name, 'LOOT_PASSWORD' => valid_password
+		allow(::ENV).to receive(:[]).and_call_original
+		allow(::ENV).to receive(:[]).with('LOOT_USERNAME').and_return env_user_name
+		allow(::ENV).to receive(:[]).with('LOOT_PASSWORD').and_return env_password
 		request.env['HTTP_AUTHORIZATION'] = ::ActionController::HttpAuthentication::Basic.encode_credentials user_name, password if defined? user_name
 		get :index, params: {context: example.metadata[:example_group][:description]}
 	end
@@ -67,6 +71,49 @@ require 'rails_helper'
 		let(:expected_status) { :no_content }
 
 		it('should response with no message and a 204 No Content status') {} # Empty block
+	end
+
+	context 'misconfigured environment' do
+		let(:user_name) { valid_user_name }
+		let(:password) { valid_password }
+		let(:expected_status) { :internal_server_error }
+
+		after do
+			expect(response.media_type).to eq 'application/json'
+			expect(response.body).to include "#{variable} environment variable must be set"
+		end
+
+		context 'user name' do
+			let(:variable) { 'LOOT_USERNAME' }
+
+			context 'unset' do
+				let(:env_user_name) { nil }
+
+				it('should respond with a 500 Internal Server Error status') {} # Empty block
+			end
+
+			context 'empty' do
+				let(:env_user_name) { '' }
+
+				it('should respond with a 500 Internal Server Error status') {} # Empty block
+			end
+		end
+
+		context 'password' do
+			let(:variable) { 'LOOT_PASSWORD' }
+
+			context 'unset' do
+				let(:env_password) { nil }
+
+				it('should respond with a 500 Internal Server Error status') {} # Empty block
+			end
+
+			context 'empty' do
+				let(:env_password) { '' }
+
+				it('should respond with a 500 Internal Server Error status') {} # Empty block
+			end
+		end
 	end
 
 	context 'internal error', :json, :request do

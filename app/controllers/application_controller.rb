@@ -20,8 +20,15 @@ class ApplicationController < ::ActionController::API
 
 	def authenticate_user
 		render plain: 'Invalid login and/or password', status: :unauthorized unless authenticate_with_http_basic do |username, password|
-			::ActiveSupport::SecurityUtils.secure_compare(username, ::ENV['LOOT_USERNAME']) & ::ActiveSupport::SecurityUtils.secure_compare(password, ::ENV['LOOT_PASSWORD'])
+			::ActiveSupport::SecurityUtils.secure_compare(username, required_env_variable('LOOT_USERNAME')) & ::ActiveSupport::SecurityUtils.secure_compare(password, required_env_variable('LOOT_PASSWORD'))
 		end
+	end
+
+	def required_env_variable(variable)
+		value = ::ENV[variable]
+		raise ::KeyError, "#{variable} environment variable must be set" if value.blank?
+
+		value
 	end
 
 	def internal_error(exception)
