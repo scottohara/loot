@@ -2,18 +2,21 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'rake'
 require 'tasks/db_e2e'
 
 ::RSpec.describe ::DB::E2E do
 	describe '::create_test_data' do
-		before do
-			::Rake::Task.define_task :environment unless ::Rake::Task.task_defined? :environment
+		# Use a fresh application for each example so that each has its own registry of tasks.
+		# Restoring the original effectively clears any registered tasks just for that example.
+		around do |example|
+			rake_application = ::Rake.application
+			::Rake.application = ::Rake::Application.new
+			example.run
+		ensure
+			::Rake.application = rake_application
 		end
 
-		after do
-			::Rake::Task.clear
-		end
+		before { ::Rake::Task.define_task :environment }
 
 		it 'should define a new rake task' do
 			described_class.create_test_data :example
