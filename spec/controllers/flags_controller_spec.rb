@@ -49,12 +49,12 @@ require 'rails_helper'
 			end
 		end
 
-		context "when a flag doesn't exist", :json do
+		context "when a flag doesn't exist", :plain do
 			let(:expected_status) { :not_found }
-			let(:json) { 'flag not found' }
+			let(:plain) { 'flag not found' }
 
 			it 'should not delete anything' do
-				expect(::TransactionFlag).to receive(:find).with('1').and_raise ::ActiveRecord::RecordNotFound, json
+				expect(::TransactionFlag).to receive(:find).with('1').and_raise ::ActiveRecord::RecordNotFound, plain
 				delete :destroy, params: {transaction_id: '1'}
 			end
 		end

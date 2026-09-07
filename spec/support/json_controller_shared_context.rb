@@ -18,6 +18,11 @@
 		expect(response.media_type).to eq 'application/json'
 		expect(response.body).to eq json
 	end
+
+	after :each, :plain do
+		expect(response.media_type).to eq 'text/plain'
+		expect(response.body).to eq plain
+	end
 end
 
 ::RSpec.configure do |config|

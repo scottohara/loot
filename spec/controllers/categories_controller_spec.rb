@@ -49,7 +49,7 @@ require 'rails_helper'
 		end
 	end
 
-	describe 'POST create', :json, :request do
+	describe 'POST create', :request do
 		let(:category) { instance_double ::Category }
 		let(:parent) { instance_double ::Category }
 		let(:name) { 'New category' }
@@ -58,7 +58,7 @@ require 'rails_helper'
 		let(:raw_json) { 'created category' }
 		let(:json) { ::JSON.dump raw_json }
 
-		context 'with a parent' do
+		context 'with a parent', :json do
 			it 'should create a new child category and return the details' do
 				expect(::Category).to receive(:find).with('1').and_return parent
 				expect(::Category).to receive(:create!).with({name:, direction:, parent:}).and_return category
@@ -67,7 +67,7 @@ require 'rails_helper'
 			end
 		end
 
-		context 'without a parent' do
+		context 'without a parent', :json do
 			it 'should create a new top level category and return the details' do
 				expect(::Category).to receive(:create!).with({name:, direction:, parent: nil}).and_return category
 				expect(category).to receive(:as_json).with({only: described_class.const_get(:EDIT_FIELDS)}).and_return raw_json
@@ -75,18 +75,18 @@ require 'rails_helper'
 			end
 		end
 
-		context 'with a non-existent parent' do
+		context 'with a non-existent parent', :plain do
 			let(:expected_status) { :not_found }
-			let(:json) { 'category not found' }
+			let(:plain) { 'category not found' }
 
 			it 'should return a 404 Not Found status' do
-				expect(::Category).to receive(:find).with('1').and_raise ::ActiveRecord::RecordNotFound, json
+				expect(::Category).to receive(:find).with('1').and_raise ::ActiveRecord::RecordNotFound, plain
 				post :create, params: request_body
 			end
 		end
 	end
 
-	describe 'PATCH update', :json, :request do
+	describe 'PATCH update', :request do
 		let(:category) { instance_double ::Category }
 		let(:parent) { instance_double ::Category }
 		let(:name) { 'Updated category' }
@@ -95,7 +95,7 @@ require 'rails_helper'
 		let(:raw_json) { 'updated category' }
 		let(:json) { ::JSON.dump raw_json }
 
-		context 'with a parent' do
+		context 'with a parent', :json do
 			it 'should update an existing child category and return the details' do
 				expect(::Category).to receive(:find).with('1').and_return category
 				expect(::Category).to receive(:find).with('2').and_return parent
@@ -105,7 +105,7 @@ require 'rails_helper'
 			end
 		end
 
-		context 'without a parent' do
+		context 'without a parent', :json do
 			it 'should update an existing top level category and return the details' do
 				expect(::Category).to receive(:find).with('1').and_return category
 				expect(category).to receive(:update!).with({name:, direction:, parent: nil})
@@ -114,13 +114,13 @@ require 'rails_helper'
 			end
 		end
 
-		context 'with a non-existent parent' do
+		context 'with a non-existent parent', :plain do
 			let(:expected_status) { :not_found }
-			let(:json) { 'category not found' }
+			let(:plain) { 'category not found' }
 
 			it 'should return a 404 Not Found status' do
 				expect(::Category).to receive(:find).with('1').and_return category
-				expect(::Category).to receive(:find).with('2').and_raise ::ActiveRecord::RecordNotFound, json
+				expect(::Category).to receive(:find).with('2').and_raise ::ActiveRecord::RecordNotFound, plain
 				patch :update, params: request_body.merge(id: '1')
 			end
 		end

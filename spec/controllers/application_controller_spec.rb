@@ -79,7 +79,7 @@ require 'rails_helper'
 		let(:expected_status) { :internal_server_error }
 
 		after do
-			expect(response.media_type).to eq 'application/json'
+			expect(response.media_type).to eq 'text/plain'
 			expect(response.body).to include "#{variable} environment variable must be set"
 		end
 
@@ -116,52 +116,52 @@ require 'rails_helper'
 		end
 	end
 
-	context 'internal error', :json, :request do
+	context 'internal error', :plain, :request do
 		let(:expected_status) { :internal_server_error }
-		let(:json) { 'internal error' }
+		let(:plain) { 'internal error' }
 
-		it('should respond with a JSON error message and a 500 Internal Server Error status') {} # Empty block
+		it('should respond with a text error message and a 500 Internal Server Error status') {} # Empty block
 	end
 
-	context 'invalid foreign key', :json, :request do
+	context 'invalid foreign key', :plain, :request do
 		let(:expected_status) { :unprocessable_content }
-		let(:json) { 'invalid foreign key' }
+		let(:plain) { 'invalid foreign key' }
 
-		it('should respond with a JSON error message and a 422 Unprocessable Content status') {} # Empty block
+		it('should respond with a text error message and a 422 Unprocessable Content status') {} # Empty block
 	end
 
-	context 'record invalid', :json, :request do
+	context 'record invalid', :plain, :request do
 		let(:expected_status) { :unprocessable_content }
-		let(:json) { "Name can't be blank, Direction is not included in the list" }
+		let(:plain) { "Name can't be blank, Direction is not included in the list" }
 
-		it('should respond with a JSON error message and a 422 Unprocessable Content status') {} # Empty block
+		it('should respond with a text error message and a 422 Unprocessable Content status') {} # Empty block
 	end
 
-	context 'record not destroyed', :json, :request do
+	context 'record not destroyed', :plain, :request do
 		let(:expected_status) { :conflict }
-		let(:json) { 'Cannot delete record because dependent transaction categories exist' }
+		let(:plain) { 'Cannot delete record because dependent transaction categories exist' }
 
-		it('should respond with a JSON error message and a 409 Conflict status') {} # Empty block
+		it('should respond with a text error message and a 409 Conflict status') {} # Empty block
 	end
 
-	context 'record not found', :json, :request do
+	context 'record not found', :plain, :request do
 		let(:expected_status) { :not_found }
-		let(:json) { 'record not found' }
+		let(:plain) { 'record not found' }
 
-		it('should respond with a JSON error message and a 404 Not Found status') {} # Empty block
+		it('should respond with a text error message and a 404 Not Found status') {} # Empty block
 	end
 
-	context 'routing error', :json, :request do
+	context 'routing error', :plain, :request do
 		let(:expected_status) { :not_found }
-		let(:json) { 'Path routing error is not valid' }
+		let(:plain) { 'Path routing error is not valid' }
 
-		it('should respond with a JSON error message and a 404 Not Found status') {} # Empty block
+		it('should respond with a text error message and a 404 Not Found status') {} # Empty block
 	end
 
-	context 'subclass not found', :json, :request do
+	context 'subclass not found', :plain, :request do
 		let(:expected_status) { :bad_request }
-		let(:json) { 'subclass not found' }
+		let(:plain) { 'subclass not found' }
 
-		it('should respond with a JSON error message and a 400 Bad Request status') {} # Empty block
+		it('should respond with a text error message and a 400 Bad Request status') {} # Empty block
 	end
 end
