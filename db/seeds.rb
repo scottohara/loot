@@ -52,7 +52,7 @@ module Loot
 	module_function :create_subtransaction_transaction, :create_subtransfer_transaction, :create_payslip_beforetax_transaction, :create_payslip_tax_transaction
 
 	def progress(action, count, type)
-		@logger.info "\r#{action} #{count} #{type}".pluralize $INPUT_LINE_NUMBER
+		@logger.info "\r#{action} #{count} #{type.pluralize count}"
 	end
 
 	def csv_file_path(table)
@@ -197,7 +197,7 @@ module Loot
 			end
 			s.save!
 		end
-		progress 'Loaded', loaded, 'security prices'
+		progress 'Loaded', loaded, 'security price'
 		2.times { @logger.info }
 	end
 
