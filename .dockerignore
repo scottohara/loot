@@ -3,6 +3,7 @@
 .github
 .qlty
 .vscode
+AGENTS.md
 bin
 config/environments/development.rb
 config/environments/test.rb
