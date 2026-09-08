@@ -1,9 +1,6 @@
 # Copyright (c) 2016 Scott O'Hara, oharagroup.net
 # frozen_string_literal: true
 
-# :nocov:
-require 'factory_bot' if ::Rails.env.local?
-# :nocov:end
 require 'rake'
 
 module DB
@@ -12,10 +9,14 @@ module DB
 		extend ::Rake::DSL
 
 		class << self
-			# Mixin factory bot syntax
-			include ::FactoryBot::Syntax::Methods
-
 			def create_test_data(name, &)
+				return unless ::Rails.env.local?
+
+				require 'factory_bot'
+
+				# Mixin factory bot syntax
+				extend ::FactoryBot::Syntax::Methods
+
 				namespace :db do
 					namespace :e2e do
 						desc "Load data for #{name} e2e tests"
