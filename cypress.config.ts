@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import { execFileSync } from "node:child_process";
 
 export default defineConfig({
 	viewportHeight: 800,
@@ -7,9 +8,15 @@ export default defineConfig({
 	defaultBrowser: "chrome",
 	e2e: {
 		setupNodeEvents(
-			_on: Cypress.PluginEvents,
+			on: Cypress.PluginEvents,
 			config: Cypress.PluginConfigOptions,
 		): Cypress.PluginConfigOptions {
+			on("task", {
+				createData(name: string): Buffer | string {
+					return execFileSync("bundle", ["exec", "rake", `db:e2e:${name}`]);
+				},
+			});
+
 			const { LOOT_USERNAME, LOOT_PASSWORD } = process.env;
 
 			config.env = { ...config.env, LOOT_USERNAME, LOOT_PASSWORD };

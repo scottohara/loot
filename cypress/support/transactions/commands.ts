@@ -1,3 +1,4 @@
-Cypress.Commands.add("createTransactions", (): void => {
-	cy.exec("bundle exec rake db:e2e:transactions");
-});
+Cypress.Commands.add(
+	"createTransactions",
+	(): Cypress.Chainable => cy.task("createData", "transactions"),
+);

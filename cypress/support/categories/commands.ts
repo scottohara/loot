@@ -1,3 +1,4 @@
-Cypress.Commands.add("createCategories", (): void => {
-	cy.exec("bundle exec rake db:e2e:categories");
-});
+Cypress.Commands.add(
+	"createCategories",
+	(): Cypress.Chainable => cy.task("createData", "categories"),
+);

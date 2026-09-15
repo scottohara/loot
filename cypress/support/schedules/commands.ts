@@ -1,3 +1,4 @@
-Cypress.Commands.add("createSchedules", (): void => {
-	cy.exec("bundle exec rake db:e2e:schedules");
-});
+Cypress.Commands.add(
+	"createSchedules",
+	(): Cypress.Chainable => cy.task("createData", "schedules"),
+);
