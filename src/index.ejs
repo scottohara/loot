@@ -2,9 +2,13 @@
 <html ng-app="lootApp">
 	<head>
 		<title ng-bind="'Loot - ' + $state.current.data.title">Loot</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta charset="utf-8">
-		<link rel="shortcut icon" href="<%=require('~/favicon.ico')%>" type="image/x-icon">
+		<meta name="viewport" content="width=device-width" />
+		<meta charset="utf-8" />
+		<link
+			rel="shortcut icon"
+			href="<%=require('~/favicon.ico')%>"
+			type="image/x-icon"
+		/>
 	</head>
 	<body>
 		<div class="container" ui-view></div>
