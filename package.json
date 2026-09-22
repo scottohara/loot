@@ -95,8 +95,8 @@
     "docker:build": "docker build --build-arg NODE_VERSION=$npm_package_engines_node --build-arg NPM_VERSION=$npm_package_engines_npm --build-arg RUBY_VERSION=$npm_package_engines_ruby --tag loot ."
   },
   "engines": {
-    "node": "24.13.0",
-    "npm": "11.9.0",
-    "ruby": "4.0.1"
+    "node": "24.21.0",
+    "npm": "12.0.2",
+    "ruby": "4.0.7"
   }
 }
