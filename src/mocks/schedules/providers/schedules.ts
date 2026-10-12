@@ -12,9 +12,9 @@ function* schedules(count: number): Iterable<ScheduledBasicTransaction> {
 	}
 }
 
-export default class SchedulesMockProvider
-	implements Mock<ScheduledBasicTransaction[]>
-{
+export default class SchedulesMockProvider implements Mock<
+	ScheduledBasicTransaction[]
+> {
 	private readonly schedules: ScheduledBasicTransaction[];
 
 	// Mock schedules object

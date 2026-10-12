@@ -229,8 +229,7 @@ export default class OgTableNavigableDirective {
 							if (
 								undefined !==
 								(CTRL_ACTION_KEYS[event.key.toUpperCase()] as
-									| OgTableActionCallback
-									| undefined)
+									OgTableActionCallback | undefined)
 							) {
 								CTRL_ACTION_KEYS[event.key.toUpperCase()](
 									Number(scope.focussedRow),

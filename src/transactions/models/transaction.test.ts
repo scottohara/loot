@@ -179,9 +179,8 @@ describe("transactionModel", (): void => {
 		it("should return a list of transactions", (): void => {
 			transactionModel
 				.all("context", fromDate, "prev", true)
-				.then(
-					(transactionBatch: TransactionBatch): Chai.Assertion =>
-						expect(transactionBatch).to.deep.equal(expectedResponse),
+				.then((transactionBatch: TransactionBatch): Chai.Assertion =>
+					expect(transactionBatch).to.deep.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -215,9 +214,8 @@ describe("transactionModel", (): void => {
 		it("should return a list of transactions", (): void => {
 			transactionModel
 				.query("query", null, "prev")
-				.then(
-					(transactionBatch: TransactionBatch): Chai.Assertion =>
-						expect(transactionBatch).to.deep.equal(expectedResponse),
+				.then((transactionBatch: TransactionBatch): Chai.Assertion =>
+					expect(transactionBatch).to.deep.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -226,11 +224,10 @@ describe("transactionModel", (): void => {
 	describe("findSubtransactions", (): void => {
 		const expectedResponse = "subtransactions";
 
-		beforeEach(
-			(): angular.mock.IRequestHandler =>
-				$httpBackend
-					.expectGET(/transactions\/123\/subtransactions/v)
-					.respond(200, expectedResponse),
+		beforeEach((): angular.mock.IRequestHandler =>
+			$httpBackend
+				.expectGET(/transactions\/123\/subtransactions/v)
+				.respond(200, expectedResponse),
 		);
 
 		it("should dispatch a GET request to /transactions/123/subtransactions", (): void => {
@@ -241,9 +238,8 @@ describe("transactionModel", (): void => {
 		it("should return a list of subtransactions", (): void => {
 			transactionModel
 				.findSubtransactions(123)
-				.then(
-					(subtransactions: SplitTransactionChild[]): Chai.Assertion =>
-						expect(subtransactions).to.equal(expectedResponse),
+				.then((subtransactions: SplitTransactionChild[]): Chai.Assertion =>
+					expect(subtransactions).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -275,9 +271,8 @@ describe("transactionModel", (): void => {
 		it("should return the transaction", (): void => {
 			transactionModel
 				.find(123)
-				.then(
-					(transaction: Transaction): Chai.Assertion =>
-						expect(transaction).to.equal(expectedResponse),
+				.then((transaction: Transaction): Chai.Assertion =>
+					expect(transaction).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -345,9 +340,8 @@ describe("transactionModel", (): void => {
 		it("should return the transaction", (): void => {
 			transactionModel
 				.save(transaction)
-				.then(
-					(savedTransaction: Transaction): Chai.Assertion =>
-						expect(savedTransaction).to.equal(expectedResponse),
+				.then((savedTransaction: Transaction): Chai.Assertion =>
+					expect(savedTransaction).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});

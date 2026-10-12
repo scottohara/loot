@@ -1,31 +1,31 @@
-const webpack = require("webpack"),
+const { defineConfig, ProvidePlugin } = require("webpack"),
 	{ merge } = require("webpack-merge"),
-	path = require("path"),
 	{ providejQuery, config } = require("./webpack.common");
 
-module.exports = merge(config, {
-	module: {
-		rules: [
-			{
-				test: /\.css$/v,
-				loader: "ignore-loader",
+module.exports = merge(
+	config,
+	defineConfig({
+		module: {
+			rules: [
+				{
+					test: /\.css$/v,
+					loader: "ignore-loader",
+				},
+			],
+		},
+		resolve: {
+			tsconfig: true,
+			fallback: {
+				"process/browser": require.resolve("process/browser.js"),
 			},
-		],
-	},
-	resolve: {
-		alias: {
-			"~": [path.resolve(__dirname, "src")],
 		},
-		fallback: {
-			"process/browser": require.resolve("process/browser.js"),
-		},
-	},
-	devtool: "inline-source-map",
-	plugins: [
-		new webpack.ProvidePlugin({
-			process: "process/browser",
-		}),
+		devtool: "inline-source-map",
+		plugins: [
+			new ProvidePlugin({
+				process: "process/browser",
+			}),
 
-		providejQuery,
-	],
-});
+			providejQuery,
+		],
+	}),
+);

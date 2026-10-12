@@ -126,9 +126,8 @@ export default class TransactionModel {
 	public find(id: number): angular.IPromise<Transaction> {
 		return this.$http
 			.get(this.path(id))
-			.then(
-				(response: angular.IHttpResponse<Transaction>): Transaction =>
-					this.parse(response.data),
+			.then((response: angular.IHttpResponse<Transaction>): Transaction =>
+				this.parse(response.data),
 			);
 	}
 

@@ -4,9 +4,7 @@ import type { QMock } from "~/mocks/node-modules/angular/types";
 import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 import sinon from "sinon";
 
-export default class AuthenticationModelMockProvider
-	implements Mock<AuthenticationModelMock>
-{
+export default class AuthenticationModelMockProvider implements Mock<AuthenticationModelMock> {
 	private readonly authenticationModel: AuthenticationModelMock;
 
 	public constructor($qMockProvider: QMockProvider) {

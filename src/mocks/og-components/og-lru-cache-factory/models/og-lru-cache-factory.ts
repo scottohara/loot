@@ -5,9 +5,7 @@ import type {
 import type { Mock } from "~/mocks/types";
 import sinon from "sinon";
 
-export default class OgLruCacheFactoryMockProvider
-	implements Mock<OgLruCacheFactoryMock>
-{
+export default class OgLruCacheFactoryMockProvider implements Mock<OgLruCacheFactoryMock> {
 	private readonly ogLruCacheFactory: OgLruCacheFactoryMock;
 
 	// Mock LruCache object

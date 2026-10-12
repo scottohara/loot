@@ -5,18 +5,10 @@ import type { Security } from "~/securities/types";
 
 export type TransactionFetchDirection = "next" | "prev";
 export type TransactionStatus =
-	| ""
-	| "Cleared"
-	| "Reconciled"
-	| "Unreconciled"
-	| null;
+	"" | "Cleared" | "Reconciled" | "Unreconciled" | null;
 export type TransactionDirection = "inflow" | "outflow";
 export type TransactionFlagType =
-	| "followup"
-	| "noreceipt"
-	| "taxdeductible"
-	| null
-	| undefined;
+	"followup" | "noreceipt" | "taxdeductible" | null | undefined;
 export type TransactionFlag = string | null | undefined;
 
 /*
@@ -25,10 +17,7 @@ export type TransactionFlag = string | null | undefined;
 export type PayeeTransactionType = "Basic" | "Transfer";
 export type SplitTransactionType = "LoanRepayment" | "Payslip" | "Split";
 export type SecurityTransactionType =
-	| "Dividend"
-	| "SecurityHolding"
-	| "SecurityInvestment"
-	| "SecurityTransfer";
+	"Dividend" | "SecurityHolding" | "SecurityInvestment" | "SecurityTransfer";
 export type SubtransactionType = "Sub" | "Subtransfer";
 export type TransactionType =
 	| PayeeTransactionType
@@ -78,18 +67,14 @@ export interface CashTransaction extends BaseTransaction {
 
 // A transaction that has a payee
 export interface PayeeCashTransaction
-	extends CashTransaction,
-		PayeeTransactionHeader {
+	extends CashTransaction, PayeeTransactionHeader {
 	transaction_type:
-		| PayeeTransactionType
-		| SplitTransactionType
-		| SubtransactionType;
+		PayeeTransactionType | SplitTransactionType | SubtransactionType;
 }
 
 // A transaction that has a security
 export interface SecurityTransaction
-	extends BaseTransaction,
-		SecurityTransactionHeader {
+	extends BaseTransaction, SecurityTransactionHeader {
 	transaction_type: SecurityTransactionType;
 	primary_account: Account;
 	category: PsuedoCategory;
@@ -119,7 +104,8 @@ export interface SubcategorisableTransaction {
 
 // Basic transaction
 export interface BasicTransaction
-	extends PayeeCashTransaction,
+	extends
+		PayeeCashTransaction,
 		CategorisableTransaction,
 		SubcategorisableTransaction {
 	transaction_type: "Basic";
@@ -129,7 +115,8 @@ export interface BasicTransaction
 
 // Transfer transaction
 export interface TransferTransaction
-	extends PayeeCashTransaction,
+	extends
+		PayeeCashTransaction,
 		CategorisableTransaction,
 		TransferrableTransaction {
 	transaction_type: "Transfer";
@@ -139,7 +126,8 @@ export interface TransferTransaction
 
 // Subtransaction
 export interface Subtransaction
-	extends CashTransaction,
+	extends
+		CashTransaction,
 		CategorisableTransaction,
 		SubcategorisableTransaction {
 	transaction_type: "Sub";
@@ -149,7 +137,8 @@ export interface Subtransaction
 
 // Subtransfer transaction
 export interface SubtransferTransaction
-	extends PayeeCashTransaction,
+	extends
+		PayeeCashTransaction,
 		CategorisableTransaction,
 		TransferrableTransaction {
 	transaction_type: "Subtransfer";
@@ -166,8 +155,7 @@ export type SplitTransactionChild =
 
 // Split transaction
 export interface SplitTransaction
-	extends PayeeCashTransaction,
-		CategorisableTransaction {
+	extends PayeeCashTransaction, CategorisableTransaction {
 	transaction_type: SplitTransactionType;
 	category: PsuedoCategory;
 	status: TransactionStatus;
@@ -198,8 +186,7 @@ export interface SecurityHoldingTransaction extends SecurityTransaction {
 
 // Security investment transaction
 export interface SecurityInvestmentTransaction
-	extends SecurityTransaction,
-		TransferrableTransaction {
+	extends SecurityTransaction, TransferrableTransaction {
 	transaction_type: "SecurityInvestment";
 	amount: number;
 	quantity: number;
@@ -209,16 +196,14 @@ export interface SecurityInvestmentTransaction
 
 // Security transfer transaction
 export interface SecurityTransferTransaction
-	extends SecurityTransaction,
-		TransferrableTransaction {
+	extends SecurityTransaction, TransferrableTransaction {
 	transaction_type: "SecurityTransfer";
 	quantity: number;
 }
 
 // Dividend transaction
 export interface DividendTransaction
-	extends SecurityTransaction,
-		TransferrableTransaction {
+	extends SecurityTransaction, TransferrableTransaction {
 	transaction_type: "Dividend";
 	amount: number;
 }

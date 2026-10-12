@@ -299,9 +299,8 @@ describe("TransactionIndexController", (): void => {
 					(
 						($uibModal.resolves as UibModalMockResolves)
 							.transaction as angular.IPromise<Transaction>
-					).then(
-						(resolvedTransaction: Transaction): Chai.Assertion =>
-							expect(resolvedTransaction).to.have.property("subtransactions"),
+					).then((resolvedTransaction: Transaction): Chai.Assertion =>
+						expect(resolvedTransaction).to.have.property("subtransactions"),
 					);
 				});
 			});
@@ -845,11 +844,10 @@ describe("TransactionIndexController", (): void => {
 				);
 			});
 
-			afterEach(
-				(): Chai.Assertion =>
-					expect(
-						(transactionIndexController.context as Account).closing_balance,
-					).to.equal(expected),
+			afterEach((): Chai.Assertion =>
+				expect(
+					(transactionIndexController.context as Account).closing_balance,
+				).to.equal(expected),
 			);
 		});
 	});

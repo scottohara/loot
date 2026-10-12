@@ -155,9 +155,8 @@ describe("categoryModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 			categoryModel
 				.all(1)
-				.then(
-					(categories: Category[]): Chai.Assertion =>
-						expect(categories).to.equal(expectedResponse),
+				.then((categories: Category[]): Chai.Assertion =>
+					expect(categories).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -185,9 +184,8 @@ describe("categoryModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 			categoryModel
 				.allWithChildren()
-				.then(
-					(categories: Category[]): Chai.Assertion =>
-						expect(categories).to.equal(expectedResponse),
+				.then((categories: Category[]): Chai.Assertion =>
+					expect(categories).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -226,9 +224,8 @@ describe("categoryModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			categoryModel
 				.find(123)
-				.then(
-					(foundCategory: Category): Chai.Assertion =>
-						expect(foundCategory).to.equal(expectedResponse),
+				.then((foundCategory: Category): Chai.Assertion =>
+					expect(foundCategory).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});

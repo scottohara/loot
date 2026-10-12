@@ -170,9 +170,8 @@ describe("accountModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 			accountModel
 				.all()
-				.then(
-					(accounts: Account[] | Accounts): Chai.Assertion =>
-						expect(accounts).to.equal(expectedResponse),
+				.then((accounts: Account[] | Accounts): Chai.Assertion =>
+					expect(accounts).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -203,9 +202,8 @@ describe("accountModel", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 				accountModel
 					.all(true)
-					.then(
-						(accounts: Account[] | Accounts): Chai.Assertion =>
-							expect(accounts).to.equal(expectedResponse),
+					.then((accounts: Account[] | Accounts): Chai.Assertion =>
+						expect(accounts).to.equal(expectedResponse),
 					);
 				$httpBackend.flush();
 			});
@@ -213,8 +211,8 @@ describe("accountModel", (): void => {
 	});
 
 	describe("allWithBalances", (): void => {
-		beforeEach(
-			(): SinonStub => sinon.stub(accountModel, "all").returns(iPromise),
+		beforeEach((): SinonStub =>
+			sinon.stub(accountModel, "all").returns(iPromise),
 		);
 
 		it("should call accountModel.all(true)", (): void => {
@@ -260,9 +258,8 @@ describe("accountModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			accountModel
 				.find(123)
-				.then(
-					(foundAccount: Account): Chai.Assertion =>
-						expect(foundAccount).to.equal(expectedResponse),
+				.then((foundAccount: Account): Chai.Assertion =>
+					expect(foundAccount).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});

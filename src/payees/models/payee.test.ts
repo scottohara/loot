@@ -153,9 +153,8 @@ describe("payeeModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 			payeeModel
 				.all()
-				.then(
-					(payees: Payee[]): Chai.Assertion =>
-						expect(payees).to.equal(expectedResponse),
+				.then((payees: Payee[]): Chai.Assertion =>
+					expect(payees).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -186,9 +185,8 @@ describe("payeeModel", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 				payeeModel
 					.all(true)
-					.then(
-						(payees: Payee[]): Chai.Assertion =>
-							expect(payees).to.equal(expectedResponse),
+					.then((payees: Payee[]): Chai.Assertion =>
+						expect(payees).to.equal(expectedResponse),
 					);
 				$httpBackend.flush();
 			});
@@ -196,8 +194,8 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("allList", (): void => {
-		beforeEach(
-			(): SinonStub => sinon.stub(payeeModel, "all").returns(iPromise),
+		beforeEach((): SinonStub =>
+			sinon.stub(payeeModel, "all").returns(iPromise),
 		);
 
 		it("should call payeeModel.all(true)", (): void => {
@@ -226,9 +224,8 @@ describe("payeeModel", (): void => {
 				.respond(200, lastTransaction);
 			payeeModel
 				.findLastTransaction(1, "bank")
-				.then(
-					(transaction: Transaction): Chai.Assertion =>
-						expect(transaction).to.deep.equal(lastTransaction),
+				.then((transaction: Transaction): Chai.Assertion =>
+					expect(transaction).to.deep.equal(lastTransaction),
 				);
 			$httpBackend.flush();
 		});
@@ -252,11 +249,10 @@ describe("payeeModel", (): void => {
 				.respond(500, "Forced error", {}, "Internal Server Error");
 			payeeModel
 				.findLastTransaction(1, "bank")
-				.catch(
-					(error: unknown): Chai.Assertion =>
-						expect((error as Error).message).to.equal(
-							"500 Internal Server Error: Forced error",
-						),
+				.catch((error: unknown): Chai.Assertion =>
+					expect((error as Error).message).to.equal(
+						"500 Internal Server Error: Forced error",
+					),
 				);
 			$httpBackend.flush();
 		});
@@ -293,9 +289,8 @@ describe("payeeModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			payeeModel
 				.find(123)
-				.then(
-					(foundPayee: Payee): Chai.Assertion =>
-						expect(foundPayee).to.equal(expectedResponse),
+				.then((foundPayee: Payee): Chai.Assertion =>
+					expect(foundPayee).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});

@@ -181,9 +181,8 @@ describe("ScheduleIndexController", (): void => {
 					(
 						($uibModal.resolves as UibModalMockResolves)
 							.schedule as angular.IPromise<ScheduledTransaction>
-					).then(
-						(scheduledTransaction: ScheduledTransaction): Chai.Assertion =>
-							expect(scheduledTransaction).to.have.property("subtransactions"),
+					).then((scheduledTransaction: ScheduledTransaction): Chai.Assertion =>
+						expect(scheduledTransaction).to.have.property("subtransactions"),
 					);
 				});
 			});

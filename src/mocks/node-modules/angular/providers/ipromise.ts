@@ -1,9 +1,9 @@
 import type { Mock } from "~/mocks/types";
 import angular from "angular";
 
-export default class IPromiseMockProvider
-	implements Mock<angular.IPromise<never>>
-{
+export default class IPromiseMockProvider implements Mock<
+	angular.IPromise<never>
+> {
 	public $get(): angular.IPromise<never> {
 		// Return the mock promise object
 		return {

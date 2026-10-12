@@ -11,9 +11,7 @@ import type AccountsWithBalancesMockProvider from "~/mocks/accounts/providers/ac
 import type { Mock } from "~/mocks/types";
 import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 
-export default class AccountModelMockProvider
-	implements Mock<AccountModelMock>
-{
+export default class AccountModelMockProvider implements Mock<AccountModelMock> {
 	private readonly accountModel: AccountModelMock;
 
 	public constructor(

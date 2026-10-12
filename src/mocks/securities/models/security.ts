@@ -10,9 +10,7 @@ import type { Security } from "~/securities/types";
 import type SecurityMockProvider from "~/mocks/securities/providers/security";
 import type { SecurityModelMock } from "~/mocks/securities/types";
 
-export default class SecurityModelMockProvider
-	implements Mock<SecurityModelMock>
-{
+export default class SecurityModelMockProvider implements Mock<SecurityModelMock> {
 	private readonly securityModel: SecurityModelMock;
 
 	public constructor(

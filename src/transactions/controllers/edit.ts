@@ -72,8 +72,7 @@ export default class TransactionEditController {
 				if (
 					undefined !==
 					((this.transaction as SplitTransaction).subtransactions as
-						| SplitTransactionChild[]
-						| undefined)
+						SplitTransactionChild[] | undefined)
 				) {
 					this.totalAllocated = (
 						this.transaction as SplitTransaction
@@ -310,8 +309,7 @@ export default class TransactionEditController {
 						if (
 							undefined ===
 							((transaction as SplitTransaction).subtransactions as
-								| SplitTransactionChild[]
-								| undefined)
+								SplitTransactionChild[] | undefined)
 						) {
 							(transaction as SplitTransaction).subtransactions = [
 								{
@@ -428,8 +426,7 @@ export default class TransactionEditController {
 			null !== (this.transaction as TransferrableTransaction).account &&
 			undefined !==
 				((this.transaction as TransferrableTransaction).account as
-					| Account
-					| undefined) &&
+					Account | undefined) &&
 			undefined !== (this.transaction.primary_account as Account | undefined) &&
 			this.transaction.primary_account.id ===
 				((this.transaction as TransferrableTransaction).account as Account).id
@@ -742,8 +739,7 @@ export default class TransactionEditController {
 								if (
 									undefined !==
 										((subtransaction as SubtransferTransaction).account as
-											| Account
-											| undefined) &&
+											Account | undefined) &&
 									Number((subtransaction as SubtransferTransaction).account.id)
 								) {
 									this.accountModel.flush(

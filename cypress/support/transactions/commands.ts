@@ -1,4 +1,3 @@
-Cypress.Commands.add(
-	"createTransactions",
-	(): Cypress.Chainable => cy.task("createData", "transactions"),
+Cypress.Commands.add("createTransactions", (): Cypress.Chainable =>
+	cy.task("createData", "transactions"),
 );

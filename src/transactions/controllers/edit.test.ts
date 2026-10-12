@@ -227,12 +227,8 @@ describe("TransactionEditController", (): void => {
 	describe("categories", (): void => {
 		it("should return an empty array if the parent category is new", (): void => {
 			const categories:
-				| angular.IPromise<DisplayCategory[]>
-				| DisplayCategory[] = transactionEditController.categories(
-				"a",
-				3,
-				{} as Category,
-			);
+				angular.IPromise<DisplayCategory[]> | DisplayCategory[] =
+				transactionEditController.categories("a", 3, {} as Category);
 
 			expect(categories).to.be.an("array");
 			expect(categories).to.be.empty;
@@ -1491,8 +1487,7 @@ describe("TransactionEditController", (): void => {
 
 	describe("updateLruCaches", (): void => {
 		const transferScenarios: (
-				| PayeeTransactionType
-				| SecurityTransactionType
+				PayeeTransactionType | SecurityTransactionType
 			)[] = ["Transfer", "SecurityTransfer", "SecurityInvestment", "Dividend"],
 			splitScenarios: SplitTransactionType[] = [
 				"Split",

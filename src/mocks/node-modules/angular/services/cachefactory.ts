@@ -13,9 +13,7 @@ function mockCache(): angular.ICacheObject {
 	};
 }
 
-export default class CacheFactoryMockProvider
-	implements Mock<CacheFactoryMock>
-{
+export default class CacheFactoryMockProvider implements Mock<CacheFactoryMock> {
 	private readonly $cacheFactory: CacheFactoryMock;
 
 	public constructor(

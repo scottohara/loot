@@ -4,14 +4,13 @@ export function testNavigableTable({ rows, actions }: OgTableNavigable): void {
 	describe("table navigation", (): void => {
 		let targetRow: number, totalRows: number;
 
-		beforeEach(
-			(): Cypress.Chainable<number> =>
-				cy
-					.get(rows)
-					.then(
-						(tableRows: JQuery<HTMLTableRowElement>): number =>
-							(totalRows = tableRows.length),
-					),
+		beforeEach((): Cypress.Chainable<number> =>
+			cy
+				.get(rows)
+				.then(
+					(tableRows: JQuery<HTMLTableRowElement>): number =>
+						(totalRows = tableRows.length),
+				),
 		);
 
 		describe("forward", (): void => {

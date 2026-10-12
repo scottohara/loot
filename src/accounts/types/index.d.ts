@@ -1,22 +1,10 @@
 import type { Entity } from "~/loot/types";
 
 export type StoredAccountType =
-	| "asset"
-	| "bank"
-	| "cash"
-	| "credit"
-	| "investment"
-	| "liability"
-	| "loan";
+	"asset" | "bank" | "cash" | "credit" | "investment" | "liability" | "loan";
 
 export type DisplayAccountType =
-	| "Asset"
-	| "Bank"
-	| "Cash"
-	| "Credit"
-	| "Investment"
-	| "Liability"
-	| "Loan";
+	"Asset" | "Bank" | "Cash" | "Credit" | "Investment" | "Liability" | "Loan";
 
 export type AccountType = DisplayAccountType | StoredAccountType;
 

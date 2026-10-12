@@ -72,9 +72,8 @@ describe("authenticationModel", (): void => {
 		});
 
 		describe("when authenticated", (): void => {
-			beforeEach(
-				(): SinonStub =>
-					$window.sessionStorage.getItem.returns("authentication key"),
+			beforeEach((): SinonStub =>
+				$window.sessionStorage.getItem.returns("authentication key"),
 			);
 
 			it("should set the default $http Authorization header", (): void => {

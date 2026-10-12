@@ -160,9 +160,8 @@ describe("securityModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 			securityModel
 				.all()
-				.then(
-					(securities: Security[]): Chai.Assertion =>
-						expect(securities).to.equal(expectedResponse),
+				.then((securities: Security[]): Chai.Assertion =>
+					expect(securities).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -193,9 +192,8 @@ describe("securityModel", (): void => {
 				$httpBackend.whenGET(expectedUrl).respond(200, expectedResponse);
 				securityModel
 					.all(true)
-					.then(
-						(securities: Security[]): Chai.Assertion =>
-							expect(securities).to.equal(expectedResponse),
+					.then((securities: Security[]): Chai.Assertion =>
+						expect(securities).to.equal(expectedResponse),
 					);
 				$httpBackend.flush();
 			});
@@ -203,8 +201,8 @@ describe("securityModel", (): void => {
 	});
 
 	describe("allWithBalances", (): void => {
-		beforeEach(
-			(): SinonStub => sinon.stub(securityModel, "all").returns(iPromise),
+		beforeEach((): SinonStub =>
+			sinon.stub(securityModel, "all").returns(iPromise),
 		);
 
 		it("should call securityModel.all(true)", (): void => {
@@ -233,9 +231,8 @@ describe("securityModel", (): void => {
 				.respond(200, lastTransaction);
 			securityModel
 				.findLastTransaction(1, "bank")
-				.then(
-					(transaction: Transaction): Chai.Assertion =>
-						expect(transaction).to.deep.equal(lastTransaction),
+				.then((transaction: Transaction): Chai.Assertion =>
+					expect(transaction).to.deep.equal(lastTransaction),
 				);
 			$httpBackend.flush();
 		});
@@ -259,11 +256,10 @@ describe("securityModel", (): void => {
 				.respond(500, "Forced error", {}, "Internal Server Error");
 			securityModel
 				.findLastTransaction(1, "bank")
-				.catch(
-					(error: unknown): Chai.Assertion =>
-						expect((error as Error).message).to.equal(
-							"500 Internal Server Error: Forced error",
-						),
+				.catch((error: unknown): Chai.Assertion =>
+					expect((error as Error).message).to.equal(
+						"500 Internal Server Error: Forced error",
+					),
 				);
 			$httpBackend.flush();
 		});
@@ -302,9 +298,8 @@ describe("securityModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			securityModel
 				.find(123)
-				.then(
-					(foundSecurity: Security): Chai.Assertion =>
-						expect(foundSecurity).to.equal(expectedResponse),
+				.then((foundSecurity: Security): Chai.Assertion =>
+					expect(foundSecurity).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});

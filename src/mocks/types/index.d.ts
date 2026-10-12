@@ -130,8 +130,7 @@ interface JQueryEventMock extends EventMock {
 }
 
 export interface JQueryKeyEventObjectMock
-	extends KeyboardEventMock,
-		JQueryEventMock {}
+	extends KeyboardEventMock, JQueryEventMock {}
 
 export interface JQueryMouseEventObjectMock extends JQueryEventMock {
 	button?: number;

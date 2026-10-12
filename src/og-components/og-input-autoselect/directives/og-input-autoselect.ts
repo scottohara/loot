@@ -28,9 +28,8 @@ export default class OgInputAutoSelectDirective {
 					iElement.on("focus", select);
 
 					// When the element is destroyed, remove all event handlers
-					iElement.on(
-						"$destroy",
-						(): JQuery<Element> => iElement.off("focus", select),
+					iElement.on("$destroy", (): JQuery<Element> =>
+						iElement.off("focus", select),
 					);
 				},
 			};

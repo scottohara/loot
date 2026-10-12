@@ -15,9 +15,7 @@ function* transactions(count: number): Iterable<BasicTransaction> {
 	}
 }
 
-export default class TransactionBatchMockProvider
-	implements Mock<TransactionBatch>
-{
+export default class TransactionBatchMockProvider implements Mock<TransactionBatch> {
 	private readonly transactionBatch: TransactionBatch;
 
 	// Mock transactionBatch object

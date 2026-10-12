@@ -10,9 +10,7 @@ import type { ScheduledTransferTransaction } from "~/schedules/types";
 import type SchedulesMockProvider from "~/mocks/schedules/providers/schedules";
 import sinon from "sinon";
 
-export default class ScheduleModelMockProvider
-	implements Mock<ScheduleModelMock>
-{
+export default class ScheduleModelMockProvider implements Mock<ScheduleModelMock> {
 	private readonly scheduleModel: ScheduleModelMock;
 
 	public constructor(

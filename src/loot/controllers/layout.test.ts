@@ -283,12 +283,11 @@ describe("LayoutController", (): void => {
 	});
 
 	describe("on search", (): void => {
-		beforeEach(
-			(): SinonStub =>
-				sinon.stub(
-					layoutController,
-					"checkIfSearchCleared" as keyof LayoutController,
-				),
+		beforeEach((): SinonStub =>
+			sinon.stub(
+				layoutController,
+				"checkIfSearchCleared" as keyof LayoutController,
+			),
 		);
 
 		it("should check if the search field was cleared", (): void => {

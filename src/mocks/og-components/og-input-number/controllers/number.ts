@@ -5,9 +5,7 @@ import type {
 import type { Mock } from "~/mocks/types";
 import sinon from "sinon";
 
-export default class OgInputNumberControllerMockProvider
-	implements Mock<OgInputNumberControllerMock>
-{
+export default class OgInputNumberControllerMockProvider implements Mock<OgInputNumberControllerMock> {
 	private readonly ogInputNumberController: OgInputNumberControllerMock;
 
 	// Mock input number controller object

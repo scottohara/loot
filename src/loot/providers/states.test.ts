@@ -270,8 +270,7 @@ describe("lootStatesProvider", (): void => {
 						let resolvedContextModel: AccountModel,
 							resolvedContext: Account,
 							resolvedTransactionBatch:
-								| Promise<TransactionBatch>
-								| TransactionBatch;
+								Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -503,8 +502,7 @@ describe("lootStatesProvider", (): void => {
 						let resolvedContextModel: PayeeModel,
 							resolvedContext: angular.IPromise<Payee>,
 							resolvedTransactionBatch:
-								| Promise<TransactionBatch>
-								| TransactionBatch;
+								Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -544,9 +542,8 @@ describe("lootStatesProvider", (): void => {
 
 						it("should resolve the parent context", (): void => {
 							expect(payeeModel["find"]).to.have.been.calledWith(1);
-							resolvedContext.then(
-								(context: Payee): Chai.Assertion =>
-									expect(context).to.deep.equal(payee),
+							resolvedContext.then((context: Payee): Chai.Assertion =>
+								expect(context).to.deep.equal(payee),
 							);
 						});
 
@@ -673,8 +670,7 @@ describe("lootStatesProvider", (): void => {
 						let resolvedContextModel: CategoryModel,
 							resolvedContext: angular.IPromise<Category>,
 							resolvedTransactionBatch:
-								| Promise<TransactionBatch>
-								| TransactionBatch;
+								Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -717,9 +713,8 @@ describe("lootStatesProvider", (): void => {
 
 						it("should resolve the parent context", (): void => {
 							expect(categoryModel["find"]).to.have.been.calledWith(1);
-							resolvedContext.then(
-								(context: Category): Chai.Assertion =>
-									expect(context).to.deep.equal(category),
+							resolvedContext.then((context: Category): Chai.Assertion =>
+								expect(context).to.deep.equal(category),
 							);
 						});
 
@@ -846,8 +841,7 @@ describe("lootStatesProvider", (): void => {
 						let resolvedContextModel: SecurityModel,
 							resolvedContext: angular.IPromise<Security>,
 							resolvedTransactionBatch:
-								| Promise<TransactionBatch>
-								| TransactionBatch;
+								Promise<TransactionBatch> | TransactionBatch;
 
 						beforeEach((): void => {
 							$state.go(stateName, stateParams);
@@ -890,9 +884,8 @@ describe("lootStatesProvider", (): void => {
 
 						it("should resolve the parent context", (): void => {
 							expect(securityModel["find"]).to.have.been.calledWith(1);
-							resolvedContext.then(
-								(context: Security): Chai.Assertion =>
-									expect(context).to.deep.equal(security),
+							resolvedContext.then((context: Security): Chai.Assertion =>
+								expect(context).to.deep.equal(security),
 							);
 						});
 

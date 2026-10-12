@@ -1,8 +1,7 @@
 const path = require("path"),
-	webpack = require("webpack"),
+	{ defineConfig, ProvidePlugin } = require("webpack"),
 	MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-	HtmlWebpackPlugin = require("html-webpack-plugin"),
-	CopyWebpackPlugin = require("copy-webpack-plugin");
+	HtmlWebpackPlugin = require("html-webpack-plugin");
 
 // Default entry
 const entry = {
@@ -13,6 +12,14 @@ const entry = {
 		path: path.resolve(__dirname, "public"),
 		assetModuleFilename: "[name][ext]",
 		clean: true,
+		copy: [
+			{
+				from: "*.html",
+				context: "./src",
+				globOptions: { ignore: ["index.html"] },
+			},
+			{ from: "robots.txt", context: "./src" },
+		],
 	},
 	// Rule for *.ts processing
 	tsRule = {
@@ -70,26 +77,17 @@ const entry = {
 	 * Exposes a global jQuery object (Bootstrap expects this global to exist)
 	 * window.jQuery is needed to prevent Angular from using jqLite
 	 */
-	providejQuery = new webpack.ProvidePlugin({
+	providejQuery = new ProvidePlugin({
 		$: "jquery",
 		jQuery: "jquery",
 		"window.jQuery": "jquery",
 	}),
 	// Creates index.html with the bundled resources
 	createIndexHtml = new HtmlWebpackPlugin(),
-	// Copies static resources to the build directory
-	copyStaticAssets = new CopyWebpackPlugin({
-		patterns: [
-			{
-				from: "*.html",
-				context: "./src",
-				globOptions: { ignore: ["index.html"] },
-			},
-			{ from: "robots.txt", context: "./src" },
-		],
-	}),
+	// Extracts CSS stylesheets
+	extractCss = new MiniCssExtractPlugin(),
 	// Default config
-	config = {
+	config = defineConfig({
 		mode: "development",
 
 		// Ensure that the context is the directory where the webpack.*.js config file is
@@ -102,9 +100,7 @@ const entry = {
 
 		// Default resolve paths
 		resolve: {
-			alias: {
-				"~": path.resolve(__dirname, "src"),
-			},
+			tsconfig: true,
 			extensions: [".ts", "..."],
 		},
 
@@ -124,11 +120,12 @@ const entry = {
 
 		// Abort on first error
 		bail: true,
-	};
 
-function extractCss(options = undefined) {
-	return new MiniCssExtractPlugin(options);
-}
+		// Show progress
+		infrastructureLogging: {
+			progress: "auto",
+		},
+	});
 
 module.exports = {
 	entry,
@@ -137,8 +134,7 @@ module.exports = {
 	fontRule,
 	iconRule,
 	providejQuery,
-	extractCss,
 	createIndexHtml,
-	copyStaticAssets,
+	extractCss,
 	config,
 };

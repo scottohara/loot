@@ -133,9 +133,8 @@ describe("scheduleModel", (): void => {
 		it("should return a list of all schedules", (): void => {
 			scheduleModel
 				.all()
-				.then(
-					(scheduledTransactions: ScheduledTransaction[]): Chai.Assertion =>
-						expect(scheduledTransactions).to.deep.equal(expectedResponse),
+				.then((scheduledTransactions: ScheduledTransaction[]): Chai.Assertion =>
+					expect(scheduledTransactions).to.deep.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});
@@ -244,9 +243,8 @@ describe("scheduleModel", (): void => {
 		it("should return the schedule", (): void => {
 			scheduleModel
 				.save(createScheduledBasicTransaction({ id: 1 }))
-				.then(
-					(scheduledTransaction: ScheduledTransaction): Chai.Assertion =>
-						expect(scheduledTransaction).to.equal(expectedResponse),
+				.then((scheduledTransaction: ScheduledTransaction): Chai.Assertion =>
+					expect(scheduledTransaction).to.equal(expectedResponse),
 				);
 			$httpBackend.flush();
 		});

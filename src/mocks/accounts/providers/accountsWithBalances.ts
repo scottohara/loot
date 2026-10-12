@@ -2,9 +2,7 @@ import type { Accounts } from "~/accounts/types";
 import type { Mock } from "~/mocks/types";
 import createAccount from "~/mocks/accounts/factories";
 
-export default class AccountsWithBalancesMockProvider
-	implements Mock<Accounts>
-{
+export default class AccountsWithBalancesMockProvider implements Mock<Accounts> {
 	// Mock accounts object
 	public constructor(
 		private readonly accounts: Accounts = {

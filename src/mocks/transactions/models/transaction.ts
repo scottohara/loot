@@ -15,9 +15,7 @@ import type { TransactionModelMock } from "~/mocks/transactions/types";
 import sinon from "sinon";
 import { startOfDay } from "date-fns";
 
-export default class TransactionModelMockProvider
-	implements Mock<TransactionModelMock>
-{
+export default class TransactionModelMockProvider implements Mock<TransactionModelMock> {
 	private readonly transactionModel: TransactionModelMock;
 
 	public constructor(

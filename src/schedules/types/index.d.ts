@@ -8,12 +8,7 @@ import type {
 } from "~/transactions/types";
 
 export type ScheduleFrequency =
-	| "Bimonthly"
-	| "Fortnightly"
-	| "Monthly"
-	| "Quarterly"
-	| "Weekly"
-	| "Yearly";
+	"Bimonthly" | "Fortnightly" | "Monthly" | "Quarterly" | "Weekly" | "Yearly";
 
 export interface Schedule {
 	next_due_date: Date | string;

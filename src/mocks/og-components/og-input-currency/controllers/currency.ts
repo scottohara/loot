@@ -6,9 +6,7 @@ import type { Mock } from "~/mocks/types";
 import type OgInputCurrencyController from "~/og-components/og-input-currency/controllers/currency";
 import sinon from "sinon";
 
-export default class OgInputCurrencyControllerMockProvider
-	implements Mock<OgInputCurrencyControllerMock>
-{
+export default class OgInputCurrencyControllerMockProvider implements Mock<OgInputCurrencyControllerMock> {
 	private readonly ogInputCurrencyController: OgInputCurrencyControllerMock;
 
 	// Mock input currency controller object

@@ -1,4 +1,3 @@
-Cypress.Commands.add(
-	"createSecurities",
-	(): Cypress.Chainable => cy.task("createData", "securities"),
+Cypress.Commands.add("createSecurities", (): Cypress.Chainable =>
+	cy.task("createData", "securities"),
 );

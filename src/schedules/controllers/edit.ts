@@ -132,8 +132,7 @@ export default class ScheduleEditController {
 				if (
 					newValue !== oldValue &&
 					((this.transaction as SplitTransaction).subtransactions as
-						| SplitTransactionChild[]
-						| undefined)
+						SplitTransactionChild[] | undefined)
 				) {
 					this.totalAllocated = (
 						this.transaction as SplitTransaction
@@ -369,8 +368,7 @@ export default class ScheduleEditController {
 						if (
 							undefined ===
 							((transaction as SplitTransaction).subtransactions as
-								| SplitTransactionChild[]
-								| undefined)
+								SplitTransactionChild[] | undefined)
 						) {
 							(transaction as SplitTransaction).subtransactions = [
 								{
@@ -500,8 +498,7 @@ export default class ScheduleEditController {
 			null !== (this.transaction as TransferrableTransaction).account &&
 			undefined !==
 				((this.transaction as TransferrableTransaction).account as
-					| Account
-					| undefined) &&
+					Account | undefined) &&
 			undefined !== (this.transaction.primary_account as Account | undefined) &&
 			this.transaction.primary_account.id ===
 				((this.transaction as TransferrableTransaction).account as Account).id

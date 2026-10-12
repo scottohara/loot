@@ -10,9 +10,7 @@ import type { CategoryModelMock } from "~/mocks/categories/types";
 import type { Mock } from "~/mocks/types";
 import type QMockProvider from "~/mocks/node-modules/angular/services/q";
 
-export default class CategoryModelMockProvider
-	implements Mock<CategoryModelMock>
-{
+export default class CategoryModelMockProvider implements Mock<CategoryModelMock> {
 	private readonly categoryModel: CategoryModelMock;
 
 	public constructor(

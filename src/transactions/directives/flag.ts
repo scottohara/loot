@@ -69,9 +69,8 @@ export default class TransactionFlagDirective {
 					iElement.on("click", scope.clickHandler);
 
 					// When the element is destroyed, remove all event handlers
-					iElement.on(
-						"$destroy",
-						(): JQuery<Element> => iElement.off("click", scope.clickHandler),
+					iElement.on("$destroy", (): JQuery<Element> =>
+						iElement.off("click", scope.clickHandler),
 					);
 				},
 			};
