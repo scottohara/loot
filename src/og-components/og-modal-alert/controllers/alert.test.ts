@@ -41,9 +41,7 @@ describe("OgModalAlertController", (): void => {
 
 	it("should make the passed alert available to the view", (): void => {
 		expect(ogModalAlertController.alert.message).to.equal(alert.message);
-		expect(ogModalAlertController.alert.closeButtonStyle as string).to.equal(
-			"primary",
-		);
+		expect(ogModalAlertController.alert.closeButtonStyle).to.equal("primary");
 	});
 
 	describe("closeModal", (): void => {

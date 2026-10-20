@@ -1,5 +1,6 @@
 import type {
 	CacheFactoryMock,
+	CacheMock,
 	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import type {
@@ -18,7 +19,7 @@ describe("categoryModel", (): void => {
 	let categoryModel: CategoryModel,
 		$httpBackend: angular.IHttpBackendService,
 		$http: angular.IHttpService,
-		$cache: angular.ICacheObject,
+		$cache: CacheMock,
 		$window: WindowMock,
 		ogLruCache: OgLruCacheMock,
 		category: Category,
@@ -195,7 +196,11 @@ describe("categoryModel", (): void => {
 		const expectedUrl = /categories\/123/v,
 			expectedResponse = "category details";
 
-		beforeEach((): SinonStub => sinon.stub(categoryModel, "addRecent"));
+		let addRecent: SinonStub;
+
+		beforeEach(
+			(): SinonStub => (addRecent = sinon.stub(categoryModel, "addRecent")),
+		);
 
 		it("should dispatch a GET request to /categories/{id}", (): void => {
 			$httpBackend.expectGET(expectedUrl).respond(200);
@@ -215,9 +220,7 @@ describe("categoryModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			categoryModel.find(123);
 			$httpBackend.flush();
-			expect(categoryModel["addRecent"]).to.have.been.calledWith(
-				expectedResponse,
-			);
+			expect(addRecent).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the category", (): void => {
@@ -235,8 +238,10 @@ describe("categoryModel", (): void => {
 		const expectedPostUrl = /categories$/v,
 			expectedPatchUrl = /categories\/1$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(categoryModel, "flush");
+			flush = sinon.stub(categoryModel, "flush");
 			$httpBackend.whenPOST(expectedPostUrl, category).respond(200);
 			$httpBackend.whenPATCH(expectedPatchUrl, category).respond(200);
 		});
@@ -244,7 +249,7 @@ describe("categoryModel", (): void => {
 		it("should flush the category cache", (): void => {
 			$httpBackend.expectPATCH(expectedPatchUrl);
 			categoryModel.save(category);
-			expect(categoryModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -263,36 +268,40 @@ describe("categoryModel", (): void => {
 	});
 
 	describe("destroy", (): void => {
+		let flush: SinonStub, removeRecent: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(categoryModel, "flush");
-			sinon.stub(categoryModel, "removeRecent");
+			flush = sinon.stub(categoryModel, "flush");
+			removeRecent = sinon.stub(categoryModel, "removeRecent");
 			$httpBackend.expectDELETE(/categories\/1$/v).respond(200);
 			categoryModel.destroy(category);
 			$httpBackend.flush();
 		});
 
 		it("should flush the category cache", (): Chai.Assertion =>
-			expect(categoryModel["flush"]).to.have.been.called);
+			expect(flush).to.have.been.called);
 
 		it("should dispatch a DELETE request to /categories/{id}", (): null =>
 			null);
 
 		it("should remove the category from the recent list", (): Chai.Assertion =>
-			expect(categoryModel["removeRecent"]).to.have.been.calledWith(1));
+			expect(removeRecent).to.have.been.calledWith(1));
 	});
 
 	describe("toggleFavourite", (): void => {
 		const expectedUrl = /categories\/1\/favourite$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(categoryModel, "flush");
+			flush = sinon.stub(categoryModel, "flush");
 			$httpBackend.whenDELETE(expectedUrl).respond(200);
 			$httpBackend.whenPUT(expectedUrl).respond(200);
 		});
 
 		it("should flush the category cache", (): void => {
 			categoryModel.toggleFavourite(category);
-			expect(categoryModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -321,12 +330,12 @@ describe("categoryModel", (): void => {
 	describe("flush", (): void => {
 		it("should remove the specified category from the category cache when an id is provided", (): void => {
 			categoryModel.flush(1);
-			expect($cache["remove"]).to.have.been.calledWith("/categories/1");
+			expect($cache.remove).to.have.been.calledWith("/categories/1");
 		});
 
 		it("should flush the category cache when an id is not provided", (): void => {
 			categoryModel.flush();
-			expect($cache["removeAll"]).to.have.been.called;
+			expect($cache.removeAll).to.have.been.called;
 		});
 	});
 

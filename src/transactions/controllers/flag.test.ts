@@ -57,15 +57,11 @@ describe("TransactionFlagController", (): void => {
 		transactionFlagController = controllerTest(
 			"TransactionFlagController",
 		) as TransactionFlagController;
-		expect(transactionFlagController.flagType as string).to.equal(
-			transaction.flag_type,
-		);
+		expect(transactionFlagController.flagType).to.equal(transaction.flag_type);
 	});
 
 	it("should make the passed transaction's flag memo available to the view", (): Chai.Assertion =>
-		expect(transactionFlagController.flag as string).to.equal(
-			transaction.flag,
-		));
+		expect(transactionFlagController.flag).to.equal(transaction.flag));
 
 	it("should default the flag type when transaction doesn't have a flag", (): void => {
 		transaction.flag_type = undefined;
@@ -98,8 +94,7 @@ describe("TransactionFlagController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionFlagController.errorMessage = "error message";
 			transactionFlagController.save();
-			expect(transactionFlagController.errorMessage as string | null).to.be
-				.null;
+			expect(transactionFlagController.errorMessage).to.be.null;
 		});
 
 		it("should flag the transaction", (): void => {
@@ -122,9 +117,7 @@ describe("TransactionFlagController", (): void => {
 		it("should display an error message when the flag save is unsuccessful", (): void => {
 			transactionFlagController["transaction"].id = -1;
 			transactionFlagController.save();
-			expect(transactionFlagController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(transactionFlagController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 
@@ -132,8 +125,7 @@ describe("TransactionFlagController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionFlagController.errorMessage = "error message";
 			transactionFlagController.deleteFlag();
-			expect(transactionFlagController.errorMessage as string | null).to.be
-				.null;
+			expect(transactionFlagController.errorMessage).to.be.null;
 		});
 
 		it("should unflag the transaction", (): void => {
@@ -155,9 +147,7 @@ describe("TransactionFlagController", (): void => {
 		it("should display an error message when the flag delete is unsuccessful", (): void => {
 			transactionFlagController["transaction"].id = -1;
 			transactionFlagController.deleteFlag();
-			expect(transactionFlagController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(transactionFlagController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

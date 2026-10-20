@@ -40,12 +40,13 @@ export default class ScheduleIndexController {
 			editAction: (index: number): void => this.editSchedule(index),
 			insertAction: (): void => this.editSchedule(),
 			deleteAction: (index: number): void => this.deleteSchedule(index),
-			focusAction: (index: number): angular.IPromise<void> =>
+			focusAction: (index: number): void => {
 				$state
 					.go(`${$state.includes("**.schedule") ? "^" : ""}.schedule`, {
 						id: this.schedules[index].id,
 					})
-					.catch(this.showError),
+					.catch(this.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -100,7 +101,7 @@ export default class ScheduleIndexController {
 		): number {
 			let x: Date | number | string, y: Date | number | string;
 
-			if (isEqual(a.next_due_date as Date, b.next_due_date as Date)) {
+			if (isEqual(a.next_due_date, b.next_due_date)) {
 				x = Number(a.id);
 				y = Number(b.id);
 			} else {
@@ -193,7 +194,9 @@ export default class ScheduleIndexController {
 					);
 				},
 			)
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 
@@ -216,7 +219,9 @@ export default class ScheduleIndexController {
 				this.schedules.splice(index, 1);
 				this.$state.go("root.schedules").catch(this.showError);
 			})
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 

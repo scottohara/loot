@@ -111,22 +111,20 @@ describe("CategoryIndexController", (): void => {
 	});
 
 	it("should ensure the category is focussed when the category id state param changes", (): void => {
-		const toParams: { id: string } = { id: "1" };
+		const toParams: { id: string } = { id: "1" },
+			focusCategory: SinonStub = sinon.stub(
+				categoryIndexController,
+				"focusCategory" as keyof CategoryIndexController,
+			);
 
-		sinon.stub(
-			categoryIndexController,
-			"focusCategory" as keyof CategoryIndexController,
-		);
 		$transitions.onSuccess.firstCall.args[1]({
 			params: sinon.stub().withArgs("to").returns(toParams),
 		});
-		expect(categoryIndexController["focusCategory"]).to.have.been.calledWith(
-			Number(toParams.id),
-		);
+		expect(focusCategory).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editCategory", (): void => {
-		let category: Category;
+		let category: Category, focusCategory: SinonStub;
 
 		// Helper function to resort the categories array by id
 		function byId(a: Category, b: Category): number {
@@ -134,7 +132,7 @@ describe("CategoryIndexController", (): void => {
 		}
 
 		beforeEach((): void => {
-			sinon.stub(
+			focusCategory = sinon.stub(
 				categoryIndexController,
 				"focusCategory" as keyof CategoryIndexController,
 			);
@@ -153,7 +151,7 @@ describe("CategoryIndexController", (): void => {
 				expect($uibModal.open).to.have.been.called;
 				expect(categoryModel.addRecent).to.have.been.calledWith(category);
 				expect(
-					($uibModal.resolves as UibModalMockResolves).category as Category,
+					($uibModal.resolves as UibModalMockResolves).category,
 				).to.deep.equal(category);
 			});
 
@@ -273,9 +271,9 @@ describe("CategoryIndexController", (): void => {
 
 			it("should add the new category to the list of categories when the modal is closed", (): void => {
 				$uibModal.close(category);
-				expect(
-					categoryIndexController.categories.pop() as Category,
-				).to.deep.equal(category);
+				expect(categoryIndexController.categories.pop()).to.deep.equal(
+					category,
+				);
 			});
 
 			it("should add the new category to the recent list", (): void => {
@@ -329,17 +327,15 @@ describe("CategoryIndexController", (): void => {
 
 			categoryIndexController["editCategory"]();
 			$uibModal.close(category);
-			expect(
-				categoryIndexController.categories.pop() as Category,
-			).to.deep.equal(outflowCategoryWithHighestName);
+			expect(categoryIndexController.categories.pop()).to.deep.equal(
+				outflowCategoryWithHighestName,
+			);
 		});
 
 		it("should focus the category when the modal is closed", (): void => {
 			categoryIndexController["editCategory"]();
 			$uibModal.close(category);
-			expect(categoryIndexController["focusCategory"]).to.have.been.calledWith(
-				category.id,
-			);
+			expect(focusCategory).to.have.been.calledWith(category.id);
 		});
 
 		it("should not change the categories list when the modal is dismissed", (): void => {
@@ -398,7 +394,7 @@ describe("CategoryIndexController", (): void => {
 			categoryIndexController["deleteCategory"](3);
 			expect($uibModal.open).to.have.been.called;
 			expect(
-				($uibModal.resolves as UibModalMockResolves).category as Category,
+				($uibModal.resolves as UibModalMockResolves).category,
 			).to.deep.equal(category);
 		});
 
@@ -509,40 +505,37 @@ describe("CategoryIndexController", (): void => {
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the category", (): void => {
-			sinon.stub(
+			const editCategory: SinonStub = sinon.stub(
 				categoryIndexController,
 				"editCategory" as keyof CategoryIndexController,
 			);
+
 			categoryIndexController.tableActions.editAction(1);
-			expect(
-				categoryIndexController["editCategory"],
-			).to.have.been.calledWithExactly(1);
+			expect(editCategory).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a category", (): void => {
-			sinon.stub(
+			const editCategory: SinonStub = sinon.stub(
 				categoryIndexController,
 				"editCategory" as keyof CategoryIndexController,
 			);
+
 			categoryIndexController.tableActions.insertAction();
-			expect(
-				categoryIndexController["editCategory"],
-			).to.have.been.calledWithExactly();
+			expect(editCategory).to.have.been.calledWithExactly();
 		});
 	});
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a category", (): void => {
-			sinon.stub(
+			const deleteCategory: SinonStub = sinon.stub(
 				categoryIndexController,
 				"deleteCategory" as keyof CategoryIndexController,
 			);
+
 			categoryIndexController.tableActions.deleteAction(1);
-			expect(
-				categoryIndexController["deleteCategory"],
-			).to.have.been.calledWithExactly(1);
+			expect(deleteCategory).to.have.been.calledWithExactly(1);
 		});
 	});
 

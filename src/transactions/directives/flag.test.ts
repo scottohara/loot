@@ -134,7 +134,7 @@ describe("transactionFlag", (): void => {
 		it("should show the flag modal for the transaction", (): void => {
 			expect($uibModal.open).to.have.been.called;
 			expect(
-				($uibModal.resolves as UibModalMockResolves).transaction as Transaction,
+				($uibModal.resolves as UibModalMockResolves).transaction,
 			).to.deep.equal(transaction);
 		});
 

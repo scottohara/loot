@@ -104,25 +104,23 @@ describe("PayeeIndexController", (): void => {
 	});
 
 	it("should ensure the payee is focussed when the payee id state param changes", (): void => {
-		const toParams: { id: string } = { id: "1" };
+		const toParams: { id: string } = { id: "1" },
+			focusPayee: SinonStub = sinon.stub(
+				payeeIndexController,
+				"focusPayee" as keyof PayeeIndexController,
+			);
 
-		sinon.stub(
-			payeeIndexController,
-			"focusPayee" as keyof PayeeIndexController,
-		);
 		$transitions.onSuccess.firstCall.args[1]({
 			params: sinon.stub().withArgs("to").returns(toParams),
 		});
-		expect(payeeIndexController["focusPayee"]).to.have.been.calledWith(
-			Number(toParams.id),
-		);
+		expect(focusPayee).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editPayee", (): void => {
-		let payee: Payee;
+		let payee: Payee, focusPayee: SinonStub;
 
 		beforeEach((): void => {
-			sinon.stub(
+			focusPayee = sinon.stub(
 				payeeIndexController,
 				"focusPayee" as keyof PayeeIndexController,
 			);
@@ -141,7 +139,7 @@ describe("PayeeIndexController", (): void => {
 				expect($uibModal.open).to.have.been.called;
 				expect(payeeModel.addRecent).to.have.been.calledWith(payee);
 				expect(
-					($uibModal.resolves as UibModalMockResolves).payee as Payee,
+					($uibModal.resolves as UibModalMockResolves).payee,
 				).to.deep.equal(payee);
 			});
 
@@ -170,7 +168,7 @@ describe("PayeeIndexController", (): void => {
 
 			it("should add the new payee to the list of payees when the modal is closed", (): void => {
 				$uibModal.close(payee);
-				expect(payeeIndexController.payees.pop() as Payee).to.deep.equal(payee);
+				expect(payeeIndexController.payees.pop()).to.deep.equal(payee);
 			});
 
 			it("should add the new payee to the recent list", (): void => {
@@ -186,7 +184,7 @@ describe("PayeeIndexController", (): void => {
 
 			payeeIndexController["editPayee"]();
 			$uibModal.close(payee);
-			expect(payeeIndexController.payees.pop() as Payee).to.deep.equal(
+			expect(payeeIndexController.payees.pop()).to.deep.equal(
 				payeeWithHighestName,
 			);
 		});
@@ -194,9 +192,7 @@ describe("PayeeIndexController", (): void => {
 		it("should focus the payee when the modal is closed", (): void => {
 			payeeIndexController["editPayee"]();
 			$uibModal.close(payee);
-			expect(payeeIndexController["focusPayee"]).to.have.been.calledWith(
-				payee.id,
-			);
+			expect(focusPayee).to.have.been.calledWith(payee.id);
 		});
 
 		it("should not change the payees list when the modal is dismissed", (): void => {
@@ -249,9 +245,9 @@ describe("PayeeIndexController", (): void => {
 		it("should show the delete payee modal if the payee has no transactions", (): void => {
 			payeeIndexController["deletePayee"](1);
 			expect($uibModal.open).to.have.been.called;
-			expect(
-				($uibModal.resolves as UibModalMockResolves).payee as Payee,
-			).to.deep.equal(payee);
+			expect(($uibModal.resolves as UibModalMockResolves).payee).to.deep.equal(
+				payee,
+			);
 		});
 
 		it("should remove the payee from the payees list when the modal is closed", (): void => {
@@ -311,40 +307,37 @@ describe("PayeeIndexController", (): void => {
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the payee", (): void => {
-			sinon.stub(
+			const editPayee: SinonStub = sinon.stub(
 				payeeIndexController,
 				"editPayee" as keyof PayeeIndexController,
 			);
+
 			payeeIndexController.tableActions.editAction(1);
-			expect(payeeIndexController["editPayee"]).to.have.been.calledWithExactly(
-				1,
-			);
+			expect(editPayee).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a payee", (): void => {
-			sinon.stub(
+			const editPayee: SinonStub = sinon.stub(
 				payeeIndexController,
 				"editPayee" as keyof PayeeIndexController,
 			);
+
 			payeeIndexController.tableActions.insertAction();
-			expect(
-				payeeIndexController["editPayee"],
-			).to.have.been.calledWithExactly();
+			expect(editPayee).to.have.been.calledWithExactly();
 		});
 	});
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a payee", (): void => {
-			sinon.stub(
+			const deletePayee: SinonStub = sinon.stub(
 				payeeIndexController,
 				"deletePayee" as keyof PayeeIndexController,
 			);
+
 			payeeIndexController.tableActions.deleteAction(1);
-			expect(
-				payeeIndexController["deletePayee"],
-			).to.have.been.calledWithExactly(1);
+			expect(deletePayee).to.have.been.calledWithExactly(1);
 		});
 	});
 

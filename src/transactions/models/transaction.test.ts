@@ -1,5 +1,4 @@
 import type {
-	BasicTransaction,
 	SecurityTransaction,
 	SplitTransaction,
 	SplitTransactionChild,
@@ -15,11 +14,13 @@ import {
 	createSubtransferTransaction,
 } from "~/mocks/transactions/factories";
 import { lightFormat, parseISO, startOfDay } from "date-fns";
+import sinon, { type SinonStub } from "sinon";
 import type { AccountModelMock } from "~/mocks/accounts/types";
 import type { CategoryModelMock } from "~/mocks/categories/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { Payee } from "~/payees/types";
 import type PayeeModel from "~/payees/models/payee";
+import type { PayeeModelMock } from "~/mocks/payees/types";
 import type { SecurityModelMock } from "~/mocks/securities/types";
 import type TransactionModel from "~/transactions/models/transaction";
 import type { WindowMock } from "~/mocks/node-modules/angular/types";
@@ -27,7 +28,6 @@ import angular from "angular";
 import createAccount from "~/mocks/accounts/factories";
 import createPayee from "~/mocks/payees/factories";
 import createSecurity from "~/mocks/securities/factories";
-import sinon from "sinon";
 
 describe("transactionModel", (): void => {
 	let transactionModel: TransactionModel,
@@ -35,6 +35,7 @@ describe("transactionModel", (): void => {
 		$window: WindowMock,
 		accountModel: AccountModelMock,
 		payeeModel: PayeeModel,
+		payeeModelMock: PayeeModelMock,
 		categoryModel: CategoryModelMock,
 		securityModel: SecurityModelMock;
 
@@ -73,6 +74,7 @@ describe("transactionModel", (): void => {
 
 				accountModel = _accountModel_;
 				payeeModel = _payeeModel_;
+				payeeModelMock = _payeeModel_ as unknown as PayeeModelMock;
 				categoryModel = _categoryModel_;
 				securityModel = _securityModel_;
 			},
@@ -108,8 +110,8 @@ describe("transactionModel", (): void => {
 				}),
 			);
 
-			expect(transaction.transaction_date as Date).to.be.a("date");
-			expect(transaction.transaction_date as Date).to.deep.equal(
+			expect(transaction.transaction_date).to.be.a("date");
+			expect(transaction.transaction_date).to.deep.equal(
 				startOfDay(new Date()),
 			);
 		});
@@ -129,8 +131,8 @@ describe("transactionModel", (): void => {
 				createBasicTransaction({ transaction_date: startOfDay(new Date()) }),
 			);
 
-			expect(transaction.transaction_date as string).to.be.a("string");
-			expect(transaction.transaction_date as string).to.deep.equal(
+			expect(transaction.transaction_date).to.be.a("string");
+			expect(transaction.transaction_date).to.deep.equal(
 				lightFormat(new Date(), "yyyy-MM-dd"),
 			);
 		});
@@ -150,11 +152,13 @@ describe("transactionModel", (): void => {
 			openingBalance: 0,
 			atEnd: false,
 		};
-		let fromDate: Date;
+		let fromDate: Date, parse: SinonStub;
 
 		beforeEach((): void => {
 			fromDate = new Date();
-			transactionModel["parse"] = sinon.stub().returnsArg(0);
+			parse = sinon
+				.stub(transactionModel, "parse" as keyof TransactionModel)
+				.returnsArg(0);
 			$httpBackend
 				.expectGET(
 					new RegExp(
@@ -173,7 +177,7 @@ describe("transactionModel", (): void => {
 		it("should parse each transaction returned", (): void => {
 			transactionModel.all("context", fromDate, "prev", true);
 			$httpBackend.flush();
-			expect(transactionModel["parse"]).to.have.been.calledTwice;
+			expect(parse).to.have.been.calledTwice;
 		});
 
 		it("should return a list of transactions", (): void => {
@@ -192,9 +196,12 @@ describe("transactionModel", (): void => {
 			openingBalance: 0,
 			atEnd: false,
 		};
+		let parse: SinonStub;
 
 		beforeEach((): void => {
-			transactionModel["parse"] = sinon.stub().returnsArg(0);
+			parse = sinon
+				.stub(transactionModel, "parse" as keyof TransactionModel)
+				.returnsArg(0);
 			$httpBackend
 				.expectGET(/transactions\?direction=prev&query=query/v)
 				.respond(200, expectedResponse);
@@ -208,7 +215,7 @@ describe("transactionModel", (): void => {
 		it("should parse each transaction returned", (): void => {
 			transactionModel.query("query", null, "prev");
 			$httpBackend.flush();
-			expect(transactionModel["parse"]).to.have.been.calledTwice;
+			expect(parse).to.have.been.calledTwice;
 		});
 
 		it("should return a list of transactions", (): void => {
@@ -247,9 +254,12 @@ describe("transactionModel", (): void => {
 
 	describe("find", (): void => {
 		const expectedResponse = "transaction";
+		let parse: SinonStub;
 
 		beforeEach((): void => {
-			transactionModel["parse"] = sinon.stub().returnsArg(0);
+			parse = sinon
+				.stub(transactionModel, "parse" as keyof TransactionModel)
+				.returnsArg(0);
 			$httpBackend
 				.expectGET(/transactions\/123/v)
 				.respond(200, expectedResponse);
@@ -263,9 +273,7 @@ describe("transactionModel", (): void => {
 		it("should parse the transaction", (): void => {
 			transactionModel.find(123);
 			$httpBackend.flush();
-			expect(transactionModel["parse"]).to.have.been.calledWith(
-				expectedResponse,
-			);
+			expect(parse).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the transaction", (): void => {
@@ -282,12 +290,22 @@ describe("transactionModel", (): void => {
 		const expectedResponse = "transaction",
 			expectedPostUrl = /transactions$/v,
 			expectedPatchUrl = /transactions\/1$/v;
-		let transaction: Transaction;
+		let transaction: Transaction,
+			invalidateCaches: SinonStub,
+			stringify: SinonStub,
+			parse: SinonStub;
 
 		beforeEach((): void => {
-			transactionModel["invalidateCaches"] = sinon.stub();
-			transactionModel["stringify"] = sinon.stub().returnsArg(0);
-			transactionModel["parse"] = sinon.stub().returnsArg(0);
+			invalidateCaches = sinon.stub(
+				transactionModel,
+				"invalidateCaches" as keyof TransactionModel,
+			);
+			stringify = sinon
+				.stub(transactionModel, "stringify" as keyof TransactionModel)
+				.returnsArg(0);
+			parse = sinon
+				.stub(transactionModel, "parse" as keyof TransactionModel)
+				.returnsArg(0);
 			$httpBackend.whenPOST(expectedPostUrl).respond(200, expectedResponse);
 			$httpBackend.whenPATCH(expectedPatchUrl).respond(200, expectedResponse);
 			transaction = createBasicTransaction({ id: 1 });
@@ -295,15 +313,13 @@ describe("transactionModel", (): void => {
 
 		it("should invalidate the associated $http caches", (): void => {
 			transactionModel.save(transaction);
-			expect(transactionModel["invalidateCaches"]).to.have.been.called;
+			expect(invalidateCaches).to.have.been.called;
 			$httpBackend.flush();
 		});
 
 		it("should stringify the transaction", (): void => {
 			transactionModel.save(transaction);
-			expect(transactionModel["stringify"]).to.have.been.calledWith(
-				transaction,
-			);
+			expect(stringify).to.have.been.calledWith(transaction);
 			$httpBackend.flush();
 		});
 
@@ -324,7 +340,7 @@ describe("transactionModel", (): void => {
 			transaction.transaction_date = parseISO("2000-01-01");
 			transactionModel.save(transaction);
 			$httpBackend.flush();
-			expect(transactionModel.lastTransactionDate as Date).to.deep.equal(
+			expect(transactionModel.lastTransactionDate).to.deep.equal(
 				transaction.transaction_date,
 			);
 		});
@@ -332,9 +348,7 @@ describe("transactionModel", (): void => {
 		it("should parse the transaction", (): void => {
 			transactionModel.save(transaction);
 			$httpBackend.flush();
-			expect(transactionModel["parse"]).to.have.been.calledWith(
-				expectedResponse,
-			);
+			expect(parse).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the transaction", (): void => {
@@ -349,17 +363,20 @@ describe("transactionModel", (): void => {
 
 	describe("destroy", (): void => {
 		const expectedUrl = /transactions\/1$/v;
-		let transaction: Transaction;
+		let transaction: Transaction, invalidateCaches: SinonStub;
 
 		beforeEach((): void => {
-			transactionModel["invalidateCaches"] = sinon.stub();
+			invalidateCaches = sinon.stub(
+				transactionModel,
+				"invalidateCaches" as keyof TransactionModel,
+			);
 			$httpBackend.whenDELETE(expectedUrl).respond(200);
 			transaction = createBasicTransaction({ id: 1 });
 		});
 
 		it("should invalidate the associated $http caches", (): void => {
 			transactionModel.destroy(transaction);
-			expect(transactionModel["invalidateCaches"]).to.have.been.called;
+			expect(invalidateCaches).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -371,73 +388,82 @@ describe("transactionModel", (): void => {
 	});
 
 	describe("invalidateCaches", (): void => {
-		const transaction: Transaction = createBasicTransaction() as Transaction;
+		const transaction: Transaction = createBasicTransaction();
+		let invalidateCache: SinonStub;
 
 		beforeEach((): void => {
-			(transaction as TransferrableTransaction).account = createAccount();
-			(transaction as SecurityTransaction).security = createSecurity();
-			(transaction as SplitTransaction).subtransactions = [
+			(transaction as unknown as TransferrableTransaction).account =
+				createAccount();
+			(transaction as unknown as SecurityTransaction).security =
+				createSecurity();
+			(transaction as unknown as SplitTransaction).subtransactions = [
 				createSubtransaction(),
 				createSubtransferTransaction(),
 			];
-			transactionModel["invalidateCache"] = sinon.stub();
+			invalidateCache = sinon.stub(
+				transactionModel,
+				"invalidateCache" as keyof TransactionModel,
+			);
 			transactionModel["invalidateCaches"](transaction);
 		});
 
 		it("should invalidate the primary account from the account cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				accountModel,
 				transaction.primary_account,
 			));
 
 		it("should invalidate the payee from the payee cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				payeeModel,
-				(transaction as BasicTransaction).payee,
+				transaction.payee,
 			));
 
 		it("should invalidate the category from the category cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				categoryModel,
 				transaction.category,
 			));
 
 		it("should invalidate the subcategory from the category cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				categoryModel,
-				(transaction as BasicTransaction).subcategory,
+				transaction.subcategory,
 			));
 
 		it("should invalidate the account from the account cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				accountModel,
-				(transaction as TransferrableTransaction).account,
+				(transaction as unknown as TransferrableTransaction).account,
 			));
 
 		it("should invalidate the security from the security cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				securityModel,
-				(transaction as SecurityTransaction).security,
+				(transaction as unknown as SecurityTransaction).security,
 			));
 
 		it("should invalidate any subtransaction categories from the category cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				categoryModel,
-				(transaction as SplitTransaction).subtransactions[0].category,
+				(transaction as unknown as SplitTransaction).subtransactions[0]
+					.category,
 			));
 
 		it("should invalidate any subtransaction subcategories from the category cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				categoryModel,
-				((transaction as SplitTransaction).subtransactions[0] as Subtransaction)
-					.subcategory,
+				(
+					(transaction as unknown as SplitTransaction)
+						.subtransactions[0] as Subtransaction
+				).subcategory,
 			));
 
 		it("should invalidate any subtransfer accounts from the account cache", (): Chai.Assertion =>
-			expect(transactionModel["invalidateCache"]).to.have.been.calledWith(
+			expect(invalidateCache).to.have.been.calledWith(
 				accountModel,
 				(
-					(transaction as SplitTransaction)
+					(transaction as unknown as SplitTransaction)
 						.subtransactions[1] as SubtransferTransaction
 				).account,
 			));
@@ -446,22 +472,22 @@ describe("transactionModel", (): void => {
 	describe("invalidateCache", (): void => {
 		it("should do nothing if the item is an empty string", (): void => {
 			transactionModel["invalidateCache"](payeeModel, "");
-			expect(payeeModel["flush"]).to.not.have.been.called;
+			expect(payeeModelMock.flush).to.not.have.been.called;
 		});
 
 		it("should flush the $http cache if the item is a non-empty string", (): void => {
 			transactionModel["invalidateCache"](payeeModel, "test");
-			expect(payeeModel["flush"]).to.have.been.calledWithExactly();
+			expect(payeeModelMock.flush).to.have.been.calledWithExactly();
 		});
 
 		it("should do nothing if the item is undefined", (): void => {
 			transactionModel["invalidateCache"](payeeModel, {} as Payee);
-			expect(payeeModel["flush"]).to.not.have.been.called;
+			expect(payeeModelMock.flush).to.not.have.been.called;
 		});
 
 		it("should do nothing if the item is null", (): void => {
 			transactionModel["invalidateCache"](payeeModel, null);
-			expect(payeeModel["flush"]).to.not.have.been.called;
+			expect(payeeModelMock.flush).to.not.have.been.called;
 		});
 
 		it("should do nothing if the item has no id", (): void => {
@@ -469,12 +495,12 @@ describe("transactionModel", (): void => {
 
 			delete payee.id;
 			transactionModel["invalidateCache"](payeeModel, payee);
-			expect(payeeModel["flush"]).to.not.have.been.called;
+			expect(payeeModelMock.flush).to.not.have.been.called;
 		});
 
 		it("should remove the item from the $http cache when the item has an id", (): void => {
 			transactionModel["invalidateCache"](payeeModel, createPayee({ id: 1 }));
-			expect(payeeModel["flush"]).to.have.been.calledWith(1);
+			expect(payeeModelMock.flush).to.have.been.calledWith(1);
 		});
 	});
 
@@ -564,7 +590,7 @@ describe("transactionModel", (): void => {
 
 	describe("lastTransactionDate", (): void => {
 		it("should return the last used transaction date", (): Chai.Assertion =>
-			expect(transactionModel.lastTransactionDate as Date).to.deep.equal(
+			expect(transactionModel.lastTransactionDate).to.deep.equal(
 				startOfDay(new Date()),
 			));
 	});

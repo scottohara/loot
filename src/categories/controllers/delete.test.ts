@@ -52,7 +52,7 @@ describe("CategoryDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			categoryDeleteController.errorMessage = "error message";
 			categoryDeleteController.deleteCategory();
-			expect(categoryDeleteController.errorMessage as string | null).to.be.null;
+			expect(categoryDeleteController.errorMessage).to.be.null;
 		});
 
 		it("should delete the category", (): void => {
@@ -68,9 +68,7 @@ describe("CategoryDeleteController", (): void => {
 		it("should display an error message when the category delete is unsuccessful", (): void => {
 			categoryDeleteController.category.id = -1;
 			categoryDeleteController.deleteCategory();
-			expect(categoryDeleteController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(categoryDeleteController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

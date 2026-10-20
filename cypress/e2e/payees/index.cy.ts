@@ -71,13 +71,13 @@ describe("Payee Index", (): void => {
 				view: payeeEditForm,
 				mouseAction: {
 					name: "edit icon is clicked",
-					perform: (row: number): Cypress.Chainable<JQuery> =>
-						cy
-							.get(payeesTableRows)
+					perform(row: number): void {
+						cy.get(payeesTableRows)
 							.eq(row)
 							.within((): void => {
 								cy.get(editButton).click();
-							}),
+							});
+					},
 				},
 			},
 			del: {

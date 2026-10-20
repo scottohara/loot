@@ -54,8 +54,7 @@ describe("TransactionDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionDeleteController.errorMessage = "error message";
 			transactionDeleteController.deleteTransaction();
-			expect(transactionDeleteController.errorMessage as string | null).to.be
-				.null;
+			expect(transactionDeleteController.errorMessage).to.be.null;
 		});
 
 		it("should delete the transaction", (): void => {
@@ -71,9 +70,7 @@ describe("TransactionDeleteController", (): void => {
 		it("should display an error message when the transaction delete is unsuccessful", (): void => {
 			transactionDeleteController["transaction"].id = -1;
 			transactionDeleteController.deleteTransaction();
-			expect(transactionDeleteController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(transactionDeleteController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

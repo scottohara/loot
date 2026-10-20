@@ -1,5 +1,6 @@
 import type {
 	CacheFactoryMock,
+	CacheMock,
 	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import type {
@@ -20,7 +21,7 @@ describe("payeeModel", (): void => {
 	let payeeModel: PayeeModel,
 		$httpBackend: angular.IHttpBackendService,
 		$http: angular.IHttpService,
-		$cache: angular.ICacheObject,
+		$cache: CacheMock,
 		$window: WindowMock,
 		ogLruCache: OgLruCacheMock,
 		payee: Payee,
@@ -194,13 +195,15 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("allList", (): void => {
-		beforeEach((): SinonStub =>
-			sinon.stub(payeeModel, "all").returns(iPromise),
+		let all: SinonStub;
+
+		beforeEach(
+			(): SinonStub => (all = sinon.stub(payeeModel, "all").returns(iPromise)),
 		);
 
 		it("should call payeeModel.all(true)", (): void => {
 			payeeModel.allList();
-			expect(payeeModel["all"]).to.have.been.calledWith(true);
+			expect(all).to.have.been.calledWith(true);
 		});
 
 		it("should return a list of all payees for the index list", (): Chai.Assertion =>
@@ -262,7 +265,11 @@ describe("payeeModel", (): void => {
 		const expectedUrl = /payees\/123/v,
 			expectedResponse = "payee details";
 
-		beforeEach((): SinonStub => sinon.stub(payeeModel, "addRecent"));
+		let addRecent: SinonStub;
+
+		beforeEach(
+			(): SinonStub => (addRecent = sinon.stub(payeeModel, "addRecent")),
+		);
 
 		it("should dispatch a GET request to /payees/{id}", (): void => {
 			$httpBackend.expectGET(expectedUrl).respond(200);
@@ -282,7 +289,7 @@ describe("payeeModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			payeeModel.find(123);
 			$httpBackend.flush();
-			expect(payeeModel["addRecent"]).to.have.been.calledWith(expectedResponse);
+			expect(addRecent).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the payee", (): void => {
@@ -300,8 +307,10 @@ describe("payeeModel", (): void => {
 		const expectedPostUrl = /payees$/v,
 			expectedPatchUrl = /payees\/1$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(payeeModel, "flush");
+			flush = sinon.stub(payeeModel, "flush");
 			$httpBackend.whenPOST(expectedPostUrl, payee).respond(200);
 			$httpBackend.whenPATCH(expectedPatchUrl, payee).respond(200);
 		});
@@ -309,7 +318,7 @@ describe("payeeModel", (): void => {
 		it("should flush the payee cache", (): void => {
 			$httpBackend.expectPATCH(expectedPatchUrl);
 			payeeModel.save(payee);
-			expect(payeeModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -328,35 +337,39 @@ describe("payeeModel", (): void => {
 	});
 
 	describe("destroy", (): void => {
+		let flush: SinonStub, removeRecent: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(payeeModel, "flush");
-			sinon.stub(payeeModel, "removeRecent");
+			flush = sinon.stub(payeeModel, "flush");
+			removeRecent = sinon.stub(payeeModel, "removeRecent");
 			$httpBackend.expectDELETE(/payees\/1$/v).respond(200);
 			payeeModel.destroy(payee);
 			$httpBackend.flush();
 		});
 
 		it("should flush the payee cache", (): Chai.Assertion =>
-			expect(payeeModel["flush"]).to.have.been.called);
+			expect(flush).to.have.been.called);
 
 		it("should dispatch a DELETE request to /payees/{id}", (): null => null);
 
 		it("should remove the payee from the recent list", (): Chai.Assertion =>
-			expect(payeeModel["removeRecent"]).to.have.been.calledWith(1));
+			expect(removeRecent).to.have.been.calledWith(1));
 	});
 
 	describe("toggleFavourite", (): void => {
 		const expectedUrl = /payees\/1\/favourite$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(payeeModel, "flush");
+			flush = sinon.stub(payeeModel, "flush");
 			$httpBackend.whenDELETE(expectedUrl).respond(200);
 			$httpBackend.whenPUT(expectedUrl).respond(200);
 		});
 
 		it("should flush the payee cache", (): void => {
 			payeeModel.toggleFavourite(payee);
-			expect(payeeModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -385,12 +398,12 @@ describe("payeeModel", (): void => {
 	describe("flush", (): void => {
 		it("should remove the specified payee from the payee cache when an id is provided", (): void => {
 			payeeModel.flush(1);
-			expect($cache["remove"]).to.have.been.calledWith("/payees/1");
+			expect($cache.remove).to.have.been.calledWith("/payees/1");
 		});
 
 		it("should flush the payee cache when an id is not provided", (): void => {
 			payeeModel.flush();
-			expect($cache["removeAll"]).to.have.been.called;
+			expect($cache.removeAll).to.have.been.called;
 		});
 	});
 

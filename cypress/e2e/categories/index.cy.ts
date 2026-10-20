@@ -118,13 +118,13 @@ describe("Category Index", (): void => {
 				view: categoryEditForm,
 				mouseAction: {
 					name: "edit icon is clicked",
-					perform: (row: number): Cypress.Chainable<JQuery> =>
-						cy
-							.get(categoriesTableRows)
+					perform(row: number): void {
+						cy.get(categoriesTableRows)
 							.eq(row)
 							.within((): void => {
 								cy.get(editButton).click();
-							}),
+							});
+					},
 				},
 			},
 			del: {

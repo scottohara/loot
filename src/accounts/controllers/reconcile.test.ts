@@ -1,15 +1,18 @@
 import type { Account, AccountType } from "~/accounts/types";
+import type {
+	UibModalInstanceMock,
+	WindowMock,
+} from "~/mocks/node-modules/angular/types";
 import type AccountReconcileController from "~/accounts/controllers/reconcile";
 import type { ControllerTestFactory } from "~/mocks/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
-import type { UibModalInstanceMock } from "~/mocks/node-modules/angular/types";
 import angular from "angular";
 
 describe("AccountReconcileController", (): void => {
 	let accountReconcileController: AccountReconcileController,
 		controllerTest: ControllerTestFactory,
 		$uibModalInstance: UibModalInstanceMock,
-		$window: angular.IWindowService,
+		$window: WindowMock,
 		account: Account;
 
 	// Load the modules
@@ -32,7 +35,7 @@ describe("AccountReconcileController", (): void => {
 			(
 				_controllerTest_: ControllerTestFactory,
 				_$uibModalInstance_: UibModalInstanceMock,
-				_$window_: angular.IWindowService,
+				_$window_: WindowMock,
 				_account_: Account,
 			): void => {
 				controllerTest = _controllerTest_;
@@ -47,7 +50,7 @@ describe("AccountReconcileController", (): void => {
 	);
 
 	it("should fetch the closing balance from localStorage and make it available to the view", (): void => {
-		expect($window.localStorage["getItem"]).to.have.been.calledWith(
+		expect($window.localStorage.getItem).to.have.been.calledWith(
 			"lootClosingBalance-1",
 		);
 		expect(accountReconcileController.closingBalance).to.equal(1000);
@@ -70,7 +73,7 @@ describe("AccountReconcileController", (): void => {
 	describe("start", (): void => {
 		it("should save the closing balance to localStorage", (): void => {
 			accountReconcileController.start();
-			expect($window.localStorage["setItem"]).to.have.been.calledWith(
+			expect($window.localStorage.setItem).to.have.been.calledWith(
 				"lootClosingBalance-1",
 				"1000",
 			);

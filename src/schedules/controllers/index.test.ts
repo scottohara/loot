@@ -124,25 +124,23 @@ describe("ScheduleIndexController", (): void => {
 	});
 
 	it("should ensure the schedule is focussed when the schedule id state param changes", (): void => {
-		const toParams: { id: string } = { id: "1" };
+		const toParams: { id: string } = { id: "1" },
+			focusSchedule: SinonStub = sinon.stub(
+				scheduleIndexController,
+				"focusSchedule" as keyof ScheduleIndexController,
+			);
 
-		sinon.stub(
-			scheduleIndexController,
-			"focusSchedule" as keyof ScheduleIndexController,
-		);
 		$transitions.onSuccess.firstCall.args[1]({
 			params: sinon.stub().withArgs("to").returns(toParams),
 		});
-		expect(scheduleIndexController["focusSchedule"]).to.have.been.calledWith(
-			Number(toParams.id),
-		);
+		expect(focusSchedule).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editSchedule", (): void => {
-		let schedule: ScheduledTransaction;
+		let schedule: ScheduledTransaction, focusSchedule: SinonStub;
 
 		beforeEach((): void => {
-			sinon.stub(
+			focusSchedule = sinon.stub(
 				scheduleIndexController,
 				"focusSchedule" as keyof ScheduleIndexController,
 			);
@@ -159,8 +157,7 @@ describe("ScheduleIndexController", (): void => {
 				scheduleIndexController["editSchedule"](1);
 				expect($uibModal.open).to.have.been.called;
 				expect(
-					($uibModal.resolves as UibModalMockResolves)
-						.schedule as ScheduledTransaction,
+					($uibModal.resolves as UibModalMockResolves).schedule,
 				).to.deep.equal(schedule);
 				expect(transactionModel.findSubtransactions).to.not.have.been.called;
 			});
@@ -209,9 +206,7 @@ describe("ScheduleIndexController", (): void => {
 
 			it("should add the new schedule to the list of schedules when the modal is closed", (): void => {
 				$uibModal.close({ data: schedule });
-				expect(
-					scheduleIndexController.schedules.pop() as ScheduledTransaction,
-				).to.deep.equal(schedule);
+				expect(scheduleIndexController.schedules.pop()).to.deep.equal(schedule);
 			});
 		});
 
@@ -220,25 +215,21 @@ describe("ScheduleIndexController", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
 			$uibModal.close({ data: schedule });
-			expect(
-				scheduleIndexController.schedules.pop() as ScheduledTransaction,
-			).to.deep.equal(schedule);
+			expect(scheduleIndexController.schedules.pop()).to.deep.equal(schedule);
 		});
 
 		it("should focus the schedule when the modal is closed if the schedule was edited", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
 			$uibModal.close({ data: schedule });
-			expect(scheduleIndexController["focusSchedule"]).to.have.been.calledWith(
-				schedule.id,
-			);
+			expect(focusSchedule).to.have.been.calledWith(schedule.id);
 		});
 
 		it("should focus the schedule now at the original index when the modal is closed if the schedule was entered or skipped", (): void => {
 			schedule.next_due_date = subDays(startOfDay(new Date()), 1);
 			scheduleIndexController["editSchedule"](1);
 			$uibModal.close({ data: schedule, skipped: true });
-			expect(scheduleIndexController["focusSchedule"]).to.have.been.calledWith(
+			expect(focusSchedule).to.have.been.calledWith(
 				scheduleIndexController.schedules[1].id,
 			);
 		});
@@ -285,8 +276,7 @@ describe("ScheduleIndexController", (): void => {
 			scheduleIndexController["deleteSchedule"](1);
 			expect($uibModal.open).to.have.been.called;
 			expect(
-				($uibModal.resolves as UibModalMockResolves)
-					.schedule as ScheduledTransaction,
+				($uibModal.resolves as UibModalMockResolves).schedule,
 			).to.deep.equal(schedule);
 		});
 
@@ -317,53 +307,49 @@ describe("ScheduleIndexController", (): void => {
 
 	describe("tableActions.selectAction", (): void => {
 		it("should edit the schedule", (): void => {
-			sinon.stub(
+			const editSchedule: SinonStub = sinon.stub(
 				scheduleIndexController,
 				"editSchedule" as keyof ScheduleIndexController,
 			);
+
 			scheduleIndexController.tableActions.selectAction(1);
-			expect(
-				scheduleIndexController["editSchedule"],
-			).to.have.been.calledWithExactly(1);
+			expect(editSchedule).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the schedule", (): void => {
-			sinon.stub(
+			const editSchedule: SinonStub = sinon.stub(
 				scheduleIndexController,
 				"editSchedule" as keyof ScheduleIndexController,
 			);
+
 			scheduleIndexController.tableActions.editAction(1);
-			expect(
-				scheduleIndexController["editSchedule"],
-			).to.have.been.calledWithExactly(1);
+			expect(editSchedule).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a schedule", (): void => {
-			sinon.stub(
+			const editSchedule: SinonStub = sinon.stub(
 				scheduleIndexController,
 				"editSchedule" as keyof ScheduleIndexController,
 			);
+
 			scheduleIndexController.tableActions.insertAction();
-			expect(
-				scheduleIndexController["editSchedule"],
-			).to.have.been.calledWithExactly();
+			expect(editSchedule).to.have.been.calledWithExactly();
 		});
 	});
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a schedule", (): void => {
-			sinon.stub(
+			const deleteSchedule: SinonStub = sinon.stub(
 				scheduleIndexController,
 				"deleteSchedule" as keyof ScheduleIndexController,
 			);
+
 			scheduleIndexController.tableActions.deleteAction(1);
-			expect(
-				scheduleIndexController["deleteSchedule"],
-			).to.have.been.calledWithExactly(1);
+			expect(deleteSchedule).to.have.been.calledWithExactly(1);
 		});
 	});
 

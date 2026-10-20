@@ -65,7 +65,7 @@ describe("AccountDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			accountDeleteController.errorMessage = "error message";
 			accountDeleteController.deleteAccount();
-			expect(accountDeleteController.errorMessage as string | null).to.be.null;
+			expect(accountDeleteController.errorMessage).to.be.null;
 		});
 
 		it("should delete the account", (): void => {
@@ -81,9 +81,7 @@ describe("AccountDeleteController", (): void => {
 		it("should display an error message when the account delete is unsuccessful", (): void => {
 			accountDeleteController.account.id = -1;
 			accountDeleteController.deleteAccount();
-			expect(accountDeleteController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(accountDeleteController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

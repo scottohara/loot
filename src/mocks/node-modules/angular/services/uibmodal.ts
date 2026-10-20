@@ -26,10 +26,8 @@ export default class UibModalMockProvider implements Mock<UibModalMock> {
 							resolve: string,
 						): UibModalMockResolves => {
 							resolves[resolve] = (
-								(options.resolve as Record<string, () => UibModalMockResolve>)[
-									resolve
-								] as () => UibModalMockResolve
-							)();
+								options.resolve as Record<string, () => UibModalMockResolve>
+							)[resolve]();
 
 							return resolves;
 						},

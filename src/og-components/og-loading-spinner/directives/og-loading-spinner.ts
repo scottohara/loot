@@ -10,11 +10,12 @@ export default class OgLoadingSpinnerDirective {
 				message: "=ogLoadingSpinner",
 			},
 			templateUrl: OgLoadingSpinnerView,
-			link: (scope: OgLoadingSpinnerScope): string =>
-				(scope.loadingMessage =
+			link(scope: OgLoadingSpinnerScope): void {
+				scope.loadingMessage =
 					undefined === scope.message || "" === scope.message
 						? "Loading"
-						: scope.message),
+						: scope.message;
+			},
 		};
 
 		return directive;

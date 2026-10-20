@@ -29,17 +29,19 @@ export default class PayeeIndexController {
 		public readonly payees: Payee[],
 	) {
 		this.tableActions = {
-			selectAction: (): angular.IPromise<void> =>
-				$state.go(".transactions").catch(this.showError),
+			selectAction: (): void => {
+				$state.go(".transactions").catch(this.showError);
+			},
 			editAction: (index: number): void => this.editPayee(index),
 			insertAction: (): void => this.editPayee(),
 			deleteAction: (index: number): void => this.deletePayee(index),
-			focusAction: (index: number): angular.IPromise<void> =>
+			focusAction: (index: number): void => {
 				$state
 					.go(`${$state.includes("**.payee") ? "^" : ""}.payee`, {
 						id: this.payees[index].id,
 					})
-					.catch(this.showError),
+					.catch(this.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -110,7 +112,9 @@ export default class PayeeIndexController {
 				// Refocus the payee
 				this.focusPayee(Number(payee.id));
 			})
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 
@@ -166,7 +170,9 @@ export default class PayeeIndexController {
 						this.payees.splice(index, 1);
 						this.$state.go("root.payees").catch(this.showError);
 					})
-					.finally((): true => (this.ogTableNavigableService.enabled = true))
+					.finally((): void => {
+						this.ogTableNavigableService.enabled = true;
+					})
 					.catch(this.showError);
 			})
 			.catch(this.showError);

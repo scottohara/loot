@@ -16,9 +16,7 @@ import { lightFormat, parseISO, startOfDay } from "date-fns";
 import type AccountModel from "~/accounts/models/account";
 import type { Category } from "~/categories/types";
 import type CategoryModel from "~/categories/models/category";
-import type { Payee } from "~/payees/types";
 import type PayeeModel from "~/payees/models/payee";
-import type { Security } from "~/securities/types";
 import type SecurityModel from "~/securities/models/security";
 import angular from "angular";
 
@@ -218,7 +216,7 @@ export default class TransactionModel {
 
 		if (undefined !== transactionCopy.transaction_date) {
 			transactionCopy.transaction_date = lightFormat(
-				transactionCopy.transaction_date as Date,
+				transactionCopy.transaction_date,
 				"yyyy-MM-dd",
 			);
 		}
@@ -231,7 +229,7 @@ export default class TransactionModel {
 		this.invalidateCache(this.accountModel, transaction.primary_account);
 		this.invalidateCache(
 			this.payeeModel,
-			(transaction as PayeeCashTransaction).payee as Payee,
+			(transaction as PayeeCashTransaction).payee,
 		);
 		this.invalidateCache(
 			this.categoryModel,
@@ -239,7 +237,7 @@ export default class TransactionModel {
 		);
 		this.invalidateCache(
 			this.categoryModel,
-			(transaction as SubcategorisableTransaction).subcategory as Category,
+			(transaction as SubcategorisableTransaction).subcategory,
 		);
 		this.invalidateCache(
 			this.accountModel,
@@ -247,7 +245,7 @@ export default class TransactionModel {
 		);
 		this.invalidateCache(
 			this.securityModel,
-			(transaction as SecurityTransaction).security as Security,
+			(transaction as SecurityTransaction).security,
 		);
 
 		// Subtransactions
@@ -260,8 +258,7 @@ export default class TransactionModel {
 				);
 				this.invalidateCache(
 					this.categoryModel,
-					(subtransaction as SubcategorisableTransaction)
-						.subcategory as Category,
+					(subtransaction as SubcategorisableTransaction).subcategory,
 				);
 				this.invalidateCache(
 					this.accountModel,

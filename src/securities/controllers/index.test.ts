@@ -107,25 +107,23 @@ describe("SecurityIndexController", (): void => {
 	});
 
 	it("should ensure the security is focussed when the security id state param changes", (): void => {
-		const toParams: { id: string } = { id: "1" };
+		const toParams: { id: string } = { id: "1" },
+			focusSecurity: SinonStub = sinon.stub(
+				securityIndexController,
+				"focusSecurity" as keyof SecurityIndexController,
+			);
 
-		sinon.stub(
-			securityIndexController,
-			"focusSecurity" as keyof SecurityIndexController,
-		);
 		$transitions.onSuccess.firstCall.args[1]({
 			params: sinon.stub().withArgs("to").returns(toParams),
 		});
-		expect(securityIndexController["focusSecurity"]).to.have.been.calledWith(
-			Number(toParams.id),
-		);
+		expect(focusSecurity).to.have.been.calledWith(Number(toParams.id));
 	});
 
 	describe("editSecurity", (): void => {
-		let security: Security;
+		let security: Security, focusSecurity: SinonStub;
 
 		beforeEach((): void => {
-			sinon.stub(
+			focusSecurity = sinon.stub(
 				securityIndexController,
 				"focusSecurity" as keyof SecurityIndexController,
 			);
@@ -144,7 +142,7 @@ describe("SecurityIndexController", (): void => {
 				expect($uibModal.open).to.have.been.called;
 				expect(securityModel.addRecent).to.have.been.calledWith(security);
 				expect(
-					($uibModal.resolves as UibModalMockResolves).security as Security,
+					($uibModal.resolves as UibModalMockResolves).security,
 				).to.deep.equal(security);
 			});
 
@@ -170,9 +168,9 @@ describe("SecurityIndexController", (): void => {
 
 			it("should add the new security to the list of securities when the modal is closed", (): void => {
 				$uibModal.close(security);
-				expect(
-					securityIndexController.securities.pop() as Security,
-				).to.deep.equal(security);
+				expect(securityIndexController.securities.pop()).to.deep.equal(
+					security,
+				);
 			});
 
 			it("should add the new security to the recent list", (): void => {
@@ -188,17 +186,15 @@ describe("SecurityIndexController", (): void => {
 
 			securityIndexController["editSecurity"]();
 			$uibModal.close(security);
-			expect(
-				securityIndexController.securities.pop() as Security,
-			).to.deep.equal(securityWithNoHoldingAndHighestName);
+			expect(securityIndexController.securities.pop()).to.deep.equal(
+				securityWithNoHoldingAndHighestName,
+			);
 		});
 
 		it("should focus the security when the modal is closed", (): void => {
 			securityIndexController["editSecurity"]();
 			$uibModal.close(security);
-			expect(securityIndexController["focusSecurity"]).to.have.been.calledWith(
-				security.id,
-			);
+			expect(focusSecurity).to.have.been.calledWith(security.id);
 		});
 
 		it("should not change the securities list when the modal is dismissed", (): void => {
@@ -257,7 +253,7 @@ describe("SecurityIndexController", (): void => {
 			securityIndexController["deleteSecurity"](1);
 			expect($uibModal.open).to.have.been.called;
 			expect(
-				($uibModal.resolves as UibModalMockResolves).security as Security,
+				($uibModal.resolves as UibModalMockResolves).security,
 			).to.deep.equal(security);
 		});
 
@@ -320,40 +316,37 @@ describe("SecurityIndexController", (): void => {
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the security", (): void => {
-			sinon.stub(
+			const editSecurity: SinonStub = sinon.stub(
 				securityIndexController,
 				"editSecurity" as keyof SecurityIndexController,
 			);
+
 			securityIndexController.tableActions.editAction(1);
-			expect(
-				securityIndexController["editSecurity"],
-			).to.have.been.calledWithExactly(1);
+			expect(editSecurity).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a security", (): void => {
-			sinon.stub(
+			const editSecurity: SinonStub = sinon.stub(
 				securityIndexController,
 				"editSecurity" as keyof SecurityIndexController,
 			);
+
 			securityIndexController.tableActions.insertAction();
-			expect(
-				securityIndexController["editSecurity"],
-			).to.have.been.calledWithExactly();
+			expect(editSecurity).to.have.been.calledWithExactly();
 		});
 	});
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a security", (): void => {
-			sinon.stub(
+			const deleteSecurity: SinonStub = sinon.stub(
 				securityIndexController,
 				"deleteSecurity" as keyof SecurityIndexController,
 			);
+
 			securityIndexController.tableActions.deleteAction(1);
-			expect(
-				securityIndexController["deleteSecurity"],
-			).to.have.been.calledWithExactly(1);
+			expect(deleteSecurity).to.have.been.calledWithExactly(1);
 		});
 	});
 

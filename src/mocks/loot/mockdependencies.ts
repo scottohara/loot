@@ -44,10 +44,9 @@ describe("mockDependenciesProvider", (): void => {
 	// Inject the object under test
 	beforeEach(
 		angular.mock.inject(
-			(
-				_mockDependencies_: MockDependenciesProvider,
-			): MockDependenciesProvider =>
-				(mockDependenciesProvider = _mockDependencies_),
+			(_mockDependencies_: MockDependenciesProvider): void => {
+				mockDependenciesProvider = _mockDependencies_;
+			},
 		) as Mocha.HookFunction,
 	);
 

@@ -1,5 +1,6 @@
 import type {
 	CacheFactoryMock,
+	CacheMock,
 	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import type AuthenticationModel from "~/authentication/models/authentication";
@@ -12,7 +13,7 @@ describe("authenticationModel", (): void => {
 		$httpBackend: angular.IHttpBackendService,
 		$http: angular.IHttpService,
 		$cacheFactory: CacheFactoryMock,
-		$cache: angular.ICacheObject,
+		$cache: CacheMock,
 		$window: WindowMock;
 
 	// Load the modules
@@ -150,7 +151,7 @@ describe("authenticationModel", (): void => {
 			).to.equal("Basic "));
 
 		it("should clear all $http caches except the template cache", (): void => {
-			expect($cache["removeAll"]).to.have.been.called;
+			expect($cache.removeAll).to.have.been.called;
 			expect(($cacheFactory.get as SinonStub)("templates").removeAll).to.not
 				.have.been.called;
 		});

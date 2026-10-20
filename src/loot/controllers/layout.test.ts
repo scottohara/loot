@@ -283,16 +283,19 @@ describe("LayoutController", (): void => {
 	});
 
 	describe("on search", (): void => {
-		beforeEach((): SinonStub =>
-			sinon.stub(
-				layoutController,
-				"checkIfSearchCleared" as keyof LayoutController,
-			),
+		let checkIfSearchCleared: SinonStub;
+
+		beforeEach(
+			(): SinonStub =>
+				(checkIfSearchCleared = sinon.stub(
+					layoutController,
+					"checkIfSearchCleared" as keyof LayoutController,
+				)),
 		);
 
 		it("should check if the search field was cleared", (): void => {
 			mockJqueryInstance["events"].search();
-			expect(layoutController["checkIfSearchCleared"]).to.have.been.called;
+			expect(checkIfSearchCleared).to.have.been.called;
 		});
 	});
 });

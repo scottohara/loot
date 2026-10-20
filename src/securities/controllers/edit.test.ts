@@ -76,7 +76,7 @@ describe("SecurityEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			securityEditController.errorMessage = "error message";
 			securityEditController.save();
-			expect(securityEditController.errorMessage as string | null).to.be.null;
+			expect(securityEditController.errorMessage).to.be.null;
 		});
 
 		it("should save the security", (): void => {
@@ -92,9 +92,7 @@ describe("SecurityEditController", (): void => {
 		it("should display an error message when the security save is unsuccessful", (): void => {
 			securityEditController.security.id = -1;
 			securityEditController.save();
-			expect(securityEditController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(securityEditController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

@@ -12,12 +12,11 @@ describe("OgInputCurrencyController", (): void => {
 
 	// Configure & compile the object under test
 	beforeEach(
-		angular.mock.inject(
-			(controllerTest: ControllerTestFactory): OgInputCurrencyController =>
-				(ogInputCurrencyController = controllerTest(
-					"OgInputCurrencyController",
-				) as OgInputCurrencyController),
-		) as Mocha.HookFunction,
+		angular.mock.inject((controllerTest: ControllerTestFactory): void => {
+			ogInputCurrencyController = controllerTest(
+				"OgInputCurrencyController",
+			) as OgInputCurrencyController;
+		}) as Mocha.HookFunction,
 	);
 
 	it("should default to 2 decimal places", (): Chai.Assertion =>

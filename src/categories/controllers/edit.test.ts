@@ -121,7 +121,7 @@ describe("CategoryEditController", (): void => {
 			});
 			categoryEditController.save();
 			expect(categoryEditController.category.direction).to.equal("outflow");
-			expect(categoryEditController.category.parent_id as number).to.equal(1);
+			expect(categoryEditController.category.parent_id).to.equal(1);
 		});
 
 		it("should clear the parent id if the category does not have a parent", (): void => {
@@ -132,7 +132,7 @@ describe("CategoryEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			categoryEditController.errorMessage = "error message";
 			categoryEditController.save();
-			expect(categoryEditController.errorMessage as string | null).to.be.null;
+			expect(categoryEditController.errorMessage).to.be.null;
 		});
 
 		it("should save the category", (): void => {
@@ -148,9 +148,7 @@ describe("CategoryEditController", (): void => {
 		it("should display an error message when the category save is unsuccessful", (): void => {
 			categoryEditController.category.id = -1;
 			categoryEditController.save();
-			expect(categoryEditController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(categoryEditController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

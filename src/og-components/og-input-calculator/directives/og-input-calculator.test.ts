@@ -3,7 +3,6 @@ import type {
 	JQueryKeyEventObjectMock,
 } from "~/mocks/types";
 import type {
-	OgInputCalculatorOperation,
 	OgInputCalculatorOperator,
 	OgInputCalculatorScope,
 } from "~/og-components/og-input-calculator/types";
@@ -104,7 +103,7 @@ describe("ogInputCalculator", (): void => {
 		it("should use no formatting if the element includes neither og-input-currency or og-input-number directives", (): void => {
 			ogInputCalculator.compile({});
 			scope.$digest();
-			expect(scope.ogInput as angular.IController | null).to.be.null;
+			expect(scope.ogInput).to.be.null;
 		});
 	});
 
@@ -170,7 +169,7 @@ describe("ogInputCalculator", (): void => {
 		it("should push the operator onto the stack", (): void => {
 			scope.push(1, "+");
 			$timeout.flush();
-			expect(scope.stack.pop() as OgInputCalculatorOperation).to.deep.equal({
+			expect(scope.stack.pop()).to.deep.equal({
 				operator: "+",
 			});
 		});
@@ -307,7 +306,7 @@ describe("ogInputCalculator", (): void => {
 
 					it(`should set the view value to '${scenario.residual}' when then input is '${scenario.input}'`, (): void => {
 						scope.inputChanged(scenario.input);
-						expect(ogInputCalculator["element"].val() as string).to.equal(
+						expect(ogInputCalculator["element"].val()).to.equal(
 							scenario.residual,
 						);
 					});
@@ -342,7 +341,7 @@ describe("ogInputCalculator", (): void => {
 			expect(scope.clear).to.have.been.called);
 
 		it("should update the input value and view value", (): Chai.Assertion =>
-			expect(ogInputCalculator["element"].val() as string).to.equal("1"));
+			expect(ogInputCalculator["element"].val()).to.equal("1"));
 
 		it("should close the calculator", (): Chai.Assertion =>
 			expect(scope.close).to.have.been.called);
@@ -418,7 +417,11 @@ describe("ogInputCalculator", (): void => {
 	});
 
 	describe("keyhandler", (): void => {
-		const TEST_ACTION_KEYS: { key: string; name: string; handler: string }[] = [
+		const TEST_ACTION_KEYS: {
+			key: string;
+			name: string;
+			handler: keyof OgInputCalculatorScope;
+		}[] = [
 			{ key: "Enter", name: "Enter", handler: "update" },
 			{ key: "Escape", name: "Esc", handler: "cancel" },
 			{ key: "=", name: "Equals", handler: "update" },
@@ -427,7 +430,7 @@ describe("ogInputCalculator", (): void => {
 		let event: JQueryKeyEventObjectMock,
 			mockJqueryInstance: { select: SinonStub },
 			realJqueryInstance: JQuery,
-			actionHandler: () => void;
+			actionHandler: SinonStub;
 
 		beforeEach((): void => {
 			event = {
@@ -437,7 +440,7 @@ describe("ogInputCalculator", (): void => {
 			};
 			(scope as DirectiveTestScope).model = 1;
 			scope.$digest();
-			expect(ogInputCalculator["element"].val() as string).to.equal("1");
+			expect(ogInputCalculator["element"].val()).to.equal("1");
 
 			mockJqueryInstance = {
 				select: sinon.stub(),
@@ -461,16 +464,13 @@ describe("ogInputCalculator", (): void => {
 			}: {
 				key: string;
 				name: string;
-				handler: string;
+				handler: keyof OgInputCalculatorScope;
 			}): void => {
 				it(`should do nothing when the SHIFT+${name} keys are pressed`, (): void => {
 					event.key = key;
 					event.shiftKey = true;
 					scope.stack = [{ operand: 1 }];
-					actionHandler = sinon.stub(
-						scope,
-						handler as keyof OgInputCalculatorScope,
-					);
+					actionHandler = sinon.stub(scope, handler);
 					scope.keyHandler(event as JQuery.KeyDownEvent);
 					$timeout.flush();
 					expect(actionHandler).to.not.have.been.called;
@@ -480,10 +480,7 @@ describe("ogInputCalculator", (): void => {
 
 				it(`should do nothing when the ${name} key is pressed and the stack is empty`, (): void => {
 					event.key = key;
-					actionHandler = sinon.stub(
-						scope,
-						handler as keyof OgInputCalculatorScope,
-					);
+					actionHandler = sinon.stub(scope, handler);
 					scope.keyHandler(event as JQuery.KeyDownEvent);
 					$timeout.flush();
 					expect(actionHandler).to.not.have.been.called;
@@ -495,10 +492,7 @@ describe("ogInputCalculator", (): void => {
 				it(`should invoke the ${handler} handler when the ${name} key is pressed`, (): void => {
 					event.key = key;
 					scope.stack = [{ operand: 1 }];
-					actionHandler = sinon.stub(
-						scope,
-						handler as keyof OgInputCalculatorScope,
-					);
+					actionHandler = sinon.stub(scope, handler);
 					scope.keyHandler(event as JQuery.KeyDownEvent);
 					$timeout.flush();
 					expect(actionHandler).to.have.been.called;

@@ -14,7 +14,6 @@ import type {
 	SubtransferTransaction,
 	Transaction,
 	TransactionDirection,
-	TransactionStatus,
 	TransactionType,
 	TransferTransaction,
 	TransferrableTransaction,
@@ -390,7 +389,10 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("payeeSelected", (): void => {
-		let payee: Payee, primaryAccount: Account;
+		let payee: Payee,
+			primaryAccount: Account,
+			getSubtransactions: SinonStub,
+			useLastTransaction: SinonStub;
 
 		beforeEach((): void => {
 			transactionEditController.transaction.id = null;
@@ -399,11 +401,11 @@ describe("TransactionEditController", (): void => {
 			(transactionEditController.transaction as PayeeCashTransaction).payee =
 				payee;
 			transactionEditController.transaction.primary_account = primaryAccount;
-			sinon.stub(
+			getSubtransactions = sinon.stub(
 				transactionEditController,
 				"getSubtransactions" as keyof TransactionEditController,
 			);
-			sinon.stub(
+			useLastTransaction = sinon.stub(
 				transactionEditController,
 				"useLastTransaction" as keyof TransactionEditController,
 			);
@@ -443,14 +445,12 @@ describe("TransactionEditController", (): void => {
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			transactionEditController.payeeSelected();
-			expect(transactionEditController["getSubtransactions"]).to.have.been
-				.called;
+			expect(getSubtransactions).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			transactionEditController.payeeSelected();
-			expect(transactionEditController["useLastTransaction"]).to.have.been
-				.called;
+			expect(useLastTransaction).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
@@ -460,7 +460,10 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("securitySelected", (): void => {
-		let security: Security, primaryAccount: Account;
+		let security: Security,
+			primaryAccount: Account,
+			getSubtransactions: SinonStub,
+			useLastTransaction: SinonStub;
 
 		beforeEach((): void => {
 			transactionEditController.transaction.id = null;
@@ -469,11 +472,11 @@ describe("TransactionEditController", (): void => {
 			(transactionEditController.transaction as SecurityTransaction).security =
 				security;
 			transactionEditController.transaction.primary_account = primaryAccount;
-			sinon.stub(
+			getSubtransactions = sinon.stub(
 				transactionEditController,
 				"getSubtransactions" as keyof TransactionEditController,
 			);
-			sinon.stub(
+			useLastTransaction = sinon.stub(
 				transactionEditController,
 				"useLastTransaction" as keyof TransactionEditController,
 			);
@@ -513,14 +516,12 @@ describe("TransactionEditController", (): void => {
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			transactionEditController.securitySelected();
-			expect(transactionEditController["getSubtransactions"]).to.have.been
-				.called;
+			expect(getSubtransactions).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			transactionEditController.securitySelected();
-			expect(transactionEditController["useLastTransaction"]).to.have.been
-				.called;
+			expect(useLastTransaction).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
@@ -547,9 +548,7 @@ describe("TransactionEditController", (): void => {
 				const basicTransaction: BasicTransaction = createBasicTransaction();
 
 				expect(
-					transactionEditController["getSubtransactions"](
-						basicTransaction,
-					) as BasicTransaction,
+					transactionEditController["getSubtransactions"](basicTransaction),
 				).to.deep.equal(basicTransaction);
 			});
 
@@ -580,9 +579,9 @@ describe("TransactionEditController", (): void => {
 				];
 
 				expect(
-					(await transactionEditController["getSubtransactions"](
+					await transactionEditController["getSubtransactions"](
 						splitTransaction,
-					)) as SplitTransaction,
+					),
 				).to.deep.equal(expected);
 			});
 		});
@@ -634,20 +633,16 @@ describe("TransactionEditController", (): void => {
 
 		it("should do nothing when a transaction is not provided", (): void => {
 			transactionEditController["useLastTransaction"]();
-			expect(lastTransaction.id as number | undefined).to.not.be.undefined;
+			expect(lastTransaction.id).to.not.be.undefined;
 		});
 
 		it("should strip the transaction of it's id, date, primary account, status, related status & flag", (): void => {
 			transactionEditController["useLastTransaction"](lastTransaction);
-			expect(lastTransaction.id as number | undefined).to.be.undefined;
-			expect(lastTransaction.transaction_date as Date | undefined).to.be
-				.undefined;
-			expect(lastTransaction.primary_account as Account | undefined).to.be
-				.undefined;
-			expect(lastTransaction.status as TransactionStatus | undefined).to.be
-				.undefined;
-			expect(lastTransaction.related_status as TransactionStatus | undefined).to
-				.be.undefined;
+			expect(lastTransaction.id).to.be.undefined;
+			expect(lastTransaction.transaction_date).to.be.undefined;
+			expect(lastTransaction.primary_account).to.be.undefined;
+			expect(lastTransaction.status).to.be.undefined;
+			expect(lastTransaction.related_status).to.be.undefined;
 			expect(lastTransaction.flag_type).to.be.undefined;
 			expect(lastTransaction.flag).to.be.undefined;
 		});
@@ -862,13 +857,13 @@ describe("TransactionEditController", (): void => {
 						transactionEditController.categorySelected(0);
 						expect(
 							(transactionEditController.transaction as SplitTransaction)
-								.subtransactions[0].transaction_type as SubtransactionType,
+								.subtransactions[0].transaction_type,
 						).to.equal(scenario.type);
 
 						if ("Sub" === scenario.type) {
 							expect(
 								(transactionEditController.transaction as SplitTransaction)
-									.subtransactions[0].direction as TransactionDirection,
+									.subtransactions[0].direction,
 							).to.equal(
 								(
 									(transactionEditController.transaction as SplitTransaction)
@@ -878,7 +873,7 @@ describe("TransactionEditController", (): void => {
 						} else {
 							expect(
 								(transactionEditController.transaction as SplitTransaction)
-									.subtransactions[0].direction as TransactionDirection,
+									.subtransactions[0].direction,
 							).to.equal(scenario.direction);
 						}
 					});
@@ -892,7 +887,7 @@ describe("TransactionEditController", (): void => {
 				transactionEditController.categorySelected(0);
 				expect(
 					(transactionEditController.transaction as SplitTransaction)
-						.subtransactions[0].transaction_type as SubtransactionType,
+						.subtransactions[0].transaction_type,
 				).to.equal("Sub");
 			});
 		});
@@ -1000,6 +995,8 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("$watch subtransations", (): void => {
+		let memoFromSubtransactions: SinonStub;
+
 		beforeEach((): void => {
 			transactionEditController.transaction.direction = "outflow";
 			(
@@ -1009,7 +1006,10 @@ describe("TransactionEditController", (): void => {
 				createSubtransaction({ amount: 5, direction: "inflow" }),
 				{},
 			];
-			sinon.stub(transactionEditController, "memoFromSubtransactions");
+			memoFromSubtransactions = sinon.stub(
+				transactionEditController,
+				"memoFromSubtransactions",
+			);
 		});
 
 		it("should do nothing if there are no subtransactions", (): void => {
@@ -1022,20 +1022,18 @@ describe("TransactionEditController", (): void => {
 
 		it("should calculate the total and make it available to the view", (): void => {
 			(transactionEditController as angular.IController).$scope.$digest();
-			expect(transactionEditController.totalAllocated as number).to.equal(5);
+			expect(transactionEditController.totalAllocated).to.equal(5);
 		});
 
 		it("should not set the main transaction memo when editing an existing transaction", (): void => {
 			(transactionEditController as angular.IController).$scope.$digest();
-			expect(transactionEditController["memoFromSubtransactions"]).to.not.have
-				.been.called;
+			expect(memoFromSubtransactions).to.not.have.been.called;
 		});
 
 		it("should set the main transaction memos when adding a new transaction", (): void => {
 			transactionEditController.transaction.id = null;
 			(transactionEditController as angular.IController).$scope.$digest();
-			expect(transactionEditController["memoFromSubtransactions"]).to.have.been
-				.called;
+			expect(memoFromSubtransactions).to.have.been.called;
 		});
 	});
 
@@ -1182,7 +1180,7 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.addUnallocatedAmount(0);
 			expect(
 				(transactionEditController.transaction as SplitTransaction)
-					.subtransactions[0].amount as number,
+					.subtransactions[0].amount,
 			).to.equal(100);
 		});
 
@@ -1190,7 +1188,7 @@ describe("TransactionEditController", (): void => {
 			transactionEditController.addUnallocatedAmount(1);
 			expect(
 				(transactionEditController.transaction as SplitTransaction)
-					.subtransactions[1].amount as number,
+					.subtransactions[1].amount,
 			).to.equal(20);
 		});
 	});
@@ -1296,12 +1294,14 @@ describe("TransactionEditController", (): void => {
 			subtransaction: SplitTransactionChild;
 
 		beforeEach((): void => {
-			original = createBasicTransaction() as Transaction;
-			(original as TransferrableTransaction).account = createAccount();
-			(original as SecurityTransaction).security = createSecurity();
+			original = createBasicTransaction();
+			(original as unknown as TransferrableTransaction).account =
+				createAccount();
+			(original as unknown as SecurityTransaction).security = createSecurity();
 
-			subtransaction = createSubtransaction() as SplitTransactionChild;
-			(subtransaction as SubtransferTransaction).account = createAccount();
+			subtransaction = createSubtransaction();
+			(subtransaction as unknown as SubtransferTransaction).account =
+				createAccount();
 
 			saved = angular.copy(original);
 
@@ -1497,11 +1497,12 @@ describe("TransactionEditController", (): void => {
 		let data: Transaction, subtransaction: SplitTransactionChild;
 
 		beforeEach((): void => {
-			data = createBasicTransaction() as Transaction;
-			(data as TransferrableTransaction).account = createAccount();
-			(data as SecurityTransaction).security = createSecurity();
-			subtransaction = createSubtransaction() as SplitTransactionChild;
-			(subtransaction as SubtransferTransaction).account = createAccount();
+			data = createBasicTransaction();
+			(data as unknown as TransferrableTransaction).account = createAccount();
+			(data as unknown as SecurityTransaction).security = createSecurity();
+			subtransaction = createSubtransaction();
+			(subtransaction as unknown as SubtransferTransaction).account =
+				createAccount();
 
 			transactionModel.findSubtransactions = sinon.stub().returns({
 				then(callback: (subtransactions: SplitTransactionChild[]) => void): {
@@ -1630,12 +1631,14 @@ describe("TransactionEditController", (): void => {
 	});
 
 	describe("save", (): void => {
+		let invalidateCaches: SinonStub, updateLruCaches: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(
+			invalidateCaches = sinon.stub(
 				transactionEditController,
 				"invalidateCaches" as keyof TransactionEditController,
 			);
-			sinon.stub(
+			updateLruCaches = sinon.stub(
 				transactionEditController,
 				"updateLruCaches" as keyof TransactionEditController,
 			);
@@ -1644,8 +1647,7 @@ describe("TransactionEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			transactionEditController.errorMessage = "error message";
 			transactionEditController.save();
-			expect(transactionEditController.errorMessage as string | null).to.be
-				.null;
+			expect(transactionEditController.errorMessage).to.be.null;
 		});
 
 		it("should save the transaction", (): void => {
@@ -1655,16 +1657,12 @@ describe("TransactionEditController", (): void => {
 
 		it("should invalidate the $http caches", (): void => {
 			transactionEditController.save();
-			expect(
-				transactionEditController["invalidateCaches"],
-			).to.have.been.calledWith(transaction);
+			expect(invalidateCaches).to.have.been.calledWith(transaction);
 		});
 
 		it("should update the LRU caches", (): void => {
 			transactionEditController.save();
-			expect(
-				transactionEditController["updateLruCaches"],
-			).to.have.been.calledWith(transaction);
+			expect(updateLruCaches).to.have.been.calledWith(transaction);
 		});
 
 		it("should close the modal when the transaction save is successful", (): void => {
@@ -1675,9 +1673,7 @@ describe("TransactionEditController", (): void => {
 		it("should display an error message when the transaction save unsuccessful", (): void => {
 			transactionEditController.transaction.id = -1;
 			transactionEditController.save();
-			expect(transactionEditController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(transactionEditController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

@@ -118,13 +118,13 @@ describe("Security Index", (): void => {
 				view: securityEditForm,
 				mouseAction: {
 					name: "edit icon is clicked",
-					perform: (row: number): Cypress.Chainable<JQuery> =>
-						cy
-							.get(securitiesTableRows)
+					perform(row: number): void {
+						cy.get(securitiesTableRows)
 							.eq(row)
 							.within((): void => {
 								cy.get(editButton).click();
-							}),
+							});
+					},
 				},
 			},
 			del: {

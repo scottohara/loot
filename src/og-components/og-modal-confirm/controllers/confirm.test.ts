@@ -41,12 +41,8 @@ describe("OgModalConfirmController", (): void => {
 
 	it("should make the passed confirmation details available on the $scope", (): void => {
 		expect(ogModalConfirmController.confirm.message).to.equal(confirm.message);
-		expect(ogModalConfirmController.confirm.noButtonStyle as string).to.equal(
-			"default",
-		);
-		expect(ogModalConfirmController.confirm.yesButtonStyle as string).to.equal(
-			"primary",
-		);
+		expect(ogModalConfirmController.confirm.noButtonStyle).to.equal("default");
+		expect(ogModalConfirmController.confirm.yesButtonStyle).to.equal("primary");
 	});
 
 	describe("yes", (): void => {

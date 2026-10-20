@@ -1,7 +1,4 @@
-import type {
-	ControllerTestFactory,
-	ControllerTestLocals,
-} from "~/mocks/types";
+import type { ControllerTestLocals } from "~/mocks/types";
 
 export default class ControllerTest {
 	public constructor(
@@ -9,7 +6,7 @@ export default class ControllerTest {
 		$controller: angular.IControllerService,
 	) {
 		// Loads the controller and returns a scope object
-		return ((
+		return (
 			controller: string,
 			locals: ControllerTestLocals = {},
 			bindings: Record<string, unknown> = {},
@@ -28,7 +25,7 @@ export default class ControllerTest {
 			instance.$scope = locals.$scope;
 
 			return instance;
-		}) as ControllerTestFactory;
+		};
 	}
 }
 

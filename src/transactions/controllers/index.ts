@@ -124,12 +124,13 @@ export default class TransactionIndexController {
 			editAction: (index: number): void => this.editTransaction(index),
 			insertAction: (): void => this.editTransaction(),
 			deleteAction: (index: number): void => this.deleteTransaction(index),
-			focusAction: (index: number): angular.IPromise<void> =>
+			focusAction: (index: number): void => {
 				$state
 					.go(`${$state.includes("**.transaction") ? "^" : ""}.transaction`, {
 						transactionId: this.transactions[index].id,
 					})
-					.catch(this.showError),
+					.catch(this.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -317,7 +318,9 @@ export default class TransactionIndexController {
 						})
 						.catch(this.showError);
 				})
-				.finally((): true => (this.ogTableNavigableService.enabled = true))
+				.finally((): void => {
+					this.ogTableNavigableService.enabled = true;
+				})
 				.catch(this.showError);
 		}
 	}
@@ -426,7 +429,7 @@ export default class TransactionIndexController {
 			$event,
 			"categories.category",
 			Number((transaction.subcategory as Entity).id),
-			transaction as Transaction,
+			transaction,
 		);
 	}
 
@@ -606,7 +609,9 @@ export default class TransactionIndexController {
 					}
 				}
 			})
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 
@@ -674,7 +679,9 @@ export default class TransactionIndexController {
 				},
 			})
 			.result.then((): void => this.removeTransaction(index))
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 
@@ -799,7 +806,9 @@ export default class TransactionIndexController {
 					this.switchPrimaryAccount(null, transaction as Transaction);
 				}
 			})
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 

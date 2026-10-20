@@ -1,8 +1,11 @@
-import type { CacheFactoryMock } from "~/mocks/node-modules/angular/types";
+import type {
+	CacheFactoryMock,
+	CacheMock,
+} from "~/mocks/node-modules/angular/types";
 import type { Mock } from "~/mocks/types";
 import sinon from "sinon";
 
-function mockCache(): angular.ICacheObject {
+function mockCache(): CacheMock {
 	return {
 		put: sinon.stub(),
 		get: sinon.stub(),
@@ -17,10 +20,10 @@ export default class CacheFactoryMockProvider implements Mock<CacheFactoryMock> 
 	private readonly $cacheFactory: CacheFactoryMock;
 
 	public constructor(
-		private readonly $cache: angular.ICacheObject = mockCache(),
-		private readonly templatesCache: angular.ICacheObject = mockCache(),
+		private readonly $cache: CacheMock = mockCache(),
+		private readonly templatesCache: CacheMock = mockCache(),
 	) {
-		const factory: CacheFactoryMock = (): angular.ICacheObject => this.$cache;
+		const factory: CacheFactoryMock = (): CacheMock => this.$cache;
 
 		factory.info = sinon.stub().returns([{ id: "templates" }, { id: "test" }]);
 

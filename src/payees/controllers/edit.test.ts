@@ -76,7 +76,7 @@ describe("PayeeEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			payeeEditController.errorMessage = "error message";
 			payeeEditController.save();
-			expect(payeeEditController.errorMessage as string | null).to.be.null;
+			expect(payeeEditController.errorMessage).to.be.null;
 		});
 
 		it("should save the payee", (): void => {
@@ -92,9 +92,7 @@ describe("PayeeEditController", (): void => {
 		it("should display an error message when the payee save is unsuccessful", (): void => {
 			payeeEditController.payee.id = -1;
 			payeeEditController.save();
-			expect(payeeEditController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(payeeEditController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

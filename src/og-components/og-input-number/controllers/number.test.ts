@@ -12,12 +12,11 @@ describe("OgInputNumberController", (): void => {
 
 	// Configure & compile the object under test
 	beforeEach(
-		angular.mock.inject(
-			(controllerTest: ControllerTestFactory): OgInputNumberController =>
-				(ogInputNumberController = controllerTest(
-					"OgInputNumberController",
-				) as OgInputNumberController),
-		) as Mocha.HookFunction,
+		angular.mock.inject((controllerTest: ControllerTestFactory): void => {
+			ogInputNumberController = controllerTest(
+				"OgInputNumberController",
+			) as OgInputNumberController;
+		}) as Mocha.HookFunction,
 	);
 
 	it("should default to 4 decimal places", (): Chai.Assertion =>

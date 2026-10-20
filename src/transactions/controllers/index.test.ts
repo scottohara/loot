@@ -22,6 +22,7 @@ import type {
 	StateMock,
 	UibModalMock,
 	UibModalMockResolves,
+	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import { addDays, startOfDay, subDays } from "date-fns";
 import {
@@ -35,6 +36,7 @@ import {
 import sinon, { type SinonStub } from "sinon";
 import type { Account } from "~/accounts/types";
 import type AccountModel from "~/accounts/models/account";
+import type { AccountModelMock } from "~/mocks/accounts/types";
 import type { Category } from "~/categories/types";
 import type CategoryModel from "~/categories/models/category";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
@@ -59,10 +61,11 @@ describe("TransactionIndexController", (): void => {
 		$transitions: angular.ui.IStateParamsService,
 		$uibModal: UibModalMock,
 		$timeout: angular.ITimeoutService,
-		$window: angular.IWindowService,
+		$window: WindowMock,
 		$state: StateMock,
 		transactionModel: TransactionModelMock,
 		accountModel: AccountModel,
+		accountModelMock: AccountModelMock,
 		categoryModel: CategoryModel,
 		securityModel: SecurityModel,
 		ogTableNavigableService: OgTableNavigableService,
@@ -70,7 +73,8 @@ describe("TransactionIndexController", (): void => {
 		contextModel: EntityModel,
 		context: Entity | string,
 		transactionBatch: TransactionBatch,
-		deregisterTransitionSuccessHook: SinonStub;
+		deregisterTransitionSuccessHook: SinonStub,
+		scrollTo: SinonStub;
 
 	// Load the modules
 	beforeEach(
@@ -101,7 +105,7 @@ describe("TransactionIndexController", (): void => {
 				_$transitions_: angular.ui.IStateParamsService,
 				_$uibModal_: UibModalMock,
 				_$timeout_: angular.ITimeoutService,
-				_$window_: angular.IWindowService,
+				_$window_: WindowMock,
 				_$state_: StateMock,
 				_transactionModel_: TransactionModelMock,
 				_accountModel_: AccountModel,
@@ -121,6 +125,7 @@ describe("TransactionIndexController", (): void => {
 				$state = _$state_;
 				transactionModel = _transactionModel_;
 				accountModel = _accountModel_;
+				accountModelMock = _accountModel_ as unknown as AccountModelMock;
 				categoryModel = _categoryModel_;
 				securityModel = _securityModel_;
 				ogTableNavigableService = _ogTableNavigableService_;
@@ -132,7 +137,7 @@ describe("TransactionIndexController", (): void => {
 				sinon
 					.stub($transitions, "onSuccess")
 					.returns(deregisterTransitionSuccessHook);
-				sinon.stub(ogViewScrollService, "scrollTo");
+				scrollTo = sinon.stub(ogViewScrollService, "scrollTo");
 				transactionIndexController = controllerTest(
 					"TransactionIndexController",
 				) as TransactionIndexController;
@@ -211,43 +216,51 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	it("should ensure the transaction is focussed when the transaction id state param changes", (): void => {
-		const toParams = { transactionId: "1" };
+		const toParams = { transactionId: "1" },
+			transitionSuccessHandler: SinonStub = sinon.stub(
+				transactionIndexController,
+				"transitionSuccessHandler" as keyof TransactionIndexController,
+			);
 
-		sinon.stub(
-			transactionIndexController,
-			"transitionSuccessHandler" as keyof TransactionIndexController,
-		);
 		$transitions.onSuccess.firstCall.args[1]({
 			params: sinon.stub().withArgs("to").returns(toParams),
 		});
-		expect(
-			transactionIndexController["transitionSuccessHandler"],
-		).to.have.been.calledWith(Number(toParams.transactionId));
+		expect(transitionSuccessHandler).to.have.been.calledWith(
+			Number(toParams.transactionId),
+		);
 	});
 
 	it("should scroll to the bottom when the controller loads", (): void => {
 		$timeout.flush();
-		expect(ogViewScrollService["scrollTo"]).to.have.been.calledWith("bottom");
+		expect(scrollTo).to.have.been.calledWith("bottom");
 	});
 
 	describe("editTransaction", (): void => {
-		let transaction: Transaction, contextChangedStub: SinonStub;
+		let transaction: Transaction,
+			contextChanged: SinonStub,
+			updateClosingBalance: SinonStub,
+			getTransactions: SinonStub,
+			updateRunningBalances: SinonStub,
+			focusTransaction: SinonStub;
 
 		beforeEach((): void => {
-			contextChangedStub = sinon.stub(
+			contextChanged = sinon.stub(
 				transactionIndexController,
 				"contextChanged" as keyof TransactionIndexController,
 			);
-			sinon.stub(
+			updateClosingBalance = sinon.stub(
 				transactionIndexController,
 				"updateClosingBalance" as keyof TransactionIndexController,
 			);
-			sinon.stub(transactionIndexController, "getTransactions");
-			sinon.stub(
+			getTransactions = sinon.stub(
+				transactionIndexController,
+				"getTransactions",
+			);
+			updateRunningBalances = sinon.stub(
 				transactionIndexController,
 				"updateRunningBalances" as keyof TransactionIndexController,
 			);
-			sinon.stub(
+			focusTransaction = sinon.stub(
 				transactionIndexController,
 				"focusTransaction" as keyof TransactionIndexController,
 			);
@@ -276,8 +289,7 @@ describe("TransactionIndexController", (): void => {
 				transactionIndexController["editTransaction"](1);
 				expect($uibModal.open).to.have.been.called;
 				expect(
-					($uibModal.resolves as UibModalMockResolves)
-						.transaction as Transaction,
+					($uibModal.resolves as UibModalMockResolves).transaction,
 				).to.deep.equal(transaction);
 				expect(transactionModel.findSubtransactions).to.not.have.been.called;
 			});
@@ -311,9 +323,10 @@ describe("TransactionIndexController", (): void => {
 				transaction.memo = "edited transaction";
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				expect(
-					transactionIndexController["updateClosingBalance"],
-				).to.have.been.calledWith(originalTransaction, transaction);
+				expect(updateClosingBalance).to.have.been.calledWith(
+					originalTransaction,
+					transaction,
+				);
 			});
 
 			it("should update the transaction in the list of transactions when the modal is closed", (): void => {
@@ -420,8 +433,7 @@ describe("TransactionIndexController", (): void => {
 					transactionIndexController["editTransaction"]();
 					expect($uibModal.open).to.have.been.called;
 					expect(
-						($uibModal.resolves as UibModalMockResolves)
-							.transaction as Transaction,
+						($uibModal.resolves as UibModalMockResolves).transaction,
 					).to.deep.equal(newTransaction);
 				});
 			});
@@ -429,33 +441,34 @@ describe("TransactionIndexController", (): void => {
 			it("should update the closing balance when the modal is closed", (): void => {
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(newTransaction as Transaction);
-				expect(
-					transactionIndexController["updateClosingBalance"],
-				).to.have.been.calledWith(undefined, newTransaction);
+				expect(updateClosingBalance).to.have.been.calledWith(
+					undefined,
+					newTransaction,
+				);
 			});
 
 			it("should add the new transaction to the list of transactions when the modal is closed", (): void => {
 				(newTransaction as PayeeCashTransaction).payee = context as Payee;
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(newTransaction as Transaction);
-				expect(
-					transactionIndexController.transactions.pop() as Transaction,
-				).to.deep.equal(newTransaction);
+				expect(transactionIndexController.transactions.pop()).to.deep.equal(
+					newTransaction,
+				);
 			});
 		});
 
 		it("should check if the context has changed when the modal is closed", (): void => {
 			transactionIndexController["editTransaction"](1);
 			$uibModal.close(transaction);
-			expect(
-				transactionIndexController["contextChanged"],
-			).to.have.been.calledWith(transaction);
+			expect(contextChanged).to.have.been.calledWith(transaction);
 		});
 
 		describe("(on context changed)", (): void => {
+			let removeTransaction: SinonStub;
+
 			beforeEach((): void => {
-				contextChangedStub.returns(true);
-				sinon.stub(
+				contextChanged.returns(true);
+				removeTransaction = sinon.stub(
 					transactionIndexController,
 					"removeTransaction" as keyof TransactionIndexController,
 				);
@@ -464,9 +477,7 @@ describe("TransactionIndexController", (): void => {
 
 			it("should remove the transaction from the list of transactions", (): void => {
 				$uibModal.close(transaction);
-				expect(
-					transactionIndexController["removeTransaction"],
-				).to.have.been.calledWith(1);
+				expect(removeTransaction).to.have.been.calledWith(1);
 			});
 		});
 
@@ -478,9 +489,7 @@ describe("TransactionIndexController", (): void => {
 				);
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				expect(
-					transactionIndexController["getTransactions"],
-				).to.have.been.calledWith(
+				expect(getTransactions).to.have.been.calledWith(
 					"next",
 					subDays(transaction.transaction_date, 1),
 					transaction.id,
@@ -500,16 +509,13 @@ describe("TransactionIndexController", (): void => {
 			it("should not fetch a new transaction batch if we're already at the end", (): void => {
 				transactionIndexController["atEnd"] = true;
 				$uibModal.close(transaction);
-				expect(transactionIndexController["getTransactions"]).to.not.have.been
-					.called;
+				expect(getTransactions).to.not.have.been.called;
 			});
 
 			it("should fetch a new transaction batch ending at the transaction date if we're not already at the end", (): void => {
 				transactionIndexController["atEnd"] = false;
 				$uibModal.close(transaction);
-				expect(
-					transactionIndexController["getTransactions"],
-				).to.have.been.calledWith(
+				expect(getTransactions).to.have.been.calledWith(
 					"prev",
 					addDays(transaction.transaction_date as Date, 1),
 					transaction.id,
@@ -521,8 +527,7 @@ describe("TransactionIndexController", (): void => {
 			it("should not fetch a new transaction batch when the modal is closed", (): void => {
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				expect(transactionIndexController["getTransactions"]).to.not.have.been
-					.called;
+				expect(getTransactions).to.not.have.been.called;
 			});
 
 			it("should resort the transaction list when the modal is closed", (): void => {
@@ -530,24 +535,21 @@ describe("TransactionIndexController", (): void => {
 				transaction.transaction_date = subDays(startOfDay(new Date()), 1);
 				transactionIndexController["editTransaction"](1);
 				$uibModal.close(transaction);
-				expect(
-					transactionIndexController.transactions.pop() as Transaction,
-				).to.deep.equal(transaction);
+				expect(transactionIndexController.transactions.pop()).to.deep.equal(
+					transaction,
+				);
 			});
 
 			it("should recalculate the running balances when the modal is closed", (): void => {
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(transaction);
-				expect(transactionIndexController["updateRunningBalances"]).to.have.been
-					.called;
+				expect(updateRunningBalances).to.have.been.called;
 			});
 
 			it("should focus the transaction when the modal is closed", (): void => {
 				transactionIndexController["editTransaction"]();
 				$uibModal.close(transaction);
-				expect(
-					transactionIndexController["focusTransaction"],
-				).to.have.been.calledWith(transaction.id);
+				expect(focusTransaction).to.have.been.calledWith(transaction.id);
 			});
 		});
 
@@ -686,11 +688,11 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("deleteTransaction", (): void => {
-		let transaction: Transaction;
+		let transaction: Transaction, removeTransaction: SinonStub;
 
 		beforeEach((): void => {
 			transaction = angular.copy(transactionIndexController.transactions[1]);
-			sinon.stub(
+			removeTransaction = sinon.stub(
 				transactionIndexController,
 				"removeTransaction" as keyof TransactionIndexController,
 			);
@@ -717,16 +719,14 @@ describe("TransactionIndexController", (): void => {
 			transactionIndexController["deleteTransaction"](1);
 			expect($uibModal.open).to.have.been.called;
 			expect(
-				($uibModal.resolves as UibModalMockResolves).transaction as Transaction,
+				($uibModal.resolves as UibModalMockResolves).transaction,
 			).to.deep.equal(transaction);
 		});
 
 		it("should remove the transaction from the transactions list when the modal is closed", (): void => {
 			transactionIndexController["deleteTransaction"](1);
 			$uibModal.close(transaction);
-			expect(
-				transactionIndexController["removeTransaction"],
-			).to.have.been.calledWith(1);
+			expect(removeTransaction).to.have.been.calledWith(1);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
@@ -743,11 +743,11 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("removeTransaction", (): void => {
-		let transaction: Transaction;
+		let transaction: Transaction, updateClosingBalance: SinonStub;
 
 		beforeEach((): void => {
 			transaction = angular.copy(transactionIndexController.transactions[1]);
-			sinon.stub(
+			updateClosingBalance = sinon.stub(
 				transactionIndexController,
 				"updateClosingBalance" as keyof TransactionIndexController,
 			);
@@ -755,9 +755,7 @@ describe("TransactionIndexController", (): void => {
 
 		it("should update the closing balance if the transaction was not focussed", (): void => {
 			transactionIndexController["removeTransaction"](1);
-			expect(
-				transactionIndexController["updateClosingBalance"],
-			).to.have.been.calledWith(transaction);
+			expect(updateClosingBalance).to.have.been.calledWith(transaction);
 		});
 
 		it("should remove the transaction from the transactions list", (): void => {
@@ -814,9 +812,7 @@ describe("TransactionIndexController", (): void => {
 				});
 
 				afterEach((): void =>
-					transactionIndexController["updateClosingBalance"](
-						transaction as Transaction,
-					),
+					transactionIndexController["updateClosingBalance"](transaction),
 				);
 			});
 
@@ -839,7 +835,7 @@ describe("TransactionIndexController", (): void => {
 				afterEach((): void =>
 					transactionIndexController["updateClosingBalance"](
 						createBasicTransaction(),
-						transaction as Transaction,
+						transaction,
 					),
 				);
 			});
@@ -853,10 +849,11 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("isAllowed", (): void => {
-		let transaction: SplitTransactionChild | Transaction;
+		let transaction: SplitTransactionChild | Transaction,
+			promptToSwitchAccounts: SinonStub;
 
 		beforeEach((): void => {
-			sinon.stub(
+			promptToSwitchAccounts = sinon.stub(
 				transactionIndexController,
 				"promptToSwitchAccounts" as keyof TransactionIndexController,
 			);
@@ -921,9 +918,10 @@ describe("TransactionIndexController", (): void => {
 							scenario.action,
 							transaction,
 						);
-						expect(
-							transactionIndexController["promptToSwitchAccounts"],
-						).to.have.been.calledWith(scenario.message, transaction);
+						expect(promptToSwitchAccounts).to.have.been.calledWith(
+							scenario.message,
+							transaction,
+						);
 					});
 
 					it(`should return false when attempting to ${scenario.action} a ${scenario.type} transaction`, (): void => {
@@ -979,8 +977,7 @@ describe("TransactionIndexController", (): void => {
 							scenario.action,
 							transaction,
 						);
-						expect(transactionIndexController["promptToSwitchAccounts"]).to.not
-							.have.been.called;
+						expect(promptToSwitchAccounts).to.not.have.been.called;
 					});
 
 					it(`should return true when attempting to ${scenario.action} a ${
@@ -1007,11 +1004,17 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("promptToSwitchAccounts", (): void => {
-		let message: string, transaction: Transaction;
+		let message: string,
+			transaction: Transaction,
+			switchAccount: SinonStub,
+			switchPrimaryAccount: SinonStub;
 
 		beforeEach((): void => {
-			sinon.stub(transactionIndexController, "switchAccount");
-			sinon.stub(transactionIndexController, "switchPrimaryAccount");
+			switchAccount = sinon.stub(transactionIndexController, "switchAccount");
+			switchPrimaryAccount = sinon.stub(
+				transactionIndexController,
+				"switchPrimaryAccount",
+			);
 			message = "test message";
 			transaction = angular.copy(transactionIndexController.transactions[1]);
 			(transaction as TransferrableTransaction).account = createAccount();
@@ -1035,17 +1038,13 @@ describe("TransactionIndexController", (): void => {
 
 		it("should switch to the other account when the modal is closed", (): void => {
 			$uibModal.close();
-			expect(
-				transactionIndexController["switchAccount"],
-			).to.have.been.calledWith(null, transaction);
+			expect(switchAccount).to.have.been.calledWith(null, transaction);
 		});
 
 		it("should switch to the primary account if there is no other account when the modal is closed", (): void => {
 			(transaction as TransferrableTransaction).account = null;
 			$uibModal.close();
-			expect(
-				transactionIndexController["switchPrimaryAccount"],
-			).to.have.been.calledWith(null, transaction);
+			expect(switchPrimaryAccount).to.have.been.calledWith(null, transaction);
 		});
 
 		it("should enable navigation on the table when the modal is closed", (): void => {
@@ -1062,25 +1061,26 @@ describe("TransactionIndexController", (): void => {
 	describe("tableActions.selectAction", (): void => {
 		describe("(not reconciling)", (): void => {
 			it("should edit a transaction", (): void => {
-				sinon.stub(
+				const editTransaction: SinonStub = sinon.stub(
 					transactionIndexController,
 					"editTransaction" as keyof TransactionIndexController,
 				);
+
 				transactionIndexController.tableActions.selectAction(1);
-				expect(
-					transactionIndexController["editTransaction"],
-				).to.have.been.calledWith(1);
+				expect(editTransaction).to.have.been.calledWith(1);
 			});
 		});
 
 		describe("(reconciling)", (): void => {
+			let toggleCleared: SinonStub;
+
 			beforeEach((): void => {
 				transactionIndexController = controllerTest(
 					"TransactionIndexController",
 					{ contextModel: accountModel },
 				) as TransactionIndexController;
 				transactionIndexController.reconciling = true;
-				sinon.stub(transactionIndexController, "toggleCleared");
+				toggleCleared = sinon.stub(transactionIndexController, "toggleCleared");
 			});
 
 			it("should set the transaction status to Cleared if not already", (): void => {
@@ -1099,49 +1099,46 @@ describe("TransactionIndexController", (): void => {
 
 			it("should toggle the transaction's cleared status", (): void => {
 				transactionIndexController.tableActions.selectAction(1);
-				expect(
-					transactionIndexController["toggleCleared"],
-				).to.have.been.calledWith(transactionIndexController.transactions[1]);
+				expect(toggleCleared).to.have.been.calledWith(
+					transactionIndexController.transactions[1],
+				);
 			});
 		});
 	});
 
 	describe("tableActions.editAction", (): void => {
 		it("should edit the transaction", (): void => {
-			sinon.stub(
+			const editTransaction: SinonStub = sinon.stub(
 				transactionIndexController,
 				"editTransaction" as keyof TransactionIndexController,
 			);
+
 			transactionIndexController.tableActions.editAction(1);
-			expect(
-				transactionIndexController["editTransaction"],
-			).to.have.been.calledWithExactly(1);
+			expect(editTransaction).to.have.been.calledWithExactly(1);
 		});
 	});
 
 	describe("tableActions.insertAction", (): void => {
 		it("should insert a transaction", (): void => {
-			sinon.stub(
+			const editTransaction: SinonStub = sinon.stub(
 				transactionIndexController,
 				"editTransaction" as keyof TransactionIndexController,
 			);
+
 			transactionIndexController.tableActions.insertAction();
-			expect(
-				transactionIndexController["editTransaction"],
-			).to.have.been.calledWithExactly();
+			expect(editTransaction).to.have.been.calledWithExactly();
 		});
 	});
 
 	describe("tableActions.deleteAction", (): void => {
 		it("should delete a transaction", (): void => {
-			sinon.stub(
+			const deleteTransaction: SinonStub = sinon.stub(
 				transactionIndexController,
 				"deleteTransaction" as keyof TransactionIndexController,
 			);
+
 			transactionIndexController.tableActions.deleteAction(1);
-			expect(
-				transactionIndexController["deleteTransaction"],
-			).to.have.been.calledWithExactly(1);
+			expect(deleteTransaction).to.have.been.calledWithExactly(1);
 		});
 	});
 
@@ -1163,10 +1160,10 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("getTransactions", (): void => {
-		let fromDate: Date;
+		let fromDate: Date, processTransactions: SinonStub;
 
 		beforeEach((): void => {
-			sinon.stub(
+			processTransactions = sinon.stub(
 				transactionIndexController,
 				"processTransactions" as keyof TransactionIndexController,
 			);
@@ -1232,9 +1229,11 @@ describe("TransactionIndexController", (): void => {
 
 		it("should process the fetched transactions", (): void => {
 			transactionIndexController.getTransactions("prev", fromDate, 1);
-			expect(
-				transactionIndexController["processTransactions"],
-			).to.have.been.calledWith(transactionBatch, fromDate, 1);
+			expect(processTransactions).to.have.been.calledWith(
+				transactionBatch,
+				fromDate,
+				1,
+			);
 		});
 
 		it("should hide the loading indicator after fetching the transacactions", (): void => {
@@ -1244,15 +1243,17 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("processTransactions", (): void => {
+		let updateRunningBalances: SinonStub, focusTransaction: SinonStub;
+
 		beforeEach((): void => {
 			transactionIndexController["openingBalance"] = 0;
 			transactionIndexController.transactions = [];
 			transactionIndexController["atEnd"] = false;
-			sinon.stub(
+			updateRunningBalances = sinon.stub(
 				transactionIndexController,
 				"updateRunningBalances" as keyof TransactionIndexController,
 			);
-			sinon.stub(
+			focusTransaction = sinon.stub(
 				transactionIndexController,
 				"focusTransaction" as keyof TransactionIndexController,
 			);
@@ -1312,8 +1313,7 @@ describe("TransactionIndexController", (): void => {
 
 		it("should calculate the running balances", (): void => {
 			transactionIndexController["processTransactions"](transactionBatch);
-			expect(transactionIndexController["updateRunningBalances"]).to.have.been
-				.called;
+			expect(updateRunningBalances).to.have.been.called;
 		});
 
 		it("should focus the transaction row for a specified transaction", (): void => {
@@ -1322,9 +1322,7 @@ describe("TransactionIndexController", (): void => {
 				undefined,
 				1,
 			);
-			expect(
-				transactionIndexController["focusTransaction"],
-			).to.have.been.calledWith(1);
+			expect(focusTransaction).to.have.been.calledWith(1);
 		});
 	});
 
@@ -1405,18 +1403,22 @@ describe("TransactionIndexController", (): void => {
 			expect(transactionIndexController.reconcilable).to.be.true);
 
 		it("should fetch the unreconciled only setting for the current account", (): Chai.Assertion =>
-			expect(accountModel["isUnreconciledOnly"]).to.have.been.calledWith(
+			expect(accountModelMock.isUnreconciledOnly).to.have.been.calledWith(
 				(transactionIndexController.context as Entity).id,
 			));
 
 		describe("toggleUnreconciledOnly", (): void => {
 			let direction: TransactionFetchDirection | null,
 				fromDate: Date,
-				transactionIdToFocus: number;
+				transactionIdToFocus: number,
+				getTransactions: SinonStub;
 
 			beforeEach((): void => {
 				transactionIndexController.unreconciledOnly = false;
-				sinon.stub(transactionIndexController, "getTransactions");
+				getTransactions = sinon.stub(
+					transactionIndexController,
+					"getTransactions",
+				);
 				direction = "next";
 				fromDate = new Date();
 				transactionIdToFocus = 1;
@@ -1425,12 +1427,12 @@ describe("TransactionIndexController", (): void => {
 			it("should do nothing if we're currently reconciling", (): void => {
 				transactionIndexController.reconciling = true;
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				expect(accountModel["unreconciledOnly"]).to.not.have.been.called;
+				expect(accountModelMock.unreconciledOnly).to.not.have.been.called;
 			});
 
 			it("should update the unreconciled only setting for the current account", (): void => {
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				expect(accountModel["unreconciledOnly"]).to.have.been.calledWith(
+				expect(accountModelMock.unreconciledOnly).to.have.been.calledWith(
 					(transactionIndexController.context as Entity).id,
 					true,
 				);
@@ -1453,36 +1455,39 @@ describe("TransactionIndexController", (): void => {
 					fromDate,
 					transactionIdToFocus,
 				);
-				expect(
-					transactionIndexController["getTransactions"],
-				).to.have.been.calledWith(direction, fromDate, transactionIdToFocus);
+				expect(getTransactions).to.have.been.calledWith(
+					direction,
+					fromDate,
+					transactionIdToFocus,
+				);
 			});
 
 			it("should refetch a batch of transactions in the previous direction if a direction is not specified", (): void => {
 				direction = null;
 				transactionIndexController.toggleUnreconciledOnly(true, "prev");
-				expect(
-					transactionIndexController["getTransactions"],
-				).to.have.been.calledWith("prev");
+				expect(getTransactions).to.have.been.calledWith("prev");
 			});
 		});
 
 		describe("save", (): void => {
-			let contextId: number;
+			let contextId: number, getTransactions: SinonStub;
 
 			beforeEach((): void => {
 				contextId = 1;
 				(transactionIndexController.context as Entity).id = contextId;
 				transactionIndexController.reconciling = true;
-				sinon.stub(transactionIndexController, "getTransactions");
+				getTransactions = sinon.stub(
+					transactionIndexController,
+					"getTransactions",
+				);
 				transactionIndexController.save();
 			});
 
 			it("should update all cleared transactions to reconciled", (): Chai.Assertion =>
-				expect(accountModel["reconcile"]).to.have.been.calledWith(contextId));
+				expect(accountModelMock.reconcile).to.have.been.calledWith(contextId));
 
 			it("should cleared the account's closing balance", (): Chai.Assertion =>
-				expect($window.localStorage["removeItem"]).to.have.been.calledWith(
+				expect($window.localStorage.removeItem).to.have.been.calledWith(
 					"lootClosingBalance-1",
 				));
 
@@ -1495,9 +1500,7 @@ describe("TransactionIndexController", (): void => {
 			});
 
 			it("should refresh the list of transactions", (): Chai.Assertion =>
-				expect(
-					transactionIndexController["getTransactions"],
-				).to.have.been.calledWith("prev"));
+				expect(getTransactions).to.have.been.calledWith("prev"));
 		});
 
 		describe("cancel", (): void => {
@@ -1516,8 +1519,13 @@ describe("TransactionIndexController", (): void => {
 			});
 
 			describe("(not already reconciling)", (): void => {
+				let toggleUnreconciledOnly: SinonStub;
+
 				beforeEach((): void => {
-					sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
+					toggleUnreconciledOnly = sinon.stub(
+						transactionIndexController,
+						"toggleUnreconciledOnly",
+					);
 					transactionIndexController.reconciling = false;
 					transactionIndexController.reconcile();
 				});
@@ -1528,7 +1536,7 @@ describe("TransactionIndexController", (): void => {
 				it("should prompt the user for the accounts closing balance", (): void => {
 					expect($uibModal.open).to.have.been.called;
 					expect(
-						($uibModal.resolves as UibModalMockResolves).account as Account,
+						($uibModal.resolves as UibModalMockResolves).account,
 					).to.deep.equal(transactionIndexController.context);
 				});
 
@@ -1562,9 +1570,7 @@ describe("TransactionIndexController", (): void => {
 
 				it("should refetch the list of unreconciled transactions when the modal is closed", (): void => {
 					$uibModal.close();
-					expect(
-						transactionIndexController["toggleUnreconciledOnly"],
-					).to.have.been.calledWith(true);
+					expect(toggleUnreconciledOnly).to.have.been.calledWith(true);
 				});
 
 				it("should enter reconcile mode when the modal is closed", (): void => {
@@ -1638,11 +1644,11 @@ describe("TransactionIndexController", (): void => {
 		});
 
 		describe("toggleCleared", (): void => {
-			let transaction: Transaction;
+			let transaction: Transaction, updateReconciledTotals: SinonStub;
 
 			beforeEach((): void => {
 				transaction = createBasicTransaction();
-				sinon.stub(
+				updateReconciledTotals = sinon.stub(
 					transactionIndexController,
 					"updateReconciledTotals" as keyof TransactionIndexController,
 				);
@@ -1657,9 +1663,7 @@ describe("TransactionIndexController", (): void => {
 				));
 
 			it("should update the reconciled totals", (): Chai.Assertion =>
-				expect(
-					transactionIndexController["updateReconciledTotals"],
-				).to.have.been.calledWith(transaction));
+				expect(updateReconciledTotals).to.have.been.calledWith(transaction));
 		});
 	});
 
@@ -1801,10 +1805,10 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("switchToAccount", (): void => {
-		let id: number, transaction: Transaction;
+		let id: number, transaction: Transaction, switchTo: SinonStub;
 
 		beforeEach((): void => {
-			sinon.stub(
+			switchTo = sinon.stub(
 				transactionIndexController,
 				"switchTo" as keyof TransactionIndexController,
 			);
@@ -1814,13 +1818,13 @@ describe("TransactionIndexController", (): void => {
 
 		it("should not toggle the unreconciled only setting for the account if the transaction is not reconciled", (): void => {
 			transactionIndexController["switchToAccount"](null, id, transaction);
-			expect(accountModel["unreconciledOnly"]).to.not.have.been.called;
+			expect(accountModelMock.unreconciledOnly).to.not.have.been.called;
 		});
 
 		it("should toggle the unreconciled only setting for the account if the transaction is reconciled", (): void => {
 			transaction.status = "Reconciled";
 			transactionIndexController["switchToAccount"](null, id, transaction);
-			expect(accountModel["unreconciledOnly"]).to.have.been.calledWith(
+			expect(accountModelMock.unreconciledOnly).to.have.been.calledWith(
 				id,
 				false,
 			);
@@ -1834,7 +1838,7 @@ describe("TransactionIndexController", (): void => {
 				id,
 				transaction,
 			);
-			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(
+			expect(switchTo).to.have.been.calledWith(
 				event,
 				"accounts.account",
 				id,
@@ -1846,16 +1850,14 @@ describe("TransactionIndexController", (): void => {
 	describe("switchAccount", (): void => {
 		it("should switch to the other side of the transaction", (): void => {
 			const event: EventMock = {},
-				transaction: TransferTransaction = createTransferTransaction();
+				transaction: TransferTransaction = createTransferTransaction(),
+				switchToAccount: SinonStub = sinon.stub(
+					transactionIndexController,
+					"switchToAccount" as keyof TransactionIndexController,
+				);
 
-			sinon.stub(
-				transactionIndexController,
-				"switchToAccount" as keyof TransactionIndexController,
-			);
 			transactionIndexController["switchAccount"](event as Event, transaction);
-			expect(
-				transactionIndexController["switchToAccount"],
-			).to.have.been.calledWith(
+			expect(switchToAccount).to.have.been.calledWith(
 				event,
 				(transaction.account as Account).id,
 				transaction,
@@ -1866,19 +1868,17 @@ describe("TransactionIndexController", (): void => {
 	describe("switchPrimaryAccount", (): void => {
 		it("should switch to the primary account of the transaction", (): void => {
 			const event: EventMock = {},
-				transaction: TransferTransaction = createTransferTransaction();
+				transaction: TransferTransaction = createTransferTransaction(),
+				switchToAccount: SinonStub = sinon.stub(
+					transactionIndexController,
+					"switchToAccount" as keyof TransactionIndexController,
+				);
 
-			sinon.stub(
-				transactionIndexController,
-				"switchToAccount" as keyof TransactionIndexController,
-			);
 			transactionIndexController.switchPrimaryAccount(
 				event as Event,
 				transaction,
 			);
-			expect(
-				transactionIndexController["switchToAccount"],
-			).to.have.been.calledWith(
+			expect(switchToAccount).to.have.been.calledWith(
 				event,
 				transaction.primary_account.id,
 				transaction,
@@ -1889,14 +1889,14 @@ describe("TransactionIndexController", (): void => {
 	describe("switchPayee", (): void => {
 		it("should switch to the payee of the transaction", (): void => {
 			const event: EventMock = {},
-				transaction: BasicTransaction = createBasicTransaction();
+				transaction: BasicTransaction = createBasicTransaction(),
+				switchTo: SinonStub = sinon.stub(
+					transactionIndexController,
+					"switchTo" as keyof TransactionIndexController,
+				);
 
-			sinon.stub(
-				transactionIndexController,
-				"switchTo" as keyof TransactionIndexController,
-			);
 			transactionIndexController.switchPayee(event as Event, transaction);
-			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(
+			expect(switchTo).to.have.been.calledWith(
 				event,
 				"payees.payee",
 				(transaction.payee as Payee).id,
@@ -1909,14 +1909,14 @@ describe("TransactionIndexController", (): void => {
 		it("should switch to the security of the transaction", (): void => {
 			const event: EventMock = {},
 				transaction: SecurityHoldingTransaction =
-					createSecurityHoldingTransaction();
+					createSecurityHoldingTransaction(),
+				switchTo: SinonStub = sinon.stub(
+					transactionIndexController,
+					"switchTo" as keyof TransactionIndexController,
+				);
 
-			sinon.stub(
-				transactionIndexController,
-				"switchTo" as keyof TransactionIndexController,
-			);
 			transactionIndexController.switchSecurity(event as Event, transaction);
-			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(
+			expect(switchTo).to.have.been.calledWith(
 				event,
 				"securities.security",
 				(transaction.security as Security).id,
@@ -1928,14 +1928,14 @@ describe("TransactionIndexController", (): void => {
 	describe("switchCategory", (): void => {
 		it("should switch to the category of the transaction", (): void => {
 			const event: EventMock = {},
-				transaction: BasicTransaction = createBasicTransaction();
+				transaction: BasicTransaction = createBasicTransaction(),
+				switchTo: SinonStub = sinon.stub(
+					transactionIndexController,
+					"switchTo" as keyof TransactionIndexController,
+				);
 
-			sinon.stub(
-				transactionIndexController,
-				"switchTo" as keyof TransactionIndexController,
-			);
 			transactionIndexController.switchCategory(event as Event, transaction);
-			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(
+			expect(switchTo).to.have.been.calledWith(
 				event,
 				"categories.category",
 				(transaction.category as Category).id,
@@ -1947,14 +1947,14 @@ describe("TransactionIndexController", (): void => {
 	describe("switchSubcategory", (): void => {
 		it("should switch to the subcategory of the transaction", (): void => {
 			const event: EventMock = {},
-				transaction: BasicTransaction = createBasicTransaction();
+				transaction: BasicTransaction = createBasicTransaction(),
+				switchTo: SinonStub = sinon.stub(
+					transactionIndexController,
+					"switchTo" as keyof TransactionIndexController,
+				);
 
-			sinon.stub(
-				transactionIndexController,
-				"switchTo" as keyof TransactionIndexController,
-			);
 			transactionIndexController.switchSubcategory(event as Event, transaction);
-			expect(transactionIndexController["switchTo"]).to.have.been.calledWith(
+			expect(switchTo).to.have.been.calledWith(
 				event,
 				"categories.category",
 				(transaction.subcategory as Category).id,
@@ -1964,11 +1964,11 @@ describe("TransactionIndexController", (): void => {
 	});
 
 	describe("transitionSuccessHandler", (): void => {
-		let transactionId: number, focusTransactionStub: SinonStub;
+		let transactionId: number, focusTransaction: SinonStub;
 
 		beforeEach(
 			(): SinonStub =>
-				(focusTransactionStub = sinon
+				(focusTransaction = sinon
 					.stub(
 						transactionIndexController,
 						"focusTransaction" as keyof TransactionIndexController,
@@ -1979,15 +1979,18 @@ describe("TransactionIndexController", (): void => {
 		it("should ensure the transaction is focussed when the transaction id state param changes", (): void => {
 			transactionId = 2;
 			transactionIndexController["transitionSuccessHandler"](transactionId);
-			expect(
-				transactionIndexController["focusTransaction"],
-			).to.have.been.calledWith(transactionId);
+			expect(focusTransaction).to.have.been.calledWith(transactionId);
 		});
 
 		describe("(transaction not found)", (): void => {
+			let getTransactions: SinonStub;
+
 			beforeEach((): void => {
-				sinon.stub(transactionIndexController, "getTransactions");
-				focusTransactionStub.withArgs(3).returns(NaN);
+				getTransactions = sinon.stub(
+					transactionIndexController,
+					"getTransactions",
+				);
+				focusTransaction.withArgs(3).returns(NaN);
 				transactionId = 3;
 			});
 
@@ -2011,12 +2014,14 @@ describe("TransactionIndexController", (): void => {
 							"focusTransaction" as keyof TransactionIndexController,
 						)
 						.returns(NaN);
-					sinon.stub(transactionIndexController, "toggleUnreconciledOnly");
+					const toggleUnreconciledOnly: SinonStub = sinon.stub(
+						transactionIndexController,
+						"toggleUnreconciledOnly",
+					);
+
 					transactionIndexController.unreconciledOnly = true;
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					expect(
-						transactionIndexController["toggleUnreconciledOnly"],
-					).to.have.been.calledWith(
+					expect(toggleUnreconciledOnly).to.have.been.calledWith(
 						false,
 						direction,
 						transactionDate,
@@ -2033,9 +2038,7 @@ describe("TransactionIndexController", (): void => {
 						new Date(),
 					);
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					expect(
-						transactionIndexController["getTransactions"],
-					).to.have.been.calledWith("next", fromDate);
+					expect(getTransactions).to.have.been.calledWith("next", fromDate);
 				});
 			});
 
@@ -2049,9 +2052,7 @@ describe("TransactionIndexController", (): void => {
 					);
 					transactionIndexController["atEnd"] = false;
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					expect(
-						transactionIndexController["getTransactions"],
-					).to.have.been.calledWith("prev", fromDate);
+					expect(getTransactions).to.have.been.calledWith("prev", fromDate);
 				});
 
 				it("should fetch a new transaction batch for the current transaction date if we're already at the end", (): void => {
@@ -2064,9 +2065,7 @@ describe("TransactionIndexController", (): void => {
 					);
 					transactionIndexController["atEnd"] = true;
 					transactionIndexController["transitionSuccessHandler"](transactionId);
-					expect(
-						transactionIndexController["getTransactions"],
-					).to.have.been.calledWith(direction, fromDate);
+					expect(getTransactions).to.have.been.calledWith(direction, fromDate);
 				});
 			});
 		});

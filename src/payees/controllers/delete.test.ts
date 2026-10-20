@@ -52,7 +52,7 @@ describe("PayeeDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			payeeDeleteController.errorMessage = "error message";
 			payeeDeleteController.deletePayee();
-			expect(payeeDeleteController.errorMessage as string | null).to.be.null;
+			expect(payeeDeleteController.errorMessage).to.be.null;
 		});
 
 		it("should delete the payee", (): void => {
@@ -68,9 +68,7 @@ describe("PayeeDeleteController", (): void => {
 		it("should display an error message when the payee delete is unsuccessful", (): void => {
 			payeeDeleteController.payee.id = -1;
 			payeeDeleteController.deletePayee();
-			expect(payeeDeleteController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(payeeDeleteController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

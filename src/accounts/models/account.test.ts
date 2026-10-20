@@ -1,6 +1,7 @@
 import type { Account, Accounts } from "~/accounts/types";
 import type {
 	CacheFactoryMock,
+	CacheMock,
 	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import type {
@@ -17,7 +18,7 @@ describe("accountModel", (): void => {
 	let accountModel: AccountModel,
 		$httpBackend: angular.IHttpBackendService,
 		$http: angular.IHttpService,
-		$cache: angular.ICacheObject,
+		$cache: CacheMock,
 		$window: WindowMock,
 		ogLruCache: OgLruCacheMock,
 		account: Account,
@@ -211,13 +212,16 @@ describe("accountModel", (): void => {
 	});
 
 	describe("allWithBalances", (): void => {
-		beforeEach((): SinonStub =>
-			sinon.stub(accountModel, "all").returns(iPromise),
+		let all: SinonStub;
+
+		beforeEach(
+			(): SinonStub =>
+				(all = sinon.stub(accountModel, "all").returns(iPromise)),
 		);
 
 		it("should call accountModel.all(true)", (): void => {
 			accountModel.allWithBalances();
-			expect(accountModel["all"]).to.have.been.calledWith(true);
+			expect(all).to.have.been.calledWith(true);
 		});
 
 		it("should return a list of all accounts including their balances", (): void => {
@@ -229,7 +233,11 @@ describe("accountModel", (): void => {
 		const expectedUrl = /accounts\/123/v,
 			expectedResponse = "account details";
 
-		beforeEach((): SinonStub => sinon.stub(accountModel, "addRecent"));
+		let addRecent: SinonStub;
+
+		beforeEach(
+			(): SinonStub => (addRecent = sinon.stub(accountModel, "addRecent")),
+		);
 
 		it("should dispatch a GET request to /accounts/{id}", (): void => {
 			$httpBackend.expectGET(expectedUrl).respond(200);
@@ -249,9 +257,7 @@ describe("accountModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			accountModel.find(123);
 			$httpBackend.flush();
-			expect(accountModel["addRecent"]).to.have.been.calledWith(
-				expectedResponse,
-			);
+			expect(addRecent).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the account", (): void => {
@@ -269,15 +275,17 @@ describe("accountModel", (): void => {
 		const expectedPostUrl = /accounts$/v,
 			expectedPatchUrl = /accounts\/1$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(accountModel, "flush");
+			flush = sinon.stub(accountModel, "flush");
 			$httpBackend.whenPOST(expectedPostUrl, account).respond(200);
 			$httpBackend.whenPATCH(expectedPatchUrl, account).respond(200);
 		});
 
 		it("should flush the account cache", (): void => {
 			accountModel.save(account);
-			expect(accountModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -296,21 +304,23 @@ describe("accountModel", (): void => {
 	});
 
 	describe("destroy", (): void => {
+		let flush: SinonStub, removeRecent: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(accountModel, "flush");
-			sinon.stub(accountModel, "removeRecent");
+			flush = sinon.stub(accountModel, "flush");
+			removeRecent = sinon.stub(accountModel, "removeRecent");
 			$httpBackend.expectDELETE(/accounts\/1$/v).respond(200);
 			accountModel.destroy(account);
 			$httpBackend.flush();
 		});
 
 		it("should flush the account cache", (): Chai.Assertion =>
-			expect(accountModel["flush"]).to.have.been.called);
+			expect(flush).to.have.been.called);
 
 		it("should dispatch a DELETE request to /accounts/{id}", (): null => null);
 
 		it("should remove the account from the recent list", (): Chai.Assertion =>
-			expect(accountModel["removeRecent"]).to.have.been.calledWith(1));
+			expect(removeRecent).to.have.been.calledWith(1));
 	});
 
 	describe("reconcile", (): void => {
@@ -326,15 +336,17 @@ describe("accountModel", (): void => {
 	describe("toggleFavourite", (): void => {
 		const expectedUrl = /accounts\/1\/favourite$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(accountModel, "flush");
+			flush = sinon.stub(accountModel, "flush");
 			$httpBackend.whenDELETE(expectedUrl).respond(200);
 			$httpBackend.whenPUT(expectedUrl).respond(200);
 		});
 
 		it("should flush the account cache", (): void => {
 			accountModel.toggleFavourite(account);
-			expect(accountModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -381,12 +393,12 @@ describe("accountModel", (): void => {
 	describe("flush", (): void => {
 		it("should remove the specified account from the account cache when an id is provided", (): void => {
 			accountModel.flush(1);
-			expect($cache["remove"]).to.have.been.calledWith("/accounts/1");
+			expect($cache.remove).to.have.been.calledWith("/accounts/1");
 		});
 
 		it("should flush the account cache when an id is not provided", (): void => {
 			accountModel.flush();
-			expect($cache["removeAll"]).to.have.been.called;
+			expect($cache.removeAll).to.have.been.called;
 		});
 	});
 

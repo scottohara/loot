@@ -44,7 +44,7 @@ describe("ogInputNumber", (): void => {
 
 		afterEach((): void => {
 			ogInputNumber.scope.$digest();
-			expect(ogInputNumber["element"].val() as string).to.equal(expected);
+			expect(ogInputNumber["element"].val()).to.equal(expected);
 		});
 	});
 
@@ -65,7 +65,7 @@ describe("ogInputNumber", (): void => {
 		afterEach((): void => {
 			ogInputNumber["element"].triggerHandler("change");
 			ogInputNumber.scope.$digest();
-			expect(ogInputNumber.scope.model as number).to.equal(expected);
+			expect(ogInputNumber.scope.model).to.equal(expected);
 		});
 	});
 
@@ -74,7 +74,7 @@ describe("ogInputNumber", (): void => {
 			expected = "-1,234.5000";
 			ogInputNumber["element"].val("-1a,234.5");
 			ogInputNumber["element"].triggerHandler("focus");
-			expect(ogInputNumber["element"].val() as string).to.equal(expected);
+			expect(ogInputNumber["element"].val()).to.equal(expected);
 		});
 	});
 
@@ -82,7 +82,7 @@ describe("ogInputNumber", (): void => {
 		it("should format the value", (): void => {
 			ogInputNumber["element"].val("-1234.5");
 			ogInputNumber["element"].triggerHandler("blur");
-			expect(ogInputNumber["element"].val() as string).to.equal("-1,234.5000");
+			expect(ogInputNumber["element"].val()).to.equal("-1,234.5000");
 		});
 	});
 
@@ -96,13 +96,13 @@ describe("ogInputNumber", (): void => {
 			expected = "-1a,234.5";
 			ogInputNumber["element"].val("-1a,234.5");
 			ogInputNumber["element"].triggerHandler("focus");
-			expect(ogInputNumber["element"].val() as string).to.equal(expected);
+			expect(ogInputNumber["element"].val()).to.equal(expected);
 		});
 
 		it("should remove the blur handler from the element", (): void => {
 			ogInputNumber["element"].val("-1234.5");
 			ogInputNumber["element"].triggerHandler("blur");
-			expect(ogInputNumber["element"].val() as string).to.equal("-1234.5");
+			expect(ogInputNumber["element"].val()).to.equal("-1234.5");
 		});
 	});
 });

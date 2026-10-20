@@ -1,10 +1,10 @@
+import sinon, { type SinonStub } from "sinon";
 import $ from "jquery";
 import type { LootRootScope } from "~/loot/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
-import type OgNavigatorServiceWorkerService from "~/og-components/og-navigator-serviceworker/services/og-navigator-serviceworker";
+import type { OgNavigatorServiceWorkerServiceMock } from "~/mocks/og-components/og-navigator-serviceworker/types";
 import type { UrlService } from "@uirouter/angularjs";
 import angular from "angular";
-import sinon from "sinon";
 
 describe("loot", (): void => {
 	// Dependencies
@@ -12,7 +12,8 @@ describe("loot", (): void => {
 		$window: angular.IWindowService,
 		$rootScope: LootRootScope,
 		$state: angular.ui.IStateService,
-		ogNavigatorServiceWorkerService: OgNavigatorServiceWorkerService;
+		ogNavigatorServiceWorkerService: OgNavigatorServiceWorkerServiceMock,
+		otherwise: SinonStub;
 
 	// Load the modules
 	beforeEach(
@@ -20,7 +21,7 @@ describe("loot", (): void => {
 			"ui.router",
 			(_$urlServiceProvider_: UrlService): void => {
 				$urlServiceProvider = _$urlServiceProvider_;
-				sinon.stub($urlServiceProvider.rules, "otherwise");
+				otherwise = sinon.stub($urlServiceProvider.rules, "otherwise");
 			},
 		) as Mocha.HookFunction,
 	);
@@ -44,7 +45,7 @@ describe("loot", (): void => {
 				_$window_: angular.IWindowService,
 				_$rootScope_: LootRootScope,
 				_$state_: angular.ui.IStateService,
-				_ogNavigatorServiceWorkerService_: OgNavigatorServiceWorkerService,
+				_ogNavigatorServiceWorkerService_: OgNavigatorServiceWorkerServiceMock,
 			): void => {
 				$window = _$window_;
 				$rootScope = _$rootScope_;
@@ -56,9 +57,7 @@ describe("loot", (): void => {
 
 	describe("config", (): void => {
 		it("should set a default URL route", (): Chai.Assertion =>
-			expect($urlServiceProvider.rules["otherwise"]).to.have.been.calledWith(
-				"/accounts",
-			));
+			expect(otherwise).to.have.been.calledWith("/accounts"));
 	});
 
 	describe("run", (): void => {
@@ -69,8 +68,8 @@ describe("loot", (): void => {
 			expect($rootScope.$state).to.deep.equal($state));
 
 		it("should register a service worker", (): Chai.Assertion =>
-			expect(
-				ogNavigatorServiceWorkerService["register"],
-			).to.have.been.calledWith("/service-worker.js"));
+			expect(ogNavigatorServiceWorkerService.register).to.have.been.calledWith(
+				"/service-worker.js",
+			));
 	});
 });

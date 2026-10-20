@@ -33,7 +33,7 @@ export default class QMockProvider implements Mock<QMock> {
 							),
 						)
 					) {
-						return result as PromiseMock<T>;
+						return result;
 					}
 
 					// Otherwise, update the promise value to the callback result; and return the existing promise
@@ -99,8 +99,7 @@ export default class QMockProvider implements Mock<QMock> {
 				// Configure the stub to return the appropriate promise based on the call arguments
 				if (
 					undefined === success ||
-					(angular.isObject(success) &&
-						undefined === (success as PromiseMockConfig<T>).args)
+					("object" === typeof success && undefined === success.args)
 				) {
 					// No success args specified, so default response is a success
 					stub.returns(qSuccess.promise);

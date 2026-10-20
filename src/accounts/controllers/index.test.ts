@@ -66,13 +66,13 @@ describe("AccountIndexController", (): void => {
 		expect(accountIndexController.netWorth).to.equal(200));
 
 	describe("editAccount", (): void => {
-		let account: Account;
+		let account: Account, calculateAccountTypeTotal: SinonStub;
 
 		beforeEach((): void => {
 			account = angular.copy(
 				accountIndexController.accounts["Bank accounts"].accounts[1],
 			);
-			sinon.stub(
+			calculateAccountTypeTotal = sinon.stub(
 				accountIndexController,
 				"calculateAccountTypeTotal" as keyof AccountIndexController,
 			);
@@ -87,7 +87,7 @@ describe("AccountIndexController", (): void => {
 				expect($uibModal.open).to.have.been.called;
 				expect(accountModel.addRecent).to.have.been.calledWith(account);
 				expect(
-					($uibModal.resolves as UibModalMockResolves).account as Account,
+					($uibModal.resolves as UibModalMockResolves).account,
 				).to.deep.equal(account);
 			});
 
@@ -103,9 +103,9 @@ describe("AccountIndexController", (): void => {
 					).to.not.include(account));
 
 				it("should recalculate the original account type total", (): Chai.Assertion =>
-					expect(
-						accountIndexController["calculateAccountTypeTotal"],
-					).to.have.been.calledWith("Bank accounts"));
+					expect(calculateAccountTypeTotal).to.have.been.calledWith(
+						"Bank accounts",
+					));
 
 				it("should add the account to the new account type's list", (): Chai.Assertion =>
 					expect(
@@ -138,9 +138,7 @@ describe("AccountIndexController", (): void => {
 			it("should add the new account to the list of accounts when the modal is closed", (): void => {
 				$uibModal.close(account);
 				expect(
-					accountIndexController.accounts[
-						"Bank accounts"
-					].accounts.pop() as Account,
+					accountIndexController.accounts["Bank accounts"].accounts.pop(),
 				).to.deep.equal(account);
 			});
 
@@ -158,18 +156,16 @@ describe("AccountIndexController", (): void => {
 			accountIndexController.editAccount();
 			$uibModal.close(account);
 			expect(
-				accountIndexController.accounts[
-					"Bank accounts"
-				].accounts.pop() as Account,
+				accountIndexController.accounts["Bank accounts"].accounts.pop(),
 			).to.deep.equal(accountWithHighestName);
 		});
 
 		it("should recalculate the account type total when the modal is closed", (): void => {
 			accountIndexController.editAccount();
 			$uibModal.close(account);
-			expect(
-				accountIndexController["calculateAccountTypeTotal"],
-			).to.have.been.calledWith("Bank accounts");
+			expect(calculateAccountTypeTotal).to.have.been.calledWith(
+				"Bank accounts",
+			);
 		});
 
 		it("should not change the accounts list when the modal is dismissed", (): void => {
@@ -184,13 +180,13 @@ describe("AccountIndexController", (): void => {
 	});
 
 	describe("deleteAccount", (): void => {
-		let account: Account;
+		let account: Account, calculateAccountTypeTotal: SinonStub;
 
 		beforeEach((): void => {
 			account = angular.copy(
 				accountIndexController.accounts["Bank accounts"].accounts[1],
 			);
-			sinon.stub(
+			calculateAccountTypeTotal = sinon.stub(
 				accountIndexController,
 				"calculateAccountTypeTotal" as keyof AccountIndexController,
 			);
@@ -214,7 +210,7 @@ describe("AccountIndexController", (): void => {
 			accountIndexController.deleteAccount("Bank accounts", 1);
 			expect($uibModal.open).to.have.been.called;
 			expect(
-				($uibModal.resolves as UibModalMockResolves).account as Account,
+				($uibModal.resolves as UibModalMockResolves).account,
 			).to.deep.equal(account);
 		});
 
@@ -229,27 +225,27 @@ describe("AccountIndexController", (): void => {
 		it("should recalculate the account type total when the modal is closed", (): void => {
 			accountIndexController.deleteAccount("Bank accounts", 1);
 			$uibModal.close(account);
-			expect(
-				accountIndexController["calculateAccountTypeTotal"],
-			).to.have.been.calledWith("Bank accounts");
+			expect(calculateAccountTypeTotal).to.have.been.calledWith(
+				"Bank accounts",
+			);
 		});
 	});
 
 	describe("keyHandler", (): void => {
-		let event: JQueryKeyEventObjectMock;
+		let event: JQueryKeyEventObjectMock, editAccount: SinonStub;
 
 		beforeEach((): void => {
 			event = {
 				key: "Enter",
 				preventDefault: sinon.stub(),
 			};
-			sinon.stub(accountIndexController, "editAccount");
+			editAccount = sinon.stub(accountIndexController, "editAccount");
 		});
 
 		it("should invoke editAccount() with no account when the Insert key is pressed", (): void => {
 			event.key = "Insert";
 			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
-			expect(accountIndexController["editAccount"]).to.have.been.called;
+			expect(editAccount).to.have.been.called;
 			expect(event.preventDefault as SinonStub).to.have.been.called;
 		});
 
@@ -257,7 +253,7 @@ describe("AccountIndexController", (): void => {
 			event.key = "N";
 			event.ctrlKey = true;
 			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
-			expect(accountIndexController["editAccount"]).to.have.been.called;
+			expect(editAccount).to.have.been.called;
 			expect(event.preventDefault as SinonStub).to.have.been.called;
 		});
 
@@ -265,29 +261,32 @@ describe("AccountIndexController", (): void => {
 			event.key = "n";
 			event.ctrlKey = true;
 			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
-			expect(accountIndexController["editAccount"]).to.have.been.called;
+			expect(editAccount).to.have.been.called;
 			expect(event.preventDefault as SinonStub).to.have.been.called;
 		});
 
 		it("should do nothing when any other keys are pressed", (): void => {
 			accountIndexController["keyHandler"](event as JQuery.KeyDownEvent);
-			expect(accountIndexController["editAccount"]).to.not.have.been.called;
+			expect(editAccount).to.not.have.been.called;
 			expect(event.preventDefault as SinonStub).to.not.have.been.called;
 		});
 	});
 
 	it("should attach a keydown handler to the document", (): void => {
-		sinon.stub(
+		const keyHandler: SinonStub = sinon.stub(
 			accountIndexController,
 			"keyHandler" as keyof AccountIndexController,
 		);
+
 		$window.$(document).triggerHandler("keydown");
-		expect(accountIndexController["keyHandler"]).to.have.been.called;
+		expect(keyHandler).to.have.been.called;
 	});
 
 	describe("on destroy", (): void => {
+		let keyHandler: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(
+			keyHandler = sinon.stub(
 				accountIndexController,
 				"keyHandler" as keyof AccountIndexController,
 			);
@@ -296,7 +295,7 @@ describe("AccountIndexController", (): void => {
 
 		it("should remove the keydown handler from the document", (): void => {
 			$window.$(document).triggerHandler("keydown");
-			expect(accountIndexController["keyHandler"]).to.not.have.been.called;
+			expect(keyHandler).to.not.have.been.called;
 		});
 	});
 

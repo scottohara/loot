@@ -32,10 +32,9 @@ describe("iPromiseMock", (): void => {
 
 	// Inject the object under test
 	beforeEach(
-		angular.mock.inject(
-			(_iPromiseMock_: angular.IPromise<never>): angular.IPromise<never> =>
-				(iPromiseMock = _iPromiseMock_),
-		) as Mocha.HookFunction,
+		angular.mock.inject((_iPromiseMock_: angular.IPromise<never>): void => {
+			iPromiseMock = _iPromiseMock_;
+		}) as Mocha.HookFunction,
 	);
 
 	describe("then", (): void => {

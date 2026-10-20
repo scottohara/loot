@@ -33,10 +33,9 @@ describe("iHttpPromiseMock", (): void => {
 	// Inject the object under test
 	beforeEach(
 		angular.mock.inject(
-			(
-				_iHttpPromiseMock_: angular.IHttpPromise<unknown>,
-			): angular.IHttpPromise<unknown> =>
-				(iHttpPromiseMock = _iHttpPromiseMock_),
+			(_iHttpPromiseMock_: angular.IHttpPromise<unknown>): void => {
+				iHttpPromiseMock = _iHttpPromiseMock_;
+			},
 		) as Mocha.HookFunction,
 	);
 

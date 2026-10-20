@@ -52,7 +52,7 @@ describe("ScheduleDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleDeleteController.errorMessage = "error message";
 			scheduleDeleteController.deleteSchedule();
-			expect(scheduleDeleteController.errorMessage as string | null).to.be.null;
+			expect(scheduleDeleteController.errorMessage).to.be.null;
 		});
 
 		it("should delete the schedule", (): void => {
@@ -68,9 +68,7 @@ describe("ScheduleDeleteController", (): void => {
 		it("should display an error message when the schedule delete is unsuccessful", (): void => {
 			scheduleDeleteController.schedule.id = -1;
 			scheduleDeleteController.deleteSchedule();
-			expect(scheduleDeleteController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(scheduleDeleteController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

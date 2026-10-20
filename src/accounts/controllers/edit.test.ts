@@ -116,9 +116,9 @@ describe("AccountEditController", (): void => {
 				opening_balance: 100,
 			};
 			accountEditController.accountTypeSelected();
-			expect(
-				accountEditController.account.related_account as Account,
-			).to.deep.equal({ opening_balance: 0 });
+			expect(accountEditController.account.related_account).to.deep.equal({
+				opening_balance: 0,
+			});
 		});
 
 		it("should clear the related account if the account type is not investment", (): void => {
@@ -149,7 +149,7 @@ describe("AccountEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			accountEditController.errorMessage = "error message";
 			accountEditController.save();
-			expect(accountEditController.errorMessage as string | null).to.be.null;
+			expect(accountEditController.errorMessage).to.be.null;
 		});
 
 		it("should convert the account type to lower case", (): void => {
@@ -175,9 +175,7 @@ describe("AccountEditController", (): void => {
 		it("should display an error message when the account save is unsuccessful", (): void => {
 			accountEditController.account.id = -1;
 			accountEditController.save();
-			expect(accountEditController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(accountEditController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

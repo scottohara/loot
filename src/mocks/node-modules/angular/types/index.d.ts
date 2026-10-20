@@ -5,8 +5,17 @@ import type { ScheduledTransaction } from "~/schedules/types";
 import type { SinonStub } from "sinon";
 import type { Transaction } from "~/transactions/types";
 
+export interface CacheMock {
+	put: SinonStub;
+	get: SinonStub;
+	info: SinonStub;
+	remove: SinonStub;
+	removeAll: SinonStub;
+	destroy: SinonStub;
+}
+
 export interface CacheFactoryMock {
-	(): angular.ICacheObject;
+	(): CacheMock;
 	info?: SinonStub;
 	get?: SinonStub;
 }
@@ -58,8 +67,8 @@ export interface StateMock {
 		name: string;
 	};
 	currentState: (state: string) => void;
-	reload: () => void;
-	go: () => void;
+	reload: SinonStub;
+	go: SinonStub;
 }
 
 export type UibModalMockResolve =

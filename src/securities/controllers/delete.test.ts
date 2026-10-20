@@ -52,7 +52,7 @@ describe("SecurityDeleteController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			securityDeleteController.errorMessage = "error message";
 			securityDeleteController.deleteSecurity();
-			expect(securityDeleteController.errorMessage as string | null).to.be.null;
+			expect(securityDeleteController.errorMessage).to.be.null;
 		});
 
 		it("should delete the security", (): void => {
@@ -68,9 +68,7 @@ describe("SecurityDeleteController", (): void => {
 		it("should display an error message when the security delete is unsuccessful", (): void => {
 			securityDeleteController.security.id = -1;
 			securityDeleteController.deleteSecurity();
-			expect(securityDeleteController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(securityDeleteController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

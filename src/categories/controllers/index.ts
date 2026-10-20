@@ -42,17 +42,19 @@ export default class CategoryIndexController {
 			}, []);
 
 		this.tableActions = {
-			selectAction: (): angular.IPromise<void> =>
-				$state.go(".transactions").catch(this.showError),
+			selectAction: (): void => {
+				$state.go(".transactions").catch(this.showError);
+			},
 			editAction: (index: number): void => this.editCategory(index),
 			insertAction: (): void => this.editCategory(),
 			deleteAction: (index: number): void => this.deleteCategory(index),
-			focusAction: (index: number): angular.IPromise<void> =>
+			focusAction: (index: number): void => {
 				$state
 					.go(`${$state.includes("**.category") ? "^" : ""}.category`, {
 						id: this.categories[index].id,
 					})
-					.catch(this.showError),
+					.catch(this.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -173,7 +175,9 @@ export default class CategoryIndexController {
 				// Refocus the category
 				this.focusCategory(Number(category.id));
 			})
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 
@@ -248,7 +252,9 @@ export default class CategoryIndexController {
 						// Go back to the parent state
 						this.$state.go("root.categories").catch(this.showError);
 					})
-					.finally((): true => (this.ogTableNavigableService.enabled = true))
+					.finally((): void => {
+						this.ogTableNavigableService.enabled = true;
+					})
 					.catch(this.showError);
 			})
 			.catch(this.showError);

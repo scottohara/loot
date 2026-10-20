@@ -3,22 +3,22 @@ import type {
 	StateMock,
 	UibModalMock,
 } from "~/mocks/node-modules/angular/types";
-import type AccountModel from "~/accounts/models/account";
+import type { AccountModelMock } from "~/mocks/accounts/types";
 import type { AuthenticationModelMock } from "~/mocks/authentication/types";
 import type { Category } from "~/categories/types";
-import type CategoryModel from "~/categories/models/category";
+import type { CategoryModelMock } from "~/mocks/categories/types";
 import type { EntityModel } from "~/loot/types";
 import type LootStatesProvider from "~/loot/providers/states";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { Payee } from "~/payees/types";
-import type PayeeModel from "~/payees/models/payee";
+import type { PayeeModelMock } from "~/mocks/payees/types";
 import type QueryService from "~/transactions/services/query";
 import type { Schedule } from "~/schedules/types";
-import type ScheduleModel from "~/schedules/models/schedule";
+import type { ScheduleModelMock } from "~/mocks/schedules/types";
 import type { Security } from "~/securities/types";
-import type SecurityModel from "~/securities/models/security";
+import type { SecurityModelMock } from "~/mocks/securities/types";
 import type { TransactionBatch } from "~/transactions/types";
-import type TransactionModel from "~/transactions/models/transaction";
+import type { TransactionModelMock } from "~/mocks/transactions/types";
 import angular from "angular";
 import sinon from "sinon";
 
@@ -29,21 +29,21 @@ describe("lootStatesProvider", (): void => {
 		$httpBackend: angular.IHttpBackendService,
 		$uibModal: UibModalMock,
 		authenticationModel: AuthenticationModelMock,
-		accountModel: AccountModel,
+		accountModel: AccountModelMock,
 		accountsWithBalances: Accounts,
 		account: Account,
-		scheduleModel: ScheduleModel,
+		scheduleModel: ScheduleModelMock,
 		schedules: Schedule[],
-		payeeModel: PayeeModel,
+		payeeModel: PayeeModelMock,
 		payees: Payee[],
 		payee: Payee,
-		categoryModel: CategoryModel,
+		categoryModel: CategoryModelMock,
 		categories: Category[],
 		category: Category,
-		securityModel: SecurityModel,
+		securityModel: SecurityModelMock,
 		securities: Security[],
 		security: Security,
-		transactionModel: TransactionModel,
+		transactionModel: TransactionModelMock,
 		transactionBatch: TransactionBatch,
 		queryService: QueryService,
 		stateName: string,
@@ -91,21 +91,21 @@ describe("lootStatesProvider", (): void => {
 				_$httpBackend_: angular.IHttpBackendService,
 				_$uibModal_: UibModalMock,
 				_authenticationModel_: AuthenticationModelMock,
-				_accountModel_: AccountModel,
+				_accountModel_: AccountModelMock,
 				_accountsWithBalances_: Accounts,
 				_account_: Account,
-				_scheduleModel_: ScheduleModel,
+				_scheduleModel_: ScheduleModelMock,
 				_schedules_: Schedule[],
-				_payeeModel_: PayeeModel,
+				_payeeModel_: PayeeModelMock,
 				_payees_: Payee[],
 				_payee_: Payee,
-				_categoryModel_: CategoryModel,
+				_categoryModel_: CategoryModelMock,
 				_categories_: Category[],
 				_category_: Category,
-				_securityModel_: SecurityModel,
+				_securityModel_: SecurityModelMock,
 				_securities_: Security[],
 				_security_: Security,
-				_transactionModel_: TransactionModel,
+				_transactionModel_: TransactionModelMock,
 				_transactionBatch_: TransactionBatch,
 				_queryService_: QueryService,
 			): void => {
@@ -146,7 +146,7 @@ describe("lootStatesProvider", (): void => {
 		});
 
 		it("should be abstract", (): Chai.Assertion =>
-			expect(stateConfig.abstract as boolean).to.be.true);
+			expect(stateConfig.abstract).to.be.true);
 
 		it("should have a title", (): Chai.Assertion =>
 			expect(stateConfig.data.title).to.equal("Welcome"));
@@ -173,12 +173,12 @@ describe("lootStatesProvider", (): void => {
 			it("should resolve the authentication status of a logged in user when the login modal is closed", (): void => {
 				authenticationModel.isAuthenticated = true;
 				$uibModal.close();
-				expect($uibModal.callbackResult as boolean).to.be.true;
+				expect($uibModal.callbackResult).to.be.true;
 			});
 
 			it("should resolve the authentication status of a non-logged in user when the login modal is dismissed", (): void => {
 				$uibModal.dismiss();
-				expect($uibModal.callbackResult as boolean).to.be.false;
+				expect($uibModal.callbackResult).to.be.false;
 			});
 		});
 	});
@@ -200,7 +200,7 @@ describe("lootStatesProvider", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			expect($state.current.name as string).to.not.equal(stateName);
+			expect($state.current.name).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -215,10 +215,10 @@ describe("lootStatesProvider", (): void => {
 			});
 
 			it("should successfully transition", (): Chai.Assertion =>
-				expect($state.current.name as string).to.equal(stateName));
+				expect($state.current.name).to.equal(stateName));
 
 			it("should resolve the accounts", (): void => {
-				expect(accountModel["allWithBalances"]).to.have.been.called;
+				expect(accountModel.allWithBalances).to.have.been.called;
 				(resolvedAccounts as Promise<Accounts>).then(
 					(accounts: Accounts): Chai.Assertion =>
 						expect(accounts).to.deep.equal(accountsWithBalances),
@@ -239,7 +239,7 @@ describe("lootStatesProvider", (): void => {
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					expect($state.current.name as string).to.equal(stateName);
+					expect($state.current.name).to.equal(stateName);
 				});
 
 				describe("account transactions state", (): void => {
@@ -263,11 +263,11 @@ describe("lootStatesProvider", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						expect($state.current.name as string).to.not.equal(stateName);
+						expect($state.current.name).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
-						let resolvedContextModel: AccountModel,
+						let resolvedContextModel: AccountModelMock,
 							resolvedContext: Account,
 							resolvedTransactionBatch:
 								Promise<TransactionBatch> | TransactionBatch;
@@ -276,8 +276,11 @@ describe("lootStatesProvider", (): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							resolvedContextModel = $injector.invoke(
-								($state.current.resolve as { contextModel: () => AccountModel })
-									.contextModel,
+								(
+									$state.current.resolve as {
+										contextModel: () => AccountModelMock;
+									}
+								).contextModel,
 							);
 							$injector
 								.invoke(
@@ -307,21 +310,21 @@ describe("lootStatesProvider", (): void => {
 						});
 
 						it("should successfully transition", (): Chai.Assertion =>
-							expect($state.current.name as string).to.equal(stateName));
+							expect($state.current.name).to.equal(stateName));
 
 						it("should resolve the parent context's model", (): Chai.Assertion =>
 							expect(resolvedContextModel).to.equal(accountModel));
 
 						it("should resolve the parent context", (): void => {
-							expect(accountModel["find"]).to.have.been.calledWith(1);
+							expect(accountModel.find).to.have.been.calledWith(1);
 							expect(resolvedContext).to.deep.equal(account);
 						});
 
 						it("should resolve the transaction batch", (): void => {
 							expect(
-								resolvedContextModel["isUnreconciledOnly"],
+								resolvedContextModel.isUnreconciledOnly,
 							).to.have.been.calledWith(resolvedContext.id);
-							expect(transactionModel["all"]).to.have.been.calledWith(
+							expect(transactionModel.all).to.have.been.calledWith(
 								"/accounts/1",
 								null,
 								"prev",
@@ -349,7 +352,7 @@ describe("lootStatesProvider", (): void => {
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								expect($state.current.name as string).to.equal(stateName);
+								expect($state.current.name).to.equal(stateName);
 							});
 						});
 					});
@@ -375,7 +378,7 @@ describe("lootStatesProvider", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			expect($state.current.name as string).to.not.equal(stateName);
+			expect($state.current.name).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -390,10 +393,10 @@ describe("lootStatesProvider", (): void => {
 			});
 
 			it("should successfully transition", (): Chai.Assertion =>
-				expect($state.current.name as string).to.equal(stateName));
+				expect($state.current.name).to.equal(stateName));
 
 			it("should resolve the schedules", (): void => {
-				expect(scheduleModel["all"]).to.have.been.called;
+				expect(scheduleModel.all).to.have.been.called;
 				expect(resolvedSchedules).to.deep.equal(schedules);
 			});
 
@@ -411,7 +414,7 @@ describe("lootStatesProvider", (): void => {
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					expect($state.current.name as string).to.equal(stateName);
+					expect($state.current.name).to.equal(stateName);
 				});
 			});
 		});
@@ -434,7 +437,7 @@ describe("lootStatesProvider", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			expect($state.current.name as string).to.not.equal(stateName);
+			expect($state.current.name).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -449,10 +452,10 @@ describe("lootStatesProvider", (): void => {
 			});
 
 			it("should successfully transition", (): Chai.Assertion =>
-				expect($state.current.name as string).to.equal(stateName));
+				expect($state.current.name).to.equal(stateName));
 
 			it("should resolve the payees", (): void => {
-				expect(payeeModel["allList"]).to.have.been.called;
+				expect(payeeModel.allList).to.have.been.called;
 				(resolvedPayees as Promise<Payee[]>).then(
 					(actualPayees: Payee[]): Chai.Assertion =>
 						expect(actualPayees).to.deep.equal(payees),
@@ -471,7 +474,7 @@ describe("lootStatesProvider", (): void => {
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					expect($state.current.name as string).to.equal(stateName);
+					expect($state.current.name).to.equal(stateName);
 				});
 
 				describe("payee transactions state", (): void => {
@@ -495,11 +498,11 @@ describe("lootStatesProvider", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						expect($state.current.name as string).to.not.equal(stateName);
+						expect($state.current.name).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
-						let resolvedContextModel: PayeeModel,
+						let resolvedContextModel: PayeeModelMock,
 							resolvedContext: angular.IPromise<Payee>,
 							resolvedTransactionBatch:
 								Promise<TransactionBatch> | TransactionBatch;
@@ -508,8 +511,11 @@ describe("lootStatesProvider", (): void => {
 							$state.go(stateName, stateParams);
 							$rootScope.$digest();
 							resolvedContextModel = $injector.invoke(
-								($state.current.resolve as { contextModel: () => PayeeModel })
-									.contextModel,
+								(
+									$state.current.resolve as {
+										contextModel: () => PayeeModelMock;
+									}
+								).contextModel,
 							);
 							resolvedContext = $injector.invoke(
 								(
@@ -535,20 +541,20 @@ describe("lootStatesProvider", (): void => {
 						});
 
 						it("should successfully transition", (): Chai.Assertion =>
-							expect($state.current.name as string).to.equal(stateName));
+							expect($state.current.name).to.equal(stateName));
 
 						it("should resolve the parent context's model", (): Chai.Assertion =>
 							expect(resolvedContextModel).to.equal(payeeModel));
 
 						it("should resolve the parent context", (): void => {
-							expect(payeeModel["find"]).to.have.been.calledWith(1);
+							expect(payeeModel.find).to.have.been.calledWith(1);
 							resolvedContext.then((context: Payee): Chai.Assertion =>
 								expect(context).to.deep.equal(payee),
 							);
 						});
 
 						it("should resolve the transaction batch", (): void => {
-							expect(transactionModel["all"]).to.have.been.calledWith(
+							expect(transactionModel.all).to.have.been.calledWith(
 								"/payees/1",
 								null,
 								"prev",
@@ -576,7 +582,7 @@ describe("lootStatesProvider", (): void => {
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								expect($state.current.name as string).to.equal(stateName);
+								expect($state.current.name).to.equal(stateName);
 							});
 						});
 					});
@@ -602,7 +608,7 @@ describe("lootStatesProvider", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			expect($state.current.name as string).to.not.equal(stateName);
+			expect($state.current.name).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -618,10 +624,10 @@ describe("lootStatesProvider", (): void => {
 			});
 
 			it("should successfully transition", (): Chai.Assertion =>
-				expect($state.current.name as string).to.equal(stateName));
+				expect($state.current.name).to.equal(stateName));
 
 			it("should resolve the categories", (): void => {
-				expect(categoryModel["allWithChildren"]).to.have.been.called;
+				expect(categoryModel.allWithChildren).to.have.been.called;
 				expect(resolvedCategories).to.deep.equal(categories);
 			});
 
@@ -639,7 +645,7 @@ describe("lootStatesProvider", (): void => {
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					expect($state.current.name as string).to.equal(stateName);
+					expect($state.current.name).to.equal(stateName);
 				});
 
 				describe("category transactions state", (): void => {
@@ -663,11 +669,11 @@ describe("lootStatesProvider", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						expect($state.current.name as string).to.not.equal(stateName);
+						expect($state.current.name).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
-						let resolvedContextModel: CategoryModel,
+						let resolvedContextModel: CategoryModelMock,
 							resolvedContext: angular.IPromise<Category>,
 							resolvedTransactionBatch:
 								Promise<TransactionBatch> | TransactionBatch;
@@ -678,7 +684,7 @@ describe("lootStatesProvider", (): void => {
 							resolvedContextModel = $injector.invoke(
 								(
 									$state.current.resolve as {
-										contextModel: () => CategoryModel;
+										contextModel: () => CategoryModelMock;
 									}
 								).contextModel,
 							);
@@ -706,20 +712,20 @@ describe("lootStatesProvider", (): void => {
 						});
 
 						it("should successfully transition", (): Chai.Assertion =>
-							expect($state.current.name as string).to.equal(stateName));
+							expect($state.current.name).to.equal(stateName));
 
 						it("should resolve the parent context's model", (): Chai.Assertion =>
 							expect(resolvedContextModel).to.equal(categoryModel));
 
 						it("should resolve the parent context", (): void => {
-							expect(categoryModel["find"]).to.have.been.calledWith(1);
+							expect(categoryModel.find).to.have.been.calledWith(1);
 							resolvedContext.then((context: Category): Chai.Assertion =>
 								expect(context).to.deep.equal(category),
 							);
 						});
 
 						it("should resolve the transaction batch", (): void => {
-							expect(transactionModel["all"]).to.have.been.calledWith(
+							expect(transactionModel.all).to.have.been.calledWith(
 								"/categories/1",
 								null,
 								"prev",
@@ -747,7 +753,7 @@ describe("lootStatesProvider", (): void => {
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								expect($state.current.name as string).to.equal(stateName);
+								expect($state.current.name).to.equal(stateName);
 							});
 						});
 					});
@@ -773,7 +779,7 @@ describe("lootStatesProvider", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName);
 			$rootScope.$digest();
-			expect($state.current.name as string).to.not.equal(stateName);
+			expect($state.current.name).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -789,10 +795,10 @@ describe("lootStatesProvider", (): void => {
 			});
 
 			it("should successfully transition", (): Chai.Assertion =>
-				expect($state.current.name as string).to.equal(stateName));
+				expect($state.current.name).to.equal(stateName));
 
 			it("should resolve the securities", (): void => {
-				expect(securityModel["allWithBalances"]).to.have.been.called;
+				expect(securityModel.allWithBalances).to.have.been.called;
 				expect(resolvedSecurities).to.deep.equal(securities);
 			});
 
@@ -810,7 +816,7 @@ describe("lootStatesProvider", (): void => {
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					expect($state.current.name as string).to.equal(stateName);
+					expect($state.current.name).to.equal(stateName);
 				});
 
 				describe("security transactions state", (): void => {
@@ -834,11 +840,11 @@ describe("lootStatesProvider", (): void => {
 						authenticationModel.isAuthenticated = false;
 						$state.go(stateName, stateParams, { reload: true });
 						$rootScope.$digest();
-						expect($state.current.name as string).to.not.equal(stateName);
+						expect($state.current.name).to.not.equal(stateName);
 					});
 
 					describe("(on transition)", (): void => {
-						let resolvedContextModel: SecurityModel,
+						let resolvedContextModel: SecurityModelMock,
 							resolvedContext: angular.IPromise<Security>,
 							resolvedTransactionBatch:
 								Promise<TransactionBatch> | TransactionBatch;
@@ -849,7 +855,7 @@ describe("lootStatesProvider", (): void => {
 							resolvedContextModel = $injector.invoke(
 								(
 									$state.current.resolve as {
-										contextModel: () => SecurityModel;
+										contextModel: () => SecurityModelMock;
 									}
 								).contextModel,
 							);
@@ -877,20 +883,20 @@ describe("lootStatesProvider", (): void => {
 						});
 
 						it("should successfully transition", (): Chai.Assertion =>
-							expect($state.current.name as string).to.equal(stateName));
+							expect($state.current.name).to.equal(stateName));
 
 						it("should resolve the parent context's model", (): Chai.Assertion =>
 							expect(resolvedContextModel).to.equal(securityModel));
 
 						it("should resolve the parent context", (): void => {
-							expect(securityModel["find"]).to.have.been.calledWith(1);
+							expect(securityModel.find).to.have.been.calledWith(1);
 							resolvedContext.then((context: Security): Chai.Assertion =>
 								expect(context).to.deep.equal(security),
 							);
 						});
 
 						it("should resolve the transaction batch", (): void => {
-							expect(transactionModel["all"]).to.have.been.calledWith(
+							expect(transactionModel.all).to.have.been.calledWith(
 								"/securities/1",
 								null,
 								"prev",
@@ -918,7 +924,7 @@ describe("lootStatesProvider", (): void => {
 							it("should successfully transition", (): void => {
 								$state.go(stateName, stateParams);
 								$rootScope.$digest();
-								expect($state.current.name as string).to.equal(stateName);
+								expect($state.current.name).to.equal(stateName);
 							});
 						});
 					});
@@ -950,7 +956,7 @@ describe("lootStatesProvider", (): void => {
 			authenticationModel.isAuthenticated = false;
 			$state.go(stateName, stateParams);
 			$rootScope.$digest();
-			expect($state.current.name as string).to.not.equal(stateName);
+			expect($state.current.name).to.not.equal(stateName);
 		});
 
 		describe("(on transition)", (): void => {
@@ -996,7 +1002,7 @@ describe("lootStatesProvider", (): void => {
 			});
 
 			it("should successfully transition", (): Chai.Assertion =>
-				expect($state.current.name as string).to.equal(stateName));
+				expect($state.current.name).to.equal(stateName));
 
 			it("should resolve the previous state", (): Chai.Assertion =>
 				expect(resolvedPreviousState).to.deep.equal({
@@ -1012,7 +1018,7 @@ describe("lootStatesProvider", (): void => {
 					null,
 					{ $state: previousState },
 				);
-				expect(resolvedPreviousState as angular.ui.IState | null).to.be.null;
+				expect(resolvedPreviousState).to.be.null;
 			});
 
 			it("should resolve the context model", (): Chai.Assertion =>
@@ -1030,7 +1036,7 @@ describe("lootStatesProvider", (): void => {
 				expect(resolvedContext).to.equal(query));
 
 			it("should resolve the transaction batch", (): void => {
-				expect(transactionModel["query"]).to.have.been.calledWith(
+				expect(transactionModel.query).to.have.been.calledWith(
 					query,
 					null,
 					"prev",
@@ -1042,7 +1048,7 @@ describe("lootStatesProvider", (): void => {
 			});
 
 			it("should set the previous state property on the query service on enter", (): Chai.Assertion =>
-				expect(queryService.previousState as angular.ui.IState).to.deep.equal(
+				expect(queryService.previousState).to.deep.equal(
 					resolvedPreviousState,
 				));
 
@@ -1050,13 +1056,11 @@ describe("lootStatesProvider", (): void => {
 				$injector.invoke($state.current.onEnter as () => void, null, {
 					previousState: null,
 				});
-				expect(queryService.previousState as angular.ui.IState).to.deep.equal(
-					resolvedPreviousState,
-				);
+				expect(queryService.previousState).to.deep.equal(resolvedPreviousState);
 			});
 
 			it("should set the query property on the query service on enter", (): Chai.Assertion =>
-				expect(queryService.query as string).to.equal(query));
+				expect(queryService.query).to.equal(query));
 
 			it("should clear the query property on the query service on exit", (): void => {
 				$httpBackend.expectGET("accounts/views/index.html").respond(200);
@@ -1079,7 +1083,7 @@ describe("lootStatesProvider", (): void => {
 				it("should successfully transition", (): void => {
 					$state.go(stateName, stateParams);
 					$rootScope.$digest();
-					expect($state.current.name as string).to.equal(stateName);
+					expect($state.current.name).to.equal(stateName);
 				});
 			});
 		});

@@ -1,4 +1,3 @@
-import type { Account, AccountType } from "~/accounts/types";
 import type {
 	CategorisableTransaction,
 	SecurityTransactionType,
@@ -8,9 +7,7 @@ import type {
 	Subtransaction,
 	SubtransactionType,
 	TransactionDirection,
-	TransactionFlag,
 	TransactionFlagType,
-	TransactionStatus,
 	TransactionType,
 } from "~/transactions/types";
 import type {
@@ -44,6 +41,7 @@ import {
 	createSubtransferTransaction,
 } from "~/mocks/transactions/factories";
 import sinon, { type SinonStub } from "sinon";
+import type { Account } from "~/accounts/types";
 import type { AccountModelMock } from "~/mocks/accounts/types";
 import type { CategoryModelMock } from "~/mocks/categories/types";
 import type { ControllerTestFactory } from "~/mocks/types";
@@ -144,7 +142,7 @@ describe("ScheduleEditController", (): void => {
 			expect(scheduleEditController.mode).to.equal("Enter Transaction"));
 
 		it("should make a copy of the transaction as schedule available to the view", (): void => {
-			expect(scheduleEditController.schedule.id as number).to.not.be.null;
+			expect(scheduleEditController.schedule.id).to.not.be.null;
 			expect(scheduleEditController.schedule).to.deep.equal(originalSchedule);
 		});
 
@@ -152,9 +150,9 @@ describe("ScheduleEditController", (): void => {
 			expect(scheduleEditController.transaction.id).to.be.null);
 
 		it("should set the transaction date to the next due date", (): Chai.Assertion =>
-			expect(
-				scheduleEditController.transaction.transaction_date as Date,
-			).to.deep.equal(schedule.next_due_date));
+			expect(scheduleEditController.transaction.transaction_date).to.deep.equal(
+				schedule.next_due_date,
+			));
 	});
 
 	describe("when a schedule is not provided", (): void => {
@@ -429,7 +427,10 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("payeeSelected", (): void => {
-		let payee: Payee, primaryAccount: Account;
+		let payee: Payee,
+			primaryAccount: Account,
+			getSubtransactions: SinonStub,
+			useLastTransaction: SinonStub;
 
 		beforeEach((): void => {
 			scheduleEditController.transaction.id = null;
@@ -439,11 +440,11 @@ describe("ScheduleEditController", (): void => {
 			(scheduleEditController.transaction as ScheduledBasicTransaction).payee =
 				payee;
 			scheduleEditController.transaction.primary_account = primaryAccount;
-			sinon.stub(
+			getSubtransactions = sinon.stub(
 				scheduleEditController,
 				"getSubtransactions" as keyof ScheduleEditController,
 			);
-			sinon.stub(
+			useLastTransaction = sinon.stub(
 				scheduleEditController,
 				"useLastTransaction" as keyof ScheduleEditController,
 			);
@@ -489,12 +490,12 @@ describe("ScheduleEditController", (): void => {
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			scheduleEditController.payeeSelected();
-			expect(scheduleEditController["getSubtransactions"]).to.have.been.called;
+			expect(getSubtransactions).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			scheduleEditController.payeeSelected();
-			expect(scheduleEditController["useLastTransaction"]).to.have.been.called;
+			expect(useLastTransaction).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
@@ -504,7 +505,10 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("securitySelected", (): void => {
-		let security: Security, primaryAccount: Account;
+		let security: Security,
+			primaryAccount: Account,
+			getSubtransactions: SinonStub,
+			useLastTransaction: SinonStub;
 
 		beforeEach((): void => {
 			scheduleEditController.transaction.id = null;
@@ -515,11 +519,11 @@ describe("ScheduleEditController", (): void => {
 				scheduleEditController.transaction as ScheduledSecurityHoldingTransaction
 			).security = security;
 			scheduleEditController.transaction.primary_account = primaryAccount;
-			sinon.stub(
+			getSubtransactions = sinon.stub(
 				scheduleEditController,
 				"getSubtransactions" as keyof ScheduleEditController,
 			);
-			sinon.stub(
+			useLastTransaction = sinon.stub(
 				scheduleEditController,
 				"useLastTransaction" as keyof ScheduleEditController,
 			);
@@ -568,12 +572,12 @@ describe("ScheduleEditController", (): void => {
 
 		it("should fetch the subtransactions for the last transaction", (): void => {
 			scheduleEditController.securitySelected();
-			expect(scheduleEditController["getSubtransactions"]).to.have.been.called;
+			expect(getSubtransactions).to.have.been.called;
 		});
 
 		it("should default the transaction details from the last transaction", (): void => {
 			scheduleEditController.securitySelected();
-			expect(scheduleEditController["useLastTransaction"]).to.have.been.called;
+			expect(useLastTransaction).to.have.been.called;
 		});
 
 		it("should hide the loading indicator", (): void => {
@@ -601,9 +605,7 @@ describe("ScheduleEditController", (): void => {
 					createScheduledBasicTransaction();
 
 				expect(
-					scheduleEditController["getSubtransactions"](
-						basicTransaction,
-					) as ScheduledBasicTransaction,
+					scheduleEditController["getSubtransactions"](basicTransaction),
 				).to.deep.equal(basicTransaction);
 			});
 
@@ -634,9 +636,7 @@ describe("ScheduleEditController", (): void => {
 				] as SplitTransactionChild[];
 
 				expect(
-					(await scheduleEditController["getSubtransactions"](
-						transaction,
-					)) as ScheduledSplitTransaction,
+					await scheduleEditController["getSubtransactions"](transaction),
 				).to.deep.equal(expected);
 			});
 		});
@@ -685,22 +685,18 @@ describe("ScheduleEditController", (): void => {
 
 		it("should do nothing when a transaction is not provided", (): void => {
 			scheduleEditController["useLastTransaction"]();
-			expect(transaction.id as number | undefined).to.not.be.undefined;
+			expect(transaction.id).to.not.be.undefined;
 		});
 
 		it("should strip the transaction of it's id, transaction date, next due date, frequency, primary account, status & related status", (): void => {
 			scheduleEditController["useLastTransaction"](transaction);
-			expect(transaction.id as number | undefined).to.be.undefined;
-			expect(transaction.transaction_date as Date | undefined).to.be.undefined;
-			expect(transaction.next_due_date as Date | undefined).to.be.undefined;
-			expect(transaction.frequency as ScheduleFrequency | undefined).to.be
-				.undefined;
-			expect(transaction.primary_account as Account | undefined).to.be
-				.undefined;
-			expect(transaction.status as TransactionStatus | undefined).to.be
-				.undefined;
-			expect(transaction.related_status as TransactionStatus | undefined).to.be
-				.undefined;
+			expect(transaction.id).to.be.undefined;
+			expect(transaction.transaction_date).to.be.undefined;
+			expect(transaction.next_due_date).to.be.undefined;
+			expect(transaction.frequency).to.be.undefined;
+			expect(transaction.primary_account).to.be.undefined;
+			expect(transaction.status).to.be.undefined;
+			expect(transaction.related_status).to.be.undefined;
 		});
 
 		it("should preserve the schedule's flag", (): void => {
@@ -718,11 +714,8 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.transaction.flag_type = null;
 			scheduleEditController.transaction.flag = null;
 			scheduleEditController["useLastTransaction"](transaction);
-			expect(
-				scheduleEditController.transaction.flag_type as TransactionFlagType,
-			).to.be.null;
-			expect(scheduleEditController.transaction.flag as TransactionFlag).to.be
-				.null;
+			expect(scheduleEditController.transaction.flag_type).to.be.null;
+			expect(scheduleEditController.transaction.flag).to.be.null;
 		});
 
 		it("should merge the transaction details into vm.transaction", (): void => {
@@ -936,14 +929,14 @@ describe("ScheduleEditController", (): void => {
 						scheduleEditController.categorySelected(0);
 						expect(
 							(scheduleEditController.transaction as ScheduledSplitTransaction)
-								.subtransactions[0].transaction_type as SubtransactionType,
+								.subtransactions[0].transaction_type,
 						).to.equal(scenario.type);
 
 						if ("Sub" === scenario.type) {
 							expect(
 								(
 									scheduleEditController.transaction as ScheduledSplitTransaction
-								).subtransactions[0].direction as TransactionDirection,
+								).subtransactions[0].direction,
 							).to.equal(
 								(
 									(
@@ -955,7 +948,7 @@ describe("ScheduleEditController", (): void => {
 							expect(
 								(
 									scheduleEditController.transaction as ScheduledSplitTransaction
-								).subtransactions[0].direction as TransactionDirection,
+								).subtransactions[0].direction,
 							).to.equal(scenario.direction);
 						}
 					});
@@ -969,7 +962,7 @@ describe("ScheduleEditController", (): void => {
 				scheduleEditController.categorySelected(0);
 				expect(
 					(scheduleEditController.transaction as ScheduledSplitTransaction)
-						.subtransactions[0].transaction_type as SubtransactionType,
+						.subtransactions[0].transaction_type,
 				).to.equal("Sub");
 			});
 		});
@@ -1084,9 +1077,7 @@ describe("ScheduleEditController", (): void => {
 
 		it("should set the account type to the primary account type", (): void => {
 			scheduleEditController.primaryAccountSelected();
-			expect(scheduleEditController["account_type"] as AccountType).to.equal(
-				"bank",
-			);
+			expect(scheduleEditController["account_type"]).to.equal("bank");
 		});
 
 		it("should set the account type to null when there is no primary account", (): void => {
@@ -1131,7 +1122,8 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("$watch subtransations", (): void => {
-		let subtransactions: Partial<Subtransaction>[];
+		let subtransactions: Partial<Subtransaction>[],
+			memoFromSubtransactions: SinonStub;
 
 		beforeEach((): void => {
 			subtransactions = [
@@ -1139,7 +1131,10 @@ describe("ScheduleEditController", (): void => {
 				createSubtransaction({ amount: 5, direction: "inflow" }),
 				{},
 			];
-			sinon.stub(scheduleEditController, "memoFromSubtransactions");
+			memoFromSubtransactions = sinon.stub(
+				scheduleEditController,
+				"memoFromSubtransactions",
+			);
 
 			scheduleEditController.transaction.direction = "outflow";
 			(
@@ -1166,7 +1161,7 @@ describe("ScheduleEditController", (): void => {
 				scheduleEditController.transaction as ScheduledSplitTransaction
 			).subtransactions = subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
-			expect(scheduleEditController.totalAllocated as number).to.equal(5);
+			expect(scheduleEditController.totalAllocated).to.equal(5);
 		});
 
 		it("should not set the main transaction memo when editing an existing transaction", (): void => {
@@ -1175,8 +1170,7 @@ describe("ScheduleEditController", (): void => {
 				scheduleEditController.transaction as ScheduledSplitTransaction
 			).subtransactions = subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
-			expect(scheduleEditController["memoFromSubtransactions"]).to.not.have.been
-				.called;
+			expect(memoFromSubtransactions).to.not.have.been.called;
 		});
 
 		it("should set the main transaction memo when adding a new transaction", (): void => {
@@ -1184,8 +1178,7 @@ describe("ScheduleEditController", (): void => {
 				scheduleEditController.transaction as ScheduledSplitTransaction
 			).subtransactions = subtransactions;
 			(scheduleEditController as angular.IController).$scope.$digest();
-			expect(scheduleEditController["memoFromSubtransactions"]).to.have.been
-				.called;
+			expect(memoFromSubtransactions).to.have.been.called;
 		});
 	});
 
@@ -1355,7 +1348,7 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.addUnallocatedAmount(0);
 			expect(
 				(scheduleEditController.transaction as ScheduledSplitTransaction)
-					.subtransactions[0].amount as number,
+					.subtransactions[0].amount,
 			).to.equal(100);
 		});
 
@@ -1363,7 +1356,7 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.addUnallocatedAmount(1);
 			expect(
 				(scheduleEditController.transaction as ScheduledSplitTransaction)
-					.subtransactions[1].amount as number,
+					.subtransactions[1].amount,
 			).to.equal(20);
 		});
 	});
@@ -1532,15 +1525,17 @@ describe("ScheduleEditController", (): void => {
 	});
 
 	describe("enter", (): void => {
+		let skip: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(scheduleEditController, "skip");
+			skip = sinon.stub(scheduleEditController, "skip");
 			scheduleEditController.transaction.id = 1;
 		});
 
 		it("should reset any previous error messages", (): void => {
 			scheduleEditController.errorMessage = "error message";
 			scheduleEditController.enter();
-			expect(scheduleEditController.errorMessage as string | null).to.be.null;
+			expect(scheduleEditController.errorMessage).to.be.null;
 		});
 
 		it("should save the schedule", (): void => {
@@ -1552,48 +1547,46 @@ describe("ScheduleEditController", (): void => {
 
 		it("should update the next due date when the transaction save is successful", (): void => {
 			scheduleEditController.enter();
-			expect(scheduleEditController["skip"]).to.have.been.called;
+			expect(skip).to.have.been.called;
 		});
 
 		it("should display an error message when the transaction save is unsuccessful", (): void => {
 			scheduleEditController.transaction.id = -1;
 			scheduleEditController.enter();
-			expect(scheduleEditController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(scheduleEditController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 
 	describe("skip", (): void => {
+		let calculateNextDue: SinonStub, save: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(
+			calculateNextDue = sinon.stub(
 				scheduleEditController,
 				"calculateNextDue" as keyof ScheduleEditController,
 			);
-			sinon.stub(scheduleEditController, "save");
+			save = sinon.stub(scheduleEditController, "save");
 			scheduleEditController.skip();
 		});
 
 		it("should calculate the next due date", (): Chai.Assertion =>
-			expect(scheduleEditController["calculateNextDue"]).to.have.been.called);
+			expect(calculateNextDue).to.have.been.called);
 
 		it("should save the schedule", (): Chai.Assertion =>
-			expect(scheduleEditController["save"]).to.have.been.calledWith(true));
+			expect(save).to.have.been.calledWith(true));
 	});
 
 	describe("save", (): void => {
 		it("should reset any previous error messages", (): void => {
 			scheduleEditController.errorMessage = "error message";
 			scheduleEditController.save();
-			expect(scheduleEditController.errorMessage as string | null).to.be.null;
+			expect(scheduleEditController.errorMessage).to.be.null;
 		});
 
 		it("should set the flag memo to '(no memo)' if the auto-flag property is set and the memo is blank", (): void => {
 			scheduleEditController.schedule.autoFlag = true;
 			scheduleEditController.save();
-			expect(scheduleEditController.schedule.flag as string).to.equal(
-				"(no memo)",
-			);
+			expect(scheduleEditController.schedule.flag).to.equal("(no memo)");
 		});
 
 		it("should preserve the flag memo if the auto-flag property is set", (): void => {
@@ -1607,9 +1600,8 @@ describe("ScheduleEditController", (): void => {
 			scheduleEditController.schedule.flag_type = "noreceipt";
 			scheduleEditController.schedule.flag = "Test flag";
 			scheduleEditController.save();
-			expect(scheduleEditController.schedule.flag_type as string | null).to.be
-				.null;
-			expect(scheduleEditController.schedule.flag as string | null).to.be.null;
+			expect(scheduleEditController.schedule.flag_type).to.be.null;
+			expect(scheduleEditController.schedule.flag).to.be.null;
 		});
 
 		it("should save the schedule", (): void => {
@@ -1636,9 +1628,7 @@ describe("ScheduleEditController", (): void => {
 		it("should display an error message when the schedule save is unsuccessful", (): void => {
 			scheduleEditController.schedule.id = -1;
 			scheduleEditController.save();
-			expect(scheduleEditController.errorMessage as string).to.equal(
-				"unsuccessful",
-			);
+			expect(scheduleEditController.errorMessage).to.equal("unsuccessful");
 		});
 	});
 

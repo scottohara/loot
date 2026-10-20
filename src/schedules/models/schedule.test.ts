@@ -7,13 +7,13 @@ import {
 	createScheduledSecurityHoldingTransaction,
 } from "~/mocks/schedules/factories";
 import { lightFormat, startOfDay } from "date-fns";
+import sinon, { type SinonStub } from "sinon";
 import type { CategoryModelMock } from "~/mocks/categories/types";
 import type MockDependenciesProvider from "~/mocks/loot/mockdependencies";
 import type { PayeeModelMock } from "~/mocks/payees/types";
 import type ScheduleModel from "~/schedules/models/schedule";
 import type { SecurityModelMock } from "~/mocks/securities/types";
 import angular from "angular";
-import sinon from "sinon";
 
 describe("scheduleModel", (): void => {
 	let scheduleModel: ScheduleModel,
@@ -112,9 +112,12 @@ describe("scheduleModel", (): void => {
 	describe("all", (): void => {
 		const expectedUrl = /schedules/v,
 			expectedResponse: string[] = ["schedule 1", "schedule 2"];
+		let parse: SinonStub;
 
 		beforeEach((): void => {
-			scheduleModel["parse"] = sinon.stub().returnsArg(0);
+			parse = sinon
+				.stub(scheduleModel, "parse" as keyof ScheduleModel)
+				.returnsArg(0);
 			$httpBackend.expectGET(expectedUrl).respond(200, expectedResponse);
 		});
 
@@ -124,10 +127,9 @@ describe("scheduleModel", (): void => {
 		});
 
 		it("should parse each schedule returned", (): void => {
-			scheduleModel["parse"] = sinon.stub().returnsArg(0);
 			scheduleModel.all();
 			$httpBackend.flush();
-			expect(scheduleModel["parse"]).to.have.been.calledTwice;
+			expect(parse).to.have.been.calledTwice;
 		});
 
 		it("should return a list of all schedules", (): void => {
@@ -144,10 +146,15 @@ describe("scheduleModel", (): void => {
 		const expectedResponse = "schedule",
 			expectedPostUrl = /schedules$/v,
 			expectedPatchUrl = /schedules\/1$/v;
+		let stringify: SinonStub, parse: SinonStub;
 
 		beforeEach((): void => {
-			scheduleModel["stringify"] = sinon.stub().returnsArg(0);
-			scheduleModel["parse"] = sinon.stub().returnsArg(0);
+			stringify = sinon
+				.stub(scheduleModel, "stringify" as keyof ScheduleModel)
+				.returnsArg(0);
+			parse = sinon
+				.stub(scheduleModel, "parse" as keyof ScheduleModel)
+				.returnsArg(0);
 			$httpBackend.whenPOST(expectedPostUrl).respond(200, expectedResponse);
 			$httpBackend.whenPATCH(expectedPatchUrl).respond(200, expectedResponse);
 		});
@@ -211,7 +218,7 @@ describe("scheduleModel", (): void => {
 				createScheduledBasicTransaction({ id: 1 });
 
 			scheduleModel.save(schedule);
-			expect(scheduleModel["stringify"]).to.have.been.calledWith(schedule);
+			expect(stringify).to.have.been.calledWith(schedule);
 			$httpBackend.flush();
 		});
 
@@ -237,7 +244,7 @@ describe("scheduleModel", (): void => {
 		it("should parse the schedule", (): void => {
 			scheduleModel.save(createScheduledBasicTransaction({ id: 1 }));
 			$httpBackend.flush();
-			expect(scheduleModel["parse"]).to.have.been.calledWith(expectedResponse);
+			expect(parse).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the schedule", (): void => {

@@ -87,7 +87,7 @@ export default class ScheduleModel {
 		const scheduleCopy: ScheduledTransaction = angular.copy(schedule);
 
 		scheduleCopy.next_due_date = lightFormat(
-			scheduleCopy.next_due_date as Date,
+			scheduleCopy.next_due_date,
 			"yyyy-MM-dd",
 		);
 

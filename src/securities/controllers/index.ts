@@ -40,17 +40,19 @@ export default class SecurityIndexController {
 		);
 
 		this.tableActions = {
-			selectAction: (): angular.IPromise<void> =>
-				$state.go(".transactions").catch(this.showError),
+			selectAction: (): void => {
+				$state.go(".transactions").catch(this.showError);
+			},
 			editAction: (index: number): void => this.editSecurity(index),
 			insertAction: (): void => this.editSecurity(),
 			deleteAction: (index: number): void => this.deleteSecurity(index),
-			focusAction: (index: number): angular.IPromise<void> =>
+			focusAction: (index: number): void => {
 				$state
 					.go(`${$state.includes("**.security") ? "^" : ""}.security`, {
 						id: this.securities[index].id,
 					})
-					.catch(this.showError),
+					.catch(this.showError);
+			},
 		};
 
 		this.showError = ogModalErrorService.showError.bind(ogModalErrorService);
@@ -135,7 +137,9 @@ export default class SecurityIndexController {
 				// Refocus the security
 				this.focusSecurity(Number(security.id));
 			})
-			.finally((): true => (this.ogTableNavigableService.enabled = true))
+			.finally((): void => {
+				this.ogTableNavigableService.enabled = true;
+			})
 			.catch(this.showError);
 	}
 
@@ -191,7 +195,9 @@ export default class SecurityIndexController {
 						this.securities.splice(index, 1);
 						this.$state.go("root.securities").catch(this.showError);
 					})
-					.finally((): true => (this.ogTableNavigableService.enabled = true))
+					.finally((): void => {
+						this.ogTableNavigableService.enabled = true;
+					})
 					.catch(this.showError);
 			})
 			.catch(this.showError);

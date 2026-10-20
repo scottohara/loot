@@ -54,8 +54,7 @@ describe("AuthenticationEditController", (): void => {
 		it("should reset any previous error messages", (): void => {
 			authenticationEditController.errorMessage = "error message";
 			authenticationEditController.login();
-			expect(authenticationEditController.errorMessage as string | null).to.be
-				.null;
+			expect(authenticationEditController.errorMessage).to.be.null;
 		});
 
 		it("should attempt to login with the username & password", (): void => {
@@ -75,7 +74,7 @@ describe("AuthenticationEditController", (): void => {
 			authenticationEditController.userName = "baduser";
 			authenticationEditController.password = "badpassword";
 			authenticationEditController.login();
-			expect(authenticationEditController.errorMessage as string).to.equal(
+			expect(authenticationEditController.errorMessage).to.equal(
 				"unsuccessful",
 			);
 			expect(authenticationEditController.loginInProgress).to.be.false;

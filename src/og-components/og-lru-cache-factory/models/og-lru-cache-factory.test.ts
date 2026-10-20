@@ -13,10 +13,9 @@ describe("ogLruCacheFactory", (): void => {
 
 	// Inject the object under test
 	beforeEach(
-		angular.mock.inject(
-			(_ogLruCacheFactory_: OgLruCacheFactory): OgLruCacheFactory =>
-				(ogLruCacheFactory = _ogLruCacheFactory_),
-		) as Mocha.HookFunction,
+		angular.mock.inject((_ogLruCacheFactory_: OgLruCacheFactory): void => {
+			ogLruCacheFactory = _ogLruCacheFactory_;
+		}) as Mocha.HookFunction,
 	);
 
 	describe("new", (): void => {

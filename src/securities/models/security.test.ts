@@ -1,5 +1,6 @@
 import type {
 	CacheFactoryMock,
+	CacheMock,
 	WindowMock,
 } from "~/mocks/node-modules/angular/types";
 import type {
@@ -20,7 +21,7 @@ describe("securityModel", (): void => {
 	let securityModel: SecurityModel,
 		$httpBackend: angular.IHttpBackendService,
 		$http: angular.IHttpService,
-		$cache: angular.ICacheObject,
+		$cache: CacheMock,
 		$window: WindowMock,
 		ogLruCache: OgLruCacheMock,
 		security: Security,
@@ -201,13 +202,16 @@ describe("securityModel", (): void => {
 	});
 
 	describe("allWithBalances", (): void => {
-		beforeEach((): SinonStub =>
-			sinon.stub(securityModel, "all").returns(iPromise),
+		let all: SinonStub;
+
+		beforeEach(
+			(): SinonStub =>
+				(all = sinon.stub(securityModel, "all").returns(iPromise)),
 		);
 
 		it("should call securityModel.all(true)", (): void => {
 			securityModel.allWithBalances();
-			expect(securityModel["all"]).to.have.been.calledWith(true);
+			expect(all).to.have.been.calledWith(true);
 		});
 
 		it("should return a list of all securities including their balances", (): Chai.Assertion =>
@@ -269,7 +273,11 @@ describe("securityModel", (): void => {
 		const expectedUrl = /securities\/123/v,
 			expectedResponse = "security details";
 
-		beforeEach((): SinonStub => sinon.stub(securityModel, "addRecent"));
+		let addRecent: SinonStub;
+
+		beforeEach(
+			(): SinonStub => (addRecent = sinon.stub(securityModel, "addRecent")),
+		);
 
 		it("should dispatch a GET request to /securities/{id}", (): void => {
 			$httpBackend.expectGET(expectedUrl).respond(200);
@@ -289,9 +297,7 @@ describe("securityModel", (): void => {
 			$httpBackend.whenGET(expectedUrl).respond(expectedResponse);
 			securityModel.find(123);
 			$httpBackend.flush();
-			expect(securityModel["addRecent"]).to.have.been.calledWith(
-				expectedResponse,
-			);
+			expect(addRecent).to.have.been.calledWith(expectedResponse);
 		});
 
 		it("should return the security", (): void => {
@@ -309,8 +315,10 @@ describe("securityModel", (): void => {
 		const expectedPostUrl = /securities$/v,
 			expectedPatchUrl = /securities\/1$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(securityModel, "flush");
+			flush = sinon.stub(securityModel, "flush");
 			$httpBackend.whenPOST(expectedPostUrl, security).respond(200);
 			$httpBackend.whenPATCH(expectedPatchUrl, security).respond(200);
 		});
@@ -318,7 +326,7 @@ describe("securityModel", (): void => {
 		it("should flush the security cache", (): void => {
 			$httpBackend.expectPATCH(expectedPatchUrl);
 			securityModel.save(security);
-			expect(securityModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -337,36 +345,40 @@ describe("securityModel", (): void => {
 	});
 
 	describe("destroy", (): void => {
+		let flush: SinonStub, removeRecent: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(securityModel, "flush");
-			sinon.stub(securityModel, "removeRecent");
+			flush = sinon.stub(securityModel, "flush");
+			removeRecent = sinon.stub(securityModel, "removeRecent");
 			$httpBackend.expectDELETE(/securities\/1$/v).respond(200);
 			securityModel.destroy(security);
 			$httpBackend.flush();
 		});
 
 		it("should flush the security cache", (): Chai.Assertion =>
-			expect(securityModel["flush"]).to.have.been.called);
+			expect(flush).to.have.been.called);
 
 		it("should dispatch a DELETE request to /securities/{id}", (): null =>
 			null);
 
 		it("should remove the securty from the recent list", (): Chai.Assertion =>
-			expect(securityModel["removeRecent"]).to.have.been.calledWith(1));
+			expect(removeRecent).to.have.been.calledWith(1));
 	});
 
 	describe("toggleFavourite", (): void => {
 		const expectedUrl = /securities\/1\/favourite$/v;
 
+		let flush: SinonStub;
+
 		beforeEach((): void => {
-			sinon.stub(securityModel, "flush");
+			flush = sinon.stub(securityModel, "flush");
 			$httpBackend.whenDELETE(expectedUrl).respond(200);
 			$httpBackend.whenPUT(expectedUrl).respond(200);
 		});
 
 		it("should flush the security cache", (): void => {
 			securityModel.toggleFavourite(security);
-			expect(securityModel["flush"]).to.have.been.called;
+			expect(flush).to.have.been.called;
 			$httpBackend.flush();
 		});
 
@@ -395,12 +407,12 @@ describe("securityModel", (): void => {
 	describe("flush", (): void => {
 		it("should remove the specified security from the security cache when an id is provided", (): void => {
 			securityModel.flush(1);
-			expect($cache["remove"]).to.have.been.calledWith("/securities/1");
+			expect($cache.remove).to.have.been.calledWith("/securities/1");
 		});
 
 		it("should flush the security cache when an id is not provided", (): void => {
 			securityModel.flush();
-			expect($cache["removeAll"]).to.have.been.called;
+			expect($cache.removeAll).to.have.been.called;
 		});
 	});
 

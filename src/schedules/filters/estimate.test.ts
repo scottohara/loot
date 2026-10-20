@@ -11,10 +11,9 @@ describe("estimate", (): void => {
 
 	// Inject the object under test
 	beforeEach(
-		angular.mock.inject(
-			(_estimateFilter_: EstimateFilter): EstimateFilter =>
-				(estimateFilter = _estimateFilter_),
-		) as Mocha.HookFunction,
+		angular.mock.inject((_estimateFilter_: EstimateFilter): void => {
+			estimateFilter = _estimateFilter_;
+		}) as Mocha.HookFunction,
 	);
 
 	it("should prefix an estimate with ~", (): Chai.Assertion =>

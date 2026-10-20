@@ -131,7 +131,8 @@ describe("ogTableNavigable", (): void => {
 		let mockJqueryInstance: { scrollTop: SinonStub; height: SinonStub },
 			realJqueryInstance: JQuery,
 			row: JQuery<Element>,
-			top: number;
+			top: number,
+			scrollIntoView: SinonStub;
 
 		beforeEach((): void => {
 			top = 110;
@@ -140,7 +141,7 @@ describe("ogTableNavigable", (): void => {
 				.children("tbody")
 				.children("tr")
 				.first() as JQuery<Element>;
-			sinon.stub(row[0], "scrollIntoView");
+			scrollIntoView = sinon.stub(row[0], "scrollIntoView");
 			sinon
 				.stub(row, "offset")
 				.callsFake((): JQuery.Coordinates => ({ top, left: 0 }));
@@ -158,7 +159,7 @@ describe("ogTableNavigable", (): void => {
 		it("should scroll the page up if the specified row is off the top of the screen", (): void => {
 			top = 50;
 			isolateScope.scrollToRow(row);
-			expect(row[0]["scrollIntoView"]).to.have.been.calledWith({
+			expect(scrollIntoView).to.have.been.calledWith({
 				behavior: "smooth",
 			});
 		});
@@ -166,21 +167,21 @@ describe("ogTableNavigable", (): void => {
 		it("should scroll the page down if the specified row is off the bottom of the screen", (): void => {
 			top = 350;
 			isolateScope.scrollToRow(row);
-			expect(row[0]["scrollIntoView"]).to.have.been.calledWith({
+			expect(scrollIntoView).to.have.been.calledWith({
 				behavior: "smooth",
 			});
 		});
 
 		it("should do nothing if the specified row is on screen", (): void => {
 			isolateScope.scrollToRow(row);
-			expect(row[0]["scrollIntoView"]).to.not.have.been.called;
+			expect(scrollIntoView).to.not.have.been.called;
 		});
 
 		it("should do nothing if the specified row offset can't be determined", (): void => {
 			(row.offset as SinonStub).restore();
 			sinon.stub(row, "offset").returns(undefined);
 			isolateScope.scrollToRow(row);
-			expect(row[0]["scrollIntoView"]).to.not.have.been.called;
+			expect(scrollIntoView).to.not.have.been.called;
 		});
 
 		afterEach((): JQuery => ($window.$ = realJqueryInstance));
