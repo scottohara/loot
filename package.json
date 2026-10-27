@@ -96,7 +96,7 @@
   "engines": {
     "node": "24.21.0",
     "npm": "12.0.2",
-    "ruby": "4.0.7"
+    "ruby": "4.0.9"
   },
   "allowScripts": {
     "cypress": true
