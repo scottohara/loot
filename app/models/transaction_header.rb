@@ -25,11 +25,11 @@ class TransactionHeader < ApplicationRecord
 		((schedule.present? && schedule.as_json) || {}).merge(transaction_date:)
 	end
 
-	# :nocov:
+	# simplecov:disable
 
 	private unless ::Rails.env.test?
 
-	# :nocov:end
+	# simplecov:enable
 
 	def validate_transaction_date_or_schedule_presence
 		errors.add :base, "Either transaction date or schedule can't be blank" if transaction_date.blank? && schedule.blank?

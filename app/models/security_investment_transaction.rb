@@ -42,11 +42,11 @@ class SecurityInvestmentTransaction < SecurityCashTransaction
 			commission: header.commission.to_f
 	end
 
-	# :nocov:
+	# simplecov:disable
 
 	private unless ::Rails.env.test?
 
-	# :nocov:end
+	# simplecov:enable
 
 	def validate_amount_matches_investment_details
 		return if [amount, header.price, header.quantity, header.commission, investment_account].any?(&:nil?)

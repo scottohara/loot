@@ -1,12 +1,4 @@
 ---
-plugins:
-  - rubocop-factory_bot
-  - rubocop-performance
-  - rubocop-rails
-  - rubocop-rake
-  - rubocop-rspec
-  - rubocop-rspec_rails
-
 inherit_gem:
   rubocop-config-oharagroup:
     - default.yml
@@ -17,35 +9,14 @@ inherit_gem:
     - rspec_rails.yml
     - rspec.yml
 
-AllCops:
-  Exclude:
-    - "bin/*"
-    - "config/**/*"
-    - "db/migrate/*"
-    - "db/schema.rb"
-    - "node_modules/**/*"
-    - "spec/*_helper.rb"
-    - "vendor/**/*"
-
-# Can't fully qualify a private_constant
-Lint/ConstantResolution:
-  Ignore:
-    - CONTEXTS
-    - FREQUENCIES
-    - MAX_TRANSACTION_DATE
-    - NUM_RESULTS
-    - SHOW_FIELDS
-    - EDIT_FIELDS
-    - TRANSACTION_TYPES
-
-# Allow reading of ENV vars for authentication
-Rails/EnvironmentVariableAccess:
-  AllowReads: true
-
 # Can't use :inverse_of due to self-referential and polymorphic associations
 Rails/InverseOf:
   Enabled: false
 
 # Needed for update_all for bulk updating transaction statuses during reconciliation
 Rails/SkipsModelValidations:
+  Enabled: false
+
+# Switching to strong parameters is a roadmap item (remove when we do)
+Rails/StrongParametersExpect:
   Enabled: false

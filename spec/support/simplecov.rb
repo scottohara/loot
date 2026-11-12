@@ -5,6 +5,7 @@ require 'simplecov'
 ::SimpleCov.start 'rails' do
 	coverage_dir 'coverage/backend'
 	enable_coverage :branch
-	track_files '{app,lib}/**/*.{rb,rake}'
-	minimum_coverage line: 100, branch: 100
+	enable_coverage :method
+	cover '{app,lib}/**/*.{rb,rake}'
+	minimum_coverage line: 100, branch: 100, method: 100
 end

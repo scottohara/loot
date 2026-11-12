@@ -30,11 +30,11 @@ class SchedulesController < ApplicationController
 		head :no_content
 	end
 
-	# :nocov:
+	# simplecov:disable
 
 	private unless ::Rails.env.test?
 
-	# :nocov:end
+	# simplecov:enable
 
 	def clean
 		# Remove any blank values

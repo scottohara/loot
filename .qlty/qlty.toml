@@ -30,6 +30,7 @@ name = "osv-scanner"
 
 [[plugin]]
 name = "prettier"
+package_file = "package.json"
 
 [[plugin]]
 name = "radarlint"

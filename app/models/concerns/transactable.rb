@@ -136,11 +136,11 @@ module Transactable
 		end
 	end
 
-	# :nocov:
+	# simplecov:disable
 
 	private unless ::Rails.env.test?
 
-	# :nocov:end
+	# simplecov:enable
 
 	def parse_as_at(as_at)
 		::Date.parse(as_at).to_s

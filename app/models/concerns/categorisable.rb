@@ -53,11 +53,11 @@ module Categorisable
 			}
 		end
 
-		# :nocov:
+		# simplecov:disable
 
 		private unless ::Rails.env.test?
 
-		# :nocov:end
+		# simplecov:enable
 
 		def basic_category(trx)
 			if trx['parent_category_id'].present?

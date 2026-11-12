@@ -69,11 +69,11 @@ module Transferable
 			related_status:
 	end
 
-	# :nocov:
+	# simplecov:disable
 
 	private unless ::Rails.env.test?
 
-	# :nocov:end
+	# simplecov:enable
 
 	def validate_account_uniqueness
 		return if source_transaction_account.nil? || destination_transaction_account.nil?

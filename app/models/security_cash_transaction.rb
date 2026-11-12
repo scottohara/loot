@@ -38,11 +38,11 @@ class SecurityCashTransaction < SecurityTransaction
 		account_of_type 'bank'
 	end
 
-	# :nocov:
+	# simplecov:disable
 
 	private unless ::Rails.env.test?
 
-	# :nocov:end
+	# simplecov:enable
 
 	def account_of_type(account_type)
 		transaction_accounts.find { |trx_account| trx_account.account&.account_type.eql? account_type }
